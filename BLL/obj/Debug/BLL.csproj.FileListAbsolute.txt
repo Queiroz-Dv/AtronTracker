@@ -8,3 +8,13 @@ C:\Users\Dubst\source\repos\PersonalTracking\BLL\obj\Debug\BLL.csproj.CopyComple
 C:\Users\Dubst\source\repos\PersonalTracking\BLL\obj\Debug\BLL.dll
 C:\Users\Dubst\source\repos\PersonalTracking\BLL\obj\Debug\BLL.pdb
 C:\Users\Dubst\source\repos\PersonalTracking\BLL\bin\Debug\DAL.dll.config
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\bin\Debug\BLL.dll
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\bin\Debug\BLL.pdb
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\bin\Debug\DAL.dll
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\bin\Debug\DAL.pdb
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\bin\Debug\DAL.dll.config
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\obj\Debug\BLL.csprojAssemblyReference.cache
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\obj\Debug\BLL.csproj.CoreCompileInputs.cache
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\obj\Debug\BLL.csproj.CopyComplete
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\obj\Debug\BLL.dll
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\obj\Debug\BLL.pdb
