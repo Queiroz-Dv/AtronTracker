@@ -5,3 +5,10 @@ C:\Users\Dubst\source\repos\PersonalTracking\DAL\obj\Debug\DAL.csproj.CoreCompil
 C:\Users\Dubst\source\repos\PersonalTracking\DAL\obj\Debug\DAL.dll
 C:\Users\Dubst\source\repos\PersonalTracking\DAL\obj\Debug\DAL.pdb
 C:\Users\Dubst\source\repos\PersonalTracking\DAL\bin\Debug\DAL.dll.config
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\bin\Debug\DAL.dll.config
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\bin\Debug\DAL.dll
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\bin\Debug\DAL.pdb
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.csprojAssemblyReference.cache
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.csproj.CoreCompileInputs.cache
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.dll
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.pdb

@@ -214,3 +214,26 @@ project.lock.json
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
 BLL/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+BLL/bin/Debug/BLL.dll
+BLL/bin/Debug/BLL.pdb
+BLL/bin/Debug/DAL.dll
+BLL/bin/Debug/DAL.pdb
+BLL/obj/Debug/BLL.csproj.FileListAbsolute.txt
+BLL/obj/Debug/BLL.csprojAssemblyReference.cache
+BLL/obj/Debug/BLL.dll
+BLL/obj/Debug/BLL.pdb
+DAL/bin/Debug/DAL.dll
+DAL/bin/Debug/DAL.pdb
+DAL/obj/Debug/DAL.csproj.FileListAbsolute.txt
+DAL/obj/Debug/DAL.dll
+DAL/obj/Debug/DAL.pdb
+PersonalTracking/bin/Debug/BLL.dll
+PersonalTracking/bin/Debug/BLL.pdb
+PersonalTracking/bin/Debug/DAL.dll
+PersonalTracking/bin/Debug/DAL.pdb
+PersonalTracking/bin/Debug/PersonalTracking.exe
+PersonalTracking/bin/Debug/PersonalTracking.pdb
+PersonalTracking/obj/Debug/PersonalTracking.csproj.FileListAbsolute.txt
+PersonalTracking/obj/Debug/PersonalTracking.csprojAssemblyReference.cache
+PersonalTracking/obj/Debug/PersonalTracking.exe
+PersonalTracking/obj/Debug/PersonalTracking.pdb
