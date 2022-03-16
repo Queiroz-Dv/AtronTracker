@@ -1,5 +1,8 @@
 ﻿using BLL;
 using DAL.DTO;
+using MaterialSkin.Controls;
+using MaterialSkin;
+using System.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +10,7 @@ using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmEmployeeList : Form
+    public partial class FrmEmployeeList : MaterialForm
     {
         public FrmEmployeeList()
         {
