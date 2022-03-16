@@ -15,6 +15,14 @@ namespace PersonalTracking
         public FrmEmployeeList()
         {
             InitializeComponent();
+            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.ColorScheme = new ColorScheme(
+               Primary.Brown400, Primary.Brown500,
+               Primary.Brown500, Accent.Indigo200,
+               TextShade.WHITE
+           );
         }
 
         private void txtUserNo_KeyPress(object sender, KeyPressEventArgs e)
@@ -160,6 +168,26 @@ namespace PersonalTracking
                 FillAllData();
                 ClearFilters();
             }
+        }
+
+        private void btnSearch_MouseHover(object sender, EventArgs e)
+        {
+            btnSearch.BackColor = Color.BlanchedAlmond;
+        }
+
+        private void btnSearch_MouseLeave(object sender, EventArgs e)
+        {
+            btnSearch.BackColor = Color.White;
+        }
+
+        private void btnClear_MouseHover(object sender, EventArgs e)
+        {
+            btnClear.BackColor = Color.BlanchedAlmond;
+        }
+
+        private void btnClear_MouseLeave(object sender, EventArgs e)
+        {
+            btnClear.BackColor = Color.White;
         }
     }
 }

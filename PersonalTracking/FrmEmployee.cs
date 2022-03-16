@@ -5,14 +5,25 @@ using BLL;
 using DAL;
 using DAL.DTO;
 using System.IO;
+using System.Drawing;
+using MaterialSkin.Controls;
+using MaterialSkin;
 
 namespace PersonalTracking
 {
-    public partial class FrmEmployee : Form
+    public partial class FrmEmployee : MaterialForm
     {
         public FrmEmployee()
         {
             InitializeComponent();
+            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.ColorScheme = new ColorScheme(
+               Primary.Brown400, Primary.Brown500,
+               Primary.Brown500, Accent.Indigo200,
+               TextShade.WHITE
+           );
         }
 
         private void btnClose_Click(object sender, EventArgs e)

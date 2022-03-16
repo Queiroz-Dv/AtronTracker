@@ -21,7 +21,7 @@ namespace PersonalTracking
              materialSkinManager.ColorScheme = new ColorScheme(
                 Primary.Brown400, Primary.Brown500,
                 Primary.Brown500, Accent.Indigo200,
-                TextShade.BLACK
+                TextShade.WHITE
             );
         }
 
