@@ -23,9 +23,9 @@ namespace PersonalTracking
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
             materialSkinManager.ColorScheme = new ColorScheme(
-               Primary.Brown400, Primary.Brown500,
-               Primary.Brown500, Accent.Indigo200,
-               TextShade.BLACK
+               Primary.DeepPurple900, Primary.DeepPurple500,
+               Primary.Purple500, Accent.Purple200,
+               TextShade.WHITE
            );
         }
 
