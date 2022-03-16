@@ -18,3 +18,4 @@ C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\obj\D
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\obj\Debug\BLL.csproj.CopyComplete
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\obj\Debug\BLL.dll
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\obj\Debug\BLL.pdb
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\BLL\bin\Debug\MaterialSkin.dll
