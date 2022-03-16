@@ -44,9 +44,10 @@
             this.btnSalary.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSalary.Image = global::PersonalTracking.Properties.Resources.salary;
             this.btnSalary.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnSalary.Location = new System.Drawing.Point(671, 24);
+            this.btnSalary.Location = new System.Drawing.Point(459, 78);
+            this.btnSalary.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSalary.Name = "btnSalary";
-            this.btnSalary.Size = new System.Drawing.Size(257, 252);
+            this.btnSalary.Size = new System.Drawing.Size(171, 149);
             this.btnSalary.TabIndex = 2;
             this.btnSalary.Text = "Salary";
             this.btnSalary.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -59,9 +60,10 @@
             this.btnTasks.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnTasks.Image = global::PersonalTracking.Properties.Resources.management;
             this.btnTasks.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnTasks.Location = new System.Drawing.Point(350, 24);
+            this.btnTasks.Location = new System.Drawing.Point(245, 78);
+            this.btnTasks.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnTasks.Name = "btnTasks";
-            this.btnTasks.Size = new System.Drawing.Size(257, 252);
+            this.btnTasks.Size = new System.Drawing.Size(171, 149);
             this.btnTasks.TabIndex = 1;
             this.btnTasks.Text = "Tasks";
             this.btnTasks.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -74,9 +76,10 @@
             this.btnPosition.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPosition.Image = global::PersonalTracking.Properties.Resources.medal;
             this.btnPosition.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnPosition.Location = new System.Drawing.Point(671, 282);
+            this.btnPosition.Location = new System.Drawing.Point(459, 276);
+            this.btnPosition.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnPosition.Name = "btnPosition";
-            this.btnPosition.Size = new System.Drawing.Size(257, 252);
+            this.btnPosition.Size = new System.Drawing.Size(171, 151);
             this.btnPosition.TabIndex = 5;
             this.btnPosition.Text = "Position";
             this.btnPosition.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -89,9 +92,10 @@
             this.btnDeparment.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDeparment.Image = global::PersonalTracking.Properties.Resources.businessman_net;
             this.btnDeparment.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnDeparment.Location = new System.Drawing.Point(350, 282);
+            this.btnDeparment.Location = new System.Drawing.Point(245, 276);
+            this.btnDeparment.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnDeparment.Name = "btnDeparment";
-            this.btnDeparment.Size = new System.Drawing.Size(257, 252);
+            this.btnDeparment.Size = new System.Drawing.Size(171, 151);
             this.btnDeparment.TabIndex = 4;
             this.btnDeparment.Text = "Deparment";
             this.btnDeparment.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -103,9 +107,10 @@
             this.btnExit.BackColor = System.Drawing.Color.White;
             this.btnExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExit.Image = global::PersonalTracking.Properties.Resources.exit;
-            this.btnExit.Location = new System.Drawing.Point(990, 282);
+            this.btnExit.Location = new System.Drawing.Point(152, 460);
+            this.btnExit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(257, 252);
+            this.btnExit.Size = new System.Drawing.Size(171, 151);
             this.btnExit.TabIndex = 7;
             this.btnExit.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnExit.UseVisualStyleBackColor = false;
@@ -117,9 +122,10 @@
             this.btnLogOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnLogOut.Image = global::PersonalTracking.Properties.Resources.logout;
             this.btnLogOut.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnLogOut.Location = new System.Drawing.Point(990, 24);
+            this.btnLogOut.Location = new System.Drawing.Point(365, 460);
+            this.btnLogOut.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnLogOut.Name = "btnLogOut";
-            this.btnLogOut.Size = new System.Drawing.Size(257, 252);
+            this.btnLogOut.Size = new System.Drawing.Size(171, 149);
             this.btnLogOut.TabIndex = 6;
             this.btnLogOut.Text = "LogOut";
             this.btnLogOut.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -132,9 +138,10 @@
             this.btnPermission.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPermission.Image = global::PersonalTracking.Properties.Resources.online_service;
             this.btnPermission.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnPermission.Location = new System.Drawing.Point(34, 282);
+            this.btnPermission.Location = new System.Drawing.Point(35, 276);
+            this.btnPermission.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnPermission.Name = "btnPermission";
-            this.btnPermission.Size = new System.Drawing.Size(257, 252);
+            this.btnPermission.Size = new System.Drawing.Size(171, 151);
             this.btnPermission.TabIndex = 3;
             this.btnPermission.Text = "Permission";
             this.btnPermission.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -147,9 +154,10 @@
             this.btnEmployee.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEmployee.Image = global::PersonalTracking.Properties.Resources.businessman3;
             this.btnEmployee.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnEmployee.Location = new System.Drawing.Point(34, 24);
+            this.btnEmployee.Location = new System.Drawing.Point(35, 78);
+            this.btnEmployee.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnEmployee.Name = "btnEmployee";
-            this.btnEmployee.Size = new System.Drawing.Size(257, 252);
+            this.btnEmployee.Size = new System.Drawing.Size(171, 149);
             this.btnEmployee.TabIndex = 0;
             this.btnEmployee.Text = "Employee";
             this.btnEmployee.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -158,9 +166,9 @@
             // 
             // FrmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1398, 913);
+            this.ClientSize = new System.Drawing.Size(699, 645);
             this.Controls.Add(this.btnSalary);
             this.Controls.Add(this.btnTasks);
             this.Controls.Add(this.btnPosition);
@@ -169,7 +177,10 @@
             this.Controls.Add(this.btnLogOut);
             this.Controls.Add(this.btnPermission);
             this.Controls.Add(this.btnEmployee);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MaximizeBox = false;
             this.Name = "FrmMain";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Employee Tracking";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmMain_FormClosed);
