@@ -1,5 +1,8 @@
 ﻿using BLL;
 using DAL.DTO;
+using MaterialSkin.Controls;
+using MaterialSkin;
+using System.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +10,19 @@ using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmEmployeeList : Form
+    public partial class FrmEmployeeList : MaterialForm
     {
         public FrmEmployeeList()
         {
             InitializeComponent();
+            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.ColorScheme = new ColorScheme(
+               Primary.DeepPurple900, Primary.DeepPurple500,
+               Primary.Purple500, Accent.Purple200,
+               TextShade.WHITE
+           );
         }
 
         private void txtUserNo_KeyPress(object sender, KeyPressEventArgs e)
@@ -157,6 +168,26 @@ namespace PersonalTracking
                 FillAllData();
                 ClearFilters();
             }
+        }
+
+        private void btnSearch_MouseHover(object sender, EventArgs e)
+        {
+            btnSearch.BackColor = Color.BlanchedAlmond;
+        }
+
+        private void btnSearch_MouseLeave(object sender, EventArgs e)
+        {
+            btnSearch.BackColor = Color.White;
+        }
+
+        private void btnClear_MouseHover(object sender, EventArgs e)
+        {
+            btnClear.BackColor = Color.BlanchedAlmond;
+        }
+
+        private void btnClear_MouseLeave(object sender, EventArgs e)
+        {
+            btnClear.BackColor = Color.White;
         }
     }
 }

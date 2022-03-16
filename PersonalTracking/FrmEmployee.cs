@@ -5,14 +5,25 @@ using BLL;
 using DAL;
 using DAL.DTO;
 using System.IO;
+using System.Drawing;
+using MaterialSkin.Controls;
+using MaterialSkin;
 
 namespace PersonalTracking
 {
-    public partial class FrmEmployee : Form
+    public partial class FrmEmployee : MaterialForm
     {
         public FrmEmployee()
         {
             InitializeComponent();
+            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.ColorScheme = new ColorScheme(
+               Primary.DeepPurple900, Primary.DeepPurple500,
+               Primary.Purple500, Accent.Purple200,
+               TextShade.WHITE
+           );
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -99,7 +110,7 @@ namespace PersonalTracking
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (txtUserNo.Text.Trim() == "")
-                MessageBox.Show("User no is Empty");
+                MessageBox.Show("User Number is Empty");
 
             else if (txtPassword.Text.Trim() == "")
                 MessageBox.Show("Password is Empty");
@@ -110,7 +121,7 @@ namespace PersonalTracking
             else if (txtSalary.Text.Trim() == "")
                 MessageBox.Show("Salary is Empty");
             else if (cmbDeparment.SelectedIndex == -1)
-                MessageBox.Show("Select a department");
+                MessageBox.Show("Select a Department");
             else if (cmbPosition.SelectedIndex == -1)
                 MessageBox.Show("Select a Position");
             else
@@ -118,7 +129,7 @@ namespace PersonalTracking
                 if (!isUpdate)
                 {
                     if (!EmployeeBLL.isUnique(Convert.ToInt32(txtUserNo.Text)))
-                        MessageBox.Show("This user is used by another employee please change");
+                        MessageBox.Show("This user is used by another employee please change it");
                     else
                     {
                         EMPLOYEE employee = new EMPLOYEE
@@ -199,12 +210,12 @@ namespace PersonalTracking
         private void btnCheck_Click(object sender, EventArgs e)
         {
             if (txtUserNo.Text.Trim() == "")
-                MessageBox.Show("User no is Empty");
+                MessageBox.Show("User Number is Empty");
             else
             {
                 isUnique = EmployeeBLL.isUnique(Convert.ToInt32(txtUserNo.Text));
                 if (!isUnique)
-                    MessageBox.Show("This user is used by another employee please change");
+                    MessageBox.Show("This user is used by another employee please change it");
                 else
                     MessageBox.Show("This user is usable");
             }
