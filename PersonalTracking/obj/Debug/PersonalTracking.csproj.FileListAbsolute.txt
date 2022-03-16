@@ -56,3 +56,4 @@ C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\PersonalT
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\PersonalTracking\obj\Debug\PersonalTracking.csproj.CopyComplete
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\PersonalTracking\obj\Debug\PersonalTracking.exe
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\PersonalTracking\obj\Debug\PersonalTracking.pdb
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\PersonalTracking\bin\Debug\MaterialSkin.dll
