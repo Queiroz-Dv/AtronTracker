@@ -2,18 +2,27 @@
 using System;
 using BLL;
 using DAL;
-using DAL.DAO;
-using DAL.DTO;
+using System.Drawing;
+using MaterialSkin;
+using MaterialSkin.Controls;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace PersonalTracking
 {
-    public partial class FrmLogin : Form
+    public partial class FrmLogin : MaterialForm
     {
         public FrmLogin()
         {
             InitializeComponent();
+            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+             materialSkinManager.ColorScheme = new ColorScheme(
+                Primary.Brown400, Primary.Brown500,
+                Primary.Brown500, Accent.Indigo200,
+                TextShade.BLACK
+            );
         }
 
         private void txtUserNo_KeyPress(object sender, KeyPressEventArgs e)
@@ -30,7 +39,7 @@ namespace PersonalTracking
         {
 
             if (txtUserNo.Text.Trim() == "" || txtPassword.Text.Trim() == "")
-                MessageBox.Show("Please fill the userno and password");
+                MessageBox.Show("Please fill the User Numb and Password");
             else
             {
                 List<EMPLOYEE> employeelist = EmployeeBLL.GetEmployees(Convert.ToInt32(txtUserNo.Text), txtPassword.Text);
@@ -46,6 +55,52 @@ namespace PersonalTracking
                     FrmMain frm = new FrmMain();
                     this.Hide();
                     frm.ShowDialog();
+                }
+            }
+        }
+
+        private void btnLogin_MouseHover(object sender, EventArgs e)
+        {
+            btnLogin.BackColor = Color.BlanchedAlmond;
+        }
+
+        private void btnLogin_MouseLeave(object sender, EventArgs e)
+        {
+            btnLogin.BackColor = Color.White;
+        }
+
+        private void btnExit_MouseHover(object sender, EventArgs e)
+        {
+            btnExit.BackColor = Color.BlanchedAlmond;
+        }
+
+        private void btnExit_MouseLeave(object sender, EventArgs e)
+        {
+            btnExit.BackColor = Color.White;
+        }
+
+        private void txtPassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (txtUserNo.Text.Trim() == "" || txtPassword.Text.Trim() == "")
+                    MessageBox.Show("Please fill the User Numb and Password");
+                else
+                {
+                    List<EMPLOYEE> employeelist = EmployeeBLL.GetEmployees(Convert.ToInt32(txtUserNo.Text), txtPassword.Text);
+                    if (employeelist.Count == 0)
+                        MessageBox.Show("Please control your information");
+                    else
+                    {
+                        EMPLOYEE employee = new EMPLOYEE();
+                        employee = employeelist.First();
+                        UserStatic.EmployeeID = employee.ID;
+                        UserStatic.UserNo = employee.UserNo;
+                        UserStatic.isAdmin = Convert.ToBoolean(employee.isAdmin);
+                        FrmMain frm = new FrmMain();
+                        this.Hide();
+                        frm.ShowDialog();
+                    }
                 }
             }
         }
