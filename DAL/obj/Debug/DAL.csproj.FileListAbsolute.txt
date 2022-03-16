@@ -12,3 +12,5 @@ C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\D
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.csproj.CoreCompileInputs.cache
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.dll
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.pdb
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\bin\Debug\MaterialSkin.dll
+C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.csproj.CopyComplete
