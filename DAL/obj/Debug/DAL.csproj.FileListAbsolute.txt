@@ -14,3 +14,12 @@ C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\D
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.pdb
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\bin\Debug\MaterialSkin.dll
 C:\Users\Dubst\Documents\Repositório Local QueirozDV\PersonalTracking\DAL\obj\Debug\DAL.csproj.CopyComplete
+C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\DAL\bin\Debug\DAL.dll.config
+C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\DAL\bin\Debug\DAL.dll
+C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\DAL\bin\Debug\DAL.pdb
+C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\DAL\bin\Debug\MaterialSkin.dll
+C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\DAL\obj\Debug\DAL.csproj.AssemblyReference.cache
+C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\DAL\obj\Debug\DAL.csproj.CoreCompileInputs.cache
+C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\DAL\obj\Debug\DAL.csproj.CopyComplete
+C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\DAL\obj\Debug\DAL.dll
+C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\DAL\obj\Debug\DAL.pdb
