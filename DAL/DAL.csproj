@@ -63,6 +63,9 @@
     <Compile Include="DTO\TaskDetailDTO.cs" />
     <Compile Include="DTO\TaskDTO.cs" />
     <Compile Include="DTO\TaskStates.cs" />
+    <Compile Include="EmployeeDataClass.cs">
+      <DependentUpon>EmployeeDataClass.dbml</DependentUpon>
+    </Compile>
     <Compile Include="EmployeeDataClass.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
