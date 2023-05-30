@@ -30,3 +30,25 @@ C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\BLL\obj\Deb
 C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\BLL\obj\Debug\BLL.csproj.CopyComplete
 C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\BLL\obj\Debug\BLL.dll
 C:\Users\eduardo.queiroz\Documents\GitHubRepository\PersonalTracking\BLL\obj\Debug\BLL.pdb
+C:\p\PersonalTracking\BLL\bin\Debug\BLL.dll
+C:\p\PersonalTracking\BLL\bin\Debug\BLL.pdb
+C:\p\PersonalTracking\BLL\bin\Debug\DAL.dll
+C:\p\PersonalTracking\BLL\bin\Debug\MaterialSkin.dll
+C:\p\PersonalTracking\BLL\bin\Debug\DAL.pdb
+C:\p\PersonalTracking\BLL\bin\Debug\DAL.dll.config
+C:\p\PersonalTracking\BLL\obj\Debug\BLL.csproj.AssemblyReference.cache
+C:\p\PersonalTracking\BLL\obj\Debug\BLL.csproj.CoreCompileInputs.cache
+C:\p\PersonalTracking\BLL\obj\Debug\BLL.csproj.CopyComplete
+C:\p\PersonalTracking\BLL\obj\Debug\BLL.dll
+C:\p\PersonalTracking\BLL\obj\Debug\BLL.pdb
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\bin\Debug\BLL.dll
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\bin\Debug\BLL.pdb
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\bin\Debug\DAL.dll
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\bin\Debug\MaterialSkin.dll
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\bin\Debug\DAL.pdb
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\bin\Debug\DAL.dll.config
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\obj\Debug\BLL.csproj.AssemblyReference.cache
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\obj\Debug\BLL.csproj.CoreCompileInputs.cache
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\obj\Debug\BLL.csproj.CopyComplete
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\obj\Debug\BLL.dll
+D:\temp\Projetos De Estudo\PersonalTracking\BLL\obj\Debug\BLL.pdb
