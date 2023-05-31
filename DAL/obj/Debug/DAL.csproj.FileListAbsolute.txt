@@ -41,3 +41,5 @@ D:\temp\Projetos De Estudo\PersonalTracking\DAL\obj\Debug\DAL.csproj.CoreCompile
 D:\temp\Projetos De Estudo\PersonalTracking\DAL\obj\Debug\DAL.csproj.CopyComplete
 D:\temp\Projetos De Estudo\PersonalTracking\DAL\obj\Debug\DAL.dll
 D:\temp\Projetos De Estudo\PersonalTracking\DAL\obj\Debug\DAL.pdb
+D:\temp\Projetos De Estudo\PersonalTracking\DAL\bin\Debug\NTF.dll
+D:\temp\Projetos De Estudo\PersonalTracking\DAL\bin\Debug\NTF.pdb
