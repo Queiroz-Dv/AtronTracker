@@ -11,12 +11,18 @@
 
 namespace DAL
 {
-    using System;
-    using System.ComponentModel;
-    using System.Data.Linq.Mapping;
-
-
-    [global::System.Data.Linq.Mapping.DatabaseAttribute(Name="PERSONALTRACKING")]
+	using System.Data.Linq;
+	using System.Data.Linq.Mapping;
+	using System.Data;
+	using System.Collections.Generic;
+	using System.Reflection;
+	using System.Linq;
+	using System.Linq.Expressions;
+	using System.ComponentModel;
+	using System;
+	
+	
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="PERSONALTRACKING")]
 	public partial class EmployeeDataClassDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -54,7 +60,7 @@ namespace DAL
     #endregion
 		
 		public EmployeeDataClassDataContext() : 
-				base(global::DAL.Properties.Settings.Default.PERSONALTRACKINGConnectionString, mappingSource)
+				base(global::DAL.Properties.Settings.Default.PERSONALTRACKING, mappingSource)
 		{
 			OnCreated();
 		}
