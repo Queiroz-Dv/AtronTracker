@@ -1,12 +1,12 @@
-﻿using System.Windows.Forms;
-using System;
-using BLL;
+﻿using BLL;
 using DAL;
-using System.Drawing;
 using MaterialSkin;
 using MaterialSkin.Controls;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace PersonalTracking
 {
@@ -37,16 +37,18 @@ namespace PersonalTracking
 
         private void btnLogin_Click(object sender, System.EventArgs e)
         {
-
+            // Verifica se está vazio
             if (txtUserNo.Text.Trim() == "" || txtPassword.Text.Trim() == "")
                 MessageBox.Show("Please fill the User Numb and Password");
             else
             {
+                //Se estiver preenchido mas o usuário não existe ele exibe um erro
                 List<EMPLOYEE> employeelist = EmployeeBLL.GetEmployees(Convert.ToInt32(txtUserNo.Text), txtPassword.Text);
                 if (employeelist.Count == 0)
                     MessageBox.Show("Please control your information");
                 else
                 {
+                    //Se existir ele pega o primeiro usuário e o mantém na sessão ativa e abre o menu
                     EMPLOYEE employee = new EMPLOYEE();
                     employee = employeelist.First();
                     UserStatic.EmployeeID = employee.ID;
