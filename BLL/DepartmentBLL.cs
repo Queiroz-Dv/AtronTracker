@@ -1,30 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BLL.Services;
 using DAL;
 using DAL.DAO;
+using DAL.DTO;
+using DAL.Generics;
+using DAL.Interfaces;
+using System.Collections.Generic;
 
 namespace BLL
 {
-    public class DepartmentBLL
+    public class DepartmentBLL : IDepartmentServices
     {
-        public static void AddDepartment(DEPARTMENT department)
+        private readonly Context _context;
+        private readonly IDeparmentRepository _repository;
+
+        public DepartmentBLL(Context context, IGenericRepository<DEPARTMENT> repository)
         {
-           DepartmentDAO.AddDepartment(department);
+            _context = context;
+            _repository = repository as IDeparmentRepository;
         }
 
-        public static List<DEPARTMENT> GetDepartments()
+        public DepartmentDTO CreateDepartmentServices(DepartmentDTO department)
         {
-            return DepartmentDAO.GetDepartments();
+            var departmentEntity = _repository.GetEntityByIdRepository(department.Id);
+
         }
 
-        public static void UpdateDepartment(DEPARTMENT department)
+        public void DeleteAllDepartmentsService(ICollection<DepartmentDTO> department)
         {
-            DepartmentDAO.UpdateDepartment(department);
+            throw new System.NotImplementedException();
         }
 
-        public static void DeleteDepartment(int iD)
+        public DepartmentDTO DeleteDepartmentByIdService(DepartmentDTO department)
         {
-            DepartmentDAO.DeleteDepartment(iD);
+            throw new System.NotImplementedException();
+        }
+
+        public ICollection<DepartmentDTO> GetAllDepartmentsService()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public DepartmentDTO GetDepartmentByIdService(int? id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public DepartmentDTO UpdateDepartmentService(DepartmentDTO department)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

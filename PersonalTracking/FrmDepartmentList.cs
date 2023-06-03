@@ -15,7 +15,7 @@ namespace PersonalTracking
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void btnNew_Click(object sender, EventArgs e)
@@ -31,15 +31,15 @@ namespace PersonalTracking
         private void btnUpdate_Click(object sender, EventArgs e)
         {
             if (detail.ID == 0)
-                MessageBox.Show("Please select a department from table");
+                MessageBox.Show("Please select a department from the table");
             else
             {
                 FrmDepartment frm = new FrmDepartment();
                 frm.isUpdate = true;
-                frm.detail=detail;
-                this.Hide();
+                frm.department=detail;
+                Hide();
                 frm.ShowDialog();
-                this.Visible = true;
+                Visible = true;
                 list = DepartmentBLL.GetDepartments();
                 dataGridView1.DataSource = list;
             }

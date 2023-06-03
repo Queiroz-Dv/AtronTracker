@@ -48,9 +48,9 @@ namespace NTF.Entities
         /// </summary>
         /// <param name="Id">Guid de identificação.</param>
         /// <param name="error">Descrição do erro a ser adicionado.</param>
-        protected void IsInvalidId(Guid Id, ErrorDescription error)
+        protected void IsInvalidId(int Id, ErrorDescription error)
         {
-            Fail(Id == Guid.Empty, error);
+            Fail(Id == 0, error);
         }
 
         /// <summary>
