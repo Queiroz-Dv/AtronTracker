@@ -1,5 +1,7 @@
 ﻿using BLL;
+using BLL.Services;
 using DAL;
+using MDL;
 using System;
 using System.Windows.Forms;
 
@@ -7,6 +9,9 @@ namespace PersonalTracking
 {
     public partial class FrmDepartment : Form
     {
+        public bool isUpdate = false;
+        public DEPARTMENT department;
+
         public FrmDepartment()
         {
             InitializeComponent();
@@ -25,35 +30,40 @@ namespace PersonalTracking
             }
             else
             {
-                DEPARTMENT department = new DEPARTMENT();
                 if(!isUpdate)
                 {
                     department.DepartmentName = txtDepartment.Text;
-                    BLL.DepartmentBLL.AddDepartment(department);
-                    MessageBox.Show("Department was added");
-                    txtDepartment.Clear();
+                    var departmentService = new DepartmentServicesBLL(department.ID, department.DepartmentName);
+
+                    SaveDepartment(departmentService, department);
+                    
                 }
                 else
                 {
                     DialogResult result = MessageBox.Show("Are you sure?", "Warning!!", MessageBoxButtons.YesNo);
                     if (DialogResult.Yes == result)
                     {
-                        department.ID = detail.ID;
-                        department.DepartmentName = txtDepartment.Text;
-                        DepartmentBLL.UpdateDepartment(department);
+                        DepartamentModel departmentModel = new DepartamentModel(department.ID, txtDepartment.Text);
+                        DepartmentBLL.UpdateDepartment(departmentModel);
                         MessageBox.Show("Department was updated");
                         this.Close();
                     }
                 }
             }
         }
-        public bool isUpdate = false;
-        public DEPARTMENT detail = new DEPARTMENT();
+
+        private void SaveDepartment(DepartmentServicesBLL departmentService, DEPARTMENT department)
+        {
+            DeparmentService
+            DepartmentBLL.AddDepartment(department);
+            MessageBox.Show("Department was added");
+            txtDepartment.Clear();
+        }
 
         private void FrmDepartment_Load(object sender, EventArgs e)
         {
             if (isUpdate)
-                txtDepartment.Text = detail.DepartmentName;
+                txtDepartment.Text = department.DepartmentName;
         }
     }
 }
