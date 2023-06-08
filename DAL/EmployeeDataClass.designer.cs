@@ -20,9 +20,9 @@ namespace DAL
 	using System.Linq.Expressions;
 	using System.ComponentModel;
 	using System;
-	
-	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="PERSONALTRACKING")]
+    using DAL.Generics;
+
+    [global::System.Data.Linq.Mapping.DatabaseAttribute(Name="PERSONALTRACKING")]
 	public partial class EmployeeDataClassDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -226,8 +226,8 @@ namespace DAL
 				}
 			}
 		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
+
+        public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
