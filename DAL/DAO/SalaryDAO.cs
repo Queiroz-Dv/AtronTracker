@@ -7,7 +7,7 @@ using DAL.DTO;
 
 namespace DAL.DAO
 {
-    public class SalaryDAO : EmployeeContext
+    public class SalaryDAO : Context
     {
         public static List<MONTH> GetMonths()
         {
