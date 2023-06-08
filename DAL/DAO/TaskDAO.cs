@@ -6,7 +6,7 @@ using DAL.DTO;
 
 namespace DAL.DAO
 {
-    public class TaskDAO : EmployeeContext
+    public class TaskDAO : Context
     {
         public static List<TASKSTATE> GetTaskStates()
         {

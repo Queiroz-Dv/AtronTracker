@@ -1,30 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BLL.Services;
 using DAL;
-using DAL.DAO;
+using DAL.DTO;
+using DAL.Repositories;
+using System.Collections.Generic;
 
 namespace BLL
 {
-    public class DepartmentBLL
+    public class DepartmentBLL : IDepartmentServices
     {
-        public static void AddDepartment(DEPARTMENT department)
+        private readonly DeparmentRepository _repository = new DeparmentRepository();
+
+        public DepartmentDTO CreateDepartmentServices(DepartmentDTO department)
         {
-           DepartmentDAO.AddDepartment(department);
+            DEPARTMENT entity = new DEPARTMENT();
+            entity.ID = department.Id;
+            entity.DepartmentName = department.DepartmentName;
+
+            _repository.CreateEntityRepository(entity);
+            return department;
         }
 
-        public static List<DEPARTMENT> GetDepartments()
+        public void DeleteAllDepartmentsService(ICollection<DepartmentDTO> department)
         {
-            return DepartmentDAO.GetDepartments();
+            throw new System.NotImplementedException();
         }
 
-        public static void UpdateDepartment(DEPARTMENT department)
+        public DepartmentDTO DeleteDepartmentByIdService(DepartmentDTO department)
         {
-            DepartmentDAO.UpdateDepartment(department);
+            throw new System.NotImplementedException();
         }
 
-        public static void DeleteDepartment(int iD)
+        public ICollection<DepartmentDTO> GetAllDepartmentsService()
         {
-            DepartmentDAO.DeleteDepartment(iD);
+            throw new System.NotImplementedException();
+        }
+
+        public DepartmentDTO GetDepartmentByIdService(int? id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public DepartmentDTO UpdateDepartmentService(DepartmentDTO department)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
