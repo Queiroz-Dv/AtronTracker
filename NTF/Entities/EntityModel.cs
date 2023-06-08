@@ -1,5 +1,4 @@
 ﻿using NTF.ErrorsType;
-using System;
 
 namespace NTF.Entities
 {
@@ -48,10 +47,10 @@ namespace NTF.Entities
         /// </summary>
         /// <param name="Id">Guid de identificação.</param>
         /// <param name="error">Descrição do erro a ser adicionado.</param>
-        protected void IsInvalidId(int Id, ErrorDescription error)
-        {
-            Fail(Id == 0, error);
-        }
+        //protected void IsInvalidId(int Id, ErrorDescription error)
+        //{
+        //    Fail(Id  0, error);
+        //}
 
         /// <summary>
         /// Verifica se o nome é inválido e adiciona um erro à lista de erros, se for o caso.
@@ -62,14 +61,11 @@ namespace NTF.Entities
         {
             Fail(string.IsNullOrWhiteSpace(entityName), error);
         }
-
         #endregion
 
         #region Errors
-
-        public static ErrorDescription InvalidId = new ErrorDescription("Invalid Id", new Critical());
-        public static ErrorDescription InvalidName = new ErrorDescription("Invalid Name", new Critical());
-
+        //public static ErrorDescription InvalidId = new ErrorDescription("Invalid Id", new Critical());
+        public static ErrorDescription InvalidName = new ErrorDescription("The field name is empty", new Critical());
         #endregion
     }
 }

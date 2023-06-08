@@ -1,28 +1,23 @@
 ﻿using BLL.Services;
 using DAL;
-using DAL.DAO;
 using DAL.DTO;
-using DAL.Generics;
-using DAL.Interfaces;
+using DAL.Repositories;
 using System.Collections.Generic;
 
 namespace BLL
 {
     public class DepartmentBLL : IDepartmentServices
     {
-        private readonly Context _context;
-        private readonly IDeparmentRepository _repository;
-
-        public DepartmentBLL(Context context, IGenericRepository<DEPARTMENT> repository)
-        {
-            _context = context;
-            _repository = repository as IDeparmentRepository;
-        }
+        private readonly DeparmentRepository _repository = new DeparmentRepository();
 
         public DepartmentDTO CreateDepartmentServices(DepartmentDTO department)
         {
-            var departmentEntity = _repository.GetEntityByIdRepository(department.Id);
+            DEPARTMENT entity = new DEPARTMENT();
+            entity.ID = department.Id;
+            entity.DepartmentName = department.DepartmentName;
 
+            _repository.CreateEntityRepository(entity);
+            return department;
         }
 
         public void DeleteAllDepartmentsService(ICollection<DepartmentDTO> department)
