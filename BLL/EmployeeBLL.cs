@@ -1,7 +1,6 @@
 ﻿using DAL;
 using DAL.DAO;
 using DAL.DTO;
-using System;
 using System.Collections.Generic;
 
 namespace BLL
@@ -11,7 +10,7 @@ namespace BLL
         public static EmployeeDTO GetAll()
         {
             EmployeeDTO dto = new EmployeeDTO();
-            dto.Departments = DepartmentDAO.GetDepartments();
+            //dto.Departments = DepartmentDAO.GetDepartments();
             dto.Positions = PositionDAO.GetPositions();
             dto.Employees = EmployeeDAO.GetEmployees();
             return dto;

@@ -11,7 +11,7 @@ namespace BLL
         {
             TaskDTO taskdto = new TaskDTO();
             taskdto.Employees = EmployeeDAO.GetEmployees();
-            taskdto.Departments = DepartmentDAO.GetDepartments();
+            //taskdto.Departments = DepartmentDAO.GetDepartments();
             taskdto.Positions = PositionDAO.GetPositions();
             taskdto.TaskStates = TaskDAO.GetTaskStates();
             taskdto.Tasks = TaskDAO.GetTasks();

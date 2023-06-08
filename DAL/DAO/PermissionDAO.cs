@@ -5,7 +5,7 @@ using DAL.DTO;
 
 namespace DAL.DAO
 {
-    public class PermissionDAO : EmployeeContext
+    public class PermissionDAO : Context
     {
         public static void AddPermission(PERMISSION permission)
         {

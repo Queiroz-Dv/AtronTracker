@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DAL.DAO
 {
-    public class PositionDAO : EmployeeContext
+    public class PositionDAO : Context
     {
         public static void AddPosition(POSITION position)
         {
