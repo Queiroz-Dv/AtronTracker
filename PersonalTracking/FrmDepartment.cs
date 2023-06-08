@@ -1,6 +1,6 @@
 ﻿using BLL;
-using BLL.Services;
 using DAL.DTO;
+using PersonalTracking.ScreenNotifications.DepartmentNotifications;
 using System;
 using System.Windows.Forms;
 
@@ -18,14 +18,18 @@ namespace PersonalTracking
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (txtDepartment.Text.Trim() == "")
             {
-                MessageBox.Show("Please fill the name field");
+                DeparmentInfo.DeparmentFieldIsEmpty();
+            }
+            else if (txtDepartment.Text.Trim().Length < 3)
+            {
+                DeparmentInfo.InvalidMinimumAmountDepartmentCharacters();
             }
             else
             {
@@ -33,18 +37,19 @@ namespace PersonalTracking
                 {
                     department.DepartmentName = txtDepartment.Text;
                     SaveDepartment(department);
-
+                    DeparmentInfo.DeparmentSavedWithSuccess(department);
                 }
                 else
                 {
                     DialogResult result = MessageBox.Show("Are you sure?", "Warning!!", MessageBoxButtons.YesNo);
-                    if (DialogResult.Yes == result)
-                    {
-                        //DepartamentModel departmentModel = new DepartamentModel(department.ID, txtDepartment.Text);
-                        //DepartmentBLL.UpdateDepartment(departmentModel);
-                        //MessageBox.Show("Department was updated");
-                        //this.Close();
-                    }
+                    //if (DialogResult.Yes == result)
+                    //{
+                    //    department.ID = detail.ID;
+                    //    department.DepartmentName = txtDepartment.Text;
+                    //    DepartmentBLL.UpdateDepartment(department);
+                    //    MessageBox.Show("Department was updated");
+                    //    this.Close();
+                    //}
                 }
             }
         }
@@ -53,14 +58,21 @@ namespace PersonalTracking
         {
             DepartmentBLL departmentBLL = new DepartmentBLL();
             departmentBLL.CreateDepartmentServices(department);
+
+            ClearFields();
         }
-
-
 
         private void FrmDepartment_Load(object sender, EventArgs e)
         {
             if (isUpdate)
+            {
                 txtDepartment.Text = department.DepartmentName;
+            }
+        }
+
+        private void ClearFields()
+        {
+            txtDepartment.Clear();
         }
     }
 }

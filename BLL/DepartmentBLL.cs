@@ -9,13 +9,12 @@ namespace BLL
     public class DepartmentBLL : IDepartmentServices
     {
         private readonly DeparmentRepository _repository = new DeparmentRepository();
+        private readonly DEPARTMENT entity = new DEPARTMENT();
 
         public DepartmentDTO CreateDepartmentServices(DepartmentDTO department)
         {
-            DEPARTMENT entity = new DEPARTMENT();
-            entity.ID = department.Id;
+            entity.ID = department.ID;
             entity.DepartmentName = department.DepartmentName;
-
             _repository.CreateEntityRepository(entity);
             return department;
         }
@@ -37,7 +36,8 @@ namespace BLL
 
         public DepartmentDTO GetDepartmentByIdService(int? id)
         {
-            throw new System.NotImplementedException();
+            var department = _repository.GetEntityByIdRepository((int)id);
+            return department as DepartmentDTO;
         }
 
         public DepartmentDTO UpdateDepartmentService(DepartmentDTO department)

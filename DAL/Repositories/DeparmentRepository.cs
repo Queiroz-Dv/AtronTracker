@@ -9,7 +9,6 @@ namespace DAL.Repositories
     public class DeparmentRepository : IDeparmentRepository
     {
         private Context _context = new Context();
-        //private readonly EmployeeDataClassDataContext db;
 
         public DeparmentRepository(Context context)
         {
@@ -26,7 +25,7 @@ namespace DAL.Repositories
             {
                 if (entity == null)
                 {
-                    throw new ArgumentNullException(nameof(entity), "O departamento não pode ser nulo.");
+                    throw new ArgumentNullException(nameof(entity), "The deparment does not be null.");
                 }
 
                 var department = new DEPARTMENT()
@@ -56,12 +55,13 @@ namespace DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public DEPARTMENT GetEntityByIdRepository(int id)
+        public DEPARTMENT GetEntityByIdRepository(object id)
         {
             try
             {
                 var context = _context;
-                DEPARTMENT entityFind = context.Departments.FirstOrDefault(dpt => dpt.ID == id);
+                var deparmentId = id as DEPARTMENT;
+                DEPARTMENT entityFind = context._db.DEPARTMENTs.FirstOrDefault(dpt => dpt.ID == deparmentId.ID);
                 return entityFind;
             }
             catch (Exception ex)

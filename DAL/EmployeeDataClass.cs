@@ -1,9 +1,6 @@
-using DAL.Generics;
-
 namespace DAL
 {
-    partial class DEPARTMENT : IEntity
+    partial class DEPARTMENT
     {
-        public int Id { get; set; }
     }
 }
