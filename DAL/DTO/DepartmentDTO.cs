@@ -2,7 +2,7 @@
 
 namespace DAL.DTO
 {
-    public class DepartmentDTO
+    public class DepartmentDTO : DEPARTMENT
     {
         public DepartmentDTO() { }
 
@@ -18,9 +18,5 @@ namespace DAL.DTO
         {
             throw new NotImplementedException();
         }
-
-        public int Id { get; set; }
-
-        public string DepartmentName { get; set; }
     }
 }
