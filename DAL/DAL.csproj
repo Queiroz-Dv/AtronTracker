@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="DAO\DepartmentDAO.cs" />
     <Compile Include="DAO\Context.cs" />
+    <Compile Include="DAO\EmployeeContext.cs" />
     <Compile Include="DAO\EmployeeDAO.cs" />
     <Compile Include="DAO\PermissionDAO.cs" />
     <Compile Include="DAO\PositionDAO.cs" />
@@ -83,12 +84,6 @@
     </Compile>
     <Compile Include="Repositories\DeparmentRepository.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NTF\NTF.csproj">
-      <Project>{79c84e8f-1e0f-40f5-bf77-a4c98e9a0d95}</Project>
-      <Name>NTF</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -11,7 +11,7 @@ namespace NTF.NotificationCommand
         public SaveCommandEntity(object entity) : base(entity)
         {
             notification = entity as EntityModel;
-            var description = new ErrorDescription("New record created!", new Warning());
+            var description = new ErrorDescription("New record created!", new Information());
             notification.Errors.Add(description);
         }
 

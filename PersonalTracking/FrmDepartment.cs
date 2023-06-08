@@ -1,7 +1,6 @@
 ﻿using BLL;
 using BLL.Services;
-using DAL;
-using MDL;
+using DAL.DTO;
 using System;
 using System.Windows.Forms;
 
@@ -10,7 +9,7 @@ namespace PersonalTracking
     public partial class FrmDepartment : Form
     {
         public bool isUpdate = false;
-        public DEPARTMENT department;
+        public DepartmentDTO department = new DepartmentDTO();
 
         public FrmDepartment()
         {
@@ -19,46 +18,44 @@ namespace PersonalTracking
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if(txtDepartment.Text.Trim()== "")
+            if (txtDepartment.Text.Trim() == "")
             {
                 MessageBox.Show("Please fill the name field");
             }
             else
             {
-                if(!isUpdate)
+                if (!isUpdate)
                 {
                     department.DepartmentName = txtDepartment.Text;
-                    var departmentService = new DepartmentServicesBLL(department.ID, department.DepartmentName);
+                    SaveDepartment(department);
 
-                    SaveDepartment(departmentService, department);
-                    
                 }
                 else
                 {
                     DialogResult result = MessageBox.Show("Are you sure?", "Warning!!", MessageBoxButtons.YesNo);
                     if (DialogResult.Yes == result)
                     {
-                        DepartamentModel departmentModel = new DepartamentModel(department.ID, txtDepartment.Text);
-                        DepartmentBLL.UpdateDepartment(departmentModel);
-                        MessageBox.Show("Department was updated");
-                        this.Close();
+                        //DepartamentModel departmentModel = new DepartamentModel(department.ID, txtDepartment.Text);
+                        //DepartmentBLL.UpdateDepartment(departmentModel);
+                        //MessageBox.Show("Department was updated");
+                        //this.Close();
                     }
                 }
             }
         }
 
-        private void SaveDepartment(DepartmentServicesBLL departmentService, DEPARTMENT department)
+        private void SaveDepartment(DepartmentDTO department)
         {
-            DeparmentService
-            DepartmentBLL.AddDepartment(department);
-            MessageBox.Show("Department was added");
-            txtDepartment.Clear();
+            DepartmentBLL departmentBLL = new DepartmentBLL();
+            departmentBLL.CreateDepartmentServices(department);
         }
+
+
 
         private void FrmDepartment_Load(object sender, EventArgs e)
         {

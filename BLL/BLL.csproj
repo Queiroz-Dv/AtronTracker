@@ -36,6 +36,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\SavedDepartmentCommand.cs" />
     <Compile Include="DepartmentBLL.cs" />
     <Compile Include="EmployeeBLL.cs" />
     <Compile Include="PermissionBLL.cs" />
@@ -58,10 +60,6 @@
     <ProjectReference Include="..\DAL\DAL.csproj">
       <Project>{d70d5b1b-a80a-4ce2-b750-18da9accccc1}</Project>
       <Name>DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NTF\NTF.csproj">
-      <Project>{79C84E8F-1E0F-40F5-BF77-A4C98E9A0D95}</Project>
-      <Name>NTF</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

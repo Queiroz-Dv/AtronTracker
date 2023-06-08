@@ -3,11 +3,9 @@ using System.Data.Linq;
 
 namespace DAL.DAO
 {
-    public class Context : IDisposable
+    public class Context : EmployeeContext, IDisposable
     {
-        private readonly EmployeeDataClassDataContext _db;
-
-        //public static EmployeeDataClassDataContext db = new EmployeeDataClassDataContext();
+        public EmployeeDataClassDataContext _db = new EmployeeDataClassDataContext();
 
         public Context()
         {
