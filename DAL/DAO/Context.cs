@@ -21,7 +21,5 @@ namespace DAL.DAO
         {
             _db.Dispose();
         }
-
-        public Table<DEPARTMENT> Departments { get; set; }
     }
 }

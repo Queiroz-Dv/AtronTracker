@@ -1,13 +1,18 @@
-﻿using System;
+﻿using BLL;
+using DAL.DTO;
+using PersonalTracking.ScreenNotifications.DepartmentNotifications;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using BLL;
-using DAL;
 
 namespace PersonalTracking
 {
     public partial class FrmDepartmentList : Form
     {
+        private ICollection<DepartmentDTO> departments = new List<DepartmentDTO>();
+        private DepartmentBLL departmentBLL = new DepartmentBLL();
+        private DepartmentDTO departmentDTO = new DepartmentDTO();
+
         public FrmDepartmentList()
         {
             InitializeComponent();
@@ -24,43 +29,37 @@ namespace PersonalTracking
             this.Hide();
             frm.ShowDialog();
             this.Visible = true;
-            //list = DepartmentBLL.GetDepartments();
-            //dataGridView1.DataSource = list;
+            var entities = departmentBLL.GetAllEntitiesBLL();
+            dgvDepartment.DataSource = entities;
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            //if (detail.ID == 0)
-            //    MessageBox.Show("Please select a department from the table");
-            //else
-            //{
-            //    FrmDepartment frm = new FrmDepartment();
-            //    frm.isUpdate = true;
-            //    frm.department=detail;
-            //    Hide();
-            //    frm.ShowDialog();
-            //    Visible = true;
-            //    list = DepartmentBLL.GetDepartments();
-            //    dataGridView1.DataSource = list;
-            //}
+            if (departmentDTO.ID == 0)
+            {
+                DeparmentInfo.InvalidDepartmentSelected();
+            }
+            else
+            {
+                FrmDepartment frm = new FrmDepartment();
+                frm.isUpdate = true;
+                frm.department = departmentDTO;
+                Hide();
+                frm.ShowDialog();
+                Visible = true;
+                var entities = departmentBLL.GetAllEntitiesBLL();
+                dgvDepartment.DataSource = entities;
+            }
         }
 
-        List<DEPARTMENT> list = new List<DEPARTMENT>();
-        public DEPARTMENT detail = new DEPARTMENT();
+        //List<DEPARTMENT> list = new List<DEPARTMENT>();
 
         private void FrmDepartmentList_Load(object sender, EventArgs e)
         {
-
-            //list = DepartmentBLL.GetDepartments();
-            //dataGridView1.DataSource = list;
-            //dataGridView1.Columns[0].Visible = false;
-            //dataGridView1.Columns[1].HeaderText = "Department Name";
-        }
-
-        private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            detail.ID = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[0].Value);
-            detail.DepartmentName = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
+            var entities = departmentBLL.GetAllEntitiesBLL();
+            dgvDepartment.DataSource = entities;
+            dgvDepartment.Columns[0].Visible = false;
+            dgvDepartment.Columns[1].HeaderText = "Department Name";
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
@@ -73,6 +72,13 @@ namespace PersonalTracking
             //    list = DepartmentBLL.GetDepartments();
             //    dataGridView1.DataSource = list;
             //}
+        }
+
+
+        private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            departmentDTO.ID = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
+            departmentDTO.DepartmentName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
         }
     }
 }

@@ -10,6 +10,7 @@ namespace PersonalTracking
     {
         public bool isUpdate = false;
         public DepartmentDTO department = new DepartmentDTO();
+        public DepartmentBLL departmentBLL = new DepartmentBLL();
 
         public FrmDepartment()
         {
@@ -42,23 +43,26 @@ namespace PersonalTracking
                 else
                 {
                     DialogResult result = MessageBox.Show("Are you sure?", "Warning!!", MessageBoxButtons.YesNo);
-                    //if (DialogResult.Yes == result)
-                    //{
-                    //    department.ID = detail.ID;
-                    //    department.DepartmentName = txtDepartment.Text;
-                    //    DepartmentBLL.UpdateDepartment(department);
-                    //    MessageBox.Show("Department was updated");
-                    //    this.Close();
-                    //}
+                    if (DialogResult.Yes == result)
+                    {
+                        department.DepartmentName = txtDepartment.Text;
+                        UpdateDepartment(department);
+                        MessageBox.Show("Department was updated");
+                        this.Close();
+                    }
                 }
             }
         }
 
+        private void UpdateDepartment(DepartmentDTO department)
+        {
+            departmentBLL.UpdateEntityBLL(department);
+            ClearFields();
+        }
+
         private void SaveDepartment(DepartmentDTO department)
         {
-            DepartmentBLL departmentBLL = new DepartmentBLL();
-            departmentBLL.CreateDepartmentServices(department);
-
+            departmentBLL.CreateEntityBLL(department);
             ClearFields();
         }
 

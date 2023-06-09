@@ -1,48 +1,44 @@
 ﻿using BLL.Services;
 using DAL;
-using DAL.DTO;
 using DAL.Repositories;
 using System.Collections.Generic;
 
 namespace BLL
 {
-    public class DepartmentBLL : IDepartmentServices
+    public class DepartmentBLL : IGenericBLL<DEPARTMENT>
     {
         private readonly DeparmentRepository _repository = new DeparmentRepository();
-        private readonly DEPARTMENT entity = new DEPARTMENT();
+        private readonly DEPARTMENT department = new DEPARTMENT();
 
-        public DepartmentDTO CreateDepartmentServices(DepartmentDTO department)
+        public DEPARTMENT CreateEntityBLL(DEPARTMENT entity)
         {
-            entity.ID = department.ID;
-            entity.DepartmentName = department.DepartmentName;
-            _repository.CreateEntityRepository(entity);
+            department.ID = entity.ID;
+            department.DepartmentName = entity.DepartmentName;
+            _repository.CreateEntity(entity);
             return department;
         }
 
-        public void DeleteAllDepartmentsService(ICollection<DepartmentDTO> department)
+        public ICollection<DEPARTMENT> GetAllEntitiesBLL()
+        {
+            var departments = _repository.GetAllEntities();
+            return departments;
+        }
+
+        public DEPARTMENT GetEntityByIdBLL(object id)
         {
             throw new System.NotImplementedException();
         }
 
-        public DepartmentDTO DeleteDepartmentByIdService(DepartmentDTO department)
+        public void RemoveEntityBLL(DEPARTMENT entity)
         {
             throw new System.NotImplementedException();
         }
 
-        public ICollection<DepartmentDTO> GetAllDepartmentsService()
+        public DEPARTMENT UpdateEntityBLL(DEPARTMENT entity)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public DepartmentDTO GetDepartmentByIdService(int? id)
-        {
-            var department = _repository.GetEntityByIdRepository((int)id);
-            return department as DepartmentDTO;
-        }
-
-        public DepartmentDTO UpdateDepartmentService(DepartmentDTO department)
-        {
-            throw new System.NotImplementedException();
+            department.DepartmentName = entity.DepartmentName;
+            _repository.UpdateEntity(entity);
+            return entity;
         }
     }
 }

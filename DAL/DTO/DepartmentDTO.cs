@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DAL.DTO
+﻿namespace DAL.DTO
 {
     public class DepartmentDTO : DEPARTMENT
     {
@@ -9,14 +7,8 @@ namespace DAL.DTO
 
         public DepartmentDTO(int departmentId, string departmentName)
         {
-            Id = departmentId;
+            ID = departmentId;
             DepartmentName = departmentName;
-            Validate();
-        }
-
-        private void Validate()
-        {
-            throw new NotImplementedException();
         }
     }
 }
