@@ -1,12 +1,13 @@
 ﻿using DAL.DAO;
-using DAL.Interfaces;
+using DAL.DTO;
+using DAL.Generics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DAL.Repositories
 {
-    public class DeparmentRepository : IDeparmentRepository
+    public class DeparmentRepository : IGenericRepository<DEPARTMENT>
     {
         private Context _context = new Context();
 
@@ -19,7 +20,7 @@ namespace DAL.Repositories
         {
         }
 
-        public void CreateEntityRepository(DEPARTMENT entity)
+        public void CreateEntity(DEPARTMENT entity)
         {
             try
             {
@@ -50,12 +51,14 @@ namespace DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DEPARTMENT> GetAllEntitiesRepository(DEPARTMENT entity)
+        public ICollection<DEPARTMENT> GetAllEntities()
         {
-            throw new NotImplementedException();
+            var context = _context;
+            var entities = context._db.DEPARTMENTs.ToList();
+            return entities;
         }
 
-        public DEPARTMENT GetEntityByIdRepository(object id)
+        public DEPARTMENT GetEntityById(object id)
         {
             try
             {
@@ -71,12 +74,12 @@ namespace DAL.Repositories
             }
         }
 
-        public void RemoveEntityRepository(DEPARTMENT entity)
+        public void RemoveEntity(DEPARTMENT entity)
         {
             throw new NotImplementedException();
         }
 
-        public void UpdateEntityRepository(DEPARTMENT entity)
+        public void UpdateEntity(DEPARTMENT entity)
         {
             throw new NotImplementedException();
         }

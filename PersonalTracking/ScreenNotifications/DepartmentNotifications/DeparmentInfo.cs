@@ -20,5 +20,10 @@ namespace PersonalTracking.ScreenNotifications.DepartmentNotifications
                                                                                                   "Success!",
                                                                                                   MessageBoxButtons.OK,
                                                                                                   MessageBoxIcon.Information);
+
+        public static void InvalidDepartmentSelected() => MessageBox.Show("Please select a department from the table.",
+                                                                          "Warning!!",
+                                                                          MessageBoxButtons.OK,
+                                                                          MessageBoxIcon.Warning);
     }
 }
