@@ -27,7 +27,7 @@ namespace PersonalTracking
 
         private void FrmPosition_Load(object sender, EventArgs e)
         {
-            departmentlist = DepartmentBLL.GetDepartments();
+            //departmentlist = DepartmentBLL.GetDepartments();
             cmbDeparment.DataSource = departmentlist;
             cmbDeparment.DisplayMember = "DepartmentName";
             cmbDeparment.ValueMember = "ID";

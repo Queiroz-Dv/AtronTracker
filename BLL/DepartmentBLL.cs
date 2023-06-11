@@ -1,30 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BLL.Services;
 using DAL;
-using DAL.DAO;
+using DAL.Repositories;
+using System.Collections.Generic;
 
 namespace BLL
 {
-    public class DepartmentBLL
+    public class DepartmentBLL : IGenericBLL<DEPARTMENT>
     {
-        public static void AddDepartment(DEPARTMENT department)
+        private readonly DeparmentRepository _repository = new DeparmentRepository();
+        private readonly DEPARTMENT department = new DEPARTMENT();
+
+        public DEPARTMENT CreateEntityBLL(DEPARTMENT entity)
         {
-           DepartmentDAO.AddDepartment(department);
+            department.ID = entity.ID;
+            department.DepartmentName = entity.DepartmentName;
+            _repository.CreateEntity(entity);
+            return department;
         }
 
-        public static List<DEPARTMENT> GetDepartments()
+        public IEnumerable<DEPARTMENT> GetAllEntitiesBLL()
         {
-            return DepartmentDAO.GetDepartments();
+            var departments = _repository.GetAllEntities();
+            return departments;
         }
 
-        public static void UpdateDepartment(DEPARTMENT department)
+        public DEPARTMENT GetEntityByIdBLL(object id)
         {
-            DepartmentDAO.UpdateDepartment(department);
+            throw new System.NotImplementedException();
         }
 
-        public static void DeleteDepartment(int iD)
+        public void RemoveEntityBLL(DEPARTMENT entity)
         {
-            DepartmentDAO.DeleteDepartment(iD);
+            _repository.RemoveEntity(entity);
+        }
+
+        public DEPARTMENT UpdateEntityBLL(DEPARTMENT entity)
+        {
+            department.DepartmentName = entity.DepartmentName;
+            _repository.UpdateEntity(entity);
+            return entity;
         }
     }
 }

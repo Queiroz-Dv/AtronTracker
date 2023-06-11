@@ -136,7 +136,9 @@
     <Compile Include="General.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScreenNotifications\InformationMessages.cs" />
     <Compile Include="UserStatic.cs" />
+    <Compile Include="Helpers\MessageHelper.cs" />
     <EmbeddedResource Include="FrmDepartment.resx">
       <DependentUpon>FrmDepartment.cs</DependentUpon>
     </EmbeddedResource>

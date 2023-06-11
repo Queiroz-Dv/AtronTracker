@@ -1,59 +1,110 @@
 ﻿using BLL;
-using DAL;
+using DAL.DTO;
+using MaterialSkin;
+using MaterialSkin.Controls;
+using PersonalTracking.ScreenNotifications;
 using System;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmDepartment : Form
+    public partial class FrmDepartment : MaterialForm
     {
+        public bool isUpdate = false;
+        public DepartmentDTO department = new DepartmentDTO();
+        private readonly DepartmentBLL departmentBLL = new DepartmentBLL();
+
         public FrmDepartment()
         {
             InitializeComponent();
+            ConfigureCollorPallet();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        public void ConfigureCollorPallet()
         {
-            this.Close();
+            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.ColorScheme = new ColorScheme(
+               Primary.DeepPurple900, Primary.DeepPurple500,
+               Primary.Purple500, Accent.Purple200,
+               TextShade.WHITE);
         }
+
+        private void btnClose_Click(object sender, EventArgs e) => this.Close();
+
+        const bool condition = true;
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if(txtDepartment.Text.Trim()== "")
+            if (txtDepartment.Text.Trim() == "")
             {
-                MessageBox.Show("Please fill the name field");
+                InfoMessages.FieldIsEmpty(condition, lblDepartment.Text);
+            }
+            else if (txtDepartment.Text.Trim().Length < 3)
+            {
+                InfoMessages.InvalidMinimumAmountCharacters(condition, lblDepartment.Text);
             }
             else
             {
-                DEPARTMENT department = new DEPARTMENT();
-                if(!isUpdate)
+                if (!isUpdate)
                 {
                     department.DepartmentName = txtDepartment.Text;
-                    BLL.DepartmentBLL.AddDepartment(department);
-                    MessageBox.Show("Department was added");
-                    txtDepartment.Clear();
+                    SaveDepartment(department);
+                    InfoMessages.EntitySavedWithSuccess(department.DepartmentName);
                 }
                 else
                 {
-                    DialogResult result = MessageBox.Show("Are you sure?", "Warning!!", MessageBoxButtons.YesNo);
+                    // TODO: Obter a entidade do datagridview selecionado
+                    DialogResult result = InfoMessages.UpdatedEntityQuestion(condition,txtDepartment.Text);
                     if (DialogResult.Yes == result)
                     {
-                        department.ID = detail.ID;
                         department.DepartmentName = txtDepartment.Text;
-                        DepartmentBLL.UpdateDepartment(department);
-                        MessageBox.Show("Department was updated");
+                        UpdateDepartment(department);
+                        InfoMessages.EntityUpdated(department.DepartmentName);
                         this.Close();
                     }
                 }
             }
         }
-        public bool isUpdate = false;
-        public DEPARTMENT detail = new DEPARTMENT();
+
+        private void UpdateDepartment(DepartmentDTO department)
+        {
+            departmentBLL.UpdateEntityBLL(department);
+            ClearFields();
+        }
+
+        private void SaveDepartment(DepartmentDTO department)
+        {
+            departmentBLL.CreateEntityBLL(department);
+            ClearFields();
+        }
 
         private void FrmDepartment_Load(object sender, EventArgs e)
         {
             if (isUpdate)
-                txtDepartment.Text = detail.DepartmentName;
+            {
+                txtDepartment.Text = department.DepartmentName;
+                btnSave.Enabled = true;
+            }
+            else
+            {
+                btnSave.Enabled = false;
+            }
+        }
+
+        private void ClearFields() => txtDepartment.Clear();
+
+        private void txtDepartment_TextChanged(object sender, EventArgs e)
+        {
+            if (txtDepartment.Text.Length >= 3)
+            {
+                btnSave.Enabled = true;
+            }
+            else
+            {
+                btnSave.Enabled = false;
+            }
         }
     }
 }
