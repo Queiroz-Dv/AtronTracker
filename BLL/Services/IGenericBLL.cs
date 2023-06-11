@@ -6,7 +6,7 @@ namespace BLL.Services
     {
         TEntity GetEntityByIdBLL(object id);
 
-        ICollection<TEntity> GetAllEntitiesBLL();
+        IEnumerable<TEntity> GetAllEntitiesBLL();
 
         TEntity CreateEntityBLL(TEntity entity);
 

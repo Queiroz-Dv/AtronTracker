@@ -1,36 +1,49 @@
 ﻿using BLL;
 using DAL.DTO;
-using PersonalTracking.ScreenNotifications.DepartmentNotifications;
+using MaterialSkin;
+using MaterialSkin.Controls;
+using PersonalTracking.ScreenNotifications;
 using System;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmDepartment : Form
+    public partial class FrmDepartment : MaterialForm
     {
         public bool isUpdate = false;
         public DepartmentDTO department = new DepartmentDTO();
-        public DepartmentBLL departmentBLL = new DepartmentBLL();
+        private readonly DepartmentBLL departmentBLL = new DepartmentBLL();
 
         public FrmDepartment()
         {
             InitializeComponent();
+            ConfigureCollorPallet();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        public void ConfigureCollorPallet()
         {
-            this.Close();
+            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.ColorScheme = new ColorScheme(
+               Primary.DeepPurple900, Primary.DeepPurple500,
+               Primary.Purple500, Accent.Purple200,
+               TextShade.WHITE);
         }
+
+        private void btnClose_Click(object sender, EventArgs e) => this.Close();
+
+        const bool condition = true;
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (txtDepartment.Text.Trim() == "")
             {
-                DeparmentInfo.DeparmentFieldIsEmpty();
+                InfoMessages.FieldIsEmpty(condition, lblDepartment.Text);
             }
             else if (txtDepartment.Text.Trim().Length < 3)
             {
-                DeparmentInfo.InvalidMinimumAmountDepartmentCharacters();
+                InfoMessages.InvalidMinimumAmountCharacters(condition, lblDepartment.Text);
             }
             else
             {
@@ -38,16 +51,17 @@ namespace PersonalTracking
                 {
                     department.DepartmentName = txtDepartment.Text;
                     SaveDepartment(department);
-                    DeparmentInfo.DeparmentSavedWithSuccess(department);
+                    InfoMessages.EntitySavedWithSuccess(department.DepartmentName);
                 }
                 else
                 {
-                    DialogResult result = MessageBox.Show("Are you sure?", "Warning!!", MessageBoxButtons.YesNo);
+                    // TODO: Obter a entidade do datagridview selecionado
+                    DialogResult result = InfoMessages.UpdatedEntityQuestion(condition,txtDepartment.Text);
                     if (DialogResult.Yes == result)
                     {
                         department.DepartmentName = txtDepartment.Text;
                         UpdateDepartment(department);
-                        MessageBox.Show("Department was updated");
+                        InfoMessages.EntityUpdated(department.DepartmentName);
                         this.Close();
                     }
                 }
@@ -71,12 +85,26 @@ namespace PersonalTracking
             if (isUpdate)
             {
                 txtDepartment.Text = department.DepartmentName;
+                btnSave.Enabled = true;
+            }
+            else
+            {
+                btnSave.Enabled = false;
             }
         }
 
-        private void ClearFields()
+        private void ClearFields() => txtDepartment.Clear();
+
+        private void txtDepartment_TextChanged(object sender, EventArgs e)
         {
-            txtDepartment.Clear();
+            if (txtDepartment.Text.Length >= 3)
+            {
+                btnSave.Enabled = true;
+            }
+            else
+            {
+                btnSave.Enabled = false;
+            }
         }
     }
 }

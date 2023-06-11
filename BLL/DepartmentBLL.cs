@@ -18,7 +18,7 @@ namespace BLL
             return department;
         }
 
-        public ICollection<DEPARTMENT> GetAllEntitiesBLL()
+        public IEnumerable<DEPARTMENT> GetAllEntitiesBLL()
         {
             var departments = _repository.GetAllEntities();
             return departments;
@@ -31,7 +31,7 @@ namespace BLL
 
         public void RemoveEntityBLL(DEPARTMENT entity)
         {
-            throw new System.NotImplementedException();
+            _repository.RemoveEntity(entity);
         }
 
         public DEPARTMENT UpdateEntityBLL(DEPARTMENT entity)
