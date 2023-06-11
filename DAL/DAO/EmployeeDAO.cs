@@ -7,7 +7,7 @@ using DAL.DTO;
 
 namespace DAL.DAO
 {
-    public class EmployeeDAO : EmployeeContext
+    public class EmployeeDAO : Context
     {
         public static void AddEmployee(EMPLOYEE employee)
         {

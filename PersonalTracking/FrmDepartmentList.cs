@@ -1,78 +1,107 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using BLL;
+﻿using BLL;
 using DAL;
+using DAL.DTO;
+using MaterialSkin;
+using MaterialSkin.Controls;
+using PersonalTracking.ScreenNotifications;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmDepartmentList : Form
+    public partial class FrmDepartmentList : MaterialForm
     {
+        IEnumerable<DEPARTMENT> departments = new List<DEPARTMENT>();
+        public DepartmentDTO departmentDTO = new DepartmentDTO();
+
         public FrmDepartmentList()
         {
             InitializeComponent();
+            ConfigureCollorPallet();
+        }
+
+        public void ConfigureCollorPallet()
+        {
+            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.ColorScheme = new ColorScheme(
+               Primary.DeepPurple900, Primary.DeepPurple500,
+               Primary.Purple500, Accent.Purple200,
+               TextShade.WHITE);
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void btnNew_Click(object sender, EventArgs e)
         {
             FrmDepartment frm = new FrmDepartment();
+
             this.Hide();
             frm.ShowDialog();
             this.Visible = true;
-            list = DepartmentBLL.GetDepartments();
-            dataGridView1.DataSource = list;
+            FrmDepartmentList_Load(sender, e);
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            if (detail.ID == 0)
-                MessageBox.Show("Please select a department from table");
+            if (departmentDTO.ID == 0)
+            {
+                InfoMessages.InvalidItemSelected();
+            }
             else
             {
                 FrmDepartment frm = new FrmDepartment();
                 frm.isUpdate = true;
-                frm.detail=detail;
-                this.Hide();
+                frm.department = departmentDTO;
+                Hide();
                 frm.ShowDialog();
-                this.Visible = true;
-                list = DepartmentBLL.GetDepartments();
-                dataGridView1.DataSource = list;
+                Visible = true;
+                FrmDepartmentList_Load(sender, e);
             }
         }
 
-        List<DEPARTMENT> list = new List<DEPARTMENT>();
-        public DEPARTMENT detail = new DEPARTMENT();
+        private void FillDgvDepartment()
+        {
+            var departmentBLL = new DepartmentBLL();
+            departments = departmentBLL.GetAllEntitiesBLL().OrderBy(depart => depart.DepartmentName);
+            dgvDepartment.DataSource = departments;
+        }
 
         private void FrmDepartmentList_Load(object sender, EventArgs e)
         {
+            var departmentBLL = new DepartmentBLL();
+            var entities = departmentBLL.GetAllEntitiesBLL().ToList();
+            dgvDepartment.DataSource = entities.OrderBy(d => d.DepartmentName).ToList();
+            dgvDepartment.Columns[0].Width = 10;
+            dgvDepartment.Columns[0].Visible = false;
+            dgvDepartment.Columns[1].HeaderText = "Department Name";
 
-            list = DepartmentBLL.GetDepartments();
-            dataGridView1.DataSource = list;
-            dataGridView1.Columns[0].Visible = false;
-            dataGridView1.Columns[1].HeaderText = "Department Name";
         }
 
-        private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
+        private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            detail.ID = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[0].Value);
-            detail.DepartmentName = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
+            departmentDTO.ID = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
+            departmentDTO.DepartmentName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure to delete this Department?", "Warning!!", MessageBoxButtons.YesNo);
+            DialogResult result = InfoMessages.DeleteEntityQuestion(departmentDTO.DepartmentName);
             if (DialogResult.Yes == result)
             {
-                DepartmentBLL.DeleteDepartment(detail.ID);
-                MessageBox.Show("Department was Deleted");
-                list = DepartmentBLL.GetDepartments();
-                dataGridView1.DataSource = list;
+                //DepartmentBLL.DeleteDepartment(detail.ID);
+                var departmentBLL = new DepartmentBLL();
+                departmentBLL.RemoveEntityBLL(departmentDTO);
+                InfoMessages.EntityDeletedWithSuccess(departmentDTO.DepartmentName);
             }
+
+            FrmDepartmentList_Load(sender, e);
         }
     }
 }
