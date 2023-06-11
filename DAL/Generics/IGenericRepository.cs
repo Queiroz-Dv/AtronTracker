@@ -6,11 +6,11 @@ namespace DAL.Generics
     {
         TEntity GetEntityById(object id);
 
-        ICollection<TEntity> GetAllEntities();
+        IEnumerable<TEntity> GetAllEntities();
 
         void CreateEntity(TEntity entity);
 
-        void UpdateEntity(TEntity entity);
+        TEntity UpdateEntity(TEntity entity);
 
         void RemoveEntity(TEntity entity);
     }

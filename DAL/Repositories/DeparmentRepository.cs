@@ -4,12 +4,14 @@ using DAL.Generics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace DAL.Repositories
 {
     public class DeparmentRepository : IGenericRepository<DEPARTMENT>
     {
         private Context _context = new Context();
+        private DEPARTMENT department = new DEPARTMENT();
 
         public DeparmentRepository(Context context)
         {
@@ -51,11 +53,22 @@ namespace DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public ICollection<DEPARTMENT> GetAllEntities()
+        public IEnumerable<DEPARTMENT> GetAllEntities()
         {
-            var context = _context;
-            var entities = context._db.DEPARTMENTs.ToList();
-            return entities;
+            try
+            {
+                var context = _context;
+                var entities = context._db.DEPARTMENTs.ToList();
+                return entities;
+
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Error" + ex);
+                throw;
+
+            }
         }
 
         public DEPARTMENT GetEntityById(object id)
@@ -76,12 +89,33 @@ namespace DAL.Repositories
 
         public void RemoveEntity(DEPARTMENT entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var context = _context;
+                var department = context._db.DEPARTMENTs.First(depart => depart.ID == entity.ID);
+                context._db.DEPARTMENTs.DeleteOnSubmit(department);
+                context._db.SubmitChanges();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public void UpdateEntity(DEPARTMENT entity)
+        public DEPARTMENT UpdateEntity(DEPARTMENT entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var context = _context;
+                department = context._db.DEPARTMENTs.First(d => d.ID == entity.ID);
+                department.DepartmentName = entity.DepartmentName;
+                context._db.SubmitChanges();
+                return department;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

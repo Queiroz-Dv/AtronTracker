@@ -19,7 +19,7 @@ namespace DAL.Repositories
             _table.InsertOnSubmit(entity);
         }
 
-        public ICollection<T> GetAllEntities()
+        public IEnumerable<T> GetAllEntities()
         {
             return _table.ToList();
         }
@@ -35,17 +35,19 @@ namespace DAL.Repositories
             _table.DeleteOnSubmit(entity);
         }
 
-        public void UpdateEntity(T entity)
+        public T UpdateEntity(T entity)
         {
             // Assume que a classe T tem uma propriedade chamada "Id" que representa a chave primária
             T existingModel = _table.SingleOrDefault(x => x.Id == entity.Id);
             if (existingModel != null)
             {
+                return existingModel;
                 // Atualiza as propriedades do modelo existente com os valores do novo modelo
                 // Aqui você pode usar uma biblioteca de mapeamento (como AutoMapper) ou fazer manualmente
                 // Por exemplo: existingModel.Property1 = model.Property1;
                 //             existingModel.Property2 = model.Property2;
             }
+            return entity;
         }
     }
 }
