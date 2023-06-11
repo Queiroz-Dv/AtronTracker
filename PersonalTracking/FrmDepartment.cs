@@ -1,8 +1,8 @@
 ﻿using BLL;
 using DAL.DTO;
+using HLP.Entity;
 using MaterialSkin;
 using MaterialSkin.Controls;
-using PersonalTracking.ScreenNotifications;
 using System;
 using System.Windows.Forms;
 
@@ -13,11 +13,14 @@ namespace PersonalTracking
         public bool isUpdate = false;
         public DepartmentDTO department = new DepartmentDTO();
         private readonly DepartmentBLL departmentBLL = new DepartmentBLL();
+        public InformationMessage Information = new InformationMessage();
+        const bool condition = true;
 
         public FrmDepartment()
         {
             InitializeComponent();
             ConfigureCollorPallet();
+            txtDepartment.Focus();
         }
 
         public void ConfigureCollorPallet()
@@ -33,17 +36,16 @@ namespace PersonalTracking
 
         private void btnClose_Click(object sender, EventArgs e) => this.Close();
 
-        const bool condition = true;
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (txtDepartment.Text.Trim() == "")
             {
-                InfoMessages.FieldIsEmpty(condition, lblDepartment.Text);
+                Information.FieldIsEmpty(condition, lblDepartment.Text.ToLower());
             }
             else if (txtDepartment.Text.Trim().Length < 3)
             {
-                InfoMessages.InvalidMinimumAmountCharacters(condition, lblDepartment.Text);
+                Information.InvalidMinimumAmountCharacters(condition, lblDepartment.Text.ToLower());
             }
             else
             {
@@ -51,17 +53,17 @@ namespace PersonalTracking
                 {
                     department.DepartmentName = txtDepartment.Text;
                     SaveDepartment(department);
-                    InfoMessages.EntitySavedWithSuccess(department.DepartmentName);
+                    Information.EntitySavedWithSuccess(condition, department.DepartmentName);
                 }
                 else
                 {
                     // TODO: Obter a entidade do datagridview selecionado
-                    DialogResult result = InfoMessages.UpdatedEntityQuestion(condition,txtDepartment.Text);
+                    DialogResult result = Information.UpdatedEntityQuestion(condition, txtDepartment.Text);
                     if (DialogResult.Yes == result)
                     {
                         department.DepartmentName = txtDepartment.Text;
                         UpdateDepartment(department);
-                        InfoMessages.EntityUpdated(department.DepartmentName);
+                        Information.EntityUpdated(condition, department.DepartmentName);
                         this.Close();
                     }
                 }

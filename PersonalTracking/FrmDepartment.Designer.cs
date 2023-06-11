@@ -46,7 +46,7 @@
             this.btnSave.Name = "btnSave";
             this.btnSave.Primary = false;
             this.btnSave.Size = new System.Drawing.Size(55, 36);
-            this.btnSave.TabIndex = 3;
+            this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -78,7 +78,7 @@
             this.lblDepartment.MouseState = MaterialSkin.MouseState.HOVER;
             this.lblDepartment.Name = "lblDepartment";
             this.lblDepartment.Size = new System.Drawing.Size(87, 19);
-            this.lblDepartment.TabIndex = 4;
+            this.lblDepartment.TabIndex = 0;
             this.lblDepartment.Text = "Department";
             // 
             // txtDepartment
@@ -87,7 +87,7 @@
             this.txtDepartment.Location = new System.Drawing.Point(231, 120);
             this.txtDepartment.Name = "txtDepartment";
             this.txtDepartment.Size = new System.Drawing.Size(213, 26);
-            this.txtDepartment.TabIndex = 5;
+            this.txtDepartment.TabIndex = 1;
             this.txtDepartment.TextChanged += new System.EventHandler(this.txtDepartment_TextChanged);
             // 
             // FrmDepartment
