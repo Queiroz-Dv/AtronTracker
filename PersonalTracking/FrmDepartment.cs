@@ -20,7 +20,6 @@ namespace PersonalTracking
         {
             InitializeComponent();
             ConfigureCollorPallet();
-            txtDepartment.Focus();
         }
 
         public void ConfigureCollorPallet()
