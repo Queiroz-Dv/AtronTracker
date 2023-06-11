@@ -16,6 +16,8 @@ namespace PersonalTracking
         IEnumerable<DEPARTMENT> departments = new List<DEPARTMENT>();
         public DepartmentDTO departmentDTO = new DepartmentDTO();
 
+        const bool condition = true;
+
         public FrmDepartmentList()
         {
             InitializeComponent();
@@ -92,13 +94,13 @@ namespace PersonalTracking
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = InfoMessages.DeleteEntityQuestion(departmentDTO.DepartmentName);
+            DialogResult result = InfoMessages.DeleteEntityQuestion(condition, departmentDTO.DepartmentName);
             if (DialogResult.Yes == result)
             {
                 //DepartmentBLL.DeleteDepartment(detail.ID);
                 var departmentBLL = new DepartmentBLL();
                 departmentBLL.RemoveEntityBLL(departmentDTO);
-                InfoMessages.EntityDeletedWithSuccess(departmentDTO.DepartmentName);
+                InfoMessages.EntityDeletedWithSuccess(condition, departmentDTO.DepartmentName);
             }
 
             FrmDepartmentList_Load(sender, e);
