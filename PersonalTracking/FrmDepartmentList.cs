@@ -1,9 +1,9 @@
 ﻿using BLL;
 using DAL;
 using DAL.DTO;
+using HLP.Entity;
 using MaterialSkin;
 using MaterialSkin.Controls;
-using PersonalTracking.ScreenNotifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +15,7 @@ namespace PersonalTracking
     {
         IEnumerable<DEPARTMENT> departments = new List<DEPARTMENT>();
         public DepartmentDTO departmentDTO = new DepartmentDTO();
+        public InformationMessage Information = new InformationMessage();
 
         const bool condition = true;
 
@@ -54,7 +55,7 @@ namespace PersonalTracking
         {
             if (departmentDTO.ID == 0)
             {
-                InfoMessages.InvalidItemSelected();
+                Information.InvalidItemSelected(condition);
             }
             else
             {
@@ -94,13 +95,13 @@ namespace PersonalTracking
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = InfoMessages.DeleteEntityQuestion(condition, departmentDTO.DepartmentName);
+            DialogResult result = Information.DeleteEntityQuestion(condition, departmentDTO.DepartmentName);
             if (DialogResult.Yes == result)
             {
                 //DepartmentBLL.DeleteDepartment(detail.ID);
                 var departmentBLL = new DepartmentBLL();
                 departmentBLL.RemoveEntityBLL(departmentDTO);
-                InfoMessages.EntityDeletedWithSuccess(condition, departmentDTO.DepartmentName);
+                Information.EntityDeletedWithSuccess(condition, departmentDTO.DepartmentName);
             }
 
             FrmDepartmentList_Load(sender, e);
