@@ -36,6 +36,7 @@
             this.materialLabel2 = new MaterialSkin.Controls.MaterialLabel();
             this.materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
             this.materialLabel3 = new MaterialSkin.Controls.MaterialLabel();
+            this.btnRegister = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,7 +45,7 @@
             this.txtUserNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.txtUserNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUserNo.Location = new System.Drawing.Point(162, 87);
+            this.txtUserNo.Location = new System.Drawing.Point(204, 156);
             this.txtUserNo.Margin = new System.Windows.Forms.Padding(2);
             this.txtUserNo.Name = "txtUserNo";
             this.txtUserNo.Size = new System.Drawing.Size(149, 26);
@@ -56,7 +57,7 @@
             this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.txtPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPassword.Location = new System.Drawing.Point(162, 131);
+            this.txtPassword.Location = new System.Drawing.Point(204, 200);
             this.txtPassword.Margin = new System.Windows.Forms.Padding(2);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
@@ -71,10 +72,10 @@
             this.btnLogin.BackColor = System.Drawing.Color.White;
             this.btnLogin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gray;
             this.btnLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnLogin.Location = new System.Drawing.Point(204, 14);
+            this.btnLogin.Location = new System.Drawing.Point(134, 14);
             this.btnLogin.Margin = new System.Windows.Forms.Padding(2);
             this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(107, 37);
+            this.btnLogin.Size = new System.Drawing.Size(107, 56);
             this.btnLogin.TabIndex = 2;
             this.btnLogin.Text = "Login";
             this.btnLogin.UseVisualStyleBackColor = false;
@@ -89,10 +90,10 @@
             this.btnExit.BackColor = System.Drawing.Color.White;
             this.btnExit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btnExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnExit.Location = new System.Drawing.Point(65, 14);
+            this.btnExit.Location = new System.Drawing.Point(290, 14);
             this.btnExit.Margin = new System.Windows.Forms.Padding(2);
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(107, 37);
+            this.btnExit.Size = new System.Drawing.Size(107, 56);
             this.btnExit.TabIndex = 3;
             this.btnExit.Text = "Exit";
             this.btnExit.UseVisualStyleBackColor = false;
@@ -105,11 +106,12 @@
             this.panel1.BackColor = System.Drawing.Color.Transparent;
             this.panel1.Controls.Add(this.materialLabel2);
             this.panel1.Controls.Add(this.btnExit);
+            this.panel1.Controls.Add(this.btnRegister);
             this.panel1.Controls.Add(this.btnLogin);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 183);
+            this.panel1.Location = new System.Drawing.Point(0, 248);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(404, 100);
+            this.panel1.Size = new System.Drawing.Size(569, 349);
             this.panel1.TabIndex = 4;
             // 
             // materialLabel2
@@ -118,7 +120,7 @@
             this.materialLabel2.Depth = 0;
             this.materialLabel2.Font = new System.Drawing.Font("Roboto", 11F);
             this.materialLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.materialLabel2.Location = new System.Drawing.Point(92, 72);
+            this.materialLabel2.Location = new System.Drawing.Point(162, 92);
             this.materialLabel2.MouseState = MaterialSkin.MouseState.HOVER;
             this.materialLabel2.Name = "materialLabel2";
             this.materialLabel2.Size = new System.Drawing.Size(191, 19);
@@ -133,7 +135,7 @@
             this.materialLabel1.Depth = 0;
             this.materialLabel1.Font = new System.Drawing.Font("Roboto", 11F);
             this.materialLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.materialLabel1.Location = new System.Drawing.Point(33, 90);
+            this.materialLabel1.Location = new System.Drawing.Point(75, 159);
             this.materialLabel1.MouseState = MaterialSkin.MouseState.HOVER;
             this.materialLabel1.Name = "materialLabel1";
             this.materialLabel1.Size = new System.Drawing.Size(97, 19);
@@ -147,19 +149,37 @@
             this.materialLabel3.Depth = 0;
             this.materialLabel3.Font = new System.Drawing.Font("Roboto", 11F);
             this.materialLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.materialLabel3.Location = new System.Drawing.Point(72, 135);
+            this.materialLabel3.Location = new System.Drawing.Point(114, 204);
             this.materialLabel3.MouseState = MaterialSkin.MouseState.HOVER;
             this.materialLabel3.Name = "materialLabel3";
             this.materialLabel3.Size = new System.Drawing.Size(75, 19);
             this.materialLabel3.TabIndex = 5;
             this.materialLabel3.Text = "Password";
             // 
+            // btnRegister
+            // 
+            this.btnRegister.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnRegister.BackColor = System.Drawing.Color.White;
+            this.btnRegister.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gray;
+            this.btnRegister.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRegister.Location = new System.Drawing.Point(440, 282);
+            this.btnRegister.Margin = new System.Windows.Forms.Padding(2);
+            this.btnRegister.Name = "btnRegister";
+            this.btnRegister.Size = new System.Drawing.Size(107, 56);
+            this.btnRegister.TabIndex = 2;
+            this.btnRegister.Text = "Register";
+            this.btnRegister.UseVisualStyleBackColor = false;
+            this.btnRegister.Click += new System.EventHandler(this.btnLogin_Click);
+            this.btnRegister.MouseLeave += new System.EventHandler(this.btnLogin_MouseLeave);
+            this.btnRegister.MouseHover += new System.EventHandler(this.btnLogin_MouseHover);
+            // 
             // FrmLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(404, 283);
+            this.ClientSize = new System.Drawing.Size(569, 597);
             this.Controls.Add(this.materialLabel3);
             this.Controls.Add(this.materialLabel1);
             this.Controls.Add(this.panel1);
@@ -187,6 +207,7 @@
         private MaterialSkin.Controls.MaterialLabel materialLabel1;
         private MaterialSkin.Controls.MaterialLabel materialLabel2;
         private MaterialSkin.Controls.MaterialLabel materialLabel3;
+        private System.Windows.Forms.Button btnRegister;
     }
 }
 

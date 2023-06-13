@@ -56,6 +56,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configurations\Controls.cs" />
+    <Compile Include="Dashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dashboard.Designer.cs">
+      <DependentUpon>Dashboard.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmDepartment.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,12 +99,6 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmMainMenuView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmMainMenuView.Designer.cs">
-      <DependentUpon>FrmMainMenuView.cs</DependentUpon>
-    </Compile>
     <Compile Include="FrmPermission.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -121,6 +122,12 @@
     </Compile>
     <Compile Include="FrmPositionList.Designer.cs">
       <DependentUpon>FrmPositionList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmRegister.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmRegister.Designer.cs">
+      <DependentUpon>FrmRegister.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmSalary.cs">
       <SubType>Form</SubType>
@@ -150,6 +157,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserStatic.cs" />
+    <EmbeddedResource Include="Dashboard.resx">
+      <DependentUpon>Dashboard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmDepartment.resx">
       <DependentUpon>FrmDepartment.cs</DependentUpon>
     </EmbeddedResource>
@@ -168,9 +178,6 @@
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmMainMenuView.resx">
-      <DependentUpon>FrmMainMenuView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FrmPermission.resx">
       <DependentUpon>FrmPermission.cs</DependentUpon>
     </EmbeddedResource>
@@ -182,6 +189,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPositionList.resx">
       <DependentUpon>FrmPositionList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmRegister.resx">
+      <DependentUpon>FrmRegister.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmSalary.resx">
       <DependentUpon>FrmSalary.cs</DependentUpon>
