@@ -42,7 +42,6 @@ namespace DAL.DAO
                             PositionId = e.PositionID,
                             isAdmin = e.isAdmin,
                             Salary = e.Salary,
-                            ImagePath = e.ImagePath,
                             Birthday = e.BirthDay,
                             Adress = e.Adress
                         }).OrderBy(x => x.UserNo).ToList();
@@ -63,7 +62,6 @@ namespace DAL.DAO
                 dto.Salary = item.Salary;
                 dto.BirthDay = item.Birthday;
                 dto.Adress = item.Adress;
-                dto.ImagePath = item.ImagePath;
                 employeeList.Add(dto);
             }
 

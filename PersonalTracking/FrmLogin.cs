@@ -30,12 +30,12 @@ namespace PersonalTracking
             e.Handled = General.isNumber(e);
         }
 
-        private void btnExit_Click(object sender, System.EventArgs e)
+        private void btnExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void btnLogin_Click(object sender, System.EventArgs e)
+        private void btnLogin_Click(object sender, EventArgs e)
         {
             // Verifica se está vazio
             if (txtUserNo.Text.Trim() == "" || txtPassword.Text.Trim() == "")
@@ -105,6 +105,14 @@ namespace PersonalTracking
                     }
                 }
             }
+        }
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            FrmRegister frm = new FrmRegister();
+            this.Hide();
+            frm.ShowDialog();
+            this.Visible = true;
         }
     }
 }

@@ -60,6 +60,7 @@ namespace PersonalTracking
 
         PermissionDTO dto = new PermissionDTO();
         private bool combofull;
+
         void FillAllData()
         {
             dto = PermissionBLL.GetAll();
