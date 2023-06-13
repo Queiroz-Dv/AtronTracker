@@ -30,8 +30,6 @@ namespace DAL.DTO
 
         public string Password { get; set; }
 
-        public string ImagePath { get; set; }
-
         public string Adress { get; set; }
 
         public DateTime? BirthDay { get; set; }

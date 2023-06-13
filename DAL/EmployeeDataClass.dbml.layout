@@ -8,10 +8,10 @@
         <elementListCompartment Id="ece294b8-c25d-4678-ae31-6d8b4a58625e" absoluteBounds="0.765, 1.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="6ac90501-1dd5-407c-9ea6-cc38fe1d8699" absoluteBounds="0.75, 2.75, 2, 3.1170068359375005">
+    <classShape Id="6ac90501-1dd5-407c-9ea6-cc38fe1d8699" absoluteBounds="0.75, 2.75, 2, 2.9247054036458326">
       <DataClassMoniker Name="/EmployeeDataClassDataContext/EMPLOYEE" />
       <nestedChildShapes>
-        <elementListCompartment Id="6c182e5c-9d46-4f39-82e4-4466d354b3b3" absoluteBounds="0.765, 3.21, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="6c182e5c-9d46-4f39-82e4-4466d354b3b3" absoluteBounds="0.765, 3.21, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="d4fedd87-9e29-47e9-a723-aadc8fda5cae" absoluteBounds="3.75, 0.75, 2, 1.1939925130208335">
@@ -38,7 +38,7 @@
         <elementListCompartment Id="eb085175-446d-469c-b2e5-b762948f05ef" absoluteBounds="6.765, 1.21, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="752a0eaa-e479-40a7-8af1-d389be6aef15" absoluteBounds="6.75, 3.75, 2, 1.7708968098958327">
+    <classShape Id="752a0eaa-e479-40a7-8af1-d389be6aef15" absoluteBounds="6.75, 3.75, 2, 1.7708968098958326">
       <DataClassMoniker Name="/EmployeeDataClassDataContext/SALARY" />
       <nestedChildShapes>
         <elementListCompartment Id="a16f34b0-0cac-4b0c-95ea-e688f5b80b96" absoluteBounds="6.765, 4.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />

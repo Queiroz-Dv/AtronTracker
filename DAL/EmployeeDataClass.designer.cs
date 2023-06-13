@@ -20,9 +20,9 @@ namespace DAL
 	using System.Linq.Expressions;
 	using System.ComponentModel;
 	using System;
-    using DAL.Generics;
-
-    [global::System.Data.Linq.Mapping.DatabaseAttribute(Name="PERSONALTRACKING")]
+	
+	
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="PERSONALTRACKING")]
 	public partial class EmployeeDataClassDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -226,8 +226,8 @@ namespace DAL
 				}
 			}
 		}
-
-        public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
@@ -262,8 +262,6 @@ namespace DAL
 		
 		private string _Surname;
 		
-		private string _ImagePath;
-		
 		private int _DepartmentID;
 		
 		private int _PositionID;
@@ -290,8 +288,6 @@ namespace DAL
     partial void OnNameChanged();
     partial void OnSurnameChanging(string value);
     partial void OnSurnameChanged();
-    partial void OnImagePathChanging(string value);
-    partial void OnImagePathChanged();
     partial void OnDepartmentIDChanging(int value);
     partial void OnDepartmentIDChanged();
     partial void OnPositionIDChanging(int value);
@@ -389,26 +385,6 @@ namespace DAL
 					this._Surname = value;
 					this.SendPropertyChanged("Surname");
 					this.OnSurnameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImagePath", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string ImagePath
-		{
-			get
-			{
-				return this._ImagePath;
-			}
-			set
-			{
-				if ((this._ImagePath != value))
-				{
-					this.OnImagePathChanging(value);
-					this.SendPropertyChanging();
-					this._ImagePath = value;
-					this.SendPropertyChanged("ImagePath");
-					this.OnImagePathChanged();
 				}
 			}
 		}
