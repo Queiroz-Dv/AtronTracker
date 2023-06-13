@@ -10,19 +10,19 @@ using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmEmployeeList : MaterialForm
+    public partial class FrmEmployeeList : Form
     {
         public FrmEmployeeList()
         {
             InitializeComponent();
-            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
-            materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
-            materialSkinManager.ColorScheme = new ColorScheme(
-               Primary.DeepPurple900, Primary.DeepPurple500,
-               Primary.Purple500, Accent.Purple200,
-               TextShade.WHITE
-           );
+           // MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+           // materialSkinManager.AddFormToManage(this);
+           // materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+           // materialSkinManager.ColorScheme = new ColorScheme(
+           //    Primary.DeepPurple900, Primary.DeepPurple500,
+           //    Primary.Purple500, Accent.Purple200,
+           //    TextShade.WHITE
+           //);
         }
 
         private void txtUserNo_KeyPress(object sender, KeyPressEventArgs e)

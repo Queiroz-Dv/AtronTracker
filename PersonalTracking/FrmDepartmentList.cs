@@ -14,8 +14,8 @@ namespace PersonalTracking
     public partial class FrmDepartmentList : MaterialForm
     {
         IEnumerable<DEPARTMENT> departments = new List<DEPARTMENT>();
-        public DepartmentDTO departmentDTO = new DepartmentDTO();
-        public InformationMessage Information = new InformationMessage();
+        private DepartmentDTO departmentDTO = new DepartmentDTO();
+        private InformationMessage Information = new InformationMessage();
 
         const bool condition = true;
 
@@ -24,7 +24,7 @@ namespace PersonalTracking
             InitializeComponent();
             ConfigureCollorPallet();
         }
-
+        
         public void ConfigureCollorPallet()
         {
             MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
@@ -69,12 +69,12 @@ namespace PersonalTracking
             }
         }
 
-        private void FillDgvDepartment()
-        {
-            var departmentBLL = new DepartmentBLL();
-            departments = departmentBLL.GetAllEntitiesBLL().OrderBy(depart => depart.DepartmentName);
-            dgvDepartment.DataSource = departments;
-        }
+        //private void FillDgvDepartment()
+        //{
+        //    var departmentBLL = new DepartmentBLL();
+        //    departments = departmentBLL.GetAllEntitiesBLL().OrderBy(depart => depart.DepartmentName);
+        //    dgvDepartment.DataSource = departments;
+        //}
 
         private void FrmDepartmentList_Load(object sender, EventArgs e)
         {
