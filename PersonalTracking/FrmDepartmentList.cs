@@ -24,7 +24,7 @@ namespace PersonalTracking
             InitializeComponent();
             ConfigureCollorPallet();
         }
-        
+
         public void ConfigureCollorPallet()
         {
             MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
@@ -55,7 +55,7 @@ namespace PersonalTracking
         {
             if (departmentDTO.ID == 0)
             {
-                Information.InvalidItemSelected(condition);
+                Information.InvalidItemSelected();
             }
             else
             {
@@ -95,13 +95,13 @@ namespace PersonalTracking
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = Information.DeleteEntityQuestion(condition, departmentDTO.DepartmentName);
+            DialogResult result = Information.DeleteEntityQuestion(departmentDTO.DepartmentName);
             if (DialogResult.Yes == result)
             {
                 //DepartmentBLL.DeleteDepartment(detail.ID);
                 var departmentBLL = new DepartmentBLL();
                 departmentBLL.RemoveEntityBLL(departmentDTO);
-                Information.EntityDeletedWithSuccess(condition, departmentDTO.DepartmentName);
+                Information.EntityDeletedWithSuccess(departmentDTO.DepartmentName);
             }
 
             FrmDepartmentList_Load(sender, e);

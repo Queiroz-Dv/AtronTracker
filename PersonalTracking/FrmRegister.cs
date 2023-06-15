@@ -1,25 +1,32 @@
 ﻿using BLL;
 using DAL;
+using HLP.Entity;
+using HLP.Helpers;
+using HLP.Interfaces;
 using MaterialSkin;
 using MaterialSkin.Controls;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Windows;
+using System.Xml.Linq;
 
 namespace PersonalTracking
 {
-    public partial class FrmRegister : MaterialForm
+    public partial class FrmRegister : MaterialForm, IValidateHelper
     {
+        private readonly IEntityMessages Information;
+        private readonly EmployeeBLL employeeBLL = new EmployeeBLL();
+
         public FrmRegister()
         {
             InitializeComponent();
             ConfigureCollorPallet();
-            grpBasicInfo.BackColor = Color.Gainsboro;
-            grpUserInformation.BackColor = Color.Gainsboro;
         }
 
         public void ConfigureCollorPallet()
         {
+            grpBasicInfo.BackColor = Color.Gainsboro;
+            grpUserInformation.BackColor = Color.Gainsboro;
             MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
@@ -36,38 +43,17 @@ namespace PersonalTracking
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtName.Text.Trim()) ||
-                string.IsNullOrEmpty(txtSurname.Text.Trim()))
+            EMPLOYEE employee = new EMPLOYEE
             {
-                MessageBox.Show($"{lblName.Text} or {lblSurname.Text} is empty");
-            }
+                Name = txtName.Text,
+                Surname = txtSurname.Text,
+                UserNo = Convert.ToInt32(txtUserNo.Text),
+                Password = txtPassword.Text
+            };
 
-            if (string.IsNullOrEmpty(txtUserNo.Text.Trim()) ||
-                string.IsNullOrEmpty(txtPassword.Text.Trim()))
-            {
-                MessageBox.Show($"{lblUserNumber} or {lblPassword} is empty");
-            }
-
-            else
-            {
-                if (!EmployeeBLL.isUnique(Convert.ToInt32(txtUserNo.Text)))
-                {
-                    MessageBox.Show("This user is used by another employee please change it");
-                }
-                else
-                {
-                    EMPLOYEE employee = new EMPLOYEE
-                    {
-                        Name = txtName.Text,
-                        Surname = txtSurname.Text,
-                        UserNo = Convert.ToInt32(txtUserNo.Text),
-                        Password = txtPassword.Text
-                    };
-
-                    EmployeeBLL.AddEmployee(employee);
-                    ClearFields();
-                }
-            }
+            employeeBLL.CreateEntityBLL(employee);
+            Information.EntitySavedWithSuccess(employee.Name);
+            ClearFields();
         }
 
         private void ClearFields()
@@ -78,20 +64,23 @@ namespace PersonalTracking
             txtPassword.Clear();
         }
 
-        bool isUnique = false; 
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            if (txtUserNo.Text.Trim() == "")
-                MessageBox.Show("User Number is Empty");
+            var userNoIsEmpty = Validate(string.IsNullOrWhiteSpace(txtUserNo.Text.Trim()));
+
+            if (userNoIsEmpty)
+                ValidateErrorMessage((IEntityMessages)Information.EntitySavedWithSuccess(lblUserNumber.Text));
+                Information.FieldIsEmpty(lblUserNumber.Text);
             else
             {
-                isUnique = EmployeeBLL.isUnique(Convert.ToInt32(txtUserNo.Text));
-                if (!isUnique)
-                    MessageBox.Show("This user is used by another employee please change it");
+                bool isUniqueUser = Validate(employeeBLL.isUniqueEntity(Convert.ToInt32(txtUserNo.Text)));
+
+                if (!isUniqueUser)
+                    Information.EntityInUse(lblUserNumber.Text);
                 else
                 {
-                    MessageBox.Show("This user is usable");
+                    Information.EntityCanBeUse(lblUserNumber.Text);
                     InformationIsFilled(txtName.Text, txtSurname.Text, txtUserNo.Text, txtPassword.Text);
                 }
 
@@ -105,12 +94,26 @@ namespace PersonalTracking
 
         private bool InformationIsFilled(string name, string surname, string userNo, string password)
         {
-            if (name.Trim().Length > 3 && 
-                surname.Trim().Length > 3 || 
-                userNo.Trim().Length > 1 && password.Length > 8)
+            bool nameLengthIsValid = Validate(name.Trim().Length > 3);
+            bool surnameLengthIsValid = Helper.IsValid(surname.Trim().Length > 3);
+            bool userNoLengthIsValid = Helper.IsValid(userNo.Trim().Length > 1);
+            bool passwordLengthIsValid = Helper.IsValid(password.Length > 8);
+            bool nameIsEmpty = Helper.IsValid(string.IsNullOrEmpty(txtName.Text.Trim()));
+            bool surNameIsEmpty = Helper.IsValid(string.IsNullOrEmpty(txtSurname.Text.Trim()));
+            bool userNoIsEmpty = Helper.IsValid(string.IsNullOrEmpty(txtUserNo.Text.Trim()));
+            bool passwordIsEmpty = Helper.IsValid(string.IsNullOrEmpty(txtPassword.Text.Trim()));
+
+            if (nameLengthIsValid && surnameLengthIsValid ||
+                userNoLengthIsValid && passwordLengthIsValid)
             {
-                 
                 return btnSave.Enabled = true;
+            }
+            else if (nameIsEmpty || surNameIsEmpty || userNoIsEmpty || passwordIsEmpty)
+            {
+                Information.FieldIsEmpty(lblName.Text, lblSurname.Text,
+                                        lblUserNumber.Text, lblPassword.Text);
+                return btnSave.Enabled = false;
+
             }
             else
             {
@@ -121,6 +124,32 @@ namespace PersonalTracking
         private void btnBack_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        public bool IsValid(bool condition)
+        {
+            return condition;
+        }
+
+        IList<string> IValidateHelper.Validate()
+        {
+            IList<InformationMessage> AddErros = new List<InformationMessage>();
+
+            bool nameIsEmpty = IsValid(string.IsNullOrEmpty(txtName.Text.Trim()));
+            bool surNameIsEmpty = IsValid(string.IsNullOrEmpty(txtSurname.Text.Trim()));
+            bool userNoIsEmpty = IsValid(string.IsNullOrEmpty(txtUserNo.Text.Trim()));
+            bool passwordIsEmpty = IsValid(string.IsNullOrEmpty(txtPassword.Text.Trim()));
+
+            if (nameIsEmpty)
+            {
+                AddErros.Add(Information.FieldIsEmpty(lblName.Text));
+            }
+
+        }
+
+        public InformationMessage ValidateErrorMessage(IEntityMessages message)
+        {
+            return (InformationMessage)message;
         }
     }
 }
