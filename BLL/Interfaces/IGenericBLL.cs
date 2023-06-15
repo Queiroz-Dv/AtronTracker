@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BLL.Services
+namespace BLL.Interfaces
 {
     public interface IGenericBLL<TEntity> where TEntity : class/*, IEntity*/
     {

@@ -14,7 +14,6 @@ namespace PersonalTracking
         public DepartmentDTO department = new DepartmentDTO();
         private readonly DepartmentBLL departmentBLL = new DepartmentBLL();
         public InformationMessage Information = new InformationMessage();
-        const bool condition = true;
 
         public FrmDepartment()
         {
@@ -40,11 +39,11 @@ namespace PersonalTracking
         {
             if (txtDepartment.Text.Trim() == "")
             {
-                Information.FieldIsEmpty(condition, lblDepartment.Text.ToLower());
+                Information.FieldIsEmpty(lblDepartment.Text.ToLower());
             }
             else if (txtDepartment.Text.Trim().Length < 3)
             {
-                Information.InvalidMinimumAmountCharacters(condition, lblDepartment.Text.ToLower());
+                Information.InvalidMinimumAmountCharacters(lblDepartment.Text.ToLower());
             }
             else
             {
@@ -52,17 +51,17 @@ namespace PersonalTracking
                 {
                     department.DepartmentName = txtDepartment.Text;
                     SaveDepartment(department);
-                    Information.EntitySavedWithSuccess(condition, department.DepartmentName);
+                    Information.EntitySavedWithSuccess(department.DepartmentName);
                 }
                 else
                 {
                     // TODO: Obter a entidade do datagridview selecionado
-                    DialogResult result = Information.UpdatedEntityQuestion(condition, txtDepartment.Text);
+                    DialogResult result = Information.UpdatedEntityQuestion(txtDepartment.Text);
                     if (DialogResult.Yes == result)
                     {
                         department.DepartmentName = txtDepartment.Text;
                         UpdateDepartment(department);
-                        Information.EntityUpdated(condition, department.DepartmentName);
+                        Information.EntityUpdated(department.DepartmentName);
                         this.Close();
                     }
                 }

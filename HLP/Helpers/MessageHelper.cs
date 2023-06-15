@@ -22,19 +22,15 @@ namespace HLP.Helpers
         /// <summary>
         /// Exibe uma caixa de diálogo com uma mensagem de acordo com as condições fornecidas.
         /// </summary>
-        /// <param name="condition">Condição que determina se a mensagem será exibida.</param>
         /// <param name="error">A mensagem de erro a ser exibida.</param>
         /// <param name="buttons">Os botões da caixa de diálogo.</param>
         /// <param name="level">O nível da mensagem.</param>
         /// <returns>O resultado da resposta do usuário (DialogResult).</returns>
-        public static DialogResult ShowMessage(bool condition, string error, MessageBoxButtons buttons, EnumLevelMessage level)
+        public static DialogResult ShowMessage(string error, MessageBoxButtons buttons, EnumLevelMessage level)
         {
-            if (condition)
-            {
-                string message = GetLevelMessage(level);
-                var icon = GetLevelIcon(level);
-                return MessageBox.Show(error, message, buttons, icon);
-            }
+            string message = GetLevelMessage(level);
+            var icon = GetLevelIcon(level);
+            return MessageBox.Show(error, message, buttons, icon);
 
             throw new Exception("Error In Information Message Layer");
         }

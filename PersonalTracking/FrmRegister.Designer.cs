@@ -110,7 +110,7 @@
             this.txtSurname.Margin = new System.Windows.Forms.Padding(2);
             this.txtSurname.Name = "txtSurname";
             this.txtSurname.Size = new System.Drawing.Size(159, 26);
-            this.txtSurname.TabIndex = 53;
+            this.txtSurname.TabIndex = 2;
             // 
             // txtName
             // 
@@ -119,7 +119,7 @@
             this.txtName.Margin = new System.Windows.Forms.Padding(2);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(159, 26);
-            this.txtName.TabIndex = 52;
+            this.txtName.TabIndex = 1;
             // 
             // grpUserInformation
             // 
@@ -165,7 +165,7 @@
             this.txtUserNo.Margin = new System.Windows.Forms.Padding(2);
             this.txtUserNo.Name = "txtUserNo";
             this.txtUserNo.Size = new System.Drawing.Size(119, 26);
-            this.txtUserNo.TabIndex = 10;
+            this.txtUserNo.TabIndex = 3;
             this.txtUserNo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtUserNo_KeyPress);
             // 
             // btnCheck
@@ -176,7 +176,7 @@
             this.btnCheck.Margin = new System.Windows.Forms.Padding(2);
             this.btnCheck.Name = "btnCheck";
             this.btnCheck.Size = new System.Drawing.Size(89, 26);
-            this.btnCheck.TabIndex = 11;
+            this.btnCheck.TabIndex = 5;
             this.btnCheck.Text = "Check";
             this.btnCheck.UseVisualStyleBackColor = false;
             this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
@@ -189,7 +189,7 @@
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(119, 26);
-            this.txtPassword.TabIndex = 12;
+            this.txtPassword.TabIndex = 4;
             // 
             // btnSave
             // 
@@ -199,7 +199,7 @@
             this.btnSave.Margin = new System.Windows.Forms.Padding(2);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(89, 26);
-            this.btnSave.TabIndex = 53;
+            this.btnSave.TabIndex = 6;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -212,7 +212,7 @@
             this.btnBack.Margin = new System.Windows.Forms.Padding(2);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(89, 26);
-            this.btnBack.TabIndex = 54;
+            this.btnBack.TabIndex = 7;
             this.btnBack.Text = "Back";
             this.btnBack.UseVisualStyleBackColor = false;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);

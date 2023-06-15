@@ -30,7 +30,7 @@ namespace DAL.DTO
 
         public string Password { get; set; }
 
-        public string Adress { get; set; }
+        public string Address { get; set; }
 
         public DateTime? BirthDay { get; set; }
 

@@ -6,68 +6,103 @@ namespace HLP.Entity
 {
     public class InformationMessage : IEntityMessages
     {
-        public DialogResult DeleteEntityQuestion(bool condition, string fieldName)
+
+        public DialogResult DeleteEntityQuestion(string fieldName)
         {
-            return ShowMessage(condition,
-                        $"Are you sure to delete this {fieldName}?",
-                        MessageBoxButtons.YesNo,
-                        EnumLevelMessage.Question);
+            return ShowMessage($"Are you sure to delete this {fieldName}?",
+                               MessageBoxButtons.YesNo,
+                               EnumLevelMessage.Question);
         }
 
-        public void EntityDeletedWithSuccess(bool condition, string fieldName)
+        public void EntityCanBeUse(string fieldName)
         {
-            ShowMessage(condition,
-                        $"{fieldName} was deleted successfully!",
+            ShowMessage($"This {fieldName} is usable",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Information);
         }
 
-        public void EntitySavedWithSuccess(bool condition, string fieldName)
+        public void EntityDeletedWithSuccess(string fieldName)
         {
-            ShowMessage(condition,
-                        $"The {fieldName} was saved successfully!",
+            ShowMessage($"{fieldName} was deleted successfully!",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Information);
         }
 
-        public void EntityUpdated(bool condition, string fieldName)
+        public void EntityInUse(string fieldName)
         {
-            ShowMessage(condition,
-                    $"{fieldName} was deleted successfully!",
-                    MessageBoxButtons.OK,
-                    EnumLevelMessage.Information);
+            ShowMessage($"This {fieldName} is used by another employee please change it",
+                        MessageBoxButtons.OK,
+                        EnumLevelMessage.Information);
         }
 
-        public void FieldIsEmpty(bool condition, string fieldName)
+        public object EntitySavedWithSuccess(string fieldName)
         {
-            ShowMessage(condition,
-                        $"Please fill the {fieldName}",
+            return ShowMessage($"The {fieldName} was saved successfully!",
+                        MessageBoxButtons.OK,
+                        EnumLevelMessage.Information);
+        }
+
+        public void EntityUpdated(string fieldName)
+        {
+            ShowMessage($"{fieldName} was deleted successfully!",
+                        MessageBoxButtons.OK,
+                        EnumLevelMessage.Information);
+        }
+
+        public void FieldIsEmpty(string fieldName)
+        {
+            ShowMessage($"Please fill the {fieldName}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void InvalidItemSelected(bool condition)
+        public void FieldIsEmpty(string fieldName, string secondField)
         {
-            ShowMessage(condition,
-                    $"Selected item invalid, try again.",
-                    MessageBoxButtons.OK,
-                    EnumLevelMessage.Warning);
-        }
-
-        public void InvalidMinimumAmountCharacters(bool condition, string fieldName)
-        {
-            ShowMessage(condition,
-                        $"The name of {fieldName} is incorrect because the minimum amount of characters is 3.",
+            ShowMessage($"Please fill the {fieldName} and {secondField}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public DialogResult UpdatedEntityQuestion(bool condition, string fieldName)
+        public void FieldIsEmpty(string fieldName, string secondField, string thirdField)
         {
-            return ShowMessage(condition,
-                        $"Are you sure to change the {fieldName}?",
-                        MessageBoxButtons.YesNo,
-                        EnumLevelMessage.Question);
+            ShowMessage($"Please fill the {fieldName}, {secondField} and {thirdField}",
+                        MessageBoxButtons.OK,
+                        EnumLevelMessage.Warning);
+        }
+
+        public void FieldIsEmpty(string fieldName, string secondField, string thirdField, string fourthField)
+        {
+            ShowMessage($"Please fill the {fieldName}, {secondField}, {thirdField} and {fourthField}",
+                        MessageBoxButtons.OK,
+                        EnumLevelMessage.Warning);
+        }
+
+        public void FieldIsEmpty(string fieldName, string secondField, string thirdField, string fourthField, string fifthField)
+        {
+            ShowMessage($"Please fill the {fieldName}, {secondField}, {thirdField}, {fourthField}, and {fifthField}",
+                        MessageBoxButtons.OK,
+                        EnumLevelMessage.Warning);
+        }
+
+        public void InvalidItemSelected()
+        {
+            ShowMessage($"Selected item invalid, try again.",
+                        MessageBoxButtons.OK,
+                        EnumLevelMessage.Warning);
+        }
+
+        public void InvalidMinimumAmountCharacters(string fieldName)
+        {
+            ShowMessage($"The name of {fieldName} is incorrect because the minimum amount of characters is 3.",
+                        MessageBoxButtons.OK,
+                        EnumLevelMessage.Warning);
+        }
+
+        public DialogResult UpdatedEntityQuestion(string fieldName)
+        {
+            return ShowMessage($"Are you sure to change the {fieldName}?",
+                               MessageBoxButtons.YesNo,
+                               EnumLevelMessage.Question);
         }
     }
 }

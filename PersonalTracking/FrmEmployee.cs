@@ -62,7 +62,7 @@ namespace PersonalTracking
                 txtUserNo.Text = detail.UserNo.ToString();
                 txtPassword.Text = detail.Password;
                 chAdmin.Checked = Convert.ToBoolean(detail.isAdmin);
-                txtAddres.Text = detail.Adress;
+                txtAddres.Text = detail.Address;
                 dateTimePicker2.Value = Convert.ToDateTime(detail.BirthDay);
                 cmbDeparment.SelectedValue = detail.DepartmentID;
                 cmbPosition.SelectedValue = detail.PositionID;
@@ -124,7 +124,7 @@ namespace PersonalTracking
                             Salary = Convert.ToInt32(txtSalary.Text),
                             DepartmentID = Convert.ToInt32(cmbDeparment.SelectedValue),
                             PositionID = Convert.ToInt32(cmbPosition.SelectedValue),
-                            Adress = txtAddres.Text,
+                            Address = txtAddres.Text,
                             BirthDay = dateTimePicker2.Value,
                         };
 
@@ -158,7 +158,7 @@ namespace PersonalTracking
                         employee.Surname = txtSurname.Text;
                         employee.isAdmin = chAdmin.Checked;
                         employee.Password = txtPassword.Text;
-                        employee.Adress = txtAddres.Text;
+                        employee.Address = txtAddres.Text;
                         employee.BirthDay = dateTimePicker2.Value;
                         employee.DepartmentID = Convert.ToInt32(cmbDeparment.SelectedValue);
                         employee.PositionID = Convert.ToInt32(cmbPosition.SelectedValue);

@@ -296,8 +296,8 @@ namespace DAL
     partial void OnSalaryChanged();
     partial void OnBirthDayChanging(System.Nullable<System.DateTime> value);
     partial void OnBirthDayChanged();
-    partial void OnAdressChanging(string value);
-    partial void OnAdressChanged();
+    partial void OnAddressChanging(string value);
+    partial void OnAddressChanged();
     partial void OnPasswordChanging(string value);
     partial void OnPasswordChanged();
     partial void OnisAdminChanging(System.Nullable<bool> value);
@@ -469,8 +469,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Adress", DbType="VarChar(MAX)")]
-		public string Adress
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="Adress", Storage="_Adress", DbType="VarChar(MAX)")]
+		public string Address
 		{
 			get
 			{
@@ -480,11 +480,11 @@ namespace DAL
 			{
 				if ((this._Adress != value))
 				{
-					this.OnAdressChanging(value);
+					this.OnAddressChanging(value);
 					this.SendPropertyChanging();
 					this._Adress = value;
-					this.SendPropertyChanged("Adress");
-					this.OnAdressChanged();
+					this.SendPropertyChanged("Address");
+					this.OnAddressChanged();
 				}
 			}
 		}

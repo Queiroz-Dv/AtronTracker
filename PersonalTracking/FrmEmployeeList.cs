@@ -147,7 +147,7 @@ namespace PersonalTracking
             detail.Name = dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString();
             detail.Surname = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString();
             detail.Password = dataGridView1.Rows[e.RowIndex].Cells[10].Value.ToString();
-            detail.Adress = dataGridView1.Rows[e.RowIndex].Cells[12].Value.ToString();
+            detail.Address = dataGridView1.Rows[e.RowIndex].Cells[12].Value.ToString();
             detail.isAdmin = Convert.ToBoolean(dataGridView1.Rows[e.RowIndex].Cells[9].Value);
             detail.BirthDay = Convert.ToDateTime(dataGridView1.Rows[e.RowIndex].Cells[13].Value);
             detail.UserNo = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[1].Value);
