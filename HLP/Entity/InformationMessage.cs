@@ -14,7 +14,7 @@ namespace HLP.Entity
                                EnumLevelMessage.Question);
         }
 
-        public void EntityCanBeUse(string fieldName)
+        public void EntityCanBeUseMessage(string fieldName)
         {
             ShowMessage($"This {fieldName} is usable",
                         MessageBoxButtons.OK,
@@ -28,7 +28,7 @@ namespace HLP.Entity
                         EnumLevelMessage.Information);
         }
 
-        public void EntityInUse(string fieldName)
+        public void EntityInUseMessage(string fieldName)
         {
             ShowMessage($"This {fieldName} is used by another employee please change it",
                         MessageBoxButtons.OK,

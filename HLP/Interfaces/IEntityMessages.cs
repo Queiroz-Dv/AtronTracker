@@ -53,8 +53,8 @@ namespace HLP.Interfaces
         /// </summary>
         void InvalidItemSelected();
 
-        void EntityInUse(string fieldName);
+        void EntityInUseMessage(string fieldName);
 
-        void EntityCanBeUse(string fieldName);
+        void EntityCanBeUseMessage(string fieldName);
     }
 }

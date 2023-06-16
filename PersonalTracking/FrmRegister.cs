@@ -67,20 +67,23 @@ namespace PersonalTracking
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            var userNoIsEmpty = Validate(string.IsNullOrWhiteSpace(txtUserNo.Text.Trim()));
+            var userNumberIsEmpty = string.IsNullOrWhiteSpace(txtUserNo.Text);
+            var userNumberIsValid = FieldValidate(userNumberIsEmpty);
 
-            if (userNoIsEmpty)
-                ValidateErrorMessage((IEntityMessages)Information.EntitySavedWithSuccess(lblUserNumber.Text));
+            if (userNumberIsValid)
+            {
                 Information.FieldIsEmpty(lblUserNumber.Text);
+            }
             else
             {
-                bool isUniqueUser = Validate(employeeBLL.isUniqueEntity(Convert.ToInt32(txtUserNo.Text)));
+                var getUniqueUser = employeeBLL.isUniqueEntity(Convert.ToInt32(txtUserNo.Text);
+                bool uniqueUserIsValid = FieldValidate(getUniqueUser);
 
-                if (!isUniqueUser)
-                    Information.EntityInUse(lblUserNumber.Text);
+                if (!uniqueUserIsValid)
+                    Information.EntityInUseMessage(lblUserNumber.Text);
                 else
                 {
-                    Information.EntityCanBeUse(lblUserNumber.Text);
+                    Information.EntityCanBeUseMessage(lblUserNumber.Text);
                     InformationIsFilled(txtName.Text, txtSurname.Text, txtUserNo.Text, txtPassword.Text);
                 }
 
@@ -131,25 +134,9 @@ namespace PersonalTracking
             return condition;
         }
 
-        IList<string> IValidateHelper.Validate()
+        public bool FieldValidate(bool condition)
         {
-            IList<InformationMessage> AddErros = new List<InformationMessage>();
-
-            bool nameIsEmpty = IsValid(string.IsNullOrEmpty(txtName.Text.Trim()));
-            bool surNameIsEmpty = IsValid(string.IsNullOrEmpty(txtSurname.Text.Trim()));
-            bool userNoIsEmpty = IsValid(string.IsNullOrEmpty(txtUserNo.Text.Trim()));
-            bool passwordIsEmpty = IsValid(string.IsNullOrEmpty(txtPassword.Text.Trim()));
-
-            if (nameIsEmpty)
-            {
-                AddErros.Add(Information.FieldIsEmpty(lblName.Text));
-            }
-
-        }
-
-        public InformationMessage ValidateErrorMessage(IEntityMessages message)
-        {
-            return (InformationMessage)message;
+            return condition;
         }
     }
 }
