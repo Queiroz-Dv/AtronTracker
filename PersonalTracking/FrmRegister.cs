@@ -80,7 +80,9 @@ namespace PersonalTracking
                 bool uniqueUserIsValid = FieldValidate(getUniqueUser);
 
                 if (!uniqueUserIsValid)
+                {
                     Information.EntityInUseMessage(lblUserNumber.Text);
+                }
                 else
                 {
                     Information.EntityCanBeUseMessage(lblUserNumber.Text);
