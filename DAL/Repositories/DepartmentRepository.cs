@@ -1,5 +1,5 @@
 ﻿using DAL.DAO;
-using DAL.Generics;
+using DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,21 +7,21 @@ using System.Windows.Forms;
 
 namespace DAL.Repositories
 {
-    public class DeparmentRepository : IGenericRepository<DEPARTMENT>
+    public class DepartmentRepository : IDepartmentRepository<DEPARTMENT>
     {
         private Context _context = new Context();
         private DEPARTMENT department = new DEPARTMENT();
 
-        public DeparmentRepository(Context context)
+        public DepartmentRepository(Context context)
         {
             _context = context;
         }
 
-        public DeparmentRepository()
+        public DepartmentRepository()
         {
         }
 
-        public void CreateEntity(DEPARTMENT entity)
+        public void CreateEntityRepository(DEPARTMENT entity)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DEPARTMENT> GetAllEntities()
+        public IEnumerable<DEPARTMENT> GetAllEntitiesRepository()
         {
             try
             {
@@ -70,7 +70,7 @@ namespace DAL.Repositories
             }
         }
 
-        public DEPARTMENT GetEntityById(object id)
+        public DEPARTMENT GetEntityByIdRepository(object id)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace DAL.Repositories
             }
         }
 
-        public void RemoveEntity(DEPARTMENT entity)
+        public void RemoveEntityRepository(DEPARTMENT entity)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace DAL.Repositories
             }
         }
 
-        public DEPARTMENT UpdateEntity(DEPARTMENT entity)
+        public DEPARTMENT UpdateEntityRepository(DEPARTMENT entity)
         {
             try
             {

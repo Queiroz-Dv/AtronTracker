@@ -79,7 +79,7 @@ namespace PersonalTracking
         private void FrmDepartmentList_Load(object sender, EventArgs e)
         {
             var departmentBLL = new DepartmentBLL();
-            var entities = departmentBLL.GetAllEntitiesBLL().ToList();
+            var entities = departmentBLL.GetAllService().ToList();
             dgvDepartment.DataSource = entities.OrderBy(d => d.DepartmentName).ToList();
             dgvDepartment.Columns[0].Width = 10;
             dgvDepartment.Columns[0].Visible = false;
@@ -100,7 +100,7 @@ namespace PersonalTracking
             {
                 //DepartmentBLL.DeleteDepartment(detail.ID);
                 var departmentBLL = new DepartmentBLL();
-                departmentBLL.RemoveEntityBLL(departmentDTO);
+                departmentBLL.RemoveEntityService(departmentDTO);
                 Information.EntityDeletedWithSuccessMessage(departmentDTO.DepartmentName);
             }
 

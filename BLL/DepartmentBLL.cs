@@ -5,39 +5,39 @@ using System.Collections.Generic;
 
 namespace BLL
 {
-    public class DepartmentBLL : IGenericBLL<DEPARTMENT>
+    public class DepartmentBLL : IGenericServices<DEPARTMENT>
     {
-        private readonly DeparmentRepository _repository = new DeparmentRepository();
+        private readonly DepartmentRepository _repository = new DepartmentRepository();
         private readonly DEPARTMENT department = new DEPARTMENT();
 
-        public DEPARTMENT CreateEntityBLL(DEPARTMENT entity)
+        public DEPARTMENT CreateEntityService(DEPARTMENT entity)
         {
             department.ID = entity.ID;
             department.DepartmentName = entity.DepartmentName;
-            _repository.CreateEntity(entity);
+            _repository.CreateEntityRepository(entity);
             return department;
         }
 
-        public IEnumerable<DEPARTMENT> GetAllEntitiesBLL()
+        public IEnumerable<DEPARTMENT> GetAllService()
         {
-            var departments = _repository.GetAllEntities();
+            var departments = _repository.GetAllEntitiesRepository();
             return departments;
         }
 
-        public DEPARTMENT GetEntityByIdBLL(object id)
+        public DEPARTMENT GetEntityByIdService(object id)
         {
             throw new System.NotImplementedException();
         }
 
-        public void RemoveEntityBLL(DEPARTMENT entity)
+        public void RemoveEntityService(DEPARTMENT entity)
         {
-            _repository.RemoveEntity(entity);
+            _repository.RemoveEntityRepository(entity);
         }
 
-        public DEPARTMENT UpdateEntityBLL(DEPARTMENT entity)
+        public DEPARTMENT UpdateEntityService(DEPARTMENT entity)
         {
             department.DepartmentName = entity.DepartmentName;
-            _repository.UpdateEntity(entity);
+            _repository.UpdateEntityRepository(entity);
             return entity;
         }
     }

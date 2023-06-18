@@ -70,13 +70,13 @@ namespace PersonalTracking
 
         private void UpdateDepartment(DepartmentDTO department)
         {
-            departmentBLL.UpdateEntityBLL(department);
+            departmentBLL.UpdateEntityService(department);
             ClearFields();
         }
 
         private void SaveDepartment(DepartmentDTO department)
         {
-            departmentBLL.CreateEntityBLL(department);
+            departmentBLL.CreateEntityService(department);
             ClearFields();
         }
 

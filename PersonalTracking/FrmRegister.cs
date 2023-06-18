@@ -1,4 +1,5 @@
 ﻿using BLL;
+using BLL.Interfaces;
 using DAL;
 using HLP.Entity;
 using HLP.Interfaces;
@@ -22,7 +23,7 @@ namespace PersonalTracking
         /// <summary>
         /// Classe da camada de negócios que realiza as operações e validações da entidade
         /// </summary>
-        private readonly EmployeeBLL employeeBLL;
+        private readonly IEmployeeService<EMPLOYEE> employeeBLL;
 
         public FrmRegister()
         {
@@ -33,7 +34,7 @@ namespace PersonalTracking
 
             // Injeta as dependências no construtor, sem isso vai estourar erro
             Information = new InformationMessage();
-            employeeBLL = new EmployeeBLL();
+            //employeeBLL = new EmployeeBLL();
         }
 
         public void ConfigureCollorPallet()
@@ -67,7 +68,7 @@ namespace PersonalTracking
             };
 
             // Chama a camada de serviços para criar a entidade
-            employeeBLL.CreateEntityBLL(employee);
+            employeeBLL.CreateEntityService(employee);
 
             // Exibi mensagem na tela  (precisa ter um if aqui)
             Information.EntitySavedWithSuccessMessage(employee.Name);
@@ -102,12 +103,12 @@ namespace PersonalTracking
             if (userNumberIsValid)
             {
                 // Se não estiver preenchido adiciona messagem informando
-                Information.FieldIsEmptyMessage(lblUserNumber.Text);
+                Information.FieldIsEmptyMessage(lblUserNumber);
             }
             else
             {
                 // Senão, vai no banco de dados e verifica se tem outro igual
-                var getUniqueUser = employeeBLL.isUniqueEntity(Convert.ToInt32(txtUserNo.Text));
+                var getUniqueUser = employeeBLL.IsUniqueEntity(Convert.ToInt32(txtUserNo.Text));
 
                 // Valida se a entidade obtida está de acordo
                 bool uniqueUserIsValid = FieldValidate(getUniqueUser);
@@ -197,7 +198,7 @@ namespace PersonalTracking
             else if (fieldsEmptyOrFilledValidated)
             {
                 // Se não, adicionamos a mensagem de que algum campo está vazio e não ativamos o botão
-                Information.FieldIsEmptyMessage(lblName.Text, lblSurname.Text, lblUserNumber.Text, lblPassword.Text);
+                Information.FieldIsEmptyMessage(lblName, lblSurname, lblUserNumber, lblPassword);
                 return btnSave.Enabled = false;
             }
             else
