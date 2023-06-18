@@ -31,7 +31,7 @@ namespace HLP.Interfaces
         /// Notifica o usuário que o campo está vazio, com base em uma determinada condição e nome do campo.
         /// </summary>
         /// <param name="fieldName">Nome do campo relacionado à entidade.</param>
-        void FieldIsEmptyMessage(string fieldName);
+        void FieldIsEmptyMessage(object fieldName);
 
         /// <summary>
         /// Notifica o usuário que o campo possui um número mínimo inválido de caracteres, com base em uma determinada condição e nome do campo.

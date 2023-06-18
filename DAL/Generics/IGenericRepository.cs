@@ -2,16 +2,16 @@
 
 namespace DAL.Generics
 {
-    public interface IGenericRepository<TEntity> where TEntity : class/*, IEntity*/
+    public interface IGenericRepository<TEntity> where TEntity : class
     {
-        TEntity GetEntityById(object id);
+        TEntity GetEntityByIdRepository(object id);
 
-        IEnumerable<TEntity> GetAllEntities();
+        IEnumerable<TEntity> GetAllEntitiesRepository();
 
-        void CreateEntity(TEntity entity);
+        void CreateEntityRepository(TEntity entity);
 
-        TEntity UpdateEntity(TEntity entity);
+        TEntity UpdateEntityRepository(TEntity entity);
 
-        void RemoveEntity(TEntity entity);
+        void RemoveEntityRepository(TEntity entity);
     }
 }

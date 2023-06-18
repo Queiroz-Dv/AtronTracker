@@ -9,7 +9,6 @@ namespace HLP.Entity
     /// </summary>
     public class InformationMessage : IEntityMessages
     {
-
         public DialogResult DeleteEntityQuestionMessage(string fieldName)
         {
             return ShowMessage($"Are you sure to delete this {fieldName}?",
@@ -52,40 +51,59 @@ namespace HLP.Entity
                         EnumLevelMessage.Information);
         }
 
-        public void FieldIsEmptyMessage(string fieldName)
+        public void FieldIsEmptyMessage(object fieldName)
         {
-            ShowMessage($"Please fill the {fieldName}",
+            var fieldConverted = fieldName?.ToString();
+            ShowMessage($"Please fill the {fieldConverted}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void FieldIsEmptyMessage(string fieldName, string secondField)
+        public void FieldIsEmptyMessage(object fieldName, object secondField)
         {
-            ShowMessage($"Please fill the {fieldName} and {secondField}",
+            var fieldNameLabel =  fieldName as Label;
+            var secondFieldLabel = secondField as Label;
+
+            var fieldNameConverted = fieldNameLabel.Text;
+            var secondFieldConverted = secondFieldLabel.Text;
+
+            ShowMessage($"Please fill the {fieldNameConverted} and {secondFieldConverted}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void FieldIsEmptyMessage(string fieldName, string secondField, string thirdField)
+        public void FieldIsEmptyMessage(object fieldName, object secondField, object thirdField)
         {
-            ShowMessage($"Please fill the {fieldName}, {secondField} and {thirdField}",
+            var fieldNameConverted = fieldName?.ToString();
+            var secondConverted = secondField?.ToString();
+            var thirdConverted = thirdField?.ToString();
+
+            ShowMessage($"Please fill the {fieldNameConverted}, {secondConverted} and {thirdConverted}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void FieldIsEmptyMessage(string fieldName, string secondField,
-                                        string thirdField, string fourthField)
+        public void FieldIsEmptyMessage(object fieldName, object secondField, object thirdField, object fourthField)
         {
-            ShowMessage($"Please fill the {fieldName}, {secondField}, {thirdField} and {fourthField}",
+            var fieldNameConverted = fieldName?.ToString();
+            var secondConverted = secondField?.ToString();
+            var thirdConverted = thirdField?.ToString();
+            var fourthFieldConverted = fourthField?.ToString();
+
+            ShowMessage($"Please fill the {fieldNameConverted}, {secondConverted}, {thirdConverted} and {fourthFieldConverted}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void FieldIsEmptyMessage(string fieldName, string secondField,
-                                        string thirdField, string fourthField,
-                                        string fifthField)
+        public void FieldIsEmptyMessage(object fieldName, object secondField, object thirdField, object fourthField, object fifthField)
         {
-            ShowMessage($"Please fill the {fieldName}, {secondField}, {thirdField}, {fourthField}, and {fifthField}",
+            var fieldNameConverted = fieldName?.ToString();
+            var secondConverted = secondField?.ToString();
+            var thirdConverted = thirdField?.ToString();
+            var fourthFieldConverted = fourthField?.ToString();
+            var fifthFieldConverted = fifthField?.ToString();
+
+            ShowMessage($"Please fill the {fieldNameConverted}, {secondConverted}, {thirdConverted}, {fourthFieldConverted}, and {fifthFieldConverted}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
