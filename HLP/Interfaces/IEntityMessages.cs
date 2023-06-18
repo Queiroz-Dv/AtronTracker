@@ -2,59 +2,70 @@
 
 namespace HLP.Interfaces
 {
-    public interface IEntityMessages
+    /// <summary>
+    /// Interface com a lista de notificações comuns para os formulários
+    /// </summary>
+    public interface IEntityMessages : IFieldValidate
     {
         /// <summary>
         /// Pergunta ao usuário se deseja atualizar a entidade, com base em uma determinada condição e nome do campo.
         /// </summary>
         /// <param name="fieldName">Nome do campo relacionado à entidade.</param>
         /// <returns>O resultado da resposta do usuário (DialogResult).</returns>
-        DialogResult UpdatedEntityQuestion(string fieldName);
+        DialogResult UpdatedEntityQuestionMessage(string fieldName);
 
         /// <summary>
         /// Pergunta ao usuário se deseja excluir a entidade, com base em uma determinada condição e nome do campo.
         /// </summary>
         /// <param name="fieldName">Nome do campo relacionado à entidade.</param>
         /// <returns>O resultado da resposta do usuário (DialogResult).</returns>
-        DialogResult DeleteEntityQuestion(string fieldName);
+        DialogResult DeleteEntityQuestionMessage(string fieldName);
 
         /// <summary>
         /// Notifica o usuário que a entidade foi excluída com sucesso, com base em uma determinada condição e nome do campo.
         /// </summary>
         /// <param name="fieldName">Nome do campo relacionado à entidade.</param>
-        void EntityDeletedWithSuccess(string fieldName);
+        void EntityDeletedWithSuccessMessage(string fieldName);
 
         /// <summary>
         /// Notifica o usuário que o campo está vazio, com base em uma determinada condição e nome do campo.
         /// </summary>
         /// <param name="fieldName">Nome do campo relacionado à entidade.</param>
-        void FieldIsEmpty(string fieldName);
+        void FieldIsEmptyMessage(string fieldName);
 
         /// <summary>
         /// Notifica o usuário que o campo possui um número mínimo inválido de caracteres, com base em uma determinada condição e nome do campo.
         /// </summary>
         /// <param name="fieldName">Nome do campo relacionado à entidade.</param>
-        void InvalidMinimumAmountCharacters(string fieldName);
+        void InvalidMinimumAmountCharactersMessage(string fieldName);
 
         /// <summary>
         /// Notifica o usuário que a entidade foi salva com sucesso, com base em uma determinada condição e nome do campo.
         /// </summary>
         /// <param name="fieldName">Nome do campo relacionado à entidade.</param>
-       object EntitySavedWithSuccess(string fieldName);
+       object EntitySavedWithSuccessMessage(string fieldName);
 
         /// <summary>
         /// Notifica o usuário que a entidade foi atualizada, com base em uma determinada condição e nome do campo.
         /// </summary>
         /// <param name="fieldName">Nome do campo relacionado à entidade.</param>
-        void EntityUpdated(string fieldName);
+        void EntityUpdatedMessage(string fieldName);
 
         /// <summary>
-        /// Notifica o usuário que a seleção do item é inválida, com base em uma determinada condição.
+        /// Exibe uma mensagem indicando que a seleção do item é inválida.
         /// </summary>
-        void InvalidItemSelected();
+        void InvalidItemSelectedMessage();
 
+        /// <summary>
+        /// Exibe uma mensagem indicando que a entidade está em uso.
+        /// </summary>
+        /// <param name="fieldName">O nome do campo ou entidade relacionada que está em uso.</param>
         void EntityInUseMessage(string fieldName);
 
+        /// <summary>
+        /// Exibe uma mensagem indicando que a entidade pode ser usada.
+        /// </summary>
+        /// <param name="fieldName">O nome do campo ou entidade relacionada que pode ser usada.</param>
         void EntityCanBeUseMessage(string fieldName);
     }
 }

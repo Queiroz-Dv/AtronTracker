@@ -39,11 +39,11 @@ namespace PersonalTracking
         {
             if (txtDepartment.Text.Trim() == "")
             {
-                Information.FieldIsEmpty(lblDepartment.Text.ToLower());
+                Information.FieldIsEmptyMessage(lblDepartment.Text.ToLower());
             }
             else if (txtDepartment.Text.Trim().Length < 3)
             {
-                Information.InvalidMinimumAmountCharacters(lblDepartment.Text.ToLower());
+                Information.InvalidMinimumAmountCharactersMessage(lblDepartment.Text.ToLower());
             }
             else
             {
@@ -51,17 +51,17 @@ namespace PersonalTracking
                 {
                     department.DepartmentName = txtDepartment.Text;
                     SaveDepartment(department);
-                    Information.EntitySavedWithSuccess(department.DepartmentName);
+                    Information.EntitySavedWithSuccessMessage(department.DepartmentName);
                 }
                 else
                 {
                     // TODO: Obter a entidade do datagridview selecionado
-                    DialogResult result = Information.UpdatedEntityQuestion(txtDepartment.Text);
+                    DialogResult result = Information.UpdatedEntityQuestionMessage(txtDepartment.Text);
                     if (DialogResult.Yes == result)
                     {
                         department.DepartmentName = txtDepartment.Text;
                         UpdateDepartment(department);
-                        Information.EntityUpdated(department.DepartmentName);
+                        Information.EntityUpdatedMessage(department.DepartmentName);
                         this.Close();
                     }
                 }

@@ -4,10 +4,13 @@ using static HLP.Helpers.MessageHelper;
 
 namespace HLP.Entity
 {
+    /// <summary>
+    /// Classe que implementa as notificações de mensagens para os formulários
+    /// </summary>
     public class InformationMessage : IEntityMessages
     {
 
-        public DialogResult DeleteEntityQuestion(string fieldName)
+        public DialogResult DeleteEntityQuestionMessage(string fieldName)
         {
             return ShowMessage($"Are you sure to delete this {fieldName}?",
                                MessageBoxButtons.YesNo,
@@ -21,7 +24,7 @@ namespace HLP.Entity
                         EnumLevelMessage.Information);
         }
 
-        public void EntityDeletedWithSuccess(string fieldName)
+        public void EntityDeletedWithSuccessMessage(string fieldName)
         {
             ShowMessage($"{fieldName} was deleted successfully!",
                         MessageBoxButtons.OK,
@@ -35,70 +38,73 @@ namespace HLP.Entity
                         EnumLevelMessage.Information);
         }
 
-        public object EntitySavedWithSuccess(string fieldName)
+        public object EntitySavedWithSuccessMessage(string fieldName)
         {
             return ShowMessage($"The {fieldName} was saved successfully!",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Information);
         }
 
-        public void EntityUpdated(string fieldName)
+        public void EntityUpdatedMessage(string fieldName)
         {
             ShowMessage($"{fieldName} was deleted successfully!",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Information);
         }
 
-        public void FieldIsEmpty(string fieldName)
+        public void FieldIsEmptyMessage(string fieldName)
         {
             ShowMessage($"Please fill the {fieldName}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void FieldIsEmpty(string fieldName, string secondField)
+        public void FieldIsEmptyMessage(string fieldName, string secondField)
         {
             ShowMessage($"Please fill the {fieldName} and {secondField}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void FieldIsEmpty(string fieldName, string secondField, string thirdField)
+        public void FieldIsEmptyMessage(string fieldName, string secondField, string thirdField)
         {
             ShowMessage($"Please fill the {fieldName}, {secondField} and {thirdField}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void FieldIsEmpty(string fieldName, string secondField, string thirdField, string fourthField)
+        public void FieldIsEmptyMessage(string fieldName, string secondField,
+                                        string thirdField, string fourthField)
         {
             ShowMessage($"Please fill the {fieldName}, {secondField}, {thirdField} and {fourthField}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void FieldIsEmpty(string fieldName, string secondField, string thirdField, string fourthField, string fifthField)
+        public void FieldIsEmptyMessage(string fieldName, string secondField,
+                                        string thirdField, string fourthField,
+                                        string fifthField)
         {
             ShowMessage($"Please fill the {fieldName}, {secondField}, {thirdField}, {fourthField}, and {fifthField}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void InvalidItemSelected()
+        public void InvalidItemSelectedMessage()
         {
             ShowMessage($"Selected item invalid, try again.",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public void InvalidMinimumAmountCharacters(string fieldName)
+        public void InvalidMinimumAmountCharactersMessage(string fieldName)
         {
             ShowMessage($"The name of {fieldName} is incorrect because the minimum amount of characters is 3.",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
         }
 
-        public DialogResult UpdatedEntityQuestion(string fieldName)
+        public DialogResult UpdatedEntityQuestionMessage(string fieldName)
         {
             return ShowMessage($"Are you sure to change the {fieldName}?",
                                MessageBoxButtons.YesNo,
