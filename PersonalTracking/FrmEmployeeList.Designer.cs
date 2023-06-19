@@ -71,7 +71,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(727, 195);
+            this.panel1.Size = new System.Drawing.Size(1006, 195);
             this.panel1.TabIndex = 0;
             // 
             // materialLabel5
@@ -236,7 +236,7 @@
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 28;
-            this.dataGridView1.Size = new System.Drawing.Size(727, 324);
+            this.dataGridView1.Size = new System.Drawing.Size(1006, 589);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             // 
@@ -248,10 +248,10 @@
             this.panel2.Controls.Add(this.btnDelete);
             this.panel2.Controls.Add(this.btnClose);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 442);
+            this.panel2.Location = new System.Drawing.Point(0, 707);
             this.panel2.Margin = new System.Windows.Forms.Padding(2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(727, 77);
+            this.panel2.Size = new System.Drawing.Size(1006, 77);
             this.panel2.TabIndex = 2;
             // 
             // btnNew
@@ -310,7 +310,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(727, 519);
+            this.ClientSize = new System.Drawing.Size(1006, 784);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.panel1);
@@ -318,7 +318,6 @@
             this.MaximizeBox = false;
             this.Name = "FrmEmployeeList";
             this.ShowIcon = false;
-            this.Sizable = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Employee List";
             this.Load += new System.EventHandler(this.FrmEmployeeList_Load);

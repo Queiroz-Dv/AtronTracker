@@ -45,7 +45,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txtAddres = new System.Windows.Forms.TextBox();
@@ -53,15 +52,11 @@
             this.cmbPosition = new System.Windows.Forms.ComboBox();
             this.cmbDeparment = new System.Windows.Forms.ComboBox();
             this.txtSalary = new System.Windows.Forms.TextBox();
-            this.btnBrowse = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.txtImagePath = new System.Windows.Forms.TextBox();
             this.txtSurname = new System.Windows.Forms.TextBox();
             this.txtName = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -200,7 +195,6 @@
             this.panel3.Controls.Add(this.label6);
             this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.txtAddres);
@@ -208,9 +202,6 @@
             this.panel3.Controls.Add(this.cmbPosition);
             this.panel3.Controls.Add(this.cmbDeparment);
             this.panel3.Controls.Add(this.txtSalary);
-            this.panel3.Controls.Add(this.btnBrowse);
-            this.panel3.Controls.Add(this.pictureBox1);
-            this.panel3.Controls.Add(this.txtImagePath);
             this.panel3.Controls.Add(this.txtSurname);
             this.panel3.Controls.Add(this.txtName);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -268,16 +259,6 @@
             this.label4.Size = new System.Drawing.Size(59, 20);
             this.label4.TabIndex = 53;
             this.label4.Text = "Salary";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(29, 93);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(101, 20);
-            this.label3.TabIndex = 52;
-            this.label3.Text = "Image Path";
             // 
             // label2
             // 
@@ -347,37 +328,6 @@
             this.txtSalary.Size = new System.Drawing.Size(159, 26);
             this.txtSalary.TabIndex = 36;
             // 
-            // btnBrowse
-            // 
-            this.btnBrowse.BackColor = System.Drawing.Color.White;
-            this.btnBrowse.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBrowse.Location = new System.Drawing.Point(334, 89);
-            this.btnBrowse.Margin = new System.Windows.Forms.Padding(2);
-            this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(87, 29);
-            this.btnBrowse.TabIndex = 35;
-            this.btnBrowse.Text = "Browse";
-            this.btnBrowse.UseVisualStyleBackColor = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.Location = new System.Drawing.Point(476, 14);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(141, 187);
-            this.pictureBox1.TabIndex = 41;
-            this.pictureBox1.TabStop = false;
-            // 
-            // txtImagePath
-            // 
-            this.txtImagePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtImagePath.Location = new System.Drawing.Point(152, 90);
-            this.txtImagePath.Margin = new System.Windows.Forms.Padding(2);
-            this.txtImagePath.Name = "txtImagePath";
-            this.txtImagePath.Size = new System.Drawing.Size(159, 26);
-            this.txtImagePath.TabIndex = 34;
-            // 
             // txtSurname
             // 
             this.txtSurname.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -417,7 +367,6 @@
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -440,18 +389,14 @@
         private System.Windows.Forms.ComboBox cmbPosition;
         private System.Windows.Forms.ComboBox cmbDeparment;
         private System.Windows.Forms.TextBox txtSalary;
-        private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TextBox txtImagePath;
-        private System.Windows.Forms.TextBox txtSurname;
-        private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtSurname;
+        private System.Windows.Forms.TextBox txtName;
     }
 }

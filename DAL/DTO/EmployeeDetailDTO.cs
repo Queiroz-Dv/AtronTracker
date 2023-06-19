@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.DTO
 {
@@ -30,11 +26,8 @@ namespace DAL.DTO
 
         public string Password { get; set; }
 
-        public string ImagePath { get; set; }
-
-        public string Adress { get; set; }
+        public string Address { get; set; }
 
         public DateTime? BirthDay { get; set; }
-
     }
 }

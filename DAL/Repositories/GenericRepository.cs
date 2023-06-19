@@ -14,28 +14,28 @@ namespace DAL.Repositories
             _table = context.GetTable<T>();
         }
 
-        public void CreateEntity(T entity)
+        public void CreateEntityRepository(T entity)
         {
             _table.InsertOnSubmit(entity);
         }
 
-        public IEnumerable<T> GetAllEntities()
+        public IEnumerable<T> GetAllEntitiesRepository()
         {
             return _table.ToList();
         }
 
-        public virtual T GetEntityById(object id)
+        public virtual T GetEntityByIdRepository(object id)
         {
             var entity = _table.FirstOrDefault(x => x.Id.Equals(id));
             return entity;
         }
 
-        public void RemoveEntity(T entity)
+        public void RemoveEntityRepository(T entity)
         {
             _table.DeleteOnSubmit(entity);
         }
 
-        public T UpdateEntity(T entity)
+        public T UpdateEntityRepository(T entity)
         {
             // Assume que a classe T tem uma propriedade chamada "Id" que representa a chave primária
             T existingModel = _table.SingleOrDefault(x => x.Id == entity.Id);

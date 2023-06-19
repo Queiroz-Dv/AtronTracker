@@ -1,20 +1,30 @@
-﻿using BLL;
+﻿using BLL.Interfaces;
 using DAL;
+using HLP.Entity;
+using HLP.Interfaces;
 using MaterialSkin;
 using MaterialSkin.Controls;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmLogin : MaterialForm
+    public partial class FrmLogin : MaterialForm, IValidateHelper
     {
-        public FrmLogin()
+        private readonly IEntityMessages Information;
+        private readonly IEmployeeService<EMPLOYEE> _employeeService;
+
+        public FrmLogin(IEmployeeService<EMPLOYEE> employeeService)
         {
             InitializeComponent();
+            ConfigureCollorPallet();
+            Information = new InformationMessage();
+            _employeeService = employeeService;
+        }
+
+        private void ConfigureCollorPallet()
+        {
             MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
@@ -30,27 +40,29 @@ namespace PersonalTracking
             e.Handled = General.isNumber(e);
         }
 
-        private void btnExit_Click(object sender, System.EventArgs e)
-        {
-            Application.Exit();
-        }
+        private void btnExit_Click(object sender, EventArgs e) => Application.Exit();
 
-        private void btnLogin_Click(object sender, System.EventArgs e)
+        private void btnLogin_Click(object sender, EventArgs e)
         {
+            var isFieldEmptyOrFilled = GetFieldsEmptyOrFilled();
             // Verifica se está vazio
-            if (txtUserNo.Text.Trim() == "" || txtPassword.Text.Trim() == "")
-                MessageBox.Show("Please fill the User Numb and Password");
+            if (isFieldEmptyOrFilled)
+            {
+                Information.FieldIsEmptyMessage(lblUserNumber, lblPassword);
+            }
             else
             {
                 //Se estiver preenchido mas o usuário não existe ele exibe um erro
-                List<EMPLOYEE> employeelist = EmployeeBLL.GetEmployees(Convert.ToInt32(txtUserNo.Text), txtPassword.Text);
-                if (employeelist.Count == 0)
+                //List<EMPLOYEE> employeelist = EmployeeBLL.GetEmployees(Convert.ToInt32(txtUserNo.Text), txtPassword.Text);
+                var userNoConverted = Convert.ToInt32(txtUserNo.Text);
+                var employeeService = _employeeService.GetEntityByIdService(userNoConverted);
+                if (employeeService.ID == 0)
                     MessageBox.Show("Please control your information");
                 else
                 {
                     //Se existir ele pega o primeiro usuário e o mantém na sessão ativa e abre o menu
                     EMPLOYEE employee = new EMPLOYEE();
-                    employee = employeelist.First();
+                    employee = employeeService;
                     UserStatic.EmployeeID = employee.ID;
                     UserStatic.UserNo = employee.UserNo;
                     UserStatic.isAdmin = Convert.ToBoolean(employee.isAdmin);
@@ -61,24 +73,13 @@ namespace PersonalTracking
             }
         }
 
-        private void btnLogin_MouseHover(object sender, EventArgs e)
+        private bool GetFieldsEmptyOrFilled()
         {
-            btnLogin.BackColor = Color.BlanchedAlmond;
-        }
+            var userNoCondition = string.IsNullOrEmpty(txtUserNo.Text.Trim());
+            var passwordCondition = string.IsNullOrEmpty(txtPassword.Text.Trim());
 
-        private void btnLogin_MouseLeave(object sender, EventArgs e)
-        {
-            btnLogin.BackColor = Color.White;
-        }
-
-        private void btnExit_MouseHover(object sender, EventArgs e)
-        {
-            btnExit.BackColor = Color.BlanchedAlmond;
-        }
-
-        private void btnExit_MouseLeave(object sender, EventArgs e)
-        {
-            btnExit.BackColor = Color.White;
+            var userNumberOrPasswordIsEmpty = FieldValidate(userNoCondition || passwordCondition);
+            return userNumberOrPasswordIsEmpty;
         }
 
         private void txtPassword_KeyDown(object sender, KeyEventArgs e)
@@ -89,7 +90,7 @@ namespace PersonalTracking
                     MessageBox.Show("Please fill the User Numb and Password");
                 else
                 {
-                    List<EMPLOYEE> employeelist = EmployeeBLL.GetEmployees(Convert.ToInt32(txtUserNo.Text), txtPassword.Text);
+                    var employeelist = _employeeService.GetEmployeesByUserNoAndPasswordService(Convert.ToInt32(txtUserNo.Text), txtPassword.Text);
                     if (employeelist.Count == 0)
                         MessageBox.Show("Please control your information");
                     else
@@ -105,6 +106,33 @@ namespace PersonalTracking
                     }
                 }
             }
+        }
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            FrmRegister frm = new FrmRegister();
+            this.Hide();
+            frm.ShowDialog();
+            this.Visible = true;
+        }
+
+        public bool FieldValidate(bool condition)
+        {
+            var isValid = condition;
+
+            if (isValid)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void FrmLogin_Load(object sender, EventArgs e)
+        {
+            //btnLogin.Enabled = false;
         }
     }
 }
