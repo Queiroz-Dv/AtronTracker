@@ -257,6 +257,10 @@
       <Project>{864F7E9D-8AF3-4D00-B967-B10EBBA8C6C0}</Project>
       <Name>HLP</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SRV\SRV.csproj">
+      <Project>{8e8995aa-091f-49b0-9f34-5c4e4d4b58c7}</Project>
+      <Name>SRV</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\businessman3.png" />

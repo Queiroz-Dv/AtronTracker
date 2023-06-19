@@ -1,10 +1,7 @@
 ﻿using BLL.Interfaces;
-using BLL.Services;
 using DAL;
-using DAL.DAO;
-using DAL.Interfaces;
-using DAL.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using SRV;
 using System;
 using System.Windows.Forms;
 
@@ -18,21 +15,21 @@ namespace PersonalTracking
         [STAThread]
         static void Main()
         {
-            var services = new ServiceCollection();
-            services.AddScoped<IEmployeeRepository<EMPLOYEE>, EmployeeRepository>();
-            services.AddScoped<IEmployeeService<EMPLOYEE>, EmployeeService>();
-            services.AddScoped<IDepartmentRepository<DEPARTMENT>, DepartmentRepository>();
-            services.AddScoped<IPositionRepository<POSITION>, PositionRepository>();
-            services.AddScoped<Context>();
+            // Cria a instância do ServiceCollection a partir do projeto de serviços
+            var services = ServiceContainer.ConfigureServices();
 
+            // Constroí o ServiceProvider partindo do serviceCollection
             var serviceProvider = services.BuildServiceProvider();
 
+            // Configura a aplicação Win Forms
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // Obtém uma instância do serviço necessário usando a injeção de dependência
             var loginService = serviceProvider.GetService<IEmployeeService<EMPLOYEE>>();
 
+            //Executa o form de login passando o serviço
             Application.Run(new FrmLogin(loginService));
-            //Application.Run(new FrmRegister());
         }
     }
 }
