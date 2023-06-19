@@ -1,8 +1,8 @@
 ﻿using BLL;
 using DAL.DTO;
+using HLP.Entity;
 using MaterialSkin;
 using MaterialSkin.Controls;
-using PersonalTracking.ScreenNotifications;
 using System;
 using System.Windows.Forms;
 
@@ -13,6 +13,7 @@ namespace PersonalTracking
         public bool isUpdate = false;
         public DepartmentDTO department = new DepartmentDTO();
         private readonly DepartmentBLL departmentBLL = new DepartmentBLL();
+        public InformationMessage Information = new InformationMessage();
 
         public FrmDepartment()
         {
@@ -33,17 +34,16 @@ namespace PersonalTracking
 
         private void btnClose_Click(object sender, EventArgs e) => this.Close();
 
-        const bool condition = true;
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (txtDepartment.Text.Trim() == "")
             {
-                InfoMessages.FieldIsEmpty(condition, lblDepartment.Text);
+                Information.FieldIsEmptyMessage(lblDepartment.Text.ToLower());
             }
             else if (txtDepartment.Text.Trim().Length < 3)
             {
-                InfoMessages.InvalidMinimumAmountCharacters(condition, lblDepartment.Text);
+                Information.InvalidMinimumAmountCharactersMessage(lblDepartment.Text.ToLower());
             }
             else
             {
@@ -51,17 +51,17 @@ namespace PersonalTracking
                 {
                     department.DepartmentName = txtDepartment.Text;
                     SaveDepartment(department);
-                    InfoMessages.EntitySavedWithSuccess(department.DepartmentName);
+                    Information.EntitySavedWithSuccessMessage(department.DepartmentName);
                 }
                 else
                 {
                     // TODO: Obter a entidade do datagridview selecionado
-                    DialogResult result = InfoMessages.UpdatedEntityQuestion(condition,txtDepartment.Text);
+                    DialogResult result = Information.UpdatedEntityQuestionMessage(txtDepartment.Text);
                     if (DialogResult.Yes == result)
                     {
                         department.DepartmentName = txtDepartment.Text;
                         UpdateDepartment(department);
-                        InfoMessages.EntityUpdated(department.DepartmentName);
+                        Information.EntityUpdatedMessage(department.DepartmentName);
                         this.Close();
                     }
                 }
@@ -70,13 +70,13 @@ namespace PersonalTracking
 
         private void UpdateDepartment(DepartmentDTO department)
         {
-            departmentBLL.UpdateEntityBLL(department);
+            departmentBLL.UpdateEntityService(department);
             ClearFields();
         }
 
         private void SaveDepartment(DepartmentDTO department)
         {
-            departmentBLL.CreateEntityBLL(department);
+            departmentBLL.CreateEntityService(department);
             ClearFields();
         }
 

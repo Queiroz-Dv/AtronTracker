@@ -239,3 +239,4 @@ project.lock.json
 *PersonalTracking/obj/Debug/PersonalTracking.pdb
 *BLL/obj/Debug/BLL.csprojAssemblyReference.cache
 *PersonalTracking/obj/Debug/PersonalTracking.csprojAssemblyReference.cache
+/BLL/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache

@@ -42,9 +42,8 @@ namespace DAL.DAO
                             PositionId = e.PositionID,
                             isAdmin = e.isAdmin,
                             Salary = e.Salary,
-                            ImagePath = e.ImagePath,
                             Birthday = e.BirthDay,
-                            Adress = e.Adress
+                            Address = e.Address
                         }).OrderBy(x => x.UserNo).ToList();
 
             foreach (var item in list)
@@ -62,8 +61,7 @@ namespace DAL.DAO
                 dto.isAdmin = item.isAdmin;
                 dto.Salary = item.Salary;
                 dto.BirthDay = item.Birthday;
-                dto.Adress = item.Adress;
-                dto.ImagePath = item.ImagePath;
+                dto.Address = item.Address;
                 employeeList.Add(dto);
             }
 
@@ -99,7 +97,7 @@ namespace DAL.DAO
                 emp.Password = employee.Password;
                 emp.isAdmin = employee.isAdmin;
                 emp.BirthDay = employee.BirthDay;
-                emp.Adress = employee.Adress;
+                emp.Address = employee.Address;
                 emp.DepartmentID = employee.DepartmentID;
                 emp.PositionID = employee.PositionID;
                 emp.Salary = employee.Salary;

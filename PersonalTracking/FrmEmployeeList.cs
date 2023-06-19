@@ -10,19 +10,19 @@ using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmEmployeeList : MaterialForm
+    public partial class FrmEmployeeList : Form
     {
         public FrmEmployeeList()
         {
             InitializeComponent();
-            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
-            materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
-            materialSkinManager.ColorScheme = new ColorScheme(
-               Primary.DeepPurple900, Primary.DeepPurple500,
-               Primary.Purple500, Accent.Purple200,
-               TextShade.WHITE
-           );
+           // MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+           // materialSkinManager.AddFormToManage(this);
+           // materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+           // materialSkinManager.ColorScheme = new ColorScheme(
+           //    Primary.DeepPurple900, Primary.DeepPurple500,
+           //    Primary.Purple500, Accent.Purple200,
+           //    TextShade.WHITE
+           //);
         }
 
         private void txtUserNo_KeyPress(object sender, KeyPressEventArgs e)
@@ -147,8 +147,7 @@ namespace PersonalTracking
             detail.Name = dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString();
             detail.Surname = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString();
             detail.Password = dataGridView1.Rows[e.RowIndex].Cells[10].Value.ToString();
-            detail.ImagePath = dataGridView1.Rows[e.RowIndex].Cells[11].Value.ToString();
-            detail.Adress = dataGridView1.Rows[e.RowIndex].Cells[12].Value.ToString();
+            detail.Address = dataGridView1.Rows[e.RowIndex].Cells[12].Value.ToString();
             detail.isAdmin = Convert.ToBoolean(dataGridView1.Rows[e.RowIndex].Cells[9].Value);
             detail.BirthDay = Convert.ToDateTime(dataGridView1.Rows[e.RowIndex].Cells[13].Value);
             detail.UserNo = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[1].Value);

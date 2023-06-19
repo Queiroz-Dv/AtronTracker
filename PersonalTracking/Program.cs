@@ -1,4 +1,8 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using DAL;
+using Microsoft.Extensions.DependencyInjection;
+using SRV;
+using System;
 using System.Windows.Forms;
 
 namespace PersonalTracking
@@ -11,9 +15,21 @@ namespace PersonalTracking
         [STAThread]
         static void Main()
         {
+            // Cria a instância do ServiceCollection a partir do projeto de serviços
+            var services = ServiceContainer.ConfigureServices();
+
+            // Constroí o ServiceProvider partindo do serviceCollection
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Configura a aplicação Win Forms
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmLogin());
+
+            // Obtém uma instância do serviço necessário usando a injeção de dependência
+            var loginService = serviceProvider.GetService<IEmployeeService<EMPLOYEE>>();
+
+            //Executa o form de login passando o serviço
+            Application.Run(new FrmLogin(loginService));
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using BLL;
 using DAL;
 using DAL.DTO;
+using HLP.Entity;
 using MaterialSkin;
 using MaterialSkin.Controls;
-using PersonalTracking.ScreenNotifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,8 @@ namespace PersonalTracking
     public partial class FrmDepartmentList : MaterialForm
     {
         IEnumerable<DEPARTMENT> departments = new List<DEPARTMENT>();
-        public DepartmentDTO departmentDTO = new DepartmentDTO();
+        private DepartmentDTO departmentDTO = new DepartmentDTO();
+        private InformationMessage Information = new InformationMessage();
 
         const bool condition = true;
 
@@ -54,7 +55,7 @@ namespace PersonalTracking
         {
             if (departmentDTO.ID == 0)
             {
-                InfoMessages.InvalidItemSelected();
+                Information.InvalidItemSelectedMessage();
             }
             else
             {
@@ -68,17 +69,17 @@ namespace PersonalTracking
             }
         }
 
-        private void FillDgvDepartment()
-        {
-            var departmentBLL = new DepartmentBLL();
-            departments = departmentBLL.GetAllEntitiesBLL().OrderBy(depart => depart.DepartmentName);
-            dgvDepartment.DataSource = departments;
-        }
+        //private void FillDgvDepartment()
+        //{
+        //    var departmentBLL = new DepartmentBLL();
+        //    departments = departmentBLL.GetAllEntitiesBLL().OrderBy(depart => depart.DepartmentName);
+        //    dgvDepartment.DataSource = departments;
+        //}
 
         private void FrmDepartmentList_Load(object sender, EventArgs e)
         {
             var departmentBLL = new DepartmentBLL();
-            var entities = departmentBLL.GetAllEntitiesBLL().ToList();
+            var entities = departmentBLL.GetAllService().ToList();
             dgvDepartment.DataSource = entities.OrderBy(d => d.DepartmentName).ToList();
             dgvDepartment.Columns[0].Width = 10;
             dgvDepartment.Columns[0].Visible = false;
@@ -94,13 +95,13 @@ namespace PersonalTracking
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = InfoMessages.DeleteEntityQuestion(condition, departmentDTO.DepartmentName);
+            DialogResult result = Information.DeleteEntityQuestionMessage(departmentDTO.DepartmentName);
             if (DialogResult.Yes == result)
             {
                 //DepartmentBLL.DeleteDepartment(detail.ID);
                 var departmentBLL = new DepartmentBLL();
-                departmentBLL.RemoveEntityBLL(departmentDTO);
-                InfoMessages.EntityDeletedWithSuccess(condition, departmentDTO.DepartmentName);
+                departmentBLL.RemoveEntityService(departmentDTO);
+                Information.EntityDeletedWithSuccessMessage(departmentDTO.DepartmentName);
             }
 
             FrmDepartmentList_Load(sender, e);

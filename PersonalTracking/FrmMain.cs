@@ -98,9 +98,9 @@ namespace PersonalTracking
 
         private void btnLogOut_Click(object sender, EventArgs e)
         {
-            FrmLogin frm = new FrmLogin();
-            this.Hide();
-            frm.ShowDialog();
+            //FrmLogin frm = new FrmLogin();
+            //this.Hide();
+            //frm.ShowDialog();
         }
 
         private void FrmMain_FormClosed(object sender, FormClosedEventArgs e)
