@@ -2,7 +2,7 @@
 
 namespace BLL.Interfaces
 {
-    public interface IDepartmentService<T> : IGenericServices<DEPARTMENT> where T : DEPARTMENT
+    public interface IDepartmentService : IGenericServices<DEPARTMENT>
     {
 
     }

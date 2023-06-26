@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 9.25" name="PersonalTrackingDB">
+  <DataContextMoniker Name="/PersonalTrackingDBDataContext" />
+  <nestedChildShapes>
+    <classShape Id="dceb5390-3f6d-4e44-97e2-fb448da2f4cb" absoluteBounds="0.75, 0.75, 2, 1.1939925130208335">
+      <DataClassMoniker Name="/PersonalTrackingDBDataContext/DEPARTMENT" />
+      <nestedChildShapes>
+        <elementListCompartment Id="10ac3d7c-432d-4ff1-8927-aff3d28bfe21" absoluteBounds="0.765, 1.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="23899e45-98e6-4dfd-919b-14772606e955" absoluteBounds="0.75, 2.75, 2, 2.9247054036458326">
+      <DataClassMoniker Name="/PersonalTrackingDBDataContext/EMPLOYEE" />
+      <nestedChildShapes>
+        <elementListCompartment Id="d1f7ff54-c5d6-4820-88cd-a497cddf141c" absoluteBounds="0.765, 3.21, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="b12c05b3-dda9-43e0-aab9-0d711ba67b2b" absoluteBounds="3.75, 0.75, 2, 1.1939925130208335">
+      <DataClassMoniker Name="/PersonalTrackingDBDataContext/MONTH" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f406ba02-2a1a-427a-99b8-512b916fdf15" absoluteBounds="3.765, 1.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7912f1a4-22f1-45df-aeba-0dce96e63823" absoluteBounds="3.75, 2.75, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/PersonalTrackingDBDataContext/PERMISSION" />
+      <nestedChildShapes>
+        <elementListCompartment Id="234e4f7d-67d0-4e68-bf11-5da6b6891e79" absoluteBounds="3.765, 3.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="5eb93ede-db19-4e9f-a24e-6b4e52281e55" absoluteBounds="3.75, 5.75, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/PersonalTrackingDBDataContext/PERMISSIONSTATE" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0e218303-3df0-443a-a18e-a80c51de0ed0" absoluteBounds="3.765, 6.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="e6a485fd-09e4-4c26-965b-83783cbc42d2" absoluteBounds="6.75, 0.75, 2, 1.3862939453125003">
+      <DataClassMoniker Name="/PersonalTrackingDBDataContext/POSITION" />
+      <nestedChildShapes>
+        <elementListCompartment Id="30c21ef3-8a26-4af5-9b08-24aec8b94bf1" absoluteBounds="6.765, 1.21, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="e06b3714-54ef-4e92-8833-6370ae3cc5d8" absoluteBounds="6.75, 3.75, 2, 1.7708968098958327">
+      <DataClassMoniker Name="/PersonalTrackingDBDataContext/SALARY" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ba790ee6-af1b-4e7a-8140-bc9036922398" absoluteBounds="6.765, 4.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="9db685d4-71b8-48bf-af89-d37df6394b9b" absoluteBounds="6.75, 6.75, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/PersonalTrackingDBDataContext/TASK" />
+      <nestedChildShapes>
+        <elementListCompartment Id="445da3e3-325c-4826-8bbb-f4b79e12184d" absoluteBounds="6.765, 7.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="01a48eca-c330-4d95-ae2c-ae6424aa1ddf" absoluteBounds="0.75, 7.75, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/PersonalTrackingDBDataContext/TASKSTATE" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6adb8cf1-a33f-4c61-957c-6447e46a91f7" absoluteBounds="0.765, 8.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

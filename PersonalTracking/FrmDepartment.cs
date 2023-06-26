@@ -1,4 +1,5 @@
 ﻿using BLL;
+using DAL;
 using DAL.DTO;
 using HLP.Entity;
 using MaterialSkin;
@@ -68,15 +69,15 @@ namespace PersonalTracking
             }
         }
 
-        private void UpdateDepartment(DepartmentDTO department)
+        private void UpdateDepartment(object department)
         {
-            departmentBLL.UpdateEntityService(department);
+            departmentBLL.UpdateEntityService(department as DEPARTMENT);
             ClearFields();
         }
 
-        private void SaveDepartment(DepartmentDTO department)
+        private void SaveDepartment(object department)
         {
-            departmentBLL.CreateEntityService(department);
+            departmentBLL.CreateEntityService(department as DEPARTMENT);
             ClearFields();
         }
 

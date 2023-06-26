@@ -257,8 +257,8 @@
       <Project>{864F7E9D-8AF3-4D00-B967-B10EBBA8C6C0}</Project>
       <Name>HLP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SRV\SRV.csproj">
-      <Project>{8e8995aa-091f-49b0-9f34-5c4e4d4b58c7}</Project>
+    <ProjectReference Include="..\SRV\PersonalTracking.Services.csproj">
+      <Project>{1E553EC8-9EC3-4FF7-91EB-05FE167C3221}</Project>
       <Name>SRV</Name>
     </ProjectReference>
   </ItemGroup>
