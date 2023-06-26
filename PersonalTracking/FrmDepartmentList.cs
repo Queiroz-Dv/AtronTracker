@@ -14,7 +14,7 @@ namespace PersonalTracking
     public partial class FrmDepartmentList : MaterialForm
     {
         IEnumerable<DEPARTMENT> departments = new List<DEPARTMENT>();
-        private DepartmentDTO departmentDTO = new DepartmentDTO();
+        private object departmentDTO = new object();
         private InformationMessage Information = new InformationMessage();
 
         const bool condition = true;
@@ -53,7 +53,8 @@ namespace PersonalTracking
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            if (departmentDTO.ID == 0)
+            var department = departmentDTO as DepartmentDTO;
+            if (department.ID == 0)
             {
                 Information.InvalidItemSelectedMessage();
             }
@@ -61,7 +62,7 @@ namespace PersonalTracking
             {
                 FrmDepartment frm = new FrmDepartment();
                 frm.isUpdate = true;
-                frm.department = departmentDTO;
+                frm.department = departmentDTO as DepartmentDTO;
                 Hide();
                 frm.ShowDialog();
                 Visible = true;
@@ -89,19 +90,22 @@ namespace PersonalTracking
 
         private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            departmentDTO.ID = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
-            departmentDTO.DepartmentName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
+            var department = departmentDTO as DepartmentDTO;
+            department.ID = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
+            department.DepartmentName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = Information.DeleteEntityQuestionMessage(departmentDTO.DepartmentName);
+            var department = departmentDTO as DepartmentDTO;
+            DialogResult result = Information.DeleteEntityQuestionMessage(department.DepartmentName);
             if (DialogResult.Yes == result)
             {
                 //DepartmentBLL.DeleteDepartment(detail.ID);
                 var departmentBLL = new DepartmentBLL();
-                departmentBLL.RemoveEntityService(departmentDTO);
-                Information.EntityDeletedWithSuccessMessage(departmentDTO.DepartmentName);
+                var departmentDAL = departmentDTO as DEPARTMENT;
+                departmentBLL.RemoveEntityService(departmentDAL);
+                Information.EntityDeletedWithSuccessMessage(department.DepartmentName);
             }
 
             FrmDepartmentList_Load(sender, e);

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="EmployeeBLL.cs" />
+    <Compile Remove="Interfaces\IEmployeeService.cs" />
+    <Compile Remove="PermissionBLL.cs" />
+    <Compile Remove="PositionBLL.cs" />
+    <Compile Remove="SalaryBLL.cs" />
+    <Compile Remove="Services\EmployeeService.cs" />
+    <Compile Remove="TaskBLL.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PersonalTracking.DAL\PersonalTracking.DAL.csproj" />
+  </ItemGroup>
+
+</Project>

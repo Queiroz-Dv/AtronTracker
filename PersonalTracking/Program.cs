@@ -1,7 +1,7 @@
 ﻿using BLL.Interfaces;
 using DAL;
 using Microsoft.Extensions.DependencyInjection;
-using SRV;
+using PersonalTracking.Services;
 using System;
 using System.Windows.Forms;
 
@@ -16,7 +16,7 @@ namespace PersonalTracking
         static void Main()
         {
             // Cria a instância do ServiceCollection a partir do projeto de serviços
-            var services = ServiceContainer.ConfigureServices();
+            var services = ServiceContainer.AddServices();
 
             // Constroí o ServiceProvider partindo do serviceCollection
             var serviceProvider = services.BuildServiceProvider();

@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace BLL.Services
 {
-    public class DepartmentService : IDepartmentService<DEPARTMENT>
+    public class DepartmentService : IDepartmentService
     {
-        private readonly IDepartmentRepository<DEPARTMENT> _departmentRepository;
+        private readonly IDepartmentRepository _departmentRepository;
         private readonly DEPARTMENT _department;
 
-        public DepartmentService(IDepartmentRepository<DEPARTMENT> departmentRepository)
+        public DepartmentService(IDepartmentRepository departmentRepository)
         {
             _departmentRepository = departmentRepository;
             _department = new DEPARTMENT();

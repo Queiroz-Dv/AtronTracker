@@ -17,13 +17,19 @@ namespace DAL.Repositories
             _employee = new EMPLOYEE();
         }
 
+        protected EmployeeDataClassDataContext GetContext()
+        {
+            var context = _context.GetContext();
+            return context;
+        }
+
         public void CreateEntityRepository(EMPLOYEE entity)
         {
             try
             {
-                var context = _context;
-                context._db.EMPLOYEEs.InsertOnSubmit(entity);
-                context._db.SubmitChanges();
+                var context = GetContext();
+                context.EMPLOYEEs.InsertOnSubmit(entity);
+                context.SubmitChanges();
             }
             catch (Exception ex)
             {
@@ -38,7 +44,7 @@ namespace DAL.Repositories
 
         public EMPLOYEE GetEntityByIdRepository(object id)
         {
-            var context = _context.GetContext();
+            var context = GetContext();
             var user = context.EMPLOYEEs.Where(employee => employee.UserNo.Equals(id)).FirstOrDefault();
             return user;
         }
@@ -55,19 +61,19 @@ namespace DAL.Repositories
 
         public IEnumerable<EMPLOYEE> GetUsers(int user)
         {
-            var context = _context;
-            var userFinded = context._db.EMPLOYEEs.Where(emp => emp.UserNo == user).ToList();
+            var context = GetContext();
+            var userFinded = context.EMPLOYEEs.Where(emp => emp.UserNo == user).ToList();
             return userFinded;
         }
 
         public IEnumerable<EMPLOYEE> GetEmployeesByUserNoAndPassword(int userNumber, string password)
         {
-            var context = _context;
+            var context = GetContext();
 
             try
             {
-                var entities = context._db.EMPLOYEEs.Where(x => x.UserNo == userNumber &&
-                                                                  x.Password == password).ToList();
+                var entities = context.EMPLOYEEs.Where(x => x.UserNo == userNumber &&
+                                                            x.Password == password).ToList();
                 return entities;
             }
             catch (Exception)

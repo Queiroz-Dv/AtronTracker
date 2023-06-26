@@ -5,23 +5,36 @@ using DAL.DAO;
 using DAL.Interfaces;
 using DAL.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using System.Web.Http;
+using Unity;
+using Unity.WebApi;
 
-namespace SRV
+namespace PersonalTracking.Services
 {
     public class ServiceContainer
     {
-        public static IServiceCollection ConfigureServices()
+        public static IServiceCollection AddServices()
         {
             var services = new ServiceCollection();
 
             // Registre os serviços aqui
-            services.AddScoped<IEmployeeRepository<EMPLOYEE>, EmployeeRepository>();
-            services.AddScoped<IEmployeeService<EMPLOYEE>, EmployeeService>();
-            services.AddScoped<IDepartmentRepository<DEPARTMENT>, DepartmentRepository>();
-            services.AddScoped<IPositionRepository<POSITION>, PositionRepository>();
+            //services.AddScoped<IEmployeeRepository<EMPLOYEE>, EmployeeRepository>();
+            //services.AddScoped<IEmployeeService<EMPLOYEE>, EmployeeService>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            //services.AddScoped<IPositionRepository<POSITION>, PositionRepository>();
             services.AddScoped<Context>();
 
             return services;
+        }
+
+        public static void RegisterDependencies()
+        {
+            var container = new UnityContainer();
+            // 
+            container.RegisterType<IDepartmentService, DepartmentService>();
+            container.RegisterType<IDepartmentRepository, DepartmentRepository>();
+
+            GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
     }
 }
