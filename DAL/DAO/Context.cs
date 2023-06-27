@@ -5,7 +5,7 @@ namespace DAL.DAO
 {
     public class Context : EmployeeContext, IDisposable
     {
-        public EmployeeDataClassDataContext _db = new EmployeeDataClassDataContext();
+        private EmployeeDataClassDataContext _db;
 
         public Context()
         {
