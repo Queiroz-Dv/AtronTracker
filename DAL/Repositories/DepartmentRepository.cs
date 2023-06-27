@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace DAL.Repositories
 {
-    public class DepartmentRepository : IDepartmentRepository<DEPARTMENT>
+    public class DepartmentRepository : IDepartmentRepository
     {
         private Context _context = new Context();
         private DEPARTMENT department = new DEPARTMENT();
@@ -21,8 +21,16 @@ namespace DAL.Repositories
         {
         }
 
+        protected EmployeeDataClassDataContext GetContext()
+        {
+            var context = _context.GetContext();
+            return context;
+        }
+
         public void CreateEntityRepository(DEPARTMENT entity)
         {
+            var db = GetContext();
+
             try
             {
                 if (entity == null)
@@ -36,9 +44,8 @@ namespace DAL.Repositories
                     DepartmentName = entity.DepartmentName
                 };
 
-                var context = _context;
-                context._db.DEPARTMENTs.InsertOnSubmit(department);
-                context._db.SubmitChanges();
+                db.DEPARTMENTs.InsertOnSubmit(department);
+                db.SubmitChanges();
             }
             catch (Exception ex)
             {
@@ -56,8 +63,8 @@ namespace DAL.Repositories
         {
             try
             {
-                var context = _context;
-                var entities = context._db.DEPARTMENTs.ToList();
+                var context = GetContext();
+                var entities = context.DEPARTMENTs.ToList();
                 return entities;
 
             }
@@ -74,9 +81,9 @@ namespace DAL.Repositories
         {
             try
             {
-                var context = _context;
+                var context = GetContext();
                 var deparmentId = id as DEPARTMENT;
-                DEPARTMENT entityFind = context._db.DEPARTMENTs.FirstOrDefault(dpt => dpt.ID == deparmentId.ID);
+                DEPARTMENT entityFind = context.DEPARTMENTs.FirstOrDefault(dpt => dpt.ID == deparmentId.ID);
                 return entityFind;
             }
             catch (Exception ex)
@@ -90,10 +97,10 @@ namespace DAL.Repositories
         {
             try
             {
-                var context = _context;
-                var department = context._db.DEPARTMENTs.First(depart => depart.ID == entity.ID);
-                context._db.DEPARTMENTs.DeleteOnSubmit(department);
-                context._db.SubmitChanges();
+                var context = GetContext();
+                var department = context.DEPARTMENTs.First(depart => depart.ID == entity.ID);
+                context.DEPARTMENTs.DeleteOnSubmit(department);
+                context.SubmitChanges();
             }
             catch (Exception)
             {
@@ -105,10 +112,10 @@ namespace DAL.Repositories
         {
             try
             {
-                var context = _context;
-                department = context._db.DEPARTMENTs.First(d => d.ID == entity.ID);
+                var context = GetContext();
+                department = context.DEPARTMENTs.First(d => d.ID == entity.ID);
                 department.DepartmentName = entity.DepartmentName;
-                context._db.SubmitChanges();
+                context.SubmitChanges();
                 return department;
             }
             catch (Exception ex)

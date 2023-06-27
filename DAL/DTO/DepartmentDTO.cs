@@ -1,6 +1,6 @@
 ﻿namespace DAL.DTO
 {
-    public class DepartmentDTO : DEPARTMENT
+    public class DepartmentDTO
     {
         public DepartmentDTO() { }
 
@@ -10,5 +10,8 @@
             ID = departmentId;
             DepartmentName = departmentName;
         }
+
+        public int ID { get; set; }
+        public string DepartmentName { get; set; }
     }
 }

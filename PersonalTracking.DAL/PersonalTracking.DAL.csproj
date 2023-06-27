@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DAO\EmployeeDAO.cs" />
+    <Compile Remove="DAO\PermissionDAO.cs" />
+    <Compile Remove="DAO\PositionDAO.cs" />
+    <Compile Remove="DAO\SalaryDAO.cs" />
+    <Compile Remove="DAO\TaskDAO.cs" />
+    <Compile Remove="DTO\EmployeeDetailDTO.cs" />
+    <Compile Remove="DTO\EmployeeDTO.cs" />
+    <Compile Remove="DTO\PermissionDetailDTO.cs" />
+    <Compile Remove="DTO\PermissionDTO.cs" />
+    <Compile Remove="DTO\PermissionStates.cs" />
+    <Compile Remove="DTO\PositionDTO.cs" />
+    <Compile Remove="DTO\SalaryDetailDTO.cs" />
+    <Compile Remove="DTO\SalaryDTO.cs" />
+    <Compile Remove="DTO\TaskDetailDTO.cs" />
+    <Compile Remove="DTO\TaskDTO.cs" />
+    <Compile Remove="DTO\TaskStates.cs" />
+    <Compile Remove="Interfaces\IEmployeeRepository.cs" />
+    <Compile Remove="Repositories\EmployeeRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Data.Linq">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Data.Linq.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DataAcess\PersonalTrackingDB.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>PersonalTrackingDB.designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{3259aa49-8aa1-44d3-9025-a0b520596a8c}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DataAcess\PersonalTrackingDB.designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PersonalTrackingDB.dbml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

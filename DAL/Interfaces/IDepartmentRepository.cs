@@ -2,7 +2,7 @@
 
 namespace DAL.Interfaces
 {
-    public interface IDepartmentRepository<T> : IGenericRepository<T> where T : DEPARTMENT
+    public interface IDepartmentRepository : IGenericRepository<DEPARTMENT>
     {
     }
 }
