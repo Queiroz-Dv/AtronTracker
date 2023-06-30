@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HLP.Enums;
+using HLP.Interfaces;
+using System;
 using System.Windows.Forms;
 
 namespace HLP.Helpers
@@ -6,18 +8,8 @@ namespace HLP.Helpers
     /// <summary>
     /// Classe abstrata que fornece métodos utilitários para exibir mensagens em caixas de diálogo.
     /// </summary>
-    public abstract class MessageHelper
+    public  class MessageHelper : IMessageHelper
     {
-        /// <summary>
-        /// Enumeração dos níveis de mensagem disponíveis.
-        /// </summary>
-        public enum EnumLevelMessage
-        {
-            Critical,
-            Warning,
-            Information,
-            Question
-        }
 
         /// <summary>
         /// Exibe uma caixa de diálogo com uma mensagem de acordo com as condições fornecidas.
@@ -26,7 +18,7 @@ namespace HLP.Helpers
         /// <param name="buttons">Os botões da caixa de diálogo.</param>
         /// <param name="level">O nível da mensagem.</param>
         /// <returns>O resultado da resposta do usuário (DialogResult).</returns>
-        public static DialogResult ShowMessage(string error, MessageBoxButtons buttons, EnumLevelMessage level)
+        public DialogResult ShowMessage(string error, MessageBoxButtons buttons, EnumLevelMessage level)
         {
             string message = GetLevelMessage(level);
             var icon = GetLevelIcon(level);
@@ -35,7 +27,7 @@ namespace HLP.Helpers
             throw new Exception("Error In Information Message Layer");
         }
 
-        private static MessageBoxIcon GetLevelIcon(EnumLevelMessage level)
+        private  MessageBoxIcon GetLevelIcon(EnumLevelMessage level)
         {
             switch (level)
             {
@@ -48,7 +40,7 @@ namespace HLP.Helpers
             }
         }
 
-        private static string GetLevelMessage(EnumLevelMessage level)
+        private  string GetLevelMessage(EnumLevelMessage level)
         {
             switch (level)
             {
