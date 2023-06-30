@@ -43,11 +43,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entity\InformationMessage.cs" />
+    <Compile Include="Enums\EnumLevelMessage.cs" />
     <Compile Include="Helpers\MessageHelper.cs" />
     <Compile Include="Helpers\ValidateHelper.cs" />
+    <Compile Include="Entity\ValidateModel.cs" />
     <Compile Include="Interfaces\IEntityMessages.cs" />
     <Compile Include="Interfaces\IFieldValidate.cs" />
+    <Compile Include="Interfaces\IMessageHelper.cs" />
+    <Compile Include="Interfaces\IShowMessagesUI.cs" />
     <Compile Include="Interfaces\IValidateHelper.cs" />
+    <Compile Include="Interfaces\IValidateModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

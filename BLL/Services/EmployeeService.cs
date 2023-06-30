@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace BLL.Services
 {
-    public class EmployeeService : IEmployeeService<EMPLOYEE>
+    public class EmployeeService : IEmployeeService
     {
         // Inversão de controle && Injeção de dependência
         private readonly IEmployeeRepository<EMPLOYEE> _employeeRepository;

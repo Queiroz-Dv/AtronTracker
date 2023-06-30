@@ -1,6 +1,4 @@
-﻿using HLP.Entity;
-
-namespace HLP.Interfaces
+﻿namespace HLP.Interfaces
 {
     public interface IValidateHelper
     {

@@ -1,9 +1,8 @@
-﻿using BLL;
-using DAL;
-using DAL.DTO;
+﻿using BLL.Interfaces;
 using HLP.Entity;
-using MaterialSkin;
+using HLP.Interfaces;
 using MaterialSkin.Controls;
+using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,27 +12,18 @@ namespace PersonalTracking
 {
     public partial class FrmDepartmentList : MaterialForm
     {
-        IEnumerable<DEPARTMENT> departments = new List<DEPARTMENT>();
-        private object departmentDTO = new object();
-        private InformationMessage Information = new InformationMessage();
+        private readonly IDepartmentService departmentService;
+        private readonly DepartmentModel departmentModel;
+        private readonly IEntityMessages _information;
+        private List<DepartmentModel> departmentsModelsList;
 
-        const bool condition = true;
-
-        public FrmDepartmentList()
+        public FrmDepartmentList(IDepartmentService service)
         {
             InitializeComponent();
-            ConfigureCollorPallet();
-        }
-
-        public void ConfigureCollorPallet()
-        {
-            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
-            materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
-            materialSkinManager.ColorScheme = new ColorScheme(
-               Primary.DeepPurple900, Primary.DeepPurple500,
-               Primary.Purple500, Accent.Purple200,
-               TextShade.WHITE);
+            _information = new InformationMessage();
+            departmentModel = new DepartmentModel(_information);
+            departmentsModelsList = new List<DepartmentModel>();
+            departmentService = service;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -43,8 +33,7 @@ namespace PersonalTracking
 
         private void btnNew_Click(object sender, EventArgs e)
         {
-            FrmDepartment frm = new FrmDepartment();
-
+            FrmDepartment frm = new FrmDepartment(departmentService);
             this.Hide();
             frm.ShowDialog();
             this.Visible = true;
@@ -53,16 +42,15 @@ namespace PersonalTracking
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            var department = departmentDTO as DepartmentDTO;
-            if (department.ID == 0)
+            if (departmentModel.ID == 0)
             {
-                Information.InvalidItemSelectedMessage();
+                _information.InvalidItemSelectedMessage();
             }
             else
             {
-                FrmDepartment frm = new FrmDepartment();
+                FrmDepartment frm = new FrmDepartment(departmentService);
                 frm.isUpdate = true;
-                frm.department = departmentDTO as DepartmentDTO;
+                frm.department = departmentModel;
                 Hide();
                 frm.ShowDialog();
                 Visible = true;
@@ -70,42 +58,19 @@ namespace PersonalTracking
             }
         }
 
-        //private void FillDgvDepartment()
-        //{
-        //    var departmentBLL = new DepartmentBLL();
-        //    departments = departmentBLL.GetAllEntitiesBLL().OrderBy(depart => depart.DepartmentName);
-        //    dgvDepartment.DataSource = departments;
-        //}
-
         private void FrmDepartmentList_Load(object sender, EventArgs e)
         {
-            var departmentBLL = new DepartmentBLL();
-            var entities = departmentBLL.GetAllService().ToList();
-            dgvDepartment.DataSource = entities.OrderBy(d => d.DepartmentName).ToList();
-            dgvDepartment.Columns[0].Width = 10;
-            dgvDepartment.Columns[0].Visible = false;
-            dgvDepartment.Columns[1].HeaderText = "Department Name";
-
-        }
-
-        private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            var department = departmentDTO as DepartmentDTO;
-            department.ID = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
-            department.DepartmentName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
+            departmentsModelsList = departmentService.GetAllModelService().ToList();
+            dgvDepartment.DataSource = departmentsModelsList.OrderBy(d => d.DepartmentName).ToList();
+            ConfigureColumns();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            var department = departmentDTO as DepartmentDTO;
-            DialogResult result = Information.DeleteEntityQuestionMessage(department.DepartmentName);
+            var result = (DialogResult)_information.DeleteEntityQuestionMessage(departmentModel.DepartmentName);
             if (DialogResult.Yes == result)
             {
-                //DepartmentBLL.DeleteDepartment(detail.ID);
-                var departmentBLL = new DepartmentBLL();
-                var departmentDAL = departmentDTO as DEPARTMENT;
-                departmentBLL.RemoveEntityService(departmentDAL);
-                Information.EntityDeletedWithSuccessMessage(department.DepartmentName);
+                departmentService.RemoveEntityService(departmentModel);
             }
 
             FrmDepartmentList_Load(sender, e);

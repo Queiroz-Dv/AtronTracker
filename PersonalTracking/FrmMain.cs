@@ -1,32 +1,21 @@
 ﻿using BLL;
+using BLL.Interfaces;
 using DAL.DTO;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using MaterialSkin;
 using MaterialSkin.Controls;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
     public partial class FrmMain : MaterialForm
     {
-        public FrmMain()
-        {
+        private readonly IDepartmentService _departmentService;
+
+        public FrmMain(IDepartmentService departmentService)
+        { 
             InitializeComponent();
-            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
-            materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
-            materialSkinManager.ColorScheme = new ColorScheme(
-               Primary.DeepPurple900, Primary.DeepPurple500,
-               Primary.Purple500, Accent.Purple200,
-               TextShade.WHITE
-           );
+            _departmentService = departmentService;
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -36,7 +25,7 @@ namespace PersonalTracking
 
         private void btnEmployee_Click(object sender, EventArgs e)
         {
-           if(!UserStatic.isAdmin)
+            if (!UserStatic.isAdmin)
             {
                 EmployeeDTO dto = EmployeeBLL.GetAll();
                 EmployeeDetailDTO detail = dto.Employees.First(x => x.EmployeeID == UserStatic.EmployeeID);
@@ -47,7 +36,7 @@ namespace PersonalTracking
                 frm.ShowDialog();
                 this.Visible = true;
             }
-           else
+            else
             {
                 FrmEmployeeList frm = new FrmEmployeeList();
                 this.Hide();
@@ -82,7 +71,7 @@ namespace PersonalTracking
 
         private void btnDeparment_Click(object sender, EventArgs e)
         {
-            FrmDepartmentList frm = new FrmDepartmentList();
+            FrmDepartmentList frm = new FrmDepartmentList(_departmentService);
             this.Hide();
             frm.ShowDialog();
             this.Visible = true;
@@ -110,10 +99,10 @@ namespace PersonalTracking
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            if(!UserStatic.isAdmin)
+            if (!UserStatic.isAdmin)
             {
                 btnDeparment.Visible = false;
-                btnPosition.Visible = false; 
+                btnPosition.Visible = false;
                 //btnLogOut.Location=new Point(257, 252);
                 //btnExit.Location=new Point(350, 282);
             }

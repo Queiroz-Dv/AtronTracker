@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using System;
 using System.Windows.Forms;
 
 namespace PersonalTracking
@@ -6,11 +7,12 @@ namespace PersonalTracking
     public partial class FrmDashboard : Form
     {
         private Form currentForm;
+        private IDepartmentService _departmentService;
 
-        public FrmDashboard()
+        public FrmDashboard(IDepartmentService departmentService)
         {
             InitializeComponent();
-
+            _departmentService = departmentService;
             this.Text = string.Empty;
             this.ControlBox = false;
             this.DoubleBuffered = true;
@@ -42,7 +44,7 @@ namespace PersonalTracking
 
         private void btnDepartments_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new FrmDepartmentList());
+            OpenChildForm(new FrmDepartmentList(_departmentService));
         }
 
 

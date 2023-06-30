@@ -1,4 +1,7 @@
-﻿namespace PersonalTracking
+﻿using System;
+using System.Windows.Forms;
+
+namespace PersonalTracking
 {
     partial class FrmDepartmentList
     {
@@ -180,6 +183,20 @@
             this.ResumeLayout(false);
 
         }
+
+        private void ConfigureColumns()
+        {
+            dgvDepartment.Columns[0].Width = 10;
+            dgvDepartment.Columns[0].Visible = false;
+            dgvDepartment.Columns[1].HeaderText = "Department Name";
+        }
+
+        private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            departmentModel.ID = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
+            departmentModel.DepartmentName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
+        }
+
 
         #endregion
 
