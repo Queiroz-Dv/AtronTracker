@@ -13,14 +13,16 @@ namespace PersonalTracking
     public partial class FrmLogin : MaterialForm, IValidateHelper
     {
         private readonly IEntityMessages Information;
-        private readonly IEmployeeService<EMPLOYEE> _employeeService;
+        private readonly IEmployeeService _employeeService;
+        private IDepartmentService _departmentService;
 
-        public FrmLogin(IEmployeeService<EMPLOYEE> employeeService)
+        public FrmLogin(IEmployeeService employeeService, IDepartmentService departmentService)
         {
             InitializeComponent();
             ConfigureCollorPallet();
             Information = new InformationMessage();
             _employeeService = employeeService;
+            _departmentService = departmentService;
         }
 
         private void ConfigureCollorPallet()
@@ -66,7 +68,7 @@ namespace PersonalTracking
                     UserStatic.EmployeeID = employee.ID;
                     UserStatic.UserNo = employee.UserNo;
                     UserStatic.isAdmin = Convert.ToBoolean(employee.isAdmin);
-                    FrmMain frm = new FrmMain();
+                    FrmMain frm = new FrmMain(_departmentService);
                     this.Hide();
                     frm.ShowDialog();
                 }
@@ -100,7 +102,7 @@ namespace PersonalTracking
                         UserStatic.EmployeeID = employee.ID;
                         UserStatic.UserNo = employee.UserNo;
                         UserStatic.isAdmin = Convert.ToBoolean(employee.isAdmin);
-                        FrmMain frm = new FrmMain();
+                        FrmMain frm = new FrmMain(_departmentService);
                         this.Hide();
                         frm.ShowDialog();
                     }

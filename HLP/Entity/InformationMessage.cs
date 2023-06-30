@@ -1,6 +1,7 @@
-﻿using HLP.Interfaces;
+﻿using HLP.Enums;
+using HLP.Helpers;
+using HLP.Interfaces;
 using System.Windows.Forms;
-using static HLP.Helpers.MessageHelper;
 
 namespace HLP.Entity
 {
@@ -9,93 +10,115 @@ namespace HLP.Entity
     /// </summary>
     public class InformationMessage : IEntityMessages
     {
-        public DialogResult DeleteEntityQuestionMessage(string fieldName)
+        IMessageHelper messageHelper;
+
+        public InformationMessage()
         {
-            return ShowMessage($"Are you sure to delete this {fieldName}?",
+            messageHelper = new MessageHelper();
+        }
+
+        public object DeleteEntityQuestionMessage(string fieldName)
+        {
+            var message = messageHelper.ShowMessage($"Are you sure to delete this {fieldName}?",
                                MessageBoxButtons.YesNo,
                                EnumLevelMessage.Question);
+            return message;
         }
 
-        public void EntityCanBeUseMessage(string fieldName)
+        public object EntityCanBeUseMessage(string fieldName)
         {
-            ShowMessage($"This {fieldName} is usable",
+            var message = messageHelper.ShowMessage($"This {fieldName} is usable",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Information);
+
+            return message;
         }
 
-        public void EntityDeletedWithSuccessMessage(string fieldName)
+        public object EntityDeletedWithSuccessMessage(string fieldName)
         {
-            ShowMessage($"{fieldName} was deleted successfully!",
+            var message = messageHelper.ShowMessage($"{fieldName} was deleted successfully!",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Information);
+
+            return message;
         }
 
-        public void EntityInUseMessage(string fieldName)
+        public object EntityInUseMessage(string fieldName)
         {
-            ShowMessage($"This {fieldName} is used by another employee please change it",
-                        MessageBoxButtons.OK,
-                        EnumLevelMessage.Information);
+            var message = messageHelper.ShowMessage($"This {fieldName} is used by another employee please change it",
+                                                    MessageBoxButtons.OK,
+                                                    EnumLevelMessage.Information);
+            return message;
         }
 
         public object EntitySavedWithSuccessMessage(string fieldName)
         {
-            return ShowMessage($"The {fieldName} was saved successfully!",
-                        MessageBoxButtons.OK,
-                        EnumLevelMessage.Information);
+            var message = messageHelper.ShowMessage($"The {fieldName} was saved successfully!",
+                                                    MessageBoxButtons.OK,
+                                                    EnumLevelMessage.Information);
+            return message;
         }
 
-        public void EntityUpdatedMessage(string fieldName)
+        public object EntityUpdatedMessage(string fieldName)
         {
-            ShowMessage($"{fieldName} was deleted successfully!",
-                        MessageBoxButtons.OK,
-                        EnumLevelMessage.Information);
+            var message = messageHelper.ShowMessage($"{fieldName} was deleted successfully!",
+                                                    MessageBoxButtons.OK,
+                                                    EnumLevelMessage.Information);
+            return message;
         }
 
-        public void FieldIsEmptyMessage(object fieldName)
+        public object FieldIsEmptyMessage(object fieldName)
         {
             var fieldConverted = fieldName?.ToString();
-            ShowMessage($"Please fill the {fieldConverted}",
+            var message = messageHelper.ShowMessage($"Please fill the {fieldConverted}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
+
+            return message;
         }
 
-        public void FieldIsEmptyMessage(object fieldName, object secondField)
+        public object FieldIsEmptyMessage(object fieldName, object secondField)
         {
-            var fieldNameLabel =  fieldName as Label;
+            var fieldNameLabel = fieldName as Label;
             var secondFieldLabel = secondField as Label;
 
             var fieldNameConverted = fieldNameLabel.Text;
             var secondFieldConverted = secondFieldLabel.Text;
 
-            ShowMessage($"Please fill the {fieldNameConverted} and {secondFieldConverted}",
+            var message = messageHelper.ShowMessage($"Please fill the {fieldNameConverted} and {secondFieldConverted}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
+
+            return message;
         }
 
-        public void FieldIsEmptyMessage(object fieldName, object secondField, object thirdField)
+        public object FieldIsEmptyMessage(object fieldName, object secondField, object thirdField)
         {
             var fieldNameConverted = fieldName?.ToString();
             var secondConverted = secondField?.ToString();
             var thirdConverted = thirdField?.ToString();
 
-            ShowMessage($"Please fill the {fieldNameConverted}, {secondConverted} and {thirdConverted}",
+            var message = messageHelper.ShowMessage($"Please fill the {fieldNameConverted}, {secondConverted} and {thirdConverted}",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
+
+            return message;
         }
 
-        public void FieldIsEmptyMessage(object fieldName, object secondField, object thirdField, object fourthField)
+        public object FieldIsEmptyMessage(object fieldName, object secondField, object thirdField, object fourthField)
         {
             var fieldNameConverted = fieldName?.ToString();
             var secondConverted = secondField?.ToString();
             var thirdConverted = thirdField?.ToString();
             var fourthFieldConverted = fourthField?.ToString();
 
-            ShowMessage($"Please fill the {fieldNameConverted}, {secondConverted}, {thirdConverted} and {fourthFieldConverted}",
-                        MessageBoxButtons.OK,
-                        EnumLevelMessage.Warning);
+            var message = messageHelper.ShowMessage($"Please fill the {fieldNameConverted}, {secondConverted}, {thirdConverted} and {fourthFieldConverted}",
+                                                    MessageBoxButtons.OK,
+                                                    EnumLevelMessage.Warning);
+            return message;
         }
 
-        public void FieldIsEmptyMessage(object fieldName, object secondField, object thirdField, object fourthField, object fifthField)
+        public object FieldIsEmptyMessage(object fieldName, object secondField, object thirdField, object fourthField, object fifthField)
         {
             var fieldNameConverted = fieldName?.ToString();
             var secondConverted = secondField?.ToString();
@@ -103,28 +126,32 @@ namespace HLP.Entity
             var fourthFieldConverted = fourthField?.ToString();
             var fifthFieldConverted = fifthField?.ToString();
 
-            ShowMessage($"Please fill the {fieldNameConverted}, {secondConverted}, {thirdConverted}, {fourthFieldConverted}, and {fifthFieldConverted}",
-                        MessageBoxButtons.OK,
-                        EnumLevelMessage.Warning);
+            var message = messageHelper.ShowMessage($"Please fill the {fieldNameConverted}, {secondConverted}, {thirdConverted}, {fourthFieldConverted}, and {fifthFieldConverted}",
+                                                    MessageBoxButtons.OK,
+                                                    EnumLevelMessage.Warning);
+            return message;
         }
 
-        public void InvalidItemSelectedMessage()
+        public object InvalidItemSelectedMessage()
         {
-            ShowMessage($"Selected item invalid, try again.",
+            var message = messageHelper.ShowMessage($"Selected item invalid, try again.",
                         MessageBoxButtons.OK,
                         EnumLevelMessage.Warning);
+
+            return message;
         }
 
-        public void InvalidMinimumAmountCharactersMessage(string fieldName)
+        public object InvalidMinimumAmountCharactersMessage(string fieldName)
         {
-            ShowMessage($"The name of {fieldName} is incorrect because the minimum amount of characters is 3.",
-                        MessageBoxButtons.OK,
-                        EnumLevelMessage.Warning);
+            var message = messageHelper.ShowMessage($"The name of {fieldName} is incorrect because the minimum amount of characters is 3.",
+                                                    MessageBoxButtons.OK,
+                                                    EnumLevelMessage.Warning);
+            return message;
         }
 
-        public DialogResult UpdatedEntityQuestionMessage(string fieldName)
+        public object UpdatedEntityQuestionMessage(string fieldName)
         {
-            return ShowMessage($"Are you sure to change the {fieldName}?",
+            return messageHelper.ShowMessage($"Are you sure to change the {fieldName}?",
                                MessageBoxButtons.YesNo,
                                EnumLevelMessage.Question);
         }

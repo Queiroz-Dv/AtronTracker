@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BLL.Interfaces
 {
-    public interface IEmployeeService<T> : IGenericServices<EMPLOYEE> where T : EMPLOYEE
+    public interface IEmployeeService : IGenericServices<EMPLOYEE>
     {
         bool IsUniqueEntity(int entity);
 
