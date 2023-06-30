@@ -1,5 +1,4 @@
-﻿using HLP.Entity;
-using HLP.Interfaces;
+﻿using HLP.Interfaces;
 
 namespace HLP.Helpers
 {
@@ -8,11 +7,6 @@ namespace HLP.Helpers
         public bool FieldValidate(bool condition)
         {
             return condition;
-        }
-
-        public InformationMessage ValidateErrorMessage(IEntityMessages message)
-        {
-            return (InformationMessage)message;
         }
     }
 }

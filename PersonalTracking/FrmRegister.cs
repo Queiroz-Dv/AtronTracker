@@ -23,7 +23,7 @@ namespace PersonalTracking
         /// <summary>
         /// Classe da camada de negócios que realiza as operações e validações da entidade
         /// </summary>
-        private readonly IEmployeeService<EMPLOYEE> employeeBLL;
+        private readonly IEmployeeService employeeBLL;
 
         public FrmRegister()
         {

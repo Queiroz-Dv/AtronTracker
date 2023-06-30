@@ -10,11 +10,12 @@ namespace DAL.Repositories
     public class DepartmentRepository : IDepartmentRepository
     {
         private Context _context = new Context();
-        private DEPARTMENT department = new DEPARTMENT();
+        private DEPARTMENT department;
 
         public DepartmentRepository(Context context)
         {
             _context = context;
+            department =  new DEPARTMENT();
         }
 
         public DepartmentRepository()
@@ -38,11 +39,13 @@ namespace DAL.Repositories
                     throw new ArgumentNullException(nameof(entity), "The deparment does not be null.");
                 }
 
-                var department = new DEPARTMENT()
-                {
-                    ID = entity.ID,
-                    DepartmentName = entity.DepartmentName
-                };
+                //var department = new DEPARTMENT()
+                //{
+                //    ID = entity.ID,
+                //    DepartmentName = entity.DepartmentName
+                //};
+                department.ID = entity.ID;
+                department.DepartmentName = entity.DepartmentName;
 
                 db.DEPARTMENTs.InsertOnSubmit(department);
                 db.SubmitChanges();
@@ -121,6 +124,24 @@ namespace DAL.Repositories
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        public List<DEPARTMENT> GetAllDepartmentEntities()
+        {
+            try
+            {
+                var context = GetContext();
+                var entities = context.DEPARTMENTs.ToList();
+                return entities;
+
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Error" + ex);
+                throw;
+
             }
         }
     }

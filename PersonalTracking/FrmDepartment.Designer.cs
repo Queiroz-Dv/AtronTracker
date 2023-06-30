@@ -1,6 +1,10 @@
-﻿namespace PersonalTracking
+﻿using BLL.Interfaces;
+using HLP.Interfaces;
+using PersonalTracking.Models;
+
+namespace PersonalTracking
 {
-    partial class FrmDepartment
+    partial class FrmDepartment : IValidateHelper
     {
         /// <summary>
         /// Required designer variable.
@@ -110,10 +114,38 @@
 
         }
 
+        public bool FieldValidate(bool condition)
+        {
+            return condition;
+        }
+
+        private bool GetFieldEmptyOrFilled()
+        {
+            var departmentIsEmpty = FieldValidate(string.IsNullOrEmpty(txtDepartment.Text) || 
+                                                  string.IsNullOrWhiteSpace(txtDepartment.Text));
+            return departmentIsEmpty;
+        }
+
+        private bool GetFieldLength()
+        {
+            var departmentAmountCharactersIsValid = FieldValidate(txtDepartment.Text.Length < 3);
+            return departmentAmountCharactersIsValid;
+        }
+
+        private bool GetDepartmentFieldLengthAmount()
+        {
+            var departmentField = FieldValidate(txtDepartment.Text.Length >= 3);
+            return departmentField;
+        }
+
         #endregion
         private MaterialSkin.Controls.MaterialFlatButton btnSave;
         private MaterialSkin.Controls.MaterialFlatButton btnClose;
         private MaterialSkin.Controls.MaterialLabel lblDepartment;
         private System.Windows.Forms.TextBox txtDepartment;
+        private IDepartmentService _departmentService;
+        public DepartmentModel department;
+        public bool isUpdate = false;
+        private readonly IEntityMessages _information;
     }
 }

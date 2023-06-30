@@ -1,5 +1,4 @@
 ﻿using BLL.Interfaces;
-using DAL;
 using Microsoft.Extensions.DependencyInjection;
 using PersonalTracking.Services;
 using System;
@@ -26,10 +25,11 @@ namespace PersonalTracking
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Obtém uma instância do serviço necessário usando a injeção de dependência
-            var loginService = serviceProvider.GetService<IEmployeeService<EMPLOYEE>>();
+            var employeeService = serviceProvider.GetService<IEmployeeService>();
+            var departmentService = serviceProvider.GetService<IDepartmentService>();
 
             //Executa o form de login passando o serviço
-            Application.Run(new FrmLogin(loginService));
+            Application.Run(new FrmLogin(employeeService, departmentService));
         }
     }
 }

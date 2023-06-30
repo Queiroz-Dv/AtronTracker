@@ -1,9 +1,7 @@
-﻿using BLL;
-using DAL;
-using DAL.DTO;
+﻿using BLL.Interfaces;
 using HLP.Entity;
-using MaterialSkin;
 using MaterialSkin.Controls;
+using PersonalTracking.Models;
 using System;
 using System.Windows.Forms;
 
@@ -11,26 +9,12 @@ namespace PersonalTracking
 {
     public partial class FrmDepartment : MaterialForm
     {
-        public bool isUpdate = false;
-        public DepartmentDTO department = new DepartmentDTO();
-        private readonly DepartmentBLL departmentBLL = new DepartmentBLL();
-        public InformationMessage Information = new InformationMessage();
-
-        public FrmDepartment()
+        public FrmDepartment(IDepartmentService departmentService)
         {
             InitializeComponent();
-            ConfigureCollorPallet();
-        }
-
-        public void ConfigureCollorPallet()
-        {
-            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
-            materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
-            materialSkinManager.ColorScheme = new ColorScheme(
-               Primary.DeepPurple900, Primary.DeepPurple500,
-               Primary.Purple500, Accent.Purple200,
-               TextShade.WHITE);
+            _information = new InformationMessage();
+            department = new DepartmentModel(_information);
+            _departmentService = departmentService;
         }
 
         private void btnClose_Click(object sender, EventArgs e) => this.Close();
@@ -38,13 +22,16 @@ namespace PersonalTracking
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (txtDepartment.Text.Trim() == "")
+            var departmentIsEmpty = GetFieldEmptyOrFilled();
+            var departmentAmountCharactersIsValid = GetFieldLength();
+
+            if (departmentIsEmpty)
             {
-                Information.FieldIsEmptyMessage(lblDepartment.Text.ToLower());
+                _information.FieldIsEmptyMessage(lblDepartment.Text.ToLower());
             }
-            else if (txtDepartment.Text.Trim().Length < 3)
+            else if (departmentAmountCharactersIsValid)
             {
-                Information.InvalidMinimumAmountCharactersMessage(lblDepartment.Text.ToLower());
+                _information.InvalidMinimumAmountCharactersMessage(lblDepartment.Text.ToLower());
             }
             else
             {
@@ -52,32 +39,29 @@ namespace PersonalTracking
                 {
                     department.DepartmentName = txtDepartment.Text;
                     SaveDepartment(department);
-                    Information.EntitySavedWithSuccessMessage(department.DepartmentName);
                 }
                 else
                 {
-                    // TODO: Obter a entidade do datagridview selecionado
-                    DialogResult result = Information.UpdatedEntityQuestionMessage(txtDepartment.Text);
+                    var result = (DialogResult)_information.UpdatedEntityQuestionMessage(txtDepartment.Text);
                     if (DialogResult.Yes == result)
                     {
                         department.DepartmentName = txtDepartment.Text;
                         UpdateDepartment(department);
-                        Information.EntityUpdatedMessage(department.DepartmentName);
                         this.Close();
                     }
                 }
             }
         }
 
-        private void UpdateDepartment(object department)
+        private void UpdateDepartment(DepartmentModel department)
         {
-            departmentBLL.UpdateEntityService(department as DEPARTMENT);
+            _departmentService.UpdateEntityService(department);
             ClearFields();
         }
 
-        private void SaveDepartment(object department)
+        private void SaveDepartment(DepartmentModel department)
         {
-            departmentBLL.CreateEntityService(department as DEPARTMENT);
+            _departmentService.CreateEntityService(department);
             ClearFields();
         }
 
@@ -98,7 +82,9 @@ namespace PersonalTracking
 
         private void txtDepartment_TextChanged(object sender, EventArgs e)
         {
-            if (txtDepartment.Text.Length >= 3)
+            var departmentVerification = GetDepartmentFieldLengthAmount();
+
+            if (departmentVerification)
             {
                 btnSave.Enabled = true;
             }
