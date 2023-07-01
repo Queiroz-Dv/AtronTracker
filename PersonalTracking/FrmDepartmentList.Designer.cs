@@ -193,8 +193,8 @@ namespace PersonalTracking
 
         private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            departmentModel.ID = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
-            departmentModel.DepartmentName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
+            departmentModel.DepartmentModelId = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
+            departmentModel.DepartmentModelName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using DAL.DAO;
 using DAL.Interfaces;
+using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,10 @@ namespace DAL.Repositories
         public DepartmentRepository(Context context)
         {
             _context = context;
-            department =  new DEPARTMENT();
+            department = new DEPARTMENT();
         }
 
-        public DepartmentRepository()
-        {
-        }
+        public DepartmentRepository() { }
 
         protected EmployeeDataClassDataContext GetContext()
         {
@@ -28,7 +27,7 @@ namespace DAL.Repositories
             return context;
         }
 
-        public void CreateEntityRepository(DEPARTMENT entity)
+        public void CreateEntityRepository(DepartmentModel entity)
         {
             var db = GetContext();
 
@@ -44,8 +43,8 @@ namespace DAL.Repositories
                 //    ID = entity.ID,
                 //    DepartmentName = entity.DepartmentName
                 //};
-                department.ID = entity.ID;
-                department.DepartmentName = entity.DepartmentName;
+                department.ID = entity.DepartmentModelId;
+                department.DepartmentName = entity.DepartmentModelName;
 
                 db.DEPARTMENTs.InsertOnSubmit(department);
                 db.SubmitChanges();
@@ -57,18 +56,19 @@ namespace DAL.Repositories
             }
         }
 
-        public bool ExistsDepartment(DEPARTMENT model)
+        public bool ExistsDepartment(DepartmentModel model)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DEPARTMENT> GetAllEntitiesRepository()
+        public IEnumerable<DepartmentModel> GetAllEntitiesRepository()
         {
             try
             {
+                // TODO: Converter os objetos 
                 var context = GetContext();
                 var entities = context.DEPARTMENTs.ToList();
-                return entities;
+                return entities as DepartmentModel;
 
             }
             catch (Exception ex)
@@ -80,10 +80,11 @@ namespace DAL.Repositories
             }
         }
 
-        public DEPARTMENT GetEntityByIdRepository(object id)
+        public DepartmentModel GetEntityByIdRepository(object id)
         {
             try
             {
+                // TODO: Verificar e fazer a conversão
                 var context = GetContext();
                 var deparmentId = id as DEPARTMENT;
                 DEPARTMENT entityFind = context.DEPARTMENTs.FirstOrDefault(dpt => dpt.ID == deparmentId.ID);
@@ -96,10 +97,11 @@ namespace DAL.Repositories
             }
         }
 
-        public void RemoveEntityRepository(DEPARTMENT entity)
+        public void RemoveEntityRepository(DepartmentModel entity)
         {
             try
             {
+                // Verificar e converter 
                 var context = GetContext();
                 var department = context.DEPARTMENTs.First(depart => depart.ID == entity.ID);
                 context.DEPARTMENTs.DeleteOnSubmit(department);
@@ -111,10 +113,11 @@ namespace DAL.Repositories
             }
         }
 
-        public DEPARTMENT UpdateEntityRepository(DEPARTMENT entity)
+        public DepartmentModel UpdateEntityRepository(DepartmentModel entity)
         {
             try
             {
+                // TODO: Converter nesse ponto também
                 var context = GetContext();
                 department = context.DEPARTMENTs.First(d => d.ID == entity.ID);
                 department.DepartmentName = entity.DepartmentName;
@@ -127,10 +130,11 @@ namespace DAL.Repositories
             }
         }
 
-        public List<DEPARTMENT> GetAllDepartmentEntities()
+        public List<DepartmentModel> GetAllDepartmentEntities()
         {
             try
             {
+                // TODO: Converter 
                 var context = GetContext();
                 var entities = context.DEPARTMENTs.ToList();
                 return entities;

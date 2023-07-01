@@ -37,7 +37,7 @@ namespace PersonalTracking
             {
                 if (!isUpdate)
                 {
-                    department.DepartmentName = txtDepartment.Text;
+                    department.DepartmentModelName = txtDepartment.Text;
                     SaveDepartment(department);
                 }
                 else
@@ -45,7 +45,7 @@ namespace PersonalTracking
                     var result = (DialogResult)_information.UpdatedEntityQuestionMessage(txtDepartment.Text);
                     if (DialogResult.Yes == result)
                     {
-                        department.DepartmentName = txtDepartment.Text;
+                        department.DepartmentModelName = txtDepartment.Text;
                         UpdateDepartment(department);
                         this.Close();
                     }
@@ -69,7 +69,7 @@ namespace PersonalTracking
         {
             if (isUpdate)
             {
-                txtDepartment.Text = department.DepartmentName;
+                txtDepartment.Text = department.DepartmentModelName;
                 btnSave.Enabled = true;
             }
             else

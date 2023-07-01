@@ -1,5 +1,4 @@
-﻿using DAL;
-using HLP.Entity;
+﻿using HLP.Entity;
 using HLP.Interfaces;
 
 namespace PersonalTracking.Models
@@ -8,16 +7,16 @@ namespace PersonalTracking.Models
     {
         private readonly IEntityMessages messageHelper;
 
-        public int ID { get; set; }
+        public int DepartmentModelId { get; set; }
 
-        public string DepartmentName { get; set; }
+        public string DepartmentModelName { get; set; }
 
         public DepartmentModel(IEntityMessages messageHelper)
         {
             this.messageHelper = messageHelper;
         }
 
-        protected DepartmentModel()
+        public DepartmentModel()
         {
 
         }
@@ -26,19 +25,19 @@ namespace PersonalTracking.Models
         {
             Errors.Clear();
 
-            var departmentNameIsEmpty = FieldValidate(string.IsNullOrEmpty(DepartmentName));
-            var departmentNameCharactersIsValid = FieldValidate(DepartmentName.Length < 3);
+            var departmentNameIsEmpty = FieldValidate(string.IsNullOrEmpty(DepartmentModelName));
+            var departmentNameCharactersIsValid = FieldValidate(DepartmentModelName.Length < 3);
 
             if (departmentNameIsEmpty)
             {
-                var errorMessage = messageHelper.FieldIsEmptyMessage(nameof(DepartmentName));
+                var errorMessage = messageHelper.FieldIsEmptyMessage(nameof(DepartmentModelName));
 
                 Errors.Add(errorMessage);
             }
 
             if (departmentNameCharactersIsValid)
             {
-                var errorMessage = messageHelper.InvalidMinimumAmountCharactersMessage(nameof(DepartmentName));
+                var errorMessage = messageHelper.InvalidMinimumAmountCharactersMessage(nameof(DepartmentModelName));
                 Errors.Add(errorMessage);
             }
         }
@@ -46,16 +45,6 @@ namespace PersonalTracking.Models
         public void ShowMessageBoxErrors()
         {
             ShowMessageBoxUI();
-        }
-
-        public static DepartmentModel FromDepartmentEntity(DEPARTMENT departmentDAL)
-        {
-            DepartmentModel departmentModel = new DepartmentModel
-            {
-                ID = departmentDAL.ID,
-                DepartmentName = departmentDAL.DepartmentName
-            };
-            return departmentModel;
         }
     }
 }
