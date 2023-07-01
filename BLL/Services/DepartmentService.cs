@@ -14,99 +14,106 @@ namespace BLL.Services
         //171920
         private readonly IDepartmentRepository _departmentRepository;
         private readonly IEntityMessages entityMessages;
-        private readonly DEPARTMENT _department;
-        private  DepartmentModel departmentModel;
+        private DepartmentModel departmentModel;
+        private List<DepartmentModel> departmentModels;
 
         public DepartmentService(IDepartmentRepository departmentRepository)
         {
             _departmentRepository = departmentRepository;
             entityMessages = new InformationMessage();
-            _department = new DEPARTMENT();
             departmentModel = new DepartmentModel(entityMessages);
+            departmentModels = new List<DepartmentModel>();
         }
 
         public DepartmentModel CreateEntityService(DepartmentModel entity)
         {
-            var _departmentEntity = SetDepartmentEntity(entity);
-            var departmentModelSetter = SetDepartmentModel(_departmentEntity);
+            var departmentModel = SetDepartmentModel(entity);
 
-            departmentModelSetter.Validate();
-            if (!departmentModelSetter.IsValidModel)
+            departmentModel.Validate();
+            if (!departmentModel.IsValidModel)
             {
-                foreach (DepartmentModel item in departmentModelSetter.Errors)
+                foreach (DepartmentModel item in departmentModel.Errors)
                 {
                     item.ShowMessageBoxErrors();
                 }
             }
             else
             {
-                _departmentRepository.CreateEntityRepository(_departmentEntity);
-                entityMessages.EntitySavedWithSuccessMessage(_departmentEntity.DepartmentName);
-                return _department;
+                _departmentRepository.CreateEntityRepository(departmentModel);
+                entityMessages.EntitySavedWithSuccessMessage(departmentModel.DepartmentModelName);
+                return departmentModel;
             }
-
-            return entity;
-        }
-
-        private DepartmentModel SetDepartmentModel(DEPARTMENT _entity)
-        {
-            departmentModel.ID = _entity.ID;
-            departmentModel.DepartmentName = _entity.DepartmentName;
 
             return departmentModel;
         }
 
-        public IEnumerable<object> GetAllService()
+        private DepartmentModel SetDepartmentModel(DepartmentModel _entity)
+        {
+            departmentModel.DepartmentModelId = _entity.DepartmentModelId;
+            departmentModel.DepartmentModelName = _entity.DepartmentModelName;
+
+            return departmentModel;
+        }
+
+        private DepartmentModel ConvertDepartmentDalToDepartmentModel(object _entity)
+        {
+            departmentModel.DepartmentModelId = _entity.ID;
+            departmentModel.DepartmentModelName = _entity.DepartmentName;
+
+            return departmentModel;
+        }
+
+        public IEnumerable<DepartmentModel> GetAllService()
         {
             var departments = _departmentRepository.GetAllEntitiesRepository();
-            IEnumerable<DepartmentModel> departmentConverted = departments.Select(depart => DepartmentModel.FromDepartmentEntity(depart));
+            List<DepartmentModel> departmentConverted = ConvertObjectHelper.ConvertList(departments, departmentModels);
             return departmentConverted;
         }
 
         public List<DepartmentModel> GetAllModelService()
         {
             var departments = _departmentRepository.GetAllDepartmentEntities();
-            List<DepartmentModel> departmentConverted = new List<DepartmentModel>();
 
-            foreach (var item in departments)
+            var departmentsConverted = ConvertObjectHelper.ConvertList(departments, entitiesConverted => ConvertDepartmentDalToDepartmentModel(entitiesConverted));
+
+            if (departmentsConverted is List<DepartmentModel>)
             {
-                var models = DepartmentModel.FromDepartmentEntity(item);
-                departmentConverted.Add(models);
-            }
 
-            return departmentConverted;
+            }
+            //var departments = _departmentRepository.GetAllDepartmentEntities();
+            //List<DepartmentModel> departmentConverted = new List<DepartmentModel>();
+
+            //foreach (var item in departments)
+            //{
+            //    var models = DepartmentModel.FromDepartmentEntity(item);
+            //    departmentConverted.Add(models);
+            //}
+
+            //return departmentConverted;
         }
 
-        public object GetEntityByIdService(object id)
+        public DepartmentModel GetEntityByIdService(object id)
         {
             var entity = _departmentRepository.GetEntityByIdRepository(id);
             return entity;
         }
 
-        public void RemoveEntityService(object entity)
+        public void RemoveEntityService(DepartmentModel model)
         {
-            var _entity = SetDepartmentEntity(entity);
+            var _entity = SetDepartmentModel(model);
 
             _departmentRepository.RemoveEntityRepository(_entity);
 
-            entityMessages.EntityDeletedWithSuccessMessage(_department.DepartmentName);
+            entityMessages.EntityDeletedWithSuccessMessage(_entity.DepartmentModelName);
         }
 
-        private DEPARTMENT SetDepartmentEntity(object entity)
+        public DepartmentModel UpdateEntityService(DepartmentModel entity)
         {
-            var _entity = entity as DepartmentModel;
-            _department.ID = _entity.ID;
-            _department.DepartmentName = _entity.DepartmentName;
-            return _department;
-        }
-
-        public object UpdateEntityService(object entity)
-        {
-            var departmentEntity = SetDepartmentEntity(entity);
+            var departmentEntity = SetDepartmentModel(entity);
 
             _departmentRepository.UpdateEntityRepository(departmentEntity);
-            entityMessages.EntityUpdatedMessage(departmentEntity.DepartmentName);
-            return entity as DepartmentModel;
+            entityMessages.EntityUpdatedMessage(departmentEntity.DepartmentModelName);
+            return entity;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace PersonalTracking
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            if (departmentModel.ID == 0)
+            if (departmentModel.DepartmentModelId == 0)
             {
                 _information.InvalidItemSelectedMessage();
             }
@@ -61,13 +61,13 @@ namespace PersonalTracking
         private void FrmDepartmentList_Load(object sender, EventArgs e)
         {
             departmentsModelsList = departmentService.GetAllModelService().ToList();
-            dgvDepartment.DataSource = departmentsModelsList.OrderBy(d => d.DepartmentName).ToList();
+            dgvDepartment.DataSource = departmentsModelsList.OrderBy(d => d.DepartmentModelName).ToList();
             ConfigureColumns();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            var result = (DialogResult)_information.DeleteEntityQuestionMessage(departmentModel.DepartmentName);
+            var result = (DialogResult)_information.DeleteEntityQuestionMessage(departmentModel.DepartmentModelName);
             if (DialogResult.Yes == result)
             {
                 departmentService.RemoveEntityService(departmentModel);

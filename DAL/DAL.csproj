@@ -109,6 +109,15 @@
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\HLP\HLP.csproj">
+      <Project>{864F7E9D-8AF3-4D00-B967-B10EBBA8C6C0}</Project>
+      <Name>HLP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PersonalTracking.Models\PersonalTracking.Models.csproj">
+      <Project>{0A8A48B0-A2CA-412B-922F-B697F5FBDC0A}</Project>
+      <Name>PersonalTracking.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
