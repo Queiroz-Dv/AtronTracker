@@ -16,10 +16,7 @@ namespace PersonalTracking.Models
             this.messageHelper = messageHelper;
         }
 
-        public DepartmentModel()
-        {
-
-        }
+        public DepartmentModel() { }
 
         public override void Validate()
         {

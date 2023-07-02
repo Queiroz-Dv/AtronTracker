@@ -6,6 +6,6 @@ namespace DAL.Interfaces
 {
     public interface IDepartmentRepository : IGenericRepository<DepartmentModel>
     {
-        List<DEPARTMENT> GetAllDepartmentEntities();
+        List<DepartmentModel> GetAllDepartmentEntities();
     }
 }

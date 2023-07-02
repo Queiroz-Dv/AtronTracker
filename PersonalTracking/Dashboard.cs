@@ -1,4 +1,6 @@
 ﻿using BLL.Interfaces;
+using HLP.Entity;
+using HLP.Interfaces;
 using System;
 using System.Windows.Forms;
 
@@ -8,11 +10,13 @@ namespace PersonalTracking
     {
         private Form currentForm;
         private IDepartmentService _departmentService;
+        private IEntityMessages entityMessages;
 
         public FrmDashboard(IDepartmentService departmentService)
         {
             InitializeComponent();
             _departmentService = departmentService;
+            entityMessages = new InformationMessage();
             this.Text = string.Empty;
             this.ControlBox = false;
             this.DoubleBuffered = true;
@@ -44,7 +48,7 @@ namespace PersonalTracking
 
         private void btnDepartments_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new FrmDepartmentList(_departmentService));
+            OpenChildForm(new FrmDepartmentList(_departmentService, entityMessages));
         }
 
 

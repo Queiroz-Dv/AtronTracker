@@ -4,6 +4,8 @@ using DAL;
 using DAL.DAO;
 using DAL.Interfaces;
 using DAL.Repositories;
+using HLP.Entity;
+using HLP.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Web.Http;
 using Unity;
@@ -13,14 +15,15 @@ namespace PersonalTracking.Services
 {
     public class ServiceContainer
     {
-        public static IServiceCollection AddServices()
+        public static IServiceCollection AddDesktopServices()
         {
             var services = new ServiceCollection();
 
-            // Registre os serviços aqui
+            // Registre os serviços desktop aqui
             services.AddScoped<IEmployeeRepository<EMPLOYEE>, EmployeeRepository>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IEntityMessages, InformationMessage>();
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IPositionRepository<POSITION>, PositionRepository>();
             services.AddScoped<Context>();
@@ -28,12 +31,13 @@ namespace PersonalTracking.Services
             return services;
         }
 
-        public static void RegisterDependencies()
+        public static void AddWebServices()
         {
             var container = new UnityContainer();
-            // 
+            // Registra os serviços web aqui
             container.RegisterType<IDepartmentService, DepartmentService>();
             container.RegisterType<IDepartmentRepository, DepartmentRepository>();
+            container.RegisterType<IEntityMessages, InformationMessage>();
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
