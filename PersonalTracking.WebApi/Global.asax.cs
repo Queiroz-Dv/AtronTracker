@@ -15,7 +15,7 @@ namespace PersonalTracking.WebApi
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            ServiceContainer.RegisterDependencies();
+            ServiceContainer.AddWebServices();
         }
     }
 }

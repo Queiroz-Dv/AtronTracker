@@ -90,6 +90,10 @@
       <Project>{d70d5b1b-a80a-4ce2-b750-18da9accccc1}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HLP\HLP.csproj">
+      <Project>{864F7E9D-8AF3-4D00-B967-B10EBBA8C6C0}</Project>
+      <Name>HLP</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -74,6 +74,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EmployeeDataClass.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Factory\DepartmentFactory.cs" />
     <Compile Include="Generics\IEntity.cs" />
     <Compile Include="Generics\IGenericRepository.cs" />
     <Compile Include="Interfaces\IDepartmentRepository.cs" />
@@ -85,6 +86,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Factory\ContextBase.cs" />
     <Compile Include="Repositories\DepartmentRepository.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
@@ -119,5 +121,6 @@
       <Name>PersonalTracking.Models</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

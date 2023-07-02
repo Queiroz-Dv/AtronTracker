@@ -273,6 +273,10 @@
       <Project>{d70d5b1b-a80a-4ce2-b750-18da9accccc1}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PersonalTracking.Models\PersonalTracking.Models.csproj">
+      <Project>{0A8A48B0-A2CA-412B-922F-B697F5FBDC0A}</Project>
+      <Name>PersonalTracking.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PersonalTracking.Services\PersonalTracking.Services.csproj">
       <Project>{1E553EC8-9EC3-4FF7-91EB-05FE167C3221}</Project>
       <Name>PersonalTracking.Services</Name>

@@ -1,6 +1,8 @@
 ﻿using BLL;
 using BLL.Interfaces;
 using DAL.DTO;
+using HLP.Entity;
+using HLP.Interfaces;
 using MaterialSkin.Controls;
 using System;
 using System.Linq;
@@ -10,12 +12,15 @@ namespace PersonalTracking
 {
     public partial class FrmMain : MaterialForm
     {
+        //171920
         private readonly IDepartmentService _departmentService;
+        private readonly IEntityMessages entityMessages;
 
         public FrmMain(IDepartmentService departmentService)
-        { 
+        {
             InitializeComponent();
             _departmentService = departmentService;
+            entityMessages = new InformationMessage();
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -71,7 +76,7 @@ namespace PersonalTracking
 
         private void btnDeparment_Click(object sender, EventArgs e)
         {
-            FrmDepartmentList frm = new FrmDepartmentList(_departmentService);
+            FrmDepartmentList frm = new FrmDepartmentList(_departmentService, entityMessages);
             this.Hide();
             frm.ShowDialog();
             this.Visible = true;
