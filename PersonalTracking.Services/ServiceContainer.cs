@@ -7,9 +7,6 @@ using DAL.Repositories;
 using HLP.Entity;
 using HLP.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using System.Web.Http;
-using Unity;
-using Unity.WebApi;
 
 namespace PersonalTracking.Services
 {
@@ -29,17 +26,6 @@ namespace PersonalTracking.Services
             services.AddScoped<Context>();
 
             return services;
-        }
-
-        public static void AddWebServices()
-        {
-            var container = new UnityContainer();
-            // Registra os serviços web aqui
-            container.RegisterType<IDepartmentService, DepartmentService>();
-            container.RegisterType<IDepartmentRepository, DepartmentRepository>();
-            container.RegisterType<IEntityMessages, InformationMessage>();
-
-            GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
     }
 }

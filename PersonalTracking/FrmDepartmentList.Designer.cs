@@ -1,4 +1,8 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using HLP.Interfaces;
+using PersonalTracking.Models;
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace PersonalTracking
@@ -183,7 +187,6 @@ namespace PersonalTracking
             departmentModel.DepartmentModelName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
         }
 
-
         #endregion
 
         private System.Windows.Forms.DataGridView dgvDepartment;
@@ -192,5 +195,9 @@ namespace PersonalTracking
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnNew;
+        private IEntityMessages _information;
+        private List<DepartmentModel> departmentsModelsList; // Lista de modelos de departamento
+        private readonly DepartmentModel departmentModel; // Modelo do departamento atualmente selecionado
+        private readonly IDepartmentService departmentService;  // Serviço responsável pelas operações relacionadas a departamento
     }
 }

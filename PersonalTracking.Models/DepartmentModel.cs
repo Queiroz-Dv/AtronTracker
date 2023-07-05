@@ -1,47 +1,14 @@
-﻿using HLP.Entity;
-using HLP.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PersonalTracking.Models
 {
-    public class DepartmentModel : ValidateModel
+    public class DepartmentModel
     {
-        private readonly IEntityMessages messageHelper;
-
         public int DepartmentModelId { get; set; }
 
+        [Required(ErrorMessage = "The department field is required")]
+        [MinLength(3)]
+        [MaxLength(50)]
         public string DepartmentModelName { get; set; }
-
-        public DepartmentModel(IEntityMessages messageHelper)
-        {
-            this.messageHelper = messageHelper;
-        }
-
-        public DepartmentModel() { }
-
-        public override void Validate()
-        {
-            Errors.Clear();
-
-            var departmentNameIsEmpty = FieldValidate(string.IsNullOrEmpty(DepartmentModelName));
-            var departmentNameCharactersIsValid = FieldValidate(DepartmentModelName.Length < 3);
-
-            if (departmentNameIsEmpty)
-            {
-                var errorMessage = messageHelper.FieldIsEmptyMessage(nameof(DepartmentModelName));
-
-                Errors.Add(errorMessage);
-            }
-
-            if (departmentNameCharactersIsValid)
-            {
-                var errorMessage = messageHelper.InvalidMinimumAmountCharactersMessage(nameof(DepartmentModelName));
-                Errors.Add(errorMessage);
-            }
-        }
-
-        public void ShowMessageBoxErrors()
-        {
-            ShowMessageBoxUI();
-        }
     }
 }

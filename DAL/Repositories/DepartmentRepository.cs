@@ -1,7 +1,6 @@
 ﻿using DAL.DAO;
 using DAL.Factory;
 using DAL.Interfaces;
-using HLP.Entity;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
@@ -64,8 +63,7 @@ namespace DAL.Repositories
             {
 
                 var context = GetContext(); // Obtém o contexto do banco de dados
-                var departmentId = id as DepartmentModel; // Obtém o ID do departamento a partir do parâmetro
-                var departmentEntity = context.DEPARTMENTs.FirstOrDefault(dpt => dpt.ID.Equals(departmentId.DepartmentModelId)); // Obtém a entidade de departamento pelo ID
+                var departmentEntity = context.DEPARTMENTs.FirstOrDefault(dpt => dpt.ID.Equals(id)); // Obtém a entidade de departamento pelo ID
 
                 // Converte a entidade em um modelo de departamento
                 var departmentModel = convertObject.ConvertObject(departmentEntity, departmentObject => CreateDepartmentModel(departmentEntity));

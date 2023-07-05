@@ -10,16 +10,11 @@ namespace PersonalTracking
 {
     public partial class FrmDepartmentList : Form
     {
-        private List<DepartmentModel> departmentsModelsList; // Lista de modelos de departamento
-        private readonly DepartmentModel departmentModel; // Modelo do departamento atualmente selecionado
-        private readonly IDepartmentService departmentService;  // Serviço responsável pelas operações relacionadas a departamento
-        private readonly IEntityMessages _information; // Interface para exibição de mensagens
-
         public FrmDepartmentList(IDepartmentService service, IEntityMessages entityMessages)
         {
             InitializeComponent();
             _information = entityMessages; // Inicializa o objeto de mensagens com a implementação fornecida da interface IEntityMessages
-            departmentModel = new DepartmentModel(_information); // Inicializa o modelo de departamento
+            departmentModel = new DepartmentModel(); // Inicializa o modelo de departamento
             departmentsModelsList = new List<DepartmentModel>(); // Inicializa a lista de modelos de departamento
             departmentService = service; // Injeta o serviço de departamento na classe
         }
@@ -31,7 +26,7 @@ namespace PersonalTracking
 
         private void btnNew_Click(object sender, EventArgs e)
         {
-            FrmDepartment frm = new FrmDepartment(departmentService); // Cria uma instância do formulário de departamento
+            FrmDepartment frm = new FrmDepartment(departmentService, _information); // Cria uma instância do formulário de departamento
             this.Hide(); // Oculta o formulário atual
             frm.ShowDialog(); // Exibe o formulário de departamento para criar um novo departamento
             this.Visible = true; // Torna o formulário atual visível novamente
@@ -46,7 +41,7 @@ namespace PersonalTracking
             }
             else
             {
-                FrmDepartment frm = new FrmDepartment(departmentService); // Cria uma instância do formulário de departamento
+                FrmDepartment frm = new FrmDepartment(departmentService, _information); // Cria uma instância do formulário de departamento
                 frm.isUpdate = true; // Define a propriedade isUpdate como true para indicar que é uma atualização
                 frm.department = departmentModel; // Define o departamento a ser atualizado
                 Hide(); // Oculta o formulário atual
@@ -70,8 +65,8 @@ namespace PersonalTracking
             if (DialogResult.Yes == result)
             {
                 departmentService.RemoveEntityService(departmentModel); // Remove o departamento através do serviço
+                _information.EntityDeletedWithSuccessMessage(departmentModel.DepartmentModelName);
             }
-
             FrmDepartmentList_Load(sender, e); // Recarrega a lista de departamentos
         }
     }
