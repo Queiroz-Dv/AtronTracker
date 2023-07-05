@@ -1,5 +1,5 @@
 ﻿using BLL.Interfaces;
-using HLP.Entity;
+using HLP.Interfaces;
 using MaterialSkin.Controls;
 using PersonalTracking.Models;
 using System;
@@ -9,11 +9,11 @@ namespace PersonalTracking
 {
     public partial class FrmDepartment : MaterialForm
     {
-        public FrmDepartment(IDepartmentService departmentService)
+        public FrmDepartment(IDepartmentService departmentService, IEntityMessages message)
         {
             InitializeComponent();
-            _information = new InformationMessage();
-            department = new DepartmentModel(_information);
+            _information = message;
+            department = new DepartmentModel();
             _departmentService = departmentService;
         }
 
@@ -24,6 +24,7 @@ namespace PersonalTracking
         {
             var departmentIsEmpty = GetFieldEmptyOrFilled();
             var departmentAmountCharactersIsValid = GetFieldLength();
+            department.DepartmentModelName = txtDepartment.Text;
 
             if (departmentIsEmpty)
             {
@@ -37,7 +38,6 @@ namespace PersonalTracking
             {
                 if (!isUpdate)
                 {
-                    department.DepartmentModelName = txtDepartment.Text;
                     SaveDepartment(department);
                 }
                 else
@@ -45,24 +45,11 @@ namespace PersonalTracking
                     var result = (DialogResult)_information.UpdatedEntityQuestionMessage(txtDepartment.Text);
                     if (DialogResult.Yes == result)
                     {
-                        department.DepartmentModelName = txtDepartment.Text;
                         UpdateDepartment(department);
                         this.Close();
                     }
                 }
             }
-        }
-
-        private void UpdateDepartment(DepartmentModel department)
-        {
-            _departmentService.UpdateEntityService(department);
-            ClearFields();
-        }
-
-        private void SaveDepartment(DepartmentModel department)
-        {
-            _departmentService.CreateEntityService(department);
-            ClearFields();
         }
 
         private void FrmDepartment_Load(object sender, EventArgs e)

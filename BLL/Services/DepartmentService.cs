@@ -1,6 +1,5 @@
 ﻿using BLL.Interfaces;
 using DAL.Interfaces;
-using HLP.Interfaces;
 using PersonalTracking.Models;
 using System.Collections.Generic;
 
@@ -10,14 +9,12 @@ namespace BLL.Services
     {
 
         private readonly IDepartmentRepository _departmentRepository; // Repositório de departamento
-        private readonly IEntityMessages _entityMessages; // Objeto de mensagens
         private DepartmentModel departmentModel; // Modelo de departamento
 
-        public DepartmentService(IDepartmentRepository departmentRepository, IEntityMessages entityMessages)
+        public DepartmentService(IDepartmentRepository departmentRepository)
         {
             _departmentRepository = departmentRepository; // Injeta o repositório de departamento na classe
-            _entityMessages = entityMessages; // Inicializa o objeto de mensagens
-            departmentModel = new DepartmentModel(_entityMessages); // Inicializa o modelo de departamento com o objeto de mensagens
+            departmentModel = new DepartmentModel(); // Inicializa o modelo de departamento com o objeto de mensagens
         }
 
 
@@ -25,22 +22,9 @@ namespace BLL.Services
         {
             var departmentModel = SetDepartmentModel(entity); // Define os valores do modelo de departamento
 
-            departmentModel.Validate(); // Valida o modelo de departamento
-            if (!departmentModel.IsValidModel)
-            {
-                foreach (DepartmentModel item in departmentModel.Errors)
-                {
-                    item.ShowMessageBoxErrors(); // Exibe mensagens de erro para cada item inválido no modelo
-                }
-            }
-            else
-            {
-                _departmentRepository.CreateEntityRepository(departmentModel); // Cria a entidade no repositório
-                _entityMessages.EntitySavedWithSuccessMessage(departmentModel.DepartmentModelName); // Exibe uma mensagem de sucesso para a entidade
-                return departmentModel; // Retorna o modelo de departamento criado
-            }
+            _departmentRepository.CreateEntityRepository(departmentModel); // Cria a entidade no repositório
 
-            return departmentModel; // Retorna o modelo de departamento inválido
+            return departmentModel; // Retorna o modelo de departamento criado
         }
 
         private DepartmentModel SetDepartmentModel(DepartmentModel _entity)
@@ -74,8 +58,6 @@ namespace BLL.Services
             var _entity = SetDepartmentModel(model); // Define os valores do modelo de departamento
 
             _departmentRepository.RemoveEntityRepository(_entity); // Remove a entidade do repositório
-
-            _entityMessages.EntityDeletedWithSuccessMessage(_entity.DepartmentModelName); // Exibe uma mensagem de sucesso para a entidade removida
         }
 
         public DepartmentModel UpdateEntityService(DepartmentModel entity)
@@ -83,7 +65,6 @@ namespace BLL.Services
             var departmentEntity = SetDepartmentModel(entity); // Define os valores do modelo de departamento
 
             _departmentRepository.UpdateEntityRepository(departmentEntity); // Atualiza a entidade no repositório
-            _entityMessages.EntityUpdatedMessage(departmentEntity.DepartmentModelName); // Exibe uma mensagem de sucesso para a entidade atualizada
             return entity; // Retorna a entidade atualizada
         }
     }
