@@ -30,9 +30,11 @@ namespace DAL.Repositories
             return entity;
         }
 
-        public void RemoveEntityRepository(T entity)
+        public T RemoveEntityRepository(object entity)
         {
-            _table.DeleteOnSubmit(entity);
+            var model = _table.FirstOrDefault(x => x.Id.Equals(entity));
+            _table.DeleteOnSubmit(model);
+            return model;
         }
 
         public T UpdateEntityRepository(T entity)

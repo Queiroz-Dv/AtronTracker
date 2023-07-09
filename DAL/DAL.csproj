@@ -74,6 +74,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EmployeeDataClass.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Factory\DepartmentFactory.cs" />
     <Compile Include="Generics\IEntity.cs" />
     <Compile Include="Generics\IGenericRepository.cs" />
     <Compile Include="Interfaces\IDepartmentRepository.cs" />
@@ -85,6 +86,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Factory\ContextBase.cs" />
     <Compile Include="Repositories\DepartmentRepository.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
@@ -108,6 +110,16 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HLP\HLP.csproj">
+      <Project>{864F7E9D-8AF3-4D00-B967-B10EBBA8C6C0}</Project>
+      <Name>HLP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PersonalTracking.Models\PersonalTracking.Models.csproj">
+      <Project>{0A8A48B0-A2CA-412B-922F-B697F5FBDC0A}</Project>
+      <Name>PersonalTracking.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
