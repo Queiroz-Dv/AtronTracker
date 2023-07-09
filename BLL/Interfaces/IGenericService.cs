@@ -12,6 +12,6 @@ namespace BLL.Interfaces
 
         TEntity UpdateEntityService(TEntity entity);
 
-        void RemoveEntityService(TEntity entity);
+        TEntity RemoveEntityService(object entity);
     }
 }

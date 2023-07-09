@@ -237,9 +237,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
       <Project>{1c35e6e1-a7b1-4568-ac01-8cfd62232933}</Project>
       <Name>BLL</Name>

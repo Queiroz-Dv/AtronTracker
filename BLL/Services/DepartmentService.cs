@@ -9,7 +9,7 @@ namespace BLL.Services
     {
 
         private readonly IDepartmentRepository _departmentRepository; // Repositório de departamento
-        private DepartmentModel departmentModel; // Modelo de departamento
+        private readonly DepartmentModel departmentModel; // Modelo de departamento
 
         public DepartmentService(IDepartmentRepository departmentRepository)
         {
@@ -53,11 +53,10 @@ namespace BLL.Services
             return entity; // Retorna a entidade de departamento encontrada
         }
 
-        public void RemoveEntityService(DepartmentModel model)
+        public DepartmentModel RemoveEntityService(object model)
         {
-            var _entity = SetDepartmentModel(model); // Define os valores do modelo de departamento
-
-            _departmentRepository.RemoveEntityRepository(_entity); // Remove a entidade do repositório
+            var repository = _departmentRepository.RemoveEntityRepository(model); // Remove a entidade do repositório
+            return repository;
         }
 
         public DepartmentModel UpdateEntityService(DepartmentModel entity)

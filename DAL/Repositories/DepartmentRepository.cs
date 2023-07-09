@@ -61,7 +61,6 @@ namespace DAL.Repositories
         {
             try
             {
-
                 var context = GetContext(); // Obtém o contexto do banco de dados
                 var departmentEntity = context.DEPARTMENTs.FirstOrDefault(dpt => dpt.ID.Equals(id)); // Obtém a entidade de departamento pelo ID
 
@@ -76,15 +75,18 @@ namespace DAL.Repositories
             }
         }
 
-        public void RemoveEntityRepository(DepartmentModel entity)
+        public DepartmentModel RemoveEntityRepository(object entity)
         {
             try
             {
                 var context = GetContext(); // Obtém o contexto do banco de dados
-                var department = context.DEPARTMENTs.FirstOrDefault(depart => depart.ID.Equals(entity.DepartmentModelId)); // Obtém a entidade de departamento a ser removida
+                var department = context.DEPARTMENTs.FirstOrDefault(depart => depart.ID.Equals(entity)); // Obtém a entidade de departamento a ser removida
 
                 context.DEPARTMENTs.DeleteOnSubmit(department); // Remove a entidade do contexto
                 context.SubmitChanges(); // Salva as alterações no banco de dados
+
+                var departmentModel = convertObject.ConvertObject(department, departmentEntity => CreateDepartmentModel(department));
+                return departmentModel;
             }
             catch (Exception)
             {

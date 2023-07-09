@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalTracking.Services",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalTracking.Models", "PersonalTracking.Models\PersonalTracking.Models.csproj", "{0A8A48B0-A2CA-412B-922F-B697F5FBDC0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalTracking.Web.Api", "PersonalTracking.Web.Api\PersonalTracking.Web.Api.csproj", "{43FEBB95-B697-4E2C-AAED-B2E7A9FE52AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalTracking.Api", "PersonalTracking.Api\PersonalTracking.Api.csproj", "{DAC861F9-8328-478E-8842-2C01D3DF11F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +53,10 @@ Global
 		{0A8A48B0-A2CA-412B-922F-B697F5FBDC0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A8A48B0-A2CA-412B-922F-B697F5FBDC0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A8A48B0-A2CA-412B-922F-B697F5FBDC0A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43FEBB95-B697-4E2C-AAED-B2E7A9FE52AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43FEBB95-B697-4E2C-AAED-B2E7A9FE52AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43FEBB95-B697-4E2C-AAED-B2E7A9FE52AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43FEBB95-B697-4E2C-AAED-B2E7A9FE52AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAC861F9-8328-478E-8842-2C01D3DF11F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAC861F9-8328-478E-8842-2C01D3DF11F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAC861F9-8328-478E-8842-2C01D3DF11F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAC861F9-8328-478E-8842-2C01D3DF11F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

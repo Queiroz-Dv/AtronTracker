@@ -49,7 +49,7 @@ namespace DAL.Repositories
             return user;
         }
 
-        public void RemoveEntityRepository(EMPLOYEE entity)
+        public EMPLOYEE RemoveEntityRepository(object entity)
         {
             throw new NotImplementedException();
         }

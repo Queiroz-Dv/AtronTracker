@@ -21,7 +21,7 @@ namespace DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public void RemoveEntityRepository(POSITION entity)
+        public POSITION RemoveEntityRepository(object entity)
         {
             throw new NotImplementedException();
         }
