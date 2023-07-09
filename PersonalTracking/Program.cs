@@ -15,7 +15,7 @@ namespace PersonalTracking
         static void Main()
         {
             // Cria a instância do ServiceCollection a partir do projeto de serviços
-            var services = ServiceContainer.AddServices();
+            var services = ServiceContainer.AddDesktopServices();
 
             // Constroí o ServiceProvider partindo do serviceCollection
             var serviceProvider = services.BuildServiceProvider();

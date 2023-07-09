@@ -1,112 +1,70 @@
 ﻿using BLL.Interfaces;
-using DAL;
 using DAL.Interfaces;
-using HLP.Entity;
-using HLP.Interfaces;
 using PersonalTracking.Models;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BLL.Services
 {
     public class DepartmentService : IDepartmentService
     {
-        //171920
-        private readonly IDepartmentRepository _departmentRepository;
-        private readonly IEntityMessages entityMessages;
-        private readonly DEPARTMENT _department;
-        private  DepartmentModel departmentModel;
+
+        private readonly IDepartmentRepository _departmentRepository; // Repositório de departamento
+        private readonly DepartmentModel departmentModel; // Modelo de departamento
 
         public DepartmentService(IDepartmentRepository departmentRepository)
         {
-            _departmentRepository = departmentRepository;
-            entityMessages = new InformationMessage();
-            _department = new DEPARTMENT();
-            departmentModel = new DepartmentModel(entityMessages);
+            _departmentRepository = departmentRepository; // Injeta o repositório de departamento na classe
+            departmentModel = new DepartmentModel(); // Inicializa o modelo de departamento com o objeto de mensagens
         }
+
 
         public DepartmentModel CreateEntityService(DepartmentModel entity)
         {
-            var _departmentEntity = SetDepartmentEntity(entity);
-            var departmentModelSetter = SetDepartmentModel(_departmentEntity);
+            var departmentModel = SetDepartmentModel(entity); // Define os valores do modelo de departamento
 
-            departmentModelSetter.Validate();
-            if (!departmentModelSetter.IsValidModel)
-            {
-                foreach (DepartmentModel item in departmentModelSetter.Errors)
-                {
-                    item.ShowMessageBoxErrors();
-                }
-            }
-            else
-            {
-                _departmentRepository.CreateEntityRepository(_departmentEntity);
-                entityMessages.EntitySavedWithSuccessMessage(_departmentEntity.DepartmentName);
-                return _department;
-            }
+            _departmentRepository.CreateEntityRepository(departmentModel); // Cria a entidade no repositório
 
-            return entity;
+            return departmentModel; // Retorna o modelo de departamento criado
         }
 
-        private DepartmentModel SetDepartmentModel(DEPARTMENT _entity)
+        private DepartmentModel SetDepartmentModel(DepartmentModel _entity)
         {
-            departmentModel.ID = _entity.ID;
-            departmentModel.DepartmentName = _entity.DepartmentName;
+            departmentModel.DepartmentModelId = _entity.DepartmentModelId; // Define o ID do modelo de departamento
+            departmentModel.DepartmentModelName = _entity.DepartmentModelName; // Define o nome do modelo de departamento
 
-            return departmentModel;
+            return departmentModel; // Retorna o modelo de departamento atualizado
         }
 
-        public IEnumerable<object> GetAllService()
+        public IEnumerable<DepartmentModel> GetAllService()
         {
-            var departments = _departmentRepository.GetAllEntitiesRepository();
-            IEnumerable<DepartmentModel> departmentConverted = departments.Select(depart => DepartmentModel.FromDepartmentEntity(depart));
-            return departmentConverted;
+            var departments = _departmentRepository.GetAllEntitiesRepository(); // Obtém todas as entidades de departamento do repositório
+            return departments; // Retorna a lista de entidades de departamento
         }
 
         public List<DepartmentModel> GetAllModelService()
         {
-            var departments = _departmentRepository.GetAllDepartmentEntities();
-            List<DepartmentModel> departmentConverted = new List<DepartmentModel>();
-
-            foreach (var item in departments)
-            {
-                var models = DepartmentModel.FromDepartmentEntity(item);
-                departmentConverted.Add(models);
-            }
-
-            return departmentConverted;
+            var departments = _departmentRepository.GetAllDepartmentEntities(); // Obtém todos os modelos de departamento do repositório
+            return departments; // Retorna a lista de modelos de departamento
         }
 
-        public object GetEntityByIdService(object id)
+        public DepartmentModel GetEntityByIdService(object id)
         {
-            var entity = _departmentRepository.GetEntityByIdRepository(id);
-            return entity;
+            var entity = _departmentRepository.GetEntityByIdRepository(id); // Obtém uma entidade de departamento pelo ID do repositório
+            return entity; // Retorna a entidade de departamento encontrada
         }
 
-        public void RemoveEntityService(object entity)
+        public DepartmentModel RemoveEntityService(object model)
         {
-            var _entity = SetDepartmentEntity(entity);
-
-            _departmentRepository.RemoveEntityRepository(_entity);
-
-            entityMessages.EntityDeletedWithSuccessMessage(_department.DepartmentName);
+            var repository = _departmentRepository.RemoveEntityRepository(model); // Remove a entidade do repositório
+            return repository;
         }
 
-        private DEPARTMENT SetDepartmentEntity(object entity)
+        public DepartmentModel UpdateEntityService(DepartmentModel entity)
         {
-            var _entity = entity as DepartmentModel;
-            _department.ID = _entity.ID;
-            _department.DepartmentName = _entity.DepartmentName;
-            return _department;
-        }
+            var departmentEntity = SetDepartmentModel(entity); // Define os valores do modelo de departamento
 
-        public object UpdateEntityService(object entity)
-        {
-            var departmentEntity = SetDepartmentEntity(entity);
-
-            _departmentRepository.UpdateEntityRepository(departmentEntity);
-            entityMessages.EntityUpdatedMessage(departmentEntity.DepartmentName);
-            return entity as DepartmentModel;
+            _departmentRepository.UpdateEntityRepository(departmentEntity); // Atualiza a entidade no repositório
+            return entity; // Retorna a entidade atualizada
         }
     }
 }

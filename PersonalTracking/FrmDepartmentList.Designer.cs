@@ -1,4 +1,8 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using HLP.Interfaces;
+using PersonalTracking.Models;
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace PersonalTracking
@@ -34,10 +38,10 @@ namespace PersonalTracking
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvDepartment = new System.Windows.Forms.DataGridView();
             this.pnlDepartmentCrud = new System.Windows.Forms.Panel();
-            this.btnClose = new MaterialSkin.Controls.MaterialFlatButton();
-            this.btnDelete = new MaterialSkin.Controls.MaterialFlatButton();
-            this.btnUpdate = new MaterialSkin.Controls.MaterialFlatButton();
-            this.btnNew = new MaterialSkin.Controls.MaterialFlatButton();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnUpdate = new System.Windows.Forms.Button();
+            this.btnNew = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDepartment)).BeginInit();
             this.pnlDepartmentCrud.SuspendLayout();
             this.SuspendLayout();
@@ -82,18 +86,14 @@ namespace PersonalTracking
             // 
             this.btnClose.AutoSize = true;
             this.btnClose.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnClose.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.btnClose.Depth = 0;
+            this.btnClose.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnClose.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnClose.Icon = null;
             this.btnClose.Location = new System.Drawing.Point(658, 10);
             this.btnClose.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnClose.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnClose.Name = "btnClose";
-            this.btnClose.Primary = false;
-            this.btnClose.Size = new System.Drawing.Size(63, 36);
+            this.btnClose.Size = new System.Drawing.Size(61, 32);
             this.btnClose.TabIndex = 10;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = false;
@@ -103,18 +103,14 @@ namespace PersonalTracking
             // 
             this.btnDelete.AutoSize = true;
             this.btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnDelete.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.btnDelete.Depth = 0;
+            this.btnDelete.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnDelete.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnDelete.Icon = null;
             this.btnDelete.Location = new System.Drawing.Point(494, 10);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnDelete.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Primary = false;
-            this.btnDelete.Size = new System.Drawing.Size(69, 36);
+            this.btnDelete.Size = new System.Drawing.Size(68, 32);
             this.btnDelete.TabIndex = 10;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = false;
@@ -124,18 +120,14 @@ namespace PersonalTracking
             // 
             this.btnUpdate.AutoSize = true;
             this.btnUpdate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnUpdate.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.btnUpdate.Depth = 0;
+            this.btnUpdate.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnUpdate.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnUpdate.Icon = null;
             this.btnUpdate.Location = new System.Drawing.Point(336, 10);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnUpdate.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Primary = false;
-            this.btnUpdate.Size = new System.Drawing.Size(73, 36);
+            this.btnUpdate.Size = new System.Drawing.Size(74, 32);
             this.btnUpdate.TabIndex = 10;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = false;
@@ -145,18 +137,14 @@ namespace PersonalTracking
             // 
             this.btnNew.AutoSize = true;
             this.btnNew.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnNew.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.btnNew.Depth = 0;
+            this.btnNew.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.btnNew.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnNew.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnNew.Icon = null;
             this.btnNew.Location = new System.Drawing.Point(207, 10);
             this.btnNew.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnNew.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnNew.Name = "btnNew";
-            this.btnNew.Primary = false;
-            this.btnNew.Size = new System.Drawing.Size(51, 36);
+            this.btnNew.Size = new System.Drawing.Size(52, 32);
             this.btnNew.TabIndex = 10;
             this.btnNew.Text = "New";
             this.btnNew.UseVisualStyleBackColor = false;
@@ -189,22 +177,27 @@ namespace PersonalTracking
             dgvDepartment.Columns[0].Width = 10;
             dgvDepartment.Columns[0].Visible = false;
             dgvDepartment.Columns[1].HeaderText = "Department Name";
+            dgvDepartment.Columns[2].Visible = false;
+            dgvDepartment.Columns[3].Visible = false;
         }
 
         private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            departmentModel.ID = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
-            departmentModel.DepartmentName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
+            departmentModel.DepartmentModelId = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
+            departmentModel.DepartmentModelName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
         }
-
 
         #endregion
 
         private System.Windows.Forms.DataGridView dgvDepartment;
         private System.Windows.Forms.Panel pnlDepartmentCrud;
-        private MaterialSkin.Controls.MaterialFlatButton btnClose;
-        private MaterialSkin.Controls.MaterialFlatButton btnDelete;
-        private MaterialSkin.Controls.MaterialFlatButton btnUpdate;
-        private MaterialSkin.Controls.MaterialFlatButton btnNew;
+        private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Button btnUpdate;
+        private System.Windows.Forms.Button btnNew;
+        private IEntityMessages _information;
+        private List<DepartmentModel> departmentsModelsList; // Lista de modelos de departamento
+        private readonly DepartmentModel departmentModel; // Modelo do departamento atualmente selecionado
+        private readonly IDepartmentService departmentService;  // Serviço responsável pelas operações relacionadas a departamento
     }
 }

@@ -138,6 +138,20 @@ namespace PersonalTracking
             return departmentField;
         }
 
+        private void UpdateDepartment(DepartmentModel department)
+        {
+            _departmentService.UpdateEntityService(department);
+            _information.EntityUpdatedMessage(department.DepartmentModelName);
+            ClearFields();
+        }
+
+        private void SaveDepartment(DepartmentModel department)
+        {
+            _departmentService.CreateEntityService(department);
+            _information.EntitySavedWithSuccessMessage(department.DepartmentModelName);
+            ClearFields();
+        }
+
         #endregion
         private MaterialSkin.Controls.MaterialFlatButton btnSave;
         private MaterialSkin.Controls.MaterialFlatButton btnClose;

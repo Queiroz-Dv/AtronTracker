@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\ConvertObjectHelper.cs" />
+    <Compile Include="Interfaces\IConvertObjectHelper.cs" />
     <Compile Include="Entity\InformationMessage.cs" />
     <Compile Include="Enums\EnumLevelMessage.cs" />
     <Compile Include="Helpers\MessageHelper.cs" />
