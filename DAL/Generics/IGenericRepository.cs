@@ -12,6 +12,6 @@ namespace DAL.Generics
 
         TEntity UpdateEntityRepository(TEntity entity);
 
-        void RemoveEntityRepository(TEntity entity);
+        TEntity RemoveEntityRepository(object entity);
     }
 }

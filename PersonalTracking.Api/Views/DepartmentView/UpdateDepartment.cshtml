@@ -1,0 +1,41 @@
+﻿@model PersonalTracking.Models.DepartmentModel
+
+@{
+    ViewBag.Title = "Update Department";
+}
+
+<h2>Update Department</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.DepartmentModelId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DepartmentModelName, "Department Name", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-6" style="margin: 8px 1px 16px 1px">
+                @Html.EditorFor(model => model.DepartmentModelName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DepartmentModelName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <p class="col-md-offset-2 col-md-2">
+                <input type="submit" value="Save" class="btn btn-info border border-info" style="margin: 1px 5px;" />
+                @Html.ActionLink("Back", "Index", null, new { @class = "btn btn-secondary" })
+            </p>
+        </div>
+
+    </div>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

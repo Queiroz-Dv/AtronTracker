@@ -75,7 +75,7 @@ namespace BLL.Services
             return list.Count <= 0;
         }
 
-        public void RemoveEntityService(EMPLOYEE entity)
+        public EMPLOYEE RemoveEntityService(object entity)
         {
             throw new NotImplementedException();
         }
