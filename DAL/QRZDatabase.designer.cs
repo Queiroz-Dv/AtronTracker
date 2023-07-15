@@ -22,8 +22,8 @@ namespace DAL
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="PERSONALTRACKING")]
-	public partial class EmployeeDataClassDataContext : System.Data.Linq.DataContext
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="QRZ")]
+	public partial class QRZDatabaseDataContext : System.Data.Linq.DataContext
 	{
 		
 		private static System.Data.Linq.Mapping.MappingSource mappingSource = new AttributeMappingSource();
@@ -33,6 +33,9 @@ namespace DAL
     partial void InsertDEPARTMENT(DEPARTMENT instance);
     partial void UpdateDEPARTMENT(DEPARTMENT instance);
     partial void DeleteDEPARTMENT(DEPARTMENT instance);
+    partial void InsertTASKSTATE(TASKSTATE instance);
+    partial void UpdateTASKSTATE(TASKSTATE instance);
+    partial void DeleteTASKSTATE(TASKSTATE instance);
     partial void InsertEMPLOYEE(EMPLOYEE instance);
     partial void UpdateEMPLOYEE(EMPLOYEE instance);
     partial void DeleteEMPLOYEE(EMPLOYEE instance);
@@ -54,36 +57,33 @@ namespace DAL
     partial void InsertTASK(TASK instance);
     partial void UpdateTASK(TASK instance);
     partial void DeleteTASK(TASK instance);
-    partial void InsertTASKSTATE(TASKSTATE instance);
-    partial void UpdateTASKSTATE(TASKSTATE instance);
-    partial void DeleteTASKSTATE(TASKSTATE instance);
     #endregion
 		
-		public EmployeeDataClassDataContext() : 
-				base(global::DAL.Properties.Settings.Default.PERSONALTRACKING, mappingSource)
+		public QRZDatabaseDataContext() : 
+				base(global::DAL.Properties.Settings.Default.QRZConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
 		
-		public EmployeeDataClassDataContext(string connection) : 
+		public QRZDatabaseDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
 		}
 		
-		public EmployeeDataClassDataContext(System.Data.IDbConnection connection) : 
+		public QRZDatabaseDataContext(System.Data.IDbConnection connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
 		}
 		
-		public EmployeeDataClassDataContext(string connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
+		public QRZDatabaseDataContext(string connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
 		}
 		
-		public EmployeeDataClassDataContext(System.Data.IDbConnection connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
+		public QRZDatabaseDataContext(System.Data.IDbConnection connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
@@ -94,6 +94,14 @@ namespace DAL
 			get
 			{
 				return this.GetTable<DEPARTMENT>();
+			}
+		}
+		
+		public System.Data.Linq.Table<TASKSTATE> TASKSTATEs
+		{
+			get
+			{
+				return this.GetTable<TASKSTATE>();
 			}
 		}
 		
@@ -150,14 +158,6 @@ namespace DAL
 			get
 			{
 				return this.GetTable<TASK>();
-			}
-		}
-		
-		public System.Data.Linq.Table<TASKSTATE> TASKSTATEs
-		{
-			get
-			{
-				return this.GetTable<TASKSTATE>();
 			}
 		}
 	}
@@ -248,6 +248,92 @@ namespace DAL
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TASKSTATE")]
+	public partial class TASKSTATE : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _StateName;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnStateNameChanging(string value);
+    partial void OnStateNameChanged();
+    #endregion
+		
+		public TASKSTATE()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateName", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string StateName
+		{
+			get
+			{
+				return this._StateName;
+			}
+			set
+			{
+				if ((this._StateName != value))
+				{
+					this.OnStateNameChanging(value);
+					this.SendPropertyChanging();
+					this._StateName = value;
+					this.SendPropertyChanged("StateName");
+					this.OnStateNameChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EMPLOYEE")]
 	public partial class EMPLOYEE : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -261,6 +347,8 @@ namespace DAL
 		private string _Name;
 		
 		private string _Surname;
+		
+		private string _ImagePath;
 		
 		private int _DepartmentID;
 		
@@ -288,6 +376,8 @@ namespace DAL
     partial void OnNameChanged();
     partial void OnSurnameChanging(string value);
     partial void OnSurnameChanged();
+    partial void OnImagePathChanging(string value);
+    partial void OnImagePathChanged();
     partial void OnDepartmentIDChanging(int value);
     partial void OnDepartmentIDChanged();
     partial void OnPositionIDChanging(int value);
@@ -296,8 +386,8 @@ namespace DAL
     partial void OnSalaryChanged();
     partial void OnBirthDayChanging(System.Nullable<System.DateTime> value);
     partial void OnBirthDayChanged();
-    partial void OnAddressChanging(string value);
-    partial void OnAddressChanged();
+    partial void OnAdressChanging(string value);
+    partial void OnAdressChanged();
     partial void OnPasswordChanging(string value);
     partial void OnPasswordChanged();
     partial void OnisAdminChanging(System.Nullable<bool> value);
@@ -389,6 +479,26 @@ namespace DAL
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImagePath", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string ImagePath
+		{
+			get
+			{
+				return this._ImagePath;
+			}
+			set
+			{
+				if ((this._ImagePath != value))
+				{
+					this.OnImagePathChanging(value);
+					this.SendPropertyChanging();
+					this._ImagePath = value;
+					this.SendPropertyChanged("ImagePath");
+					this.OnImagePathChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DepartmentID", DbType="Int NOT NULL")]
 		public int DepartmentID
 		{
@@ -469,8 +579,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="Adress", Storage="_Adress", DbType="VarChar(MAX)")]
-		public string Address
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Adress", DbType="VarChar(MAX)")]
+		public string Adress
 		{
 			get
 			{
@@ -480,11 +590,11 @@ namespace DAL
 			{
 				if ((this._Adress != value))
 				{
-					this.OnAddressChanging(value);
+					this.OnAdressChanging(value);
 					this.SendPropertyChanging();
 					this._Adress = value;
-					this.SendPropertyChanged("Address");
-					this.OnAddressChanged();
+					this.SendPropertyChanged("Adress");
+					this.OnAdressChanged();
 				}
 			}
 		}
@@ -1377,92 +1487,6 @@ namespace DAL
 					this._TaskState = value;
 					this.SendPropertyChanged("TaskState");
 					this.OnTaskStateChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TASKSTATE")]
-	public partial class TASKSTATE : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ID;
-		
-		private string _StateName;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnStateNameChanging(string value);
-    partial void OnStateNameChanged();
-    #endregion
-		
-		public TASKSTATE()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
-		{
-			get
-			{
-				return this._ID;
-			}
-			set
-			{
-				if ((this._ID != value))
-				{
-					this.OnIDChanging(value);
-					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateName", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-		public string StateName
-		{
-			get
-			{
-				return this._StateName;
-			}
-			set
-			{
-				if ((this._StateName != value))
-				{
-					this.OnStateNameChanging(value);
-					this.SendPropertyChanging();
-					this._StateName = value;
-					this.SendPropertyChanged("StateName");
-					this.OnStateNameChanged();
 				}
 			}
 		}

@@ -177,8 +177,6 @@ namespace PersonalTracking
             dgvDepartment.Columns[0].Width = 10;
             dgvDepartment.Columns[0].Visible = false;
             dgvDepartment.Columns[1].HeaderText = "Department Name";
-            dgvDepartment.Columns[2].Visible = false;
-            dgvDepartment.Columns[3].Visible = false;
         }
 
         private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)

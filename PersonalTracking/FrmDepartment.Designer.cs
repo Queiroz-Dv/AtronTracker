@@ -32,9 +32,9 @@ namespace PersonalTracking
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnSave = new MaterialSkin.Controls.MaterialFlatButton();
-            this.btnClose = new MaterialSkin.Controls.MaterialFlatButton();
-            this.lblDepartment = new MaterialSkin.Controls.MaterialLabel();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.lblDepartment = new System.Windows.Forms.Label();
             this.txtDepartment = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -42,14 +42,11 @@ namespace PersonalTracking
             // 
             this.btnSave.AutoSize = true;
             this.btnSave.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnSave.Depth = 0;
-            this.btnSave.Icon = null;
-            this.btnSave.Location = new System.Drawing.Point(182, 195);
+            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.btnSave.Location = new System.Drawing.Point(159, 141);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnSave.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnSave.Name = "btnSave";
-            this.btnSave.Primary = false;
-            this.btnSave.Size = new System.Drawing.Size(55, 36);
+            this.btnSave.Size = new System.Drawing.Size(59, 30);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -59,14 +56,11 @@ namespace PersonalTracking
             // 
             this.btnClose.AutoSize = true;
             this.btnClose.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnClose.Depth = 0;
-            this.btnClose.Icon = null;
-            this.btnClose.Location = new System.Drawing.Point(291, 195);
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.btnClose.Location = new System.Drawing.Point(268, 141);
             this.btnClose.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnClose.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnClose.Name = "btnClose";
-            this.btnClose.Primary = false;
-            this.btnClose.Size = new System.Drawing.Size(63, 36);
+            this.btnClose.Size = new System.Drawing.Size(64, 30);
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
@@ -75,20 +69,18 @@ namespace PersonalTracking
             // lblDepartment
             // 
             this.lblDepartment.AutoSize = true;
-            this.lblDepartment.Depth = 0;
-            this.lblDepartment.Font = new System.Drawing.Font("Roboto", 11F);
+            this.lblDepartment.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.lblDepartment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.lblDepartment.Location = new System.Drawing.Point(118, 124);
-            this.lblDepartment.MouseState = MaterialSkin.MouseState.HOVER;
+            this.lblDepartment.Location = new System.Drawing.Point(91, 62);
             this.lblDepartment.Name = "lblDepartment";
-            this.lblDepartment.Size = new System.Drawing.Size(87, 19);
+            this.lblDepartment.Size = new System.Drawing.Size(104, 20);
             this.lblDepartment.TabIndex = 0;
             this.lblDepartment.Text = "Department";
             // 
             // txtDepartment
             // 
             this.txtDepartment.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.txtDepartment.Location = new System.Drawing.Point(231, 120);
+            this.txtDepartment.Location = new System.Drawing.Point(204, 58);
             this.txtDepartment.Name = "txtDepartment";
             this.txtDepartment.Size = new System.Drawing.Size(213, 26);
             this.txtDepartment.TabIndex = 1;
@@ -98,7 +90,7 @@ namespace PersonalTracking
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(540, 246);
+            this.ClientSize = new System.Drawing.Size(523, 214);
             this.Controls.Add(this.txtDepartment);
             this.Controls.Add(this.lblDepartment);
             this.Controls.Add(this.btnClose);
@@ -153,9 +145,9 @@ namespace PersonalTracking
         }
 
         #endregion
-        private MaterialSkin.Controls.MaterialFlatButton btnSave;
-        private MaterialSkin.Controls.MaterialFlatButton btnClose;
-        private MaterialSkin.Controls.MaterialLabel lblDepartment;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Label lblDepartment;
         private System.Windows.Forms.TextBox txtDepartment;
         private IDepartmentService _departmentService;
         public DepartmentModel department;

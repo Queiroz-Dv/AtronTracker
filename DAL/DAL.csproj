@@ -31,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MaterialSkin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MaterialSkin.Updated.0.2.2\lib\MaterialSkin.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
@@ -66,17 +63,12 @@
     <Compile Include="DTO\TaskDetailDTO.cs" />
     <Compile Include="DTO\TaskDTO.cs" />
     <Compile Include="DTO\TaskStates.cs" />
-    <Compile Include="EmployeeDataClass.cs">
-      <DependentUpon>EmployeeDataClass.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="EmployeeDataClass.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EmployeeDataClass.dbml</DependentUpon>
-    </Compile>
+    <Compile Include="Factory\ContextBase.cs" />
     <Compile Include="Factory\DepartmentFactory.cs" />
+    <Compile Include="Factory\PositionFactory.cs" />
     <Compile Include="Generics\IEntity.cs" />
     <Compile Include="Generics\IGenericRepository.cs" />
+    <Compile Include="Interfaces\FactoryModules\IDepartmentFactory.cs" />
     <Compile Include="Interfaces\IDepartmentRepository.cs" />
     <Compile Include="Interfaces\IEmployeeRepository.cs" />
     <Compile Include="Interfaces\IPositionRepository.cs" />
@@ -86,7 +78,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Factory\ContextBase.cs" />
+    <Compile Include="QRZDatabase.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QRZDatabase.dbml</DependentUpon>
+    </Compile>
     <Compile Include="Repositories\DepartmentRepository.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
@@ -94,18 +90,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="EmployeeDataClass.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>EmployeeDataClass.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="EmployeeDataClass.dbml.layout">
-      <DependentUpon>EmployeeDataClass.dbml</DependentUpon>
-    </None>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="QRZDatabase.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>QRZDatabase.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="QRZDatabase.dbml.layout">
+      <DependentUpon>QRZDatabase.dbml</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>

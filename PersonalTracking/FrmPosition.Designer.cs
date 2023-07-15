@@ -40,26 +40,30 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 30);
+            this.label1.Location = new System.Drawing.Point(8, 19);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 29);
+            this.label1.Size = new System.Drawing.Size(73, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "Position";
             // 
             // txtPosition
             // 
-            this.txtPosition.Location = new System.Drawing.Point(181, 30);
+            this.txtPosition.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txtPosition.Location = new System.Drawing.Point(121, 19);
+            this.txtPosition.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtPosition.Name = "txtPosition";
-            this.txtPosition.Size = new System.Drawing.Size(289, 26);
+            this.txtPosition.Size = new System.Drawing.Size(194, 26);
             this.txtPosition.TabIndex = 0;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 98);
+            this.label2.Location = new System.Drawing.Point(8, 64);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(155, 29);
+            this.label2.Size = new System.Drawing.Size(109, 20);
             this.label2.TabIndex = 0;
             this.label2.Text = "Department ";
             // 
@@ -67,17 +71,19 @@
             // 
             this.cmbDeparment.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbDeparment.FormattingEnabled = true;
-            this.cmbDeparment.Location = new System.Drawing.Point(181, 98);
+            this.cmbDeparment.Location = new System.Drawing.Point(121, 64);
+            this.cmbDeparment.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cmbDeparment.Name = "cmbDeparment";
-            this.cmbDeparment.Size = new System.Drawing.Size(289, 37);
+            this.cmbDeparment.Size = new System.Drawing.Size(194, 28);
             this.cmbDeparment.TabIndex = 1;
             // 
             // btnClose
             // 
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(297, 173);
+            this.btnClose.Location = new System.Drawing.Point(203, 125);
+            this.btnClose.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(131, 46);
+            this.btnClose.Size = new System.Drawing.Size(87, 30);
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
@@ -86,9 +92,10 @@
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.Location = new System.Drawing.Point(131, 173);
+            this.btnSave.Location = new System.Drawing.Point(92, 125);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(142, 46);
+            this.btnSave.Size = new System.Drawing.Size(95, 30);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -96,18 +103,20 @@
             // 
             // FrmPosition
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(544, 271);
+            this.ClientSize = new System.Drawing.Size(363, 176);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.cmbDeparment);
             this.Controls.Add(this.txtPosition);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FrmPosition";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Position";
+            this.Text = "Create or Update Position";
             this.Load += new System.EventHandler(this.FrmPosition_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

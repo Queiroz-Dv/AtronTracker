@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entity\ConvertObjectHelper.cs" />
+    <Compile Include="Helpers\ObjectModelHelper.cs" />
     <Compile Include="Interfaces\IConvertObjectHelper.cs" />
     <Compile Include="Entity\InformationMessage.cs" />
     <Compile Include="Enums\EnumLevelMessage.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="Interfaces\IEntityMessages.cs" />
     <Compile Include="Interfaces\IFieldValidate.cs" />
     <Compile Include="Interfaces\IMessageHelper.cs" />
+    <Compile Include="Interfaces\IObjectModelHelper.cs" />
     <Compile Include="Interfaces\IShowMessagesUI.cs" />
     <Compile Include="Interfaces\IValidateHelper.cs" />
     <Compile Include="Interfaces\IValidateModel.cs" />

@@ -1,16 +1,11 @@
-﻿using HLP.Entity;
+﻿using DAL.Interfaces.FactoryModules;
 using PersonalTracking.Models;
 
 namespace DAL.Factory
 {
-    public class DepartmentFactory : ContextBase
+    public class DepartmentFactory : IDepartmentFactory
     {
-        public DepartmentFactory()
-        {
-            convertObject = new ConvertObjectHelper();
-        }
-
-        internal static DEPARTMENT CreateDepartmentDal(DepartmentModel departmentModel)
+        public DEPARTMENT CreateDepartmentDal(DepartmentModel departmentModel)
         {
             return new DEPARTMENT
             {
@@ -19,7 +14,7 @@ namespace DAL.Factory
             };
         }
 
-        internal static DepartmentModel CreateDepartmentModel(DEPARTMENT department)
+        public DepartmentModel CreateDepartmentModel(DEPARTMENT department)
         {
             return new DepartmentModel
             {

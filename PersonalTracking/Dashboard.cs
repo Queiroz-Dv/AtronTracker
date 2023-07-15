@@ -10,6 +10,7 @@ namespace PersonalTracking
     {
         private Form currentForm;
         private IDepartmentService _departmentService;
+        private IPositionService _positionService;
         private IEntityMessages entityMessages;
 
         public FrmDashboard(IDepartmentService departmentService)
@@ -54,7 +55,7 @@ namespace PersonalTracking
 
         private void btnPosition_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new FrmPositionList());
+            OpenChildForm(new FrmPositionList(_positionService, entityMessages));
         }
 
         private void btnExit_Click(object sender, EventArgs e)

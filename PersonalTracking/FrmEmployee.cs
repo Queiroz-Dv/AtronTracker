@@ -1,27 +1,17 @@
 ﻿using BLL;
 using DAL;
 using DAL.DTO;
-using MaterialSkin;
-using MaterialSkin.Controls;
 using System;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmEmployee : MaterialForm
+    public partial class FrmEmployee : Form
     {
         public FrmEmployee()
         {
             InitializeComponent();
-            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
-            materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
-            materialSkinManager.ColorScheme = new ColorScheme(
-               Primary.DeepPurple900, Primary.DeepPurple500,
-               Primary.Purple500, Accent.Purple200,
-               TextShade.WHITE
-           );
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -124,7 +114,7 @@ namespace PersonalTracking
                             Salary = Convert.ToInt32(txtSalary.Text),
                             DepartmentID = Convert.ToInt32(cmbDeparment.SelectedValue),
                             PositionID = Convert.ToInt32(cmbPosition.SelectedValue),
-                            Address = txtAddres.Text,
+                            Adress = txtAddres.Text,
                             BirthDay = dateTimePicker2.Value,
                         };
 
@@ -158,7 +148,7 @@ namespace PersonalTracking
                         employee.Surname = txtSurname.Text;
                         employee.isAdmin = chAdmin.Checked;
                         employee.Password = txtPassword.Text;
-                        employee.Address = txtAddres.Text;
+                        employee.Adress = txtAddres.Text;
                         employee.BirthDay = dateTimePicker2.Value;
                         employee.DepartmentID = Convert.ToInt32(cmbDeparment.SelectedValue);
                         employee.PositionID = Convert.ToInt32(cmbPosition.SelectedValue);

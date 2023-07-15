@@ -9,7 +9,7 @@ namespace HLP.Entity
     {
         public List<TOutput> ConvertList<TInput, TOutput>(List<TInput> inputList, Func<TInput, TOutput> conversionFunc)
         {
-            List<TOutput> outputList = new List<TOutput>();
+            IList<TOutput> outputList = new List<TOutput>();
 
             foreach (var input in inputList)
             {
@@ -17,10 +17,10 @@ namespace HLP.Entity
                 outputList.Add(output);
             }
 
-            return outputList;
+            return outputList as List<TOutput>;
         }
 
-        public TOutput ConvertObject<TInput, TOutput>(TInput input, Func<TInput, TOutput> conversionFunc)
+        public  TOutput ConvertObject<TInput, TOutput>(TInput input, Func<TInput, TOutput> conversionFunc)
         {
             return conversionFunc(input);
         }

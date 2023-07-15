@@ -20,8 +20,11 @@ namespace PersonalTracking.Api.Controllers
             _httpClient = new HttpClient();
         }
 
-        // GET: DepartmentView
-        // Vai obter todos os departamentos
+        
+        /// <summary>
+        /// Get All Departments
+        /// </summary>
+        /// <returns>A list and a view of all departments</returns>
         public async Task<ActionResult> Index()
 
         {

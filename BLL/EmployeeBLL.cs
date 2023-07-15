@@ -4,12 +4,15 @@ using DAL.DAO;
 using DAL.DTO;
 using DAL.Interfaces;
 using DAL.Repositories;
+using HLP.Interfaces;
+using PersonalTracking.Models;
 using System.Collections.Generic;
 
 namespace BLL
 {
     public class EmployeeBLL 
     {
+        private readonly IObjectModelHelper<DepartmentModel, DEPARTMENT> objectModel;
         private readonly IEmployeeRepository<EMPLOYEE> repository;
         private readonly DepartmentRepository deparmentRepository;
         private readonly PositionRepository positionRepository;
@@ -18,7 +21,6 @@ namespace BLL
 
         public EmployeeBLL()
         {
-            
             employee = new EMPLOYEE();
             deparmentRepository = new DepartmentRepository();
             positionRepository = new PositionRepository();
@@ -43,7 +45,7 @@ namespace BLL
                 employee.PositionID = entity.PositionID;
                 employee.Salary = entity.Salary;
                 employee.BirthDay = entity.BirthDay;
-                employee.Address = entity.Address;
+                employee.Adress = entity.Adress;
                 employee.Password = entity.Password;
                 employee.isAdmin = entity.isAdmin;
 

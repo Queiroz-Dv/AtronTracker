@@ -9,7 +9,7 @@ namespace DAL.Repositories
     {
         private readonly Table<T> _table;
 
-        public GenericRepository(EmployeeDataClassDataContext context)
+        public GenericRepository(QRZDatabaseDataContext context)
         {
             _table = context.GetTable<T>();
         }
