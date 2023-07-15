@@ -1,19 +1,16 @@
-﻿using BLL;
-using BLL.Interfaces;
+﻿using BLL.Interfaces;
 using DAL;
 using HLP.Entity;
 using HLP.Interfaces;
-using MaterialSkin;
-using MaterialSkin.Controls;
 using System;
-using System.Drawing;
+using System.Windows.Forms;
 
 namespace PersonalTracking
 {
     /// <summary>
     /// Formulário de registro de um novo usuário
     /// </summary>
-    public partial class FrmRegister : MaterialForm, IValidateHelper
+    public partial class FrmRegister : Form, IValidateHelper
     {
         /// <summary>
         /// Campo que guarda as informações de mensagens das validações e comportamentos do formulário
@@ -29,26 +26,12 @@ namespace PersonalTracking
         {
             InitializeComponent();
 
-            // Configura a paleta de cores 
-            ConfigureCollorPallet();
-
             // Injeta as dependências no construtor, sem isso vai estourar erro
             Information = new InformationMessage();
             //employeeBLL = new EmployeeBLL();
         }
 
-        public void ConfigureCollorPallet()
-        {
-            grpBasicInfo.BackColor = Color.Gainsboro;
-            grpUserInformation.BackColor = Color.Gainsboro;
-            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
-            materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
-            materialSkinManager.ColorScheme = new ColorScheme(
-               Primary.DeepPurple900, Primary.DeepPurple500,
-               Primary.Purple500, Accent.Purple200,
-               TextShade.WHITE);
-        }
+
 
         private void txtUserNo_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {

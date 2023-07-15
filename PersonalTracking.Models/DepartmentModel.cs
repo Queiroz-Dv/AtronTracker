@@ -11,4 +11,15 @@ namespace PersonalTracking.Models
         [MaxLength(50)]
         public string DepartmentModelName { get; set; }
     }
+
+    public class PositionModel
+    {
+        public int PositionId { get; set; }
+
+        public string PositionName { get; set; }
+
+        public int OldDepartmentID { get; set; }
+
+        public DepartmentModel DepartmentName { get; set; }
+    }
 }

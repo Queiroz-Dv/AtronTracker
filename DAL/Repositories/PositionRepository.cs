@@ -1,32 +1,34 @@
-﻿using DAL.Interfaces;
+﻿using DAL.DAO;
+using DAL.Interfaces;
+using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
 
 namespace DAL.Repositories
 {
-    public class PositionRepository : IPositionRepository<POSITION>
+    public class PositionRepository : IPositionRepository
     {
-        public void CreateEntityRepository(POSITION entity)
+        public void CreateEntityRepository(PositionModel entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<POSITION> GetAllEntitiesRepository()
+        public IEnumerable<PositionModel> GetAllEntitiesRepository()
         {
             throw new NotImplementedException();
         }
 
-        public POSITION GetEntityByIdRepository(object id)
+        public PositionModel GetEntityByIdRepository(object id)
         {
             throw new NotImplementedException();
         }
 
-        public POSITION RemoveEntityRepository(object entity)
+        public PositionModel RemoveEntityRepository(object entity)
         {
             throw new NotImplementedException();
         }
 
-        public POSITION UpdateEntityRepository(POSITION entity)
+        public PositionModel UpdateEntityRepository(PositionModel entity)
         {
             throw new NotImplementedException();
         }

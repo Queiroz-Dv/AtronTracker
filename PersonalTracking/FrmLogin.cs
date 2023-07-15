@@ -2,15 +2,13 @@
 using DAL;
 using HLP.Entity;
 using HLP.Interfaces;
-using MaterialSkin;
-using MaterialSkin.Controls;
 using System;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmLogin : MaterialForm, IValidateHelper
+    public partial class FrmLogin : Form, IValidateHelper
     {
         private readonly IEntityMessages Information;
         private readonly IEmployeeService _employeeService;
@@ -19,23 +17,11 @@ namespace PersonalTracking
         public FrmLogin(IEmployeeService employeeService, IDepartmentService departmentService)
         {
             InitializeComponent();
-            ConfigureCollorPallet();
             Information = new InformationMessage();
             _employeeService = employeeService;
             _departmentService = departmentService;
         }
 
-        private void ConfigureCollorPallet()
-        {
-            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
-            materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
-            materialSkinManager.ColorScheme = new ColorScheme(
-               Primary.DeepPurple900, Primary.DeepPurple500,
-               Primary.Purple500, Accent.Purple200,
-               TextShade.WHITE
-           );
-        }
 
         private void txtUserNo_KeyPress(object sender, KeyPressEventArgs e)
         {

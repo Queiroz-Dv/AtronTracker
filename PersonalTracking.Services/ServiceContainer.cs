@@ -2,7 +2,9 @@
 using BLL.Services;
 using DAL;
 using DAL.DAO;
+using DAL.Factory;
 using DAL.Interfaces;
+using DAL.Interfaces.FactoryModules;
 using DAL.Repositories;
 using HLP.Entity;
 using HLP.Interfaces;
@@ -22,7 +24,8 @@ namespace PersonalTracking.Services
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IEntityMessages, InformationMessage>();
             services.AddScoped<IDepartmentService, DepartmentService>();
-            services.AddScoped<IPositionRepository<POSITION>, PositionRepository>();
+            services.AddScoped<IPositionRepository, PositionRepository>();
+            services.AddScoped<IDepartmentFactory, DepartmentFactory>();
             services.AddScoped<Context>();
 
             return services;

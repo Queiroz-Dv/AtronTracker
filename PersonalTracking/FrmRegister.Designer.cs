@@ -228,7 +228,6 @@
             this.Controls.Add(this.slpRegister);
             this.Name = "FrmRegister";
             this.ShowIcon = false;
-            this.Sizable = false;
             this.Text = "Register";
             this.Load += new System.EventHandler(this.FrmRegister_Load);
             this.slpRegister.Panel1.ResumeLayout(false);

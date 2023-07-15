@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using BLL;
+using BLL.Interfaces;
 using DAL.DTO;
+using HLP.Interfaces;
 
 namespace PersonalTracking
 {
     public partial class FrmPositionList : Form
     {
-        public FrmPositionList()
+        public FrmPositionList(IPositionService positionService, IEntityMessages messages)
         {
             InitializeComponent();
         }
@@ -48,26 +50,26 @@ namespace PersonalTracking
         void FillGrid()
         {
             positionList = PositionBLL.GetPositions();
-            dataGridView1.DataSource = positionList;
+            dgvPositionList.DataSource = positionList;
         }
         PositionDTO detail = new PositionDTO();
 
         private void FrmPositionList_Load(object sender, EventArgs e)
         {
             FillGrid();
-            dataGridView1.Columns[1].Visible = false;
-            dataGridView1.Columns[4].Visible = false;
-            dataGridView1.Columns[2].Visible = false;
-            dataGridView1.Columns[0].HeaderText = "Deparment Name";
-            dataGridView1.Columns[3].HeaderText = "Position Name";
+            dgvPositionList.Columns[1].Visible = false;
+            dgvPositionList.Columns[4].Visible = false;
+            dgvPositionList.Columns[2].Visible = false;
+            dgvPositionList.Columns[0].HeaderText = "Deparment Name";
+            dgvPositionList.Columns[3].HeaderText = "Position Name";
         }
 
         private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            detail.PositionName = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString();
-            detail.ID = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[2].Value);
-            detail.DepartmentID = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[2].Value);
-            detail.OldDepartmentID = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[4].Value);
+            detail.PositionName = dgvPositionList.Rows[e.RowIndex].Cells[3].Value.ToString();
+            detail.ID = Convert.ToInt32(dgvPositionList.Rows[e.RowIndex].Cells[2].Value);
+            detail.DepartmentID = Convert.ToInt32(dgvPositionList.Rows[e.RowIndex].Cells[2].Value);
+            detail.OldDepartmentID = Convert.ToInt32(dgvPositionList.Rows[e.RowIndex].Cells[4].Value);
 
 
         }

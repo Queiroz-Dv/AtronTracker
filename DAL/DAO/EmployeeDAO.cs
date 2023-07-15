@@ -43,7 +43,7 @@ namespace DAL.DAO
                             isAdmin = e.isAdmin,
                             Salary = e.Salary,
                             Birthday = e.BirthDay,
-                            Address = e.Address
+                            Address = e.Adress
                         }).OrderBy(x => x.UserNo).ToList();
 
             foreach (var item in list)
@@ -97,7 +97,7 @@ namespace DAL.DAO
                 emp.Password = employee.Password;
                 emp.isAdmin = employee.isAdmin;
                 emp.BirthDay = employee.BirthDay;
-                emp.Address = employee.Address;
+                emp.Adress = employee.Adress;
                 emp.DepartmentID = employee.DepartmentID;
                 emp.PositionID = employee.PositionID;
                 emp.Salary = employee.Salary;

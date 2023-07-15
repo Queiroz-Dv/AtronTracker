@@ -26,11 +26,10 @@ namespace DAL.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=MRJ01-DSK238\\SQLEXPRESS;Initial Catalog=PERSONALTRACKING;Integrated S" +
-            "ecurity=True")]
-        public string PERSONALTRACKING {
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=QRZ;Integrated Security=True")]
+        public string QRZConnectionString {
             get {
-                return ((string)(this["PERSONALTRACKING"]));
+                return ((string)(this["QRZConnectionString"]));
             }
         }
     }

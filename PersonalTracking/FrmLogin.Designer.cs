@@ -34,14 +34,13 @@
             this.btnExit = new System.Windows.Forms.Button();
             this.btnRegister = new System.Windows.Forms.Button();
             this.btnLogin = new System.Windows.Forms.Button();
-            this.lblUserNumber = new MaterialSkin.Controls.MaterialLabel();
-            this.lblPassword = new MaterialSkin.Controls.MaterialLabel();
+            this.lblUserNumber = new System.Windows.Forms.Label();
+            this.lblPassword = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
-            this.SuspendLayout();
             // 
             // txtUserNo
             // 
-            this.txtUserNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.txtUserNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.txtUserNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtUserNo.Location = new System.Drawing.Point(194, 132);
@@ -53,7 +52,7 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.txtPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtPassword.Location = new System.Drawing.Point(194, 179);
@@ -78,7 +77,7 @@
             // 
             // btnExit
             // 
-            this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.btnExit.BackColor = System.Drawing.Color.White;
             this.btnExit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
@@ -94,7 +93,7 @@
             // 
             // btnRegister
             // 
-            this.btnRegister.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.btnRegister.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.btnRegister.BackColor = System.Drawing.Color.White;
             this.btnRegister.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gray;
@@ -110,7 +109,7 @@
             // 
             // btnLogin
             // 
-            this.btnLogin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.btnLogin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.btnLogin.BackColor = System.Drawing.Color.White;
             this.btnLogin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gray;
@@ -128,11 +127,9 @@
             // 
             this.lblUserNumber.AutoSize = true;
             this.lblUserNumber.BackColor = System.Drawing.Color.Transparent;
-            this.lblUserNumber.Depth = 0;
             this.lblUserNumber.Font = new System.Drawing.Font("Roboto", 11F);
             this.lblUserNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.lblUserNumber.Location = new System.Drawing.Point(65, 135);
-            this.lblUserNumber.MouseState = MaterialSkin.MouseState.HOVER;
             this.lblUserNumber.Name = "lblUserNumber";
             this.lblUserNumber.Size = new System.Drawing.Size(97, 19);
             this.lblUserNumber.TabIndex = 4;
@@ -142,11 +139,9 @@
             // 
             this.lblPassword.AutoSize = true;
             this.lblPassword.BackColor = System.Drawing.Color.Transparent;
-            this.lblPassword.Depth = 0;
             this.lblPassword.Font = new System.Drawing.Font("Roboto", 11F);
             this.lblPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.lblPassword.Location = new System.Drawing.Point(104, 183);
-            this.lblPassword.MouseState = MaterialSkin.MouseState.HOVER;
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(75, 19);
             this.lblPassword.TabIndex = 5;
@@ -180,8 +175,8 @@
         private System.Windows.Forms.TextBox txtUserNo;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Panel panel1;
-        private MaterialSkin.Controls.MaterialLabel lblUserNumber;
-        private MaterialSkin.Controls.MaterialLabel lblPassword;
+        private System.Windows.Forms.Label lblUserNumber;
+        private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnRegister;
         private System.Windows.Forms.Button btnLogin;

@@ -1,13 +1,12 @@
 ﻿using BLL.Interfaces;
 using HLP.Interfaces;
-using MaterialSkin.Controls;
 using PersonalTracking.Models;
 using System;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmDepartment : MaterialForm
+    public partial class FrmDepartment : Form
     {
         public FrmDepartment(IDepartmentService departmentService, IEntityMessages message)
         {

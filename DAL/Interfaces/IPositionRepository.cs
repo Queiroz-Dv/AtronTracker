@@ -1,8 +1,8 @@
 ﻿using DAL.Generics;
+using PersonalTracking.Models;
 
 namespace DAL.Interfaces
 {
-    public interface IPositionRepository<T> : IGenericRepository<T> where T : POSITION
-    {
-    }
+    public interface IPositionRepository : IGenericRepository<PositionModel>
+    { }
 }

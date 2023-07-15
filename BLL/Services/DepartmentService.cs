@@ -44,7 +44,7 @@ namespace BLL.Services
         public List<DepartmentModel> GetAllModelService()
         {
             var departments = _departmentRepository.GetAllDepartmentEntities(); // Obtém todos os modelos de departamento do repositório
-            return departments; // Retorna a lista de modelos de departamento
+            return departments as List<DepartmentModel>; // Retorna a lista de modelos de departamento
         }
 
         public DepartmentModel GetEntityByIdService(object id)

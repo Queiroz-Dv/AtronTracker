@@ -6,13 +6,10 @@
 
 <h2>Departments</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create", "DepartmentApi", new { @class = "btn btn-primary"})
+<p style="margin: 18px 1px 18px 1px;">
+    @Html.ActionLink("Create New", "Create", "DepartmentApi", new { @class = "btn btn-secondary"})
 </p>
 <table class="table">
-    <tr>
-        <th></th>
-    </tr>
 
 @foreach (var item in Model) {
     <tr>
@@ -29,5 +26,4 @@
         </td>
     </tr>
 }
-
 </table>

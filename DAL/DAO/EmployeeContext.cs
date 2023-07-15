@@ -1,7 +1,7 @@
 ﻿namespace DAL.DAO
 {
-    public class EmployeeContext
+    public class QRZStaticDataContext
     {
-        public static EmployeeDataClassDataContext db = new EmployeeDataClassDataContext();
+        public static QRZDatabaseDataContext db = new QRZDatabaseDataContext();
     }
 }

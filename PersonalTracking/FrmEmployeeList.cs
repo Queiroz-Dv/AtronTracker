@@ -1,10 +1,8 @@
 ﻿using BLL;
 using DAL.DTO;
-using MaterialSkin.Controls;
-using MaterialSkin;
-using System.Drawing;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -15,14 +13,6 @@ namespace PersonalTracking
         public FrmEmployeeList()
         {
             InitializeComponent();
-           // MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
-           // materialSkinManager.AddFormToManage(this);
-           // materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
-           // materialSkinManager.ColorScheme = new ColorScheme(
-           //    Primary.DeepPurple900, Primary.DeepPurple500,
-           //    Primary.Purple500, Accent.Purple200,
-           //    TextShade.WHITE
-           //);
         }
 
         private void txtUserNo_KeyPress(object sender, KeyPressEventArgs e)
@@ -101,7 +91,7 @@ namespace PersonalTracking
 
         private void cmbDeparment_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(combofull)
+            if (combofull)
             {
                 cmbPosition.DataSource = dto.Positions.Where(x => x.DepartmentID ==
                 Convert.ToInt32(cmbDepartment.SelectedValue)).ToList();

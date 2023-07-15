@@ -17,7 +17,7 @@ namespace DAL.Repositories
             _employee = new EMPLOYEE();
         }
 
-        protected EmployeeDataClassDataContext GetContext()
+        protected QRZDatabaseDataContext GetContext()
         {
             var context = _context.GetContext();
             return context;

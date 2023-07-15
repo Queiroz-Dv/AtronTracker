@@ -3,17 +3,17 @@ using BLL.Interfaces;
 using DAL.DTO;
 using HLP.Entity;
 using HLP.Interfaces;
-using MaterialSkin.Controls;
 using System;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmMain : MaterialForm
+    public partial class FrmMain : Form
     {
         //171920
         private readonly IDepartmentService _departmentService;
+        private readonly IPositionService _positionService;
         private readonly IEntityMessages entityMessages;
 
         public FrmMain(IDepartmentService departmentService)
@@ -84,7 +84,7 @@ namespace PersonalTracking
 
         private void btnPosition_Click(object sender, EventArgs e)
         {
-            FrmPositionList frm = new FrmPositionList();
+            FrmPositionList frm = new FrmPositionList(_positionService, entityMessages);
             this.Hide();
             frm.ShowDialog();
             this.Visible = true;

@@ -2,16 +2,16 @@
 
 namespace DAL.DAO
 {
-    public class Context : EmployeeContext, IDisposable
+    public class Context : QRZStaticDataContext, IDisposable
     {
-        private EmployeeDataClassDataContext _db;
+        private QRZDatabaseDataContext _db;
 
         public Context()
         {
-            _db = new EmployeeDataClassDataContext();
+            _db = new QRZDatabaseDataContext();
         }
 
-        public EmployeeDataClassDataContext GetContext()
+        public QRZDatabaseDataContext GetContext()
         {
             return _db;
         }
