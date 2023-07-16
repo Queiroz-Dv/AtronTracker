@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace DAL.Interfaces
 {
-    public interface IEmployeeRepository<T> : IGenericRepository<T> where T : EMPLOYEE
+    public interface IEmployeeRepository : IGenericRepository<EMPLOYEE> 
     {
-        IEnumerable<T> GetUsers(int user);
+        IEnumerable<EMPLOYEE> GetUsers(int user);
 
-        IEnumerable<T> GetEmployeesByUserNoAndPassword(int userNumber, string password);
+        IEnumerable<EMPLOYEE> GetEmployeesByUserNoAndPassword(int userNumber, string password);
     }
 }

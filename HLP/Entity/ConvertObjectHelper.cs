@@ -1,13 +1,22 @@
-﻿using HLP.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace HLP.Entity
 {
-
-    public class ConvertObjectHelper : IConvertObjectHelper
+    /// <summary>
+    /// Uma classe helper que disponibiliza métodos de conversão
+    /// </summary>
+    public static class ConvertObjectHelper
     {
-        public List<TOutput> ConvertList<TInput, TOutput>(List<TInput> inputList, Func<TInput, TOutput> conversionFunc)
+        /// <summary>
+        /// Converte uma lista de objetos para um outro tipo usando uma função de conversão
+        /// </summary>
+        /// <typeparam name="TInput">O tipo de objeto de entrada.</typeparam>
+        /// <typeparam name="TOutput">O tipo de objeto de saída.</typeparam>
+        /// <param name="inputList">A lista de objetos de entrada.</param>
+        /// <param name="conversionFunc">A função que específica como converter cada objeto de entrada.</param>
+        /// <returns>Uma lista de objetos de saída convertidos dos objetos de entrada.</returns>
+        public static IList<TOutput> ConvertList<TInput, TOutput>(this List<TInput> inputList, Func<TInput, TOutput> conversionFunc)
         {
             IList<TOutput> outputList = new List<TOutput>();
 
@@ -17,10 +26,18 @@ namespace HLP.Entity
                 outputList.Add(output);
             }
 
-            return outputList as List<TOutput>;
+            return outputList;
         }
 
-        public  TOutput ConvertObject<TInput, TOutput>(TInput input, Func<TInput, TOutput> conversionFunc)
+        /// <summary>
+        /// Converte um objeto de um tipo para outro usando uma função de conversão.
+        /// </summary>
+        /// <typeparam name="TInput">O tipo de objeto de entrada.</typeparam>
+        /// <typeparam name="TOutput">O tipo de objeto de saída.</typeparam>
+        /// <param name="input">O objeto de entrada que será convertido.</param>
+        /// <param name="conversionFunc">A função que específica como converter o objeto de entrada.</param>
+        /// <returns>O objeto de saída convertido do objeto de entrada.</returns>
+        public static TOutput ConvertObject<TInput, TOutput>(this TInput input, Func<TInput, TOutput> conversionFunc)
         {
             return conversionFunc(input);
         }

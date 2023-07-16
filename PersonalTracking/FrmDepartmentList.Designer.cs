@@ -3,6 +3,7 @@ using HLP.Interfaces;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PersonalTracking
@@ -90,7 +91,7 @@ namespace PersonalTracking
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnClose.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnClose.Location = new System.Drawing.Point(658, 10);
+            this.btnClose.Location = new System.Drawing.Point(676, 10);
             this.btnClose.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(61, 32);
@@ -107,7 +108,7 @@ namespace PersonalTracking
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnDelete.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnDelete.Location = new System.Drawing.Point(494, 10);
+            this.btnDelete.Location = new System.Drawing.Point(528, 10);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(68, 32);
@@ -124,7 +125,7 @@ namespace PersonalTracking
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnUpdate.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnUpdate.Location = new System.Drawing.Point(336, 10);
+            this.btnUpdate.Location = new System.Drawing.Point(379, 10);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(74, 32);
@@ -141,7 +142,7 @@ namespace PersonalTracking
             this.btnNew.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnNew.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnNew.Location = new System.Drawing.Point(207, 10);
+            this.btnNew.Location = new System.Drawing.Point(253, 10);
             this.btnNew.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnNew.Name = "btnNew";
             this.btnNew.Size = new System.Drawing.Size(52, 32);
@@ -185,6 +186,19 @@ namespace PersonalTracking
             departmentModel.DepartmentModelName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
         }
 
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Close(); // Fecha o form
+        }
+
+        private void FrmDepartmentList_Load(object sender, EventArgs e)
+        {
+            //Preenche o grid com a lista de departamentos e configura as colunas
+            departmentsModelsList = _departmentService.GetAllModelService().ToList();
+            dgvDepartment.DataSource = departmentsModelsList.OrderBy(d => d.DepartmentModelName).ToList();
+            ConfigureColumns();
+        }
+
         #endregion
 
         private System.Windows.Forms.DataGridView dgvDepartment;
@@ -193,9 +207,9 @@ namespace PersonalTracking
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnNew;
-        private IEntityMessages _information;
+        private readonly IDepartmentService _departmentService;  // Serviço responsável pelas operações relacionadas a departamento
+        private readonly IEntityMessages _information; // Serviço pelas mensagens de notificação
         private List<DepartmentModel> departmentsModelsList; // Lista de modelos de departamento
         private readonly DepartmentModel departmentModel; // Modelo do departamento atualmente selecionado
-        private readonly IDepartmentService departmentService;  // Serviço responsável pelas operações relacionadas a departamento
     }
 }

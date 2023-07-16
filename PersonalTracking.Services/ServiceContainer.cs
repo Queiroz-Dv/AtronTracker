@@ -19,7 +19,7 @@ namespace PersonalTracking.Services
             var services = new ServiceCollection();
 
             // Registre os serviços desktop aqui
-            services.AddScoped<IEmployeeRepository<EMPLOYEE>, EmployeeRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IEntityMessages, InformationMessage>();

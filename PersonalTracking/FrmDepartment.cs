@@ -16,10 +16,9 @@ namespace PersonalTracking
             _departmentService = departmentService;
         }
 
-        private void btnClose_Click(object sender, EventArgs e) => this.Close();
+        private void BtnClose_Click(object sender, EventArgs e) => this.Close();
 
-
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             var departmentIsEmpty = GetFieldEmptyOrFilled();
             var departmentAmountCharactersIsValid = GetFieldLength();
@@ -51,6 +50,20 @@ namespace PersonalTracking
             }
         }
 
+        private void UpdateDepartment(DepartmentModel department)
+        {
+            _departmentService.UpdateEntityService(department);
+            _information.EntityUpdatedMessage(department.DepartmentModelName);
+            ClearFields();
+        }
+
+        private void SaveDepartment(DepartmentModel department)
+        {
+            _departmentService.CreateEntityService(department);
+            _information.EntitySavedWithSuccessMessage(department.DepartmentModelName);
+            ClearFields();
+        }
+
         private void FrmDepartment_Load(object sender, EventArgs e)
         {
             if (isUpdate)
@@ -64,20 +77,6 @@ namespace PersonalTracking
             }
         }
 
-        private void ClearFields() => txtDepartment.Clear();
-
-        private void txtDepartment_TextChanged(object sender, EventArgs e)
-        {
-            var departmentVerification = GetDepartmentFieldLengthAmount();
-
-            if (departmentVerification)
-            {
-                btnSave.Enabled = true;
-            }
-            else
-            {
-                btnSave.Enabled = false;
-            }
-        }
+        private void ClearFields() => txtDepartment.Clear();        
     }
 }

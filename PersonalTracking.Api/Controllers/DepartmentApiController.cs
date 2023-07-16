@@ -1,9 +1,5 @@
 ﻿using BLL.Interfaces;
-using BLL.Services;
-using DAL.Interfaces;
-using DAL.Repositories;
 using PersonalTracking.Models;
-using System.ComponentModel;
 using System.Web.Http;
 
 namespace PersonalTracking.Api.Controllers
@@ -11,14 +7,11 @@ namespace PersonalTracking.Api.Controllers
     public class DepartmentApiController : ApiController
     {
         // Interfaces para serem usadas no processo
-        private readonly IDepartmentService _departmentService; // chama o service
-        private IDepartmentRepository _departmentRepository; // chama o repository
+        private readonly IDepartmentService _departmentService;
 
-        public DepartmentApiController()
+        public DepartmentApiController(IDepartmentService departmentService)
         {
-            /*_departmentRepository = new DepartmentRepository()*/;
-            // Por padrão o service precisa do repository para a dependência do construtor
-            _departmentService = new DepartmentService(_departmentRepository);
+            _departmentService = departmentService;
         }
 
         /// <summary>

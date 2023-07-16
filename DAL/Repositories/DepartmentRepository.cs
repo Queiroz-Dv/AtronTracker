@@ -2,6 +2,7 @@
 using DAL.Factory;
 using DAL.Interfaces;
 using DAL.Interfaces.FactoryModules;
+using HLP.Interfaces;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
@@ -12,12 +13,13 @@ namespace DAL.Repositories
 {
     public class DepartmentRepository : ContextBase<DepartmentModel, DEPARTMENT>, IDepartmentRepository
     {
-        private readonly IDepartmentFactory DeparmentFactory;
+        private readonly IDepartmentFactory _deparmentFactory;
 
-        public DepartmentRepository()
+        public DepartmentRepository(IDepartmentFactory departmentFactory, IObjectModelHelper<DepartmentModel, DEPARTMENT> objectModelHelper) 
+            : base (objectModelHelper)
         {
             _context = new Context(); // Define o contexto do banco de dados
-            DeparmentFactory = new DepartmentFactory();
+            _deparmentFactory = departmentFactory;
         }
 
         public void CreateEntityRepository(DepartmentModel model)
@@ -27,8 +29,7 @@ namespace DAL.Repositories
             try
             {
                 // Converte o modelo de departamento em uma entidade DAL
-                //var departmentDal = convertObject.ConvertObject(entity, departmentModel => CreateDepartmentDal(departmentModel));
-                var departmentDal = ObjectModelHelper.CreateEntity(model, entity => DeparmentFactory.CreateDepartmentDal(entity));
+                var departmentDal = _objectModelHelper.CreateEntity(model, entity => _deparmentFactory.CreateDalEntity(entity));
 
                 db.DEPARTMENTs.InsertOnSubmit(departmentDal); // Insere a entidade no contexto
                 db.SubmitChanges(); // Salva as alterações no banco de dados
@@ -47,8 +48,7 @@ namespace DAL.Repositories
                 var entities = context.DEPARTMENTs.ToList(); // Obtém todas as entidades de departamento
 
                 // Converte as entidades em modelos de departamento
-                //var departmentConverted = convertObject.ConvertList(entities, departmentsConverted => CreateDepartmentModel(departmentsConverted));
-                var departments = ObjectModelHelper.CreateListModels(entities, entitiesList => DeparmentFactory.CreateDepartmentModel(entitiesList));
+                var departments = _objectModelHelper.CreateListModels(entities, entitiesList => _deparmentFactory.CreateModel(entitiesList));
 
                 // Retorna a lista de modelos de departamento
                 return departments;
@@ -69,8 +69,7 @@ namespace DAL.Repositories
                 var departmentEntity = context.DEPARTMENTs.FirstOrDefault(dpt => dpt.ID.Equals(id)); // Obtém a entidade de departamento pelo ID
 
                 // Converte a entidade em um modelo de departamento
-                //var departmentModel = convertObject.ConvertObject(departmentEntity, departmentObject => CreateDepartmentModel(departmentEntity));
-                var departmentModel = ObjectModelHelper.CreateModel(departmentEntity, department => DeparmentFactory.CreateDepartmentModel(departmentEntity));
+                var departmentModel = _objectModelHelper.CreateModel(departmentEntity, department => _deparmentFactory.CreateModel(departmentEntity));
 
                 return departmentModel; // Retorna o modelo de departamento encontrado
             }
@@ -84,20 +83,15 @@ namespace DAL.Repositories
         {
             try
             {
-                var departmentObject = new DepartmentModel();
-
-                departmentObject.DepartmentModelId = (int)entity;
-
                 var context = GetContext(); // Obtém o contexto do banco de dados
 
-                var departmentModel = GetEntityByIdRepository(departmentObject);
-
-                var department = ObjectModelHelper.CreateEntity(departmentModel, departmentDal => DeparmentFactory.CreateDepartmentDal(departmentDal));
+                var department = context.DEPARTMENTs.FirstOrDefault(depart => depart.ID.Equals(entity)); // Obtém a entidade de departamento a ser removida
 
                 context.DEPARTMENTs.DeleteOnSubmit(department); // Remove a entidade do contexto
+
                 context.SubmitChanges(); // Salva as alterações no banco de dados
 
-                var departmentModelToReturn = ObjectModelHelper.CreateModel(department, departmentEntity => DeparmentFactory.CreateDepartmentModel(department));
+                var departmentModelToReturn = _objectModelHelper.CreateModel(department, departmentEntity => _deparmentFactory.CreateModel(department));
 
                 return departmentModelToReturn;
             }
@@ -112,13 +106,15 @@ namespace DAL.Repositories
             try
             {
                 var context = GetContext(); // Obtém o contexto do banco de dados
-                var departmentEntity = GetEntityByIdRepository(entity.DepartmentModelId); // Obtém a entidade de departamento a ser atualizada
+                var departmentEntity = context.DEPARTMENTs.FirstOrDefault(depart => depart.ID.Equals(entity.DepartmentModelId));  // Obtém a entidade de departamento a ser atualizada
 
-                departmentEntity.DepartmentModelName = entity.DepartmentModelName; // Atualiza o nome do departamento na entidade
+                departmentEntity.DepartmentName = entity.DepartmentModelName; // Atualiza o nome do departamento na entidade
 
                 context.SubmitChanges(); // Salva as alterações no banco de dados
+                
+                var departmentModelToReturn = _objectModelHelper.CreateModel(departmentEntity, department => _deparmentFactory.CreateModel(departmentEntity));
 
-                return departmentEntity; // Retorna o modelo de departamento atualizado
+                return departmentModelToReturn; // Retorna o modelo de departamento atualizado
             }
             catch (Exception ex)
             {
@@ -134,8 +130,7 @@ namespace DAL.Repositories
                 var entities = context.DEPARTMENTs.ToList(); // Obtém todas as entidades de departamento
 
                 // Converte as entidades em modelos de departamento
-                //List<DepartmentModel> departments = convertObject.ConvertList(entities, departmentModel => CreateDepartmentModel(departmentModel));
-                var departments = ObjectModelHelper.CreateListModels(entities, departmentModel => DeparmentFactory.CreateDepartmentModel(departmentModel));
+                var departments = _objectModelHelper.CreateListModels(entities, departmentModel => _deparmentFactory.CreateModel(departmentModel));
 
                 return departments; // Retorna a lista de modelos de departamento
 
