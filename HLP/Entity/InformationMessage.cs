@@ -61,7 +61,7 @@ namespace HLP.Entity
 
         public object EntityUpdatedMessage(string fieldName)
         {
-            var message = messageHelper.ShowMessage($"{fieldName} was deleted successfully!",
+            var message = messageHelper.ShowMessage($"{fieldName} was updated successfully!",
                                                     MessageBoxButtons.OK,
                                                     EnumLevelMessage.Information);
             return message;

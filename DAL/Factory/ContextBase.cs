@@ -13,12 +13,12 @@ namespace DAL.Factory
     {
         public Context _context;
 
-        public readonly IObjectModelHelper<Model, Entity> ObjectModelHelper;
+        public readonly IObjectModelHelper<Model, Entity> _objectModelHelper;
 
-        public ContextBase()
+        public ContextBase(IObjectModelHelper<Model, Entity> objectModelHelper)
         {
             _context = new Context();
-            ObjectModelHelper = new ObjectModelHelper<Model, Entity>();
+            _objectModelHelper = objectModelHelper;
         }
 
         protected QRZDatabaseDataContext GetContext()

@@ -1,37 +1,36 @@
-﻿using BLL.Interfaces;
-using DAL;
+﻿using DAL;
 using DAL.DAO;
 using DAL.DTO;
 using DAL.Interfaces;
-using DAL.Repositories;
 using HLP.Interfaces;
 using PersonalTracking.Models;
 using System.Collections.Generic;
 
 namespace BLL
 {
-    public class EmployeeBLL 
+    public class EmployeeBLL
     {
         private readonly IObjectModelHelper<DepartmentModel, DEPARTMENT> objectModel;
-        private readonly IEmployeeRepository<EMPLOYEE> repository;
-        private readonly DepartmentRepository deparmentRepository;
-        private readonly PositionRepository positionRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IDepartmentRepository _deparmentRepository;
+        private readonly IPositionRepository _positionRepository;
 
         private readonly EMPLOYEE employee;
 
-        public EmployeeBLL()
+        public EmployeeBLL(IEmployeeRepository employeeRepository,
+                           IDepartmentRepository departmentRepository,
+                           IPositionRepository positionRepository)
         {
             employee = new EMPLOYEE();
-            deparmentRepository = new DepartmentRepository();
-            positionRepository = new PositionRepository();
+            _employeeRepository = employeeRepository;
+            _deparmentRepository = departmentRepository;
+            _positionRepository = positionRepository;
         }
 
         public EMPLOYEE GetEntityByIdService(object id)
         {
             throw new System.NotImplementedException();
         }
-
-      
 
         public EMPLOYEE CreateEntityService(EMPLOYEE entity)
         {
@@ -49,7 +48,7 @@ namespace BLL
                 employee.Password = entity.Password;
                 employee.isAdmin = entity.isAdmin;
 
-                repository.CreateEntityRepository(employee);
+                _employeeRepository.CreateEntityRepository(employee);
                 return entity;
             }
             else
@@ -81,7 +80,7 @@ namespace BLL
 
         public IEnumerable<EMPLOYEE> GetAllService()
         {
-            var entities = repository.GetAllEntitiesRepository();
+            var entities = _employeeRepository.GetAllEntitiesRepository();
             // TODO: verificar depois 
             return entities;
         }
@@ -89,7 +88,7 @@ namespace BLL
         public static EmployeeDTO GetAll()
         {
             EmployeeDTO dto = new EmployeeDTO();
-           //dto.Departments = DepartmentDAO.GetDepartments();
+            //dto.Departments = DepartmentDAO.GetDepartments();
             dto.Positions = PositionDAO.GetPositions();
             dto.Employees = EmployeeDAO.GetEmployees();
             return dto;
@@ -116,7 +115,7 @@ namespace BLL
 
         public bool IsUniqueEntity(int entity)
         {
-            List<EMPLOYEE> list = repository.GetUsers(entity) as List<EMPLOYEE>;
+            List<EMPLOYEE> list = _employeeRepository.GetUsers(entity) as List<EMPLOYEE>;
             return list.Count <= 0;
         }
     }

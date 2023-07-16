@@ -10,12 +10,12 @@ namespace BLL.Services
     public class EmployeeService : IEmployeeService
     {
         // Inversão de controle && Injeção de dependência
-        private readonly IEmployeeRepository<EMPLOYEE> _employeeRepository;
+        private readonly IEmployeeRepository _employeeRepository;
         private readonly IDepartmentRepository _deparmentRepository;
         private readonly IPositionRepository _positionRepository;
         private readonly EMPLOYEE _employee;
 
-        public EmployeeService(IEmployeeRepository<EMPLOYEE> employeeRepository,
+        public EmployeeService(IEmployeeRepository employeeRepository,
                                IDepartmentRepository departmentRepository,
                                IPositionRepository positionRepository)
         {

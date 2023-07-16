@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using HLP.Interfaces;
 using PersonalTracking.Models;
+using System;
 
 namespace PersonalTracking
 {
@@ -50,7 +51,7 @@ namespace PersonalTracking
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnClose
             // 
@@ -64,7 +65,7 @@ namespace PersonalTracking
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // lblDepartment
             // 
@@ -84,7 +85,7 @@ namespace PersonalTracking
             this.txtDepartment.Name = "txtDepartment";
             this.txtDepartment.Size = new System.Drawing.Size(213, 26);
             this.txtDepartment.TabIndex = 1;
-            this.txtDepartment.TextChanged += new System.EventHandler(this.txtDepartment_TextChanged);
+            this.txtDepartment.TextChanged += new System.EventHandler(this.TxtDepartment_TextChanged);
             // 
             // FrmDepartment
             // 
@@ -130,18 +131,18 @@ namespace PersonalTracking
             return departmentField;
         }
 
-        private void UpdateDepartment(DepartmentModel department)
+        private void TxtDepartment_TextChanged(object sender, EventArgs e)
         {
-            _departmentService.UpdateEntityService(department);
-            _information.EntityUpdatedMessage(department.DepartmentModelName);
-            ClearFields();
-        }
+            var departmentVerification = GetDepartmentFieldLengthAmount();
 
-        private void SaveDepartment(DepartmentModel department)
-        {
-            _departmentService.CreateEntityService(department);
-            _information.EntitySavedWithSuccessMessage(department.DepartmentModelName);
-            ClearFields();
+            if (departmentVerification)
+            {
+                btnSave.Enabled = true;
+            }
+            else
+            {
+                btnSave.Enabled = false;
+            }
         }
 
         #endregion

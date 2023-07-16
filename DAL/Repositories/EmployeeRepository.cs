@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DAL.Repositories
 {
-    public class EmployeeRepository : IEmployeeRepository<EMPLOYEE>
+    public class EmployeeRepository : IEmployeeRepository
     {
         private Context _context;
         private EMPLOYEE _employee;
