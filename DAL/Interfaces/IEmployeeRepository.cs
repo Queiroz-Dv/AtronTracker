@@ -8,5 +8,7 @@ namespace DAL.Interfaces
         IEnumerable<EMPLOYEE> GetUsers(int user);
 
         IEnumerable<EMPLOYEE> GetEmployeesByUserNoAndPassword(int userNumber, string password);
+
+        EmployeeModel UpdateEntityRepository(TEntity entity);
     }
 }

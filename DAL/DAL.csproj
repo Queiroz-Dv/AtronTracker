@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DAO\DepartmentDAO.cs" />
     <Compile Include="DAO\Context.cs" />
     <Compile Include="DAO\EmployeeContext.cs" />
     <Compile Include="DAO\EmployeeDAO.cs" />
@@ -69,6 +68,7 @@
     <Compile Include="Generics\IEntity.cs" />
     <Compile Include="Generics\IGenericRepository.cs" />
     <Compile Include="Interfaces\FactoryModules\IDepartmentFactory.cs" />
+    <Compile Include="Interfaces\FactoryModules\IPositionFactory.cs" />
     <Compile Include="Interfaces\IDepartmentRepository.cs" />
     <Compile Include="Interfaces\IEmployeeRepository.cs" />
     <Compile Include="Interfaces\IPositionRepository.cs" />
@@ -77,6 +77,9 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="QRZDatabase.cs">
+      <DependentUpon>QRZDatabase.dbml</DependentUpon>
     </Compile>
     <Compile Include="QRZDatabase.designer.cs">
       <AutoGen>True</AutoGen>

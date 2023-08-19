@@ -1,11 +1,8 @@
 ﻿using BLL.Interfaces;
 using DAL.Interfaces;
+using DAL.Interfaces.FactoryModules;
 using PersonalTracking.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Services
 {
@@ -15,38 +12,59 @@ namespace BLL.Services
     public class PositionService : IPositionService
     {
         private readonly IPositionRepository _positionRepository;
-        private readonly PositionModel positionModel;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IPositionFactory _positionFactory;
 
-        public PositionService(IPositionRepository positionRepository)
+        public PositionService(IPositionRepository positionRepository, IEmployeeRepository employeeRepository, IPositionFactory positionFactory)
         {
             _positionRepository = positionRepository;
-            positionModel = new PositionModel();
+            _employeeRepository = employeeRepository;
+            _positionFactory = positionFactory;
         }
 
         public PositionModel CreateEntityService(PositionModel entity)
         {
-            throw new NotImplementedException();
+            var position = _positionFactory.SetPositionModelFactory(entity);
+            if (!position.Equals(null))
+            {
+                _positionRepository.CreateEntityRepository(position);
+                return position;
+            }
+            else
+            {
+                return entity;
+            }
         }
 
         public IEnumerable<PositionModel> GetAllService()
         {
-            var positions = _positionRepository.GetAllEntitiesRepository().ToList();
+            var positions = _positionRepository.GetAllEntitiesRepository();
             return positions;
         }
 
         public PositionModel GetEntityByIdService(object id)
         {
-            throw new NotImplementedException();
+            var position = _positionRepository.GetEntityByIdRepository(id);
+            return position;
         }
 
         public PositionModel RemoveEntityService(object entity)
         {
-            throw new NotImplementedException();
+            var position = _positionRepository.RemoveEntityRepository(entity);
+            return position;
         }
+
+        public bool control;
 
         public PositionModel UpdateEntityService(PositionModel entity)
         {
-            throw new NotImplementedException();
+            
+            var position = _positionRepository.UpdateEntityRepository(entity);
+            if (control)
+            {
+                _employeeRepository.UpdateEntityRepository(position);
+            }
+            return position;
         }
     }
 }

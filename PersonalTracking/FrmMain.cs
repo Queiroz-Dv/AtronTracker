@@ -16,10 +16,11 @@ namespace PersonalTracking
         private readonly IPositionService _positionService;
         private readonly IEntityMessages entityMessages;
 
-        public FrmMain(IDepartmentService departmentService)
+        public FrmMain(IDepartmentService departmentService, IPositionService positionService)
         {
             InitializeComponent();
             _departmentService = departmentService;
+            _positionService = positionService;
             entityMessages = new InformationMessage();
         }
 
@@ -84,7 +85,7 @@ namespace PersonalTracking
 
         private void btnPosition_Click(object sender, EventArgs e)
         {
-            FrmPositionList frm = new FrmPositionList(_positionService, entityMessages);
+            FrmPositionList frm = new FrmPositionList(_positionService, entityMessages, _departmentService);
             this.Hide();
             frm.ShowDialog();
             this.Visible = true;

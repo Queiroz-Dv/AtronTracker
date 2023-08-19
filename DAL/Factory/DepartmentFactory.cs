@@ -1,5 +1,6 @@
 ﻿using DAL.Interfaces.FactoryModules;
 using PersonalTracking.Models;
+using System;
 
 namespace DAL.Factory
 {
@@ -8,7 +9,14 @@ namespace DAL.Factory
     /// </summary>
     public class DepartmentFactory : IDepartmentFactory
     {
-        public DEPARTMENT CreateDalEntity(DepartmentModel departmentModel)
+        protected  DepartmentModel model;
+
+        public DepartmentFactory()
+        {
+            model = new DepartmentModel();
+        }
+
+        public DEPARTMENT CreateModelToDalEntity(DepartmentModel departmentModel)
         {
             return new DEPARTMENT
             {
@@ -17,13 +25,29 @@ namespace DAL.Factory
             };
         }
 
-        public DepartmentModel CreateModel(DEPARTMENT department)
+        public DepartmentModel CreateDalToModel(DEPARTMENT department)
         {
             return new DepartmentModel
             {
                 DepartmentModelId = department.ID,
                 DepartmentModelName = department.DepartmentName
             };
+        }
+
+        public DepartmentModel SetDepartmentModelFactory(DepartmentModel _entity)
+        {
+            if (_entity != null)
+            {
+                model = _entity;
+                return model;
+            }
+
+            return _entity;
+        }
+
+        public DepartmentModel CreateDepartmentModelFactory()
+        {
+            return model;
         }
     }
 }

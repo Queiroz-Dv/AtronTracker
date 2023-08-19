@@ -12,14 +12,16 @@ namespace PersonalTracking
     {
         private readonly IEntityMessages Information;
         private readonly IEmployeeService _employeeService;
-        private IDepartmentService _departmentService;
+        private readonly IDepartmentService _departmentService;
+        private readonly IPositionService _positionService;
 
-        public FrmLogin(IEmployeeService employeeService, IDepartmentService departmentService)
+        public FrmLogin(IEmployeeService employeeService, IDepartmentService departmentService, IPositionService positionService)
         {
             InitializeComponent();
             Information = new InformationMessage();
             _employeeService = employeeService;
             _departmentService = departmentService;
+            _positionService = positionService;
         }
 
 
@@ -54,7 +56,7 @@ namespace PersonalTracking
                     UserStatic.EmployeeID = employee.ID;
                     UserStatic.UserNo = employee.UserNo;
                     UserStatic.isAdmin = Convert.ToBoolean(employee.isAdmin);
-                    FrmMain frm = new FrmMain(_departmentService);
+                    FrmMain frm = new FrmMain(_departmentService, _positionService);
                     this.Hide();
                     frm.ShowDialog();
                 }
@@ -88,7 +90,7 @@ namespace PersonalTracking
                         UserStatic.EmployeeID = employee.ID;
                         UserStatic.UserNo = employee.UserNo;
                         UserStatic.isAdmin = Convert.ToBoolean(employee.isAdmin);
-                        FrmMain frm = new FrmMain(_departmentService);
+                        FrmMain frm = new FrmMain(_departmentService, _positionService);
                         this.Hide();
                         frm.ShowDialog();
                     }
@@ -106,11 +108,9 @@ namespace PersonalTracking
 
         public bool FieldValidate(bool condition)
         {
-            var isValid = condition;
-
-            if (isValid)
+            if (condition)
             {
-                return true;
+                return condition;
             }
             else
             {

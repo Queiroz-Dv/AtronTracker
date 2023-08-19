@@ -1,6 +1,11 @@
-﻿namespace PersonalTracking
+﻿using BLL.Interfaces;
+using HLP.Interfaces;
+using PersonalTracking.Models;
+using System.Collections.Generic;
+
+namespace PersonalTracking
 {
-    partial class FrmPositionList
+    partial class FrmPositionList : IValidateHelper
     {
         /// <summary>
         /// Required designer variable.
@@ -43,14 +48,14 @@
             this.dgvPositionList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvPositionList.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
             this.dgvPositionList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvPositionList.Dock = System.Windows.Forms.DockStyle.Top;
+            this.dgvPositionList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvPositionList.GridColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvPositionList.Location = new System.Drawing.Point(0, 0);
-            this.dgvPositionList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dgvPositionList.Margin = new System.Windows.Forms.Padding(2);
             this.dgvPositionList.MultiSelect = false;
             this.dgvPositionList.Name = "dgvPositionList";
             this.dgvPositionList.RowTemplate.Height = 28;
-            this.dgvPositionList.Size = new System.Drawing.Size(427, 246);
+            this.dgvPositionList.Size = new System.Drawing.Size(1022, 823);
             this.dgvPositionList.TabIndex = 0;
             this.dgvPositionList.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             // 
@@ -61,41 +66,41 @@
             this.panel1.Controls.Add(this.btnDelete);
             this.panel1.Controls.Add(this.btnClose);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 229);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel1.Location = new System.Drawing.Point(0, 758);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(427, 65);
+            this.panel1.Size = new System.Drawing.Size(1022, 65);
             this.panel1.TabIndex = 1;
             // 
             // btnNew
             // 
             this.btnNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNew.Location = new System.Drawing.Point(7, 14);
-            this.btnNew.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnNew.Location = new System.Drawing.Point(285, 16);
+            this.btnNew.Margin = new System.Windows.Forms.Padding(2);
             this.btnNew.Name = "btnNew";
             this.btnNew.Size = new System.Drawing.Size(100, 38);
             this.btnNew.TabIndex = 4;
             this.btnNew.Text = "New";
             this.btnNew.UseVisualStyleBackColor = true;
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            this.btnNew.Click += new System.EventHandler(this.BtnNew_Click);
             // 
             // btnUpdate
             // 
             this.btnUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnUpdate.Location = new System.Drawing.Point(111, 14);
-            this.btnUpdate.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnUpdate.Location = new System.Drawing.Point(389, 16);
+            this.btnUpdate.Margin = new System.Windows.Forms.Padding(2);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(100, 38);
             this.btnUpdate.TabIndex = 5;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
-            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
             // 
             // btnDelete
             // 
             this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDelete.Location = new System.Drawing.Point(215, 14);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnDelete.Location = new System.Drawing.Point(493, 16);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(2);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(100, 38);
             this.btnDelete.TabIndex = 6;
@@ -106,23 +111,23 @@
             // btnClose
             // 
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(319, 14);
-            this.btnClose.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnClose.Location = new System.Drawing.Point(597, 16);
+            this.btnClose.Margin = new System.Windows.Forms.Padding(2);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(100, 38);
             this.btnClose.TabIndex = 7;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // FrmPositionList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(427, 294);
+            this.ClientSize = new System.Drawing.Size(1022, 823);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dgvPositionList);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FrmPositionList";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -134,6 +139,11 @@
 
         }
 
+        public bool FieldValidate(bool condition)
+        {
+            return condition;
+        }
+
         #endregion
 
         private System.Windows.Forms.DataGridView dgvPositionList;
@@ -142,5 +152,10 @@
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnClose;
+        private readonly IPositionService _positionService;
+        private readonly IDepartmentService _departmentService;
+        private readonly IEntityMessages _entityMessages;
+        private IList<PositionModel> positionModels;
+        private readonly PositionModel detail;
     }
 }

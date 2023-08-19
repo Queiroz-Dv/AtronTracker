@@ -14,19 +14,30 @@ namespace PersonalTracking
         [STAThread]
         static void Main()
         {
-            // Cria a instância do ServiceCollection a partir do projeto de serviços
-            //var services = ServiceContainer.AddDesktopServices();
+            var services = ServiceContainer.AddDesktopServices();
+
+            // Constroí o ServiceProvider partindo do serviceCollection
+            var serviceProvider = services.BuildServiceProvider();
 
             // Configura a aplicação Win Forms
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Obtém uma instância do serviço necessário usando a injeção de dependência
-            //var employeeService = services.GetService<IEmployeeService>();
-            //var departmentService = services.GetService<IDepartmentService>();
+            var employeeService = serviceProvider.GetService<IEmployeeService>();
+            var departmentService = serviceProvider.GetService<IDepartmentService>();
+            var positionService = serviceProvider.GetService<IPositionService>();
 
             ////Executa o form de login passando o serviço
-            //Application.Run(new FrmLogin(employeeService, departmentService));
+            Application.Run(new FrmLogin(employeeService, departmentService, positionService));
+
+            var frase = "Eu amo você também Naylane!";
+            Digite(frase);
+        }
+
+        internal static void Digite(string TeAmo)
+        {
+            var fraseComData = TeAmo + DateTime.Now;
         }
     }
 }

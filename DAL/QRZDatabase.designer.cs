@@ -30,9 +30,6 @@ namespace DAL
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertDEPARTMENT(DEPARTMENT instance);
-    partial void UpdateDEPARTMENT(DEPARTMENT instance);
-    partial void DeleteDEPARTMENT(DEPARTMENT instance);
     partial void InsertTASKSTATE(TASKSTATE instance);
     partial void UpdateTASKSTATE(TASKSTATE instance);
     partial void DeleteTASKSTATE(TASKSTATE instance);
@@ -48,15 +45,18 @@ namespace DAL
     partial void InsertPERMISSIONSTATE(PERMISSIONSTATE instance);
     partial void UpdatePERMISSIONSTATE(PERMISSIONSTATE instance);
     partial void DeletePERMISSIONSTATE(PERMISSIONSTATE instance);
-    partial void InsertPOSITION(POSITION instance);
-    partial void UpdatePOSITION(POSITION instance);
-    partial void DeletePOSITION(POSITION instance);
     partial void InsertSALARY(SALARY instance);
     partial void UpdateSALARY(SALARY instance);
     partial void DeleteSALARY(SALARY instance);
     partial void InsertTASK(TASK instance);
     partial void UpdateTASK(TASK instance);
     partial void DeleteTASK(TASK instance);
+    partial void InsertDEPARTMENT(DEPARTMENT instance);
+    partial void UpdateDEPARTMENT(DEPARTMENT instance);
+    partial void DeleteDEPARTMENT(DEPARTMENT instance);
+    partial void InsertPOSITION(POSITION instance);
+    partial void UpdatePOSITION(POSITION instance);
+    partial void DeletePOSITION(POSITION instance);
     #endregion
 		
 		public QRZDatabaseDataContext() : 
@@ -87,14 +87,6 @@ namespace DAL
 				base(connection, mappingSource)
 		{
 			OnCreated();
-		}
-		
-		public System.Data.Linq.Table<DEPARTMENT> DEPARTMENTs
-		{
-			get
-			{
-				return this.GetTable<DEPARTMENT>();
-			}
 		}
 		
 		public System.Data.Linq.Table<TASKSTATE> TASKSTATEs
@@ -137,14 +129,6 @@ namespace DAL
 			}
 		}
 		
-		public System.Data.Linq.Table<POSITION> POSITIONs
-		{
-			get
-			{
-				return this.GetTable<POSITION>();
-			}
-		}
-		
 		public System.Data.Linq.Table<SALARY> SALARies
 		{
 			get
@@ -160,90 +144,28 @@ namespace DAL
 				return this.GetTable<TASK>();
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.DEPARTMENT")]
-	public partial class DEPARTMENT : INotifyPropertyChanging, INotifyPropertyChanged
-	{
 		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ID;
-		
-		private string _DepartmentName;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnDepartmentNameChanging(string value);
-    partial void OnDepartmentNameChanged();
-    #endregion
-		
-		public DEPARTMENT()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
+		public System.Data.Linq.Table<DEPARTMENT> DEPARTMENTs
 		{
 			get
 			{
-				return this._ID;
-			}
-			set
-			{
-				if ((this._ID != value))
-				{
-					this.OnIDChanging(value);
-					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
+				return this.GetTable<DEPARTMENT>();
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DepartmentName", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-		public string DepartmentName
+		public System.Data.Linq.Table<POSITION> POSITIONs
 		{
 			get
 			{
-				return this._DepartmentName;
-			}
-			set
-			{
-				if ((this._DepartmentName != value))
-				{
-					this.OnDepartmentNameChanging(value);
-					this.SendPropertyChanging();
-					this._DepartmentName = value;
-					this.SendPropertyChanged("DepartmentName");
-					this.OnDepartmentNameChanged();
-				}
+				return this.GetTable<POSITION>();
 			}
 		}
 		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
+		public System.Data.Linq.Table<PositionWithDepartment> PositionWithDepartments
 		{
-			if ((this.PropertyChanging != null))
+			get
 			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+				return this.GetTable<PositionWithDepartment>();
 			}
 		}
 	}
@@ -1038,116 +960,6 @@ namespace DAL
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.POSITION")]
-	public partial class POSITION : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ID;
-		
-		private string _PositionName;
-		
-		private int _DepartmentID;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnPositionNameChanging(string value);
-    partial void OnPositionNameChanged();
-    partial void OnDepartmentIDChanging(int value);
-    partial void OnDepartmentIDChanged();
-    #endregion
-		
-		public POSITION()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
-		{
-			get
-			{
-				return this._ID;
-			}
-			set
-			{
-				if ((this._ID != value))
-				{
-					this.OnIDChanging(value);
-					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PositionName", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-		public string PositionName
-		{
-			get
-			{
-				return this._PositionName;
-			}
-			set
-			{
-				if ((this._PositionName != value))
-				{
-					this.OnPositionNameChanging(value);
-					this.SendPropertyChanging();
-					this._PositionName = value;
-					this.SendPropertyChanged("PositionName");
-					this.OnPositionNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DepartmentID", DbType="Int NOT NULL")]
-		public int DepartmentID
-		{
-			get
-			{
-				return this._DepartmentID;
-			}
-			set
-			{
-				if ((this._DepartmentID != value))
-				{
-					this.OnDepartmentIDChanging(value);
-					this.SendPropertyChanging();
-					this._DepartmentID = value;
-					this.SendPropertyChanged("DepartmentID");
-					this.OnDepartmentIDChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SALARY")]
 	public partial class SALARY : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1508,6 +1320,352 @@ namespace DAL
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.DEPARTMENT")]
+	public partial class DEPARTMENT : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _DepartmentName;
+		
+		private EntitySet<POSITION> _POSITIONs;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnDepartmentNameChanging(string value);
+    partial void OnDepartmentNameChanged();
+    #endregion
+		
+		public DEPARTMENT()
+		{
+			this._POSITIONs = new EntitySet<POSITION>(new Action<POSITION>(this.attach_POSITIONs), new Action<POSITION>(this.detach_POSITIONs));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DepartmentName", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string DepartmentName
+		{
+			get
+			{
+				return this._DepartmentName;
+			}
+			set
+			{
+				if ((this._DepartmentName != value))
+				{
+					this.OnDepartmentNameChanging(value);
+					this.SendPropertyChanging();
+					this._DepartmentName = value;
+					this.SendPropertyChanged("DepartmentName");
+					this.OnDepartmentNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="DEPARTMENT_POSITION", Storage="_POSITIONs", ThisKey="ID", OtherKey="DepartmentID")]
+		public EntitySet<POSITION> POSITIONs
+		{
+			get
+			{
+				return this._POSITIONs;
+			}
+			set
+			{
+				this._POSITIONs.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_POSITIONs(POSITION entity)
+		{
+			this.SendPropertyChanging();
+			entity.DEPARTMENT = this;
+		}
+		
+		private void detach_POSITIONs(POSITION entity)
+		{
+			this.SendPropertyChanging();
+			entity.DEPARTMENT = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.POSITION")]
+	public partial class POSITION : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _PositionName;
+		
+		private int _DepartmentID;
+		
+		private EntityRef<DEPARTMENT> _DEPARTMENT;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnPositionNameChanging(string value);
+    partial void OnPositionNameChanged();
+    partial void OnDepartmentIDChanging(int value);
+    partial void OnDepartmentIDChanged();
+    #endregion
+		
+		public POSITION()
+		{
+			this._DEPARTMENT = default(EntityRef<DEPARTMENT>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PositionName", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string PositionName
+		{
+			get
+			{
+				return this._PositionName;
+			}
+			set
+			{
+				if ((this._PositionName != value))
+				{
+					this.OnPositionNameChanging(value);
+					this.SendPropertyChanging();
+					this._PositionName = value;
+					this.SendPropertyChanged("PositionName");
+					this.OnPositionNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DepartmentID", DbType="Int NOT NULL")]
+		public int DepartmentID
+		{
+			get
+			{
+				return this._DepartmentID;
+			}
+			set
+			{
+				if ((this._DepartmentID != value))
+				{
+					if (this._DEPARTMENT.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnDepartmentIDChanging(value);
+					this.SendPropertyChanging();
+					this._DepartmentID = value;
+					this.SendPropertyChanged("DepartmentID");
+					this.OnDepartmentIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="DEPARTMENT_POSITION", Storage="_DEPARTMENT", ThisKey="DepartmentID", OtherKey="ID", IsForeignKey=true)]
+		public DEPARTMENT DEPARTMENT
+		{
+			get
+			{
+				return this._DEPARTMENT.Entity;
+			}
+			set
+			{
+				DEPARTMENT previousValue = this._DEPARTMENT.Entity;
+				if (((previousValue != value) 
+							|| (this._DEPARTMENT.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._DEPARTMENT.Entity = null;
+						previousValue.POSITIONs.Remove(this);
+					}
+					this._DEPARTMENT.Entity = value;
+					if ((value != null))
+					{
+						value.POSITIONs.Add(this);
+						this._DepartmentID = value.ID;
+					}
+					else
+					{
+						this._DepartmentID = default(int);
+					}
+					this.SendPropertyChanged("DEPARTMENT");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PositionWithDepartments")]
+	public partial class PositionWithDepartment
+	{
+		
+		private int _Position_ID;
+		
+		private string _Position_Name;
+		
+		private string _Department_Name;
+		
+		private int _Department_ID;
+		
+		public PositionWithDepartment()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Position_ID", DbType="Int NOT NULL")]
+		public int Position_ID
+		{
+			get
+			{
+				return this._Position_ID;
+			}
+			set
+			{
+				if ((this._Position_ID != value))
+				{
+					this._Position_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Position_Name", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Position_Name
+		{
+			get
+			{
+				return this._Position_Name;
+			}
+			set
+			{
+				if ((this._Position_Name != value))
+				{
+					this._Position_Name = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Department_Name", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Department_Name
+		{
+			get
+			{
+				return this._Department_Name;
+			}
+			set
+			{
+				if ((this._Department_Name != value))
+				{
+					this._Department_Name = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Department_ID", DbType="Int NOT NULL")]
+		public int Department_ID
+		{
+			get
+			{
+				return this._Department_ID;
+			}
+			set
+			{
+				if ((this._Department_ID != value))
+				{
+					this._Department_ID = value;
+				}
 			}
 		}
 	}

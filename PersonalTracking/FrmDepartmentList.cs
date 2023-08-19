@@ -3,7 +3,6 @@ using HLP.Interfaces;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace PersonalTracking
@@ -14,12 +13,13 @@ namespace PersonalTracking
         {
             InitializeComponent();
             _information = entityMessages; // Inicializa o objeto de mensagens com a implementação fornecida da interface IEntityMessages
-            departmentModel = new DepartmentModel(); // Inicializa o modelo de departamento
-            departmentsModelsList = new List<DepartmentModel>(); // Inicializa a lista de modelos de departamento
             _departmentService = service; // Injeta o serviço de departamento na classe
+            departmentModel = _departmentService.CreateDepartmentModelObjectFactory(); // Inicializa o modelo de departamento
+            departmentsModelsList = new List<DepartmentModel>(); // Inicializa a lista de modelos de departamento
+            
         }
-    
-        private void btnNew_Click(object sender, EventArgs e)
+
+        private void BtnNew_Click(object sender, EventArgs e)
         {
             FrmDepartment frm = new FrmDepartment(_departmentService, _information); // Cria uma instância do formulário de departamento
             this.Hide(); // Oculta o formulário atual
@@ -28,9 +28,11 @@ namespace PersonalTracking
             FrmDepartmentList_Load(sender, e); // Recarrega a lista de departamentos
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        private void BtnUpdate_Click(object sender, EventArgs e)
         {
-            if (departmentModel.DepartmentModelId == 0)
+            var isValidId = departmentModel.DepartmentModelId.Equals(0);
+
+            if (FieldValidate(isValidId))
             {
                 _information.InvalidItemSelectedMessage(); // Exibe uma mensagem de erro se nenhum departamento estiver selecionado
             }
@@ -45,11 +47,11 @@ namespace PersonalTracking
                 FrmDepartmentList_Load(sender, e); // Recarrega a lista de departamentos
             }
         }
-        
-        private void btnDelete_Click(object sender, EventArgs e)
+
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
             var result = (DialogResult)_information.DeleteEntityQuestionMessage(departmentModel.DepartmentModelName); // Exibe uma mensagem de confirmação para excluir o departamento
-            if (DialogResult.Yes == result)
+            if (DialogResult.Yes.Equals(result))
             {
                 _departmentService.RemoveEntityService(departmentModel.DepartmentModelId); // Remove o departamento através do serviço
                 _information.EntityDeletedWithSuccessMessage(departmentModel.DepartmentModelName);
