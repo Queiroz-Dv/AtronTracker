@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    partial class FrmDepartmentList
+    partial class FrmDepartmentList : IValidateHelper
     {
         /// <summary>
         /// Required designer variable.
@@ -36,13 +36,13 @@ namespace PersonalTracking
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvDepartment = new System.Windows.Forms.DataGridView();
             this.pnlDepartmentCrud = new System.Windows.Forms.Panel();
-            this.btnClose = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnUpdate = new System.Windows.Forms.Button();
             this.btnNew = new System.Windows.Forms.Button();
+            this.btnUpdate = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDepartment)).BeginInit();
             this.pnlDepartmentCrud.SuspendLayout();
             this.SuspendLayout();
@@ -58,14 +58,14 @@ namespace PersonalTracking
             this.dgvDepartment.Margin = new System.Windows.Forms.Padding(2);
             this.dgvDepartment.MultiSelect = false;
             this.dgvDepartment.Name = "dgvDepartment";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvDepartment.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvDepartment.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvDepartment.RowTemplate.Height = 28;
             this.dgvDepartment.Size = new System.Drawing.Size(1022, 823);
             this.dgvDepartment.TabIndex = 0;
@@ -73,83 +73,63 @@ namespace PersonalTracking
             // 
             // pnlDepartmentCrud
             // 
-            this.pnlDepartmentCrud.Controls.Add(this.btnClose);
-            this.pnlDepartmentCrud.Controls.Add(this.btnDelete);
-            this.pnlDepartmentCrud.Controls.Add(this.btnUpdate);
             this.pnlDepartmentCrud.Controls.Add(this.btnNew);
+            this.pnlDepartmentCrud.Controls.Add(this.btnUpdate);
+            this.pnlDepartmentCrud.Controls.Add(this.btnDelete);
+            this.pnlDepartmentCrud.Controls.Add(this.btnClose);
             this.pnlDepartmentCrud.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlDepartmentCrud.Location = new System.Drawing.Point(0, 762);
             this.pnlDepartmentCrud.Name = "pnlDepartmentCrud";
             this.pnlDepartmentCrud.Size = new System.Drawing.Size(1022, 61);
             this.pnlDepartmentCrud.TabIndex = 1;
             // 
-            // btnClose
+            // btnNew
             // 
-            this.btnClose.AutoSize = true;
-            this.btnClose.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnClose.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnClose.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnClose.Location = new System.Drawing.Point(676, 10);
-            this.btnClose.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(61, 32);
-            this.btnClose.TabIndex = 10;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = false;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.AutoSize = true;
-            this.btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnDelete.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnDelete.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnDelete.Location = new System.Drawing.Point(528, 10);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(68, 32);
-            this.btnDelete.TabIndex = 10;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = false;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNew.Location = new System.Drawing.Point(305, 11);
+            this.btnNew.Margin = new System.Windows.Forms.Padding(2);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(100, 38);
+            this.btnNew.TabIndex = 8;
+            this.btnNew.Text = "New";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.BtnNew_Click);
             // 
             // btnUpdate
             // 
-            this.btnUpdate.AutoSize = true;
-            this.btnUpdate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnUpdate.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnUpdate.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnUpdate.Location = new System.Drawing.Point(379, 10);
-            this.btnUpdate.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            this.btnUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnUpdate.Location = new System.Drawing.Point(409, 11);
+            this.btnUpdate.Margin = new System.Windows.Forms.Padding(2);
             this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(74, 32);
-            this.btnUpdate.TabIndex = 10;
+            this.btnUpdate.Size = new System.Drawing.Size(100, 38);
+            this.btnUpdate.TabIndex = 9;
             this.btnUpdate.Text = "Update";
-            this.btnUpdate.UseVisualStyleBackColor = false;
-            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
             // 
-            // btnNew
+            // btnDelete
             // 
-            this.btnNew.AutoSize = true;
-            this.btnNew.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnNew.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.btnNew.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnNew.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnNew.Location = new System.Drawing.Point(253, 10);
-            this.btnNew.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(52, 32);
-            this.btnNew.TabIndex = 10;
-            this.btnNew.Text = "New";
-            this.btnNew.UseVisualStyleBackColor = false;
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDelete.Location = new System.Drawing.Point(513, 11);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(2);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(100, 38);
+            this.btnDelete.TabIndex = 10;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnClose.Location = new System.Drawing.Point(617, 11);
+            this.btnClose.Margin = new System.Windows.Forms.Padding(2);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(100, 38);
+            this.btnClose.TabIndex = 11;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // FrmDepartmentList
             // 
@@ -168,7 +148,6 @@ namespace PersonalTracking
             this.Load += new System.EventHandler(this.FrmDepartmentList_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvDepartment)).EndInit();
             this.pnlDepartmentCrud.ResumeLayout(false);
-            this.pnlDepartmentCrud.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -198,18 +177,24 @@ namespace PersonalTracking
             dgvDepartment.DataSource = departmentsModelsList.OrderBy(d => d.DepartmentModelName).ToList();
             ConfigureColumns();
         }
+        
+        public bool FieldValidate(bool condition)
+        {
+            return condition;
+        }
 
         #endregion
 
         private System.Windows.Forms.DataGridView dgvDepartment;
         private System.Windows.Forms.Panel pnlDepartmentCrud;
-        private System.Windows.Forms.Button btnClose;
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnUpdate;
-        private System.Windows.Forms.Button btnNew;
         private readonly IDepartmentService _departmentService;  // Serviço responsável pelas operações relacionadas a departamento
         private readonly IEntityMessages _information; // Serviço pelas mensagens de notificação
         private List<DepartmentModel> departmentsModelsList; // Lista de modelos de departamento
         private readonly DepartmentModel departmentModel; // Modelo do departamento atualmente selecionado
+        private FrmDepartment frm;
+        private Button btnNew;
+        private Button btnUpdate;
+        private Button btnDelete;
+        private Button btnClose;
     }
 }

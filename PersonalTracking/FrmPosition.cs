@@ -1,77 +1,127 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using BLL;
+﻿using BLL;
+using BLL.Interfaces;
 using DAL;
-using DAL.DTO;
+using HLP.Interfaces;
+using PersonalTracking.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace PersonalTracking
 {
     public partial class FrmPosition : Form
     {
-        public FrmPosition()
+        private readonly IPositionService _positionService;
+        private readonly IDepartmentService _departmentService;
+        private readonly IEntityMessages _entityMessages;
+
+        public FrmPosition(IPositionService positionService, IEntityMessages entityMessages, IDepartmentService departmentService)
         {
             InitializeComponent();
+            _positionService = positionService;
+            _departmentService = departmentService;
+            _entityMessages = entityMessages;
+            _departmentList = new List<DepartmentModel>();
+            _detail = new PositionModel();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        private void BtnClose_Click(object sender, EventArgs e) => Close();
 
-
-        List<DEPARTMENT> departmentlist = new List<DEPARTMENT>();
-        public PositionDTO detail = new PositionDTO();
         public bool isUpdate = false;
 
+        void FillCmbDepartment()
+        {
+            _departmentList = _departmentService.GetAllService().ToList();
+
+            var departments = _departmentList.Select(dpt => new DepartmentInfo
+            {
+                Id = dpt.DepartmentModelId,
+                DepartmentName = dpt.DepartmentModelName
+            }).ToList();
+
+            cmbDeparment.DataSource = departments;
+        }
 
         private void FrmPosition_Load(object sender, EventArgs e)
         {
-            //departmentlist = DepartmentBLL.GetDepartments();
-            cmbDeparment.DataSource = departmentlist;
+            FillCmbDepartment();
             cmbDeparment.DisplayMember = "DepartmentName";
-            cmbDeparment.ValueMember = "ID";
+            cmbDeparment.ValueMember = "Id";
             cmbDeparment.SelectedIndex = -1;
-            if(isUpdate)
+            if (isUpdate)
             {
-                txtPosition.Text = detail.PositionName;
-                cmbDeparment.SelectedValue = detail.DepartmentID;
+                txtPosition.Text = _detail.PositionName;
+                cmbDeparment.SelectedValue = _detail.Department.DepartmentModelId;
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private bool GetFieldEmptyOrFilled()
         {
-            if (txtPosition.Text.Trim() == "")
-                MessageBox.Show("Please fill the position name");
-            else if (cmbDeparment.SelectedIndex == -1)
-                MessageBox.Show("Please select a department");
+            var departmentValidated = FieldValidate(string.IsNullOrEmpty(txtPosition.Text));
+            return departmentValidated;
+        }
+
+        private void BtnSave_Click(object sender, EventArgs e)
+        {
+            var positionIsEmpty = GetFieldEmptyOrFilled();
+
+            if (positionIsEmpty)
+            {
+                _entityMessages.FieldIsEmptyMessage(lblPosition.Text);
+            }
+            else if (cmbDeparment.SelectedIndex.Equals(-1))
+            {
+                _entityMessages.InvalidItemSelectedMessage();
+            }
             else
             {
-                if(!isUpdate)
+                if (!isUpdate)
                 {
-                    POSITION position = new POSITION();
-                    position.PositionName = txtPosition.Text;
-                    position.DepartmentID = Convert.ToInt32(cmbDeparment.SelectedValue);
-                    PositionBLL.AddPosition(position);
-                    MessageBox.Show("Position was added");
+                    var positionModel = new PositionModel();
+
+                    _detail.PositionName = txtPosition.Text;
+                    _detail.Department.DepartmentModelId = Convert.ToInt32(cmbDeparment.SelectedValue);
+
+                    _positionService.CreateEntityService(_detail);
+                    _entityMessages.EntitySavedWithSuccessMessage(_detail.PositionName);
                     txtPosition.Clear();
                     cmbDeparment.SelectedIndex = -1;
                 }
                 else
                 {
-                    POSITION position = new POSITION();
-                    position.ID = detail.ID;
+
+                    var position = new PositionModel();
+
+                    position.PositionId = _detail.PositionId;
                     position.PositionName = txtPosition.Text;
-                    position.DepartmentID = Convert.ToInt32(cmbDeparment.SelectedValue);
-                    bool control = false;
-                    if (Convert.ToInt32(cmbDeparment.SelectedValue) != detail.OldDepartmentID)
-                        control = true;
-                    PositionBLL.UpdatePosition(position, control);
-                    MessageBox.Show("Position was updated");
-                    this.Close();
+                    position.Department.DepartmentModelId = Convert.ToInt32(cmbDeparment.SelectedValue);
+
+                    if (Convert.ToInt32(cmbDeparment.SelectedValue) != _detail.OldDepartmentID)
+                    {
+                        
+                    }
+
+                    //POSITION position = new POSITION();
+                    //position.ID = _detail.PositionId;
+                    //position.PositionName = txtPosition.Text;
+                    //position.DepartmentID = Convert.ToInt32(cmbDeparment.SelectedValue);
+                    //bool control = false;
+                    //if (Convert.ToInt32(cmbDeparment.SelectedValue) != _detail.OldDepartmentID)
+                    //    control = true;
+                    //PositionBLL.UpdatePosition(position, control);
+                    //MessageBox.Show("Position was updated");
+                    //this.Close();
                 }
             }
 
         }
+    }
+
+    public class DepartmentInfo
+    {
+        public int Id { get; set; }
+
+        public string DepartmentName { get; set; }
     }
 }

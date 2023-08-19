@@ -12,13 +12,22 @@ namespace DAL.Interfaces.FactoryModules
         /// </summary>
         /// <param name="model">Um objeto model a ser convertido.</param>
         /// <returns>Um objeto DAL</returns>
-        DEPARTMENT CreateDalEntity(DepartmentModel model);
+        DEPARTMENT CreateModelToDalEntity(DepartmentModel model);
 
         /// <summary>
         /// Cria um objeto do tipo model.
         /// </summary>
         /// <param name="entity">O objeto DAL a ser convertido</param>
         /// <returns>Um objeto model.</returns>
-        DepartmentModel CreateModel(DEPARTMENT entity);
+        DepartmentModel CreateDalToModel(DEPARTMENT entity);
+
+        /// <summary>
+        /// Repassa os valores para uma nova model
+        /// </summary>
+        /// <param name="_entity">Model que é recebida</param>
+        /// <returns>Um novo model verificado</returns>
+        DepartmentModel SetDepartmentModelFactory(DepartmentModel _entity);
+
+        DepartmentModel CreateDepartmentModelFactory();
     }
 }

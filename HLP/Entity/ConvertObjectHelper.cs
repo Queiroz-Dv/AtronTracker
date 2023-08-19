@@ -16,7 +16,7 @@ namespace HLP.Entity
         /// <param name="inputList">A lista de objetos de entrada.</param>
         /// <param name="conversionFunc">A função que específica como converter cada objeto de entrada.</param>
         /// <returns>Uma lista de objetos de saída convertidos dos objetos de entrada.</returns>
-        public static IList<TOutput> ConvertList<TInput, TOutput>(this List<TInput> inputList, Func<TInput, TOutput> conversionFunc)
+        public static IList<TOutput> ConvertList<TInput, TOutput>(this IList<TInput> inputList, Func<TInput, TOutput> conversionFunc)
         {
             IList<TOutput> outputList = new List<TOutput>();
 

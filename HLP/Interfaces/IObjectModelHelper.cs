@@ -11,6 +11,6 @@ namespace HLP.Interfaces
 
         Model CreateModel(Entity entity, Func<Entity, Model> conversionFunction);
 
-        IList<Model> CreateListModels(List<Entity> entities, Func<Entity, Model> conversionFunction);
+        IList<Model> CreateListModels(IList<Entity> entities, Func<Entity, Model> conversionFunction);
     }
 }

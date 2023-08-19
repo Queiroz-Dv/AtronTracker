@@ -32,7 +32,7 @@ namespace HLP.Helpers
         /// <param name="entities">Entidades da DAL a serem convertidas</param>
         /// <param name="conversionFunction">Função de conversão a ser utilizada</param>
         /// <returns>Utiliza a classe ConvertObjectHelper para realizar a conversão e retorna uma lista contendo os objetos Model resultantes.</returns>
-        public IList<Model> CreateListModels(List<Entity> entities, Func<Entity, Model> conversionFunction)
+        public IList<Model> CreateListModels(IList<Entity> entities, Func<Entity, Model> conversionFunction)
         {
             var objectsConverted = ConvertObjectHelper.ConvertList(inputList: entities, conversionFunc: conversionFunction);
             return objectsConverted;

@@ -55,7 +55,7 @@ namespace PersonalTracking
 
         private void btnPosition_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new FrmPositionList(_positionService, entityMessages));
+            OpenChildForm(new FrmPositionList(_positionService, entityMessages, _departmentService));
         }
 
         private void btnExit_Click(object sender, EventArgs e)

@@ -1,5 +1,6 @@
 ﻿using BLL.Interfaces;
 using DAL.Interfaces;
+using DAL.Interfaces.FactoryModules;
 using PersonalTracking.Models;
 using System.Collections.Generic;
 
@@ -7,34 +8,27 @@ namespace BLL.Services
 {
     public class DepartmentService : IDepartmentService
     {
-
         private readonly IDepartmentRepository _departmentRepository; // Repositório de departamento
-        private readonly DepartmentModel departmentModel; // Modelo de departamento
+        private readonly IDepartmentFactory _departmentFactory;
 
-        public DepartmentService(IDepartmentRepository departmentRepository)
+        public DepartmentService(IDepartmentRepository departmentRepository, IDepartmentFactory departmentFactory)
         {
             _departmentRepository = departmentRepository; // Injeta o repositório de departamento na classe
-            departmentModel = new DepartmentModel(); // Inicializa o modelo de departamento com o objeto de mensagens
+            _departmentFactory = departmentFactory;
         }
-
 
         public DepartmentModel CreateEntityService(DepartmentModel entity)
         {
-            var departmentModel = SetDepartmentModel(entity); // Define os valores do modelo de departamento
+            var departmentModel = _departmentFactory.SetDepartmentModelFactory(entity); // Define os valores do modelo de departamento
 
-            _departmentRepository.CreateEntityRepository(departmentModel); // Cria a entidade no repositório
-
+            if (departmentModel != null)
+            {
+                _departmentRepository.CreateEntityRepository(departmentModel); // Cria a entidade no repositório
+            }
+           
             return departmentModel; // Retorna o modelo de departamento criado
         }
-
-        private DepartmentModel SetDepartmentModel(DepartmentModel _entity)
-        {
-            departmentModel.DepartmentModelId = _entity.DepartmentModelId; // Define o ID do modelo de departamento
-            departmentModel.DepartmentModelName = _entity.DepartmentModelName; // Define o nome do modelo de departamento
-
-            return departmentModel; // Retorna o modelo de departamento atualizado
-        }
-
+ 
         public IEnumerable<DepartmentModel> GetAllService()
         {
             var departments = _departmentRepository.GetAllEntitiesRepository(); // Obtém todas as entidades de departamento do repositório
@@ -61,10 +55,16 @@ namespace BLL.Services
 
         public DepartmentModel UpdateEntityService(DepartmentModel entity)
         {
-            var departmentEntity = SetDepartmentModel(entity); // Define os valores do modelo de departamento
+            var departmentEntity = _departmentFactory.SetDepartmentModelFactory(entity); // Define os valores do modelo de departamento
 
             _departmentRepository.UpdateEntityRepository(departmentEntity); // Atualiza a entidade no repositório
             return entity; // Retorna a entidade atualizada
+        }
+
+        public DepartmentModel CreateDepartmentModelObjectFactory()
+        {
+            var newDepartmentModel = _departmentFactory.CreateDepartmentModelFactory();
+            return newDepartmentModel;
         }
     }
 }
