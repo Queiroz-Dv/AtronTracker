@@ -6,7 +6,7 @@ namespace DAL.Factory
     /// <summary>
     /// Classe padrão para os objetos do repository
     /// </summary>
-    public class ContextBase<Model, Entity> : Context
+    public class ContextBase<Model, Entity>
         where Model : class
         where Entity : class
     {
@@ -16,11 +16,5 @@ namespace DAL.Factory
         {
             _objectModelHelper = objectModelHelper;
         }
-
-        //protected QRZDatabaseDataContext GetContext()
-        //{
-        //    var context = _context.GetContext();
-        //    return context;
-        //}
     }
 }

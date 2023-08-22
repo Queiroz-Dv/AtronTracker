@@ -1,5 +1,6 @@
 ﻿using DAL.DAO;
 using DAL.Interfaces;
+using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +81,11 @@ namespace DAL.Repositories
             {
                 throw;
             }
+        }
+
+        public EmployeeModel UpdateEntityRepository(PositionModel entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

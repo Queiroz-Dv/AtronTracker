@@ -1,75 +1,31 @@
-﻿using NTF.Entities;
-using NTF.Interfaces;
-using System.Collections;
+using NTF.Enums;
+using NTF.Models;
+using System.Collections.Generic;
 
 namespace NTF.Services
 {
-    /// <summary>
-    /// Classe que representa um serviço de notificação.
-    /// <br />
-    /// Gerencia notificações relacionadas a erros, avisos e informações.
-    /// <br />
-    /// Permite verificar a presença de notificações e recuperar as coleções correspondentes.
-    /// </summary>
-    public class NotificationService : INotificationService
+    public class NotificationService
     {
-        /// <summary>
-        /// Representa uma entidade de notificação.
-        /// </summary>
-        protected EntityModel NotificationEntity;
+        public IList<NotificationMessage> Messages { get; set; }
 
-        public bool HasNotifications
+        private void AddNotification(string message, ENotificationType type)
         {
-            get
-            {
-                var hasnotifications = NotificationEntity != null && NotificationEntity.Errors.HasNotifications;
-                return hasnotifications;
-            }
+            Messages.Add(new NotificationMessage(message, type));
         }
 
-        public bool HasErrors
+        protected void AddMessage(string message)
         {
-            get
-            {
-                var hasErrors = NotificationEntity != null && NotificationEntity.Errors.HasErrors;
-                return hasErrors;
-            }
+            AddNotification(message, ENotificationType.Message);
         }
 
-        public bool HasWarnings
+        protected void AddError(string message)
         {
-            get
-            {
-                var hasWarnings = NotificationEntity != null && NotificationEntity.Errors.HasWarnings;
-                return hasWarnings;
-            }
+            AddNotification(message, ENotificationType.Error);
         }
 
-        public bool HasInformations
+        protected void AddWarning(string message)
         {
-            get
-            {
-                var hasInformations = NotificationEntity != null && NotificationEntity.Errors.HasInformations;
-                return hasInformations;
-            }
-        }
-
-        public IEnumerable Errors()
-        {
-            var errors = NotificationEntity?.Errors.Errors;
-            return errors;
-        }
-
-        public IEnumerable Warnings()
-        {
-            var warnings = NotificationEntity?.Errors.Warnings;
-            return warnings;
-        }
-
-        public IEnumerable Informations()
-        {
-            var informations = NotificationEntity?.Errors.Informations;
-            return informations;
+            AddNotification(message, ENotificationType.Warning);
         }
     }
 }

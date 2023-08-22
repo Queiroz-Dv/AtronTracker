@@ -1,4 +1,5 @@
 ﻿using DAL.Generics;
+using PersonalTracking.Models;
 using System.Collections.Generic;
 
 namespace DAL.Interfaces
@@ -9,6 +10,6 @@ namespace DAL.Interfaces
 
         IEnumerable<EMPLOYEE> GetEmployeesByUserNoAndPassword(int userNumber, string password);
 
-        EmployeeModel UpdateEntityRepository(TEntity entity);
+        EmployeeModel UpdateEntityRepository(PositionModel entity);
     }
 }

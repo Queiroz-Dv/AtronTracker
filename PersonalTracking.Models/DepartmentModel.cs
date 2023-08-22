@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PersonalTracking.Models
 {
@@ -7,7 +8,7 @@ namespace PersonalTracking.Models
     {
         public DepartmentModel()
         {
-            Positions = new List<PositionModel>();
+            //Positions = new List<PositionModel>();
         }
 
         public int DepartmentModelId { get; set; }
@@ -17,10 +18,11 @@ namespace PersonalTracking.Models
         [MaxLength(50)]
         public string DepartmentModelName { get; set; }
 
-        public IList<PositionModel> Positions { get; set; }
+        public virtual ICollection<PersonModel> Staff { get; set; }
+        //public IList<PositionModel> Positions { get; set; }
     }
 
-    public class PositionModel 
+    public class PositionModel
     {
         public PositionModel()
         {
@@ -33,11 +35,43 @@ namespace PersonalTracking.Models
 
         public int OldDepartmentID { get; set; }
 
-        public DepartmentModel Department { get; set; } 
+        public DepartmentModel Department { get; set; }
     }
 
     public class EmployeeModel
     {
 
+    }
+
+
+    // Object Model to test
+    public class CompanyModel
+    {
+        public int Id { get; set; }
+        public string CompanyName { get; set; }
+        public virtual ICollection<DepartmentModel> Departments { get; set; }
+    }
+
+    [Table("Staff")]
+    public class PersonModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public decimal Salary { get; set; }
+    }
+
+    public class  ProjectManagerModel : PersonModel
+    {
+        public string ProjectManagerProperty { get; set; }
+    }
+
+    public class DeveloperModel : PersonModel
+    {
+        public string DveeloperProperty { get; set; }
+    }
+
+    public class TesterModel : PersonModel
+    {
+        public string TesterProperty { get; set; }
     }
 }

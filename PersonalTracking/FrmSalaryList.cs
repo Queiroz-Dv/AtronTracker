@@ -107,8 +107,8 @@ namespace PersonalTracking
         {
             if (combofull)
             {
-                cmbPosition.DataSource = dto.Positions.Where(x => x.DepartmentID ==
-                Convert.ToInt32(cmbDepartment.SelectedValue)).ToList();
+                //cmbPosition.DataSource = dto.Positions.Where(x => x.DepartmentID ==
+                //Convert.ToInt32(cmbDepartment.SelectedValue)).ToList();
             }
         }
 
