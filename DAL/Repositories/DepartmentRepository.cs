@@ -1,8 +1,7 @@
-﻿using DAL.DAO;
-using DAL.Factory;
+﻿using DAL.Factory;
 using DAL.Interfaces;
 using DAL.Interfaces.FactoryModules;
-using HLP.Interfaces;
+using PersonalTracking.Helper.Interfaces;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
@@ -14,18 +13,16 @@ namespace DAL.Repositories
     public class DepartmentRepository : ContextBase<DepartmentModel, DEPARTMENT>, IDepartmentRepository
     {
         private readonly IDepartmentFactory _deparmentFactory;
-        private readonly Context _departmentContext;
 
-        public DepartmentRepository(Context context,IDepartmentFactory departmentFactory, IObjectModelHelper<DepartmentModel, DEPARTMENT> objectModelHelper) 
-            : base (objectModelHelper)
+        public DepartmentRepository(IDepartmentFactory departmentFactory, IObjectModelHelper<DepartmentModel, DEPARTMENT> objectModelHelper)
+            : base(objectModelHelper)
         {
             _deparmentFactory = departmentFactory;
-            _departmentContext = context;
         }
 
         public void CreateEntityRepository(DepartmentModel model)
         {
-            var db = _departmentContext.GetContext(); // Obtém o contexto do banco de dados
+            var db = GetContext(); // Obtém o contexto do banco de dados
 
             try
             {
@@ -112,7 +109,7 @@ namespace DAL.Repositories
                 departmentEntity.DepartmentName = entity.DepartmentModelName; // Atualiza o nome do departamento na entidade
 
                 context.SubmitChanges(); // Salva as alterações no banco de dados
-                
+
                 var departmentModelToReturn = _objectModelHelper.CreateModel(departmentEntity, department => _deparmentFactory.CreateDalToModel(departmentEntity));
 
                 return departmentModelToReturn; // Retorna o modelo de departamento atualizado

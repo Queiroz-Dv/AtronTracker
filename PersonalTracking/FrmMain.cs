@@ -1,8 +1,8 @@
 ﻿using BLL;
 using BLL.Interfaces;
 using DAL.DTO;
-using HLP.Entity;
-using HLP.Interfaces;
+using PersonalTracking.Helper.Entity;
+using PersonalTracking.Helper.Interfaces;
 using System;
 using System.Linq;
 using System.Windows.Forms;

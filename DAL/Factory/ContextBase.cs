@@ -1,5 +1,4 @@
-﻿using DAL.DAO;
-using HLP.Interfaces;
+﻿using PersonalTracking.Helper.Interfaces;
 
 namespace DAL.Factory
 {
@@ -12,9 +11,18 @@ namespace DAL.Factory
     {
         public readonly IObjectModelHelper<Model, Entity> _objectModelHelper;
 
+        private QRZDatabaseDataContext _db;
+
+
         public ContextBase(IObjectModelHelper<Model, Entity> objectModelHelper)
         {
             _objectModelHelper = objectModelHelper;
+            _db = new QRZDatabaseDataContext();
+        }
+
+        public QRZDatabaseDataContext GetContext()
+        {
+            return _db;
         }
     }
 }

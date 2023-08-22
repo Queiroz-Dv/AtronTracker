@@ -2,11 +2,11 @@
 using DAL.Factory;
 using DAL.Interfaces;
 using DAL.Interfaces.FactoryModules;
-using HLP.Interfaces;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PersonalTracking.Helper.Interfaces;
 
 namespace DAL.Repositories
 {
@@ -24,7 +24,7 @@ namespace DAL.Repositories
         {
             try
             {
-                var position = db.POSITIONs.FirstOrDefault(pos => pos.ID.Equals(id));
+                var position = GetContext().POSITIONs.FirstOrDefault(pos => pos.ID.Equals(id));
 
                 var positionDTO = position as PositionDTO;
 
@@ -51,8 +51,8 @@ namespace DAL.Repositories
                 position.PositionName = positionDTO.PositionName;
                 //position.DepartmentID = positionDTO.DepartmentID;
 
-                db.POSITIONs.InsertOnSubmit(position);
-                db.SubmitChanges();
+                GetContext().POSITIONs.InsertOnSubmit(position);
+                GetContext().SubmitChanges();
 
             }
             catch (Exception ex)
@@ -96,10 +96,10 @@ namespace DAL.Repositories
         {
             try
             {
-                var position = db.POSITIONs.First(pos => pos.ID.Equals(entity));
+                var position = GetContext().POSITIONs.First(pos => pos.ID.Equals(entity));
 
-                db.POSITIONs.DeleteOnSubmit(position);
-                db.SubmitChanges();
+                GetContext().POSITIONs.DeleteOnSubmit(position);
+                GetContext().SubmitChanges();
 
                 var positionDTO = position as PositionDTO;
 
@@ -117,13 +117,13 @@ namespace DAL.Repositories
         {
             try
             {
-                var position = db.POSITIONs.First(x => x.ID.Equals(entity.PositionId));
+                var position = GetContext().POSITIONs.First(x => x.ID.Equals(entity.PositionId));
 
 
                 position.PositionName = entity.PositionName;
                 //position.DepartmentID = entity.Department.DepartmentModelId;
 
-                db.SubmitChanges();
+                GetContext().SubmitChanges();
 
                 var positionDTO = position as PositionDTO;
 
