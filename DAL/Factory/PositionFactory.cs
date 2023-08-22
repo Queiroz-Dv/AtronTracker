@@ -37,7 +37,7 @@ namespace DAL.Factory
             {
                 positionModel.PositionId = position.ID;
                 positionModel.PositionName = position.PositionName;
-                positionModel.Department.DepartmentModelId = position.DepartmentID;
+                //positionModel.Department.DepartmentModelId = position.DepartmentID;
                 positionModel.Department.DepartmentModelName = position.DepartmentName;
                 return positionModel;
             }
@@ -53,7 +53,7 @@ namespace DAL.Factory
             {
                 positionDTO.ID = position.PositionId;
                 positionDTO.PositionName = position.PositionName;
-                positionDTO.DepartmentID = position.Department.DepartmentModelId;
+                //positionDTO.DepartmentID = position.Department.DepartmentModelId;
                 positionDTO.DepartmentName = position.Department.DepartmentModelName;
 
                 return positionDTO;

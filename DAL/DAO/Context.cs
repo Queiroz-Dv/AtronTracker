@@ -2,7 +2,7 @@
 
 namespace DAL.DAO
 {
-    public class Context : QRZStaticDataContext, IDisposable
+    public class Context
     {
         private QRZDatabaseDataContext _db;
 
@@ -14,11 +14,6 @@ namespace DAL.DAO
         public QRZDatabaseDataContext GetContext()
         {
             return _db;
-        }
-
-        public void Dispose()
-        {
-            _db.Dispose();
         }
     }
 }

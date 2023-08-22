@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="QRZ" Class="QRZDatabaseDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=QRZ;Integrated Security=True" SettingsObjectName="DAL.Properties.Settings" SettingsPropertyName="QRZConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.DEPARTMENT" Member="DEPARTMENTs">
+    <Type Name="DEPARTMENT">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DepartmentName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
   <Table Name="dbo.TASKSTATE" Member="TASKSTATEs">
     <Type Name="TASKSTATE">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -45,6 +51,12 @@
       <Column Name="StateNaem" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
+  <Table Name="dbo.POSITION" Member="POSITIONs">
+    <Type Name="POSITION">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PositionName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
   <Table Name="dbo.SALARY" Member="SALARies">
     <Type Name="SALARY">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -63,29 +75,6 @@
       <Column Name="TaskStartDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="TaskDeliveryDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="TaskState" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
-  <Table Name="dbo.DEPARTMENT" Member="DEPARTMENTs">
-    <Type Name="DEPARTMENT">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="DepartmentName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Association Name="DEPARTMENT_POSITION" Member="POSITIONs" ThisKey="ID" OtherKey="DepartmentID" Type="POSITION" />
-    </Type>
-  </Table>
-  <Table Name="dbo.POSITION" Member="POSITIONs">
-    <Type Name="POSITION">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="PositionName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="DepartmentID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Association Name="DEPARTMENT_POSITION" Member="DEPARTMENT" ThisKey="DepartmentID" OtherKey="ID" Type="DEPARTMENT" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.PositionWithDepartments" Member="PositionWithDepartments">
-    <Type Name="PositionWithDepartment">
-      <Column Name="Position_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Position_Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Department_Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Department_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
 </Database>

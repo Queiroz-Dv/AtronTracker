@@ -14,16 +14,18 @@ namespace DAL.Repositories
     public class DepartmentRepository : ContextBase<DepartmentModel, DEPARTMENT>, IDepartmentRepository
     {
         private readonly IDepartmentFactory _deparmentFactory;
+        private readonly Context _departmentContext;
 
-        public DepartmentRepository(IDepartmentFactory departmentFactory, IObjectModelHelper<DepartmentModel, DEPARTMENT> objectModelHelper) 
+        public DepartmentRepository(Context context,IDepartmentFactory departmentFactory, IObjectModelHelper<DepartmentModel, DEPARTMENT> objectModelHelper) 
             : base (objectModelHelper)
         {
             _deparmentFactory = departmentFactory;
+            _departmentContext = context;
         }
 
         public void CreateEntityRepository(DepartmentModel model)
         {
-            var db = GetContext(); // Obtém o contexto do banco de dados
+            var db = _departmentContext.GetContext(); // Obtém o contexto do banco de dados
 
             try
             {

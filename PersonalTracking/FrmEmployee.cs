@@ -74,7 +74,7 @@ namespace PersonalTracking
             if (combofull)
             {
                 int departmentID = Convert.ToInt32(cmbDeparment.SelectedValue);
-                cmbPosition.DataSource = dto.Positions.Where(x => x.DepartmentID == departmentID).ToList();
+                //cmbPosition.DataSource = dto.Positions.Where(x => x.DepartmentID == departmentID).ToList();
             }
         }
 

@@ -1,72 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 18.25, 10.5" name="QRZDatabase">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="QRZDatabase">
   <DataContextMoniker Name="/QRZDatabaseDataContext" />
   <nestedChildShapes>
-    <classShape Id="8aff2b97-2e5d-4d73-b0f3-ccef6c687b89" absoluteBounds="0.75, 2.75, 2, 1.1939925130208335">
-      <DataClassMoniker Name="/QRZDatabaseDataContext/TASKSTATE" />
-      <nestedChildShapes>
-        <elementListCompartment Id="c0977410-9ab5-4fa6-a6b2-30757f10e769" absoluteBounds="0.765, 3.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="df292c55-0470-4be7-8c63-c1592d62abc8" absoluteBounds="6.5, 2.25, 2, 3.1170068359375005">
-      <DataClassMoniker Name="/QRZDatabaseDataContext/EMPLOYEE" />
-      <nestedChildShapes>
-        <elementListCompartment Id="d16ab6f3-8c79-4983-b95a-1da3aa149a1b" absoluteBounds="6.5150000000000006, 2.71, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="48ee2b79-7644-4a31-a300-21031ea71090" absoluteBounds="0.75, 4.75, 2, 1.1939925130208344">
-      <DataClassMoniker Name="/QRZDatabaseDataContext/MONTH" />
-      <nestedChildShapes>
-        <elementListCompartment Id="bc7a1d8b-d1a5-4b4d-9fde-7b0c6d23c231" absoluteBounds="0.765, 5.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="3c041551-09d7-4700-ae21-6a756c9922a9" absoluteBounds="3.75, 4.75, 2, 2.1554996744791666">
-      <DataClassMoniker Name="/QRZDatabaseDataContext/PERMISSION" />
-      <nestedChildShapes>
-        <elementListCompartment Id="d36c33cf-59e7-4d29-b3fe-f30da126706e" absoluteBounds="3.765, 5.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="0dd7021b-7434-4467-9ec2-56e8d380a83d" absoluteBounds="6.75, 0.75, 2, 1.1939925130208335">
-      <DataClassMoniker Name="/QRZDatabaseDataContext/PERMISSIONSTATE" />
-      <nestedChildShapes>
-        <elementListCompartment Id="c5fd57ec-8c77-4c7f-b8c2-188e4c28541e" absoluteBounds="6.765, 1.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="312fe89e-a529-4dbe-8d31-31adb648901b" absoluteBounds="6.75, 5.75, 2, 1.7708968098958327">
-      <DataClassMoniker Name="/QRZDatabaseDataContext/SALARY" />
-      <nestedChildShapes>
-        <elementListCompartment Id="e59154cc-c7a1-4ec6-a03e-add7021f8a4b" absoluteBounds="6.765, 6.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="97d049b9-2e09-421c-81b4-b82b76522e4f" absoluteBounds="0.75, 7.75, 2, 2.1554996744791666">
-      <DataClassMoniker Name="/QRZDatabaseDataContext/TASK" />
-      <nestedChildShapes>
-        <elementListCompartment Id="efa2356b-be79-4c58-8ec4-52b7e89acb59" absoluteBounds="0.765, 8.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="46dcbf86-a082-406c-8f53-a54d08a10bbd" absoluteBounds="3.375, 9, 2, 1.1939925130208344">
+    <classShape Id="65a8ac08-b80a-4c2e-8def-ab8d796c5ce9" absoluteBounds="0.75, 0.5, 2, 1.1939925130208335">
       <DataClassMoniker Name="/QRZDatabaseDataContext/DEPARTMENT" />
       <nestedChildShapes>
-        <elementListCompartment Id="e78e42b7-8d04-45ad-bcb3-5fde5fb19a21" absoluteBounds="3.39, 9.46, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="41cd2c66-bdf9-44de-9772-74b9448adeb7" absoluteBounds="0.765, 0.96, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="ce3e67ec-30a7-4398-b4e6-e810229c0b6e" absoluteBounds="6.125, 8.875, 2, 1.3862939453125005">
+    <classShape Id="bbb9c196-c92d-4213-89a0-c0a3183c592f" absoluteBounds="0.75, 2.5, 2, 1.1939925130208335">
+      <DataClassMoniker Name="/QRZDatabaseDataContext/TASKSTATE" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b5e1a22a-8cc2-4e05-b8cb-8a1e96022f8f" absoluteBounds="0.765, 2.96, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="4a4f62c8-08af-47d0-a2a5-c944f60f449f" absoluteBounds="3.75, 0.5, 2, 3.1170068359375005">
+      <DataClassMoniker Name="/QRZDatabaseDataContext/EMPLOYEE" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8ef039a5-090d-422b-a9b9-b99b2e01bf9c" absoluteBounds="3.765, 0.96, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7c9ddd89-01f3-4137-99de-cff411d08701" absoluteBounds="0.75, 4.5, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/QRZDatabaseDataContext/MONTH" />
+      <nestedChildShapes>
+        <elementListCompartment Id="359d036a-8330-4f56-9e58-140bcff67790" absoluteBounds="0.765, 4.96, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c7d527ec-c0bb-4f22-8b48-2245859ec3df" absoluteBounds="3.75, 4.5, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/QRZDatabaseDataContext/PERMISSION" />
+      <nestedChildShapes>
+        <elementListCompartment Id="7a7aeb79-195d-43c5-b404-3ed6291aaf97" absoluteBounds="3.765, 4.96, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="2ac73468-826a-4cc4-8293-6e6e772cd08e" absoluteBounds="6.75, 0.5, 2, 1.1939925130208335">
+      <DataClassMoniker Name="/QRZDatabaseDataContext/PERMISSIONSTATE" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f8defffe-b2ab-441f-bc72-d2e528d6f128" absoluteBounds="6.765, 0.96, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="16bb29ca-82eb-4c85-a840-6c49a9c2aabe" absoluteBounds="6.75, 2.5, 2, 1.1939925130208335">
       <DataClassMoniker Name="/QRZDatabaseDataContext/POSITION" />
       <nestedChildShapes>
-        <elementListCompartment Id="a690f446-c875-434b-b819-5dd95275dfbb" absoluteBounds="6.14, 9.335, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="e2daf3a2-3180-4d88-9da2-a9a651dee117" absoluteBounds="6.765, 2.96, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5.375 : 9.13243913321659); (6.125 : 9.13243913321659)]" fixedFrom="Algorithm" fixedTo="Caller">
-      <AssociationMoniker Name="/QRZDatabaseDataContext/DEPARTMENT/DEPARTMENT_POSITION" />
-      <nodes>
-        <classShapeMoniker Id="46dcbf86-a082-406c-8f53-a54d08a10bbd" />
-        <classShapeMoniker Id="ce3e67ec-30a7-4398-b4e6-e810229c0b6e" />
-      </nodes>
-    </associationConnector>
-    <classShape Id="9b7928d3-0752-4347-9d1b-ef32f30e4161" isExpanded="false" absoluteBounds="16, 3.125, 2, 0.45">
-      <DataClassMoniker Name="/QRZDatabaseDataContext/PositionWithDepartment" />
+    <classShape Id="d7ba6c70-1720-4bbd-83a0-6e86636a66e3" absoluteBounds="6.75, 4.5, 2, 1.7708968098958327">
+      <DataClassMoniker Name="/QRZDatabaseDataContext/SALARY" />
       <nestedChildShapes>
-        <elementListCompartment Id="d4130bac-727a-4775-bfbd-e9a0d2c4fe11" absoluteBounds="16.015, 3.5850000000000009, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="211b046e-baea-45f5-bbf4-bd6affb29a8c" absoluteBounds="6.765, 4.96, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="486bab57-14f4-452f-8e22-9c8119f0d095" absoluteBounds="0.625, 6.125, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/QRZDatabaseDataContext/TASK" />
+      <nestedChildShapes>
+        <elementListCompartment Id="fbab0aff-0bbc-4e7e-8fb3-689f79be83fb" absoluteBounds="0.64, 6.5850000000000009, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>

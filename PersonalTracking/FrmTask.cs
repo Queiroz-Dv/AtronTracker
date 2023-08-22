@@ -78,8 +78,8 @@ namespace PersonalTracking
         {
             if (combofull)
             {
-                cmbPosition.DataSource = dto.Positions.Where(x => x.DepartmentID ==
-                Convert.ToInt32(cmbDepartment.SelectedValue)).ToList();
+                //cmbPosition.DataSource = dto.Positions.Where(x => x.DepartmentID ==
+                //Convert.ToInt32(cmbDepartment.SelectedValue)).ToList();
                 List<EmployeeDetailDTO> list = dto.Employees;
                 dataGridView1.DataSource = list.Where(x => x.DepartmentID ==
                 Convert.ToInt32(cmbDepartment.SelectedValue)).ToList();

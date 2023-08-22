@@ -81,7 +81,7 @@ namespace DAL.DAO
             List<EMPLOYEE> list = db.EMPLOYEEs.Where(x => x.PositionID == position.ID).ToList();
             foreach(var item in list)
             {
-                item.DepartmentID = position.DepartmentID;
+                //item.DepartmentID = position.DepartmentID;
             }
             db.SubmitChanges();
         }

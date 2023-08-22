@@ -49,7 +49,7 @@ namespace DAL.Repositories
 
                 position.ID = positionDTO.ID;
                 position.PositionName = positionDTO.PositionName;
-                position.DepartmentID = positionDTO.DepartmentID;
+                //position.DepartmentID = positionDTO.DepartmentID;
 
                 db.POSITIONs.InsertOnSubmit(position);
                 db.SubmitChanges();
@@ -66,23 +66,24 @@ namespace DAL.Repositories
         {
             try
             {
-                var positionsWithDepartments = db.PositionWithDepartments.ToList();
+                //var positionsWithDepartments = db.PositionWithDepartments.ToList();
 
-                IList<PositionModel> positionList = new List<PositionModel>();
+                //IList<PositionModel> positionList = new List<PositionModel>();
 
-                foreach (var item in positionsWithDepartments)
-                {
-                    PositionModel positionModel = new PositionModel();
+                //foreach (var item in positionsWithDepartments)
+                //{
+                //    PositionModel positionModel = new PositionModel();
 
-                    positionModel.PositionId = item.Position_ID;
-                    positionModel.PositionName = item.Position_Name;
-                    positionModel.Department.DepartmentModelId = item.Department_ID;
-                    positionModel.Department.DepartmentModelName = item.Department_Name;
+                //    positionModel.PositionId = item.Position_ID;
+                //    positionModel.PositionName = item.Position_Name;
+                //    positionModel.Department.DepartmentModelId = item.Department_ID;
+                //    positionModel.Department.DepartmentModelName = item.Department_Name;
 
-                    positionList.Add(positionModel);
-                }
+                //    positionList.Add(positionModel);
+                //}
 
-                return positionList;
+                //return positionList;
+                return null;
             }
             catch (Exception ex)
             {
@@ -120,7 +121,7 @@ namespace DAL.Repositories
 
 
                 position.PositionName = entity.PositionName;
-                position.DepartmentID = entity.Department.DepartmentModelId;
+                //position.DepartmentID = entity.Department.DepartmentModelId;
 
                 db.SubmitChanges();
 
