@@ -1,14 +1,14 @@
 ﻿using BLL.Interfaces;
 using DAL;
-using HLP.Entity;
-using HLP.Interfaces;
+using PersonalTracking.Helper.Entity;
+using PersonalTracking.Helper.Interfaces;
 using System;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    public partial class FrmLogin : Form, IValidateHelper
+    public partial class FrmLogin : Form
     {
         private readonly IEntityMessages Information;
         private readonly IEmployeeService _employeeService;

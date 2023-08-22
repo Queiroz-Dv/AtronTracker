@@ -1,7 +1,7 @@
 ﻿using BLL.Interfaces;
 using DAL;
-using HLP.Entity;
-using HLP.Interfaces;
+using PersonalTracking.Helper.Entity;
+using PersonalTracking.Helper.Interfaces;
 using System;
 using System.Windows.Forms;
 
@@ -10,7 +10,7 @@ namespace PersonalTracking
     /// <summary>
     /// Formulário de registro de um novo usuário
     /// </summary>
-    public partial class FrmRegister : Form, IValidateHelper
+    public partial class FrmRegister : Form
     {
         /// <summary>
         /// Campo que guarda as informações de mensagens das validações e comportamentos do formulário

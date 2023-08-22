@@ -7,9 +7,9 @@ using DAL.Factory;
 using DAL.Interfaces;
 using DAL.Interfaces.FactoryModules;
 using DAL.Repositories;
-using HLP.Entity;
-using HLP.Helpers;
-using HLP.Interfaces;
+using PersonalTracking.Helper.Entity;
+using PersonalTracking.Helper.Helpers;
+using PersonalTracking.Helper.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using PersonalTracking.Models;
 

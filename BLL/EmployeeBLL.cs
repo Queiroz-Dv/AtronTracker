@@ -2,7 +2,7 @@
 using DAL.DAO;
 using DAL.DTO;
 using DAL.Interfaces;
-using HLP.Interfaces;
+using PersonalTracking.Helper.Interfaces;
 using PersonalTracking.Models;
 using System.Collections.Generic;
 

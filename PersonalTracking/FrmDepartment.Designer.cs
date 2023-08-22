@@ -1,11 +1,11 @@
 ﻿using BLL.Interfaces;
-using HLP.Interfaces;
+using PersonalTracking.Helper.Interfaces;
 using PersonalTracking.Models;
 using System;
 
 namespace PersonalTracking
 {
-    partial class FrmDepartment : IValidateHelper
+    partial class FrmDepartment 
     {
         /// <summary>
         /// Required designer variable.

@@ -1,5 +1,5 @@
 ﻿using BLL.Interfaces;
-using HLP.Interfaces;
+using PersonalTracking.Helper.Interfaces;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PersonalTracking
 {
-    partial class FrmDepartmentList : IValidateHelper
+    partial class FrmDepartmentList 
     {
         /// <summary>
         /// Required designer variable.

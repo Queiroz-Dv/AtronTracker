@@ -2,7 +2,7 @@
 
 namespace DAL.DAO
 {
-    public class Context
+    public class Context : QRZStaticDataContext
     {
         private QRZDatabaseDataContext _db;
 
