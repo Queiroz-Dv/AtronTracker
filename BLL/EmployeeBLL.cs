@@ -2,6 +2,7 @@
 using DAL.DAO;
 using DAL.DTO;
 using DAL.Interfaces;
+using PersonalTracking.Entities;
 using PersonalTracking.Helper.Interfaces;
 using PersonalTracking.Models;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ namespace BLL
 {
     public class EmployeeBLL
     {
-        private readonly IObjectModelHelper<DepartmentModel, DEPARTMENT> objectModel;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IDepartmentRepository _deparmentRepository;
         private readonly IPositionRepository _positionRepository;

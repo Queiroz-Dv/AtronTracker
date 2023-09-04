@@ -1,4 +1,5 @@
-﻿using PersonalTracking.Helper.Interfaces;
+﻿using PersonalTracking.Entities;
+using PersonalTracking.Factory.Interfaces;
 
 namespace DAL.Factory
 {
@@ -9,14 +10,13 @@ namespace DAL.Factory
         where Model : class
         where Entity : class
     {
-        public readonly IObjectModelHelper<Model, Entity> _objectModelHelper;
+        public IModelFactory<Model, Entity> _factory;
 
         private QRZDatabaseDataContext _db;
 
-
-        public ContextBase(IObjectModelHelper<Model, Entity> objectModelHelper)
+        public ContextBase(IModelFactory<Model, Entity> factory)
         {
-            _objectModelHelper = objectModelHelper;
+            _factory = factory;
             _db = new QRZDatabaseDataContext();
         }
 

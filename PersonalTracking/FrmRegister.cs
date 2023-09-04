@@ -1,5 +1,6 @@
 ﻿using BLL.Interfaces;
 using DAL;
+using PersonalTracking.Entities;
 using PersonalTracking.Helper.Entity;
 using PersonalTracking.Helper.Interfaces;
 using System;

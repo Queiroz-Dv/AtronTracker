@@ -247,9 +247,17 @@
       <Project>{d70d5b1b-a80a-4ce2-b750-18da9accccc1}</Project>
       <Name>DAL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PersonalTracking.Framework\PersonalTracking.Helper\PersonalTracking.Helper.csproj">
+    <ProjectReference Include="..\Framework\PersonalTracking.Helper\PersonalTracking.Helper.csproj">
       <Project>{864F7E9D-8AF3-4D00-B967-B10EBBA8C6C0}</Project>
       <Name>PersonalTracking.Helper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Framework\PersonalTracking.Notification\PersonalTracking.Notification.csproj">
+      <Project>{79C84E8F-1E0F-40F5-BF77-A4C98E9A0D95}</Project>
+      <Name>PersonalTracking.Notification</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PersonalTracking.Entities\PersonalTracking.Entities.csproj">
+      <Project>{21E02C0D-98D1-4FE1-B1F6-F5F0FDD18B03}</Project>
+      <Name>PersonalTracking.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\PersonalTracking.Models\PersonalTracking.Models.csproj">
       <Project>{0A8A48B0-A2CA-412B-922F-B697F5FBDC0A}</Project>

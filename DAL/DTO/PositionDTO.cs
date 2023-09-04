@@ -1,4 +1,6 @@
-﻿namespace DAL.DTO
+﻿using PersonalTracking.Entities;
+
+namespace DAL.DTO
 {
     public class PositionDTO : POSITION
     {

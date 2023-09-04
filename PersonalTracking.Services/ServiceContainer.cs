@@ -1,17 +1,18 @@
 ﻿using BLL.Interfaces;
 using BLL.Services;
-using DAL;
-using DAL.DAO;
+using BLL.Validation;
 using DAL.DTO;
-using DAL.Factory;
 using DAL.Interfaces;
-using DAL.Interfaces.FactoryModules;
 using DAL.Repositories;
-using PersonalTracking.Helper.Entity;
-using PersonalTracking.Helper.Helpers;
-using PersonalTracking.Helper.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using PersonalTracking.Entities;
+using PersonalTracking.Factory.Entities;
+using PersonalTracking.Factory.Interfaces;
+using PersonalTracking.Helper.Entity;
+using PersonalTracking.Helper.Interfaces;
 using PersonalTracking.Models;
+using PersonalTracking.Notification.Interfaces;
+using PersonalTracking.Notification.Models;
 
 namespace PersonalTracking.Services
 {
@@ -22,20 +23,23 @@ namespace PersonalTracking.Services
             var services = new ServiceCollection();
 
             // Registre os serviços desktop aqui
-            services.AddScoped<IObjectModelHelper<DepartmentModel, DEPARTMENT>, ObjectModelHelper<DepartmentModel, DEPARTMENT>>();
-            services.AddScoped<IObjectModelHelper<PositionModel, PositionDTO>, ObjectModelHelper<PositionModel, PositionDTO>>();
+            services.AddScoped<INotificationService, NotificationModel>();
             services.AddScoped<IEntityMessages, InformationMessage>();
+
+            services.AddScoped<IModelFactory<DepartmentModel, DEPARTMENT>, DeparmentFactory>();
+            services.AddScoped<IModelFactory<PositionModel, POSITION>, PositionFactory>();
+
+            services.AddScoped<IValidateHelper<DepartmentModel>, DepartmentValidationService>();
+            services.AddScoped<IValidateHelper<PositionModel>, PositionValidationService>();
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IEmployeeService, EmployeeService>();
 
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IDepartmentService, DepartmentService>();
-            services.AddScoped<IDepartmentFactory, DepartmentFactory>();
 
             services.AddScoped<IPositionRepository, PositionRepository>();
             services.AddScoped<IPositionService, PositionService>();
-            services.AddScoped<IPositionFactory, PositionFactory>();
 
             services.AddScoped<Context>();
 

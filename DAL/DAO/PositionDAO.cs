@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DAL.DTO;
 using System.Linq;
+using PersonalTracking.Entities;
 
 namespace DAL.DAO
 {

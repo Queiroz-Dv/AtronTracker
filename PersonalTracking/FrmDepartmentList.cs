@@ -3,20 +3,51 @@ using PersonalTracking.Helper.Interfaces;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PersonalTracking
 {
     public partial class FrmDepartmentList : Form
     {
+        private readonly IDepartmentService _departmentService;  // Serviço responsável pelas operações relacionadas a departamento
+        private readonly IEntityMessages _information; // Serviço pelas mensagens de notificação
+        private readonly DepartmentModel departmentModel = new DepartmentModel();// Modelo do departamento atualmente selecionado
+        private List<DepartmentModel> departmentsModelsList; // Lista de modelos de departamento
+        private FrmDepartment frm;
+
         public FrmDepartmentList(IDepartmentService service, IEntityMessages entityMessages)
         {
             InitializeComponent();
             _information = entityMessages; // Inicializa o objeto de mensagens com a implementação fornecida da interface IEntityMessages
             _departmentService = service; // Injeta o serviço de departamento na classe
-            departmentModel = _departmentService.CreateDepartmentModelObjectFactory(); // Inicializa o modelo de departamento
             departmentsModelsList = new List<DepartmentModel>(); // Inicializa a lista de modelos de departamento
-            
+        }
+
+        private void ConfigureColumns()
+        {
+            dgvDepartment.Columns[0].Width = 10;
+            dgvDepartment.Columns[0].Visible = false;
+            dgvDepartment.Columns[1].HeaderText = "Department Name";
+        }
+
+        private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            departmentModel.DepartmentModelId = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
+            departmentModel.DepartmentModelName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Close(); // Fecha o form
+        }
+
+        private void FrmDepartmentList_Load(object sender, EventArgs e)
+        {
+            //Preenche o grid com a lista de departamentos e configura as colunas
+            departmentsModelsList = _departmentService.GetAllService().ToList();
+            dgvDepartment.DataSource = departmentsModelsList.OrderBy(d => d.DepartmentModelName).ToList();
+            ConfigureColumns();
         }
 
         private void BtnNew_Click(object sender, EventArgs e)
@@ -30,9 +61,8 @@ namespace PersonalTracking
 
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
-            var isValidId = departmentModel.DepartmentModelId.Equals(0);
 
-            if (FieldValidate(isValidId))
+            if (departmentModel.DepartmentModelId.Equals(decimal.Zero))
             {
                 _information.InvalidItemSelectedMessage(); // Exibe uma mensagem de erro se nenhum departamento estiver selecionado
             }

@@ -1,4 +1,5 @@
 ﻿using DAL;
+using PersonalTracking.Entities;
 using System.Collections.Generic;
 
 namespace BLL.Interfaces

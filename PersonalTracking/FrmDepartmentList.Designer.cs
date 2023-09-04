@@ -1,10 +1,4 @@
-﻿using BLL.Interfaces;
-using PersonalTracking.Helper.Interfaces;
-using PersonalTracking.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace PersonalTracking
 {
@@ -151,47 +145,10 @@ namespace PersonalTracking
             this.ResumeLayout(false);
 
         }
-
-        private void ConfigureColumns()
-        {
-            dgvDepartment.Columns[0].Width = 10;
-            dgvDepartment.Columns[0].Visible = false;
-            dgvDepartment.Columns[1].HeaderText = "Department Name";
-        }
-
-        private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            departmentModel.DepartmentModelId = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
-            departmentModel.DepartmentModelName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
-        }
-
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            Close(); // Fecha o form
-        }
-
-        private void FrmDepartmentList_Load(object sender, EventArgs e)
-        {
-            //Preenche o grid com a lista de departamentos e configura as colunas
-            departmentsModelsList = _departmentService.GetAllModelService().ToList();
-            dgvDepartment.DataSource = departmentsModelsList.OrderBy(d => d.DepartmentModelName).ToList();
-            ConfigureColumns();
-        }
-        
-        public bool FieldValidate(bool condition)
-        {
-            return condition;
-        }
-
         #endregion
 
-        private System.Windows.Forms.DataGridView dgvDepartment;
-        private System.Windows.Forms.Panel pnlDepartmentCrud;
-        private readonly IDepartmentService _departmentService;  // Serviço responsável pelas operações relacionadas a departamento
-        private readonly IEntityMessages _information; // Serviço pelas mensagens de notificação
-        private List<DepartmentModel> departmentsModelsList; // Lista de modelos de departamento
-        private readonly DepartmentModel departmentModel; // Modelo do departamento atualmente selecionado
-        private FrmDepartment frm;
+        private DataGridView dgvDepartment;
+        private Panel pnlDepartmentCrud;
         private Button btnNew;
         private Button btnUpdate;
         private Button btnDelete;

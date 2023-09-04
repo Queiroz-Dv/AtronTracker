@@ -1,4 +1,5 @@
 ﻿using DAL.Generics;
+using PersonalTracking.Entities;
 using PersonalTracking.Models;
 using System.Collections.Generic;
 
