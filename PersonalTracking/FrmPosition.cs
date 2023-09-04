@@ -52,7 +52,7 @@ namespace PersonalTracking
             if (isUpdate)
             {
                 txtPosition.Text = _detail.PositionName;
-                cmbDeparment.SelectedValue = _detail.Department.DepartmentModelId;
+                cmbDeparment.SelectedValue = _detail.Department.First().DepartmentModelId;
             }
         }
 
@@ -81,7 +81,7 @@ namespace PersonalTracking
                     var positionModel = new PositionModel();
 
                     _detail.PositionName = txtPosition.Text;
-                    _detail.Department.DepartmentModelId = Convert.ToInt32(cmbDeparment.SelectedValue);
+                    _detail.Department.First().DepartmentModelId = Convert.ToInt32(cmbDeparment.SelectedValue);
 
                     _positionService.CreateEntityService(_detail);
                     _entityMessages.EntitySavedWithSuccessMessage(_detail.PositionName);
@@ -95,7 +95,7 @@ namespace PersonalTracking
 
                     position.PositionId = _detail.PositionId;
                     position.PositionName = txtPosition.Text;
-                    position.Department.DepartmentModelId = Convert.ToInt32(cmbDeparment.SelectedValue);
+                    position.Department.First().DepartmentModelId = Convert.ToInt32(cmbDeparment.SelectedValue);
 
                     if (Convert.ToInt32(cmbDeparment.SelectedValue) != _detail.OldDepartmentID)
                     {

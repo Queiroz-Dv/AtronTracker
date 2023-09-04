@@ -2,6 +2,7 @@
 using DAL;
 using DAL.DAO;
 using DAL.DTO;
+using PersonalTracking.Entities;
 
 namespace BLL
 {

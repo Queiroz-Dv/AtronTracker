@@ -1,23 +1,21 @@
 ﻿using DAL.DTO;
 using DAL.Factory;
 using DAL.Interfaces;
-using DAL.Interfaces.FactoryModules;
+using PersonalTracking.Entities;
+using PersonalTracking.Factory.Interfaces;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PersonalTracking.Helper.Interfaces;
 
 namespace DAL.Repositories
 {
-    public class PositionRepository : ContextBase<PositionModel, PositionDTO>, IPositionRepository
+    public class PositionRepository : ContextBase<PositionModel, POSITION>, IPositionRepository
     {
-        private readonly IPositionFactory _positionFactory;
-
-        public PositionRepository(IPositionFactory positionFactory, IObjectModelHelper<PositionModel, PositionDTO> objectModelHelper)
-            : base(objectModelHelper)
+        public PositionRepository(IModelFactory<PositionModel, POSITION> modelFactory)
+            : base(modelFactory)
         {
-            _positionFactory = positionFactory;
+            _factory = modelFactory;
         }
 
         public PositionModel GetEntityByIdRepository(object id)
@@ -28,14 +26,14 @@ namespace DAL.Repositories
 
                 var positionDTO = position as PositionDTO;
 
-                var positionModel = _objectModelHelper.CreateModel(positionDTO, positionFunction => _positionFactory.CreateDalToModel(positionDTO));
+                var positionModel = _factory.ToModel(positionDTO);
 
                 return positionModel;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
 
@@ -43,7 +41,7 @@ namespace DAL.Repositories
         {
             try
             {
-                var positionDTO = _objectModelHelper.CreateEntity(positionModel, positionFunc => _positionFactory.CreateModelToDalEntity(positionModel));
+                var positionDTO = _factory.ToEntity(positionModel);
 
                 var position = new POSITION();
 
@@ -103,7 +101,7 @@ namespace DAL.Repositories
 
                 var positionDTO = position as PositionDTO;
 
-                var positionModel = _objectModelHelper.CreateModel(positionDTO, positionFunction => _positionFactory.CreateDalToModel(positionDTO));
+                var positionModel = _factory.ToModel(positionDTO);
 
                 return positionModel;
             }
@@ -127,7 +125,7 @@ namespace DAL.Repositories
 
                 var positionDTO = position as PositionDTO;
 
-                var positionModel = _objectModelHelper.CreateModel(positionDTO, positionFunction => _positionFactory.CreateDalToModel(positionDTO));
+                var positionModel = _factory.ToModel(positionDTO);
                 return positionModel;
             }
             catch (Exception)

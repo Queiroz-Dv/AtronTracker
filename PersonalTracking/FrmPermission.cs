@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using DAL;
 using BLL;
 using DAL.DTO;
+using PersonalTracking.Entities;
 
 namespace PersonalTracking
 {

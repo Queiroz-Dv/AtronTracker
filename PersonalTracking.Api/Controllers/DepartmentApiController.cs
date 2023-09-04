@@ -22,7 +22,7 @@ namespace PersonalTracking.Api.Controllers
         public IHttpActionResult GetDepartments()
         {
             //Chama o service para obter todos os dados 
-            var departments = _departmentService.GetAllModelService();
+            var departments = _departmentService.GetAllService();
             // Se estiver preenchido retorna Ok e as entidades
             if (departments != null)
             {

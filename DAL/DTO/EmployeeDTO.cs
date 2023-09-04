@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PersonalTracking.Entities;
+using System.Collections.Generic;
 
 namespace DAL.DTO
 {

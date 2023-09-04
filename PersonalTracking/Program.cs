@@ -30,14 +30,6 @@ namespace PersonalTracking
 
             ////Executa o form de login passando o serviço
             Application.Run(new FrmLogin(employeeService, departmentService, positionService));
-
-            var frase = "Eu amo você também Naylane!";
-            Digite(frase);
-        }
-
-        internal static void Digite(string TeAmo)
-        {
-            var fraseComData = TeAmo + DateTime.Now;
         }
     }
 }

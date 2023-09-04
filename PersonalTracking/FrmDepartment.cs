@@ -2,6 +2,7 @@
 using PersonalTracking.Helper.Interfaces;
 using PersonalTracking.Models;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace PersonalTracking
@@ -60,6 +61,17 @@ namespace PersonalTracking
         private void SaveDepartment(DepartmentModel department)
         {
             _departmentService.CreateEntityService(department);
+            if (_departmentService.Messages.Count > decimal.Zero)
+            {
+                var messagebox = new List<DialogResult>();
+
+                foreach (var item in _departmentService.Messages)
+                {
+                    var message = MessageBox.Show(item.TypeMessage, item.Message, MessageBoxButtons.OK);
+                    messagebox.Add(message);
+                }
+            }
+            
             _information.EntitySavedWithSuccessMessage(department.DepartmentModelName);
             ClearFields();
         }

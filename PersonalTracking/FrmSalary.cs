@@ -1,6 +1,7 @@
 ﻿using BLL;
 using DAL;
 using DAL.DTO;
+using PersonalTracking.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

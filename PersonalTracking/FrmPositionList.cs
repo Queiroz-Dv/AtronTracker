@@ -54,7 +54,7 @@ namespace PersonalTracking
             var entities = positionModels.Select(dpt => new PositionAndDepartmentInfo
             {
                 PositionName = dpt.PositionName,
-                DepartmentName = dpt.Department.DepartmentModelName
+                DepartmentName = dpt.Department.First().DepartmentModelName
             }).ToList();
 
             dgvPositionList.DataSource = entities;
@@ -96,7 +96,7 @@ namespace PersonalTracking
             {
                 if (detail.Department == null)
                 {
-                    detail.Department = new DepartmentModel();
+                    detail.Department = new List<DepartmentModel>();
                 }
 
                 detail.PositionName = dgvPositionList.Rows[e.RowIndex].Cells["PositionName"].Value.ToString();

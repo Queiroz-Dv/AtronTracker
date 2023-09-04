@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DAL.DTO;
 using DAL.DAO;
 using DAL;
+using PersonalTracking.Entities;
 
 namespace BLL
 {

@@ -1,0 +1,25 @@
+{
+  "AutheticationToken": {
+    "Token": null,
+    "Username": "MXMSESCORCAPI",
+    "Password": "!Mxmsescorca0",
+    "EnvironmentName": "D498841"
+  },
+  "Data": [
+    {
+      "Empresa": "RN",
+      "Identificador": 48449,
+      "Departamento": "1",
+      "Orcamento": "2016",
+      "ContaOrcamentaria": "319011",
+      "CentroCusto": "010120010101",
+      "Mes": "1",
+      "Funcional": "",
+      "Valor": 890000.0,
+      "Tipo": "",
+      "Natureza": "D",
+      "UsuarioCadastro": null,
+      "DataCadastro": "0001-01-01T00:00:00"
+    }
+  ]
+}

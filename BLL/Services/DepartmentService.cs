@@ -1,62 +1,58 @@
 ﻿using BLL.Interfaces;
 using BLL.Validation;
 using DAL.Interfaces;
-using PersonalTracking.Notification.Models;
-using DAL.Interfaces.FactoryModules;
+using PersonalTracking.Entities;
+using PersonalTracking.Factory.Interfaces;
 using PersonalTracking.Models;
+using PersonalTracking.Notification.Interfaces;
+using PersonalTracking.Notification.Models;
 using System.Collections.Generic;
 
 namespace BLL.Services
 {
-    public class DepartmentService : NotificationModel, IDepartmentService
+    public class DepartmentService : IDepartmentService
     {
-        private readonly DepartmentValidationService _validationService;
+        private readonly IModelFactory<DepartmentModel, DEPARTMENT> _modelFactory; //Factory do departamento
+        public readonly INotificationService _notificationService; // Notification service 
         private readonly IDepartmentRepository _departmentRepository; // Repositório de departamento
-        private readonly IDepartmentFactory _departmentFactory;
 
-        public DepartmentService(IDepartmentRepository departmentRepository, IDepartmentFactory departmentFactory, DepartmentValidationService validationService)
+        public List<NotificationMessage> Messages { get; set; }
+
+        public DepartmentService(IDepartmentRepository departmentRepository, IModelFactory<DepartmentModel, DEPARTMENT> modelFactory, INotificationService notificationService)
         {
-            _departmentRepository = departmentRepository; // Injeta o repositório de departamento na classe
-            _departmentFactory = departmentFactory;
-            _validationService = validationService;
+            // Injeta as dependências no construtor 
+            _departmentRepository = departmentRepository;
+            _modelFactory = modelFactory;
+            _notificationService = notificationService;
+            Messages = new List<NotificationMessage>();
         }
 
         public DepartmentModel CreateEntityService(DepartmentModel entity)
         {
-            var departmentModel = _departmentFactory.SetDepartmentModelFactory(entity); // Define os valores do modelo de departamento
-
-            _validationService.Validate(entity);
+            var departmentModel = _modelFactory.SetAndValidateModel(entity); // Define os valores e valida o modelo
 
             var notifications = GetMessages();
 
-            Messages.AddRange(notifications);
-            if (departmentModel != null)
+            if (!notifications.HasErrors())
             {
-                if (!Messages.HasErrors())
-                {
-                    _departmentRepository.CreateEntityRepository(departmentModel); // Cria a entidade no repositório
-                    AddMessage("Department saved suceffuly");
-                    return departmentModel; // Retorna o modelo de departamento criado
-                }
+                _departmentRepository.CreateEntityRepository(departmentModel); // Cria a entidade no repositório
+                _notificationService.AddMessage("Department saved suceffuly");
+                return departmentModel; // Retorna o modelo de departamento criado
             }
+
+            _notificationService.Messages.AddRange(notifications);
             return entity;
         }
 
         private List<NotificationMessage> GetMessages()
         {
-            return _validationService.notificationService.Messages;
+            return _modelFactory.Notifications;
         }
 
         public IEnumerable<DepartmentModel> GetAllService()
         {
             var departments = _departmentRepository.GetAllEntitiesRepository(); // Obtém todas as entidades de departamento do repositório
             return departments; // Retorna a lista de entidades de departamento
-        }
-
-        public List<DepartmentModel> GetAllModelService()
-        {
-            var departments = _departmentRepository.GetAllDepartmentEntities(); // Obtém todos os modelos de departamento do repositório
-            return departments as List<DepartmentModel>; // Retorna a lista de modelos de departamento
         }
 
         public DepartmentModel GetEntityByIdService(object id)
@@ -73,16 +69,10 @@ namespace BLL.Services
 
         public DepartmentModel UpdateEntityService(DepartmentModel entity)
         {
-            var departmentEntity = _departmentFactory.SetDepartmentModelFactory(entity); // Define os valores do modelo de departamento
+            var departmentEntity = _modelFactory.SetModelWhithoutValidation(entity); // Define os valores do modelo sem validação
 
             _departmentRepository.UpdateEntityRepository(departmentEntity); // Atualiza a entidade no repositório
             return entity; // Retorna a entidade atualizada
-        }
-
-        public DepartmentModel CreateDepartmentModelObjectFactory()
-        {
-            var newDepartmentModel = _departmentFactory.CreateDepartmentModelFactory();
-            return newDepartmentModel;
         }
     }
 }

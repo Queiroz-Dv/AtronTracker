@@ -1,12 +1,10 @@
 using BLL.Interfaces;
 using BLL.Services;
-using DAL;
-using DAL.Factory;
 using DAL.Interfaces;
-using DAL.Interfaces.FactoryModules;
 using DAL.Repositories;
-using PersonalTracking.Helper.Helpers;
-using PersonalTracking.Helper.Interfaces;
+using PersonalTracking.Entities;
+using PersonalTracking.Factory.Entities;
+using PersonalTracking.Factory.Interfaces;
 using PersonalTracking.Models;
 using System.Web.Http;
 using Unity;
@@ -18,7 +16,7 @@ namespace PersonalTracking.Api
     {
         public static void RegisterComponents()
         {
-			var container = new UnityContainer();
+            var container = new UnityContainer();
 
             // register all your components with the container here
             // it is NOT necessary to register your controllers
@@ -26,9 +24,8 @@ namespace PersonalTracking.Api
             // e.g. container.RegisterType<ITestService, TestService>();
             container.RegisterType<IDepartmentService, DepartmentService>();
             container.RegisterType<IDepartmentRepository, DepartmentRepository>();
-            container.RegisterType<IDepartmentFactory, DepartmentFactory>();
-            container.RegisterType<IObjectModelHelper<DepartmentModel, DEPARTMENT>, ObjectModelHelper<DepartmentModel, DEPARTMENT>>();
-
+            container.RegisterType<IModelFactory<DepartmentModel, DEPARTMENT>, DeparmentFactory>();
+            
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
     }

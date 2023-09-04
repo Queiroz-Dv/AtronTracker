@@ -1,6 +1,5 @@
 ﻿using BLL.Interfaces;
 using DAL.Interfaces;
-using DAL.Interfaces.FactoryModules;
 using PersonalTracking.Models;
 using System.Collections.Generic;
 
@@ -13,27 +12,28 @@ namespace BLL.Services
     {
         private readonly IPositionRepository _positionRepository;
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IPositionFactory _positionFactory;
+        //private readonly IPositionFactory _positionFactory;
 
-        public PositionService(IPositionRepository positionRepository, IEmployeeRepository employeeRepository, IPositionFactory positionFactory)
+        public PositionService(IPositionRepository positionRepository, IEmployeeRepository employeeRepository)
         {
             _positionRepository = positionRepository;
             _employeeRepository = employeeRepository;
-            _positionFactory = positionFactory;
+            //_positionFactory = positionFactory;
         }
 
         public PositionModel CreateEntityService(PositionModel entity)
         {
-            var position = _positionFactory.SetPositionModelFactory(entity);
-            if (!position.Equals(null))
-            {
-                _positionRepository.CreateEntityRepository(position);
-                return position;
-            }
-            else
-            {
-                return entity;
-            }
+            return null;
+            //var position = _positionFactory.SetPositionModelFactory(entity);
+            //if (!position.Equals(null))
+            //{
+            //    _positionRepository.CreateEntityRepository(position);
+            //    return position;
+            //}
+            //else
+            //{
+            //    return entity;
+            //}
         }
 
         public IEnumerable<PositionModel> GetAllService()
@@ -58,7 +58,7 @@ namespace BLL.Services
 
         public PositionModel UpdateEntityService(PositionModel entity)
         {
-            
+
             var position = _positionRepository.UpdateEntityRepository(entity);
             if (control)
             {

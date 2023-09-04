@@ -1,5 +1,6 @@
 ﻿using DAL.DAO;
 using DAL.Interfaces;
+using PersonalTracking.Entities;
 using PersonalTracking.Models;
 using System;
 using System.Collections.Generic;
