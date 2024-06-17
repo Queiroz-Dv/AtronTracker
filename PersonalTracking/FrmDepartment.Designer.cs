@@ -151,7 +151,7 @@ namespace PersonalTracking
         private System.Windows.Forms.Label lblDepartment;
         private System.Windows.Forms.TextBox txtDepartment;
         private IDepartmentService _departmentService;
-        public DepartmentModel department;
+        public Department department;
         public bool isUpdate = false;
         private readonly IEntityMessages _information;
     }

@@ -22,8 +22,8 @@ namespace PersonalTracking
             _positionService = positionService;
             _departmentService = departmentService;
             _entityMessages = entityMessages;
-            _departmentList = new List<DepartmentModel>();
-            _detail = new PositionModel();
+            _departmentList = new List<Department>();
+            _detail = new Position();
         }
 
         private void BtnClose_Click(object sender, EventArgs e) => Close();
@@ -36,8 +36,8 @@ namespace PersonalTracking
 
             var departments = _departmentList.Select(dpt => new DepartmentInfo
             {
-                Id = dpt.DepartmentModelId,
-                DepartmentName = dpt.DepartmentModelName
+                Id = dpt.Id,
+                DepartmentName = dpt.Name
             }).ToList();
 
             cmbDeparment.DataSource = departments;
@@ -51,7 +51,7 @@ namespace PersonalTracking
             cmbDeparment.SelectedIndex = -1;
             if (isUpdate)
             {
-                txtPosition.Text = _detail.PositionName;
+                txtPosition.Text = _detail.Name;
                 cmbDeparment.SelectedValue = _detail.Department.First().DepartmentModelId;
             }
         }
@@ -78,23 +78,23 @@ namespace PersonalTracking
             {
                 if (!isUpdate)
                 {
-                    var positionModel = new PositionModel();
+                    var positionModel = new Position();
 
-                    _detail.PositionName = txtPosition.Text;
+                    _detail.Name = txtPosition.Text;
                     _detail.Department.First().DepartmentModelId = Convert.ToInt32(cmbDeparment.SelectedValue);
 
                     _positionService.CreateEntityService(_detail);
-                    _entityMessages.EntitySavedWithSuccessMessage(_detail.PositionName);
+                    _entityMessages.EntitySavedWithSuccessMessage(_detail.Name);
                     txtPosition.Clear();
                     cmbDeparment.SelectedIndex = -1;
                 }
                 else
                 {
 
-                    var position = new PositionModel();
+                    var position = new Position();
 
-                    position.PositionId = _detail.PositionId;
-                    position.PositionName = txtPosition.Text;
+                    position.Id = _detail.Id;
+                    position.Name = txtPosition.Text;
                     position.Department.First().DepartmentModelId = Convert.ToInt32(cmbDeparment.SelectedValue);
 
                     if (Convert.ToInt32(cmbDeparment.SelectedValue) != _detail.OldDepartmentID)

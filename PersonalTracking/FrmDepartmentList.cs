@@ -12,8 +12,8 @@ namespace PersonalTracking
     {
         private readonly IDepartmentService _departmentService;  // Serviço responsável pelas operações relacionadas a departamento
         private readonly IEntityMessages _information; // Serviço pelas mensagens de notificação
-        private readonly DepartmentModel departmentModel = new DepartmentModel();// Modelo do departamento atualmente selecionado
-        private List<DepartmentModel> departmentsModelsList; // Lista de modelos de departamento
+        private readonly Department departmentModel = new Department();// Modelo do departamento atualmente selecionado
+        private List<Department> departmentsModelsList; // Lista de modelos de departamento
         private FrmDepartment frm;
 
         public FrmDepartmentList(IDepartmentService service, IEntityMessages entityMessages)
@@ -21,7 +21,7 @@ namespace PersonalTracking
             InitializeComponent();
             _information = entityMessages; // Inicializa o objeto de mensagens com a implementação fornecida da interface IEntityMessages
             _departmentService = service; // Injeta o serviço de departamento na classe
-            departmentsModelsList = new List<DepartmentModel>(); // Inicializa a lista de modelos de departamento
+            departmentsModelsList = new List<Department>(); // Inicializa a lista de modelos de departamento
         }
 
         private void ConfigureColumns()
@@ -33,8 +33,8 @@ namespace PersonalTracking
 
         private void dgvDeparments_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            departmentModel.DepartmentModelId = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
-            departmentModel.DepartmentModelName = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
+            departmentModel.Id = Convert.ToInt32(dgvDepartment.Rows[e.RowIndex].Cells[0].Value);
+            departmentModel.Name = dgvDepartment.Rows[e.RowIndex].Cells[1].Value.ToString();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -46,7 +46,7 @@ namespace PersonalTracking
         {
             //Preenche o grid com a lista de departamentos e configura as colunas
             departmentsModelsList = _departmentService.GetAllService().ToList();
-            dgvDepartment.DataSource = departmentsModelsList.OrderBy(d => d.DepartmentModelName).ToList();
+            dgvDepartment.DataSource = departmentsModelsList.OrderBy(d => d.Name).ToList();
             ConfigureColumns();
         }
 
@@ -62,7 +62,7 @@ namespace PersonalTracking
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
 
-            if (departmentModel.DepartmentModelId.Equals(decimal.Zero))
+            if (departmentModel.Id.Equals(decimal.Zero))
             {
                 _information.InvalidItemSelectedMessage(); // Exibe uma mensagem de erro se nenhum departamento estiver selecionado
             }
@@ -80,11 +80,11 @@ namespace PersonalTracking
 
         private void BtnDelete_Click(object sender, EventArgs e)
         {
-            var result = (DialogResult)_information.DeleteEntityQuestionMessage(departmentModel.DepartmentModelName); // Exibe uma mensagem de confirmação para excluir o departamento
+            var result = (DialogResult)_information.DeleteEntityQuestionMessage(departmentModel.Name); // Exibe uma mensagem de confirmação para excluir o departamento
             if (DialogResult.Yes.Equals(result))
             {
-                _departmentService.RemoveEntityService(departmentModel.DepartmentModelId); // Remove o departamento através do serviço
-                _information.EntityDeletedWithSuccessMessage(departmentModel.DepartmentModelName);
+                _departmentService.RemoveEntityService(departmentModel.Id); // Remove o departamento através do serviço
+                _information.EntityDeletedWithSuccessMessage(departmentModel.Name);
             }
             FrmDepartmentList_Load(sender, e); // Recarrega a lista de departamentos
         }

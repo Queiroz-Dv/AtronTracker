@@ -154,7 +154,7 @@ namespace PersonalTracking
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button BtnNewDepartment;
-        private IList<DepartmentModel> _departmentList;
-        public PositionModel _detail;
+        private IList<Department> _departmentList;
+        public Position _detail;
     }
 }

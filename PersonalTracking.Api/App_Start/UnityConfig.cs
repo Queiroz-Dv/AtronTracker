@@ -24,7 +24,7 @@ namespace PersonalTracking.Api
             // e.g. container.RegisterType<ITestService, TestService>();
             container.RegisterType<IDepartmentService, DepartmentService>();
             container.RegisterType<IDepartmentRepository, DepartmentRepository>();
-            container.RegisterType<IModelFactory<DepartmentModel, DEPARTMENT>, DeparmentFactory>();
+            container.RegisterType<IModelFactory<Department, DEPARTMENT>, DeparmentFactory>();
             
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
