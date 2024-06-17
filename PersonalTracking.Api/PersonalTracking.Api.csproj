@@ -539,28 +539,6 @@
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.0.min.map" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BLL\BLL.csproj">
-      <Project>{1C35E6E1-A7B1-4568-AC01-8CFD62232933}</Project>
-      <Name>BLL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DAL\DAL.csproj">
-      <Project>{D70D5B1B-A80A-4CE2-B750-18DA9ACCCCC1}</Project>
-      <Name>DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Framework\PersonalTracking.Factory\PersonalTracking.Factory.csproj">
-      <Project>{E9F497AC-65E3-4CEF-856C-D6A722872EB9}</Project>
-      <Name>PersonalTracking.Factory</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PersonalTracking.Entities\PersonalTracking.Entities.csproj">
-      <Project>{21E02C0D-98D1-4FE1-B1F6-F5F0FDD18B03}</Project>
-      <Name>PersonalTracking.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PersonalTracking.Models\PersonalTracking.Models.csproj">
-      <Project>{0A8A48B0-A2CA-412B-922F-B697F5FBDC0A}</Project>
-      <Name>PersonalTracking.Models</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

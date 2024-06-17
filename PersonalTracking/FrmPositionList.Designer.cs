@@ -155,7 +155,7 @@ namespace PersonalTracking
         private readonly IPositionService _positionService;
         private readonly IDepartmentService _departmentService;
         private readonly IEntityMessages _entityMessages;
-        private IList<PositionModel> positionModels;
-        private readonly PositionModel detail;
+        private IList<Position> positionModels;
+        private readonly Position detail;
     }
 }

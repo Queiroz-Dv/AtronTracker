@@ -41,7 +41,7 @@ namespace PersonalTracking.Api.Controllers
         /// <param name="department">O objeto DepartmentModel contendo os dados do departamento.</param>
         /// <returns>Retorna um código de status HTTP.</returns>
         [HttpPost]
-        public IHttpActionResult CreateDepartment([FromBody] DepartmentModel department)
+        public IHttpActionResult CreateDepartment([FromBody] Department department)
         {
             if (department != null)
             {
@@ -67,7 +67,7 @@ namespace PersonalTracking.Api.Controllers
         }
 
         [HttpPut]
-        public IHttpActionResult Put(DepartmentModel departmentModel)
+        public IHttpActionResult Put(Department departmentModel)
         {
             if (departmentModel != null)
             {

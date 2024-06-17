@@ -16,8 +16,8 @@ namespace PersonalTracking
             _positionService = positionService;
             _departmentService = departmentService;
             _entityMessages = messages;
-            positionModels = new List<PositionModel>();
-            detail = new PositionModel();
+            positionModels = new List<Position>();
+            detail = new Position();
         }
 
         private void BtnClose_Click(object sender, EventArgs e) => this.Close();
@@ -49,11 +49,11 @@ namespace PersonalTracking
 
         void FillGrid()
         {
-            positionModels = _positionService.GetAllService().OrderBy(pos => pos.PositionId).ToList();
+            positionModels = _positionService.GetAllService().OrderBy(pos => pos.Id).ToList();
 
             var entities = positionModels.Select(dpt => new PositionAndDepartmentInfo
             {
-                PositionName = dpt.PositionName,
+                PositionName = dpt.Name,
                 DepartmentName = dpt.Department.First().DepartmentModelName
             }).ToList();
 
@@ -96,10 +96,10 @@ namespace PersonalTracking
             {
                 if (detail.Department == null)
                 {
-                    detail.Department = new List<DepartmentModel>();
+                    detail.Department = new List<Department>();
                 }
 
-                detail.PositionName = dgvPositionList.Rows[e.RowIndex].Cells["PositionName"].Value.ToString();
+                detail.Name = dgvPositionList.Rows[e.RowIndex].Cells["PositionName"].Value.ToString();
                 // detail.PositionId = ... (caso necessário)
                 // detail.Department.DepartmentModelId = ... (caso necessário)
             }

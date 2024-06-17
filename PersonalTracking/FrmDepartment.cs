@@ -13,7 +13,7 @@ namespace PersonalTracking
         {
             InitializeComponent();
             _information = message;
-            department = new DepartmentModel();
+            department = new Department();
             _departmentService = departmentService;
         }
 
@@ -23,7 +23,7 @@ namespace PersonalTracking
         {
             var departmentIsEmpty = GetFieldEmptyOrFilled();
             var departmentAmountCharactersIsValid = GetFieldLength();
-            department.DepartmentModelName = txtDepartment.Text;
+            department.Name = txtDepartment.Text;
 
             if (departmentIsEmpty)
             {
@@ -51,14 +51,14 @@ namespace PersonalTracking
             }
         }
 
-        private void UpdateDepartment(DepartmentModel department)
+        private void UpdateDepartment(Department department)
         {
             _departmentService.UpdateEntityService(department);
-            _information.EntityUpdatedMessage(department.DepartmentModelName);
+            _information.EntityUpdatedMessage(department.Name);
             ClearFields();
         }
 
-        private void SaveDepartment(DepartmentModel department)
+        private void SaveDepartment(Department department)
         {
             _departmentService.CreateEntityService(department);
             if (_departmentService.Messages.Count > decimal.Zero)
@@ -72,7 +72,7 @@ namespace PersonalTracking
                 }
             }
             
-            _information.EntitySavedWithSuccessMessage(department.DepartmentModelName);
+            _information.EntitySavedWithSuccessMessage(department.Name);
             ClearFields();
         }
 
@@ -80,7 +80,7 @@ namespace PersonalTracking
         {
             if (isUpdate)
             {
-                txtDepartment.Text = department.DepartmentModelName;
+                txtDepartment.Text = department.Name;
                 btnSave.Enabled = true;
             }
             else

@@ -28,7 +28,7 @@ namespace PersonalTracking.Api.Controllers
         public async Task<ActionResult> Index()
 
         {
-            List<DepartmentModel> departments = null; // Inicializa a lista 
+            List<Department> departments = null; // Inicializa a lista 
             try
             {
                 _httpClient.BaseAddress = new Uri(DepartmentUri); // Passa o endereço da API 
@@ -37,7 +37,7 @@ namespace PersonalTracking.Api.Controllers
                 if (response.IsSuccessStatusCode) // Se o status for 200 (Ok) 
                 {
                     // Ler os dados de forma asíncrona
-                    var displayData = response.Content.ReadAsAsync<List<DepartmentModel>>();
+                    var displayData = response.Content.ReadAsAsync<List<Department>>();
                     displayData.Wait(); // Aguarda a leitura
                     departments = displayData.Result; // Repassa o resultado da leitura (as entidades) para a lista
                 }
@@ -59,14 +59,14 @@ namespace PersonalTracking.Api.Controllers
         /// <returns>The details of the department.</returns>
         public async Task<ActionResult> Details(int id)
         {
-            DepartmentModel departmentModel = null;
+            Department departmentModel = null;
             try
             {
                 _httpClient.BaseAddress = new Uri(DepartmentUri);
                 var response = await _httpClient.GetAsync($"{ApiPath}?id=" + id.ToString());
                 if (response.IsSuccessStatusCode)
                 {
-                    var model = await response.Content.ReadAsAsync<DepartmentModel>();
+                    var model = await response.Content.ReadAsAsync<Department>();
                     departmentModel = model;
                 }
 
@@ -86,7 +86,7 @@ namespace PersonalTracking.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(DepartmentModel department)
+        public async Task<ActionResult> Create(Department department)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace PersonalTracking.Api.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var displayData = response.Content.ReadAsAsync<DepartmentModel>();
+                    var displayData = response.Content.ReadAsAsync<Department>();
                     department = displayData.Result;
                 }
 
@@ -109,14 +109,14 @@ namespace PersonalTracking.Api.Controllers
 
         public async Task<ActionResult> UpdateDepartment(int id)
         {
-            DepartmentModel departmentModel = null;
+            Department departmentModel = null;
             _httpClient.BaseAddress = new Uri(DepartmentUri);
 
             var consumeAPI = await _httpClient.GetAsync($"{ApiPath}?id=" + id.ToString());
 
             if (consumeAPI.IsSuccessStatusCode)
             {
-                var displayData = await consumeAPI.Content.ReadAsAsync<DepartmentModel>();
+                var displayData = await consumeAPI.Content.ReadAsAsync<Department>();
                 departmentModel = displayData;
             }
 
@@ -124,7 +124,7 @@ namespace PersonalTracking.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> UpdateDepartment(DepartmentModel departmentModel)
+        public async Task<ActionResult> UpdateDepartment(Department departmentModel)
         {
             _httpClient.BaseAddress = new Uri(DepartmentUri);
 
