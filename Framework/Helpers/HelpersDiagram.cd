@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Helpers.Entity.ValidateModel&lt;T&gt;">
+    <Position X="0.5" Y="3.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAACAAQAAAEAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\ValidateModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Helpers.Objects.MessageHelper">
+    <Position X="2.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAABAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Objects\MessageHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Helper.Objects.ValidateHelper&lt;Model&gt;">
+    <Position X="5.25" Y="6.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAACAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\ValidateHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Helpers.Entity.InformationMessage">
+    <Position X="3" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAACAABIAAAAAgAAiAAAAAIQAAABAAAAAAAAA=</HashCode>
+      <FileName>Entity\InformationMessage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Helpers.Interfaces.IEntityMessages">
+    <Position X="8.5" Y="5.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAACAABIAAAAAgAACAAAAAIQAAABAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IEntityMessages.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Helpers.Interfaces.IFieldValidate">
+    <Position X="12" Y="5.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IFieldValidate.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Helpers.Interfaces.IMessageHelper">
+    <Position X="3" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IMessageHelper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Helpers.Interfaces.IShowMessagesUI">
+    <Position X="6.25" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IShowMessagesUI.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Helpers.Interfaces.IValidateHelper&lt;TModel&gt;">
+    <Position X="5.5" Y="4.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IValidateHelper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Helpers.Interfaces.IValidateModel">
+    <Position X="0.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IValidateModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Helpers.Enums.EnumLevelMessage">
+    <Position X="6.25" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAIEAAAAAAAAAAAAAAAABAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Enums\EnumLevelMessage.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
