@@ -5,7 +5,7 @@ namespace Notification.Interfaces
 {
     public interface INotificationService
     {
-        List<NotificationMessage> Messages { get; set; }
+        List<NotificationMessage> Messages { get; }
 
         void AddMessage(string message);
 

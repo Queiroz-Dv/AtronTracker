@@ -1,5 +1,5 @@
-using Notification.Interfaces;
 using Notification.Enums;
+using Notification.Interfaces;
 using Notification.Models;
 using System.Collections.Generic;
 
@@ -7,9 +7,14 @@ namespace Notification.Services
 {
     public abstract class NotificationService : INotificationService
     {
-        public List<NotificationMessage> Messages { get; set; }
+        protected NotificationService()
+        {
+            Messages = new List<NotificationMessage>();
+        }
 
-        public  void AddNotification(string message, ENotificationType type)
+        public List<NotificationMessage> Messages { get; }
+
+        public void AddNotification(string message, ENotificationType type)
         {
             Messages.Add(new NotificationMessage(message, type));
         }

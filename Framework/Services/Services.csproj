@@ -9,9 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Models\Models.csproj" />
-    <ProjectReference Include="..\..\PersonalTracking.BLL\PersonalTracking.BLL.csproj" />
-    <ProjectReference Include="..\..\PersonalTracking.DAL\PersonalTracking.DAL.csproj" />
     <ProjectReference Include="..\Factory\Factory.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
     <ProjectReference Include="..\Notification\Notification.csproj" />
