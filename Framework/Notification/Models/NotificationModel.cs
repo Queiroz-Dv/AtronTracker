@@ -1,14 +1,11 @@
 ﻿using Notification.Services;
-using System.Collections.Generic;
+using System;
 
 namespace Notification.Models
 {
-    public class NotificationModel : NotificationService
+    [Serializable]
+    public abstract class NotificationModel<Entity> : NotificationService
     {
-        public NotificationModel()
-        {
-            Messages = new List<NotificationMessage>();
-        }
 
         public override void AddError(string message)
         {
@@ -24,5 +21,7 @@ namespace Notification.Models
         {
             AddNotification(message, Enums.ENotificationType.Warning);
         }
+
+        public abstract void Validate(Entity entity);
     }
 }
