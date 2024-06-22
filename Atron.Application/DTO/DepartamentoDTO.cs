@@ -1,10 +1,14 @@
-﻿using System.ComponentModel;
+﻿using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
-    public class DepartamentoDTO
+    public class DepartamentoDTO : Factory
     {
+        [JsonIgnore]
+        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "O campo código é obrigatório")]
@@ -19,8 +23,14 @@ namespace Atron.Application.DTO
         [DisplayName("Descrição")]
         public string Descricao { get; set; }
 
+        [JsonIgnore]
+        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public int CargoId { get; set; }
+        [JsonIgnore]
+        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public string CargoCodigo { get; set; }
+        [JsonIgnore]
+        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public string CargoDescricao { get; set; }
     }
 }

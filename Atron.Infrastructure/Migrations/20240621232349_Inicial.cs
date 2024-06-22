@@ -11,8 +11,8 @@ namespace Atron.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    CodigoDepartamento = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    DescricaoDepartamento = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Codigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Descricao = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {

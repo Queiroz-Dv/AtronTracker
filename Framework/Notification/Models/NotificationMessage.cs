@@ -9,11 +9,17 @@ namespace Notification.Models
         public NotificationMessage(string message, ENotificationType type)
         {
             Message = message;
-            Type = type;           
+            Type = type;
+        }
+
+        public NotificationMessage(string message)
+        {
+            Message = message;
+            Type = ENotificationType.Message;
         }
 
         public string Message { get; set; }
 
-        public ENotificationType Type { get; set; }        
+        public ENotificationType Type { get; set; }
     }
 }

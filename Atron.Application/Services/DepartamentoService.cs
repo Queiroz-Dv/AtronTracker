@@ -23,6 +23,8 @@ namespace Atron.Application.Services
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly NotificationModel<Departamento> _notification;
 
+        public List<NotificationMessage> notificationMessages { get; set; }
+
         public DepartamentoService(IMapper mapper, IDepartamentoRepository departamentoRepository,
             NotificationModel<Departamento> notification)
         {
@@ -35,28 +37,54 @@ namespace Atron.Application.Services
             _mapper = mapper;
             _departamentoRepository = departamentoRepository;
             _notification = notification;
+            notificationMessages = new List<NotificationMessage>();
         }
 
-        public string Ambiente { get; set; }
 
-        public void AtualizarAsync(DepartamentoDTO departmentDTO)
+        public async Task AtualizarAsync(DepartamentoDTO departmentDTO)
         {
-            throw new System.NotImplementedException();
+            var departamento = _mapper.Map<Departamento>(departmentDTO);
+            await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
+            notificationMessages.Add(new NotificationMessage($"Departamento: {departamento.Codigo} foi atualizado com sucesso."));
         }
 
-        public void CriarAsync(DepartamentoDTO departmentDTO)
+        public async Task CriarAsync(DepartamentoDTO departmentDTO)
         {
-            throw new System.NotImplementedException();
+            departmentDTO.Id = departmentDTO.GerarIdentificador();
+
+            var departamento = _mapper.Map<Departamento>(departmentDTO);
+            _notification.Validate(departamento);
+
+            if (!_notification.Messages.HasErrors())
+            {
+                await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
+                notificationMessages.Add(new NotificationMessage("Departamento criado com sucesso."));
+            }
         }
 
-        public Task<DepartamentoDTO> ObterPorCodigo(string codigo)
+        public async Task<DepartamentoDTO> ObterPorCodigo(string codigo)
         {
-            throw new System.NotImplementedException();
+            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
+
+            if (departamento is not null)
+            {
+                var departamentoDTO = _mapper.Map<DepartamentoDTO>(departamento);
+                return departamentoDTO;
+            }
+            else
+            {
+                var message = new NotificationMessage("Código do departamento informado não existe.", Notification.Enums.ENotificationType.Error);
+                notificationMessages.Add(message);
+                return null;
+            }
         }
 
-        public Task<DepartamentoDTO> ObterPorIdAsync(int? departamentoId)
+        public async Task<DepartamentoDTO> ObterPorIdAsync(int? departamentoId)
         {
-            throw new System.NotImplementedException();
+            var entity = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);
+            var dto = _mapper.Map<DepartamentoDTO>(entity);
+
+            return dto;
         }
 
         public async Task<IEnumerable<DepartamentoDTO>> ObterTodosAsync()
@@ -66,9 +94,10 @@ namespace Atron.Application.Services
             return dtos;
         }
 
-        public void RemoverAsync(string codigo)
+        public async Task RemoverAsync(string codigo)
         {
-            throw new System.NotImplementedException();
+            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
+            await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
         }
     }
 }

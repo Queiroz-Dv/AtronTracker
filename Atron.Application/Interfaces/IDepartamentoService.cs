@@ -1,4 +1,5 @@
 ﻿using Atron.Application.DTO;
+using Notification.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,6 +8,7 @@ namespace Atron.Application.Interfaces
     public interface IDepartamentoService
     {
         //TODO: Implementar o guardian e notification aqui
+        public List<NotificationMessage> notificationMessages { get; }
 
         /// <summary>
         /// Obtém todos os departamentos
@@ -33,20 +35,18 @@ namespace Atron.Application.Interfaces
         /// </summary>
         /// <param name="departmentDTO">Modelo que será criado</param>
 
-        void CriarAsync(DepartamentoDTO departmentDTO);
+        Task CriarAsync(DepartamentoDTO departmentDTO);
 
         /// <summary>
         /// Atualiza um departamento existente
         /// </summary>
         /// <param name="departmentDTO">Modelo que será atualizado</param>
-        void AtualizarAsync(DepartamentoDTO departmentDTO);
+        Task AtualizarAsync(DepartamentoDTO departmentDTO);
 
         /// <summary>
         /// Exclui um departamento existente por código informado
         /// </summary>
         /// <param name="codigo">Código do departamento</param>
-        void RemoverAsync(string codigo);
-
-        string Ambiente { get; set; }
+        Task RemoverAsync(string codigo);
     }
 }
