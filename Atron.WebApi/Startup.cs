@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Atron.WebApi
 {
+    /* Classe principal onde é definido as configurações e serviços da API */
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -19,8 +20,13 @@ namespace Atron.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddInfrastructureAPI(Configuration); // Registra os serviços da api
+            // Aqui registramos os serviços da API como repositorios e Validações
+            services.AddInfrastructureAPI(Configuration);
+
+            // Indica que usaremos as controllers para comunicação com os endpoints
             services.AddControllers();
+
+            // Informa que usaremos o Swagger para documentação e testes
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Atron.WebApi", Version = "v1" });

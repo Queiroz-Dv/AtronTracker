@@ -7,7 +7,8 @@ namespace Atron.Application.Interfaces
 {
     public interface IDepartamentoService
     {
-        //TODO: Implementar o guardian e notification aqui
+        // Aqui eu preciso das notificações para informar a controller 
+        // caso algo deu certo ou errado
         public List<NotificationMessage> notificationMessages { get; }
 
         /// <summary>
@@ -33,15 +34,15 @@ namespace Atron.Application.Interfaces
         /// <summary>
         /// Cria um departamento
         /// </summary>
-        /// <param name="departmentDTO">Modelo que será criado</param>
+        /// <param name="departamentoDTO">Modelo que será criado</param>
 
-        Task CriarAsync(DepartamentoDTO departmentDTO);
+        Task CriarAsync(DepartamentoDTO departamentoDTO);
 
         /// <summary>
         /// Atualiza um departamento existente
         /// </summary>
-        /// <param name="departmentDTO">Modelo que será atualizado</param>
-        Task AtualizarAsync(DepartamentoDTO departmentDTO);
+        /// <param name="departamentoDTO">Modelo que será atualizado</param>
+        Task AtualizarAsync(DepartamentoDTO departamentoDTO);
 
         /// <summary>
         /// Exclui um departamento existente por código informado

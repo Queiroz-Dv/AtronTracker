@@ -41,18 +41,20 @@ namespace Atron.Application.Services
         }
 
 
-        public async Task AtualizarAsync(DepartamentoDTO departmentDTO)
+        public async Task AtualizarAsync(DepartamentoDTO departamentoDTO)
         {
-            var departamento = _mapper.Map<Departamento>(departmentDTO);
+            // Sempre que preciso conectar no repository
+            // também terei de remapear o objeto para um dto 
+            var departamento = _mapper.Map<Departamento>(departamentoDTO);
             await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
             notificationMessages.Add(new NotificationMessage($"Departamento: {departamento.Codigo} foi atualizado com sucesso."));
         }
 
-        public async Task CriarAsync(DepartamentoDTO departmentDTO)
+        public async Task CriarAsync(DepartamentoDTO departamentoDTO)
         {
-            departmentDTO.Id = departmentDTO.GerarIdentificador();
+            departamentoDTO.Id = departamentoDTO.GerarIdentificador();
 
-            var departamento = _mapper.Map<Departamento>(departmentDTO);
+            var departamento = _mapper.Map<Departamento>(departamentoDTO);
             _notification.Validate(departamento);
 
             if (!_notification.Messages.HasErrors())

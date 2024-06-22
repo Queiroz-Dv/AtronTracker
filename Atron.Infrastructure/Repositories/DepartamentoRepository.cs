@@ -47,6 +47,12 @@ namespace Atron.Infrastructure.Repositories
             return departamento;
         }
 
+        public bool DepartamentoExiste(string codigo)
+        {
+            var departamentoExiste = _context.Departamentos.Any(dpt => dpt.Codigo == codigo);
+            return departamentoExiste;
+        }
+
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
         {
             var departamento = await _context.Departamentos.Where(dpt => dpt.Codigo == codigo).FirstOrDefaultAsync();
