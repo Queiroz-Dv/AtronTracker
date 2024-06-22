@@ -4,5 +4,10 @@
     public abstract class EntityBase
     {
         public int Id { get; protected set; }
+
+        public virtual void SetId(int id)
+        {
+            Id = id;
+        }
     }
 }

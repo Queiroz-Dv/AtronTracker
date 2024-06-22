@@ -3,25 +3,36 @@ using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
+using Notification.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Services
 {
+    /// <summary>
+    /// Classe de serviço para cargos
+    /// </summary>
     public class CargoService : ICargoService
     {
+        private readonly IMapper _mapper;
         private ICargoRepository _cargoRepository;
         private IDepartamentoRepository _departamentoRepository;
+        private readonly NotificationModel<Cargo> _notification;
 
-        private readonly IMapper _mapper;
+        public List<NotificationMessage> notificationMessages { get; set; }
 
 
-        public CargoService(IMapper mapper, ICargoRepository cargoRepository, IDepartamentoRepository departamentoRepository)
+        public CargoService(IMapper mapper,
+                            ICargoRepository cargoRepository,
+                            IDepartamentoRepository departamentoRepository,
+                            NotificationModel<Cargo> notification)
         {
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
             _mapper = mapper;
+            notificationMessages = new List<NotificationMessage>();
+            _notification = notification;
         }
 
         public async Task<List<CargoDTO>> ObterTodosAsync()
@@ -29,8 +40,8 @@ namespace Atron.Application.Services
             var cargos = await _cargoRepository.ObterCargosAsync();
             var departamentos = await _departamentoRepository.ObterDepartmentosAsync();
 
-            var cargosDTOs = ObterCargosMapeados(cargos);
-            var departamentosDTOs = ObterDepartamentosMapeados(departamentos);
+            var cargosDTOs = _mapper.Map<IEnumerable<CargoDTO>>(cargos);
+            var departamentosDTOs = _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
 
             var cargosComDepartamentos = (from pst in cargosDTOs
                                           join dpt in departamentosDTOs on pst.DepartamentoCodigo equals dpt.Codigo
@@ -39,7 +50,7 @@ namespace Atron.Application.Services
                                               Codigo = pst.Codigo,
                                               Descricao = pst.Descricao,
                                               DepartamentoCodigo = dpt.Codigo,
-                                              DepartamentoDescricao = dpt.Descricao
+                                              Departamento = new DepartamentoDTO() { Codigo = dpt.Codigo, Descricao = dpt.Descricao }
                                           }).ToList();
 
             return cargosComDepartamentos;
@@ -47,43 +58,52 @@ namespace Atron.Application.Services
 
         public async Task CriarAsync(CargoDTO cargoDTO)
         {
+            cargoDTO.Id = cargoDTO.GerarIdentificador();
             var cargo = _mapper.Map<Cargo>(cargoDTO);
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
 
             if (departamento is not null)
             {
+                // Preciso obter o identificador do departamento através do código pra informar aqui
                 cargo.DepartmentoId = departamento.Id;
             }
 
-            //GuardianModel.Validate(cargo);
+            _notification.Validate(cargo);
 
-            //if (GuardianModel.HasErrors() is not true)
-            //{
-            //    await _cargoRepository.CriarCargoAsync(cargo);
-            //}
+            if (!_notification.Messages.HasErrors())
+            {
+                await _cargoRepository.CriarCargoAsync(cargo);
+                notificationMessages.Add(new NotificationMessage("Cargo criado com sucesso."));
+            }
+
+            notificationMessages.AddRange(_notification.Messages);
         }
 
         public async Task AtualizarAsync(CargoDTO cargoDTO)
         {
             var cargo = _mapper.Map<Cargo>(cargoDTO);
-            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
+            var departamento = _departamentoRepository.DepartamentoExiste(cargoDTO.DepartamentoCodigo);
 
-            if (departamento is not null)
+            if (departamento)
             {
-                cargo.DepartmentoId = cargoDTO.DepartamentoId;
+                var entidade= await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
+                cargo.DepartmentoId = entidade.DepartmentoId;
+                cargo.SetId(entidade.Id); // Atribuição de Id internamente
             }
-            await _cargoRepository.AtualizarCargoAsync(cargo);
+
+            _notification.Validate(cargo);
+            if (!_notification.Messages.HasErrors())
+            {
+                await _cargoRepository.AtualizarCargoAsync(cargo);
+                notificationMessages.Add(new NotificationMessage("Cargo atualizado com sucesso."));
+            }
         }
 
         public async Task RemoverAsync(int? id)
         {
-            var cargo = _cargoRepository.ObterCargoPorIdAsync(id).Result;
+            var cargo = await _cargoRepository.ObterCargoPorIdAsync(id);
             await _cargoRepository.RemoverCargoAsync(cargo);
         }
-
-        private IEnumerable<CargoDTO> ObterCargosMapeados(IEnumerable<Cargo> cargos) => _mapper.Map<IEnumerable<CargoDTO>>(cargos);
-
-        private IEnumerable<DepartamentoDTO> ObterDepartamentosMapeados(IEnumerable<Departamento> departamentos) => _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
 
         public async Task<CargoDTO> ObterPorCodigoAsync(string codigo)
         {

@@ -8,14 +8,16 @@ using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    // Controller básica de departamento
+    [Route("api/[controller]")] // Define a rota do controlador 
+    [ApiController] // Informar que é uma controller de API
     public class DepartamentoController : ControllerBase
     {
         private readonly IDepartamentoService _departamentoService;
 
         public DepartamentoController(IDepartamentoService departamentoService)
         {
+            // Injeta a dependência do serviço de departamento no construtor
             _departamentoService = departamentoService;
         }
 
@@ -45,7 +47,7 @@ namespace Atron.WebApi.Controllers
             return Ok(departamentos);
         }
 
-        [HttpPut("{codigo}")]
+        [HttpPut("AtualizarDepartamento/{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] DepartamentoDTO departamento)
         {
             if (codigo != departamento.Codigo || codigo is null)
@@ -62,7 +64,7 @@ namespace Atron.WebApi.Controllers
             return Ok(_departamentoService.notificationMessages.First().Message);
         }
 
-        [HttpDelete("{codigo}")]
+        [HttpDelete("ExcluirDepartamento/{codigo}")]
         public async Task<ActionResult<DepartamentoDTO>> Delete(string codigo)
         {
             var departamento = await _departamentoService.ObterPorCodigo(codigo);
