@@ -28,11 +28,11 @@ namespace Atron.Application.Services
                             IDepartamentoRepository departamentoRepository,
                             NotificationModel<Cargo> notification)
         {
+            _mapper = mapper;
+            _notification = notification;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
-            _mapper = mapper;
             notificationMessages = new List<NotificationMessage>();
-            _notification = notification;
         }
 
         public async Task<List<CargoDTO>> ObterTodosAsync()

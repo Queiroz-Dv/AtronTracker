@@ -4,14 +4,16 @@ using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Atron.Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240623002605_CorrecaoUsuarioConfiguration")]
+    partial class CorrecaoUsuarioConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,8 +158,8 @@ namespace Atron.Infrastructure.Migrations
 
                     b.Property<string>("CargoCodigo")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<int>("CargoId")
                         .HasColumnType("int");
@@ -172,8 +174,8 @@ namespace Atron.Infrastructure.Migrations
 
                     b.Property<string>("DepartamentoCodigo")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<int>("DepartamentoId")
                         .HasColumnType("int");
@@ -186,12 +188,19 @@ namespace Atron.Infrastructure.Migrations
                     b.Property<int>("Salario")
                         .HasColumnType("int");
 
+                    b.Property<string>("Senha")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Sobrenome")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CargoId");
+
+                    b.HasIndex("DepartamentoId");
 
                     b.ToTable("Usuarios");
                 });
@@ -203,6 +212,25 @@ namespace Atron.Infrastructure.Migrations
                         .HasForeignKey("DepartmentoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Departmento");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Usuario", b =>
+                {
+                    b.HasOne("Atron.Domain.Entities.Cargo", "Cargo")
+                        .WithMany()
+                        .HasForeignKey("CargoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Atron.Domain.Entities.Departamento", "Departmento")
+                        .WithMany()
+                        .HasForeignKey("DepartamentoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cargo");
 
                     b.Navigation("Departmento");
                 });

@@ -12,10 +12,12 @@ namespace Atron.Application.Mapping
 
             CreateMap<Cargo, CargoDTO>().ForMember(dto => dto.DepartamentoCodigo, opt => opt.MapFrom(src => src.DepartmentoCodigo)).ReverseMap();
 
-            //CreateMap<Usuario, EmployeeDTO>()
-            //        .ForMember(dto => dto.DepartmentID, opt => opt.MapFrom(src => src.DepartmentoId))
-            //        .ForMember(dto => dto.PositionID, opt => opt.MapFrom(src => src.CargoId))
-            //        .ReverseMap();
+            CreateMap<Usuario, UsuarioDTO>()
+                    .ForPath(dto => dto.DepartamentoId, opt => opt.MapFrom(src => src.DepartamentoId))
+                    .ForPath(dto => dto.CargoId, opt => opt.MapFrom(src => src.CargoId))
+                    .ForPath(dto => dto.CargoCodigo, opt => opt.MapFrom(src => src.CargoCodigo))
+                    .ForPath(dto => dto.DepartamentoCodigo, opt => opt.MapFrom(src => src.DepartamentoCodigo))
+                    .ReverseMap();
         }
     }
 }

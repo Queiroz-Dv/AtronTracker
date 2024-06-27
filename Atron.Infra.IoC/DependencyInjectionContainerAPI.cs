@@ -30,6 +30,9 @@ namespace Atron.Infra.IoC
             m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
 
             // Registra os repositories e services
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
             services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
 
@@ -42,8 +45,10 @@ namespace Atron.Infra.IoC
             // Serviços de Notificação e Validação
             services.AddScoped<INotificationService, DepartamentoValidation>();
             services.AddScoped<INotificationService, CargoValidation>();
+            services.AddScoped<INotificationService, UsuarioValidation>();
             services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
             services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
+            services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();    
 
             // Outros Serviços
 
