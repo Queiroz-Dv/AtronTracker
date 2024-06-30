@@ -30,14 +30,19 @@ namespace Atron.Infra.IoC
             m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
 
             // Registra os repositories e services
-            services.AddScoped<IUsuarioService, UsuarioService>();
-            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-
             services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
 
             services.AddScoped<ICargoRepository, CargoRepository>();
             services.AddScoped<ICargoService, CargoService>();
+
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+            services.AddScoped<ITarefaRepository, TarefaRepository>();
+            services.AddScoped<ITarefaService, TarefaService>();
+
+            services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
 
             // Serviços utilitários 
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
@@ -46,9 +51,12 @@ namespace Atron.Infra.IoC
             services.AddScoped<INotificationService, DepartamentoValidation>();
             services.AddScoped<INotificationService, CargoValidation>();
             services.AddScoped<INotificationService, UsuarioValidation>();
+            services.AddScoped<INotificationService, TarefaValidation>();
+
             services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
             services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
             services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();    
+            services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
 
             // Outros Serviços
 

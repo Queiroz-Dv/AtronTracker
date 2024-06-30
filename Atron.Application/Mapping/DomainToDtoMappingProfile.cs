@@ -18,6 +18,8 @@ namespace Atron.Application.Mapping
                     .ForPath(dto => dto.CargoCodigo, opt => opt.MapFrom(src => src.CargoCodigo))
                     .ForPath(dto => dto.DepartamentoCodigo, opt => opt.MapFrom(src => src.DepartamentoCodigo))
                     .ReverseMap();
+
+            CreateMap<Tarefa, TarefaDTO>().ReverseMap();
         }
     }
 }

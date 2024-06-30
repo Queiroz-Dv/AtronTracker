@@ -4,14 +4,16 @@ using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Atron.Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240628005928_AddEstruturaTarefa")]
+    partial class AddEstruturaTarefa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,38 +185,6 @@ namespace Atron.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tarefas");
-                });
-
-            modelBuilder.Entity("Atron.Domain.Entities.TarefaEstado", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Descricao")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TarefaEstados");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Descricao = "Em atividade"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Descricao = "Aprovada"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Descricao = "Entregue"
-                        });
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Usuario", b =>
