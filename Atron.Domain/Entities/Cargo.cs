@@ -12,6 +12,5 @@
         public string DepartmentoCodigo { get; set; }
 
         public Departamento Departmento { get; set; }
-
     }
 }

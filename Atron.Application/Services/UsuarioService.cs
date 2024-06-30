@@ -4,7 +4,6 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Notification.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,7 +35,6 @@ namespace Atron.Application.Services
             notificationMessages = new List<NotificationMessage>();
         }
 
-
         public async Task AtualizarAsync(UsuarioDTO usuarioDTO)
         {
             var usuario = _mapper.Map<Usuario>(usuarioDTO);
@@ -59,7 +57,6 @@ namespace Atron.Application.Services
                 _notification.AddError("Usuário, Cargo ou Departamento não encontrados/cadastrados.");
                 return;
             }
-
 
             _notification.Validate(usuario);
 
@@ -88,7 +85,7 @@ namespace Atron.Application.Services
             }
             else
             {
-                _notification.AddError("Cargo ou Departamento não encontrado.");
+                _notification.AddError("Cargo ou Departamento não encontrados. Cadastre-os ou tente novamente.");
                 return;
             }
 
@@ -110,7 +107,6 @@ namespace Atron.Application.Services
             var cargos = await _cargoRepository.ObterCargosAsync();
             var departamentos = await _departamentoRepository.ObterDepartmentosAsync();
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-
 
             var cargosDTOs = _mapper.Map<IEnumerable<CargoDTO>>(cargos);
             var departamentosDTOs = _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
@@ -139,7 +135,6 @@ namespace Atron.Application.Services
             var departamentos = await _departamentoRepository.ObterDepartmentosAsync();
             var usuarios = await _usuarioRepository.ObterUsuariosAsync();
 
-
             var cargosDTOs = _mapper.Map<IEnumerable<CargoDTO>>(cargos);
             var departamentosDTOs = _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
             var usuariosDTOs = _mapper.Map<IEnumerable<UsuarioDTO>>(usuarios);
@@ -149,6 +144,7 @@ namespace Atron.Application.Services
                                      join crg in cargosDTOs on usr.CargoId equals crg.Id
                                      select new UsuarioDTO
                                      {
+                                         Id = usr.Id,
                                          Codigo = usr.Codigo,
                                          Nome = usr.Nome,
                                          Sobrenome = usr.Sobrenome,
