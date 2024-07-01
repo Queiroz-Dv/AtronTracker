@@ -16,7 +16,7 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Salario> CriarSalarioAsync(Salario salario)
+        public async Task<Salario> CriarSalarioRepositoryAsync(Salario salario)
         {
             await _context.Salarios.AddAsync(salario);
             await _context.SaveChangesAsync();

@@ -14,6 +14,17 @@ namespace Atron.Application.Mapping
             CriarMapeamentoDeTarefa();
             CriarMapeamentoDeSalario();
             CriarMapeamentoDeMes();
+            CriarMapeamentoDePermissao();
+        }
+
+        private void CriarMapeamentoDePermissao()
+        {
+            CreateMap<Permissao, PermissaoDTO>()
+                            .ForPath(dto => dto.UsuarioId, opt => opt.MapFrom(src => src.UsuarioId))
+                            .ForPath(dto => dto.UsuarioCodigo, opt => opt.MapFrom(src => src.UsuarioCodigo))
+                            .ForPath(dto => dto.Usuario.Id, opt => opt.MapFrom(src => src.UsuarioId))
+                            .ForPath(dto => dto.Usuario.Codigo, opt => opt.MapFrom(src => src.UsuarioCodigo))
+                            .ReverseMap();
         }
 
         private void CriarMapeamentoDeMes()

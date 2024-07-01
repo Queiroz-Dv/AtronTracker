@@ -67,14 +67,12 @@ namespace Atron.Application.Services
             }
 
             var salario = _mapper.Map<Salario>(salarioDTO);
-            //var diaAtual = DateTime.Now.Day;
-            //salario.Ano = new DateTime(salarioDTO.Ano, salarioDTO.Mes.Id, diaAtual);
-
+            
             _notification.Validate(salario);
 
             if (!_notification.Messages.HasErrors())
             {
-                await _salarioRepository.CriarSalarioAsync(salario);
+                await _salarioRepository.CriarSalarioRepositoryAsync(salario);
                 Messages.Add(new NotificationMessage($"Salário incluso para o usuário {salarioDTO.Usuario.Nome}"));
             }
         }

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
-    public class SalarioDTO
+    public class PermissaoDTO
     {
         [JsonIgnore]
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
@@ -14,18 +14,18 @@ namespace Atron.Application.DTO
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public int UsuarioId { get; set; }
 
+        public string UsuarioCodigo { get; set; }
+
         public UsuarioDTO Usuario { get; set; }
 
+        public DateTime DataInicial { get; set; }
+        public DateTime DataFinal { get; set; }
         [JsonIgnore]
+
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
-        public int MesId { get; set; }
-
-        public MesDTO Mes { get; set; }
-
-        public DateTime? Ano { get; set; }
-
-        public int QuantidadeTotal { get; set; }
-
-        public int SalarioAntigo { get; set; }
+        public int PermissaoEstadoId { get; set; }
+        public string PermissaoEstadoDescricao { get; set; }
+        public string Descricao { get; set; }
+        public int QuantidadeDeDias { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace Notification.Enums
     /// </summary>
     [Serializable]
     public enum ENotificationType
-    {
+    {        
         Error,
         Warning,
         Message
