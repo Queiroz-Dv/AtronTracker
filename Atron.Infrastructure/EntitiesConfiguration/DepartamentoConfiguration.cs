@@ -13,11 +13,11 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.Property(dpt => dpt.Id)
                    .ValueGeneratedNever();
 
-            builder.Property(dpt => dpt.CodigoDepartamento)
+            builder.Property(dpt => dpt.Codigo)
                    .IsRequired()
                    .HasMaxLength(10);
 
-            builder.Property(dpt => dpt.DescricaoDepartamento)
+            builder.Property(dpt => dpt.Descricao)
                    .IsRequired()
                    .HasMaxLength(50);
         }

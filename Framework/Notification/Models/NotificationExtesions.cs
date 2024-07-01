@@ -7,7 +7,7 @@ namespace Notification.Models
 {
     public static class NotificationExtesions
     {
-        public static Boolean HasErrors(this IList<NotificationMessage> messages)
+        public static bool HasErrors(this IList<NotificationMessage> messages)
         {
             return messages.Count(m => m.Type == ENotificationType.Error) > 0;
         }

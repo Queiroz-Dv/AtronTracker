@@ -1,8 +1,10 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
@@ -16,34 +18,68 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public void AtualizarDepartamentoRepositoryAsync(Departamento departamento)
+        public async Task<Departamento> AtualizarDepartamentoRepositoryAsync(Departamento departamento)
         {
-            throw new NotImplementedException();
+            var entidade = await _context.Departamentos.FirstOrDefaultAsync(dpt => dpt.Codigo == departamento.Codigo);
+
+            try
+            {
+                if (entidade is not null)
+                {
+                    entidade.AtualizarDescricao(departamento.Descricao);
+                    await _context.SaveChangesAsync();
+                    return entidade;
+                }
+            }
+            catch (Exception ex)
+            {
+                var message = ex.ToString();
+                throw;
+            }
+
+            return departamento;
         }
 
-        public void CriarDepartamentoRepositoryAsync(Departamento departamento)
+        public async Task<Departamento> CriarDepartamentoRepositoryAsync(Departamento departamento)
         {
-            throw new NotImplementedException();
+            _context.Add(departamento);
+            await _context.SaveChangesAsync();
+            return departamento;
         }
 
-        public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
+        public bool DepartamentoExiste(string codigo)
         {
-            throw new NotImplementedException();
+            var departamentoExiste = _context.Departamentos.Any(dpt => dpt.Codigo == codigo);
+            return departamentoExiste;
         }
 
-        public Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
+        public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
         {
-            throw new NotImplementedException();
+            var departamento = await _context.Departamentos.Where(dpt => dpt.Codigo == codigo).FirstOrDefaultAsync();
+            return departamento;
         }
 
-        public Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
+        public async Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
         {
-            throw new NotImplementedException();
+            var departamento = await _context.Departamentos.AsNoTracking().FirstOrDefaultAsync(dpt => dpt.Id == id);
+            return departamento;
         }
 
-        public void RemoverDepartmentoRepositoryAsync(Departamento departamento)
+        public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
         {
-            throw new NotImplementedException();
+            var departamentos = await _context.Departamentos
+                                    .AsNoTracking()
+                                    .OrderByDescending(order => order.Codigo)
+                                    .ToListAsync();
+
+            return departamentos;
+        }
+
+        public async Task<Departamento> RemoverDepartmentoRepositoryAsync(Departamento departamento)
+        {
+            _context.Remove(departamento);
+            await _context.SaveChangesAsync();
+            return departamento;
         }
     }
 }

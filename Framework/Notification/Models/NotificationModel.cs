@@ -6,7 +6,6 @@ namespace Notification.Models
     [Serializable]
     public abstract class NotificationModel<Entity> : NotificationService
     {
-
         public override void AddError(string message)
         {
             AddNotification(message, Enums.ENotificationType.Error);

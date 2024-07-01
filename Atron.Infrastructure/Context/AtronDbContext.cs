@@ -13,6 +13,14 @@ namespace Atron.Infrastructure.Context
 
         public DbSet<Mes> Meses { get; set; }
 
+        public DbSet<Usuario> Usuarios { get; set; }
+
+        public DbSet<Tarefa> Tarefas { get; set; }
+
+        public DbSet<TarefaEstado> TarefaEstados { get; set; }
+
+        public DbSet<Salario> Salarios { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

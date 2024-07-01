@@ -16,5 +16,7 @@ namespace Atron.Domain.Interfaces
         Task<Cargo> AtualizarCargoAsync(Cargo cargo);
 
         Task<Cargo> RemoverCargoAsync(Cargo cargo);
+
+        bool CargoExiste(string codigo);
     }
 }
