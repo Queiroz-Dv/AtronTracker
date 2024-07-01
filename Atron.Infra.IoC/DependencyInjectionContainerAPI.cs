@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Interfaces;
+using Notification.Interfaces.DTO;
 using Notification.Models;
 
 namespace Atron.Infra.IoC
@@ -44,6 +45,10 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
 
+            services.AddScoped<ISalarioRepository, SalarioRepository>();
+            services.AddScoped<ISalarioService, SalarioService>();
+            services.AddScoped<IMesRepository, MesRepository>();
+
             // Serviços utilitários 
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
@@ -52,13 +57,13 @@ namespace Atron.Infra.IoC
             services.AddScoped<INotificationService, CargoValidation>();
             services.AddScoped<INotificationService, UsuarioValidation>();
             services.AddScoped<INotificationService, TarefaValidation>();
+            services.AddScoped<INotificationService, SalarioValidation>();
 
             services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
             services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
             services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();    
             services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
-
-            // Outros Serviços
+            services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
 
             return services;
         }
