@@ -6,7 +6,7 @@ namespace Atron.Domain.Interfaces
 {
     public interface ISalarioRepository
     {
-        Task<Salario> CriarSalarioAsync(Salario salario);
+        Task<Salario> CriarSalarioRepositoryAsync(Salario salario);
         Task<IEnumerable<Salario>> ObterSalariosRepositoryAsync();
     }
 }
