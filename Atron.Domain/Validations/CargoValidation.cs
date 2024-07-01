@@ -14,6 +14,11 @@ namespace Atron.Domain.Validations
                 AddError("O código ou a descrição não estão preenchidos.");
             }
 
+            if (entity.Id == 0)
+            {
+                AddError($"Identificador inválido, tente novamente.");
+            }
+
             if (entity.Codigo.Length > 10)
             {
                 AddError("O código informado é muito longo.");

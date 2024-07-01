@@ -71,5 +71,10 @@ namespace Atron.Infrastructure.Repositories
             var cargo = await context.Cargos.AsNoTracking().FirstOrDefaultAsync(crg => crg.Codigo == codigo);
             return cargo;
         }
+
+        public bool CargoExiste(string codigo)
+        {
+            return context.Cargos.Any(crg => crg.Codigo == codigo);
+        }
     }
 }
