@@ -10,5 +10,9 @@ namespace Atron.Application.Interfaces
         Task CriarPermissaoServiceAsync(PermissaoDTO permissaoDTO);
 
         Task<List<PermissaoDTO>> ObterTodasPermissoesServiceAsync();
+
+        Task AtualizarPermissaoServiceAsync(PermissaoDTO permissaoDTO);
+
+        Task ExcluirPermissaoServiceAsync(int id);
     }
 }

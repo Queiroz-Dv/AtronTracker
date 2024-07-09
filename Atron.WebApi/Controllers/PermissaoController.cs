@@ -44,5 +44,48 @@ namespace Atron.WebApi.Controllers
 
             return Ok(permissoes);
         }
+
+        [HttpPut("AtualizarPermissao/{id}")]
+        public async Task<ActionResult<PermissaoDTO>> Put(int id, [FromBody] PermissaoDTO permissao)
+        {
+            if (id != 0)
+            {
+                await _permissaoService.AtualizarPermissaoServiceAsync(permissao);
+
+                if (_permissaoService.Messages.HasErrors())
+                {
+                    foreach (var item in _permissaoService.Messages)
+                    {
+                        return BadRequest(item.Message);
+                    }
+                }
+
+                return Ok(_permissaoService.Messages);
+            }
+
+            return BadRequest();
+        }
+
+        // TODO: Testar depois
+        [HttpDelete("ExcluirPermissao")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            if (id != 0)
+            {
+                await _permissaoService.ExcluirPermissaoServiceAsync(id);
+
+                if (_permissaoService.Messages.HasErrors())
+                {
+                    foreach (var item in _permissaoService.Messages)
+                    {
+                        return BadRequest(item.Message);
+                    }
+                }
+
+                return Ok(_permissaoService.Messages);
+            }
+
+            return BadRequest(new NotificationMessage("Identificador da permissão inválido", Notification.Enums.ENotificationType.Error));
+        }
     }
 }
