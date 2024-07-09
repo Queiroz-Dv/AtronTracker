@@ -30,6 +30,9 @@ namespace Atron.Infra.IoC
             // Define o asembly de onde as migrações devem ser mantidas 
             m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
 
+            //Repositórios e serviços padrões
+            services.AddScoped<IRepository<Permissao>, Repository<Permissao>>();
+
             // Registra os repositories e services
             services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
