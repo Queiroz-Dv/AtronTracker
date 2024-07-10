@@ -4,8 +4,8 @@ using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
-    public class TarefaDTO : Factory
-    {       
+    public class PermissaoDTO
+    {      
         public int Id { get; set; }
 
         [JsonIgnore]
@@ -13,18 +13,19 @@ namespace Atron.Application.DTO
         public int UsuarioId { get; set; }
 
         public string UsuarioCodigo { get; set; }
-        public UsuarioDTO Usuario { get; set; }        
 
-        public string Titulo { get; set; }
-
-        public string Conteudo { get; set; }
+        public UsuarioDTO Usuario { get; set; }
 
         public DateTime DataInicial { get; set; }
 
         public DateTime DataFinal { get; set; }
 
-        public int EstadoDaTarefa { get; set; }
+        public int PermissaoEstadoId { get; set; }
 
-        public string EstadoDaTarefaDescricao { get; set; }
+        public string PermissaoEstadoDescricao { get; set; }
+
+        public string Descricao { get; set; }
+
+        public int QuantidadeDeDias { get; set; }
     }
 }
