@@ -1,5 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Application.Services;
+using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Notification.Models;
 using System.Collections.Generic;
@@ -44,6 +46,43 @@ namespace Atron.WebApi.Controllers
             }
 
             return Ok(tarefas);
+        }
+
+        [HttpPut("AtualizarTarefa")]
+        public async Task<ActionResult> Put([FromBody] TarefaDTO tarefa)
+        {
+            await _service.AtualizarAsync(tarefa);
+
+            if (_service.Messages.HasErrors())
+            {
+                foreach (var item in _service.Messages)
+                {
+                    return BadRequest(item.Message);
+                }
+            }
+
+            return Ok(_service.Messages);
+        }
+
+        [HttpDelete("ExcluirTarefa")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            if (id != 0)
+            {
+                await _service.ExcluirAsync(id);
+
+                if (_service.Messages.HasErrors())
+                {
+                    foreach (var item in _service.Messages)
+                    {
+                        return BadRequest(item.Message);
+                    }
+                }
+
+                return Ok(_service.Messages);
+            }
+
+            return BadRequest(new NotificationMessage("Identificador da permissão inválido", Notification.Enums.ENotificationType.Error));
         }
     }
 }

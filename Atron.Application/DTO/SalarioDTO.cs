@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using Swashbuckle.AspNetCore.Annotations;
+﻿using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Text.Json.Serialization;
 
@@ -22,7 +21,7 @@ namespace Atron.Application.DTO
         public int MesId { get; set; }
 
         public MesDTO Mes { get; set; }
-        
+
         public DateTime? Ano { get; set; }
 
         public int QuantidadeTotal { get; set; }

@@ -30,6 +30,11 @@ namespace Atron.Infra.IoC
             // Define o asembly de onde as migrações devem ser mantidas 
             m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
 
+            //Repositórios e serviços padrões
+            services.AddScoped<IRepository<Permissao>, Repository<Permissao>>();
+            services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
+            services.AddScoped<IRepository<Salario>, Repository<Salario>>();
+
             // Registra os repositories e services
             services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
@@ -47,7 +52,13 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<ISalarioRepository, SalarioRepository>();
             services.AddScoped<ISalarioService, SalarioService>();
+
             services.AddScoped<IMesRepository, MesRepository>();
+
+            services.AddScoped<IPermissaoRepository, PermissaoRepository>();
+            services.AddScoped<IPermissaoService, PermissaoService>();
+
+            services.AddScoped<IPermissaoEstadoRepository, PermissaoEstadoRepository>();
 
             // Serviços utilitários 
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
@@ -58,12 +69,14 @@ namespace Atron.Infra.IoC
             services.AddScoped<INotificationService, UsuarioValidation>();
             services.AddScoped<INotificationService, TarefaValidation>();
             services.AddScoped<INotificationService, SalarioValidation>();
+            services.AddScoped<INotificationService, PermissaoValidation>();
 
             services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
             services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
             services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();    
             services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
             services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
+            services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
 
             return services;
         }
