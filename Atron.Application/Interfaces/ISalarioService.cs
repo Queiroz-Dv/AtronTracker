@@ -10,5 +10,9 @@ namespace Atron.Application.Interfaces
         Task CriarAsync(SalarioDTO salarioDTO);
 
         Task<List<SalarioDTO>> ObterTodosAsync();
+
+        Task AtualizarServiceAsync(SalarioDTO salarioDTO);
+
+        Task ExcluirServiceAsync(int id);
     }
 }

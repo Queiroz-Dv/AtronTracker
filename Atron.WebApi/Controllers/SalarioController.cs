@@ -44,5 +44,38 @@ namespace Atron.WebApi.Controllers
 
             return Ok(salarios);
         }
+
+        [HttpPut("AtualizarSalario")]
+        public async Task<ActionResult> Put([FromBody] SalarioDTO salario)
+        {
+            await _service.AtualizarServiceAsync(salario);
+
+            if (_service.Messages.HasErrors())
+            {
+                foreach (var item in _service.Messages)
+                {
+                    return BadRequest(item.Message);
+                }
+            }
+
+            return Ok(_service.Messages);
+        }
+
+        // TODO: Testar depois
+        [HttpDelete("ExcluirPermissao")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            await _service.ExcluirServiceAsync(id);
+
+            if (_service.Messages.HasErrors())
+            {
+                foreach (var item in _service.Messages)
+                {
+                    return BadRequest(item.Message);
+                }
+            }
+
+            return Ok(_service.Messages);
+        }
     }
 }
