@@ -5,9 +5,7 @@ using System.Text.Json.Serialization;
 namespace Atron.Application.DTO
 {
     public class TarefaDTO : Factory
-    {
-        [JsonIgnore]
-        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
+    {       
         public int Id { get; set; }
 
         [JsonIgnore]

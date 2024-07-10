@@ -32,6 +32,7 @@ namespace Atron.Infra.IoC
 
             //Repositórios e serviços padrões
             services.AddScoped<IRepository<Permissao>, Repository<Permissao>>();
+            services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
 
             // Registra os repositories e services
             services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
