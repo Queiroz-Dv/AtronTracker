@@ -45,25 +45,20 @@ namespace Atron.WebApi.Controllers
             return Ok(permissoes);
         }
 
-        [HttpPut("AtualizarPermissao/{id}")]
-        public async Task<ActionResult<PermissaoDTO>> Put(int id, [FromBody] PermissaoDTO permissao)
+        [HttpPut("AtualizarPermissao")]
+        public async Task<ActionResult<PermissaoDTO>> Put([FromBody] PermissaoDTO permissao)
         {
-            if (id != 0)
+            await _permissaoService.AtualizarPermissaoServiceAsync(permissao);
+
+            if (_permissaoService.Messages.HasErrors())
             {
-                await _permissaoService.AtualizarPermissaoServiceAsync(permissao);
-
-                if (_permissaoService.Messages.HasErrors())
+                foreach (var item in _permissaoService.Messages)
                 {
-                    foreach (var item in _permissaoService.Messages)
-                    {
-                        return BadRequest(item.Message);
-                    }
+                    return BadRequest(item.Message);
                 }
-
-                return Ok(_permissaoService.Messages);
             }
 
-            return BadRequest();
+            return Ok(_permissaoService.Messages);
         }
 
         // TODO: Testar depois

@@ -13,6 +13,7 @@ namespace Atron.Application.Services
     public class TarefaService : ITarefaService
     {
         private readonly IMapper _mapper;
+        private readonly IRepository<Tarefa> _repository;
         private readonly ICargoRepository _cargoRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly IUsuarioRepository _usuarioRepository;
@@ -25,6 +26,7 @@ namespace Atron.Application.Services
         public List<NotificationMessage> Messages { get; set; }
 
         public TarefaService(IMapper mapper,
+                             IRepository<Tarefa> repository,
                              ICargoRepository cargoRepository,
                              IDepartamentoRepository departamentoRepository,
                              IUsuarioRepository usuarioRepository,
@@ -34,6 +36,7 @@ namespace Atron.Application.Services
                              NotificationModel<Tarefa> notification)
         {
             _mapper = mapper;
+            _repository = repository;
             _notification = notification;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
@@ -60,14 +63,14 @@ namespace Atron.Application.Services
 
             if (!_notification.Messages.HasErrors())
             {
-                await _tarefaRepository.CriarTarefaAsync(tarefa);
+                await _tarefaRepository.CriarRepositoryAsync(tarefa);
                 Messages.Add(new NotificationMessage("Tarefa criada com sucesso."));
             }
         }
 
         public async Task<List<TarefaDTO>> ObterTodosAsync()
         {
-            var tarefas = await _tarefaRepository.ObterTarefasAsync();
+            var tarefas = await _tarefaRepository.ObterTodosRepositoryAsync();
             var estadosDaTarefa = await _tarefaEstadoRepository.ObterTodosAsync();
             var usuarios = await _usuarioService.ObterTodosAsync();
 
@@ -118,6 +121,53 @@ namespace Atron.Application.Services
                 }
             }
             return tarefasDTOList;
+        }
+
+        public async Task AtualizarAsync(TarefaDTO tarefaDTO)
+        {
+            var tarefa = _mapper.Map<Tarefa>(tarefaDTO);
+
+            var usuarioExiste = _usuarioRepository.UsuarioExiste(tarefa.UsuarioCodigo);
+
+            if (usuarioExiste)
+            {
+                var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefa.UsuarioCodigo);
+                var tarefaEstados = await _tarefaEstadoRepository.ObterTodosAsync();
+
+                tarefa.UsuarioId = usuario.Id;
+                tarefa.UsuarioCodigo = usuario.Codigo;
+                tarefa.EstadoDaTarefa = tarefaEstados.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Id;
+
+                _notification.Validate(tarefa);
+
+                if (!_notification.Messages.HasErrors())
+                {
+                    await _tarefaRepository.AtualizarRepositoryAsync(tarefa);
+                    Messages.Add(new NotificationMessage("Tarefa atualizada com sucesso."));
+                    return;
+                }
+
+                Messages.AddRange(_notification.Messages);
+            }
+            else
+            {
+                Messages.Add(new NotificationMessage("Código de usuário não existe. Tente novamente", Notification.Enums.ENotificationType.Error));
+                return;
+            }
+        }
+
+        public async Task ExcluirAsync(int id)
+        {
+            var tarefa = await _tarefaRepository.ObterPorIdRepositoryAsync(id);
+
+            if (tarefa is null)
+            {
+                Messages.Add(new NotificationMessage("Tarefa não existe. Tente novamente"));
+                return;
+            }
+
+            await _repository.RemoverRepositoryAsync(tarefa);
+            Messages.Add(new NotificationMessage("Registro removido com sucesso"));
         }
     }
 }
