@@ -37,11 +37,12 @@ namespace Atron.Application.Mapping
         private void CriarMapeamentoDeSalario()
         {
             CreateMap<Salario, SalarioDTO>()
-                .ForPath(dto => dto.QuantidadeTotal, opt => opt.MapFrom(src => src.QuantidadeTotal))
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.Id))
+                .ForPath(dto => dto.SalarioMensal, opt => opt.MapFrom(src => src.SalarioMensal))
                 .ForPath(dto => dto.UsuarioId, opt => opt.MapFrom(src => src.UsuarioId))
-                .ForPath(dto => dto.Usuario.Id, opt=> opt.MapFrom(src => src.UsuarioId))
+                .ForPath(dto => dto.Usuario.Id, opt => opt.MapFrom(src => src.UsuarioId))
                 .ForPath(dto => dto.MesId, opt => opt.MapFrom(src => src.MesId))
-                .ForPath(dto => dto.Mes.Id, opt=> opt.MapFrom(src => src.MesId))
+                .ForPath(dto => dto.Mes.Id, opt => opt.MapFrom(src => src.MesId))
                 .ForPath(dto => dto.Ano, opt => opt.MapFrom(src => src.Ano))
                 .ReverseMap();
         }

@@ -13,7 +13,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.Property(slr => slr.UsuarioId).IsRequired();
             builder.Property(slr => slr.UsuarioCodigo).IsRequired().HasMaxLength(10);
             builder.Property(slr => slr.MesId).IsRequired();
-            builder.Property(slr => slr.QuantidadeTotal).IsRequired();
+            builder.Property(slr => slr.SalarioMensal).IsRequired();
             builder.Property(slr => slr.Ano).IsRequired();
         }
     }

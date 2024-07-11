@@ -10,7 +10,7 @@ namespace Atron.Domain.Entities
 
         public int MesId { get; set; }
 
-        public int QuantidadeTotal { get; set; }
+        public int SalarioMensal { get; set; }
 
         public DateTime? Ano { get; set; }
     }

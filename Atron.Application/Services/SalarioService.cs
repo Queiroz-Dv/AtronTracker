@@ -4,7 +4,6 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Notification.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,31 +54,39 @@ namespace Atron.Application.Services
 
         public async Task AtualizarServiceAsync(SalarioDTO salarioDTO)
         {
-            var salario = _mapper.Map<Salario>(salarioDTO);
+            var entidade = _mapper.Map<Salario>(salarioDTO);
 
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(salario.UsuarioCodigo);
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.UsuarioCodigo);
             var meses = await _mesRepository.ObterMesesRepositoryAsync();
 
             if (usuario is not null)
             {
-                salario.UsuarioId = usuario.Id;
-                salario.UsuarioCodigo = usuario.Codigo;
-                salario.MesId = meses.FirstOrDefault(ms => ms.MesId == salario.MesId).MesId;
-
-                _notification.Validate(salario);
-
-                if (!_notification.Messages.HasErrors())
+                entidade.UsuarioId = usuario.Id;
+                entidade.UsuarioCodigo = usuario.Codigo;
+                entidade.MesId = meses.FirstOrDefault(ms => ms.MesId == entidade.MesId).MesId;
+                // Sempre que o meu salário for maior do que o cadastrado em usuário
+                // ele sofrerá a atualização
+                if (entidade.SalarioMensal > usuario.Salario)
                 {
-                    await _salarioRepository.AtualizarRepositoryAsync(salario);
-                    Messages.Add(new NotificationMessage("Salário atualizado com sucesso."));
-                    return;
+                    _usuarioRepository.AtualizarSalario(entidade.UsuarioId, entidade.SalarioMensal);
                 }
-
-                Messages.AddRange(_notification.Messages);
+            }
+            else
+            {
+                Messages.Add(new NotificationMessage("Usuário informado não está cadastrado.", Notification.Enums.ENotificationType.Error));
                 return;
             }
 
-            Messages.Add(new NotificationMessage("Usuário informado não está cadastrado.", Notification.Enums.ENotificationType.Error));
+            _notification.Validate(entidade);
+
+            if (!_notification.Messages.HasErrors())
+            {
+                await _repository.AtualizarRepositoryAsync(entidade);
+                Messages.Add(new NotificationMessage("Salário atualizado com sucesso."));
+                return;
+            }
+
+            Messages.AddRange(_notification.Messages);
         }
 
         public async Task CriarAsync(SalarioDTO salarioDTO)
@@ -98,13 +105,19 @@ namespace Atron.Application.Services
                 salarioDTO.Mes.Id = mesDoSalario.MesId;
             }
 
-            var salario = _mapper.Map<Salario>(salarioDTO);
+            var entidade = _mapper.Map<Salario>(salarioDTO);
 
-            _notification.Validate(salario);
+            _notification.Validate(entidade);
 
             if (!_notification.Messages.HasErrors())
             {
-                await _salarioRepository.CriarRepositoryAsync(salario);
+                if (entidade.SalarioMensal > usuario.Salario)
+                {
+                    _usuarioRepository.AtualizarSalario(entidade.UsuarioId, entidade.SalarioMensal);
+                }
+
+
+                await _salarioRepository.CriarRepositoryAsync(entidade);
                 Messages.Add(new NotificationMessage($"Salário incluso para o usuário {salarioDTO.Usuario.Nome}"));
             }
         }
@@ -173,7 +186,7 @@ namespace Atron.Application.Services
                                         Descricao = mes.Descricao
                                     },
                                     Ano = slr.salario.Ano,
-                                    QuantidadeTotal = slr.salario.QuantidadeTotal
+                                    SalarioMensal = slr.salario.SalarioMensal
                                 }).OrderByDescending(slr => slr.Ano).ToList();
 
             return salarios;
