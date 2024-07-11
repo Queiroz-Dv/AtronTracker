@@ -24,8 +24,6 @@ namespace Atron.Application.DTO
 
         public DateTime? Ano { get; set; }
 
-        public int QuantidadeTotal { get; set; }
-
-        public int SalarioAntigo { get; set; }
+        public int SalarioMensal { get; set; }
     }
 }

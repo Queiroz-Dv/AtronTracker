@@ -23,9 +23,7 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult> Post([FromBody] SalarioDTO salario)
         {
             if (salario is null)
-            {
                 return BadRequest(new NotificationMessage("Registro inválido, tente novamente"));
-            }
 
             await _service.CriarAsync(salario);
 
@@ -38,24 +36,20 @@ namespace Atron.WebApi.Controllers
         {
             var salarios = await _service.ObterTodosAsync();
             if (salarios is null)
-            {
                 NotFound("Não foi encontrado nenum registro");
-            }
 
             return Ok(salarios);
         }
 
-        [HttpPut("AtualizarSalario")]
-        public async Task<ActionResult> Put([FromBody] SalarioDTO salario)
+        [HttpPut("AtualizarSalario/{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] SalarioDTO salario)
         {
             await _service.AtualizarServiceAsync(salario);
 
             if (_service.Messages.HasErrors())
             {
                 foreach (var item in _service.Messages)
-                {
                     return BadRequest(item.Message);
-                }
             }
 
             return Ok(_service.Messages);
@@ -70,9 +64,7 @@ namespace Atron.WebApi.Controllers
             if (_service.Messages.HasErrors())
             {
                 foreach (var item in _service.Messages)
-                {
                     return BadRequest(item.Message);
-                }
             }
 
             return Ok(_service.Messages);
