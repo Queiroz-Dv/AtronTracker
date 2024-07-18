@@ -1,4 +1,5 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.Enums;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
@@ -103,6 +104,14 @@ namespace Atron.Application.Services
                 Messages.Add(new NotificationMessage("Permissão não existe ou não foi associada a um usuário"));
                 return;
             }
+
+            if (permissao.PermissaoEstadoId is (int)EPermissaoEstados.Aprovada or
+                (int)EPermissaoEstados.Desaprovada)
+            {
+                Messages.Add(new NotificationMessage("Não é possível excluir uma permissão aprovada ou desaprovada"));
+                return;
+            }
+
 
             await _repository.RemoverRepositoryAsync(permissao);
             Messages.Add(new NotificationMessage("Registro removido com sucesso"));
