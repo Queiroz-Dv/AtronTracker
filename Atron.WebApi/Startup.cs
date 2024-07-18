@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace Atron.WebApi
 {
@@ -29,7 +30,14 @@ namespace Atron.WebApi
             // Informa que usaremos o Swagger para documentação e testes
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Atron.WebApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Atron API",
+                    Version = "v1",
+                    Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
+                    Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
+                });
+                c.EnableAnnotations();                
             });
         }
 

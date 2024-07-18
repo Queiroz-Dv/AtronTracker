@@ -2,15 +2,17 @@
 using Atron.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Notification.Models;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
-{
-    // Controller básica de departamento
-    [Route("api/[controller]")] // Define a rota do controlador 
-    [ApiController] // Informar que é uma controller de API
+{        
+    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [ApiController] 
     public class DepartamentoController : ControllerBase
     {
         private readonly IDepartamentoService _departamentoService;
@@ -20,9 +22,11 @@ namespace Atron.WebApi.Controllers
             // Injeta a dependência do serviço de departamento no construtor
             _departamentoService = departamentoService;
         }
-
-        [HttpPost]
-        [Route("CriarDepartamento")]
+        
+        [HttpPost("CriarDepartamento")]
+        [SwaggerOperation(Description = "Endpoint para criar um departamento")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Departamento criado com sucesso", typeof(NotificationMessage))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Dados inválidos", Type =typeof(NotificationMessage))]         
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
         {
             if (departamento == null)
