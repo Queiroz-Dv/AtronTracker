@@ -18,7 +18,7 @@ namespace Atron.Domain.Validations
                 AddError("Código de usuário inválido. Tente novamente");
             }
 
-            if (entity.QuantidadeTotal <= 0)
+            if (entity.SalarioMensal <= 0)
             {
                 AddError("Quantidade de salário inválido ou abaixo de zero. Tente novamente");
             }

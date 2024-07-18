@@ -18,6 +18,20 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
+        public void AtualizarSalario(int usuarioId, int quantidadeTotal)
+        {
+            try
+            {
+                var usuario =  _context.Usuarios.First(usr => usr.Id == usuarioId);
+                usuario.Salario = quantidadeTotal;
+                 _context.Update(usuario);
+            }
+            catch (Exception ex)
+            {
+                throw ex.InnerException;
+            }
+        }
+
         public async Task<Usuario> AtualizarUsuarioAsync(Usuario usuario)
         {
             _context.Update(usuario);
