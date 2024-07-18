@@ -50,6 +50,8 @@ namespace Atron.WebApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron.WebApi v1"));
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron.WebApi v1"));
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
