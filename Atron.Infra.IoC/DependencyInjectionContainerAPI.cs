@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Interfaces;
-using Notification.Interfaces.DTO;
 using Notification.Models;
 
 namespace Atron.Infra.IoC
@@ -73,7 +72,7 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
             services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
-            services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();    
+            services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();
             services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
             services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
             services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();

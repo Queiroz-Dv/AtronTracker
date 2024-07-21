@@ -37,7 +37,7 @@ namespace Atron.WebApi
                     Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
                     Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
                 });
-                c.EnableAnnotations();                
+                c.EnableAnnotations();
             });
         }
 
@@ -46,10 +46,9 @@ namespace Atron.WebApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron.WebApi v1"));
+                AddSwagger(app);
             }
-
+            
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
@@ -58,6 +57,12 @@ namespace Atron.WebApi
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private static void AddSwagger(IApplicationBuilder app)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron.WebApi v1"));
         }
     }
 }

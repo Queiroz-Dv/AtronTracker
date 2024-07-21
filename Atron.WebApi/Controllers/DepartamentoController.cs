@@ -23,10 +23,7 @@ namespace Atron.WebApi.Controllers
             _departamentoService = departamentoService;
         }
         
-        [HttpPost("CriarDepartamento")]
-        [SwaggerOperation(Description = "Endpoint para criar um departamento")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Departamento criado com sucesso", typeof(NotificationMessage))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Dados inválidos", Type =typeof(NotificationMessage))]         
+        [HttpPost("CriarDepartamento")]            
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
         {
             if (departamento == null)
@@ -35,7 +32,7 @@ namespace Atron.WebApi.Controllers
             }
             await _departamentoService.CriarAsync(departamento);
 
-            return Ok(_departamentoService.notificationMessages.FirstOrDefault().Message);
+            return Ok(_departamentoService.notificationMessages);
         }
 
         [HttpGet]
