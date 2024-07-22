@@ -8,6 +8,9 @@ namespace Atron.Domain.ViewsInterfaces
     public interface IDepartamentoViewRepository : INotificationDTO
     {
         Task<List<Dictionary<string, object>>> GetDepartamentosAsync();
+
         Task CriarDepartamento(Departamento departamento);
+
+        public string ResponseResultApiJson { get; }
     }
 }

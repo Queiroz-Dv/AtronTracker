@@ -1,6 +1,8 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.ViewInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Notification.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,8 +18,8 @@ namespace Atron.WebViews.Controllers
         }
 
         [HttpGet]
-        [Route("/Departamentos/Index")]
-        [Route("/Departamentos/Index/{codigoBuscado}")]
+        [Route("/Departamento/Index")]
+        [Route("/Departamento/Index/{codigoBuscado}")]
         public async Task<IActionResult> Index(string codigoBuscado)
         {
             ViewData["Title"] = "Painel de departamentos";
@@ -51,8 +53,18 @@ namespace Atron.WebViews.Controllers
             {
                 await _service.CriarDepartamento(departamento);
 
-                return RedirectToAction("Index");
+                if (_service.Messages.HasErrors())
+                {
+                    ViewBag.Erros = _service.Messages;
+                    return View(nameof(Cadastrar), departamento);
+                }
+                else
+                {
+                    TempData["Notifications"] = _service.NotificationResponse.GetJsonResponseContent();
+                    return RedirectToAction(nameof(Cadastrar));
+                }
             }
+
             return View(departamento);
         }
     }

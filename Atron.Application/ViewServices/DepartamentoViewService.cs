@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Application.ViewServices
 {
-    public class DepartamentoViewService : IDepartamentoViewService
+    public class DepartamentoViewService : NotificationWebViewModel, IDepartamentoViewService
     {
         private IMapper _mapper;
         private readonly IDepartamentoViewRepository _viewRepository;
@@ -25,11 +25,12 @@ namespace Atron.Application.ViewServices
 
         public async Task CriarDepartamento(DepartamentoDTO departamento)
         {
-            var entidade =  _mapper.Map<Departamento>(departamento);
+            var entidade = _mapper.Map<Departamento>(departamento);
 
             await _viewRepository.CriarDepartamento(entidade);
 
             ObterMensagesRepository();
+            AddApiNotification(_viewRepository.ResponseResultApiJson);
         }
 
         private void ObterMensagesRepository()
@@ -47,7 +48,6 @@ namespace Atron.Application.ViewServices
             }
 
             var departamentos = new List<DepartamentoDTO>();
-
             foreach (var dict in departamentosDict)
             {
                 var departamento = new DepartamentoDTO
@@ -59,6 +59,6 @@ namespace Atron.Application.ViewServices
             }
 
             return departamentos;
-        }
+        }       
     }
 }
