@@ -21,6 +21,13 @@ namespace Notification.Models
             Level = GetLevelMessage();
         }
 
+        public NotificationMessage(string message, string notificationType)
+        {
+            Message = message;
+            Type = GetNotificationType(notificationType);
+            Level = GetLevelMessage();
+        }
+
         public string Message { get; set; }
 
         [JsonIgnore]
@@ -48,6 +55,21 @@ namespace Notification.Models
                 case ENotificationType.Warning: return "Warning";
                 default: throw new ArgumentException("Invalid level");
             }
+        }
+
+        const string MESSAGE = "Message";
+        const string ERROR = "Error";
+        const string WARNING = "Warning";
+
+        public static ENotificationType GetNotificationType(string level)
+        {
+            return level switch
+            {
+                MESSAGE => ENotificationType.Message,
+                ERROR => ENotificationType.Error,
+                WARNING => ENotificationType.Warning,
+                _ => throw new ArgumentException("Invalid level"),
+            };
         }
     }
 }

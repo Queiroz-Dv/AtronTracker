@@ -1,4 +1,11 @@
 ﻿@model IEnumerable<Atron.Application.DTO.DepartamentoDTO>
+@using Newtonsoft.Json;
+@using Notification.Models
+
+@{
+    var erroJson = TempData["Erro"];
+    var erro = erroJson is not null ? JsonConvert.DeserializeObject<List<NotificationMessage>>(erroJson.ToString()) : null;
+}
 
 <style>
     .modal-lg {
@@ -7,7 +14,7 @@
 </style>
 
 <div>
-    <h2> @ViewData["Title"]</h2>
+    <h2>@ViewData["Title"]</h2>
 </div>
 <hr />
 
@@ -21,7 +28,7 @@
             </a>
         </div>
 
-      @*   @if (erro is not null)
+        @if (erro is not null)
         {
             foreach (var item in erro)
             {
@@ -30,7 +37,7 @@
                     @item.Message
                 </div>
             }
-        } *@
+        }
 
     </div>
 </div>

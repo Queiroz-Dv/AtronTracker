@@ -2,13 +2,13 @@
 using Atron.Domain.ViewsInterfaces;
 using Newtonsoft.Json;
 using Notification.Models;
+using Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Atron.Infrastructure.ViewsRepositories
 {
@@ -16,6 +16,7 @@ namespace Atron.Infrastructure.ViewsRepositories
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
+        public string ResponseResultApiJson { get; set; }
 
         public DepartamentoViewRepository(IHttpClientFactory httpClientFactory)
         {
@@ -25,32 +26,43 @@ namespace Atron.Infrastructure.ViewsRepositories
 
         public List<NotificationMessage> Messages { get; }
 
+
         public async Task CriarDepartamento(Departamento departamento)
         {
-            var request = new HttpRequestMessage();
-            request.RequestUri = new Uri("https://atron-hmg.azurewebsites.net/api/Departamento/CriarDepartamento");
-            request.Method = HttpMethod.Post;
-
-            var json = JsonConvert.SerializeObject(departamento);
-            var mediaType = MediaTypeNames.Application.Json;
-
-            var content = new StringContent(json, Encoding.UTF8, mediaType);
-
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsync(request.RequestUri, content);
             
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            var dictJson = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(responseContent);
-
+            var json = JsonConvert.SerializeObject(departamento, Formatting.Indented);                     
+            var content = new StringContent(json, Encoding.UTF8, Application.Json);
             
-            foreach (var dict in dictJson) {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri("https://atron-hmg.azurewebsites.net/api/Departamento/CriarDepartamento"),
+                Method = HttpMethod.Post,
+                Content = content
+            };
+            
+            var client = await _httpClientFactory.CreateClient().SendAsync(request);
 
-                var message = dict.ContainsKey("message") ? dict["message"].ToString() : null;
-                var notification = new NotificationMessage(message);
-                Messages.Add(notification);           
+            var responseContent = await client.Content.ReadAsStringAsync();
+
+            if (client.IsSuccessStatusCode)
+            {
+                ResponseResultApiJson = responseContent;                
             }
+            else
+            {
+                var errorResponse = await client.ReadValidationErrorResponseAsync();
 
+                if (errorResponse?.Errors != null)
+                {
+                    foreach (var error in errorResponse.Errors)
+                    {
+                        foreach (var message in error.Value)
+                        {
+                            Messages.Add(new NotificationMessage(message, "Error"));
+                        }
+                    }
+                }
+            }
             return;
         }
 
