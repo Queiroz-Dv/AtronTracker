@@ -31,7 +31,7 @@ namespace Atron.WebApi.Controllers
 
             await _service.CriarAsync(tarefa);
 
-            return Ok(_service.Messages);
+            return Ok(_service._messages);
         }
 
         [Route("ObterTarefas")]
@@ -53,15 +53,15 @@ namespace Atron.WebApi.Controllers
         {
             await _service.AtualizarAsync(tarefa);
 
-            if (_service.Messages.HasErrors())
+            if (_service._messages.HasErrors())
             {
-                foreach (var item in _service.Messages)
+                foreach (var item in _service._messages)
                 {
                     return BadRequest(item.Message);
                 }
             }
 
-            return Ok(_service.Messages);
+            return Ok(_service._messages);
         }
 
         [HttpDelete("ExcluirTarefa")]
@@ -71,15 +71,15 @@ namespace Atron.WebApi.Controllers
             {
                 await _service.ExcluirAsync(id);
 
-                if (_service.Messages.HasErrors())
+                if (_service._messages.HasErrors())
                 {
-                    foreach (var item in _service.Messages)
+                    foreach (var item in _service._messages)
                     {
                         return BadRequest(item.Message);
                     }
                 }
 
-                return Ok(_service.Messages);
+                return Ok(_service._messages);
             }
 
             return BadRequest(new NotificationMessage("Identificador da permissão inválido", Notification.Enums.ENotificationType.Error));

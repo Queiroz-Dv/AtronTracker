@@ -4,6 +4,7 @@ using Atron.Domain.Entities;
 using Atron.Domain.ViewsInterfaces;
 using AutoMapper;
 using Notification.Models;
+using Shared.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,28 +15,25 @@ namespace Atron.Application.ViewServices
         private IMapper _mapper;
         private readonly IDepartamentoViewRepository _viewRepository;
 
+        public List<NotificationMessage> _messages { get; }
+
         public DepartamentoViewService(IDepartamentoViewRepository viewRepository, IMapper mapper)
         {
             _mapper = mapper;
             _viewRepository = viewRepository;
-            Messages = new List<NotificationMessage>();
+            _messages = new List<NotificationMessage>();
         }
-
-        public List<NotificationMessage> Messages { get; }
 
         public async Task CriarDepartamento(DepartamentoDTO departamento)
         {
             var entidade = _mapper.Map<Departamento>(departamento);
 
             await _viewRepository.CriarDepartamento(entidade);
-
-            ObterMensagesRepository();
-            AddApiNotification(_viewRepository.ResponseResultApiJson);
         }
 
         private void ObterMensagesRepository()
         {
-            Messages.AddRange(_viewRepository.Messages);
+            _messages.AddRange(_viewRepository._messages);
         }
 
         public async Task<List<DepartamentoDTO>> ObterDepartamentos()
@@ -59,6 +57,11 @@ namespace Atron.Application.ViewServices
             }
 
             return departamentos;
-        }       
+        }
+
+        public ApiWebViewMessageResponse GetJsonResponseContent()
+        {
+            return GetResultResponse();
+        }
     }
 }

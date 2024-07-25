@@ -12,24 +12,21 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Atron.Infrastructure.ViewsRepositories
 {
-    public class DepartamentoViewRepository : IDepartamentoViewRepository
+    public class DepartamentoViewRepository : NotificationWebViewModel, IDepartamentoViewRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
-
-        public string ResponseResultApiJson { get; set; }
 
         public DepartamentoViewRepository(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            Messages = new List<NotificationMessage>();
+            _messages = new List<NotificationMessage>();
         }
 
-        public List<NotificationMessage> Messages { get; }
+        public List<NotificationMessage> _messages { get; }
 
 
         public async Task CriarDepartamento(Departamento departamento)
-        {
-            
+        {            
             var json = JsonConvert.SerializeObject(departamento, Formatting.Indented);                     
             var content = new StringContent(json, Encoding.UTF8, Application.Json);
             
@@ -41,12 +38,11 @@ namespace Atron.Infrastructure.ViewsRepositories
             };
             
             var client = await _httpClientFactory.CreateClient().SendAsync(request);
-
             var responseContent = await client.Content.ReadAsStringAsync();
 
             if (client.IsSuccessStatusCode)
             {
-                ResponseResultApiJson = responseContent;                
+                AddApiNotification(responseContent);                
             }
             else
             {
@@ -58,7 +54,7 @@ namespace Atron.Infrastructure.ViewsRepositories
                     {
                         foreach (var message in error.Value)
                         {
-                            Messages.Add(new NotificationMessage(message, "Error"));
+                            _messages.Add(new NotificationMessage(message, "Error"));
                         }
                     }
                 }

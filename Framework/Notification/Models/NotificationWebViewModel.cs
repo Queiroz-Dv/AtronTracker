@@ -23,11 +23,6 @@ namespace Notification.Models
         public override void AddApiWarning(string message)
         {
             AddApiNotification(message, WARNING);
-        }
-
-        public override void AddApiResponse(string apiResponse)
-        {
-            AddApiNotification(apiResponse);
-        }
+        }      
     }
 }

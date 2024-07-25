@@ -10,7 +10,5 @@ namespace Atron.Domain.ViewsInterfaces
         Task<List<Dictionary<string, object>>> GetDepartamentosAsync();
 
         Task CriarDepartamento(Departamento departamento);
-
-        public string ResponseResultApiJson { get; }
     }
 }

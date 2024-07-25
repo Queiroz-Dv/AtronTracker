@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 namespace Notification.Interfaces
 {
-    public interface INotificationWebViewService : INotificationWebViewDTO
+    public interface INotificationWebViewService
     {
         List<ApiWebViewMessageResponse> MessageResponses { get; }
-        ApiWebViewMessageResponse Response { get; }
     }
 }

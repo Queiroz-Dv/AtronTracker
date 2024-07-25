@@ -27,7 +27,7 @@ namespace Atron.WebApi.Controllers
 
             await _service.CriarAsync(salario);
 
-            return Ok(_service.Messages);
+            return Ok(_service._messages);
         }
 
         [Route("ObterSalarios")]
@@ -46,13 +46,13 @@ namespace Atron.WebApi.Controllers
         {
             await _service.AtualizarServiceAsync(salario);
 
-            if (_service.Messages.HasErrors())
+            if (_service._messages.HasErrors())
             {
-                foreach (var item in _service.Messages)
+                foreach (var item in _service._messages)
                     return BadRequest(item.Message);
             }
 
-            return Ok(_service.Messages);
+            return Ok(_service._messages);
         }
 
         // TODO: Testar depois
@@ -61,13 +61,13 @@ namespace Atron.WebApi.Controllers
         {
             await _service.ExcluirServiceAsync(id);
 
-            if (_service.Messages.HasErrors())
+            if (_service._messages.HasErrors())
             {
-                foreach (var item in _service.Messages)
+                foreach (var item in _service._messages)
                     return BadRequest(item.Message);
             }
 
-            return Ok(_service.Messages);
+            return Ok(_service._messages);
         }
     }
 }

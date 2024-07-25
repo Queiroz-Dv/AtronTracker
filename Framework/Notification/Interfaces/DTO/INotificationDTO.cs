@@ -5,6 +5,6 @@ namespace Notification.Interfaces.DTO
 {
     public interface INotificationDTO
     {
-        public List<NotificationMessage> Messages { get; }
+        public List<NotificationMessage> _messages { get; }
     }
 }

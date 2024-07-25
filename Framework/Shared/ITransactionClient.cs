@@ -2,6 +2,6 @@
 {
     public interface ITransactionResponseClient
     {
-        string ResultApiJson { get; }
+        List<Dictionary<string, object>> ResultApiJson { get; }
     }
 }

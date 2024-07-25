@@ -2,7 +2,7 @@
 
 namespace Notification.Interfaces.DTO
 {
-    public interface INotificationWebViewDTO
+    public interface INotificationResponseDTO
     {
         ApiWebViewMessageResponse GetJsonResponseContent();
     }
