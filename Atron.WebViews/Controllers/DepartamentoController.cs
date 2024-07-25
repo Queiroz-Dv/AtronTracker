@@ -1,8 +1,8 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.ViewInterfaces;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Notification.Models;
+using Notification.Services;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -53,14 +53,16 @@ namespace Atron.WebViews.Controllers
             {
                 await _service.CriarDepartamento(departamento);
 
-                if (_service.Messages.HasErrors())
+                if (_service._messages.HasErrors())
                 {
-                    ViewBag.Erros = _service.Messages;
+                    ViewBag.Erros = _service._messages;
                     return View(nameof(Cadastrar), departamento);
                 }
                 else
                 {
-                    TempData["Notifications"] = _service.NotificationResponse.GetJsonResponseContent();
+                    var response = _service.GetJsonResponseContent();
+                    var responseSerialized = response.ResponseSerialized();
+                    TempData["Notifications"] = responseSerialized; 
                     return RedirectToAction(nameof(Cadastrar));
                 }
             }
