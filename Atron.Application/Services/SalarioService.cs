@@ -4,6 +4,7 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Notification.Models;
+using Shared.DTO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -51,6 +52,8 @@ namespace Atron.Application.Services
         }
 
         public List<NotificationMessage> _messages { get; set; }
+
+        public List<ResultResponse> ResultApiJson => throw new System.NotImplementedException();
 
         public async Task AtualizarServiceAsync(SalarioDTO salarioDTO)
         {

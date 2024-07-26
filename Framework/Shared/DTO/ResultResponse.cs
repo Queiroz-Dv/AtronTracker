@@ -1,7 +1,7 @@
 ﻿namespace Shared.DTO
 {
     [Serializable]
-    public class ApiWebViewMessageResponse
+    public class ResultResponse
     {
         public string Message { get; set; }
 
