@@ -12,6 +12,7 @@ namespace Atron.WebViews.Controllers
     public class DepartamentoController : Controller
     {
         private IDepartamentoExternalService _externalService;
+
         public List<ResultResponse> ResultResponses { get; set; }
 
         public DepartamentoController(IDepartamentoExternalService externalService)
@@ -82,43 +83,41 @@ namespace Atron.WebViews.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            //var departamentoDTO = await _service.ObterPorCodigo(codigo);
+            var departamentos = await _externalService.ObterDepartamentos();
+            var departamento = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
 
-            //if (!_service._messages.HasErrors() && departamentoDTO is not null)
-            //{
-            //    ViewData["Title"] = "Atualizar informação de departamento";
+            if (departamento is not null)
+            {
+                ViewData["Title"] = "Atualizar informação de departamento";
 
-            //    return View(departamentoDTO);
-            //}
-            //else
-            //{
-            //    //var erros = _departamentoService.GuardianModel.GetErrors();
-            //    //TempData["Erro"] = JsonConvert.SerializeObject(erros);
-            //    return RedirectToAction(nameof(Index));
-            //}
-
-            return View();
+                return View(departamento);
+            }
+            else
+            {
+                ResultResponses.Add(new ResultResponse() { Message = "Código de departamento informado não existe ou não cadastrado." });
+                TempData["Erro"] = JsonConvert.SerializeObject(ResultResponses);
+                return RedirectToAction(nameof(Index));
+            }            
         }
 
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
-            //await _service.Atualizar(codigo, departamentoDTO);
-            //var temErros = _departamentoService.GuardianModel.HasErrors();
+            var response = await _externalService.Atualizar(codigo, departamentoDTO);
 
-            //if (departamento is not null && temErros is not true)
-            //{
-            //    await _departamentoService.AtualizarAsync(departamentoDTO);
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //else
-            //{
-            //    var erros = _departamentoService.GuardianModel.GetErrors();
-            //    var json = JsonConvert.SerializeObject(erros, Formatting.Indented);
-            //    TempData["Erro"] = json;
-            //    return RedirectToAction(nameof(Index));
-            //}
-            return View(departamentoDTO);
+            if (response.isSucess)
+            {
+                ResultResponses.AddRange(response.responses);
+                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
+                TempData["Notifications"] = responseSerialized;
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+
+                ViewBag.Erros = response.responses;
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }
