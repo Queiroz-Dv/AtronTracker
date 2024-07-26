@@ -9,7 +9,7 @@ using System;
 
 namespace Atron.WebApi
 {
-    /* Classe principal onde é definido as configurações e serviços da API */
+    /* Classe principal onde Ã© definido as configuraÃ§Ãµes e serviÃ§os da API */
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -21,13 +21,13 @@ namespace Atron.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Aqui registramos os serviços da API como repositorios e Validações
+            // Aqui registramos os serviÃ§os da API como repositorios e ValidaÃ§Ãµes
             services.AddInfrastructureAPI(Configuration);
 
-            // Indica que usaremos as controllers para comunicação com os endpoints
+            // Indica que usaremos as controllers para comunicaÃ§Ã£o com os endpoints
             services.AddControllers();
 
-            // Informa que usaremos o Swagger para documentação e testes
+            // Informa que usaremos o Swagger para documentaÃ§Ã£o e testes
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -48,8 +48,7 @@ namespace Atron.WebApi
                 app.UseDeveloperExceptionPage();
                 AddSwagger(app);
             }
-
-            AddSwagger(app);
+          
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
