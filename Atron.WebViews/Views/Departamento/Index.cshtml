@@ -1,10 +1,11 @@
 ﻿@model IEnumerable<Atron.Application.DTO.DepartamentoDTO>
 @using Newtonsoft.Json;
 @using Notification.Models
+@using Shared.DTO
 
 @{
     var erroJson = TempData["Erro"];
-    var erro = erroJson is not null ? JsonConvert.DeserializeObject<List<NotificationMessage>>(erroJson.ToString()) : null;
+    var erro = erroJson is not null ? JsonConvert.DeserializeObject<List<ResultResponse>>(erroJson.ToString()) : null;
 }
 
 <style>

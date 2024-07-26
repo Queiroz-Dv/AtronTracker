@@ -31,11 +31,43 @@ namespace Communication.Models
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             var response = await _httpClient.PostAsync(uri, httpContent);
             response.EnsureSuccessStatusCode();
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var resultContent = JsonConvert.DeserializeObject<List<ResultResponse>>(responseContent);
-            _communicationService.AddResponseContent(resultContent);
+            string responseContent = await FillResultResponse(response);
 
             return responseContent;
+        }
+
+        private async Task<string> FillResultResponse(HttpResponseMessage response)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var resultContent = JsonConvert.DeserializeObject<List<ResultResponse>>(responseContent);
+
+            _communicationService.AddResponseContent(resultContent);
+            return responseContent;
+        }
+
+        public async Task<string> PutAsync(string uri, string parameter, string content)
+        {
+            var uriFormated = $"{uri}{parameter}";
+            var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
+            try
+            {
+                var response = await _httpClient.PutAsync(uriFormated, httpContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseContent = await FillResultResponse(response);
+                    return responseContent;
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException(errorContent);
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                throw;
+            }
         }
     }
 }
