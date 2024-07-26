@@ -1,8 +1,9 @@
 ﻿using Atron.Application.DTO;
-using Atron.Application.ViewInterfaces;
+using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Notification.Models;
+using Shared.DTO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,11 +11,13 @@ namespace Atron.WebViews.Controllers
 {
     public class DepartamentoController : Controller
     {
-        private IDepartamentoViewService _service;
+        private IDepartamentoExternalService _externalService;
+        public List<ResultResponse> ResultResponses { get; set; }
 
-        public DepartamentoController(IDepartamentoViewService service)
+        public DepartamentoController(IDepartamentoExternalService externalService)
         {
-            _service = service;
+            _externalService = externalService;
+            ResultResponses = new List<ResultResponse>();
         }
 
         [HttpGet]
@@ -24,7 +27,7 @@ namespace Atron.WebViews.Controllers
         {
             ViewData["Title"] = "Painel de departamentos";
 
-            var departamentos = await _service.ObterDepartamentos();
+            var departamentos = await _externalService.ObterDepartamentos();
 
             if (!departamentos.Any())
             {
@@ -51,21 +54,19 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _service.CriarDepartamento(departamento);
+                var response = await _externalService.CriarDepartamento(departamento);
 
-                var response = _service.ResultApiJson;
-
-                var responseSerialized = JsonConvert.SerializeObject(response);
-
-                if (_service._messages.HasErrors())
+                if (response.isSucess)
                 {
-                    ViewBag.Erros = _service._messages;
-                    return View(nameof(Cadastrar), departamento);
+                    ResultResponses.AddRange(response.responses);
+                    var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
+                    TempData["Notifications"] = responseSerialized;
+                    return RedirectToAction(nameof(Cadastrar));
                 }
                 else
                 {
-                    TempData["Notifications"] = responseSerialized;
-                    return RedirectToAction(nameof(Cadastrar));
+                    ViewBag.Erros = response.responses;
+                    return View(nameof(Cadastrar), departamento);
                 }
             }
 
@@ -77,30 +78,32 @@ namespace Atron.WebViews.Controllers
         {
             if (codigo is null)
             {
-              //  TempData["Erro"] = JsonConvert.SerializeObject(new GuardianMessage("O código informado não foi encontrado", EGuardianMessageType.Error));
+                TempData["Erro"] = JsonConvert.SerializeObject(new ResultResponse() { Message = "Código não informado, tente novamente." });
                 return RedirectToAction(nameof(Index));
             }
 
-            var departamentoDTO = await _service.ObterPorCodigo(codigo);
+            //var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
-            if (!_service._messages.HasErrors() && departamentoDTO is not null)
-            {
-                ViewData["Title"] = "Atualizar informação de departamento";
+            //if (!_service._messages.HasErrors() && departamentoDTO is not null)
+            //{
+            //    ViewData["Title"] = "Atualizar informação de departamento";
 
-                return View(departamentoDTO);
-            }
-            else
-            {
-                //var erros = _departamentoService.GuardianModel.GetErrors();
-                //TempData["Erro"] = JsonConvert.SerializeObject(erros);
-                return RedirectToAction(nameof(Index));
-            }
+            //    return View(departamentoDTO);
+            //}
+            //else
+            //{
+            //    //var erros = _departamentoService.GuardianModel.GetErrors();
+            //    //TempData["Erro"] = JsonConvert.SerializeObject(erros);
+            //    return RedirectToAction(nameof(Index));
+            //}
+
+            return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
-             //await _service.Atualizar(codigo, departamentoDTO);
+            //await _service.Atualizar(codigo, departamentoDTO);
             //var temErros = _departamentoService.GuardianModel.HasErrors();
 
             //if (departamento is not null && temErros is not true)

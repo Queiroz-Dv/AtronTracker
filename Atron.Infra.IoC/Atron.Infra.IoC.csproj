@@ -12,6 +12,8 @@
 		<ProjectReference Include="..\Atron.Application\Atron.Application.csproj" />
 		<ProjectReference Include="..\Atron.Domain\Atron.Domain.csproj" />
 		<ProjectReference Include="..\Atron.Infrastructure\Atron.Infrastructure.csproj" />
+		<ProjectReference Include="..\Framework\Communication\Communication.csproj" />
+		<ProjectReference Include="..\Framework\ExternalServices\ExternalServices.csproj" />
 	</ItemGroup>
 
 </Project>

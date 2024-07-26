@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Atron.Infra.IoC\Atron.Infra.IoC.csproj" />
+    <ProjectReference Include="..\Framework\ExternalServices\ExternalServices.csproj" />
   </ItemGroup>
 
 </Project>

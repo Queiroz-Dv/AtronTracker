@@ -1,13 +1,12 @@
 ﻿using Atron.Application.Mapping;
-using Atron.Application.ViewInterfaces;
-using Atron.Application.ViewServices;
-using Atron.Domain.ViewsInterfaces;
-using Atron.Infrastructure.ViewsRepositories;
+using Communication.Interfaces;
+using Communication.Interfaces.Services;
+using Communication.Models;
+using Communication.Services;
+using ExternalServices.Interfaces;
+using ExternalServices.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Notification.Interfaces;
-using Notification.Models;
-using Notification.Services;
 
 namespace Atron.Infra.IoC
 {
@@ -22,12 +21,13 @@ namespace Atron.Infra.IoC
             // O método Singleton indica que o serviço é criado uma vez para todas as requisições
             // O método Transiente indica que sempre será criado um novo serviço cada vez que for necessário
             // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo
-            
-            services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
-            services.AddScoped<IDepartamentoViewService, DepartamentoViewService>();
-            services.AddScoped<IDepartamentoViewRepository, DepartamentoViewRepository>();
 
-            
+            services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
+
+            services.AddScoped<IApiClient, ApiClient>();
+            services.AddScoped<ICommunicationService, CommunicationService>();
+
+            services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
             return services;
         }
     }
