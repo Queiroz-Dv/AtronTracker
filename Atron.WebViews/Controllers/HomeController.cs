@@ -18,8 +18,10 @@ namespace Atron.WebViews.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(string searchString)
         {
+            ViewData["Title"] = "Atron Tracker";
             return View();
         }
 

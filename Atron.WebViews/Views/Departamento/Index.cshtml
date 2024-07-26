@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Atron.Application.DTO.DepartamentoDTO>
+@using Newtonsoft.Json;
+@using Notification.Models
+
+@{
+    var erroJson = TempData["Erro"];
+    var erro = erroJson is not null ? JsonConvert.DeserializeObject<List<NotificationMessage>>(erroJson.ToString()) : null;
+}
+
+<style>
+    .modal-lg {
+        max-width: 80%;
+    }
+</style>
+
+<div>
+    <h2>@ViewData["Title"]</h2>
+</div>
+<hr />
+
+<link href="~/css/site.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-left">
+            <a asp-action="Cadastrar" class="btn btn-success">
+                <span title="Cadastrar novo" class="fas fa-plus"></span> Cadastrar novo
+            </a>
+        </div>
+
+        @if (erro is not null)
+        {
+            foreach (var item in erro)
+            {
+                <div class="alert alert-danger" style="margin-top: 25px;" role="alert">
+                    <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">X</button>
+                    @item.Message
+                </div>
+            }
+        }
+
+    </div>
+</div>
+<br />
+
+<div class="panel panel-default">
+    <form asp-controller="Departamentos" asp-action="Index" method="get">
+        <p>
+            <input type="text" name="codigoBuscado" />
+            <input type="submit" value="Filtrar" />
+        </p>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Codigo)
+                </th>
+                <th>@Html.DisplayNameFor(model => model.Descricao)</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model_item => item.Codigo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model_item => item.Descricao)
+                        </td>
+                        <td>
+                            <a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
+                                <span class="fas fa-edit">Atualizar</span>
+                            </a>
+                            <a asp-action="Remover" asp-route-codigo="@item.Codigo" title="Remover" class="btn btn-danger">
+                                <span class="fas fa-trash-alt">Excluir</span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script src="~/js/departamentoScript.js"></script>

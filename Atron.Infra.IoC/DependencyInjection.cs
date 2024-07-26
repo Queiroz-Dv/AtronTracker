@@ -1,16 +1,12 @@
-﻿using Atron.Application.Interfaces;
-using Atron.Application.Mapping;
-using Atron.Application.Services;
-using Atron.Domain.Entities;
-using Atron.Domain.Interfaces;
-using Atron.Infrastructure.Context;
-using Atron.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿using Atron.Application.Mapping;
+using Communication.Interfaces;
+using Communication.Interfaces.Services;
+using Communication.Models;
+using Communication.Services;
+using ExternalServices.Interfaces;
+using ExternalServices.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Notification.Interfaces;
-using Notification.Models;
-using Notification.Services;
 
 namespace Atron.Infra.IoC
 {
@@ -24,28 +20,14 @@ namespace Atron.Infra.IoC
             // O método AddScoped indica que os serviços são criados uma vez por requisição HTTP
             // O método Singleton indica que o serviço é criado uma vez para todas as requisições
             // O método Transiente indica que sempre será criado um novo serviço cada vez que for necessário
+            // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo
 
-            // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo 
-
-            services.AddDbContext<AtronDbContext>(options =>
-            // Define o provedor e a string de conexão
-            options.UseSqlServer(configuration.GetConnectionString("AtronConnection"),
-            // Define o asembly de onde as migrações devem ser mantidas 
-            m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
-
-            // Registra os repositories
-            services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
-            services.AddScoped<ICargoRepository, CargoRepository>();
-            //services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-
-            // Registra os Serviços
-            services.AddScoped<IDepartamentoService, DepartamentoService>();
-            services.AddScoped<ICargoService, CargoService>();
-
-            // Serviços utilitários 
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
-            services.AddScoped<NotificationService, NotificationModel<Departamento>>();
 
+            services.AddScoped<IApiClient, ApiClient>();
+            services.AddScoped<ICommunicationService, CommunicationService>();
+
+            services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
             return services;
         }
     }

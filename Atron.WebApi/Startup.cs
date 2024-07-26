@@ -9,7 +9,7 @@ using System;
 
 namespace Atron.WebApi
 {
-    /* Classe principal onde é definido as configurações e serviços da API */
+    /* Classe principal onde Ã© definido as configuraÃ§Ãµes e serviÃ§os da API */
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -21,13 +21,13 @@ namespace Atron.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Aqui registramos os serviços da API como repositorios e Validações
+            // Aqui registramos os serviÃ§os da API como repositorios e ValidaÃ§Ãµes
             services.AddInfrastructureAPI(Configuration);
 
-            // Indica que usaremos as controllers para comunicação com os endpoints
+            // Indica que usaremos as controllers para comunicaÃ§Ã£o com os endpoints
             services.AddControllers();
 
-            // Informa que usaremos o Swagger para documentação e testes
+            // Informa que usaremos o Swagger para documentaÃ§Ã£o e testes
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -37,7 +37,7 @@ namespace Atron.WebApi
                     Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
                     Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
                 });
-                c.EnableAnnotations();                
+                c.EnableAnnotations();
             });
         }
 
@@ -46,12 +46,9 @@ namespace Atron.WebApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron.WebApi v1"));
+                AddSwagger(app);
             }
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron.WebApi v1"));
+          
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
@@ -60,6 +57,12 @@ namespace Atron.WebApi
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private static void AddSwagger(IApplicationBuilder app)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron.WebApi v1"));
         }
     }
 }

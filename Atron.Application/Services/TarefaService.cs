@@ -23,7 +23,7 @@ namespace Atron.Application.Services
 
         private readonly NotificationModel<Tarefa> _notification;
 
-        public List<NotificationMessage> Messages { get; set; }
+        public List<NotificationMessage> _messages { get; set; }
 
         public TarefaService(IMapper mapper,
                              IRepository<Tarefa> repository,
@@ -44,7 +44,7 @@ namespace Atron.Application.Services
             _usuarioService = usuarioService;
             _tarefaRepository = tarefaRepository;
             _tarefaEstadoRepository = tarefaEstadoRepository;
-            Messages = new List<NotificationMessage>();
+            _messages = new List<NotificationMessage>();
         }
 
         public async Task CriarAsync(TarefaDTO tarefaDTO)
@@ -64,7 +64,7 @@ namespace Atron.Application.Services
             if (!_notification.Messages.HasErrors())
             {
                 await _tarefaRepository.CriarRepositoryAsync(tarefa);
-                Messages.Add(new NotificationMessage("Tarefa criada com sucesso."));
+                _messages.Add(new NotificationMessage("Tarefa criada com sucesso."));
             }
         }
 
@@ -143,15 +143,15 @@ namespace Atron.Application.Services
                 if (!_notification.Messages.HasErrors())
                 {
                     await _tarefaRepository.AtualizarRepositoryAsync(tarefa);
-                    Messages.Add(new NotificationMessage("Tarefa atualizada com sucesso."));
+                    _messages.Add(new NotificationMessage("Tarefa atualizada com sucesso."));
                     return;
                 }
 
-                Messages.AddRange(_notification.Messages);
+                _messages.AddRange(_notification.Messages);
             }
             else
             {
-                Messages.Add(new NotificationMessage("Código de usuário não existe. Tente novamente", Notification.Enums.ENotificationType.Error));
+                _messages.Add(new NotificationMessage("Código de usuário não existe. Tente novamente", Notification.Enums.ENotificationType.Error));
                 return;
             }
         }
@@ -162,12 +162,12 @@ namespace Atron.Application.Services
 
             if (tarefa is null)
             {
-                Messages.Add(new NotificationMessage("Tarefa não existe. Tente novamente"));
+                _messages.Add(new NotificationMessage("Tarefa não existe. Tente novamente"));
                 return;
             }
 
             await _repository.RemoverRepositoryAsync(tarefa);
-            Messages.Add(new NotificationMessage("Registro removido com sucesso"));
+            _messages.Add(new NotificationMessage("Registro removido com sucesso"));
         }
     }
 }
