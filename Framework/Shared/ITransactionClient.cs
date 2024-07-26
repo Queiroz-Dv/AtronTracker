@@ -1,7 +1,9 @@
-﻿namespace Shared
+﻿using Shared.DTO;
+
+namespace Shared
 {
     public interface ITransactionResponseClient
     {
-        List<Dictionary<string, object>> ResultApiJson { get; }
+        List<ResultResponse> ResultApiJson { get; }
     }
 }

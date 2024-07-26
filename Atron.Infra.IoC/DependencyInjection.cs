@@ -5,6 +5,7 @@ using Atron.Domain.ViewsInterfaces;
 using Atron.Infrastructure.ViewsRepositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Notification.Interfaces;
 using Notification.Models;
 using Notification.Services;
 
@@ -26,6 +27,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IDepartamentoViewService, DepartamentoViewService>();
             services.AddScoped<IDepartamentoViewRepository, DepartamentoViewRepository>();
 
+            
             return services;
         }
     }

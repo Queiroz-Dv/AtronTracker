@@ -6,7 +6,7 @@
 
 @{
     var notificationData = TempData["Notifications"];
-    var notification = notificationData is not null ? JsonConvert.DeserializeObject<ApiWebViewMessageResponse>(notificationData.ToString()) : null;
+    var notification = notificationData is not null ? JsonConvert.DeserializeObject<List<ResultResponse>>(notificationData.ToString()) : null;
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -28,12 +28,13 @@
 
         @if (notification != null)
         {
-
-            <div class="alert-success">
-                <button type="button" class="btn btn-success btn-sm close" arial-label="Close">X</button>
-                @notification.Message
-            </div>
-
+            foreach (var item in notification)
+            {
+                <div class="alert alert-success" role="alert">
+                    <button type="button" class="btn btn-success btn-sm close-alert" arial-label="Close">X</button>
+                    @item.Message
+                </div>
+            }
         }
 
         <div class="form-group">
