@@ -100,6 +100,8 @@ namespace Atron.Application.Services
         {
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
             await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
+            var message = new NotificationMessage("Departamento removido com sucesso.");
+            notificationMessages.Add(message);
         }
     }
 }

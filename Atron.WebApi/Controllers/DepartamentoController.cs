@@ -2,17 +2,14 @@
 using Atron.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Notification.Models;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
-{        
+{
     [Route("api/[controller]")]
     [Produces("application/json")]
-    [ApiController] 
+    [ApiController]
     public class DepartamentoController : ControllerBase
     {
         private readonly IDepartamentoService _departamentoService;
@@ -22,8 +19,8 @@ namespace Atron.WebApi.Controllers
             // Injeta a dependência do serviço de departamento no construtor
             _departamentoService = departamentoService;
         }
-        
-        [HttpPost("CriarDepartamento")]            
+
+        [HttpPost("CriarDepartamento")]
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
         {
             if (departamento == null)
@@ -62,7 +59,7 @@ namespace Atron.WebApi.Controllers
                 return BadRequest(_departamentoService.notificationMessages);
             }
 
-            return Ok(_departamentoService.notificationMessages.First().Message);
+            return Ok(_departamentoService.notificationMessages);
         }
 
         [HttpDelete("ExcluirDepartamento/{codigo}")]
@@ -76,7 +73,7 @@ namespace Atron.WebApi.Controllers
             }
             await _departamentoService.RemoverAsync(codigo);
 
-            return Ok(departamento);
+            return Ok(_departamentoService.notificationMessages);
         }
     }
 }

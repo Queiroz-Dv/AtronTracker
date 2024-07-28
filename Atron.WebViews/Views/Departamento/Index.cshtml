@@ -1,12 +1,14 @@
-﻿@model IEnumerable<Atron.Application.DTO.DepartamentoDTO>
-@using Newtonsoft.Json;
+﻿@using Newtonsoft.Json;
 @using Notification.Models
+@using Shared.DTO
+@using Atron.WebViews.Models;
+@model DepartamentosListViewModel
 
 @{
     var erroJson = TempData["Erro"];
-    var erro = erroJson is not null ? JsonConvert.DeserializeObject<List<NotificationMessage>>(erroJson.ToString()) : null;
+    var erro = erroJson is not null ? JsonConvert.DeserializeObject<List<ResultResponse>>(erroJson.ToString()) : null;
 }
-
+<link href="~/css/site.css" />
 <style>
     .modal-lg {
         max-width: 80%;
@@ -17,8 +19,6 @@
     <h2>@ViewData["Title"]</h2>
 </div>
 <hr />
-
-<link href="~/css/site.css" rel="stylesheet" />
 
 <div class="row">
     <div class="col-md-12">
@@ -38,7 +38,6 @@
                 </div>
             }
         }
-
     </div>
 </div>
 <br />
@@ -51,40 +50,68 @@
         </p>
     </form>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Codigo)
-                </th>
-                <th>@Html.DisplayNameFor(model => model.Descricao)</th>
-            </tr>
+    <div id="departamentos">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Departamentos.FirstOrDefault().Codigo)
+                    </th>
+                    <th>@Html.DisplayNameFor(model => model.Departamentos.FirstOrDefault().Descricao)</th>
+                </tr>
+            </thead>
 
-        </thead>
-        <tbody>
-            @if (Model != null)
-            {
-                @foreach (var item in Model)
+            <tbody>
+                @if (Model != null)
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(model_item => item.Codigo)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(model_item => item.Descricao)
-                        </td>
-                        <td>
-                            <a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
-                                <span class="fas fa-edit">Atualizar</span>
-                            </a>
-                            <a asp-action="Remover" asp-route-codigo="@item.Codigo" title="Remover" class="btn btn-danger">
-                                <span class="fas fa-trash-alt">Excluir</span>
-                            </a>
-                        </td>
-                    </tr>
+                    @foreach (var item in Model.Departamentos)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model_item => item.Codigo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model_item => item.Descricao)
+                            </td>
+                            <td>
+
+                                <a href="javascript:void(0);" onclick="abrirModal('@item.Codigo')" class="btn btn-warning">Atualizar</a>
+                              
+
+                                <a href="javascript:void(0);" onclick="confirmarRemocao('@item.Codigo')" title="Remover" class="btn btn-danger">
+                                    <span class="fas fa-trash-alt">Excluir</span>
+                                </a>
+
+                            </td>
+                        </tr>
+                    }
                 }
+            </tbody>
+        </table>
+    </div>
+    <div class="btn-group pull-right m-1">
+        @if (Model.PagingInfo.TotalPages > 1)
+        {
+            for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+            {
+                <a asp-action="Index"
+                   asp-route-itemPage="@i"
+                   class="btn @(i == Model.PagingInfo.CurrentPage ? "btn-primary" : "btn-outline-dark")">
+                    @i
+                </a>
             }
-        </tbody>
-    </table>
+        }
+    </div>
 </div>
+<br />
+<partial></partial>
 <script src="~/js/departamentoScript.js"></script>
+
+<partial name="Partials/Departamento/AtualizarDepartamentoModal" for="Departamentos"></partial>
+<partial name="Partials/Departamento/ExcluirDepartamentoModal" for="Departamentos"></partial>
+@if (TempData["MensagemSucesso"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["MensagemSucesso"]
+    </div>
+}
