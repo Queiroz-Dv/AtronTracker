@@ -29,7 +29,6 @@
     document.getElementById('btnConfirmarRemocao').addEventListener('click', async function () {
         $('#confirmacaoModal').modal('hide');
         await removerDepartamento(codigoParaRemover);
-        location.reload(); // Recarrega a página após a remoção
     });
 
     async function removerDepartamento(codigo) {
@@ -37,8 +36,26 @@
             method: 'POST'
         });
 
-        if (!response.ok) {
-            alert("Ocorreu um erro ao tentar remover o departamento.");
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: 'Departamento removido com sucesso!',
+                showConfirmButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'Ocorreu um erro ao tentar remover o departamento.',
+                timer: 3000
+            }).then(() => {
+                location.reload();
+            });
         }
     }
 </script>

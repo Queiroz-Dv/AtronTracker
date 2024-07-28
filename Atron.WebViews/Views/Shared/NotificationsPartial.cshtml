@@ -1,0 +1,34 @@
+﻿@using Communication.Extensions;
+@using Shared.DTO;
+@using Shared.Extensions;
+@using Newtonsoft.Json;
+
+@{
+    var notificationsTempData = TempData["Notifications"];
+    List<ResultResponse> notifications = notificationsTempData is not null ? JsonConvert.DeserializeObject<List<ResultResponse>>(notificationsTempData.ToString()) : null;
+}
+
+
+@if (notifications != null)
+{
+    if (notifications.HasErrors())
+    {
+        foreach (var item in notifications)
+        {
+            <div class="alert alert-danger" role="alert">
+                <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">X</button>
+                @item.Message
+            </div>
+        }
+    }
+    else
+    {
+        foreach (var item in notifications)
+        {
+            <div class="alert alert-success" role="alert">
+                <button type="button" class="btn btn-success btn-sm close-alert" arial-label="Close">X</button>
+                @item.Message
+            </div>
+        }
+    }
+}
