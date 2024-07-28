@@ -12,5 +12,7 @@
                 return (int)Math.Ceiling((decimal)TotalItems / ItemsPerPage);
             }
         }
+
+        public string Filter { get; set; }
     }
 }

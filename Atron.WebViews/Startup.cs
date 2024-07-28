@@ -1,4 +1,5 @@
 using Atron.Infra.IoC;
+using Atron.WebViews.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +43,7 @@ namespace Atron.WebViews
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.AddEntityRoutes();
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
