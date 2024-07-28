@@ -1,13 +1,8 @@
-﻿@using Newtonsoft.Json;
-@using Notification.Models
-@using Shared.DTO
+﻿@using Atron.Application.DTO
+@using Newtonsoft.Json;
 @using Atron.WebViews.Models;
 @model DepartamentosListViewModel
 
-@{
-    var erroJson = TempData["Erro"];
-    var erro = erroJson is not null ? JsonConvert.DeserializeObject<List<ResultResponse>>(erroJson.ToString()) : null;
-}
 <link href="~/css/site.css" />
 <style>
     .modal-lg {
@@ -26,26 +21,15 @@
             <a asp-action="Cadastrar" class="btn btn-success">
                 <span title="Cadastrar novo" class="fas fa-plus"></span> Cadastrar novo
             </a>
-        </div>
-
-        @if (erro is not null)
-        {
-            foreach (var item in erro)
-            {
-                <div class="alert alert-danger" style="margin-top: 25px;" role="alert">
-                    <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">X</button>
-                    @item.Message
-                </div>
-            }
-        }
+        </div>      
     </div>
 </div>
 <br />
 
 <div class="panel panel-default">
-    <form asp-controller="Departamentos" asp-action="Index" method="get">
+    <form asp-controller="Departamento" asp-action="Index" method="get">
         <p>
-            <input type="text" name="codigoBuscado" />
+            <input type="text" name="filter" />
             <input type="submit" value="Filtrar" />
         </p>
     </form>
@@ -76,7 +60,7 @@
                             <td>
 
                                 <a href="javascript:void(0);" onclick="abrirModal('@item.Codigo')" class="btn btn-warning">Atualizar</a>
-                              
+
 
                                 <a href="javascript:void(0);" onclick="confirmarRemocao('@item.Codigo')" title="Remover" class="btn btn-danger">
                                     <span class="fas fa-trash-alt">Excluir</span>
@@ -89,29 +73,26 @@
             </tbody>
         </table>
     </div>
+
     <div class="btn-group pull-right m-1">
-        @if (Model.PagingInfo.TotalPages > 1)
+        @if (Model.PagingInfo is not null)
         {
-            for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+            @if (Model.PagingInfo.TotalPages > 1)
             {
-                <a asp-action="Index"
-                   asp-route-itemPage="@i"
-                   class="btn @(i == Model.PagingInfo.CurrentPage ? "btn-primary" : "btn-outline-dark")">
-                    @i
-                </a>
+                for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+                {
+                    <a asp-action="Index"
+                       asp-route-itemPage="@i"
+                       asp-route-filter="@Model.PagingInfo.Filter"
+                       class="btn @(i == Model.PagingInfo.CurrentPage ? "btn-primary" : "btn-outline-dark")">
+                        @i
+                    </a>
+                }
             }
         }
     </div>
 </div>
 <br />
-<partial></partial>
 <script src="~/js/departamentoScript.js"></script>
-
 <partial name="Partials/Departamento/AtualizarDepartamentoModal" for="Departamentos"></partial>
 <partial name="Partials/Departamento/ExcluirDepartamentoModal" for="Departamentos"></partial>
-@if (TempData["MensagemSucesso"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["MensagemSucesso"]
-    </div>
-}

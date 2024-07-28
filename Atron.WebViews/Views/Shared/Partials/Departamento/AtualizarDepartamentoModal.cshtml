@@ -28,7 +28,7 @@
 </div>
 
 <script>
-
+   
     class Departamento {
         constructor(codigo, descricao) {
             this.codigo = codigo;
@@ -96,10 +96,11 @@
                 icon: 'success',
                 title: 'Sucesso!',
                 text: 'Departamento atualizado com sucesso!',
-                showConfirmButton: false,
-                timer: 2000
-            }).then(() => {
-                location.reload();
+                showConfirmButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                }
             });
         } else {
             Swal.fire({
