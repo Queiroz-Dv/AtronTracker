@@ -1,4 +1,5 @@
 ﻿using Atron.Application.DTO;
+using Atron.WebViews.Models;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ namespace Atron.WebViews.Controllers
     public class DepartamentoController : Controller
     {
         private IDepartamentoExternalService _externalService;
+        public int PageSize = 4;
         public List<ResultResponse> ResultResponses { get; set; }
 
         public DepartamentoController(IDepartamentoExternalService externalService)
@@ -22,24 +24,35 @@ namespace Atron.WebViews.Controllers
 
         [HttpGet]
         [Route("/Departamento/Index")]
-        [Route("/Departamento/Index/{codigoBuscado}")]
-        public async Task<IActionResult> Index(string codigoBuscado)
+        [Route("/Departamento/Index/{itemPage}")]
+        public async Task<IActionResult> Index(int itemPage = 1)
         {
             ViewData["Title"] = "Painel de departamentos";
 
-            var departamentos = await _externalService.ObterDepartamentos();
+            var departamentos = await _externalService.ObterTodos();
 
             if (!departamentos.Any())
             {
                 return View();
             }
 
-            if (!string.IsNullOrEmpty(codigoBuscado))
-            {
-                departamentos = departamentos.Where(dpt => dpt.Codigo.Contains(codigoBuscado)).ToList();
-            }
+            //if (!string.IsNullOrEmpty(codigoBuscado))
+            //{
+            //    departamentos = departamentos.Where(dpt => dpt.Codigo.Contains(codigoBuscado)).ToList();
+            //}
 
-            return View(departamentos);
+            var models = new DepartamentosListViewModel()
+            {
+                Departamentos = departamentos.Skip((itemPage - 1) * PageSize)
+                                             .Take(PageSize),
+                PagingInfo = new PagingInfo
+                {
+                    CurrentPage = itemPage,
+                    ItemsPerPage = PageSize,
+                    TotalItems = departamentos.Count()
+                }
+            };
+            return View(models);
         }
 
         [HttpGet]
@@ -54,18 +67,18 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _externalService.CriarDepartamento(departamento);
+                var response = await _externalService.Criar(departamento);
+                ResultResponses.AddRange(response.responses);
 
                 if (response.isSucess)
                 {
-                    ResultResponses.AddRange(response.responses);
                     var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
                     TempData["Notifications"] = responseSerialized;
                     return RedirectToAction(nameof(Cadastrar));
                 }
                 else
                 {
-                    ViewBag.Erros = response.responses;
+                    ViewBag.Erros = ResultResponses;
                     return View(nameof(Cadastrar), departamento);
                 }
             }
@@ -82,43 +95,75 @@ namespace Atron.WebViews.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            //var departamentoDTO = await _service.ObterPorCodigo(codigo);
+            var departamentos = await _externalService.ObterTodos();
+            var departamento = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
 
-            //if (!_service._messages.HasErrors() && departamentoDTO is not null)
-            //{
-            //    ViewData["Title"] = "Atualizar informação de departamento";
+            if (departamento is not null)
+            {
+                ViewData["Title"] = "Atualizar informação de departamento";
 
-            //    return View(departamentoDTO);
-            //}
-            //else
-            //{
-            //    //var erros = _departamentoService.GuardianModel.GetErrors();
-            //    //TempData["Erro"] = JsonConvert.SerializeObject(erros);
-            //    return RedirectToAction(nameof(Index));
-            //}
-
-            return View();
+                return View(departamento);
+            }
+            else
+            {
+                ResultResponses.Add(new ResultResponse() { Message = "Código de departamento informado não existe ou não cadastrado." });
+                TempData["Erro"] = JsonConvert.SerializeObject(ResultResponses);
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
+        public async Task<IActionResult> Atualizar(string codigo, [FromBody] DepartamentoDTO departamentoDTO)
         {
-            //await _service.Atualizar(codigo, departamentoDTO);
-            //var temErros = _departamentoService.GuardianModel.HasErrors();
+            var response = await _externalService.Atualizar(codigo, departamentoDTO);
 
-            //if (departamento is not null && temErros is not true)
-            //{
-            //    await _departamentoService.AtualizarAsync(departamentoDTO);
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //else
-            //{
-            //    var erros = _departamentoService.GuardianModel.GetErrors();
-            //    var json = JsonConvert.SerializeObject(erros, Formatting.Indented);
-            //    TempData["Erro"] = json;
-            //    return RedirectToAction(nameof(Index));
-            //}
-            return View(departamentoDTO);
+            if (response.isSucess)
+            {
+                ResultResponses.AddRange(response.responses);
+                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
+                TempData["Notifications"] = responseSerialized;
+                return Ok(responseSerialized);
+            }
+            else
+            {
+                ViewBag.Erros = response.responses;
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Remover(string codigo)
+        {
+            if (string.IsNullOrEmpty(codigo))
+            {
+                TempData["Erro"] = JsonConvert.SerializeObject(new ResultResponse() { Message = "Código não informado, tente novamente." });
+                return RedirectToAction(nameof(Index));
+            }
+
+            var response = await _externalService.Remover(codigo);
+
+            if (response.isSuccess)
+            {
+                ResultResponses.AddRange(response.responses);
+                TempData["Notifications"] = JsonConvert.SerializeObject(ResultResponses);
+            }
+            else
+            {
+
+                ViewBag.Erros = JsonConvert.SerializeObject(response.responses);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObterDepartamento(string codigoDepartamento)
+        {
+            var departamentos = await _externalService.ObterTodos();
+
+            var departamento = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigoDepartamento);
+
+            return Ok(departamento);
         }
     }
 }
