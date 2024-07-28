@@ -73,7 +73,7 @@ namespace Atron.WebApi.Controllers
             }
             await _departamentoService.RemoverAsync(codigo);
 
-            return Ok(departamento);
+            return Ok(_departamentoService.notificationMessages);
         }
     }
 }

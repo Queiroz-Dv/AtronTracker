@@ -1,0 +1,113 @@
+﻿<div class="modal fade" id="atualizacaoModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="atualizacaoModalLabel">Atualizar Departamento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formAtualizarDepartamento">
+                    <div class="form-group">
+                        <label for="codigo">Código</label>
+                        <input type="text" class="form-control" id="codigo" name="Codigo" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Descrição</label>
+                        <input type="text" class="form-control" id="descricao" name="Descricao" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnSalvar">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    class Departamento {
+        constructor(codigo, descricao) {
+            this.codigo = codigo;
+            this.descricao = descricao;
+        }
+    }
+
+    let codigoDoDepartamento = '';
+
+    async function abrirModal(codigo) {
+        codigoDoDepartamento = codigo;
+        var departamento = await obterDepartamento(codigoDoDepartamento);
+
+        if (departamento) {
+            document.getElementById('codigo').value = departamento.codigo;
+            document.getElementById('descricao').value = departamento.descricao;
+        }
+
+        $('#atualizacaoModal').modal('show');
+    }
+
+    async function obterDepartamento(codigo) {
+        try {
+            const response = await fetch(`/Departamento/ObterDepartamento?codigoDepartamento=${codigo}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Ocorreu um erro ao tentar obter o departamento.'
+                })
+            }
+
+            var result = await response.json();
+            var departamento = new Departamento(result.codigo, result.descricao);
+            return departamento;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    document.getElementById('btnSalvar').addEventListener('click', async function () {
+        await salvarAtualizacao();
+    })
+
+    async function salvarAtualizacao() {
+        const codigo = document.getElementById('codigo').value;
+        const descricao = document.getElementById('descricao').value;
+
+        const departamento = new Departamento(codigo, descricao);
+
+        const response = await fetch(`/Departamento/Atualizar?codigo=${codigo}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(departamento)
+        });
+
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: 'Departamento atualizado com sucesso!',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'Ocorreu um erro ao tentar atualizar o departamento.',
+            });
+        }
+    }
+</script>
+

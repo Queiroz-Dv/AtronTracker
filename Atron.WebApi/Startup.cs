@@ -49,6 +49,7 @@ namespace Atron.WebApi
                 AddSwagger(app);
             }
           
+            AddSwagger(app);
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();

@@ -2,6 +2,8 @@
 using Communication.Interfaces.Services;
 using Newtonsoft.Json;
 using Shared.DTO;
+using System;
+using System.Reflection.Metadata;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -68,6 +70,21 @@ namespace Communication.Models
             {
                 throw;
             }
+        }
+
+        public async Task<string> DeleteAsync(string uri, string codigo)
+        {
+            var uriFormated = $"{uri}{codigo}";
+
+            var response = await _httpClient.DeleteAsync(uriFormated);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseContent = await FillResultResponse(response);
+                return responseContent;
+            }
+          
+            return string.Empty;
         }
     }
 }
