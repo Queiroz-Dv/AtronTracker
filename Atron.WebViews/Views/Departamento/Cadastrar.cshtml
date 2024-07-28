@@ -1,42 +1,15 @@
 ﻿@using Newtonsoft.Json
-@using Notification.Models
+@using Communication.Extensions;
 @using Shared.DTO
 @using Shared.Extensions
 @model Atron.Application.DTO.DepartamentoDTO
-
-@{
-    var notificationData = TempData["Notifications"];
-    var notification = notificationData is not null ? JsonConvert.DeserializeObject<List<ResultResponse>>(notificationData.ToString()) : null;
-}
 
 <h2>@ViewData["Title"]</h2>
 <link href="~/css/site.css" rel="stylesheet" />
 <form asp-action="Cadastrar" method="post">
     <div class="form-horizontal">
-
         <hr />
-        @if (ViewBag.Erros != null)
-        {
-            foreach (var item in @ViewBag.Erros)
-            {
-                <div class="alert alert-danger" role="alert">
-                    <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">X</button>
-                    @item.Message
-                </div>
-            }
-        }
-
-        @if (notification != null)
-        {
-            foreach (var item in notification)
-            {
-                <div class="alert alert-success" role="alert">
-                    <button type="button" class="btn btn-success btn-sm close-alert" arial-label="Close">X</button>
-                    @item.Message
-                </div>
-            }
-        }
-
+        <partial name="NotificationsPartial" model="null"></partial>
         <div class="form-group">
 
             <label asp-for="Codigo" class="col-md-2 control-label"></label>

@@ -14,6 +14,7 @@ namespace Atron.WebViews.Controllers
     {
         private IDepartamentoExternalService _externalService;
         public int PageSize = 4;
+
         public List<ResultResponse> ResultResponses { get; set; }
 
         public DepartamentoController(IDepartamentoExternalService externalService)
@@ -23,9 +24,7 @@ namespace Atron.WebViews.Controllers
         }
 
         [HttpGet]
-        [Route("/Departamento/Index")]
-        [Route("/Departamento/Index/{itemPage}")]
-        public async Task<IActionResult> Index(int itemPage = 1)
+        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ViewData["Title"] = "Painel de departamentos";
 
@@ -36,10 +35,10 @@ namespace Atron.WebViews.Controllers
                 return View();
             }
 
-            //if (!string.IsNullOrEmpty(codigoBuscado))
-            //{
-            //    departamentos = departamentos.Where(dpt => dpt.Codigo.Contains(codigoBuscado)).ToList();
-            //}
+            if (!string.IsNullOrEmpty(filter))
+            {
+                departamentos = departamentos.Where(dpt => dpt.Codigo.Contains(filter)).ToList();
+            }
 
             var models = new DepartamentosListViewModel()
             {
@@ -49,7 +48,8 @@ namespace Atron.WebViews.Controllers
                 {
                     CurrentPage = itemPage,
                     ItemsPerPage = PageSize,
-                    TotalItems = departamentos.Count()
+                    TotalItems = departamentos.Count(),
+                    Filter = filter
                 }
             };
             return View(models);
@@ -83,33 +83,8 @@ namespace Atron.WebViews.Controllers
                 }
             }
 
+            ViewData["Title"] = "Cadastro de departamentos";
             return View(departamento);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Atualizar(string codigo)
-        {
-            if (codigo is null)
-            {
-                TempData["Erro"] = JsonConvert.SerializeObject(new ResultResponse() { Message = "Código não informado, tente novamente." });
-                return RedirectToAction(nameof(Index));
-            }
-
-            var departamentos = await _externalService.ObterTodos();
-            var departamento = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
-
-            if (departamento is not null)
-            {
-                ViewData["Title"] = "Atualizar informação de departamento";
-
-                return View(departamento);
-            }
-            else
-            {
-                ResultResponses.Add(new ResultResponse() { Message = "Código de departamento informado não existe ou não cadastrado." });
-                TempData["Erro"] = JsonConvert.SerializeObject(ResultResponses);
-                return RedirectToAction(nameof(Index));
-            }
         }
 
         [HttpPost]
@@ -120,15 +95,15 @@ namespace Atron.WebViews.Controllers
             if (response.isSucess)
             {
                 ResultResponses.AddRange(response.responses);
-                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
-                TempData["Notifications"] = responseSerialized;
-                return Ok(responseSerialized);
+                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);                
             }
             else
             {
                 ViewBag.Erros = response.responses;
                 return RedirectToAction(nameof(Index));
             }
+
+            return Ok();
         }
 
         [HttpPost]
@@ -149,7 +124,6 @@ namespace Atron.WebViews.Controllers
             }
             else
             {
-
                 ViewBag.Erros = JsonConvert.SerializeObject(response.responses);
             }
 
