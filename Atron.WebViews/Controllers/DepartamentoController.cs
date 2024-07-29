@@ -14,7 +14,7 @@ namespace Atron.WebViews.Controllers
     public class DepartamentoController : Controller
     {
         private IDepartamentoExternalService _externalService;
-        public int PageSize = 4;
+        public int PageSize = 5;
 
         public List<ResultResponse> ResultResponses { get; set; }
 
@@ -41,14 +41,42 @@ namespace Atron.WebViews.Controllers
                 departamentos = departamentos.Where(dpt => dpt.Codigo.Contains(filter)).ToList();
             }
 
-            var models = new PageInfoDTO<DepartamentoDTO>()
+            var startPage = itemPage - 2;
+            var endPage = itemPage + 1;
+            var models = new PageInfoDTO();
+            models.TotalItems = departamentos.Count;
+            models.CurrentPage = itemPage;
+            models.ItemsPerPage = PageSize;
+            models.Filter = filter;
+            //models.Entities = departamentos.Skip((itemPage - 1) * PageSize).Take(PageSize).ToList();
+            
+            if (startPage <= 0)
             {
-                CurrentPage = itemPage,
-                ItemsPerPage = PageSize,
-                TotalItems = departamentos.Count,
-                Filter = filter,
-                Entities = departamentos.Skip((itemPage - 1) * PageSize).Take(PageSize).ToList()
-            };
+                endPage = endPage - (startPage - 1);
+                startPage = 1;
+            }
+
+            if (endPage > models.TotalPages)
+            {
+                endPage = models.TotalPages;
+                if (endPage > 5)
+                {
+                    startPage = endPage - 4;
+                }
+            }
+
+            models.StartPage = startPage;
+            models.EndPage = endPage;
+            //models.ItemsPerPage = PageSize;
+            //{
+            //    CurrentPage = itemPage,
+            //    StartPage = ,
+            //    EndPage= +4
+            //    ItemsPerPage = PageSize,
+            //    TotalItems = departamentos.Count,
+            //    Filter = filter,
+            //    Entities = departamentos.Skip((itemPage - 1) * PageSize).Take(PageSize).ToList()
+            //};
 
             return View(models);
         }
@@ -91,7 +119,7 @@ namespace Atron.WebViews.Controllers
 
             var departamentos = await _externalService.ObterTodos();
 
-            var departamentoDTO  = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
+            var departamentoDTO = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
 
             if (departamentoDTO is not null)
             {
@@ -100,13 +128,13 @@ namespace Atron.WebViews.Controllers
                 return View(departamentoDTO);
             }
             else
-            {                
+            {
                 return View(departamentoDTO);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Atualizar(string codigo,DepartamentoDTO departamentoDTO)
+        public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
             var response = await _externalService.Atualizar(codigo, departamentoDTO);
             ResultResponses.AddRange(response.responses);

@@ -1,12 +1,7 @@
 ﻿namespace Shared.DTO
 {
-    public class PageInfoDTO<T>
-    {
-        public PageInfoDTO()
-        {
-            Entities = new List<T>();
-        }
-
+    public class PageInfoDTO
+    {        
         public int TotalItems { get; set; }
         public int ItemsPerPage { get; set; }
         public int CurrentPage { get; set; }
@@ -19,7 +14,7 @@
         }
 
         public string? Filter { get; set; }
-
-        public List<T> Entities { get; set; }
+        public int StartPage { get; set; }
+        public int EndPage { get; set; }      
     }
 }
