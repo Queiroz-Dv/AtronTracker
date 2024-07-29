@@ -22,7 +22,7 @@
             <a asp-action="Cadastrar" class="btn btn-success">
                 <span title="Cadastrar novo" class="fas fa-plus"></span> Cadastrar novo
             </a>
-        </div>      
+        </div>
     </div>
 </div>
 <br />
@@ -33,7 +33,7 @@
             <input type="text" name="filter" />
             <input type="submit" value="Filtrar" />
         </p>
-    </form>    
+    </form>
     <div id="departamentos">
         <table class="table table-striped">
             <thead>
@@ -73,25 +73,9 @@
                 }
             </tbody>
         </table>
+        
     </div>
 
-    <div class="btn-group pull-right m-1">
-        @if (Model.Entities is not null)
-        {
-            @if (Model.TotalPages > 1)
-            {
-                for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <a asp-action="Index"
-                       asp-route-itemPage="@i"
-                       asp-route-filter="@Model.Filter"
-                       class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-outline-dark")">
-                        @i
-                    </a>
-                }
-            }
-        }
-    </div>
 </div>
 <br />
 <script src="~/js/departamentoScript.js"></script>
