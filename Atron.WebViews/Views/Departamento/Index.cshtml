@@ -1,7 +1,8 @@
-﻿@using Atron.Application.DTO
+﻿@using Atron.Application.DTO;
+@using Shared.DTO;
 @using Newtonsoft.Json;
 @using Atron.WebViews.Models;
-@model DepartamentosListViewModel
+@model PageInfoDTO<DepartamentoDTO>
 
 <link href="~/css/site.css" />
 <style>
@@ -32,23 +33,22 @@
             <input type="text" name="filter" />
             <input type="submit" value="Filtrar" />
         </p>
-    </form>
-
+    </form>    
     <div id="departamentos">
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Departamentos.FirstOrDefault().Codigo)
+                        @Html.DisplayNameFor(model => model.Entities.FirstOrDefault().Codigo)
                     </th>
-                    <th>@Html.DisplayNameFor(model => model.Departamentos.FirstOrDefault().Descricao)</th>
+                    <th>@Html.DisplayNameFor(model => model.Entities.FirstOrDefault().Descricao)</th>
                 </tr>
             </thead>
 
             <tbody>
                 @if (Model != null)
                 {
-                    @foreach (var item in Model.Departamentos)
+                    @foreach (var item in Model.Entities)
                     {
                         <tr>
                             <td>
@@ -59,8 +59,9 @@
                             </td>
                             <td>
 
-                                <a href="javascript:void(0);" onclick="abrirModal('@item.Codigo')" class="btn btn-warning">Atualizar</a>
-
+                                <a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
+                                    <span class="fas fa-edit">Atualizar</span>
+                                </a>
 
                                 <a href="javascript:void(0);" onclick="confirmarRemocao('@item.Codigo')" title="Remover" class="btn btn-danger">
                                     <span class="fas fa-trash-alt">Excluir</span>
@@ -75,16 +76,16 @@
     </div>
 
     <div class="btn-group pull-right m-1">
-        @if (Model.PagingInfo is not null)
+        @if (Model.Entities is not null)
         {
-            @if (Model.PagingInfo.TotalPages > 1)
+            @if (Model.TotalPages > 1)
             {
-                for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+                for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     <a asp-action="Index"
                        asp-route-itemPage="@i"
-                       asp-route-filter="@Model.PagingInfo.Filter"
-                       class="btn @(i == Model.PagingInfo.CurrentPage ? "btn-primary" : "btn-outline-dark")">
+                       asp-route-filter="@Model.Filter"
+                       class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-outline-dark")">
                         @i
                     </a>
                 }
@@ -94,5 +95,4 @@
 </div>
 <br />
 <script src="~/js/departamentoScript.js"></script>
-<partial name="Partials/Departamento/AtualizarDepartamentoModal" for="Departamentos"></partial>
-<partial name="Partials/Departamento/ExcluirDepartamentoModal" for="Departamentos"></partial>
+<partial name="Partials/Departamento/ExcluirDepartamentoModal" for="Entities"></partial>

@@ -7,15 +7,15 @@
         <form asp-action="Atualizar" method="post">
             <div class="form-group">
 
-                <label asp-for="Codigo" class="control-label col-md-2"></label>
-                <div class="col-md-5">
+                <label asp-for="Codigo" class="control-label col-md-2 font-weight-bold"></label>
+                <div class="col-md-5" style="margin-bottom: 25px;">
                     <input disabled="disabled" asp-for="Codigo" />
                     <input hidden="hidden" asp-for="Codigo" />
                 </div>
 
 
-                <label asp-for="Descricao" class="control-label col-md-5"></label>
-                <div class="col-md-8">
+                <label asp-for="Descricao" class="control-label col-md-5 font-weight-bold"></label>
+                <div class="col-md-12">
                     <input asp-for="Descricao" class="form-control" />
                 </div>
 
@@ -27,7 +27,6 @@
                 <input type="submit" value="Atualizar" class="btn btn-primary" />
                 <a asp-action="Index" class="btn btn-secondary">Painel</a>
             </div>
-
         </form>
     </div>
 </div>
