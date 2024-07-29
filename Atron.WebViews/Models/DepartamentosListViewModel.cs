@@ -7,6 +7,6 @@ namespace Atron.WebViews.Models
     public class DepartamentosListViewModel
     {
         public IEnumerable<DepartamentoDTO> Departamentos { get; set; }
-        public PagingInfo PagingInfo { get; set; }  
+        //public PageInfoDTO PagingInfo { get; set; }  
     }
 }

@@ -11,24 +11,19 @@
 
 @if (notifications != null)
 {
-    if (notifications.HasErrors())
-    {
-        foreach (var item in notifications)
-        {
-            <div class="alert alert-danger" role="alert">
-                <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">X</button>
-                @item.Message
-            </div>
-        }
-    }
-    else
-    {
-        foreach (var item in notifications)
-        {
-            <div class="alert alert-success" role="alert">
-                <button type="button" class="btn btn-success btn-sm close-alert" arial-label="Close">X</button>
-                @item.Message
-            </div>
-        }
-    }
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var notifications = @Html.Raw(JsonConvert.SerializeObject(notifications));
+            notifications.forEach(function (notification) {
+                Swal.fire({
+                    icon: notification.Level === "Error" ? "error" : "success",
+                    title: notification.Level === "Error" ? "Erro!" : "Sucesso!",
+                    text: notification.Message,
+                    showConfirmButton: true
+                });
+            });
+        });
+
+    </script>
 }
