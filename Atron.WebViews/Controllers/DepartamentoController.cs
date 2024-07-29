@@ -1,4 +1,5 @@
 ﻿using Atron.Application.DTO;
+using Atron.Domain.Entities;
 using Atron.WebViews.Models;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -40,18 +41,15 @@ namespace Atron.WebViews.Controllers
                 departamentos = departamentos.Where(dpt => dpt.Codigo.Contains(filter)).ToList();
             }
 
-            var models = new DepartamentosListViewModel()
+            var models = new PageInfoDTO<DepartamentoDTO>()
             {
-                Departamentos = departamentos.Skip((itemPage - 1) * PageSize)
-                                             .Take(PageSize),
-                PagingInfo = new PagingInfo
-                {
-                    CurrentPage = itemPage,
-                    ItemsPerPage = PageSize,
-                    TotalItems = departamentos.Count(),
-                    Filter = filter
-                }
+                CurrentPage = itemPage,
+                ItemsPerPage = PageSize,
+                TotalItems = departamentos.Count,
+                Filter = filter,
+                Entities = departamentos.Skip((itemPage - 1) * PageSize).Take(PageSize).ToList()
             };
+
             return View(models);
         }
 
@@ -70,40 +68,53 @@ namespace Atron.WebViews.Controllers
                 var response = await _externalService.Criar(departamento);
                 ResultResponses.AddRange(response.responses);
 
-                if (response.isSucess)
-                {
-                    var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
-                    TempData["Notifications"] = responseSerialized;
-                    return RedirectToAction(nameof(Cadastrar));
-                }
-                else
-                {
-                    ViewBag.Erros = ResultResponses;
-                    return View(nameof(Cadastrar), departamento);
-                }
+                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
+                TempData["Notifications"] = responseSerialized;
+                return response.isSucess ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
             }
 
             ViewData["Title"] = "Cadastro de departamentos";
             return View(departamento);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Atualizar(string codigo, [FromBody] DepartamentoDTO departamentoDTO)
+        [HttpGet]
+        public async Task<IActionResult> Atualizar(string codigo)
         {
-            var response = await _externalService.Atualizar(codigo, departamentoDTO);
-
-            if (response.isSucess)
+            if (codigo is null)
             {
-                ResultResponses.AddRange(response.responses);
-                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);                
+                var notification = new ResultResponse() { Message = "O código informado não foi encontrado", Level = "Error" };
+                ResultResponses.Add(notification);
+                TempData["Notifications"] = JsonConvert.SerializeObject(ResultResponses);
+
+                return View(codigo);
+            }
+
+            var departamentos = await _externalService.ObterTodos();
+
+            var departamentoDTO  = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
+
+            if (departamentoDTO is not null)
+            {
+                ViewData["Title"] = "Atualizar informação de departamento";
+
+                return View(departamentoDTO);
             }
             else
-            {
-                ViewBag.Erros = response.responses;
-                return RedirectToAction(nameof(Index));
+            {                
+                return View(departamentoDTO);
             }
+        }
 
-            return Ok();
+        [HttpPost]
+        public async Task<IActionResult> Atualizar(string codigo,DepartamentoDTO departamentoDTO)
+        {
+            var response = await _externalService.Atualizar(codigo, departamentoDTO);
+            ResultResponses.AddRange(response.responses);
+
+            var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
+            TempData["Notifications"] = responseSerialized;
+
+            return response.isSucess ? RedirectToAction(nameof(Index)) : View(nameof(Atualizar), departamentoDTO);
         }
 
         [HttpPost]

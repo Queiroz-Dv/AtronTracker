@@ -9,17 +9,16 @@
 <form asp-action="Cadastrar" method="post">
     <div class="form-horizontal">
         <hr />
-        <partial name="NotificationsPartial" model="null"></partial>
         <div class="form-group">
 
-            <label asp-for="Codigo" class="col-md-2 control-label"></label>
+            <label asp-for="Codigo" class="col-md-2 control-label font-weight-bold"></label>
 
             <div class="col-md-5" style="margin-bottom: 25px;">
                 <input asp-for="Codigo" class="form-control" />
                 <span asp-validation-for="Codigo" class="text-danger"></span>
             </div>
 
-            <label asp-for="Descricao" class="col-md-2 control-label"></label>
+            <label asp-for="Descricao" class="col-md-2 control-label font-weight-bolder"></label>
 
             <div class="col-md-7">
                 <input asp-for="Descricao" class="form-control" />
