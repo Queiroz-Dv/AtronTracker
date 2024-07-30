@@ -4,9 +4,12 @@ using System.Collections.Generic;
 
 namespace Atron.WebViews.Models
 {
-    public class DepartamentosListViewModel
-    {
+    public class DepartamentoModel
+    {        
+        public DepartamentoDTO Departamento { get; set; }  
+
         public IEnumerable<DepartamentoDTO> Departamentos { get; set; }
-        //public PageInfoDTO PagingInfo { get; set; }  
+
+        public PageInfoDTO PageInfo { get; set; }  
     }
 }
