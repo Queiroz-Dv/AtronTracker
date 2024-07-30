@@ -5,6 +5,7 @@ using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.DTO;
+using Shared.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,13 +15,14 @@ namespace Atron.WebViews.Controllers
     public class DepartamentoController : Controller
     {
         private IDepartamentoExternalService _externalService;
-        public int PageSize = 5;
+        private readonly PaginationService _paginationService;
 
         public List<ResultResponse> ResultResponses { get; set; }
 
-        public DepartamentoController(IDepartamentoExternalService externalService)
+        public DepartamentoController(IDepartamentoExternalService externalService, PaginationService paginationService)
         {
             _externalService = externalService;
+            _paginationService = paginationService;
             ResultResponses = new List<ResultResponse>();
         }
 
@@ -41,44 +43,14 @@ namespace Atron.WebViews.Controllers
                 departamentos = departamentos.Where(dpt => dpt.Codigo.Contains(filter)).ToList();
             }
 
-            var startPage = itemPage - 2;
-            var endPage = itemPage + 1;
-            var models = new PageInfoDTO();
-            models.TotalItems = departamentos.Count;
-            models.CurrentPage = itemPage;
-            models.ItemsPerPage = PageSize;
-            models.Filter = filter;
-            //models.Entities = departamentos.Skip((itemPage - 1) * PageSize).Take(PageSize).ToList();
-            
-            if (startPage <= 0)
+            var pageInfo = _paginationService.Paginate(departamentos, itemPage, nameof(Departamento), filter);
+            var model = new DepartamentoModel()
             {
-                endPage = endPage - (startPage - 1);
-                startPage = 1;
-            }
+                Departamentos = _paginationService.GetEntityPaginated(departamentos),
+                PageInfo = pageInfo
+            };
 
-            if (endPage > models.TotalPages)
-            {
-                endPage = models.TotalPages;
-                if (endPage > 5)
-                {
-                    startPage = endPage - 4;
-                }
-            }
-
-            models.StartPage = startPage;
-            models.EndPage = endPage;
-            //models.ItemsPerPage = PageSize;
-            //{
-            //    CurrentPage = itemPage,
-            //    StartPage = ,
-            //    EndPage= +4
-            //    ItemsPerPage = PageSize,
-            //    TotalItems = departamentos.Count,
-            //    Filter = filter,
-            //    Entities = departamentos.Skip((itemPage - 1) * PageSize).Take(PageSize).ToList()
-            //};
-
-            return View(models);
+            return View(model);
         }
 
         [HttpGet]
