@@ -5,6 +5,7 @@ using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.DTO;
+using Shared.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,13 +15,14 @@ namespace Atron.WebViews.Controllers
     public class DepartamentoController : Controller
     {
         private IDepartamentoExternalService _externalService;
-        public int PageSize = 4;
+        private readonly PaginationService _paginationService;
 
         public List<ResultResponse> ResultResponses { get; set; }
 
-        public DepartamentoController(IDepartamentoExternalService externalService)
+        public DepartamentoController(IDepartamentoExternalService externalService, PaginationService paginationService)
         {
             _externalService = externalService;
+            _paginationService = paginationService;
             ResultResponses = new List<ResultResponse>();
         }
 
@@ -41,16 +43,14 @@ namespace Atron.WebViews.Controllers
                 departamentos = departamentos.Where(dpt => dpt.Codigo.Contains(filter)).ToList();
             }
 
-            var models = new PageInfoDTO<DepartamentoDTO>()
+            var pageInfo = _paginationService.Paginate(departamentos, itemPage, nameof(Departamento), filter);
+            var model = new DepartamentoModel()
             {
-                CurrentPage = itemPage,
-                ItemsPerPage = PageSize,
-                TotalItems = departamentos.Count,
-                Filter = filter,
-                Entities = departamentos.Skip((itemPage - 1) * PageSize).Take(PageSize).ToList()
+                Departamentos = _paginationService.GetEntityPaginated(departamentos),
+                PageInfo = pageInfo
             };
 
-            return View(models);
+            return View(model);
         }
 
         [HttpGet]
@@ -91,7 +91,7 @@ namespace Atron.WebViews.Controllers
 
             var departamentos = await _externalService.ObterTodos();
 
-            var departamentoDTO  = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
+            var departamentoDTO = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
 
             if (departamentoDTO is not null)
             {
@@ -100,13 +100,13 @@ namespace Atron.WebViews.Controllers
                 return View(departamentoDTO);
             }
             else
-            {                
+            {
                 return View(departamentoDTO);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Atualizar(string codigo,DepartamentoDTO departamentoDTO)
+        public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
             var response = await _externalService.Atualizar(codigo, departamentoDTO);
             ResultResponses.AddRange(response.responses);

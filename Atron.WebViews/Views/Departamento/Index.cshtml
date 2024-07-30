@@ -1,8 +1,9 @@
 ﻿@using Atron.Application.DTO;
 @using Shared.DTO;
+@using Shared.Services;
 @using Newtonsoft.Json;
 @using Atron.WebViews.Models;
-@model PageInfoDTO<DepartamentoDTO>
+@model DepartamentoModel;
 
 <link href="~/css/site.css" />
 <style>
@@ -22,7 +23,7 @@
             <a asp-action="Cadastrar" class="btn btn-success">
                 <span title="Cadastrar novo" class="fas fa-plus"></span> Cadastrar novo
             </a>
-        </div>      
+        </div>
     </div>
 </div>
 <br />
@@ -33,22 +34,22 @@
             <input type="text" name="filter" />
             <input type="submit" value="Filtrar" />
         </p>
-    </form>    
+    </form>
     <div id="departamentos">
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Entities.FirstOrDefault().Codigo)
+                        @Html.DisplayNameFor(model => model.Departamento.Codigo)
                     </th>
-                    <th>@Html.DisplayNameFor(model => model.Entities.FirstOrDefault().Descricao)</th>
+                    <th>@Html.DisplayNameFor(model => model.Departamento.Descricao)</th>
                 </tr>
             </thead>
 
             <tbody>
                 @if (Model != null)
                 {
-                    @foreach (var item in Model.Entities)
+                    @foreach (var item in Model.Departamentos)
                     {
                         <tr>
                             <td>
@@ -73,26 +74,10 @@
                 }
             </tbody>
         </table>
+        <partial name="PagerPartial" model="Model.PageInfo" />
     </div>
 
-    <div class="btn-group pull-right m-1">
-        @if (Model.Entities is not null)
-        {
-            @if (Model.TotalPages > 1)
-            {
-                for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <a asp-action="Index"
-                       asp-route-itemPage="@i"
-                       asp-route-filter="@Model.Filter"
-                       class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-outline-dark")">
-                        @i
-                    </a>
-                }
-            }
-        }
-    </div>
 </div>
 <br />
 <script src="~/js/departamentoScript.js"></script>
-<partial name="Partials/Departamento/ExcluirDepartamentoModal" for="Entities"></partial>
+<partial name="Partials/Departamento/ExcluirDepartamentoModal" for="Departamento"></partial>
