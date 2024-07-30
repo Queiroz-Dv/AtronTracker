@@ -4,7 +4,7 @@ using Communication.Interfaces.Services;
 using Communication.Models;
 using Communication.Services;
 using ExternalServices.Interfaces;
-using ExternalServices.Models;
+using ExternalServices.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Services;
@@ -29,6 +29,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<ICommunicationService, CommunicationService>();
             
             services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
+            services.AddScoped<ICargoExternalService, CargoExternalService>();
 
             services.AddScoped<PaginationService>();
             return services;
