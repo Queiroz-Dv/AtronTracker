@@ -7,6 +7,7 @@ using ExternalServices.Interfaces;
 using ExternalServices.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Services;
 
 namespace Atron.Infra.IoC
 {
@@ -26,8 +27,10 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IApiClient, ApiClient>();
             services.AddScoped<ICommunicationService, CommunicationService>();
-
+            
             services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
+
+            services.AddScoped<PaginationService>();
             return services;
         }
     }

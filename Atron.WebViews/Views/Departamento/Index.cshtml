@@ -1,8 +1,9 @@
 ﻿@using Atron.Application.DTO;
 @using Shared.DTO;
+@using Shared.Services;
 @using Newtonsoft.Json;
 @using Atron.WebViews.Models;
-@model PageInfoDTO<DepartamentoDTO>
+@model DepartamentoModel;
 
 <link href="~/css/site.css" />
 <style>
@@ -39,16 +40,16 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Entities.FirstOrDefault().Codigo)
+                        @Html.DisplayNameFor(model => model.Departamento.Codigo)
                     </th>
-                    <th>@Html.DisplayNameFor(model => model.Entities.FirstOrDefault().Descricao)</th>
+                    <th>@Html.DisplayNameFor(model => model.Departamento.Descricao)</th>
                 </tr>
             </thead>
 
             <tbody>
                 @if (Model != null)
                 {
-                    @foreach (var item in Model.Entities)
+                    @foreach (var item in Model.Departamentos)
                     {
                         <tr>
                             <td>
@@ -73,10 +74,10 @@
                 }
             </tbody>
         </table>
-        
+        <partial name="PagerPartial" model="Model.PageInfo" />
     </div>
 
 </div>
 <br />
 <script src="~/js/departamentoScript.js"></script>
-<partial name="Partials/Departamento/ExcluirDepartamentoModal" for="Entities"></partial>
+<partial name="Partials/Departamento/ExcluirDepartamentoModal" for="Departamento"></partial>
