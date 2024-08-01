@@ -6,7 +6,7 @@ using ExternalServices.Interfaces;
 using Newtonsoft.Json;
 using Shared.DTO;
 
-namespace ExternalServices.Models
+namespace ExternalServices.Services
 {
     public class DepartamentoExternalService : IDepartamentoExternalService
     {
