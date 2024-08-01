@@ -1,12 +1,7 @@
 ﻿using Atron.Application.DTO;
-using Communication.Interfaces.Services;
 using Communication.Interfaces;
+using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace ExternalServices.Services
