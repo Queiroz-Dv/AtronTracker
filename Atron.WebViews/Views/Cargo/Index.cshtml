@@ -3,13 +3,17 @@
 @using Shared.Services;
 @using Newtonsoft.Json;
 @using Atron.WebViews.Models;
-@model List<CargoDTO>
+@model CargoModel;
 
 <style>
     .modal-lg {
         max-width: 80%;
     }
 </style>
+
+<div>
+    <h2>@ViewData["Title"]</h2>
+</div>
 <hr />
 
 <div class="row">
@@ -27,32 +31,32 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Codigo)</th>
-                <th>@Html.DisplayNameFor(model => model.First().Descricao)</th>
+                <th>@Html.DisplayNameFor(model => model.Cargo.Codigo)</th>
+                <th>@Html.DisplayNameFor(model => model.Cargo.Descricao)</th>
                 <th>Departamento</th>
             </tr>
         </thead>
 
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Cargos)
             {
                 <tr>
                     <td>@item.Codigo</td>
-                    <td>@item.Descricao</td>
-                    @* <td>@item.DepartamentoCodigo - @item.DepartamentoDescricao</td> *@
+                    <td>@item.Descricao</td>                    
                     <td>@item.DepartamentoCodigo</td>
 
                     <td>
                         <a asp-action="Atualizar" asp-route-id="@item.Codigo" title="Atualizar" class="btn btn-warning">
-                            <span class="fas fa-edit">Edit</span>
+                            <span class="fas fa-edit">Atualizar</span>
                         </a>
 
-                        <a asp-action="Delete" asp-route-id="@item.Codigo" title="Delete" class="btn btn-danger">
-                            <span class="fas fa-trash-alt">Delete</span>
+                        <a asp-action="Remover" asp-route-id="@item.Codigo" title="Remover" class="btn btn-danger">
+                            <span class="fas fa-trash-alt">Remover</span>
                         </a>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    <partial name="PagerPartial" model="Model.PageInfo" />
 </div>

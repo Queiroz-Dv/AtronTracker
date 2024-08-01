@@ -13,7 +13,7 @@
             {
                 <li class="page-item">
                     <a class="page-link" asp-controller="@Model.CurrentController"
-                       asp-action="Index"
+                       asp-action="@Model.Action"
                        asp-route-itemPage="@(Model.CurrentPage - 1)"
                        aria-label="Anterior">
                         <span aria-hidden="true">&laquo;</span>
@@ -27,7 +27,7 @@
             {
                 <li class="page-item" @(pager == Model.CurrentPage ? "active" : "")>
                     <a class="page-link"
-                       asp-controller="@Model.CurrentController" asp-action="Index"
+                       asp-controller="@Model.CurrentController" asp-action="@Model.Action"
                        asp-route-filter="@Model.Filter"
                        asp-route-itemPage="@pager">@pager</a>
                 </li>
@@ -37,14 +37,13 @@
             {
                 <li class="page-item">
                     <a class="page-link" asp-controller="@Model.CurrentController"
-                       asp-action="Index"
+                       asp-action="@Model.Action"
                        asp-route-itemPage="@(Model.CurrentPage + 1)">
                         <span aria-hidden="true">&raquo;</span>
                         <span class="sr-only">Próximo</span>
                     </a>
                 </li>
             }
-
         </ul>
     }
 </div>

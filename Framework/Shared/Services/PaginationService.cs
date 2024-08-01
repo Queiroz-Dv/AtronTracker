@@ -2,13 +2,19 @@
 
 namespace Shared.Services
 {
-    public class PaginationService 
+    public class PaginationService
     {
         private int CurrentPage { get; set; }
         private int ItemsPerPage { get; set; }
 
-        public PageInfoDTO Paginate<T>(IEnumerable<T> items, int currentPage, string controllerRoute, string filter = "", int itemsPerPage = 5)
+        public PageInfoDTO Paginate<T>(IEnumerable<T> items,
+            int currentPage,
+            string controllerRoute,
+            string filter = "",
+            string action = nameof(Index),
+            int itemsPerPage = 5)
         {
+            //var filteredItems = ApplyFilter(items, filter);
             var totalItems = items.Count();
             var totalPages = (int)Math.Ceiling((decimal)totalItems / itemsPerPage);
             var startPage = currentPage - 2;
@@ -35,6 +41,7 @@ namespace Shared.Services
                 ItemsPerPage = itemsPerPage,
                 CurrentPage = currentPage,
                 CurrentController = controllerRoute,
+                Action = action,
                 Filter = filter,
                 StartPage = startPage,
                 EndPage = endPage
@@ -45,12 +52,24 @@ namespace Shared.Services
             return pageInfo;
         }
 
-        public List<T> GetEntityPaginated<T>(List<T> values)
+        public List<T> GetEntityPaginated<T>(List<T> values, string filter = "")
         {
-            var entities = values.Skip((CurrentPage - 1) * ItemsPerPage)
+            var filteredItems = ApplyFilter(values, filter);
+            var entities = filteredItems.Skip((CurrentPage - 1) * ItemsPerPage)
                             .Take(ItemsPerPage)
                             .ToList();
             return entities;
         }
-    }   
+
+        private IEnumerable<T> ApplyFilter<T>(IEnumerable<T> items, string filter)
+        {
+            if (string.IsNullOrEmpty(filter))
+            {
+                return items;
+            }
+
+            // Assuming T has a property called Codigo
+            return items.Where(item => item.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString().Contains(filter.ToUpper()) ?? false);
+        }
+    }
 }
