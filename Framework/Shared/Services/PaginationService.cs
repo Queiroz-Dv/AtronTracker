@@ -69,7 +69,8 @@ namespace Shared.Services
             }
 
             // Assuming T has a property called Codigo
-            return items.Where(item => item.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString().Contains(filter.ToUpper()) ?? false);
+            var entities = items.Where(item => item?.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString()?.Contains(filter.ToUpper()) ?? false);
+            return entities;
         }
     }
 }
