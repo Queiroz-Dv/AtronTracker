@@ -45,7 +45,7 @@ namespace Atron.WebApi.Controllers
 
             await _cargoService.CriarAsync(cargo);
 
-            return Ok(cargo);
+            return Ok(_cargoService.notificationMessages);
         }
 
         [HttpPut("AtualizarCargo/{codigo}")]

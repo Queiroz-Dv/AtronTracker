@@ -1,8 +1,12 @@
-﻿using Atron.Domain.Entities;
+﻿using Atron.Application.DTO;
+using Atron.Domain.Entities;
 using Atron.WebViews.Models;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Shared.DTO;
 using Shared.Services;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,6 +17,7 @@ namespace Atron.WebViews.Controllers
         private IDepartamentoExternalService _departamentoService;
         private ICargoExternalService _cargoExternalService;
         private readonly PaginationService _paginationService;
+        public List<ResultResponse> ResultResponses { get; set; }
 
         public CargoController(IDepartamentoExternalService departamentoService,
             ICargoExternalService cargoExternalService,
@@ -62,15 +67,34 @@ namespace Atron.WebViews.Controllers
             }
 
             var pageInfo = _paginationService.Paginate(departamentos, itemPage, nameof(Cargo), filter, nameof(Cadastrar));
-            var departamentosModel = new DepartamentoModel()
-            {
-                Departamentos = _paginationService.GetEntityPaginated(departamentos),
-                PageInfo = pageInfo
-            };
+            var entityPaginated = _paginationService.GetEntityPaginated(departamentos);
 
-            ViewBag.Departamentos = departamentosModel;
+            var model = new CargoModel();
+            model.Departamentos.AddRange(entityPaginated);
+            model.PageInfo = pageInfo;
 
-            return View();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Cadastrar(CargoModel model)
+        {
+            var cargoDTO = new CargoDTO();
+            cargoDTO.Codigo = model.Cargo.Codigo;
+            cargoDTO.Descricao = model.Cargo.Descricao;
+            cargoDTO.DepartamentoCodigo = model.Cargo.DepartamentoCodigo;
+
+
+            var response = await _cargoExternalService.Criar(cargoDTO);
+            ResultResponses.AddRange(response.responses);
+
+            var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
+            TempData["Notifications"] = responseSerialized;
+            return response.isSucess ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), cargoDTO);
+
+
+            //ViewData["Title"] = "Cadastro de departamentos";
+            //return View(new { filter = "", itemPage = 1 });
         }
 
         [HttpGet]

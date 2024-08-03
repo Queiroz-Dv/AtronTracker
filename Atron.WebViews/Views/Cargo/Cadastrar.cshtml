@@ -3,34 +3,27 @@
 @using Shared.Services;
 @using Newtonsoft.Json;
 @using Atron.WebViews.Models;
-@model CargoDTO;
-
-@{
-    DepartamentoModel Departamentos = ViewBag.Departamentos;
-}
+@model CargoModel;
 
 <link href="~/css/site.css" />
 
 <h2 style="margin-bottom: 40px;">@ViewData["Title"]</h2>
 
-
-
-
 <form asp-action="Cadastrar" method="post" class="form-horizontal">
 
     <div class="form-group row">
-        <label asp-for="Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
+        <label asp-for="Cargo.Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
         <div class="col-md-5 mb-3">
-            <input asp-for="Codigo" class="form-control" />
-            <span asp-validation-for="Codigo" class="text-danger"></span>
+            <input asp-for="Cargo.Codigo" class="form-control" />
+            <span asp-validation-for="Cargo.Codigo" class="text-danger"></span>
         </div>
     </div>
 
     <div class="form-group row">
-        <label asp-for="Descricao" class="col-md-2 col-form-label font-weight-bold"></label>
+        <label asp-for="Cargo.Descricao" class="col-md-2 col-form-label font-weight-bold"></label>
         <div class="col-md-7 mb-3">
-            <input asp-for="Descricao" class="form-control" />
-            <span asp-validation-for="Descricao" class="text-danger"></span>
+            <input asp-for="Cargo.Descricao" class="form-control" />
+            <span asp-validation-for="Cargo.Descricao" class="text-danger"></span>
         </div>
     </div>
 
@@ -50,8 +43,8 @@
         </div>
     </div>
     <div id="departamentosTable" class="form-group">
-        @await Html.PartialAsync("Partials/Departamento/DepartamentosTablePartial", Departamentos);
-        <partial name="PagerPartial" model="Departamentos.PageInfo" />
+        @await Html.PartialAsync("Partials/Departamento/DepartamentosTablePartial", Model);
+        <partial name="PagerPartial" model="Model.PageInfo" />
     </div>
 
     <div class="form-group row">
