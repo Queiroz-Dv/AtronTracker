@@ -3,6 +3,7 @@ using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Newtonsoft.Json;
+using Shared.DTO;
 
 namespace ExternalServices.Services
 {
@@ -15,6 +16,14 @@ namespace ExternalServices.Services
         {
             _apiClient = apiClient;
             _communicationService = communicationService;
+        }
+
+        public async Task<(bool isSucess, List<ResultResponse> responses)> Criar(CargoDTO cargoDTO)
+        {            
+            var json  = JsonConvert.SerializeObject(cargoDTO);
+            var response = await _apiClient.PostAsync("https://atron-hmg.azurewebsites.net/api/Cargo/CriarCargo", json);
+            var notifications = _communicationService.GetResultResponses();
+            return (true, notifications);
         }
 
         public async Task<List<CargoDTO>> ObterTodos()
