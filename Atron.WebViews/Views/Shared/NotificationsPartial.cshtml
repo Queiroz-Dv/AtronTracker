@@ -8,7 +8,6 @@
     List<ResultResponse> notifications = notificationsTempData is not null ? JsonConvert.DeserializeObject<List<ResultResponse>>(notificationsTempData.ToString()) : null;
 }
 
-
 @if (notifications != null)
 {
     <script>

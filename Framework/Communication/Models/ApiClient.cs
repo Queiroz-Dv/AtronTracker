@@ -2,8 +2,6 @@
 using Communication.Interfaces.Services;
 using Newtonsoft.Json;
 using Shared.DTO;
-using System;
-using System.Reflection.Metadata;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -83,7 +81,7 @@ namespace Communication.Models
                 string responseContent = await FillResultResponse(response);
                 return responseContent;
             }
-          
+
             return string.Empty;
         }
     }
