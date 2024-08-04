@@ -30,17 +30,11 @@ namespace Atron.WebViews.Controllers
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ViewData["Title"] = "Painel de departamentos";
-
             var departamentos = await _externalService.ObterTodos();
 
             if (!departamentos.Any())
             {
                 return View();
-            }
-
-            if (!string.IsNullOrEmpty(filter))
-            {
-                departamentos = departamentos.Where(dpt => dpt.Codigo.Contains(filter)).ToList();
             }
 
             var pageInfo = _paginationService.Paginate(departamentos, itemPage, nameof(Departamento), filter);
