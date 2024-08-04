@@ -3,7 +3,7 @@
 @using Shared.Services;
 @using Newtonsoft.Json;
 @using Atron.WebViews.Models;
-@model CargoModel;
+@model CargoDTO;
 
 <link href="~/css/site.css" />
 
@@ -12,39 +12,31 @@
 <form asp-action="Cadastrar" method="post" class="form-horizontal">
 
     <div class="form-group row">
-        <label asp-for="Cargo.Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
+        <label asp-for="Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
         <div class="col-md-5 mb-3">
-            <input asp-for="Cargo.Codigo" class="form-control" />
-            <span asp-validation-for="Cargo.Codigo" class="text-danger"></span>
+            <input asp-for="Codigo" class="form-control" />
+            <span asp-validation-for="Codigo" class="text-danger"></span>
         </div>
     </div>
 
     <div class="form-group row">
-        <label asp-for="Cargo.Descricao" class="col-md-2 col-form-label font-weight-bold"></label>
+        <label asp-for="Descricao" class="col-md-2 col-form-label font-weight-bold"></label>
         <div class="col-md-7 mb-3">
-            <input asp-for="Cargo.Descricao" class="form-control" />
-            <span asp-validation-for="Cargo.Descricao" class="text-danger"></span>
+            <input asp-for="Descricao" class="form-control" />
+            <span asp-validation-for="Descricao" class="text-danger"></span>
         </div>
     </div>
 
-    <div class="float-left">
-        <h3>Departamentos</h3>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="float-right">
-                <div>
-                    <p>
-                        <input type="text" name="filter" id="codigoDepartamento" />
-                        <input type="button" value="Filtrar" id="btnFiltrar" />
-                    </p>
-                </div>
-            </div>
+    <div class="form-group row">
+        <div>
+            <label class="font-weight-bold">Departamentos</label>
+            <label asp-for="Departamento" class="col-md-9 col-form-label">
+                <select asp-for="DepartamentoCodigo" id="departamentoCodigo" class="form-control" asp-items="@ViewBag.Departamentos">
+                    <option>Selecione um departamento</option>
+                </select>
+            </label>
+            <span asp-validation-for="DepartamentoCodigo" class="text-danger"></span>
         </div>
-    </div>
-    <div id="departamentosTable" class="form-group">
-        @await Html.PartialAsync("Partials/Departamento/DepartamentosTablePartial", Model);
-        <partial name="PagerPartial" model="Model.PageInfo" />
     </div>
 
     <div class="form-group row">
@@ -55,19 +47,12 @@
     </div>
 </form>
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#btnFiltrar").click(function () {
-                var filter = $("#codigoDepartamento").val();
-                $.ajax({
-                    url: '@Url.Action("FiltrarDepartamentos", "Cargo")',
-                    type: 'GET',
-                    data: { filter: filter },
-                    success: function (result) {
-                        $("#departamentosTable").html(result);
-                    }
-                });
-            });
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#departamentoCodigo").select2();
         });
     </script>
 }

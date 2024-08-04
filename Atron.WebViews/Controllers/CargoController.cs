@@ -3,8 +3,11 @@ using Atron.Domain.Entities;
 using Atron.WebViews.Models;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Shared.DTO;
+using Shared.Enums;
+using Shared.Extensions;
 using Shared.Services;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +20,7 @@ namespace Atron.WebViews.Controllers
         private IDepartamentoExternalService _departamentoService;
         private ICargoExternalService _cargoExternalService;
         private readonly PaginationService _paginationService;
+
         public List<ResultResponse> ResultResponses { get; set; }
 
         public CargoController(IDepartamentoExternalService departamentoService,
@@ -26,6 +30,7 @@ namespace Atron.WebViews.Controllers
             _departamentoService = departamentoService;
             _cargoExternalService = cargoExternalService;
             _paginationService = paginationService;
+            ResultResponses = new List<ResultResponse>();
         }
 
         [HttpGet]
@@ -39,15 +44,10 @@ namespace Atron.WebViews.Controllers
                 return View();
             }
 
-            if (!string.IsNullOrEmpty(filter))
-            {
-                cargos = cargos.Where(dpt => dpt.Codigo.Contains(filter)).ToList();
-            }
-
             var pageInfo = _paginationService.Paginate(cargos, itemPage, nameof(Cargo), filter);
             var model = new CargoModel()
             {
-                Cargos = cargos,
+                Cargos = _paginationService.GetEntityPaginated(cargos, filter),
                 PageInfo = pageInfo
             };
 
@@ -55,62 +55,53 @@ namespace Atron.WebViews.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Cadastrar(string filter = "", int itemPage = 1)
+        public async Task<IActionResult> Cadastrar()
         {
             ViewData["Title"] = "Cadastro de cargos";
+
             var departamentos = await _departamentoService.ObterTodos();
 
-            if (departamentos is null || departamentos.Count() is 0)
+            if (!departamentos.Any())
             {
-                //TempData["NotificacaoDeErro"] = JsonConvert.SerializeObject(("Para criar um cargo é necessário ter um departamento.", EGuardianMessageType.Error));
+                ResultResponses.Add(new ResultResponse() { Message = "Para criar um cargo é necessário ter um departamento.", Level = ResultResponseEnum.Error.GetEnumDescription() });
+                var result = JsonConvert.SerializeObject(ResultResponses);
+                TempData["Notifications"] = result;
                 return RedirectToAction(nameof(Index));
             }
 
-            var pageInfo = _paginationService.Paginate(departamentos, itemPage, nameof(Cargo), filter, nameof(Cadastrar));
-            var entityPaginated = _paginationService.GetEntityPaginated(departamentos);
+            var departamentosFiltrados = departamentos.Select(dpt =>
+                new
+                {
+                    dpt.Codigo,
+                    Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
+                }).ToList();
 
-            var model = new CargoModel();
-            model.Departamentos.AddRange(entityPaginated);
-            model.PageInfo = pageInfo;
-
-            return View(model);
+            ViewBag.Departamentos = new SelectList(departamentosFiltrados, "Codigo", "Descricao");
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Cadastrar(CargoModel model)
+        public async Task<IActionResult> Cadastrar(CargoDTO model)
         {
-            var cargoDTO = new CargoDTO();
-            cargoDTO.Codigo = model.Cargo.Codigo;
-            cargoDTO.Descricao = model.Cargo.Descricao;
-            cargoDTO.DepartamentoCodigo = model.Cargo.DepartamentoCodigo;
-
-
-            var response = await _cargoExternalService.Criar(cargoDTO);
-            ResultResponses.AddRange(response.responses);
-
-            var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
-            TempData["Notifications"] = responseSerialized;
-            return response.isSucess ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), cargoDTO);
-
-
-            //ViewData["Title"] = "Cadastro de departamentos";
-            //return View(new { filter = "", itemPage = 1 });
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> FiltrarDepartamentos(string filter = "", int itemPage = 1)
-        {
-            var departamentos = await _departamentoService.ObterTodos();
-
-            var pageInfo = _paginationService.Paginate(departamentos, itemPage, nameof(Cargo), filter, nameof(Cadastrar));
-            var departamentosModel = new DepartamentoModel()
+            if (ModelState.IsValid)
             {
-                Departamentos = _paginationService.GetEntityPaginated(departamentos, filter),
-                PageInfo = pageInfo
-            };
+                var response = await _cargoExternalService.Criar(model);
+                ResultResponses.AddRange(response.responses);
 
-            return PartialView("Partials/Departamento/DepartamentosTablePartial", departamentosModel);
+                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
+                TempData["Notifications"] = responseSerialized;
+                return response.isSucess ? RedirectToAction(nameof(Cadastrar)) : View();
+            }
+
+            ResultResponses.Add(new ResultResponse()
+            {
+                Message = "Registro inválido para gravação. Tente novamente.",
+                Level = ResultResponseEnum.Error.GetEnumDescription()
+            });
+
+            var result = JsonConvert.SerializeObject(ResultResponses);
+            TempData["Notifications"] = result;
+            return RedirectToAction(nameof(Cadastrar));
         }
-
     }
 }

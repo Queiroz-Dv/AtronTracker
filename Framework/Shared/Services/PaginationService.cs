@@ -6,19 +6,20 @@ namespace Shared.Services
     {
         private int CurrentPage { get; set; }
         private int ItemsPerPage { get; set; }
+        
 
-        public PageInfoDTO Paginate<T>(IEnumerable<T> items,
+        public PageInfoDTO Paginate<T>(IEnumerable<T> allItens, 
             int currentPage,
             string controllerRoute,
             string filter = "",
             string action = nameof(Index),
             int itemsPerPage = 5)
         {
-            //var filteredItems = ApplyFilter(items, filter);
-            var totalItems = items.Count();
+            var filteredItens = ApplyFilter(allItens, filter);
+            var totalItems = filteredItens.Count();
             var totalPages = (int)Math.Ceiling((decimal)totalItems / itemsPerPage);
             var startPage = currentPage - 2;
-            var endPage = currentPage + 1;
+            var endPage = currentPage + 2;
 
             if (startPage <= 0)
             {
@@ -35,6 +36,9 @@ namespace Shared.Services
                 }
             }
 
+            CurrentPage = currentPage;
+            ItemsPerPage = itemsPerPage;
+
             var pageInfo = new PageInfoDTO
             {
                 TotalItems = totalItems,
@@ -47,17 +51,20 @@ namespace Shared.Services
                 EndPage = endPage
             };
 
-            CurrentPage = currentPage;
-            ItemsPerPage = itemsPerPage;
             return pageInfo;
         }
 
         public List<T> GetEntityPaginated<T>(List<T> values, string filter = "")
         {
             var filteredItems = ApplyFilter(values, filter);
-            var entities = filteredItems.Skip((CurrentPage - 1) * ItemsPerPage)
-                            .Take(ItemsPerPage)
-                            .ToList();
+            return PaginateEntities(filteredItems);
+        }
+
+        private List<T> PaginateEntities<T>(IEnumerable<T> items)
+        {
+            var entities = items.Skip((CurrentPage - 1) * ItemsPerPage)
+                                .Take(ItemsPerPage)
+                                .ToList();
             return entities;
         }
 
@@ -67,8 +74,7 @@ namespace Shared.Services
             {
                 return items;
             }
-
-            // Assuming T has a property called Codigo
+            
             var entities = items.Where(item => item?.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString()?.Contains(filter.ToUpper()) ?? false);
             return entities;
         }
