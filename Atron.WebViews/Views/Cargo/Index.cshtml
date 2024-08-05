@@ -27,7 +27,14 @@
 </div>
 <br />
 
+
 <div class="panel panel-default">
+    <form asp-controller="Cargo" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
+        <p>
+            <input type="text" name="filter" />
+            <input type="submit" value="Filtrar" />
+        </p>
+    </form>
     <table class="table table-striped">
         <thead>
             <tr>
