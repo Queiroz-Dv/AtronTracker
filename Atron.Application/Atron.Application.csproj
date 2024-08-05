@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ValueObjects\**" />
+    <EmbeddedResource Remove="ValueObjects\**" />
+    <None Remove="ValueObjects\**" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="10.1.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.2" />
+	</ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\Atron.Domain\Atron.Domain.csproj" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Folder Include="DTO\Request\" />
+    <Folder Include="DTO\Response\" />
+  </ItemGroup>
+
+</Project>
