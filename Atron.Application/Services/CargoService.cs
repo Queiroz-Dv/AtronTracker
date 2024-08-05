@@ -69,6 +69,11 @@ namespace Atron.Application.Services
             }
 
             _notification.Validate(cargo);
+            var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(cargo.Codigo);
+            if (cargoBd is not null && cargo.Codigo == cargoBd.Codigo)
+            {
+                _notification.AddError("Cargo já existe com esse código. Cadastre outro com um novo código.");
+            }
 
             if (!_notification.Messages.HasErrors())
             {
@@ -86,7 +91,7 @@ namespace Atron.Application.Services
 
             if (departamento)
             {
-                var entidade= await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
+                var entidade = await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
                 cargo.DepartmentoId = entidade.DepartmentoId;
                 cargo.SetId(entidade.Id); // Atribuição de Id internamente
             }
@@ -110,6 +115,12 @@ namespace Atron.Application.Services
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
 
             var cargoDTO = _mapper.Map<CargoDTO>(cargo);
+
+            if (cargoDTO is null)
+            {
+                _notification.AddError("Cargo informado não existe");
+                notificationMessages.AddRange(_notification.Messages);
+            }
 
             return cargoDTO;
         }

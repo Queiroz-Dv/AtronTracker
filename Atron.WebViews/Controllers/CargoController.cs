@@ -33,10 +33,12 @@ namespace Atron.WebViews.Controllers
             ResultResponses = new List<ResultResponse>();
         }
 
-        [HttpGet]
+        [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ViewData["Title"] = "Painel de cargos";
+            ViewData["Filter"] = filter;
+
             var cargos = await _cargoExternalService.ObterTodos();
 
             if (!cargos.Any())

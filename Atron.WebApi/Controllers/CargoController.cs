@@ -82,5 +82,21 @@ namespace Atron.WebApi.Controllers
 
             return Ok(cargo);
         }
+
+        [HttpGet]
+        [Route("ObterPorCodigo/{codigo}")]
+        public async Task<ActionResult<IEnumerable<CargoDTO>>> GetByCode(string codigo)
+        {
+            var cargo = await _cargoService.ObterPorCodigoAsync(codigo);
+
+            if (cargo is not null)
+            {
+                return Ok(cargo);
+            }
+            else
+            {
+                return NotFound(_cargoService.notificationMessages);
+            }
+        }
     }
 }
