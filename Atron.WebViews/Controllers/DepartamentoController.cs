@@ -13,45 +13,35 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class DepartamentoController : Controller
+    public class DepartamentoController : DefaultController<DepartamentoDTO>
     {
-        private IDepartamentoExternalService _externalService;
-        private readonly PaginationService _paginationService;
+        private IDepartamentoExternalService _externalService;        
 
-        public List<ResultResponse> ResultResponses { get; set; }
-
-        public DepartamentoController(IDepartamentoExternalService externalService, PaginationService paginationService)
+        public DepartamentoController(IDepartamentoExternalService externalService)
         {
-            _externalService = externalService;
-            _paginationService = paginationService;
-            ResultResponses = new List<ResultResponse>();
+            _externalService = externalService;            
+            CurrentController = nameof(Departamento);
         }
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
-        {
-            ViewData["Title"] = "Painel de departamentos";
-            ViewData["Filter"] = filter;
-
+        {          
             var departamentos = await _externalService.ObterTodos();
 
+            ConfigureViewDataTitle("Painel de departamentos");
             if (!departamentos.Any())
             {
                 return View();
             }
 
-            var pageInfo = _paginationService.Paginate(departamentos, itemPage, nameof(Departamento), filter);
-            if (!string.IsNullOrEmpty(filter))
-            {
-                _paginationService.ForceFilter = true;
-                _paginationService.FilterBy = filter;
-            }
-
-            var entities = _paginationService.GetEntityPaginated(departamentos, filter);
+            Filter = filter;
+            ForceFilter = true;
+            ConfigureEntitiesForView(departamentos, itemPage);
+            
             var model = new DepartamentoModel()
             {
-                Departamentos = entities,
-                PageInfo = pageInfo
+                Departamentos = GetEntities(),
+                PageInfo = GetPageInfo()
             };
 
             return View(model);
@@ -60,7 +50,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public IActionResult Cadastrar()
         {
-            ViewData["Title"] = "Cadastro de departamentos";
+            ConfigureViewDataTitle("Cadastro de departamentos");
             return View();
         }
 
@@ -71,13 +61,12 @@ namespace Atron.WebViews.Controllers
             {
                 await _externalService.Criar(departamento);
 
-                var responses = _externalService.ResultResponses;
-                var responseSerialized = JsonConvert.SerializeObject(responses);
-                TempData["Notifications"] = responseSerialized;
+                var responses = _externalService.ResultResponses;    
+                ConfigureNotifications(responses);
                 return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
             }
 
-            ViewData["Title"] = "Cadastro de departamentos";
+            ConfigureViewDataTitle("Cadastro de departamentos");
             return View(departamento);
         }
 
