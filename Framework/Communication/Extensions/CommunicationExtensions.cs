@@ -1,4 +1,6 @@
 ﻿using Shared.DTO;
+using Shared.Enums;
+using Shared.Extensions;
 
 namespace Communication.Extensions
 {
@@ -6,8 +8,7 @@ namespace Communication.Extensions
     {
         public static bool HasErrors(this List<ResultResponse> resultResponses)
         {
-            var hasErrors = resultResponses.Count(rst => rst.Level == "Error") > 0;
-            return hasErrors;
+            return resultResponses.Any(rst => rst.Level == ResultResponseEnum.Error.GetEnumDescription());
         }
     }
 }

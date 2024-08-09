@@ -6,9 +6,10 @@ namespace Shared.Services
     {
         private int CurrentPage { get; set; }
         private int ItemsPerPage { get; set; }
-        
+        public bool ForceFilter { get; set; }
+        public string FilterBy { get; set; }
 
-        public PageInfoDTO Paginate<T>(IEnumerable<T> allItens, 
+        public PageInfoDTO Paginate<T>(IEnumerable<T> allItens,
             int currentPage,
             string controllerRoute,
             string filter = "",
@@ -56,7 +57,8 @@ namespace Shared.Services
 
         public List<T> GetEntityPaginated<T>(List<T> values, string filter = "")
         {
-            var filteredItems = ApplyFilter(values, filter);
+            var filteredItems = ForceFilter ? ApplyFilter(values, FilterBy) : ApplyFilter(values, filter);
+
             return PaginateEntities(filteredItems);
         }
 
@@ -74,8 +76,8 @@ namespace Shared.Services
             {
                 return items;
             }
-            
-            var entities = items.Where(item => item?.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString()?.Contains(filter.ToUpper()) ?? false);
+
+            var entities = items.Where(item => item?.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString()?.Contains(filter) ?? false);
             return entities;
         }
     }

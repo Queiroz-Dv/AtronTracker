@@ -12,12 +12,15 @@ namespace ExternalServices.Services
     {
         private readonly IApiClient _apiClient;
         private readonly ICommunicationService _communicationService;
+        public List<ResultResponse> ResultResponses { get; set; }
 
         public DepartamentoExternalService(IApiClient apiClient, ICommunicationService communicationService)
         {
             _apiClient = apiClient;
             _communicationService = communicationService;
+            ResultResponses = new List<ResultResponse>();
         }
+
 
         public async Task<(bool isSucess, List<ResultResponse> responses)> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
@@ -41,20 +44,11 @@ namespace ExternalServices.Services
 
         }
 
-        public async Task<(bool isSucess, List<ResultResponse> responses)> Criar(DepartamentoDTO departamento)
+        public async Task Criar(DepartamentoDTO departamento)
         {
             var json = JsonConvert.SerializeObject(departamento);
-            var response = await _apiClient.PostAsync("https://atron-hmg.azurewebsites.net/api/Departamento/CriarDepartamento", json);
-            var notifications = _communicationService.GetResultResponses();
-
-            if (!notifications.HasErrors())
-            {
-                return (true, notifications);
-            }
-            else
-            {
-                return (false, notifications);
-            }
+            await _apiClient.PostAsync("https://atron-hmg.azurewebsites.net/api/Departamento/CriarDepartamento", json);
+            ResultResponses.AddRange(_communicationService.GetResultResponses());
         }
 
         public async Task<List<DepartamentoDTO>> ObterTodos()

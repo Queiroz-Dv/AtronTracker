@@ -1,6 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
+using Communication.Extensions;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -26,10 +27,12 @@ namespace Atron.WebViews.Controllers
             ResultResponses = new List<ResultResponse>();
         }
 
-        [HttpGet]
+        [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ViewData["Title"] = "Painel de departamentos";
+            ViewData["Filter"] = filter;
+
             var departamentos = await _externalService.ObterTodos();
 
             if (!departamentos.Any())
@@ -38,9 +41,16 @@ namespace Atron.WebViews.Controllers
             }
 
             var pageInfo = _paginationService.Paginate(departamentos, itemPage, nameof(Departamento), filter);
+            if (!string.IsNullOrEmpty(filter))
+            {
+                _paginationService.ForceFilter = true;
+                _paginationService.FilterBy = filter;
+            }
+
+            var entities = _paginationService.GetEntityPaginated(departamentos, filter);
             var model = new DepartamentoModel()
             {
-                Departamentos = _paginationService.GetEntityPaginated(departamentos),
+                Departamentos = entities,
                 PageInfo = pageInfo
             };
 
@@ -59,12 +69,12 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _externalService.Criar(departamento);
-                ResultResponses.AddRange(response.responses);
+                await _externalService.Criar(departamento);
 
-                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
+                var responses = _externalService.ResultResponses;
+                var responseSerialized = JsonConvert.SerializeObject(responses);
                 TempData["Notifications"] = responseSerialized;
-                return response.isSucess ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
+                return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
             }
 
             ViewData["Title"] = "Cadastro de departamentos";
