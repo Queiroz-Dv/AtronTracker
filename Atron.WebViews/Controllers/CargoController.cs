@@ -62,7 +62,7 @@ namespace Atron.WebViews.Controllers
 
             if (!departamentos.Any())
             {
-                ResultResponses.Add(new ResultResponse() { Message = "Para criar um cargo é necessário ter um departamento.", Level = ResultResponseLevelEnum.Error.GetEnumDescription() });
+                ResultResponses.Add(new ResultResponse() { Message = "Para criar um cargo é necessário ter um departamento.", Level = ResultResponseLevelEnum.Error });
                 var result = JsonConvert.SerializeObject(ResultResponses);
                 TempData["Notifications"] = result;
                 return RedirectToAction(nameof(Index));
@@ -95,7 +95,7 @@ namespace Atron.WebViews.Controllers
             ResultResponses.Add(new ResultResponse()
             {
                 Message = "Registro inválido para gravação. Tente novamente.",
-                Level = ResultResponseLevelEnum.Error.GetEnumDescription()
+                Level = ResultResponseLevelEnum.Error
             });
 
             var result = JsonConvert.SerializeObject(ResultResponses);

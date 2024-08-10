@@ -39,7 +39,7 @@ namespace ExternalServices.Services
             }
             catch (Exception ex)
             {
-                ResultResponses.Add(new ResultResponse() { Message = ex.Message, Level = ResultResponseLevelEnum.Error.GetEnumDescription() });
+                ResultResponses.Add(new ResultResponse() { Message = ex.Message, Level = ResultResponseLevelEnum.Error });
             }
         }
 

@@ -76,13 +76,8 @@ namespace Communication.Models
 
             var response = await _httpClient.DeleteAsync(uriFormated);
 
-            if (response.IsSuccessStatusCode)
-            {
-                string responseContent = await FillResultResponse(response);
-                return responseContent;
-            }
-
-            return string.Empty;
+            string responseContent = await FillResultResponse(response);
+            return responseContent;
         }
     }
 }
