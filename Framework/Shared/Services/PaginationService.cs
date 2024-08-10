@@ -2,14 +2,22 @@
 
 namespace Shared.Services
 {
-    public class PaginationService
+    public class PaginationService<T>
     {
+        public PaginationService()
+        {
+            PageInfo = new PageInfoDTO();
+            Entities = new List<T>();
+        }
+
+        private List<T> Entities { get; set; }
         private int CurrentPage { get; set; }
         private int ItemsPerPage { get; set; }
         public bool ForceFilter { get; set; }
         public string FilterBy { get; set; }
+        public PageInfoDTO PageInfo { get; set; }
 
-        public PageInfoDTO Paginate<T>(IEnumerable<T> allItens,
+        public void Paginate<T>(IEnumerable<T> allItens,
             int currentPage,
             string controllerRoute,
             string filter = "",
@@ -52,22 +60,14 @@ namespace Shared.Services
                 EndPage = endPage
             };
 
-            return pageInfo;
+            PageInfo = pageInfo;
         }
 
-        public List<T> GetEntityPaginated<T>(List<T> values, string filter = "")
+        public void ConfigureEntityPaginated(List<T> values, string filter = "")
         {
             var filteredItems = ForceFilter ? ApplyFilter(values, FilterBy) : ApplyFilter(values, filter);
 
-            return PaginateEntities(filteredItems);
-        }
-
-        private List<T> PaginateEntities<T>(IEnumerable<T> items)
-        {
-            var entities = items.Skip((CurrentPage - 1) * ItemsPerPage)
-                                .Take(ItemsPerPage)
-                                .ToList();
-            return entities;
+            Entities = PaginateEntities(filteredItems);            
         }
 
         private IEnumerable<T> ApplyFilter<T>(IEnumerable<T> items, string filter)
@@ -79,6 +79,19 @@ namespace Shared.Services
 
             var entities = items.Where(item => item?.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString()?.Contains(filter) ?? false);
             return entities;
+        }
+
+        private List<T> PaginateEntities<T>(IEnumerable<T> items)
+        {
+            var entities = items.Skip((CurrentPage - 1) * ItemsPerPage)
+                                .Take(ItemsPerPage)
+                                .ToList();
+            return entities;
+        }
+
+        public List<T> GetEntitiesFilled()
+        {
+            return Entities;
         }
     }
 }

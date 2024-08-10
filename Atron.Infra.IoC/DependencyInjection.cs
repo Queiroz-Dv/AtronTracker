@@ -31,7 +31,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
             services.AddScoped<ICargoExternalService, CargoExternalService>();
 
-            services.AddScoped<PaginationService>();
+            // services.AddScoped<PaginationService>();
             return services;
         }
     }

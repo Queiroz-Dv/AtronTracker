@@ -11,7 +11,7 @@ namespace Atron.WebViews.Helpers
         {
             endpoints.MapControllerRoute(
                 name: "departamento",
-                pattern: "Departamento/Index/{filter?}/{itemPage?}",             
+                pattern: "Departamento/Index/{filter?}/{itemPage?}",
                 defaults: new { controller = nameof(Departamento), action = nameof(Index)});
 
             endpoints.MapControllerRoute(

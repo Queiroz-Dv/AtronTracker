@@ -2,7 +2,7 @@
 
 namespace Shared.Enums
 {
-    public enum ResultResponseEnum
+    public enum ResultResponseLevelEnum
     {
         [Description("Success")]
         Success,

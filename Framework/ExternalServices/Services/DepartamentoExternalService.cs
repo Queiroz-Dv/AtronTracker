@@ -5,6 +5,8 @@ using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Newtonsoft.Json;
 using Shared.DTO;
+using Shared.Enums;
+using Shared.Extensions;
 
 namespace ExternalServices.Services
 {
@@ -22,26 +24,23 @@ namespace ExternalServices.Services
         }
 
 
-        public async Task<(bool isSucess, List<ResultResponse> responses)> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
+        public async Task Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
             var json = JsonConvert.SerializeObject(departamentoDTO);
             try
             {
                 var response = await _apiClient.PutAsync("https://atron-hmg.azurewebsites.net/api/Departamento/AtualizarDepartamento/", codigo, json);
-                var notifications = _communicationService.GetResultResponses();
-                return (true, notifications);
+                ResultResponses.AddRange(_communicationService.GetResultResponses());
             }
             catch (HttpRequestException ex)
             {
                 var errorResponse = JsonConvert.DeserializeObject<List<ResultResponse>>(ex.Message);
-                return (false, errorResponse);
-                throw;
+                ResultResponses.AddRange(errorResponse);
             }
             catch (Exception ex)
             {
-                return (false, new List<ResultResponse> { new ResultResponse { Message = ex.Message } });
+                ResultResponses.Add(new ResultResponse() { Message = ex.Message, Level = ResultResponseLevelEnum.Error.GetEnumDescription() });
             }
-
         }
 
         public async Task Criar(DepartamentoDTO departamento)
@@ -57,18 +56,10 @@ namespace ExternalServices.Services
             return JsonConvert.DeserializeObject<List<DepartamentoDTO>>(response);
         }
 
-        public async Task<(bool isSuccess, List<ResultResponse> responses)> Remover(string codigo)
+        public async Task Remover(string codigo)
         {
             var response = await _apiClient.DeleteAsync("https://atron-hmg.azurewebsites.net/api/Departamento/ExcluirDepartamento/", codigo);
-            var notifications = _communicationService.GetResultResponses();
-            if (!notifications.HasErrors())
-            {
-                return (true, notifications);
-            }
-            else
-            {
-                return (false, notifications);
-            }
+            ResultResponses.AddRange(_communicationService.GetResultResponses());
         }
     }
 }
