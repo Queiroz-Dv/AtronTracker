@@ -2,27 +2,27 @@
 @using Shared.DTO;
 @using Shared.Extensions;
 @using Newtonsoft.Json;
+@using Shared.Enums;
 
 @{
     var notificationsTempData = TempData["Notifications"];
-    List<ResultResponse> notifications = notificationsTempData is not null ? JsonConvert.DeserializeObject<List<ResultResponse>>(notificationsTempData.ToString()) : null;
+    List<ResultResponse> notifications = notificationsTempData is not null ?
+    JsonConvert.DeserializeObject<List<ResultResponse>>(notificationsTempData.ToString()) : null;
 }
 
 @if (notifications != null)
 {
     <script>
-
         document.addEventListener("DOMContentLoaded", function () {
-            var notifications = @Html.Raw(JsonConvert.SerializeObject(notifications));
-            notifications.forEach(function (notification) {
+            var messages = @Html.Raw(JsonConvert.SerializeObject(notifications));
+            messages.forEach(function (ntf) {
                 Swal.fire({
-                    icon: notification.Level === "Error" ? "error" : "success",
-                    title: notification.Level === "Error" ? "Erro!" : "Sucesso!",
-                    text: notification.Message,
+                    icon: ntf.Level === @ResultResponseLevelEnum.Error ? "error" : "success",
+                    title: ntf.Level === @ResultResponseLevelEnum.Error ? "Erro!" : "Sucesso!",
+                    text: ntf.Message,
                     showConfirmButton: true
                 });
             });
         });
-
     </script>
 }

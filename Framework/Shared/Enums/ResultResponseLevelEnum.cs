@@ -2,10 +2,11 @@
 
 namespace Shared.Enums
 {
+    [Serializable]
     public enum ResultResponseLevelEnum
     {
-        [Description("Success")]
-        Success,
+        [Description("Message")]
+        Message,
 
         [Description("Error")]
         Error,

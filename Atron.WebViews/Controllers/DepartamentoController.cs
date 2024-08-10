@@ -70,7 +70,7 @@ namespace Atron.WebViews.Controllers
         {
             if (codigo is null)
             {
-                ResponseViewModel.AddError("O código informado não foi encontrado");
+                ResponseModel.AddError("O código informado não foi encontrado");
                 return View(codigo);
             }
 
@@ -96,13 +96,11 @@ namespace Atron.WebViews.Controllers
         {
             if (string.IsNullOrEmpty(codigo))
             {
-                ResponseViewModel.AddError("Código não informado, tente novamente.");
+                ResponseModel.AddError("Código não informado, tente novamente.");
                 return RedirectToAction(nameof(Index));
             }
 
             await _externalService.Remover(codigo);
-
-
             CreateTempDataNotifications(_externalService.ResultResponses);
             return RedirectToAction(nameof(Index));
         }
