@@ -4,10 +4,6 @@ using Atron.WebViews.Models;
 using Communication.Extensions;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Shared.DTO;
-using Shared.Services;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,17 +11,17 @@ namespace Atron.WebViews.Controllers
 {
     public class DepartamentoController : DefaultController<DepartamentoDTO>
     {
-        private IDepartamentoExternalService _externalService;        
+        private IDepartamentoExternalService _externalService;
 
         public DepartamentoController(IDepartamentoExternalService externalService)
         {
-            _externalService = externalService;            
+            _externalService = externalService;
             CurrentController = nameof(Departamento);
         }
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
-        {          
+        {
             var departamentos = await _externalService.ObterTodos();
 
             ConfigureViewDataTitle("Painel de departamentos");
@@ -35,13 +31,12 @@ namespace Atron.WebViews.Controllers
             }
 
             Filter = filter;
-            ForceFilter = true;
             ConfigureEntitiesForView(departamentos, itemPage);
-            
+
             var model = new DepartamentoModel()
             {
                 Departamentos = GetEntities(),
-                PageInfo = GetPageInfo()
+                PageInfo = PageInfo
             };
 
             return View(model);
@@ -61,8 +56,8 @@ namespace Atron.WebViews.Controllers
             {
                 await _externalService.Criar(departamento);
 
-                var responses = _externalService.ResultResponses;    
-                ConfigureNotifications(responses);
+                var responses = _externalService.ResultResponses;
+                CreateTempDataNotifications(responses);
                 return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
             }
 
@@ -75,39 +70,25 @@ namespace Atron.WebViews.Controllers
         {
             if (codigo is null)
             {
-                var notification = new ResultResponse() { Message = "O código informado não foi encontrado", Level = "Error" };
-                ResultResponses.Add(notification);
-                TempData["Notifications"] = JsonConvert.SerializeObject(ResultResponses);
-
+                ResponseViewModel.AddError("O código informado não foi encontrado");
                 return View(codigo);
             }
 
             var departamentos = await _externalService.ObterTodos();
-
             var departamentoDTO = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
 
-            if (departamentoDTO is not null)
-            {
-                ViewData["Title"] = "Atualizar informação de departamento";
-
-                return View(departamentoDTO);
-            }
-            else
-            {
-                return View(departamentoDTO);
-            }
+            ConfigureViewDataTitle("Atualizar informação de departamento");
+            return departamentoDTO is not null ? View(departamentoDTO) : View(codigo);
         }
 
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
-            var response = await _externalService.Atualizar(codigo, departamentoDTO);
-            ResultResponses.AddRange(response.responses);
+            await _externalService.Atualizar(codigo, departamentoDTO);
+            var response = _externalService.ResultResponses;
+            CreateTempDataNotifications(response);
 
-            var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
-            TempData["Notifications"] = responseSerialized;
-
-            return response.isSucess ? RedirectToAction(nameof(Index)) : View(nameof(Atualizar), departamentoDTO);
+            return !response.HasErrors() ? RedirectToAction(nameof(Index)) : View(nameof(Atualizar), departamentoDTO);
         }
 
         [HttpPost]
@@ -115,22 +96,14 @@ namespace Atron.WebViews.Controllers
         {
             if (string.IsNullOrEmpty(codigo))
             {
-                TempData["Erro"] = JsonConvert.SerializeObject(new ResultResponse() { Message = "Código não informado, tente novamente." });
+                ResponseViewModel.AddError("Código não informado, tente novamente.");
                 return RedirectToAction(nameof(Index));
             }
 
-            var response = await _externalService.Remover(codigo);
+            await _externalService.Remover(codigo);
 
-            if (response.isSuccess)
-            {
-                ResultResponses.AddRange(response.responses);
-                TempData["Notifications"] = JsonConvert.SerializeObject(ResultResponses);
-            }
-            else
-            {
-                ViewBag.Erros = JsonConvert.SerializeObject(response.responses);
-            }
 
+            CreateTempDataNotifications(_externalService.ResultResponses);
             return RedirectToAction(nameof(Index));
         }
 

@@ -8,37 +8,33 @@ using Newtonsoft.Json;
 using Shared.DTO;
 using Shared.Enums;
 using Shared.Extensions;
-using Shared.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class CargoController : Controller
+    public class CargoController : DefaultController<CargoDTO>
     {
         private IDepartamentoExternalService _departamentoService;
         private ICargoExternalService _cargoExternalService;
-        private readonly PaginationService _paginationService;
+
 
         public List<ResultResponse> ResultResponses { get; set; }
 
         public CargoController(IDepartamentoExternalService departamentoService,
-            ICargoExternalService cargoExternalService,
-            PaginationService paginationService)
+            ICargoExternalService cargoExternalService)
         {
             _departamentoService = departamentoService;
             _cargoExternalService = cargoExternalService;
-            _paginationService = paginationService;
+            CurrentController = nameof(Cargo);
             ResultResponses = new List<ResultResponse>();
         }
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
-            ViewData["Title"] = "Painel de cargos";
-            ViewData["Filter"] = filter;
-
+            ConfigureViewDataTitle("Painel de cargos");
             var cargos = await _cargoExternalService.ObterTodos();
 
             if (!cargos.Any())
@@ -46,11 +42,12 @@ namespace Atron.WebViews.Controllers
                 return View();
             }
 
-            var pageInfo = _paginationService.Paginate(cargos, itemPage, nameof(Cargo), filter);
+            Filter = filter;
+            ConfigureEntitiesForView(cargos, itemPage);
             var model = new CargoModel()
             {
-                Cargos = _paginationService.GetEntityPaginated(cargos, filter),
-                PageInfo = pageInfo
+                Cargos = GetEntities(),
+                PageInfo = PageInfo
             };
 
             return View(model);
@@ -65,7 +62,7 @@ namespace Atron.WebViews.Controllers
 
             if (!departamentos.Any())
             {
-                ResultResponses.Add(new ResultResponse() { Message = "Para criar um cargo é necessário ter um departamento.", Level = ResultResponseEnum.Error.GetEnumDescription() });
+                ResultResponses.Add(new ResultResponse() { Message = "Para criar um cargo é necessário ter um departamento.", Level = ResultResponseLevelEnum.Error.GetEnumDescription() });
                 var result = JsonConvert.SerializeObject(ResultResponses);
                 TempData["Notifications"] = result;
                 return RedirectToAction(nameof(Index));
@@ -98,7 +95,7 @@ namespace Atron.WebViews.Controllers
             ResultResponses.Add(new ResultResponse()
             {
                 Message = "Registro inválido para gravação. Tente novamente.",
-                Level = ResultResponseEnum.Error.GetEnumDescription()
+                Level = ResultResponseLevelEnum.Error.GetEnumDescription()
             });
 
             var result = JsonConvert.SerializeObject(ResultResponses);

@@ -8,7 +8,7 @@ namespace ExternalServices.Interfaces
     {
         Task<List<DepartamentoDTO>> ObterTodos();
         Task Criar(DepartamentoDTO departamento);
-        Task<(bool isSucess, List<ResultResponse> responses)> Atualizar(string codigo, DepartamentoDTO departamentoDTO);
-        Task<(bool isSuccess, List<ResultResponse> responses)> Remover(string codigo);
+        Task Atualizar(string codigo, DepartamentoDTO departamentoDTO);
+        Task Remover(string codigo);
     }
 }
