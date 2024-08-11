@@ -4,9 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="Properties\PublishProfiles\atron-hmg - FTP.pubxml.user" />
-    <None Include="Properties\PublishProfiles\atron-hmg - Web Deploy.pubxml.user" />
+  <ItemGroup>    
     <None Include="Properties\PublishProfiles\atron-hmg - Zip Deploy.pubxml.user" />
   </ItemGroup>
 
@@ -24,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\ServiceDependencies\atron-hmg - Web Deploy\" />
     <Folder Include="Properties\ServiceDependencies\atron-hmg - Zip Deploy\" />
   </ItemGroup>
 

@@ -1,14 +1,10 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
+using Communication.Extensions;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Newtonsoft.Json;
-using Shared.DTO;
-using Shared.Enums;
-using Shared.Extensions;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,16 +15,12 @@ namespace Atron.WebViews.Controllers
         private IDepartamentoExternalService _departamentoService;
         private ICargoExternalService _cargoExternalService;
 
-
-        public List<ResultResponse> ResultResponses { get; set; }
-
         public CargoController(IDepartamentoExternalService departamentoService,
             ICargoExternalService cargoExternalService)
         {
             _departamentoService = departamentoService;
             _cargoExternalService = cargoExternalService;
             CurrentController = nameof(Cargo);
-            ResultResponses = new List<ResultResponse>();
         }
 
         [HttpGet, HttpPost]
@@ -62,9 +54,7 @@ namespace Atron.WebViews.Controllers
 
             if (!departamentos.Any())
             {
-                ResultResponses.Add(new ResultResponse() { Message = "Para criar um cargo é necessário ter um departamento.", Level = ResultResponseLevelEnum.Error });
-                var result = JsonConvert.SerializeObject(ResultResponses);
-                TempData["Notifications"] = result;
+                ResponseModel.AddError("Para criar um cargo é necessário ter um departamento.");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -84,22 +74,15 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _cargoExternalService.Criar(model);
-                ResultResponses.AddRange(response.responses);
+                await _cargoExternalService.Criar(model);
 
-                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
-                TempData["Notifications"] = responseSerialized;
-                return response.isSucess ? RedirectToAction(nameof(Cadastrar)) : View();
+                var responses = _cargoExternalService.ResultResponses;
+                CreateTempDataNotifications(responses);                
+                return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
-            ResultResponses.Add(new ResultResponse()
-            {
-                Message = "Registro inválido para gravação. Tente novamente.",
-                Level = ResultResponseLevelEnum.Error
-            });
-
-            var result = JsonConvert.SerializeObject(ResultResponses);
-            TempData["Notifications"] = result;
+            ResponseModel.AddError("Registro inválido para gravação. Tente novamente.");
+            CreateTempDataNotifications(ResponseModel.ResultMessages);
             return RedirectToAction(nameof(Cadastrar));
         }
     }
