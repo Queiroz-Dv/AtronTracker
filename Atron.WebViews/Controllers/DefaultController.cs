@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.DTO;
-using Shared.Enums;
 using Shared.Models;
 using Shared.Services;
 

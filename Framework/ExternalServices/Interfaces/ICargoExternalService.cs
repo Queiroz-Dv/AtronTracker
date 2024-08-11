@@ -1,11 +1,11 @@
 ﻿using Atron.Application.DTO;
-using Shared.DTO;
+using ExternalServices.Interfaces.ExternalMessage;
 
 namespace ExternalServices.Interfaces
 {
-    public interface ICargoExternalService
+    public interface ICargoExternalService : IExternalMessageService
     {
-        Task<(bool isSucess, List<ResultResponse> responses)> Criar(CargoDTO cargoDTO);
+        Task Criar(CargoDTO cargoDTO);
         Task<List<CargoDTO>> ObterTodos();
     }
 }
