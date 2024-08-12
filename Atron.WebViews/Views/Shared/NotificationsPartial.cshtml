@@ -14,15 +14,23 @@
 {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var messages = @Html.Raw(JsonConvert.SerializeObject(notifications));
-            messages.forEach(function (ntf) {
-                Swal.fire({
-                    icon: ntf.Level === @ResultResponseLevelEnum.Error ? "error" : "success",
-                    title: ntf.Level === @ResultResponseLevelEnum.Error ? "Erro!" : "Sucesso!",
-                    text: ntf.Message,
-                    showConfirmButton: true
+            var messages = @Html.Raw(JsonConvert.SerializeObject(notifications))
+                messages.forEach(function (ntf) {
+                    var iconType = ntf.Level === "Error" ? "error" :
+                        ntf.Level === "Warning" ? "warning" :
+                            "success";
+
+                    var title = ntf.Level === "Error" ? "Erro!" :
+                        ntf.Level === "Warning" ? "Aviso!" :
+                            "Sucesso!";
+
+                    Swal.fire({
+                        icon: iconType,
+                        title: title,
+                        text: ntf.Message,
+                        showConfirmButton: true
+                    });
                 });
-            });
         });
     </script>
 }

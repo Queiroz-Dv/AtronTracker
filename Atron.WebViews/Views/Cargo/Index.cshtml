@@ -53,12 +53,13 @@
                     <td>@item.DepartamentoCodigo</td>
 
                     <td>
-                        <a asp-action="Atualizar" asp-route-id="@item.Codigo" title="Atualizar" class="btn btn-warning">
+                        <a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
                             <span class="fas fa-edit">Atualizar</span>
                         </a>
 
-                        <a asp-action="Remover" asp-route-id="@item.Codigo" title="Remover" class="btn btn-danger">
-                            <span class="fas fa-trash-alt">Remover</span>
+                        <a onclick="confirmarRemocao('@item.Codigo')" title="Remover"
+                           class="btn btn-danger">
+                            <span class="fas fa-trash-alt">Excluir</span>
                         </a>
                     </td>
                 </tr>
@@ -67,3 +68,4 @@
     </table>
     <partial name="PagerPartial" model="Model.PageInfo" />
 </div>
+<partial name="Partials/ExcluirRegistroPartialModal" for="Cargo"></partial>

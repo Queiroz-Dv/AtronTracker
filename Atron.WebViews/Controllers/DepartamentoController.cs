@@ -4,6 +4,8 @@ using Atron.WebViews.Models;
 using Communication.Extensions;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Models;
+using Shared.Services;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +15,11 @@ namespace Atron.WebViews.Controllers
     {
         private IDepartamentoExternalService _externalService;
 
-        public DepartamentoController(IDepartamentoExternalService externalService)
+        public DepartamentoController(
+            ResultResponseModel resultResponseModel,
+            PaginationService<DepartamentoDTO> paginationService,
+            IDepartamentoExternalService externalService)
+            : base(paginationService, resultResponseModel)
         {
             _externalService = externalService;
             CurrentController = nameof(Departamento);
