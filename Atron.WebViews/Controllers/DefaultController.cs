@@ -1,17 +1,15 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.DTO;
-using Shared.Models;
-using Shared.Services;
+using Shared.Interfaces;
+using System.Collections.Generic;
 
 namespace Atron.WebViews.Controllers
 {
     public class DefaultController<T> : Controller
     {
-        private readonly PaginationService<T> PaginationService;
-
-        protected ResultResponseModel ResponseModel;
+        protected readonly IPaginationService<T> _paginationService;
+        protected readonly IResultResponseService _responseService;
 
         protected PageInfoDTO PageInfo { get; set; }
 
@@ -21,54 +19,89 @@ namespace Atron.WebViews.Controllers
 
         protected string CurrentController { get; set; }
 
-        public DefaultController(PaginationService<T> paginationService, ResultResponseModel responseModel)
+        public DefaultController(IPaginationService<T> paginationService, IResultResponseService responseModel)
         {
-            ResponseModel = responseModel;
-            PaginationService = paginationService;
+            _responseService = responseModel;
+            _paginationService = paginationService;
             PageInfo = new PageInfoDTO();
         }
 
-        protected virtual void ConfigureEntitiesForView(List<T> itens, int itemPage = 1)
+        /// <summary>
+        /// Configura a paginação e prepara as entidades para a exibição na View.
+        /// </summary>
+        /// <param name="items">Lista de entidades a serem paginadas</param>
+        /// <param name="itemPage">Número da página atual</param>
+        protected virtual void ConfigurePaginationForView(List<T> itens, int itemPage = 1)
         {
-            ViewData["Filter"] = Filter;
-            ViewBag.CurrentController = CurrentController;
-            PaginationService.Paginate(itens, itemPage, CurrentController, Filter);
+            ConfigureViewDataFilter();
+            ConfigureViewBagCurrentController();
+            ConfigurePagination(itens, itemPage);
+        }
+
+        private void ConfigurePagination(List<T> itens, int itemPage)
+        {
+            _paginationService.Paginate(itens, itemPage, CurrentController, Filter);
 
             if (!string.IsNullOrEmpty(Filter))
             {
-                PaginationService.ForceFilter = ForceFilter;
-                PaginationService.FilterBy = Filter;
+                _paginationService.ForceFilter = ForceFilter;
+                _paginationService.FilterBy = Filter;
             }
 
-            PaginationService.ConfigureEntityPaginated(itens, Filter);
+            _paginationService.ConfigureEntityPaginated(itens, Filter);
             PageInfo = GetPageInfo();
         }
 
+        private void ConfigureViewBagCurrentController()
+        {
+            ViewBag.CurrentController = CurrentController;
+        }
+
+        private void ConfigureViewDataFilter()
+        {
+            ViewData["Filter"] = Filter;
+        }
+
+        /// <summary>
+        /// Cria as notificações de TempData a partir das mensagens de resposta.
+        /// </summary>
+        /// <param name="resultResponses">Lista de respostas com notificações</param>
         protected virtual void CreateTempDataNotifications(List<ResultResponse> resultResponses)
-        {            
+        {
             var responseSerialized = JsonConvert.SerializeObject(resultResponses);
             TempData["Notifications"] = responseSerialized;
         }
 
-        protected void CreateResultNotifications()
+        /// <summary>
+        /// Cria as notificações de TempData usando o modelo de resposta atual.
+        /// </summary>
+        protected virtual void CreateTempDataNotifications()
         {
-            var resultSerialized = JsonConvert.SerializeObject(ResponseModel.ResultMessages);
+            var resultSerialized = JsonConvert.SerializeObject(_responseService.ResultMessages);
             TempData["Notifications"] = resultSerialized;
         }
 
-        protected List<T> GetEntities()
+        /// <summary>
+        /// Obtém as entidades paginadas da página atual.
+        /// </summary>
+        /// <returns>Lista de entidades paginadas</returns>
+        protected List<T> GetEntitiesPaginated()
         {
-            return PaginationService.GetEntitiesFilled();
+            return _paginationService.GetEntitiesFilled();
         }
 
-        private  PageInfoDTO GetPageInfo()
+        private PageInfoDTO GetPageInfo()
         {
-            return PaginationService.PageInfo;
+            return _paginationService.PageInfo;
         }
 
-        public virtual void ConfigureViewDataTitle(string title)
+        /// <summary>
+        /// Configura o título da View usando ViewData.
+        /// </summary>
+        /// <param name="title">Título da View</param>
+        public virtual void ConfigureDataTitleForView(string title)
         {
             ViewData["Title"] = title;
-        }       
-    }         
+        }
+    }
 }

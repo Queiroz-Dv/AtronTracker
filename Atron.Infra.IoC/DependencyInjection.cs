@@ -8,6 +8,7 @@ using ExternalServices.Interfaces;
 using ExternalServices.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.Services;
 
@@ -32,9 +33,10 @@ namespace Atron.Infra.IoC
             
             services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
             services.AddScoped<ICargoExternalService, CargoExternalService>();
-            services.AddScoped(typeof(PaginationService<DepartamentoDTO>));
-            services.AddScoped(typeof(PaginationService<CargoDTO>));
-            services.AddScoped<ResultResponseModel>();
+            services.AddScoped<IPaginationService<CargoDTO>, PaginationService<CargoDTO>>();
+            services.AddScoped<IPaginationService<DepartamentoDTO>, PaginationService<DepartamentoDTO>>();
+
+            services.AddScoped<IResultResponseService, ResultResponseModel>();
 
             return services;
         }
