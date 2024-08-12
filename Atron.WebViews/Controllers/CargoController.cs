@@ -5,8 +5,7 @@ using Communication.Extensions;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shared.Models;
-using Shared.Services;
+using Shared.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,8 +17,8 @@ namespace Atron.WebViews.Controllers
         private ICargoExternalService _cargoExternalService;
 
         public CargoController(
-            PaginationService<CargoDTO> paginationService,
-            ResultResponseModel resultResponseModel,
+            IPaginationService<CargoDTO> paginationService,
+            IResultResponseService resultResponseModel,
             IDepartamentoExternalService departamentoService,
             ICargoExternalService cargoExternalService) : base(paginationService, resultResponseModel)
         {
@@ -31,7 +30,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
-            ConfigureViewDataTitle("Painel de cargos");
+            ConfigureDataTitleForView("Painel de cargos");
             var cargos = await _cargoExternalService.ObterTodos();
 
             if (!cargos.Any())
@@ -40,10 +39,10 @@ namespace Atron.WebViews.Controllers
             }
 
             Filter = filter;
-            ConfigureEntitiesForView(cargos, itemPage);
+            ConfigurePaginationForView(cargos, itemPage);
             var model = new CargoModel()
             {
-                Cargos = GetEntities(),
+                Cargos = GetEntitiesPaginated(),
                 PageInfo = PageInfo
             };
 
@@ -53,13 +52,14 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> Cadastrar()
         {
-            ViewData["Title"] = "Cadastro de cargos";
+            ConfigureDataTitleForView("Cadastro de cargos");
 
             var departamentos = await _departamentoService.ObterTodos();
 
             if (!departamentos.Any())
             {
-                ResponseModel.AddError("Para criar um cargo é necessário ter um departamento.");
+                _responseService.AddError("Para criar um cargo é necessário ter um departamento.");
+                CreateTempDataNotifications();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -86,8 +86,8 @@ namespace Atron.WebViews.Controllers
                 return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
-            ResponseModel.AddError("Registro inválido para gravação. Tente novamente.");
-            CreateTempDataNotifications(ResponseModel.ResultMessages);
+            _responseService.AddError("Registro inválido para gravação. Tente novamente.");
+            CreateTempDataNotifications();
 
             return RedirectToAction(nameof(Cadastrar));
         }
@@ -97,7 +97,8 @@ namespace Atron.WebViews.Controllers
         {
             if (codigo is null)
             {
-                ResponseModel.AddError("O código informado não foi encontrado");
+                _responseService.AddError("O código informado não foi encontrado");
+                CreateTempDataNotifications();
                 return View(codigo);
             }
 
@@ -115,7 +116,7 @@ namespace Atron.WebViews.Controllers
 
             ViewBag.Departamentos = new SelectList(departamentosFiltrados, "Codigo", "Descricao");
             ViewBag.CodigoDoDepartamentoRelacionado = cargoDTO.DepartamentoCodigo;
-            ConfigureViewDataTitle("Atualizar informação de cargo");
+            ConfigureDataTitleForView("Atualizar informação de cargo");
             return View(cargoDTO);
         }
 
@@ -128,8 +129,8 @@ namespace Atron.WebViews.Controllers
             }
             else
             {
-                ResponseModel.AddError("Registro inválido tente novamente");
-                CreateTempDataNotifications(ResponseModel.ResultMessages);
+                _responseService.AddError("Registro inválido tente novamente");
+                CreateTempDataNotifications();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -143,8 +144,8 @@ namespace Atron.WebViews.Controllers
         {
             if (string.IsNullOrEmpty(codigo))
             {
-                ResponseModel.AddError("Código não informado, tente novamente.");
-                CreateResultNotifications();
+                _responseService.AddError("Código não informado, tente novamente.");
+                CreateTempDataNotifications();
                 return RedirectToAction(nameof(Index));
             }
 
