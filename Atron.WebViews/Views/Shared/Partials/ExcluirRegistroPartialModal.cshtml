@@ -1,4 +1,7 @@
-﻿<div class="modal fade" id="confirmacaoModal" tabindex="-1" role="dialog" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
+﻿@{
+    string controllerAtual = ViewBag.CurrentController;
+}
+<div class="modal fade" id="confirmacaoModal" tabindex="-1" role="dialog" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -8,7 +11,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                Tem certeza que deseja remover este departamento?
+                Tem certeza que deseja remover este registro?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -20,7 +23,7 @@
 
 <script>
     let codigoParaRemover = '';
-
+    
     function confirmarRemocao(codigo) {
         codigoParaRemover = codigo;
         $('#confirmacaoModal').modal('show');
@@ -28,11 +31,11 @@
 
     document.getElementById('btnConfirmarRemocao').addEventListener('click', async function () {
         $('#confirmacaoModal').modal('hide');
-        await removerDepartamento(codigoParaRemover);
+        await excluirRegistro(codigoParaRemover);
     });
 
-    async function removerDepartamento(codigo) {
-        const response = await fetch(`@Url.Action("Remover", "Departamento")?codigo=${codigo}`, {
+    async function excluirRegistro(codigo) {
+        const response = await fetch(`@Url.Action("Remover", controllerAtual)?codigo=${codigo}`, {
             method: 'POST'
         });
 
@@ -40,7 +43,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',
-                text: 'Departamento removido com sucesso!',
+                text: 'Registro removido com sucesso!',
                 showConfirmButton: true
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -51,7 +54,7 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Erro!',
-                text: 'Ocorreu um erro ao tentar remover o departamento.',
+                text: 'Ocorreu um erro ao tentar remover o registro.',
                 timer: 3000
             }).then(() => {
                 location.reload();

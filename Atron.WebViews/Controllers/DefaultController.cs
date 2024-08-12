@@ -1,112 +1,107 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.DTO;
-using Shared.Enums;
-using Shared.Services;
+using Shared.Interfaces;
+using System.Collections.Generic;
 
 namespace Atron.WebViews.Controllers
 {
     public class DefaultController<T> : Controller
     {
-        private readonly PaginationService<T> PaginationService;
-        public ResultResponseViewModel ResponseViewModel;
-        public PageInfoDTO PageInfo { get; set; }
-        public string Filter { get; set; }
-        public bool ForceFilter { get; set; } = true;
-        public string CurrentController { get; set; }
+        protected readonly IPaginationService<T> _paginationService;
+        protected readonly IResultResponseService _responseService;
 
-        public DefaultController()
+        protected PageInfoDTO PageInfo { get; set; }
+
+        protected string Filter { get; set; }
+
+        protected bool ForceFilter { get; set; } = true;
+
+        protected string CurrentController { get; set; }
+
+        public DefaultController(IPaginationService<T> paginationService, IResultResponseService responseModel)
         {
-            ResponseViewModel = new ResultResponseViewModel();
-            PaginationService = new PaginationService<T>();
+            _responseService = responseModel;
+            _paginationService = paginationService;
             PageInfo = new PageInfoDTO();
         }
 
-        public virtual void ConfigureEntitiesForView(List<T> itens, int itemPage = 1)
+        /// <summary>
+        /// Configura a paginação e prepara as entidades para a exibição na View.
+        /// </summary>
+        /// <param name="items">Lista de entidades a serem paginadas</param>
+        /// <param name="itemPage">Número da página atual</param>
+        protected virtual void ConfigurePaginationForView(List<T> itens, int itemPage = 1)
         {
-            ViewData["Filter"] = Filter;
-            PaginationService.Paginate(itens, itemPage, CurrentController, Filter);
+            ConfigureViewDataFilter();
+            ConfigureViewBagCurrentController();
+            ConfigurePagination(itens, itemPage);
+        }
+
+        private void ConfigurePagination(List<T> itens, int itemPage)
+        {
+            _paginationService.Paginate(itens, itemPage, CurrentController, Filter);
 
             if (!string.IsNullOrEmpty(Filter))
             {
-                PaginationService.ForceFilter = ForceFilter;
-                PaginationService.FilterBy = Filter;
+                _paginationService.ForceFilter = ForceFilter;
+                _paginationService.FilterBy = Filter;
             }
 
-            PaginationService.ConfigureEntityPaginated(itens, Filter);
+            _paginationService.ConfigureEntityPaginated(itens, Filter);
             PageInfo = GetPageInfo();
         }
 
-        public virtual void CreateTempDataNotifications(List<ResultResponse> resultResponses)
+        private void ConfigureViewBagCurrentController()
+        {
+            ViewBag.CurrentController = CurrentController;
+        }
+
+        private void ConfigureViewDataFilter()
+        {
+            ViewData["Filter"] = Filter;
+        }
+
+        /// <summary>
+        /// Cria as notificações de TempData a partir das mensagens de resposta.
+        /// </summary>
+        /// <param name="resultResponses">Lista de respostas com notificações</param>
+        protected virtual void CreateTempDataNotifications(List<ResultResponse> resultResponses)
         {
             var responseSerialized = JsonConvert.SerializeObject(resultResponses);
             TempData["Notifications"] = responseSerialized;
         }
 
-        public List<T> GetEntities()
+        /// <summary>
+        /// Cria as notificações de TempData usando o modelo de resposta atual.
+        /// </summary>
+        protected virtual void CreateTempDataNotifications()
         {
-            return PaginationService.GetEntitiesFilled();
+            var resultSerialized = JsonConvert.SerializeObject(_responseService.ResultMessages);
+            TempData["Notifications"] = resultSerialized;
         }
 
-        private  PageInfoDTO GetPageInfo()
+        /// <summary>
+        /// Obtém as entidades paginadas da página atual.
+        /// </summary>
+        /// <returns>Lista de entidades paginadas</returns>
+        protected List<T> GetEntitiesPaginated()
         {
-            return PaginationService.PageInfo;
+            return _paginationService.GetEntitiesFilled();
         }
 
-        public virtual void ConfigureViewDataTitle(string title)
+        private PageInfoDTO GetPageInfo()
+        {
+            return _paginationService.PageInfo;
+        }
+
+        /// <summary>
+        /// Configura o título da View usando ViewData.
+        /// </summary>
+        /// <param name="title">Título da View</param>
+        public virtual void ConfigureDataTitleForView(string title)
         {
             ViewData["Title"] = title;
         }
-    }
-
-    public class ResultResponseViewModel : ResultResponseViewService
-    {
-        public override void AddError(string message)
-        {
-            AddNotification(message, ResultResponseLevelEnum.Error);
-        }
-
-        public override void AddSuccess(string message)
-        {
-            AddNotification(message, ResultResponseLevelEnum.Success);
-        }
-
-        public override void AddWarning(string message)
-        {
-            AddNotification(message, ResultResponseLevelEnum.Warning);
-        }
-    }
-
-    public abstract class ResultResponseViewService : IResultResponseViewService
-    {
-        protected ResultResponseViewService()
-        {
-            Messages = new List<ResultResponse>();
-        }
-
-        public void AddNotification(string message, ResultResponseLevelEnum level)
-        {
-            Messages.Add(new ResultResponse() { Message = message, MessageLevel = level });
-        }
-
-        public List<ResultResponse> Messages { get; set; }
-
-        public abstract void AddSuccess(string message);
-
-        public abstract void AddError(string message);
-
-        public abstract void AddWarning(string message);
-    }
-
-    public interface IResultResponseViewService
-    {
-        List<ResultResponse> Messages { get; set; }
-
-        void AddSuccess(string message);
-
-        void AddError(string message);
-
-        void AddWarning(string message);
     }
 }

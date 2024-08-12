@@ -1,6 +1,5 @@
 ﻿using Atron.Application.DTO;
 using ExternalServices.Interfaces.ExternalMessage;
-using Shared.DTO;
 
 namespace ExternalServices.Interfaces
 {
