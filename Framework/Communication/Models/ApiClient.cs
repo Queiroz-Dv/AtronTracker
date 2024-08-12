@@ -30,8 +30,7 @@ namespace Communication.Models
         {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             var response = await _httpClient.PostAsync(uri, httpContent);
-            response.EnsureSuccessStatusCode();
-            await FillResultResponse(response);
+            await FillResultResponse(response);            
         }
 
         private async Task FillResultResponse(HttpResponseMessage response)

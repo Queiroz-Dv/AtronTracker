@@ -1,4 +1,5 @@
-﻿using Atron.Application.Mapping;
+﻿using Atron.Application.DTO;
+using Atron.Application.Mapping;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Communication.Models;
@@ -7,6 +8,7 @@ using ExternalServices.Interfaces;
 using ExternalServices.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Models;
 using Shared.Services;
 
 namespace Atron.Infra.IoC
@@ -30,8 +32,10 @@ namespace Atron.Infra.IoC
             
             services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
             services.AddScoped<ICargoExternalService, CargoExternalService>();
+            services.AddScoped(typeof(PaginationService<DepartamentoDTO>));
+            services.AddScoped(typeof(PaginationService<CargoDTO>));
+            services.AddScoped<ResultResponseModel>();
 
-            // services.AddScoped<PaginationService>();
             return services;
         }
     }

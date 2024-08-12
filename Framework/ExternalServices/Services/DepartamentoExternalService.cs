@@ -1,5 +1,4 @@
 ﻿using Atron.Application.DTO;
-using Communication.Extensions;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
