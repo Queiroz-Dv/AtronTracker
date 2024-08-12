@@ -1,8 +1,9 @@
 ﻿using Shared.DTO;
+using Shared.Interfaces;
 
 namespace Shared.Services
 {
-    public class PaginationService<T>
+    public class PaginationService<T> : IPaginationService<T>
     {
         public PaginationService()
         {
@@ -17,7 +18,7 @@ namespace Shared.Services
         public string FilterBy { get; set; }
         public PageInfoDTO PageInfo { get; set; }
 
-        public void Paginate<T>(IEnumerable<T> allItens,
+        private void Paginate<T>(IEnumerable<T> allItens,
             int currentPage,
             string controllerRoute,
             string filter = "",
@@ -92,6 +93,11 @@ namespace Shared.Services
         public List<T> GetEntitiesFilled()
         {
             return Entities;
+        }
+
+        public void Paginate(List<T> items, int itemPage, string controllerName, string filter)
+        {
+            Paginate<T>(items, itemPage, controllerName, filter);
         }
     }
 }

@@ -4,6 +4,7 @@ using Atron.WebViews.Models;
 using Communication.Extensions;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +14,11 @@ namespace Atron.WebViews.Controllers
     {
         private IDepartamentoExternalService _externalService;
 
-        public DepartamentoController(IDepartamentoExternalService externalService)
+        public DepartamentoController(
+            IResultResponseService resultResponse,
+            IPaginationService<DepartamentoDTO> paginationService,
+            IDepartamentoExternalService externalService)
+            : base(paginationService, resultResponse)
         {
             _externalService = externalService;
             CurrentController = nameof(Departamento);
@@ -24,18 +29,18 @@ namespace Atron.WebViews.Controllers
         {
             var departamentos = await _externalService.ObterTodos();
 
-            ConfigureViewDataTitle("Painel de departamentos");
+            ConfigureDataTitleForView("Painel de departamentos");
             if (!departamentos.Any())
             {
                 return View();
             }
 
             Filter = filter;
-            ConfigureEntitiesForView(departamentos, itemPage);
+            ConfigurePaginationForView(departamentos, itemPage);
 
             var model = new DepartamentoModel()
             {
-                Departamentos = GetEntities(),
+                Departamentos = GetEntitiesPaginated(),
                 PageInfo = PageInfo
             };
 
@@ -45,7 +50,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public IActionResult Cadastrar()
         {
-            ConfigureViewDataTitle("Cadastro de departamentos");
+            ConfigureDataTitleForView("Cadastro de departamentos");
             return View();
         }
 
@@ -61,7 +66,7 @@ namespace Atron.WebViews.Controllers
                 return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
             }
 
-            ConfigureViewDataTitle("Cadastro de departamentos");
+            ConfigureDataTitleForView("Cadastro de departamentos");
             return View(departamento);
         }
 
@@ -70,14 +75,15 @@ namespace Atron.WebViews.Controllers
         {
             if (codigo is null)
             {
-                ResponseViewModel.AddError("O código informado não foi encontrado");
+                _responseService.AddError("O código informado não foi encontrado");
+                CreateTempDataNotifications();
                 return View(codigo);
             }
 
             var departamentos = await _externalService.ObterTodos();
             var departamentoDTO = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
 
-            ConfigureViewDataTitle("Atualizar informação de departamento");
+            ConfigureDataTitleForView("Atualizar informação de departamento");
             return departamentoDTO is not null ? View(departamentoDTO) : View(codigo);
         }
 
@@ -96,13 +102,12 @@ namespace Atron.WebViews.Controllers
         {
             if (string.IsNullOrEmpty(codigo))
             {
-                ResponseViewModel.AddError("Código não informado, tente novamente.");
+                _responseService.AddError("Código não informado, tente novamente.");
+                CreateTempDataNotifications();
                 return RedirectToAction(nameof(Index));
             }
 
             await _externalService.Remover(codigo);
-
-
             CreateTempDataNotifications(_externalService.ResultResponses);
             return RedirectToAction(nameof(Index));
         }
@@ -111,7 +116,6 @@ namespace Atron.WebViews.Controllers
         public async Task<IActionResult> ObterDepartamento(string codigoDepartamento)
         {
             var departamentos = await _externalService.ObterTodos();
-
             var departamento = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigoDepartamento);
 
             return Ok(departamento);

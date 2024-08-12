@@ -5,14 +5,15 @@
 @using Atron.WebViews.Models;
 @model CargoDTO;
 
-<h2 style="margin-bottom: 40px;">@ViewData["Title"]</h2>
-<form asp-action="Cadastrar" method="post" class="form-horizontal">
+<h3>@ViewData["Title"]</h3>
+
+<form asp-action="Atualizar" method="post" class="form-horizontal">
 
     <div class="form-group row">
         <label asp-for="Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
         <div class="col-md-5 mb-3">
-            <input asp-for="Codigo" class="form-control" />
-            <span asp-validation-for="Codigo" class="text-danger"></span>
+            <input asp-for="Codigo" readonly="readonly" disabled="disabled" class="form-control" />
+            <input hidden="hidden" asp-for="Codigo" />
         </div>
     </div>
 
@@ -28,7 +29,7 @@
         <label asp-for="DepartamentoCodigo" class="col-md-2 col-form-label font-weight-bold">Departamentos</label>
         <div class="col-md-7 mb-3">
             <select asp-for="DepartamentoCodigo" id="departamentoCodigo" class="form-control" asp-items="@ViewBag.Departamentos">
-                <option value="">Selecione um departamento</option>
+                <option value="@ViewBag.CodigoDoDepartamentoRelacionado">Selecione um departamento</option>
             </select>
             <span asp-validation-for="DepartamentoCodigo" class="text-danger"></span>
         </div>
@@ -36,12 +37,15 @@
 
     <div class="form-group row">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Cadastrar" class="btn btn-success" />
+            <input type="submit" value="Atualizar" class="btn btn-success" />
             <a asp-action="Index" class="btn btn-dark">Painel</a>
         </div>
     </div>
 </form>
-@section Scripts {    
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/select2.min.js"></script>
+
     <script type="text/javascript">
         $(function () {
             $("#departamentoCodigo").select2();

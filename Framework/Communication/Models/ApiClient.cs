@@ -26,63 +26,42 @@ namespace Communication.Models
             return responseContent;
         }
 
-        public async Task<string> PostAsync(string uri, string content)
+        public async Task PostAsync(string uri, string content)
         {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             var response = await _httpClient.PostAsync(uri, httpContent);
-            response.EnsureSuccessStatusCode();
-            string responseContent = await FillResultResponse(response);
-
-            return responseContent;
+            await FillResultResponse(response);            
         }
 
-        private async Task<string> FillResultResponse(HttpResponseMessage response)
+        private async Task FillResultResponse(HttpResponseMessage response)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
             var resultContent = JsonConvert.DeserializeObject<List<ResultResponse>>(responseContent);
-
             _communicationService.AddResponseContent(resultContent);
-            return responseContent;
         }
 
-        public async Task<string> PutAsync(string uri, string parameter, string content)
+        public async Task PutAsync(string uri, string parameter, string content)
         {
             var uriFormated = $"{uri}{parameter}";
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             try
             {
                 var response = await _httpClient.PutAsync(uriFormated, httpContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseContent = await FillResultResponse(response);
-                    return responseContent;
-                }
-                else
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new HttpRequestException(errorContent);
-                }
+                await FillResultResponse(response);
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
                 throw;
             }
         }
 
-        public async Task<string> DeleteAsync(string uri, string codigo)
+        public async Task DeleteAsync(string uri, string codigo)
         {
             var uriFormated = $"{uri}{codigo}";
 
             var response = await _httpClient.DeleteAsync(uriFormated);
 
-            if (response.IsSuccessStatusCode)
-            {
-                string responseContent = await FillResultResponse(response);
-                return responseContent;
-            }
-
-            return string.Empty;
+            await FillResultResponse(response);
         }
     }
 }

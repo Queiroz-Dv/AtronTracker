@@ -44,8 +44,9 @@ namespace Atron.WebApi.Controllers
             }
 
             await _cargoService.CriarAsync(cargo);
-
-            return Ok(_cargoService.notificationMessages);
+           
+            return !_cargoService.notificationMessages.HasErrors() ? Ok(_cargoService.notificationMessages) : 
+                BadRequest(_cargoService.notificationMessages);
         }
 
         [HttpPut("AtualizarCargo/{codigo}")]
@@ -80,7 +81,7 @@ namespace Atron.WebApi.Controllers
 
             await _cargoService.RemoverAsync(cargo.Id);
 
-            return Ok(cargo);
+            return Ok(_cargoService.notificationMessages);
         }
 
         [HttpGet]

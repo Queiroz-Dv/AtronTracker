@@ -1,12 +1,10 @@
 ﻿using Atron.Application.DTO;
-using Communication.Extensions;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Newtonsoft.Json;
 using Shared.DTO;
 using Shared.Enums;
-using Shared.Extensions;
 
 namespace ExternalServices.Services
 {
@@ -29,7 +27,7 @@ namespace ExternalServices.Services
             var json = JsonConvert.SerializeObject(departamentoDTO);
             try
             {
-                var response = await _apiClient.PutAsync("https://atron-hmg.azurewebsites.net/api/Departamento/AtualizarDepartamento/", codigo, json);
+                await _apiClient.PutAsync("https://atron-hmg.azurewebsites.net/api/Departamento/AtualizarDepartamento/", codigo, json);
                 ResultResponses.AddRange(_communicationService.GetResultResponses());
             }
             catch (HttpRequestException ex)
@@ -39,7 +37,7 @@ namespace ExternalServices.Services
             }
             catch (Exception ex)
             {
-                ResultResponses.Add(new ResultResponse() { Message = ex.Message, Level = ResultResponseLevelEnum.Error.GetEnumDescription() });
+                ResultResponses.Add(new ResultResponse() { Message = ex.Message, Level = ResultResponseLevelEnum.Error });
             }
         }
 
@@ -58,7 +56,7 @@ namespace ExternalServices.Services
 
         public async Task Remover(string codigo)
         {
-            var response = await _apiClient.DeleteAsync("https://atron-hmg.azurewebsites.net/api/Departamento/ExcluirDepartamento/", codigo);
+             await _apiClient.DeleteAsync("https://atron-hmg.azurewebsites.net/api/Departamento/ExcluirDepartamento/", codigo);
             ResultResponses.AddRange(_communicationService.GetResultResponses());
         }
     }
