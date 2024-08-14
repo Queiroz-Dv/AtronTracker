@@ -5,6 +5,7 @@ using ExternalServices.Interfaces;
 using Newtonsoft.Json;
 using Shared.DTO;
 using Shared.Enums;
+using Shared.Extensions;
 
 namespace ExternalServices.Services
 {

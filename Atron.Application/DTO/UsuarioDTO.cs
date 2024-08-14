@@ -1,5 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
@@ -10,10 +11,13 @@ namespace Atron.Application.DTO
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public int Id { get; set; }
 
+        [DisplayName("Código")]
         public string Codigo { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
         public DateTime? DataNascimento { get; set; }
+        
+        [DisplayName("Salário")]
         public int Salario { get; set; }
         public string CargoCodigo { get; set; }
         public string DepartamentoCodigo { get; set; }
@@ -25,9 +29,9 @@ namespace Atron.Application.DTO
         [JsonIgnore]
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public int CargoId { get; set; }
-        
+
         public DepartamentoDTO Departamento { get; set; }
-        
-        public CargoDTO Cargo { get; set; }
+
+        public CargoDTO Cargo { get; set; }      
     }
 }
