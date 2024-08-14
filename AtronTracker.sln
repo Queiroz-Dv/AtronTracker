@@ -25,11 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication", "Framework\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalServices", "Framework\ExternalServices\ExternalServices.csproj", "{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{35F8B05E-B9D5-4B36-8939-03219F1A990A}"
-	ProjectSection(SolutionItems) = preProject
-		CodigosParaUtilizar.txt = CodigosParaUtilizar.txt
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -33,8 +33,11 @@ namespace Atron.Infra.IoC
             
             services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
             services.AddScoped<ICargoExternalService, CargoExternalService>();
+            services.AddScoped<IUsuarioExternalService, UsuarioExternalService>();
+
             services.AddScoped<IPaginationService<CargoDTO>, PaginationService<CargoDTO>>();
             services.AddScoped<IPaginationService<DepartamentoDTO>, PaginationService<DepartamentoDTO>>();
+            services.AddScoped<IPaginationService<UsuarioDTO>, PaginationService<UsuarioDTO>>();
 
             services.AddScoped<IResultResponseService, ResultResponseModel>();
 
