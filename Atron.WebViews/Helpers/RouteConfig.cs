@@ -17,7 +17,12 @@ namespace Atron.WebViews.Helpers
             endpoints.MapControllerRoute(
                name: "cargo",
                pattern: "Cargo/Index/{filter?}/{itemPage?}",
-               defaults: new { controller = nameof(Cargo), action = nameof(Index) });           
+               defaults: new { controller = nameof(Cargo), action = nameof(Index) });
+
+            endpoints.MapControllerRoute(
+             name: "usuario",
+             pattern: "Usuario/Index/{filter?}/{itemPage?}",
+             defaults: new { controller = nameof(Usuario), action = nameof(Index) });
         }
     }
 }

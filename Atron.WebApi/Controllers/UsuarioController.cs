@@ -34,7 +34,7 @@ namespace Atron.WebApi.Controllers
             return Ok(_usuarioService.notificationMessages);
         }
 
-        [Route("ObterUsuários")]
+        [Route("ObterUsuarios")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuarioDTO>>> Get()
         {
