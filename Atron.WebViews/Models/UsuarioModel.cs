@@ -12,15 +12,16 @@ namespace Atron.WebViews.Models
             Usuarios= new List<UsuarioDTO>();
         }
 
+        public UsuarioDTO Usuario { get; set; }
+
         public CargoDTO Cargo { get; set; }
 
         public DepartamentoDTO Departamento { get; set; }
 
+
         public List<CargoDTO> Cargos { get; set; }
 
         public List<DepartamentoDTO> Departamentos { get; set; }
-
-        public UsuarioDTO Usuario { get; set; }
 
         public List<UsuarioDTO> Usuarios { get; set; }
     }
