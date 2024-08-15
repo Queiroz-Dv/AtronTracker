@@ -18,9 +18,11 @@ namespace Atron.WebViews.Controllers
         IUsuarioExternalService _externalService;
         IDepartamentoExternalService _departamentoExternalService;
         ICargoExternalService _cargoExternalService;
+        IPaginationService<CargoDTO> _cargoPager;
 
         public UsuarioController(
             IPaginationService<UsuarioDTO> paginationService,
+            IPaginationService<CargoDTO> cargoPager,
             IResultResponseService responseModel,
             IUsuarioExternalService externalService,
             IDepartamentoExternalService departamentoExternalService,
@@ -29,6 +31,7 @@ namespace Atron.WebViews.Controllers
             _departamentoExternalService = departamentoExternalService;
             _cargoExternalService = cargoExternalService;
             _externalService = externalService;
+            _cargoPager = cargoPager;
             CurrentController = nameof(Usuario);
         }
 
@@ -42,7 +45,7 @@ namespace Atron.WebViews.Controllers
             {
                 return View();
             }
-
+            
             Filter = filter;
             ConfigurePaginationForView(usuarios, itemPage);
             var model = new UsuarioModel()
@@ -50,7 +53,7 @@ namespace Atron.WebViews.Controllers
                 Usuarios = GetEntitiesPaginated(),
                 PageInfo = PageInfo
             };
-
+            
             return View(model);
         }
 
@@ -78,7 +81,6 @@ namespace Atron.WebViews.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            Filter = filter;
             cargos = cargos.Join(departamentos,
                                  crg => crg.DepartamentoCodigo,
                                  dpt => dpt.Codigo,
@@ -90,11 +92,20 @@ namespace Atron.WebViews.Controllers
                                      DepartamentoDescricao = dpt.Descricao
                                  }).OrderBy(orderBy => orderBy.Codigo).ToList();
 
+            _cargoPager.FilterBy = filter;
+
+            _cargoPager.Paginate(cargos, itemPage, CurrentController, filter, nameof(Cadastrar));
+            _cargoPager.ConfigureEntityPaginated(cargos, filter);
+
+            var model = new UsuarioModel()
+            {
+                Cargos = _cargoPager.GetEntitiesFilled(),
+                PageInfo = _cargoPager.PageInfo
+            };
 
 
-           
-
-            ViewBag.CargoComDepartamentos = cargos;
+            ViewBag.CargoComDepartamentos = model.Cargos;
+            ViewBag.CargoPageInfo = model.PageInfo;
 
             return View();
         }
