@@ -47,7 +47,7 @@ namespace Shared.Services
             }
 
             CurrentPage = currentPage;
-            ItemsPerPage = itemsPerPage;
+            ItemsPerPage = itemsPerPage;       
 
             var pageInfo = new PageInfoDTO
             {
@@ -95,9 +95,9 @@ namespace Shared.Services
             return Entities;
         }
 
-        public void Paginate(List<T> items, int itemPage, string controllerName, string filter)
+        public void Paginate(List<T> items, int itemPage, string controllerName, string filter, string action = "")
         {
-            Paginate<T>(items, itemPage, controllerName, filter);
+            Paginate<T>(items, itemPage, controllerName, filter, action);
         }
     }
 }

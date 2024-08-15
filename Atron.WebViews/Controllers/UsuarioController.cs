@@ -18,9 +18,11 @@ namespace Atron.WebViews.Controllers
         IUsuarioExternalService _externalService;
         IDepartamentoExternalService _departamentoExternalService;
         ICargoExternalService _cargoExternalService;
+        IPaginationService<CargoDTO> _cargoPager;
 
         public UsuarioController(
             IPaginationService<UsuarioDTO> paginationService,
+            IPaginationService<CargoDTO> cargoPager,
             IResultResponseService responseModel,
             IUsuarioExternalService externalService,
             IDepartamentoExternalService departamentoExternalService,
@@ -29,6 +31,7 @@ namespace Atron.WebViews.Controllers
             _departamentoExternalService = departamentoExternalService;
             _cargoExternalService = cargoExternalService;
             _externalService = externalService;
+            _cargoPager = cargoPager;
             CurrentController = nameof(Usuario);
         }
 
@@ -42,7 +45,7 @@ namespace Atron.WebViews.Controllers
             {
                 return View();
             }
-
+            
             Filter = filter;
             ConfigurePaginationForView(usuarios, itemPage);
             var model = new UsuarioModel()
@@ -50,17 +53,17 @@ namespace Atron.WebViews.Controllers
                 Usuarios = GetEntitiesPaginated(),
                 PageInfo = PageInfo
             };
-
+            
             return View(model);
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> Cadastrar()
+        [HttpGet, HttpPost]
+        public async Task<IActionResult> Cadastrar(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Cadastro de usuários");
             ViewBag.CurrentController = CurrentController;
-            
+
             var departamentos = await _departamentoExternalService.ObterTodos();
             var cargos = await _cargoExternalService.ObterTodos();
 
@@ -78,93 +81,53 @@ namespace Atron.WebViews.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var departamentosFiltrados = departamentos.Select(dpt =>
-                new
-                {
-                    dpt.Codigo,
-                    Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
-                }).ToList();
+            cargos = cargos.Join(departamentos,
+                                 crg => crg.DepartamentoCodigo,
+                                 dpt => dpt.Codigo,
+                                 (crg, dpt) => new CargoDTO
+                                 {
+                                     Codigo = crg.Codigo,
+                                     Descricao = crg.Descricao,
+                                     DepartamentoCodigo = crg.DepartamentoCodigo,
+                                     DepartamentoDescricao = dpt.Descricao
+                                 }).OrderBy(orderBy => orderBy.Codigo).ToList();
 
-            ViewBag.Departamentos = new SelectList(departamentosFiltrados, "Codigo", "Descricao");
+            _cargoPager.FilterBy = filter;
 
-            if (TempData["CargosFiltrados"] != null)
+            _cargoPager.Paginate(cargos, itemPage, CurrentController, filter, nameof(Cadastrar));
+            _cargoPager.ConfigureEntityPaginated(cargos, filter);
+
+            var model = new UsuarioModel()
             {
-                var cargosFiltrados = JsonConvert.DeserializeObject<List<dynamic>>(TempData["CargosFiltrados"].ToString());
-                ViewBag.Cargos = new SelectList(cargosFiltrados, "Codigo", "Descricao");
-            }
-            else
-            {
-                var cargosFiltrados = cargos.Select(crg =>
-                    new
-                    {
-                        crg.Codigo,
-                        Descricao = $"{crg.Codigo} - {crg.Descricao}"
-                    }
-                ).ToList();
+                Cargos = _cargoPager.GetEntitiesFilled(),
+                PageInfo = _cargoPager.PageInfo
+            };
 
-                ViewBag.Cargos = new SelectList(cargosFiltrados, "Codigo", "Descricao");
-            }
 
-            UsuarioDTO usuarioDTO = new UsuarioDTO();
-            if (TempData["UsuarioDTO"] != null)
-            {
-                usuarioDTO = JsonConvert.DeserializeObject<UsuarioDTO>(TempData[nameof(UsuarioDTO)].ToString());
-            }
+            ViewBag.CargoComDepartamentos = model.Cargos;
+            ViewBag.CargoPageInfo = model.PageInfo;
 
-            return View(usuarioDTO);
+            return View();
         }
 
 
-        //[HttpPost]
-        //public async Task<IActionResult> CadastrarUsuario(UsuarioDTO model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        await _externalService.Criar(model);
-        //        var responses = _externalService.ResultResponses;
-        //        CreateTempDataNotifications(responses);
-        //        return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
-        //    }
-
-        //    _responseService.AddError("Registro inválido para gravação. Tente novamente.");
-        //    CreateTempDataNotifications();
-
-        //    return RedirectToAction(nameof(Cadastrar));
-        //}
-
-        [HttpGet]
-        public async Task<IActionResult> ObterCargosAssociados(UsuarioDTO usuarioDTO)
+        [HttpPost]
+        public async Task<IActionResult> CadastrarUsuario(UsuarioDTO model)
         {
-            var cargos = await _cargoExternalService.ObterTodos();
-
-            cargos = cargos.Where(crg => crg.DepartamentoCodigo == usuarioDTO.DepartamentoCodigo).ToList();
-
-            var cargosFiltrados = cargos.Select(crg => new
+            if (ModelState.IsValid)
             {
-                crg.Codigo,
-                Descricao = $"{crg.Codigo} - {crg.Descricao}"
-            }).ToList();
+                await _externalService.Criar(model);
+                var responses = _externalService.ResultResponses;
+                CreateTempDataNotifications(responses);
+                return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+            }
 
-            TempData["CargosFiltrados"] = JsonConvert.SerializeObject(cargosFiltrados);
-            TempData[nameof(UsuarioDTO)] = JsonConvert.SerializeObject(usuarioDTO);
+            _responseService.AddError("Registro inválido para gravação. Tente novamente.");
+            CreateTempDataNotifications();
+
             return RedirectToAction(nameof(Cadastrar));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetDepartamentosByCargo(string cargoCodigo)
-        {
-            var departamentos = await _departamentoExternalService.ObterTodos();
-
-            departamentos = departamentos.Where(dpt => dpt.CargoCodigo == cargoCodigo).ToList();
-
-            var departamentosFiltrados = departamentos.Select(dpt => new
-            {
-                dpt.Codigo,
-                Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
-            }).ToList();
-
-            return Json(departamentosFiltrados);
-        }
 
     }
 }
