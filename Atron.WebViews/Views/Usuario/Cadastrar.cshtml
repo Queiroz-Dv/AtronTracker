@@ -7,6 +7,7 @@
 
 @{
     List<CargoDTO> cargoComDepartamentos = ViewBag.CargoComDepartamentos;
+    PageInfoDTO cargoPageInfo = ViewBag.CargoPageInfo;
 }
 <h2 style="margin-bottom: 40px;">@ViewData["Title"]</h2>
 <form id="usuarioForm" asp-action="Cadastrar" method="post" class="form-horizontal">
@@ -78,7 +79,7 @@
                 }
             </tbody>
         </table>
-        <partial name="PagerPartial" model="Model.PageInfo"></partial>
+        <partial name="PagerPartial" model="@cargoPageInfo"></partial>
     </fieldset>
    
     <div class="form-group row">

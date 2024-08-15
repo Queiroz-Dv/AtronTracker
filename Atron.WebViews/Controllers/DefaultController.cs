@@ -18,6 +18,7 @@ namespace Atron.WebViews.Controllers
         protected bool ForceFilter { get; set; } = true;
 
         protected string CurrentController { get; set; }
+        
 
         public DefaultController(IPaginationService<T> paginationService, IResultResponseService responseModel)
         {
@@ -31,15 +32,30 @@ namespace Atron.WebViews.Controllers
         /// </summary>
         /// <param name="items">Lista de entidades a serem paginadas</param>
         /// <param name="itemPage">Número da página atual</param>
-        protected virtual void ConfigurePaginationForView(List<T> itens, int itemPage = 1)
+        protected virtual void ConfigurePaginationForView(List<T> itens, int itemPage = 1, string currentController = "", string filter = "")
         {
             ConfigureViewDataFilter();
             ConfigureViewBagCurrentController();
-            ConfigurePagination(itens, itemPage);
+            ConfigurePagination(itens, itemPage, currentController, filter);
         }
 
-        private void ConfigurePagination(List<T> itens, int itemPage)
+        public void ConfigurePagination(List<T> itens, int itemPage, string currentController = "", string filter = "")
         {
+            ProcessPagination(itens, itemPage, currentController, filter);
+        }
+    
+        private void ProcessPagination(List<T> itens, int itemPage, string currentController = "", string filter = "")
+        {
+            if (string.IsNullOrEmpty(currentController))
+            {
+                CurrentController = currentController;
+            }
+
+            if (string.IsNullOrEmpty(filter))
+            {
+                Filter = filter;
+            }
+
             _paginationService.Paginate(itens, itemPage, CurrentController, Filter);
 
             if (!string.IsNullOrEmpty(Filter))
@@ -103,5 +119,5 @@ namespace Atron.WebViews.Controllers
         {
             ViewData["Title"] = title;
         }
-    }
+    }   
 }
