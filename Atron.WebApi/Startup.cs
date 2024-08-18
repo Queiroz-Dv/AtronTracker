@@ -33,7 +33,7 @@ namespace Atron.WebApi
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Atron API",
-                    Version = "v1",
+                    Version = "v1", 
                     Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
                     Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
                 });

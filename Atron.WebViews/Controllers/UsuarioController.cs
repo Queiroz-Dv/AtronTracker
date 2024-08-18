@@ -1,15 +1,13 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
-using ExternalServices.Interfaces;
 using Communication.Extensions;
+using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Shared.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace Atron.WebViews.Controllers
 {
@@ -45,7 +43,7 @@ namespace Atron.WebViews.Controllers
             {
                 return View();
             }
-            
+
             Filter = filter;
             ConfigurePaginationForView(usuarios, itemPage);
             var model = new UsuarioModel()
@@ -53,13 +51,13 @@ namespace Atron.WebViews.Controllers
                 Usuarios = GetEntitiesPaginated(),
                 PageInfo = PageInfo
             };
-            
+
             return View(model);
         }
 
 
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Cadastrar(string filter = "", int itemPage = 1)
+        [HttpGet]
+        public async Task<IActionResult> Cadastrar(int itemPage = 1)
         {
             ConfigureDataTitleForView("Cadastro de usuários");
             ViewBag.CurrentController = CurrentController;
@@ -92,27 +90,24 @@ namespace Atron.WebViews.Controllers
                                      DepartamentoDescricao = dpt.Descricao
                                  }).OrderBy(orderBy => orderBy.Codigo).ToList();
 
-            _cargoPager.FilterBy = filter;
 
-            _cargoPager.Paginate(cargos, itemPage, CurrentController, filter, nameof(Cadastrar));
-            _cargoPager.ConfigureEntityPaginated(cargos, filter);
+            ConfigureViewDataFilter();
+            PaginacaoDeCargos(itemPage, cargos);
 
-            var model = new UsuarioModel()
-            {
-                Cargos = _cargoPager.GetEntitiesFilled(),
-                PageInfo = _cargoPager.PageInfo
-            };
-
-
-            ViewBag.CargoComDepartamentos = model.Cargos;
-            ViewBag.CargoPageInfo = model.PageInfo;
+            ViewBag.CargoComDepartamentos = _cargoPager.GetEntitiesFilled();
+            ViewBag.CargoPageInfo = _cargoPager.PageInfo;
 
             return View();
         }
 
+        private void PaginacaoDeCargos(int itemPage, List<CargoDTO> cargos)
+        {
+            _cargoPager.Paginate(cargos, itemPage, CurrentController, string.Empty, nameof(Cadastrar));
+            _cargoPager.ConfigureEntityPaginated(cargos, string.Empty);
+        }
 
         [HttpPost]
-        public async Task<IActionResult> CadastrarUsuario(UsuarioDTO model)
+        public async Task<IActionResult> Cadastrar(UsuarioDTO model)
         {
             if (ModelState.IsValid)
             {
@@ -126,8 +121,6 @@ namespace Atron.WebViews.Controllers
             CreateTempDataNotifications();
 
             return RedirectToAction(nameof(Cadastrar));
-        }
-
-
+        }       
     }
 }

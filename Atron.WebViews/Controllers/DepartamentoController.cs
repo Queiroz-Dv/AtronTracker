@@ -36,7 +36,7 @@ namespace Atron.WebViews.Controllers
             }
 
             Filter = filter;
-            ConfigurePaginationForView(departamentos, itemPage);
+            ConfigurePaginationForView(departamentos, itemPage, CurrentController, filter);
 
             var model = new DepartamentoModel()
             {
