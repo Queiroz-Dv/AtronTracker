@@ -95,7 +95,7 @@ namespace Shared.Services
             return Entities;
         }
 
-        public void Paginate(List<T> items, int itemPage, string controllerName, string filter, string action = "")
+        public void Paginate(List<T> items, int itemPage, string controllerName, string filter, string action = nameof(Index))
         {
             Paginate<T>(items, itemPage, controllerName, filter, action);
         }

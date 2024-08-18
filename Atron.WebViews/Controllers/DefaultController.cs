@@ -73,7 +73,7 @@ namespace Atron.WebViews.Controllers
             ViewBag.CurrentController = CurrentController;
         }
 
-        private void ConfigureViewDataFilter()
+        protected void ConfigureViewDataFilter()
         {
             ViewData["Filter"] = Filter;
         }

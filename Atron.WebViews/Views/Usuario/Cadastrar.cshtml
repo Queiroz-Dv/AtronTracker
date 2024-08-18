@@ -3,85 +3,90 @@
 @using Shared.Services;
 @using Newtonsoft.Json;
 @using Atron.WebViews.Models;
-@model UsuarioModel;
+@model UsuarioDTO;
 
 @{
     List<CargoDTO> cargoComDepartamentos = ViewBag.CargoComDepartamentos;
     PageInfoDTO cargoPageInfo = ViewBag.CargoPageInfo;
 }
+
 <h2 style="margin-bottom: 40px;">@ViewData["Title"]</h2>
 <form id="usuarioForm" asp-action="Cadastrar" method="post" class="form-horizontal">
-        <div class="form-group row">
-        <label asp-for="Usuario.Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
+    <div class="form-group row">
+        <label asp-for="Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
         <div class="col-md-5 mb-3">
-            <input asp-for="Usuario.Codigo" class="form-control" />
-            <span asp-validation-for="Usuario.Codigo" class="text-danger"></span>
+            <input asp-for="Codigo" class="form-control" />
+            <span asp-validation-for="Codigo" class="text-danger"></span>
         </div>
     </div>
 
     <div class="form-group row">
-        <label asp-for="Usuario.Nome" class="col-md-2 col-form-label font-weight-bold"></label>
+        <label asp-for="Nome" class="col-md-2 col-form-label font-weight-bold"></label>
         <div class="col-md-7 mb-3">
-            <input asp-for="Usuario.Nome" class="form-control" />
-            <span asp-validation-for="Usuario.Nome" class="text-danger"></span>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
         </div>
     </div>
 
     <div class="form-group row">
-        <label asp-for="Usuario.Sobrenome" class="col-md-2 col-form-label font-weight-bold"></label>
+        <label asp-for="Sobrenome" class="col-md-2 col-form-label font-weight-bold"></label>
         <div class="col-md-7 mb-3">
-            <input asp-for="Usuario.Sobrenome" class="form-control" />
-            <span asp-validation-for="Usuario.Sobrenome" class="text-danger"></span>
+            <input asp-for="Sobrenome" class="form-control" />
+            <span asp-validation-for="Sobrenome" class="text-danger"></span>
         </div>
     </div>
 
     <div class="form-group row">
-        <label asp-for="Usuario.Salario" class="col-md-2 col-form-label font-weight-bold"></label>
+        <label asp-for="Salario" class="col-md-2 col-form-label font-weight-bold"></label>
         <div class="col-md-7 mb-3">
-            <input asp-for="Usuario.Salario" class="form-control" />
-            <span asp-validation-for="Usuario.Salario" class="text-danger"></span>
+            <input asp-for="Salario" class="form-control" />
+            <span asp-validation-for="Salario" class="text-danger"></span>
         </div>
     </div>
 
     <div class="form-group row">
-        <label asp-for="Usuario.DataNascimento" class="col-md-2 col-form-label font-weight-bold">Data de nascimento</label>
+        <label asp-for="DataNascimento" class="col-md-2 col-form-label font-weight-bold">Data de nascimento</label>
         <div class="col-md-7 mb-3">
-            <input asp-for="Usuario.DataNascimento" type="date" class="form-control" />
-            <span asp-validation-for="Usuario.DataNascimento" class="text-danger"></span>
+            <input asp-for="DataNascimento" type="date" class="form-control" />
+            <span asp-validation-for="DataNascimento" class="text-danger"></span>
         </div>
     </div>
 
-    <fieldset class="border p-3">
-        <legend class="w-auto">Cargos e Departamentos</legend>
+    <fieldset class="border p-2">
+        <legend class="w-auto">Cargos e Departamentos</legend>               
         <table class="table table-bordered table-hover">
             <thead class="thead-dark">
                 <tr>
                     <th></th>
                     <th>Código do Cargo</th>
-                    <th>Descrição do Cargo</th>                   
+                    <th>Descrição do Cargo</th>
                     <th>Descrição do Departamento</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in cargoComDepartamentos) // Supondo que o modelo tenha CargosDepartamentos
+                @foreach (var item in cargoComDepartamentos)
                 {
                     <tr>
                         <td>
-                            <input asp-for="Usuario.CargoCodigo" type="radio" value="@item.Codigo" />
+                            <input asp-for="CargoCodigo" type="radio" value="@item.Codigo" />
                         </td>
                         <td>@item.Codigo</td>
                         <td>@item.Descricao</td>
                         <td hidden="hidden">
-                            <input hidden="hidden" asp-for="Usuario.DepartamentoCodigo" value="@item.DepartamentoCodigo" />
+                            <input hidden="hidden" asp-for="DepartamentoCodigo" value="@item.DepartamentoCodigo" />
                         </td>
                         <td>@item.DepartamentoDescricao</td>
                     </tr>
                 }
             </tbody>
         </table>
-        <partial name="PagerPartial" model="@cargoPageInfo"></partial>
     </fieldset>
-   
+
+    <div class="form-group row p-3">
+        <partial name="PagerPartial" model="@cargoPageInfo"></partial>
+    </div>
+
+
     <div class="form-group row">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" value="Cadastrar" class="btn btn-success" />
@@ -91,5 +96,17 @@
 </form>
 
 @section Scripts {
-    
+    <script type="text/javascript">
+
+        // document.getElementById('inputFilter').addEventListener('click', async function () {
+        //     const codigo = document.getElementById('filterText').value;
+        //     await filtrar(codigo);
+        // });
+
+        // async function filtrar(codigo) {
+        //     const response = await fetch(`@Url.Action("Filtrar", "Usuario")?codigo=${codigo}`, {
+        //         method: 'POST'
+        //     });
+        // }
+    </script>
 }
