@@ -26,6 +26,8 @@ namespace Atron.WebApi
 
             // Indica que usaremos as controllers para comunicação com os endpoints
             services.AddControllers();
+            services.AddHttpClient();
+            services.AddHttpContextAccessor();
 
             // Informa que usaremos o Swagger para documentação e testes
             services.AddSwaggerGen(c =>
@@ -53,6 +55,7 @@ namespace Atron.WebApi
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

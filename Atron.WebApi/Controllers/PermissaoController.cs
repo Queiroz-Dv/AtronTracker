@@ -28,7 +28,7 @@ namespace Atron.WebApi.Controllers
             }
 
             await _permissaoService.CriarPermissaoServiceAsync(permissao);
-            return Ok(_permissaoService._messages);
+            return Ok(_permissaoService.Messages);
         }
 
         [Route("ObterPermissoes")]
@@ -50,15 +50,15 @@ namespace Atron.WebApi.Controllers
         {
             await _permissaoService.AtualizarPermissaoServiceAsync(permissao);
 
-            if (_permissaoService._messages.HasErrors())
+            if (_permissaoService.Messages.HasErrors())
             {
-                foreach (var item in _permissaoService._messages)
+                foreach (var item in _permissaoService.Messages)
                 {
                     return BadRequest(item.Message);
                 }
             }
 
-            return Ok(_permissaoService._messages);
+            return Ok(_permissaoService.Messages);
         }
 
         // TODO: Testar depois
@@ -69,15 +69,15 @@ namespace Atron.WebApi.Controllers
             {
                 await _permissaoService.ExcluirPermissaoServiceAsync(id);
 
-                if (_permissaoService._messages.HasErrors())
+                if (_permissaoService.Messages.HasErrors())
                 {
-                    foreach (var item in _permissaoService._messages)
+                    foreach (var item in _permissaoService.Messages)
                     {
                         return BadRequest(item.Message);
                     }
                 }
 
-                return Ok(_permissaoService._messages);
+                return Ok(_permissaoService.Messages);
             }
 
             return BadRequest(new NotificationMessage("Identificador da permissão inválido", Notification.Enums.ENotificationType.Error));

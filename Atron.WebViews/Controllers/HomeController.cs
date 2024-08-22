@@ -1,16 +1,16 @@
-﻿using Atron.WebViews.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 
 namespace Atron.WebViews.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        //   private readonly IApiRouteService _apiRouteService;
 
         public HomeController(ILogger<HomeController> logger)
         {
+
             _logger = logger;
         }
 
@@ -21,11 +21,23 @@ namespace Atron.WebViews.Controllers
             return View();
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> CadastrarRotas()
+        //{
+        //    ViewData["Title"] = "Cadastro de Rotas";
+        //   // var routes = await _apiRouteService.ObterTodasRotasServiceAsync();
+        //    return View(routes); // Certifique-se de que a view espera uma lista de rotas
+        //}
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> CadastrarRotas(ApiRoute route)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        //await _apiRouteService.(route);
+        //        return RedirectToAction("CadastrarRotas");
+        //    }
+        //    return View(route);
+        //}
     }
 }

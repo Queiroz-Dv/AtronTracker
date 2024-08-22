@@ -1,4 +1,5 @@
-﻿using Atron.Domain.Entities;
+﻿using Atron.Domain.ApiEntities;
+using Atron.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Atron.Infrastructure.Context
@@ -24,6 +25,8 @@ namespace Atron.Infrastructure.Context
         public DbSet<Permissao> Permissoes { get; set; }
 
         public DbSet<PermissaoEstado> PermissoesEstados { get; set; }
+
+        public DbSet<ApiRoute> ApiRoutes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
