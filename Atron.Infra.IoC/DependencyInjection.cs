@@ -1,11 +1,14 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Mapping;
+using Atron.Domain.ApiEntities;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Communication.Models;
 using Communication.Services;
 using ExternalServices.Interfaces;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using ExternalServices.Services;
+using ExternalServices.Services.ApiRouteServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Interfaces;
@@ -34,6 +37,9 @@ namespace Atron.Infra.IoC
             services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
             services.AddScoped<ICargoExternalService, CargoExternalService>();
             services.AddScoped<IUsuarioExternalService, UsuarioExternalService>();
+
+            services.AddScoped<IApiRouteExternalService, ApiRouteExternalService>();
+            services.AddScoped<IPaginationService<ApiRoute>, PaginationService<ApiRoute>>();
 
             services.AddScoped<IPaginationService<CargoDTO>, PaginationService<CargoDTO>>();
             services.AddScoped<IPaginationService<DepartamentoDTO>, PaginationService<DepartamentoDTO>>();

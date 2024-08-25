@@ -7,7 +7,7 @@ namespace Shared.Interfaces
     /// </summary>
     public interface IResultResponseService
     {
-         List<ResultResponse> ResultMessages { get; set; }
+         List<ResultResponseDTO> ResultMessages { get; set; }
 
         void AddMessage(string message);
 

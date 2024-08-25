@@ -50,8 +50,7 @@ namespace Atron.WebApi
                 app.UseDeveloperExceptionPage();
                 AddSwagger(app);
             }
-          
-            AddSwagger(app);
+         
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();

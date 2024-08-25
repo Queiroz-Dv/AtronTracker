@@ -1,7 +1,7 @@
 ﻿using Atron.Application.ApiInterfaces;
 using Atron.Domain.ApiEntities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Notification.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,27 +12,25 @@ namespace Atron.WebApi.Controllers
     public class ApiRouteConnectController : Controller
     {
         private readonly IApiRouteService _apiRouteService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApiRouteConnectController(IApiRouteService apiRouteService, IHttpContextAccessor httpContextAccessor)
+        public ApiRouteConnectController(IApiRouteService apiRouteService)
         {
-            _httpContextAccessor = httpContextAccessor;
             _apiRouteService = apiRouteService;
         }
 
-        [HttpGet]
+        [HttpGet("ObterRotas")]
         public async Task<ActionResult<IEnumerable<ApiRoute>>> Get()
         {
             var rotas = await _apiRouteService.ObterTodasRotasServiceAsync();
             return rotas is not null ? Ok(rotas) : NoContent();
         }
 
-        [HttpGet("GetBaseUrl")]
-        public  async Task<ActionResult> GetBaseUrl()
+        [HttpPost("CriarRota")]
+        public async Task<ActionResult> Post([FromBody] ApiRoute apiRoute)
         {
-            var request = _httpContextAccessor.HttpContext.Request;
-            var baseUrl = $"{request.Scheme}://{request.Host.Value}";
-            return Ok(baseUrl);
+            await _apiRouteService.CriarRotaAsync(apiRoute);
+            return !_apiRouteService.Messages.HasErrors() ?
+                Ok(_apiRouteService.Messages) : BadRequest(_apiRouteService.Messages);
         }
     }
 }

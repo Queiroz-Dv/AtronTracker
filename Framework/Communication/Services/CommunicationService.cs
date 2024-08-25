@@ -5,19 +5,19 @@ namespace Communication.Services
 {
     public class CommunicationService : ICommunicationService
     {
-        private readonly List<ResultResponse> responses = new List<ResultResponse>();
+        private readonly List<ResultResponseDTO> responses = new List<ResultResponseDTO>();
 
-        public void AddResponseContent(ResultResponse resultResponse)
+        public void AddResponseContent(ResultResponseDTO resultResponse)
         {
             responses.Add(resultResponse);
         }
 
-        public void AddResponseContent(List<ResultResponse> resultResponses)
+        public void AddResponseContent(List<ResultResponseDTO> resultResponses)
         {
             responses.AddRange(resultResponses);
         }
 
-        public List<ResultResponse> GetResultResponses()
+        public List<ResultResponseDTO> GetResultResponses()
         {
             return responses;
         }

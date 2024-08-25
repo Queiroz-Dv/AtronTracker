@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Shared.DTO.API;
 
 namespace Atron.WebViews
 {
@@ -23,6 +24,7 @@ namespace Atron.WebViews
             services.AddHttpClient();
             services.AddInfrastructure(Configuration);
             services.AddControllersWithViews();
+            services.Configure<AppSettingsConfigShared>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
