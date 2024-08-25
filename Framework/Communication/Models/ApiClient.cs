@@ -30,13 +30,13 @@ namespace Communication.Models
         {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             var response = await _httpClient.PostAsync(uri, httpContent);
-            await FillResultResponse(response);            
+            await FillResultResponse(response);
         }
 
         private async Task FillResultResponse(HttpResponseMessage response)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
-            var resultContent = JsonConvert.DeserializeObject<List<ResultResponse>>(responseContent);
+            var resultContent = JsonConvert.DeserializeObject<List<ResultResponseDTO>>(responseContent);
             _communicationService.AddResponseContent(resultContent);
         }
 
@@ -62,6 +62,6 @@ namespace Communication.Models
             var response = await _httpClient.DeleteAsync(uriFormated);
 
             await FillResultResponse(response);
-        }
+        }        
     }
 }

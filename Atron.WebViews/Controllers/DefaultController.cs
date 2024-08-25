@@ -73,7 +73,7 @@ namespace Atron.WebViews.Controllers
             ViewBag.CurrentController = CurrentController;
         }
 
-        private void ConfigureViewDataFilter()
+        protected void ConfigureViewDataFilter()
         {
             ViewData["Filter"] = Filter;
         }
@@ -82,7 +82,7 @@ namespace Atron.WebViews.Controllers
         /// Cria as notificações de TempData a partir das mensagens de resposta.
         /// </summary>
         /// <param name="resultResponses">Lista de respostas com notificações</param>
-        protected virtual void CreateTempDataNotifications(List<ResultResponse> resultResponses)
+        protected virtual void CreateTempDataNotifications(List<ResultResponseDTO> resultResponses)
         {
             var responseSerialized = JsonConvert.SerializeObject(resultResponses);
             TempData["Notifications"] = responseSerialized;

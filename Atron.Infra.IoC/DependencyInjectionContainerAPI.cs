@@ -1,9 +1,13 @@
-﻿using Atron.Application.Interfaces;
+﻿using Atron.Application.ApiInterfaces;
+using Atron.Application.ApiServices;
+using Atron.Application.Interfaces;
 using Atron.Application.Mapping;
 using Atron.Application.Services;
+using Atron.Domain.ApiInterfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Validations;
+using Atron.Infrastructure.ApiRepositories;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +63,9 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IPermissaoEstadoRepository, PermissaoEstadoRepository>();
 
+            services.AddScoped<IApiRouteRepository, ApiRouteRepository>();
+            services.AddScoped<IApiRouteService, ApiRouteService>();
+
             // Serviços utilitários 
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
@@ -76,7 +83,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
             services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
             services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
-
+           
             return services;
         }
     }

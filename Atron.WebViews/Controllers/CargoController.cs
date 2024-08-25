@@ -39,7 +39,7 @@ namespace Atron.WebViews.Controllers
             }
 
             Filter = filter;
-            ConfigurePaginationForView(cargos, itemPage);
+            ConfigurePaginationForView(cargos, itemPage, CurrentController, filter);
             var model = new CargoModel()
             {
                 Cargos = GetEntitiesPaginated(),

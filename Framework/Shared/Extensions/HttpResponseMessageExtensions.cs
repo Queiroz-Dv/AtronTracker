@@ -12,10 +12,10 @@ namespace Shared.Extensions
             return jsonValidation;
         }
 
-        public static async Task<List<ResultResponse>> ReadMessageResponseAsync(this HttpResponseMessage response)
+        public static async Task<List<ResultResponseDTO>> ReadMessageResponseAsync(this HttpResponseMessage response)
         {
             var content = await response.Content.ReadAsStringAsync();
-            var jsonValidation = JsonConvert.DeserializeObject<List<ResultResponse>>(content);
+            var jsonValidation = JsonConvert.DeserializeObject<List<ResultResponseDTO>>(content);
             return jsonValidation;
         }
     }

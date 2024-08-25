@@ -5,7 +5,7 @@ namespace Communication.Extensions
 {
     public static class CommunicationExtensions
     {
-        public static bool HasErrors(this List<ResultResponse> resultResponses)
+        public static bool HasErrors(this List<ResultResponseDTO> resultResponses)
         {
             return resultResponses.Any(rst => rst.Level == ResultResponseLevelEnum.Error);
         }

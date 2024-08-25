@@ -8,15 +8,15 @@ namespace Shared.Services
     {
         protected ResultResponseService()
         {
-            ResultMessages = new List<ResultResponse>();
+            ResultMessages = new List<ResultResponseDTO>();
         }
 
         public void AddNotification(string message, ResultResponseLevelEnum level)
         {
-            ResultMessages.Add(new ResultResponse() { Message = message, Level = level });
+            ResultMessages.Add(new ResultResponseDTO() { Message = message, Level = level });
         }
 
-        public List<ResultResponse> ResultMessages { get; set; }
+        public List<ResultResponseDTO> ResultMessages { get; set; }
 
         public abstract void AddMessage(string message);
 
