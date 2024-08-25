@@ -6,8 +6,8 @@
 
 @{
     var notificationsTempData = TempData["Notifications"];
-    List<ResultResponse> notifications = notificationsTempData is not null ?
-    JsonConvert.DeserializeObject<List<ResultResponse>>(notificationsTempData.ToString()) : null;
+    List<ResultResponseDTO> notifications = notificationsTempData is not null ?
+    JsonConvert.DeserializeObject<List<ResultResponseDTO>>(notificationsTempData.ToString()) : null;
 }
 
 @if (notifications != null)

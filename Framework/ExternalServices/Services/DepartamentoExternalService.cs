@@ -12,13 +12,13 @@ namespace ExternalServices.Services
     {
         private readonly IApiClient _apiClient;
         private readonly ICommunicationService _communicationService;
-        public List<ResultResponse> ResultResponses { get; set; }
+        public List<ResultResponseDTO> ResultResponses { get; set; }
 
         public DepartamentoExternalService(IApiClient apiClient, ICommunicationService communicationService)
         {
             _apiClient = apiClient;
             _communicationService = communicationService;
-            ResultResponses = new List<ResultResponse>();
+            ResultResponses = new List<ResultResponseDTO>();
         }
 
 
@@ -32,12 +32,12 @@ namespace ExternalServices.Services
             }
             catch (HttpRequestException ex)
             {
-                var errorResponse = JsonConvert.DeserializeObject<List<ResultResponse>>(ex.Message);
+                var errorResponse = JsonConvert.DeserializeObject<List<ResultResponseDTO>>(ex.Message);
                 ResultResponses.AddRange(errorResponse);
             }
             catch (Exception ex)
             {
-                ResultResponses.Add(new ResultResponse() { Message = ex.Message, Level = ResultResponseLevelEnum.Error });
+                ResultResponses.Add(new ResultResponseDTO() { Message = ex.Message, Level = ResultResponseLevelEnum.Error });
             }
         }
 

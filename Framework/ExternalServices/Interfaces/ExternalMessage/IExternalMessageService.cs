@@ -4,6 +4,6 @@ namespace ExternalServices.Interfaces.ExternalMessage
 {
     public interface IExternalMessageService
     {
-        public List<ResultResponse> ResultResponses { get; set; }
+        public List<ResultResponseDTO> ResultResponses { get; set; }
     }
 }

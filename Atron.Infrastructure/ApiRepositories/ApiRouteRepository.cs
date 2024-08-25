@@ -17,9 +17,16 @@ namespace Atron.Infrastructure.ApiRepositories
             _context = context;
         }
 
+        public async Task CriarRotaRepositoryAsync(ApiRoute apiRoute)
+        {
+            await _context.ApiRoutes.AddAsync(apiRoute);
+            await _context.SaveChangesAsync();
+            return;
+        }
+
         public async Task<IEnumerable<ApiRoute>> ObterTodasRotas()
         {
-            var rotas = await _context.ApiRoutes.Where(rts => rts.IsActive).ToListAsync();
+            var rotas = await _context.ApiRoutes.Where(rts => rts.Ativo).ToListAsync();
             return rotas;
         }
     }

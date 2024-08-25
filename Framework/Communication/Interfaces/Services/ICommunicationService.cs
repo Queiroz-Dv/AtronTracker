@@ -4,8 +4,8 @@ namespace Communication.Interfaces.Services
 {
     public interface ICommunicationService
     {
-        void AddResponseContent(ResultResponse resultResponse);
-        void AddResponseContent(List<ResultResponse> resultResponses);
-        List<ResultResponse> GetResultResponses();
+        void AddResponseContent(ResultResponseDTO resultResponse);
+        void AddResponseContent(List<ResultResponseDTO> resultResponses);
+        List<ResultResponseDTO> GetResultResponses();
     }
 }

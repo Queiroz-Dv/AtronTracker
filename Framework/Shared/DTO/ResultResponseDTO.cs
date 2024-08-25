@@ -5,7 +5,7 @@ using Shared.Enums;
 namespace Shared.DTO
 {
     [Serializable]
-    public class ResultResponse
+    public class ResultResponseDTO
     {        
         public string Message { get; set; }
 

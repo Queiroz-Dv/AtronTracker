@@ -12,13 +12,13 @@ namespace ExternalServices.Services
         private readonly IApiClient _client;
         private readonly ICommunicationService _communicationService;
 
-        public List<ResultResponse> ResultResponses { get; set; }
+        public List<ResultResponseDTO> ResultResponses { get; set; }
 
         public UsuarioExternalService(IApiClient apiClient, ICommunicationService communicationService)
         {
             _client = apiClient;
             _communicationService = communicationService;
-            ResultResponses = new List<ResultResponse>();
+            ResultResponses = new List<ResultResponseDTO>();
         }
 
         public async Task<List<UsuarioDTO>> ObterTodos()
