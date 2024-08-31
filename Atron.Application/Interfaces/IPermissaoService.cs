@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Application.Interfaces
 {
-    public interface IPermissaoService : INotificationDTO
+    public interface IPermissaoService : INotificationMessage
     {
         Task CriarPermissaoServiceAsync(PermissaoDTO permissaoDTO);
 

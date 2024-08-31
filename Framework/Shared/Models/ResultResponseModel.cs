@@ -3,6 +3,9 @@ using Shared.Services;
 
 namespace Shared.Models
 {
+    /// <summary>
+    /// Classe de modelo para os processos de notificações do retorno da API
+    /// </summary>
     public class ResultResponseModel : ResultResponseService
     {
          public override void AddError(string message)

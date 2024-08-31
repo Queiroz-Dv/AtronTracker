@@ -1,7 +1,13 @@
 ﻿namespace Shared.DTO.API
 {
+    /// <summary>
+    /// Classe para o fluxo de configurações descritas no AppSettings
+    /// </summary>
     public class AppSettingsConfigShared
     {
-        public List<RotasFixasConfig> RotasFixas { get; set; } // Lista de rotas fixas
+        /// <summary>
+        /// Lista de rotas padrões para conexão com a API
+        /// </summary>
+        public List<RotasFixasConfig> RotasFixas { get; set; } 
     }
 }

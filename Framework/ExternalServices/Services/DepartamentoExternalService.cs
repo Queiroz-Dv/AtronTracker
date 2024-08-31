@@ -8,6 +8,9 @@ using Shared.Enums;
 
 namespace ExternalServices.Services
 {
+    /// <summary>
+    /// Classe que implementa o processo e fluxo de departamentos
+    /// </summary>
     public class DepartamentoExternalService : IDepartamentoExternalService
     {
         private readonly IApiClient _apiClient;
