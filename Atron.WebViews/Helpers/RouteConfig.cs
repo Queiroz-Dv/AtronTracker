@@ -5,6 +5,9 @@ using System;
 
 namespace Atron.WebViews.Helpers
 {
+    /// <summary>
+    /// Classe que configura as rotas padrões para cada módulo
+    /// </summary>
     public static class RouteConfig
     {
         public static void AddEntityRoutes(this IEndpointRouteBuilder endpoints)
