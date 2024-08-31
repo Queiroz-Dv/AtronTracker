@@ -1,6 +1,5 @@
 ﻿# Projeto Communication
 
-
 O projeto **Communication** é responsável por gerenciar a comunicação com APIs externas
 <br> e por lidar com o tratamento de respostas de APIs. <br>
 Ele é estruturado em diferentes pastas, cada uma com responsabilidades específicas para manter a modularidade e clareza do código.
