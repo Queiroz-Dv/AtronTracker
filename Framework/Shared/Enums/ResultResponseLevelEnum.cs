@@ -2,6 +2,9 @@
 
 namespace Shared.Enums
 {
+    /// <summary>
+    /// Enumerador de nível da mensagem
+    /// </summary>
     [Serializable]
     public enum ResultResponseLevelEnum
     {

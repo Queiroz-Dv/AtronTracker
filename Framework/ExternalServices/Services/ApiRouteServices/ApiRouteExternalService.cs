@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 
 namespace ExternalServices.Services.ApiRouteServices
 {
+    /// <summary>
+    /// Classe que implementa os processos do fluxo do módulo de Rotas da API
+    /// </summary>
     public class ApiRouteExternalService : IApiRouteExternalService
     {
         private readonly IApiClient _apiClient;

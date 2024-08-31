@@ -1,5 +1,8 @@
 ﻿namespace Shared.DTO
 {
+    /// <summary>
+    /// Classe que define a estrutura de informações para paginação das entidades
+    /// </summary>
     public class PageInfoDTO
     {        
         public int TotalItems { get; set; }

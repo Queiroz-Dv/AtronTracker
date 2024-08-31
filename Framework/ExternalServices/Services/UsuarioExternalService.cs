@@ -7,6 +7,9 @@ using Shared.DTO;
 
 namespace ExternalServices.Services
 {
+    /// <summary>
+    /// Classe que implementa os processos e fluxo do módulo de Usuários
+    /// </summary>
     public class UsuarioExternalService : IUsuarioExternalService
     {
         private readonly IApiClient _client;

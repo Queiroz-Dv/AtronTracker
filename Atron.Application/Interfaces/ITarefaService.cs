@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Application.Interfaces
 {
-    public interface ITarefaService : INotificationDTO
+    public interface ITarefaService : INotificationMessage
     {
         Task<List<TarefaDTO>> ObterTodosAsync();
 
