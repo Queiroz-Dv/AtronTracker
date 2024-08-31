@@ -1,6 +1,7 @@
-﻿# Atron.Application
+﻿# Projeto Application
 
-O projeto **Atron.Application** contém a lógica de aplicação, implementações de serviços e regras de negócios, e interfaces necessárias para orquestrar a interação entre diferentes camadas do sistema. Abaixo, uma descrição detalhada de cada pasta e arquivo dentro deste projeto.
+O projeto **Application** contém a lógica de aplicação, implementações de serviços e regras de negócios, e interfaces necessárias para orquestrar a interação entre diferentes camadas do sistema.
+Abaixo, uma descrição detalhada de cada pasta e arquivo dentro deste projeto.
 
 ## Estrutura do Projeto
 
