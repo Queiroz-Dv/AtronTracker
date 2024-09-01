@@ -1,8 +1,11 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Notification.Models;
+using Shared.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
@@ -29,7 +32,8 @@ namespace Atron.WebApi.Controllers
             }
             await _departamentoService.CriarAsync(departamento);
 
-            return Ok(_departamentoService.notificationMessages);
+            var messages = _departamentoService.Messages.ConvertMessageToJson();
+            return Ok(messages);
         }
 
         [HttpGet]

@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Interfaces;
 using Notification.Models;
+using Shared.Models;
 
 namespace Atron.Infra.IoC
 {
@@ -83,6 +84,8 @@ namespace Atron.Infra.IoC
             services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
             services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
             services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
+
+            services.AddScoped<MessageModel<Departamento>, DepartamentoMessageValidation>();
            
             return services;
         }

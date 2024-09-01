@@ -10,8 +10,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration
         {
             builder.HasKey(pst => pst.Id);
 
-            builder.Property(dpt => dpt.Id)
-                   .ValueGeneratedNever();
+            builder.Property(dpt => dpt.IdSequencial).IsRequired();
 
             builder.Property(pst => pst.Codigo)
                    .IsRequired()

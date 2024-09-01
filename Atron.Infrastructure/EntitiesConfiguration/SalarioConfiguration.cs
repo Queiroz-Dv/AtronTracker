@@ -9,7 +9,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration
         public void Configure(EntityTypeBuilder<Salario> builder)
         {
             builder.HasKey(x => x.Id);
-
+            builder.Property(dpt => dpt.IdSequencial).IsRequired();
             builder.Property(slr => slr.UsuarioId).IsRequired();
             builder.Property(slr => slr.UsuarioCodigo).IsRequired().HasMaxLength(10);
             builder.Property(slr => slr.MesId).IsRequired();
