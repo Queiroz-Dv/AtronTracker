@@ -13,16 +13,20 @@
 <ul>
   <li>
     <h3>Framework</h3>
+    <p>Decidi modelar e montar a estrutura interna dos processos e fluxos do sistema. Para isso centralizei tudo nessa pasta a fim de organizar as bibliotecas de acesso do sistema.</p>
     <ul>
       <li>
         <strong>Communication:</strong> Gerencia a comunicação dentro da aplicação, incluindo serviços de envio de e-mails, notificações, mensagens de texto, ou qualquer outro tipo de comunicação necessária.
       </li>
+      <br>
       <li>
         <strong>ExternalServices:</strong> Responsável pela integração com serviços externos, conectando a aplicação com APIs de terceiros ou serviços como gateways de pagamento, serviços de autenticação, ou APIs de dados.
       </li>
+      <br>
       <li>
         <strong>Notification:</strong> Gerencia notificações dentro da aplicação, incluindo envio de alertas, gerenciamento de status das notificações e definição de regras para disparo de notificações.
       </li>
+      <br>
       <li>
         <strong>Shared:</strong> Contém código compartilhado entre diferentes módulos ou camadas da aplicação, como utilitários, helpers e outras classes reutilizáveis.
       </li>
