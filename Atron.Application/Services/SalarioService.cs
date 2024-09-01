@@ -47,10 +47,10 @@ namespace Atron.Application.Services
             _salarioRepository = salarioRepository;
             _mesRepository = mesRepository;
             _notification = notification;
-            _messages = new List<NotificationMessage>();
+            Messages = new List<NotificationMessage>();
         }
 
-        public List<NotificationMessage> _messages { get; set; }
+        public List<NotificationMessage> Messages { get; set; }
 
         public async Task AtualizarServiceAsync(SalarioDTO salarioDTO)
         {
@@ -73,7 +73,7 @@ namespace Atron.Application.Services
             }
             else
             {
-                _messages.Add(new NotificationMessage("Usuário informado não está cadastrado.", Notification.Enums.ENotificationType.Error));
+                Messages.Add(new NotificationMessage("Usuário informado não está cadastrado.", Notification.Enums.ENotificationType.Error));
                 return;
             }
 
@@ -82,11 +82,11 @@ namespace Atron.Application.Services
             if (!_notification.Messages.HasErrors())
             {
                 await _repository.AtualizarRepositoryAsync(entidade);
-                _messages.Add(new NotificationMessage("Salário atualizado com sucesso."));
+                Messages.Add(new NotificationMessage("Salário atualizado com sucesso."));
                 return;
             }
 
-            _messages.AddRange(_notification.Messages);
+            Messages.AddRange(_notification.Messages);
         }
 
         public async Task CriarAsync(SalarioDTO salarioDTO)
@@ -118,7 +118,7 @@ namespace Atron.Application.Services
 
 
                 await _salarioRepository.CriarRepositoryAsync(entidade);
-                _messages.Add(new NotificationMessage($"Salário incluso para o usuário {salarioDTO.Usuario.Nome}"));
+                Messages.Add(new NotificationMessage($"Salário incluso para o usuário {salarioDTO.Usuario.Nome}"));
             }
         }
 
@@ -129,7 +129,7 @@ namespace Atron.Application.Services
             if (salario is not null)
             {
                 await _salarioRepository.RemoverRepositoryAsync(salario);
-                _messages.Add(new NotificationMessage("Registro removido com sucesso."));
+                Messages.Add(new NotificationMessage("Registro removido com sucesso."));
             }
         }
 

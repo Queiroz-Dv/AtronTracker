@@ -26,6 +26,8 @@ namespace Atron.WebApi
 
             // Indica que usaremos as controllers para comunicação com os endpoints
             services.AddControllers();
+            services.AddHttpClient();
+            services.AddHttpContextAccessor();
 
             // Informa que usaremos o Swagger para documentação e testes
             services.AddSwaggerGen(c =>
@@ -33,7 +35,7 @@ namespace Atron.WebApi
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Atron API",
-                    Version = "v1",
+                    Version = "v1", 
                     Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
                     Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
                 });
@@ -48,11 +50,11 @@ namespace Atron.WebApi
                 app.UseDeveloperExceptionPage();
                 AddSwagger(app);
             }
-          
-            AddSwagger(app);
+         
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

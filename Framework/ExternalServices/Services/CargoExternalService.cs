@@ -4,26 +4,32 @@ using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Newtonsoft.Json;
 using Shared.DTO;
+using Shared.Enums;
 
 namespace ExternalServices.Services
 {
+    /// <summary>
+    /// Classe que implementa o fluxo de processos do módulo de cargos
+    /// </summary>
     public class CargoExternalService : ICargoExternalService
     {
         private readonly IApiClient _apiClient;
         private readonly ICommunicationService _communicationService;
 
+        public List<ResultResponseDTO> ResultResponses { get; set; }
+
         public CargoExternalService(IApiClient apiClient, ICommunicationService communicationService)
         {
             _apiClient = apiClient;
             _communicationService = communicationService;
+            ResultResponses = new List<ResultResponseDTO>();
         }
 
-        public async Task<(bool isSucess, List<ResultResponse> responses)> Criar(CargoDTO cargoDTO)
-        {            
-            var json  = JsonConvert.SerializeObject(cargoDTO);
-            var response = await _apiClient.PostAsync("https://atron-hmg.azurewebsites.net/api/Cargo/CriarCargo", json);
-            var notifications = _communicationService.GetResultResponses();
-            return (true, notifications);
+        public async Task Criar(CargoDTO cargoDTO)
+        {
+            var json = JsonConvert.SerializeObject(cargoDTO);
+            await _apiClient.PostAsync("https://atron-hmg.azurewebsites.net/api/Cargo/CriarCargo", json);
+            ResultResponses.AddRange(_communicationService.GetResultResponses());
         }
 
         public async Task<List<CargoDTO>> ObterTodos()
@@ -33,6 +39,31 @@ namespace ExternalServices.Services
             var cargos = JsonConvert.DeserializeObject<List<CargoDTO>>(response);
 
             return cargos;
+        }
+
+        public async Task Atualizar(string codigo, CargoDTO cargoDTO)
+        {
+            var json = JsonConvert.SerializeObject(cargoDTO);
+            try
+            {
+                await _apiClient.PutAsync("https://atron-hmg.azurewebsites.net/api/Cargo/AtualizarCargo/", codigo, json);
+                ResultResponses.AddRange(_communicationService.GetResultResponses());
+            }
+            catch (HttpRequestException ex)
+            {
+                var errorResponse = JsonConvert.DeserializeObject<List<ResultResponseDTO>>(ex.Message);
+                ResultResponses.AddRange(errorResponse);
+            }
+            catch (Exception ex)
+            {
+                ResultResponses.Add(new ResultResponseDTO() { Message = ex.Message, Level = ResultResponseLevelEnum.Error });
+            }
+        }
+
+        public async Task Remover(string codigo)
+        {
+            await _apiClient.DeleteAsync("https://atron-hmg.azurewebsites.net/api/Cargo/ExcluirCargo/", codigo);
+            ResultResponses.AddRange(_communicationService.GetResultResponses());
         }
     }
 }

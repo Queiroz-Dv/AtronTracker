@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.Infra.IoC", "Atron.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.Application", "Atron.Application\Atron.Application.csproj", "{1F8C93F7-FBC6-4280-BCAE-7CC321F4204A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.WebApi", "Atron.WebApi\Atron.WebApi.csproj", "{21697CFE-71CE-42BB-8D15-0559DB0EBEE7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.WebViews", "Atron.WebViews\Atron.WebViews.csproj", "{79B33563-3EAB-48F9-9CBC-16D2189F9192}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Framework\Shared\Shared.csproj", "{86FAF893-A440-49B0-8E91-555A62217E7A}"
@@ -25,9 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication", "Framework\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalServices", "Framework\ExternalServices\ExternalServices.csproj", "{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{35F8B05E-B9D5-4B36-8939-03219F1A990A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atron.WebApi", "Atron.WebApi\Atron.WebApi.csproj", "{27F889AF-D98E-4D08-9DB6-9407F088902D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{C8E95E49-4E58-4EB4-B156-82E6EF79D14B}"
 	ProjectSection(SolutionItems) = preProject
-		CodigosParaUtilizar.txt = CodigosParaUtilizar.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
@@ -56,10 +56,6 @@ Global
 		{1F8C93F7-FBC6-4280-BCAE-7CC321F4204A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F8C93F7-FBC6-4280-BCAE-7CC321F4204A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F8C93F7-FBC6-4280-BCAE-7CC321F4204A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{21697CFE-71CE-42BB-8D15-0559DB0EBEE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21697CFE-71CE-42BB-8D15-0559DB0EBEE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{21697CFE-71CE-42BB-8D15-0559DB0EBEE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{21697CFE-71CE-42BB-8D15-0559DB0EBEE7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79B33563-3EAB-48F9-9CBC-16D2189F9192}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{79B33563-3EAB-48F9-9CBC-16D2189F9192}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79B33563-3EAB-48F9-9CBC-16D2189F9192}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -76,6 +72,10 @@ Global
 		{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27F889AF-D98E-4D08-9DB6-9407F088902D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27F889AF-D98E-4D08-9DB6-9407F088902D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27F889AF-D98E-4D08-9DB6-9407F088902D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27F889AF-D98E-4D08-9DB6-9407F088902D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,6 +4,9 @@ using AutoMapper;
 
 namespace Atron.Application.Mapping
 {
+    /// <summary>
+    /// Classe de mapeamento dos DTOs e entidades
+    /// </summary>
     public class DomainToDtoMappingProfile : Profile
     {
         public DomainToDtoMappingProfile()
