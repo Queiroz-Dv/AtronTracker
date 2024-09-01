@@ -1,0 +1,50 @@
+﻿@using Atron.Domain.ApiEntities;
+@using Shared.DTO;
+@using Atron.WebViews.Models;
+
+@model List<ApiRoute>
+
+@{
+    var pageInfo = ViewBag.PageInfo as PageInfoDTO;
+}
+
+<div>
+    <h2>@ViewData["Title"]</h2>
+</div>
+<hr />
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-left">
+            <a asp-action="CadastrarRota" class="btn btn-success">
+                <span title="Cadastrar rota" class="fas fa-plus"></span> Cadastrar
+            </a>
+        </div>
+    </div>
+</div>
+<br />
+<div class="panel panel-default">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Módulo</th>
+                <th>URL</th>
+                <th>Método</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model is not null)
+            {
+                @foreach (var route in Model)
+                {
+                    <tr>
+                        <td>@route.Modulo</td>
+                        <td>@route.Acao</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <partial name="PagerPartial" model="pageInfo" />
+</div>

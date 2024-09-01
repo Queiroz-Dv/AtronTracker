@@ -5,11 +5,7 @@
 @using Atron.WebViews.Models;
 @model CargoDTO;
 
-<link href="~/css/site.css" rel="stylesheet" />
-<link href="~/css/select2.min.css"  rel="stylesheet"/>
-
 <h2 style="margin-bottom: 40px;">@ViewData["Title"]</h2>
-
 <form asp-action="Cadastrar" method="post" class="form-horizontal">
 
     <div class="form-group row">
@@ -45,10 +41,7 @@
         </div>
     </div>
 </form>
-@section Scripts {
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="~/js/select2.min.js"></script>
-
+@section Scripts {    
     <script type="text/javascript">
         $(function () {
             $("#departamentoCodigo").select2();

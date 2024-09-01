@@ -5,8 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DTO\Request\**" />
+    <Compile Remove="DTO\Response\**" />
     <Compile Remove="ValueObjects\**" />
+    <EmbeddedResource Remove="DTO\Request\**" />
+    <EmbeddedResource Remove="DTO\Response\**" />
     <EmbeddedResource Remove="ValueObjects\**" />
+    <None Remove="DTO\Request\**" />
+    <None Remove="DTO\Response\**" />
     <None Remove="ValueObjects\**" />
   </ItemGroup>
 
@@ -18,11 +24,6 @@
 	
   <ItemGroup>
     <ProjectReference Include="..\Atron.Domain\Atron.Domain.csproj" />
-  </ItemGroup>
-	
-  <ItemGroup>
-    <Folder Include="DTO\Request\" />
-    <Folder Include="DTO\Response\" />
   </ItemGroup>
 
 </Project>

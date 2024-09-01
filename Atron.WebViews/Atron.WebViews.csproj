@@ -1,13 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup> 
-
-  <ItemGroup>
-    <PackageReference Include="bootstrap" Version="5.3.3" />
-  </ItemGroup>
-
+  </PropertyGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\Atron.Infra.IoC\Atron.Infra.IoC.csproj" />
     <ProjectReference Include="..\Framework\ExternalServices\ExternalServices.csproj" />

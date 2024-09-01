@@ -1,0 +1,46 @@
+﻿@using Atron.Domain.ApiEntities;
+@using Shared.DTO;
+@using Atron.WebViews.Models;
+
+@model ApiRoute;
+
+<div>
+    <h2>@ViewData["Title"]</h2>
+</div>
+<hr />
+
+<form asp-action="CadastrarRota" method="post" class="form-horizontal">
+    <div class="form-group row mb-4">
+        <label asp-for="Modulo" class="col-md-2 col-form-label"></label>
+        <div class="col-md-7">
+            <input asp-for="Modulo" class="form-control" />
+            <span asp-validation-for="Modulo" class="text-danger"></span>
+        </div>
+    </div>
+    
+    @* Altera depois *@
+
+    <div class="form-group row mb-4">
+        <label asp-for="Acao" class="col-md-2 col-form-label"></label>
+        <div class="col-md-7">
+            <input asp-for="Acao" class="form-control" />
+            <span asp-validation-for="Acao" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row mb-4">
+        <label asp-for="Ativo" class="col-md-2 col-form-label"></label>
+        <div class="col-md-7 d-flex align-items-center">
+            <input asp-for="Ativo" type="checkbox" class="form-check-input" />
+            <span asp-validation-for="Ativo" class="text-danger ml-2"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-md-7 offset-md-2">
+            <input type="submit" value="Cadastrar" class="btn btn-success" />
+            <a asp-action="Index" class="btn btn-dark ml-2">Painel</a>
+        </div>
+    </div>
+</form>
+

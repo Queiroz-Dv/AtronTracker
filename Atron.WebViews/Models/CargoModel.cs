@@ -1,10 +1,9 @@
 ﻿using Atron.Application.DTO;
-using Shared.DTO;
 using System.Collections.Generic;
 
 namespace Atron.WebViews.Models
 {
-    public class CargoModel
+    public class CargoModel : DefaultModel
     {
         public CargoModel()
         {
@@ -19,7 +18,5 @@ namespace Atron.WebViews.Models
         public List<DepartamentoDTO> Departamentos { get; set; }
 
         public DepartamentoDTO Departamento { get; set; }
-
-        public PageInfoDTO PageInfo { get; set; }
     }
 }

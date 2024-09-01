@@ -70,9 +70,11 @@ namespace Atron.Application.Services
 
             _notification.Validate(cargo);
             var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(cargo.Codigo);
-            if (cargoBd is not null && cargo.Codigo == cargoBd.Codigo)
+            if (cargoBd != null)
             {
                 _notification.AddError("Cargo já existe com esse código. Cadastre outro com um novo código.");
+                notificationMessages.AddRange(_notification.Messages);
+                return;
             }
 
             if (!_notification.Messages.HasErrors())
