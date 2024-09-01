@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace Atron.Application.DTO
 {
+    /// <summary>
+    /// Classe utilizada utilizada para processos comuns entre as entidades
+    /// </summary>
     public class Factory
     {
         public int GerarIdentificador()

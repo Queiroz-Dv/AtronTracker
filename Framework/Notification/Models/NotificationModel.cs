@@ -3,6 +3,10 @@ using System;
 
 namespace Notification.Models
 {
+    /// <summary>
+    /// Classe de modelo de validação e notificações
+    /// </summary>
+    /// <typeparam name="Entity">Entidade que será utilizada como modelo</typeparam>
     [Serializable]
     public abstract class NotificationModel<Entity> : NotificationService
     {
@@ -21,6 +25,10 @@ namespace Notification.Models
             AddNotification(message, Enums.ENotificationType.Warning);
         }
 
+        /// <summary>
+        /// Método que realiza as validações da entidade
+        /// </summary>
+        /// <param name="entity">Entidade que será validada</param>
         public abstract void Validate(Entity entity);
     }
 }

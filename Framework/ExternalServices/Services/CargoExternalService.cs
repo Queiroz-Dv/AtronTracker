@@ -5,10 +5,12 @@ using ExternalServices.Interfaces;
 using Newtonsoft.Json;
 using Shared.DTO;
 using Shared.Enums;
-using Shared.Extensions;
 
 namespace ExternalServices.Services
 {
+    /// <summary>
+    /// Classe que implementa o fluxo de processos do módulo de cargos
+    /// </summary>
     public class CargoExternalService : ICargoExternalService
     {
         private readonly IApiClient _apiClient;
@@ -30,13 +32,13 @@ namespace ExternalServices.Services
             ResultResponses.AddRange(_communicationService.GetResultResponses());
         }
 
-        public async Task<List<CargoDTO>?> ObterTodos()
+        public async Task<List<CargoDTO>> ObterTodos()
         {
             var response = await _apiClient.GetAsync("https://atron-hmg.azurewebsites.net/api/Cargo/ObterCargos");
 
             var cargos = JsonConvert.DeserializeObject<List<CargoDTO>>(response);
 
-            return cargos is not null? cargos : null;
+            return cargos;
         }
 
         public async Task Atualizar(string codigo, CargoDTO cargoDTO)

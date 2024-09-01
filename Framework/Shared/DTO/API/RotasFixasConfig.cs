@@ -1,9 +1,18 @@
 ﻿namespace Shared.DTO.API
 {
+    /// <summary>
+    /// Classe das rotas de configuração padrão da API
+    /// </summary>
     public class RotasFixasConfig
     {
-        public RotaDeAcesso RotasPrincipalDeAcessoDoConnect { get; set; } // Rotas para o connect
+        /// <summary>
+        /// Rota principal para obtenção das rotas do api connect
+        /// </summary>
+        public RotaDeAcesso RotasPrincipalDeAcessoDoConnect { get; set; }
 
-        public RotaDeAcesso RotaDeCriacaoDoConnect { get; set; } // Rotas para a criação
+        /// <summary>
+        /// Rota principal para criação de rotas do api connect
+        /// </summary>
+        public RotaDeAcesso RotaDeCriacaoDoConnect { get; set; }
     }
 }

@@ -1,9 +1,13 @@
 ﻿using Notification.Enums;
+using Shared.Extensions;
 using System;
 using System.Text.Json.Serialization;
 
 namespace Notification.Models
 {
+    /// <summary>
+    /// Classe padrão de notificações
+    /// </summary>
     [Serializable]
     public class NotificationMessage
     {
@@ -35,13 +39,17 @@ namespace Notification.Models
 
         public string Level { get; set; }
 
+        /// <summary>
+        /// Método que obtém o nível da mensgaem de notificação
+        /// </summary>
+        /// <returns>Retorna uma descrição do tipo do enumerado</returns>
         private string GetLevelMessage()
         {
             switch (Type)
             {
-                case ENotificationType.Message: return "Message";
-                case ENotificationType.Error: return "Error";
-                case ENotificationType.Warning: return "Warning";
+                case ENotificationType.Message: return ENotificationType.Message.GetEnumDescription();
+                case ENotificationType.Error: return ENotificationType.Error.GetEnumDescription();
+                case ENotificationType.Warning: return ENotificationType.Warning.GetEnumDescription();
                 default: throw new ArgumentException("Invalid level");
             }
         }
@@ -50,9 +58,9 @@ namespace Notification.Models
         {
             switch (type)
             {
-                case ENotificationType.Message: return "Message";
-                case ENotificationType.Error: return "Error";
-                case ENotificationType.Warning: return "Warning";
+                case ENotificationType.Message: return ENotificationType.Message.GetEnumDescription();
+                case ENotificationType.Error: return ENotificationType.Error.GetEnumDescription();
+                case ENotificationType.Warning: return ENotificationType.Warning.GetEnumDescription();
                 default: throw new ArgumentException("Invalid level");
             }
         }
