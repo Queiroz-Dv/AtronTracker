@@ -7,11 +7,19 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Communication.Models
 {
+    /// <summary>
+    /// Classe que implementa todos os processos de comunicação com a API
+    /// </summary>
     public class ApiClient : IApiClient
     {
         private readonly HttpClient _httpClient;
         private readonly ICommunicationService _communicationService;
 
+        /// <summary>
+        /// Construtor que realiza a injeção de dependência da classe
+        /// </summary>
+        /// <param name="httpClient">Classe que é utilizada para fazer a comunicação direta com a API</param>
+        /// <param name="communicationService">Interface que irá lidar com as respostas de retorno da API </param>
         public ApiClient(HttpClient httpClient, ICommunicationService communicationService)
         {
             _httpClient = httpClient;
@@ -21,7 +29,6 @@ namespace Communication.Models
         public async Task<string> GetAsync(string uri)
         {
             var response = await _httpClient.GetAsync(uri);
-            response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             return responseContent;
         }
@@ -33,6 +40,10 @@ namespace Communication.Models
             await FillResultResponse(response);
         }
 
+        /// <summary>
+        /// Preenche a lista de comunicação com os retornos da resposta da API
+        /// </summary>
+        /// <param name="response">Mensagem de resposta que será processada</param>       
         private async Task FillResultResponse(HttpResponseMessage response)
         {
             var responseContent = await response.Content.ReadAsStringAsync();

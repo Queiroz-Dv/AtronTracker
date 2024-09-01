@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Application.Interfaces
 {
-    public interface ISalarioService : INotificationDTO
+    public interface ISalarioService : INotificationMessage
     {
         Task CriarAsync(SalarioDTO salarioDTO);
 

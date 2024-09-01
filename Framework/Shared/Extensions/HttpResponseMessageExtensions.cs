@@ -3,6 +3,9 @@ using Shared.DTO;
 
 namespace Shared.Extensions
 {
+    /// <summary>
+    /// Classe com métodos utilitários para as respostas HTTP
+    /// </summary>
     public static class HttpResponseMessageExtensions
     {
         public static async Task<ValidationErrorResponse> ReadValidationErrorResponseAsync(this HttpResponseMessage response)
