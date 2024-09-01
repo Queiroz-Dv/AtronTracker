@@ -2,8 +2,10 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Shared.Extensions;
 using AutoMapper;
 using Notification.Models;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,11 +24,14 @@ namespace Atron.Application.Services
         private readonly IMapper _mapper;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly NotificationModel<Departamento> _notification;
+        private readonly MessageModel<Departamento> messageModel;
 
         public List<NotificationMessage> notificationMessages { get; set; }
 
+        public List<Message> Messages { get; set; }
+
         public DepartamentoService(IMapper mapper, IDepartamentoRepository departamentoRepository,
-            NotificationModel<Departamento> notification)
+            NotificationModel<Departamento> notification, MessageModel<Departamento> messageModel)
         {
             /* A Injeção de Dependência via construtor é usada para fornecer 
              * a dependência ao DepartamentoService. 
@@ -37,9 +42,10 @@ namespace Atron.Application.Services
             _mapper = mapper;
             _departamentoRepository = departamentoRepository;
             _notification = notification;
+            this.messageModel = messageModel;
             notificationMessages = new List<NotificationMessage>();
+            Messages = new List<Message>();
         }
-
 
         public async Task AtualizarAsync(DepartamentoDTO departamentoDTO)
         {
@@ -47,20 +53,20 @@ namespace Atron.Application.Services
             // também terei de remapear o objeto para um dto 
             var departamento = _mapper.Map<Departamento>(departamentoDTO);
             await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
-            notificationMessages.Add(new NotificationMessage($"Departamento: {departamento.Codigo} foi atualizado com sucesso."));
+            Messages.Add(new Message() { Description = $"Departamento: {departamento.Codigo} foi atualizado com sucesso.", Level = Shared.Enums.MessageLevel.Message });
+            //notificationMessages.Add(new NotificationMessage($"Departamento: {departamento.Codigo} foi atualizado com sucesso."));
         }
 
         public async Task CriarAsync(DepartamentoDTO departamentoDTO)
         {
-            departamentoDTO.Id = departamentoDTO.GerarIdentificador();
+            departamentoDTO.IdSequencial = departamentoDTO.NovoSequencial();
 
             var departamento = _mapper.Map<Departamento>(departamentoDTO);
-            _notification.Validate(departamento);
-
-            if (!_notification.Messages.HasErrors())
+            messageModel.Validate(departamento);
+            if (!messageModel.Messages.HasErrors())
             {
                 await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
-                notificationMessages.Add(new NotificationMessage("Departamento criado com sucesso."));
+                Messages.Add(new Message() {Description = "Departamento criado com sucesso", Level=  Shared.Enums.MessageLevel.Message});
             }
         }
 

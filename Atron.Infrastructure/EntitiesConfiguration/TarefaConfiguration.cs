@@ -9,7 +9,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration
         public void Configure(EntityTypeBuilder<Tarefa> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).ValueGeneratedNever();
+            builder.Property(dpt => dpt.IdSequencial).IsRequired();
 
             builder.Property(usr => usr.Id).IsRequired();
             builder.Property(usr => usr.UsuarioCodigo).IsRequired().HasMaxLength(10);

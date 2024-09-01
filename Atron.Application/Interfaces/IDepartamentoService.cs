@@ -1,5 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Notification.Models;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,6 +11,8 @@ namespace Atron.Application.Interfaces
         // Aqui eu preciso das notificações para informar a controller 
         // caso algo deu certo ou errado
         public List<NotificationMessage> notificationMessages { get; }
+
+        public List<Message> Messages { get; }
 
         /// <summary>
         /// Obtém todos os departamentos

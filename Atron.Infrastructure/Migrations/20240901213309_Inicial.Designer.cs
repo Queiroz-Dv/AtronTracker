@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Atron.Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    [Migration("20240818235839_IncluindoTabelaDeRotas")]
-    partial class IncluindoTabelaDeRotas
+    [Migration("20240901213309_Inicial")]
+    partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,23 +32,21 @@ namespace Atron.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("HttpMethod")
-                        .IsRequired()
-                        .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
+                    b.Property<int>("Acao")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("Ativo")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ModuleName")
+                    b.Property<string>("Modulo")
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<string>("RouteUrl")
+                    b.Property<string>("NomeDaRotaDeAcesso")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
@@ -58,7 +56,10 @@ namespace Atron.Infrastructure.Migrations
             modelBuilder.Entity("Atron.Domain.Entities.Cargo", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Codigo")
                         .IsRequired()
@@ -79,6 +80,9 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid>("IdSequencial")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentoId");
@@ -89,7 +93,10 @@ namespace Atron.Infrastructure.Migrations
             modelBuilder.Entity("Atron.Domain.Entities.Departamento", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Codigo")
                         .IsRequired()
@@ -100,6 +107,9 @@ namespace Atron.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("IdSequencial")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -204,6 +214,9 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(2500)
                         .HasColumnType("nvarchar(2500)");
 
+                    b.Property<Guid>("IdSequencial")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("PermissaoEstadoId")
                         .HasColumnType("int");
 
@@ -271,6 +284,9 @@ namespace Atron.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("IdSequencial")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("MesId")
                         .HasColumnType("int");
 
@@ -293,7 +309,10 @@ namespace Atron.Infrastructure.Migrations
             modelBuilder.Entity("Atron.Domain.Entities.Tarefa", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Conteudo")
                         .HasMaxLength(2500)
@@ -307,6 +326,9 @@ namespace Atron.Infrastructure.Migrations
 
                     b.Property<int>("EstadoDaTarefa")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("IdSequencial")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
@@ -363,7 +385,10 @@ namespace Atron.Infrastructure.Migrations
             modelBuilder.Entity("Atron.Domain.Entities.Usuario", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CargoCodigo")
                         .IsRequired()
@@ -388,6 +413,9 @@ namespace Atron.Infrastructure.Migrations
 
                     b.Property<int>("DepartamentoId")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("IdSequencial")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Nome")
                         .IsRequired()
