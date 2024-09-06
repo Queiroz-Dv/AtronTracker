@@ -1,11 +1,9 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Notification.Models;
 using Shared.Extensions;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
@@ -30,10 +28,15 @@ namespace Atron.WebApi.Controllers
             {
                 return BadRequest("Registro inválido, tente novamente.");
             }
-            await _departamentoService.CriarAsync(departamento);
 
-            var messages = _departamentoService.Messages.ConvertMessageToJson();
+            await _departamentoService.CriarAsync(departamento);
+            var messages = ObterNotificacoes();
             return Ok(messages);
+        }
+
+        private IEnumerable<dynamic> ObterNotificacoes()
+        {
+            return _departamentoService.GetMessages().ConvertMessageToJson();
         }
 
         [HttpGet]
@@ -41,29 +44,26 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<DepartamentoDTO>>> Get()
         {
             var departamentos = await _departamentoService.ObterTodosAsync();
-            if (departamentos is null)
-            {
-                return NotFound("Não foi encontrado nenhum registro");
-            }
-
             return Ok(departamentos);
         }
 
         [HttpPut("AtualizarDepartamento/{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] DepartamentoDTO departamento)
         {
-            if (codigo != departamento.Codigo || codigo is null)
+            if (ModelState.IsValid)
             {
-                return BadRequest();
-            }
+                await _departamentoService.AtualizarAsync(codigo, departamento);
+                if (_departamentoService.GetMessages().HasErrors())
+                {
+                    return BadRequest(ObterNotificacoes());
+                }
 
-            await _departamentoService.AtualizarAsync(departamento);
-            if (_departamentoService.notificationMessages.HasErrors())
+                return Ok(ObterNotificacoes());
+            }
+            else
             {
-                return BadRequest(_departamentoService.notificationMessages);
+                return BadRequest(ObterNotificacoes());
             }
-
-            return Ok(_departamentoService.notificationMessages);
         }
 
         [HttpDelete("ExcluirDepartamento/{codigo}")]
@@ -75,9 +75,23 @@ namespace Atron.WebApi.Controllers
             {
                 return NotFound(new NotificationMessage("Departamento não encontrado"));
             }
+
             await _departamentoService.RemoverAsync(codigo);
 
-            return Ok(_departamentoService.notificationMessages);
+            return Ok(ObterNotificacoes());
+        }
+
+        [HttpGet("ObterPorCodigo/{codigo}")]
+        public async Task<ActionResult<DepartamentoDTO>> Get(string codigo)
+        {
+            var departamento = await _departamentoService.ObterPorCodigo(codigo);
+
+            if (departamento is null)
+            {
+                return NotFound(ObterNotificacoes());
+            }
+
+            return Ok(departamento);
         }
     }
 }

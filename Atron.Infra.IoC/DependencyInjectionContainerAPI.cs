@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Interfaces;
 using Notification.Models;
+using Shared.Interfaces;
 using Shared.Models;
 
 namespace Atron.Infra.IoC
@@ -71,20 +72,21 @@ namespace Atron.Infra.IoC
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
             // Serviços de Notificação e Validação
-            services.AddScoped<INotificationService, DepartamentoValidation>();
+            //services.AddScoped<INotificationService, DepartamentoValidation>();
             services.AddScoped<INotificationService, CargoValidation>();
             services.AddScoped<INotificationService, UsuarioValidation>();
             services.AddScoped<INotificationService, TarefaValidation>();
             services.AddScoped<INotificationService, SalarioValidation>();
             services.AddScoped<INotificationService, PermissaoValidation>();
 
-            services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
+            //services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
             services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
             services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();
             services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
             services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
             services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
 
+            services.AddScoped<IMessages, DepartamentoMessageValidation>();
             services.AddScoped<MessageModel<Departamento>, DepartamentoMessageValidation>();
            
             return services;

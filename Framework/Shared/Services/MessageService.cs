@@ -15,6 +15,18 @@ namespace Shared.Services
 
         public abstract void AddMessage(string message);
 
+        public abstract void AddRegisterNotFoundMessage(string moduleName);
+
+        public abstract void AddRegisterExistMessage(string moduleName);
+
+        public abstract void AddSuccessMessage(string moduleName);
+
+        public abstract void AddRegisterRemovedSuccessMessage(string moduleName);
+
+        public abstract void AddUpdateMessage(string moduleName);
+
+        public abstract void AddRegisterInvalidMessage(string moduleName);
+
         public abstract void AddError(string message);
 
         public abstract void AddWarning(string message);

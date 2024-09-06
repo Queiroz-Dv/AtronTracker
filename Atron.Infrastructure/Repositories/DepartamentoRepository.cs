@@ -26,7 +26,7 @@ namespace Atron.Infrastructure.Repositories
             {
                 if (entidade is not null)
                 {
-                    entidade.AtualizarDescricao(departamento.Descricao);
+                    entidade.SetDescricao(departamento.Descricao);
                     await _context.SaveChangesAsync();
                     return entidade;
                 }
@@ -68,7 +68,6 @@ namespace Atron.Infrastructure.Repositories
         public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
         {
             var departamentos = await _context.Departamentos
-                                    .AsNoTracking()
                                     .OrderByDescending(order => order.Codigo)
                                     .ToListAsync();
 
