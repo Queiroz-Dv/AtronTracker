@@ -1,10 +1,10 @@
 ﻿using Atron.Domain.Entities;
-using Notification.Interfaces;
-using Notification.Models;
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Atron.Domain.Validations
 {
-    public class CargoValidation : NotificationModel<Cargo>, INotificationService
+    public class CargoMessageValidation : MessageModel<Cargo>, IMessages
     {
         public override void Validate(Cargo entity)
         {

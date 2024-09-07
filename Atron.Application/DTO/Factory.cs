@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Security.Cryptography;
+using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
@@ -8,12 +10,21 @@ namespace Atron.Application.DTO
     /// </summary>
     public class Factory
     {
+        public Factory()
+        {
+            IdSequencial = NovoSequencial();
+        }
+
         // A geração dos identificadores tem como objetivo manter a identidade dos dados garantindo sua segurança
         // ou seja, para entidades de menor importância usaremos o índice clusterizado ao invés da criação
         // de identificadores únicos.
 
         // Para a geração dos ids estou utilizando a abordagem COMB (Combined Guid/TimeStamp) que substitui
         // uma parte do GUID por um valor que é garantido o seu acréscimo
+
+        [JsonIgnore]
+        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
+        public Guid IdSequencial { get; set; }
 
         public int GerarIdentificador()
         {

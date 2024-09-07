@@ -43,7 +43,8 @@ namespace Atron.Application.Services
 
         public async Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
-            if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO))
+            if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO) || 
+                string.IsNullOrEmpty(codigo))
             {
                 messageModel.AddRegisterInvalidMessage(nameof(Departamento));
                 return;
@@ -61,8 +62,6 @@ namespace Atron.Application.Services
 
         public async Task CriarAsync(DepartamentoDTO departamentoDTO)
         {
-            departamentoDTO.IdSequencial = departamentoDTO.NovoSequencial();
-
             var departamento = _mapper.Map<Departamento>(departamentoDTO);
 
             var entity = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamento.Codigo);
