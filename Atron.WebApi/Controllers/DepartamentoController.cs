@@ -30,13 +30,10 @@ namespace Atron.WebApi.Controllers
             }
 
             await _departamentoService.CriarAsync(departamento);
-            var messages = ObterNotificacoes();
-            return Ok(messages);
-        }
 
-        private IEnumerable<dynamic> ObterNotificacoes()
-        {
-            return _departamentoService.GetMessages().ConvertMessageToJson();
+            return _departamentoService.GetMessages().HasErrors() ?
+                   BadRequest(ObterNotificacoes()) :
+                   Ok(ObterNotificacoes());
         }
 
         [HttpGet]
@@ -50,35 +47,21 @@ namespace Atron.WebApi.Controllers
         [HttpPut("AtualizarDepartamento/{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] DepartamentoDTO departamento)
         {
-            if (ModelState.IsValid)
-            {
-                await _departamentoService.AtualizarAsync(codigo, departamento);
-                if (_departamentoService.GetMessages().HasErrors())
-                {
-                    return BadRequest(ObterNotificacoes());
-                }
+            await _departamentoService.AtualizarAsync(codigo, departamento);
 
-                return Ok(ObterNotificacoes());
-            }
-            else
-            {
-                return BadRequest(ObterNotificacoes());
-            }
+            return _departamentoService.GetMessages().HasErrors() ?
+                   BadRequest(ObterNotificacoes()) :
+                   Ok(ObterNotificacoes());
         }
 
         [HttpDelete("ExcluirDepartamento/{codigo}")]
         public async Task<ActionResult<DepartamentoDTO>> Delete(string codigo)
         {
-            var departamento = await _departamentoService.ObterPorCodigo(codigo);
-
-            if (departamento is null)
-            {
-                return NotFound(new NotificationMessage("Departamento não encontrado"));
-            }
-
             await _departamentoService.RemoverAsync(codigo);
 
-            return Ok(ObterNotificacoes());
+            return _departamentoService.GetMessages().HasErrors() ?
+                BadRequest(ObterNotificacoes()) :
+                Ok(ObterNotificacoes());
         }
 
         [HttpGet("ObterPorCodigo/{codigo}")]
@@ -86,12 +69,14 @@ namespace Atron.WebApi.Controllers
         {
             var departamento = await _departamentoService.ObterPorCodigo(codigo);
 
-            if (departamento is null)
-            {
-                return NotFound(ObterNotificacoes());
-            }
+            return departamento is null ?  
+                NotFound(ObterNotificacoes()) :  
+                Ok(departamento);            
+        }
 
-            return Ok(departamento);
+        private IEnumerable<dynamic> ObterNotificacoes()
+        {
+            return _departamentoService.GetMessages().ConvertMessageToJson();
         }
     }
 }

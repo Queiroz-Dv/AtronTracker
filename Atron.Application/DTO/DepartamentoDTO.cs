@@ -10,11 +10,7 @@ namespace Atron.Application.DTO
     {
         [JsonIgnore]
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
-        public int Id { get; set; }
-
-        [JsonIgnore]
-        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
-        public Guid IdSequencial { get; set; }
+        public int Id { get; set; }        
 
         [Required(ErrorMessage = "O campo código é obrigatório")]
         [MinLength(3, ErrorMessage = "O campo código deve conter 3 caracteres ou mais.")]
