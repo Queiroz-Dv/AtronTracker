@@ -3,8 +3,12 @@ using Atron.Domain.Entities;
 using Atron.WebViews.Models;
 using Communication.Extensions;
 using ExternalServices.Interfaces;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Shared.DTO.API;
 using Shared.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,8 +23,16 @@ namespace Atron.WebViews.Controllers
         public CargoController(
             IPaginationService<CargoDTO> paginationService,
             IResultResponseService resultResponseModel,
+            IConfiguration configuration,
+            IOptions<RotaDeAcesso> appSettingsConfig,
+            IApiRouteExternalService apiRouteExternalService,
             IDepartamentoExternalService departamentoService,
-            ICargoExternalService cargoExternalService) : base(paginationService, resultResponseModel)
+            ICargoExternalService cargoExternalService)
+            : base(paginationService,
+                resultResponseModel,
+                apiRouteExternalService,
+                configuration,
+                appSettingsConfig)
         {
             _departamentoService = departamentoService;
             _cargoExternalService = cargoExternalService;

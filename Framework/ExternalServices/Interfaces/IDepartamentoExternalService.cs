@@ -1,12 +1,13 @@
 ﻿using Atron.Application.DTO;
-using ExternalServices.Interfaces.ExternalMessage;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
+using Shared.Interfaces;
 
 namespace ExternalServices.Interfaces
 {
     /// <summary>
     /// Interface dos processos e fluxos do módulo de Departamentos
     /// </summary>
-    public interface IDepartamentoExternalService : IExternalMessageService
+    public interface IDepartamentoExternalService : IApiUri, IMessageModelService
     {
         /// <summary>
         /// Método que obtém todos os departamentos

@@ -1,40 +1,81 @@
 ﻿using Atron.Application.ApiInterfaces;
 using Atron.Domain.ApiEntities;
-using Atron.Domain.ApiInterfaces;
-using Notification.Models;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices
 {
     public class ApiRouteService : IApiRouteService
     {
-        private IApiRouteRepository _routeRepository;
+        private IHttpContextAccessor _contextAccessor;
 
-        public ApiRouteService(IApiRouteRepository routeRepository)
+        public ApiRouteService(IHttpContextAccessor httpContextAccessor)
         {
-            _routeRepository = routeRepository;
-            Messages = new List<NotificationMessage>();
+            _contextAccessor = httpContextAccessor;
         }
 
-        public List<NotificationMessage> Messages { get; set; }
-
-        public async Task CriarRotaAsync(ApiRoute apiRoute)
+        public List<ApiRoute> MontarRotasPorModuloService(string modulo)
         {
-            var entity = new ApiRoute();
-            entity.Id = apiRoute.Id;
-            entity.Modulo = apiRoute.Modulo;
-            entity.Ativo = apiRoute.Ativo;
-            entity.Acao = apiRoute.Acao;
+            string baseUrl = UrlBase();
 
-            await _routeRepository.CriarRotaRepositoryAsync(entity);
-            Messages.Add(new NotificationMessage("Rota criada com sucesso."));
+            var rotasMontadas = MontarRotasPadronizadas(baseUrl, modulo);
+            return rotasMontadas;
         }
 
-        public Task<IEnumerable<ApiRoute>> ObterTodasRotasServiceAsync()
+        private string UrlBase()
         {
-            var rotas = _routeRepository.ObterTodasRotas();
-            return rotas;
+            var request = _contextAccessor.HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host.Value}/api";
+            return baseUrl;
+        }
+
+        public ApiRoute ObterRotaPorModulo(string modulo)
+        {
+            var baseUrl = UrlBase();
+
+            var route = new ApiRoute()
+            {
+                Url = baseUrl,
+                Modulo = modulo
+            };
+
+            return route;
+        }
+
+        private List<ApiRoute> MontarRotasPadronizadas(string baseUrl, string modulo)
+        {
+            var rotasPadronizadas = new List<ApiRoute>()
+            {
+                new ApiRoute()
+                {
+                    Url = baseUrl,
+                    Acao = ApiRouteAction.Get,
+                    Modulo = modulo
+                },
+
+                new ApiRoute()
+                {
+                    Url = baseUrl,
+                    Acao = ApiRouteAction.Post,
+                    Modulo = modulo
+                },
+
+                new ApiRoute()
+                {
+                    Url= baseUrl,
+                    Acao = ApiRouteAction.Put,
+                    Modulo = modulo
+                },
+
+                new ApiRoute()
+                {
+                    Url = baseUrl,
+                    Acao = ApiRouteAction.Delete,
+                    Modulo = modulo
+                }
+            };
+
+            return rotasPadronizadas;
         }
     }
 }

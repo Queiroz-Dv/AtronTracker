@@ -21,14 +21,9 @@ namespace Atron.WebApi.Controllers
             _departamentoService = departamentoService;
         }
 
-        [HttpPost("CriarDepartamento")]
+        [HttpPost]
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
-        {
-            if (departamento == null)
-            {
-                return BadRequest("Registro inválido, tente novamente.");
-            }
-
+        {            
             await _departamentoService.CriarAsync(departamento);
 
             return _departamentoService.GetMessages().HasErrors() ?
@@ -37,14 +32,13 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("ObterDepartamentos")]
         public async Task<ActionResult<IEnumerable<DepartamentoDTO>>> Get()
         {
             var departamentos = await _departamentoService.ObterTodosAsync();
             return Ok(departamentos);
         }
 
-        [HttpPut("AtualizarDepartamento/{codigo}")]
+        [HttpPut("{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] DepartamentoDTO departamento)
         {
             await _departamentoService.AtualizarAsync(codigo, departamento);
@@ -54,7 +48,7 @@ namespace Atron.WebApi.Controllers
                    Ok(ObterNotificacoes());
         }
 
-        [HttpDelete("ExcluirDepartamento/{codigo}")]
+        [HttpDelete("{codigo}")]
         public async Task<ActionResult<DepartamentoDTO>> Delete(string codigo)
         {
             await _departamentoService.RemoverAsync(codigo);
@@ -64,7 +58,7 @@ namespace Atron.WebApi.Controllers
                 Ok(ObterNotificacoes());
         }
 
-        [HttpGet("ObterPorCodigo/{codigo}")]
+        [HttpGet("{codigo}")]
         public async Task<ActionResult<DepartamentoDTO>> Get(string codigo)
         {
             var departamento = await _departamentoService.ObterPorCodigo(codigo);
