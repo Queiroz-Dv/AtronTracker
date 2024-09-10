@@ -3,7 +3,11 @@ using Atron.Domain.Entities;
 using Atron.WebViews.Models;
 using Communication.Extensions;
 using ExternalServices.Interfaces;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Shared.DTO.API;
 using Shared.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +28,15 @@ namespace Atron.WebViews.Controllers
             IResultResponseService responseModel,
             IUsuarioExternalService externalService,
             IDepartamentoExternalService departamentoExternalService,
-            ICargoExternalService cargoExternalService) : base(paginationService, responseModel)
+            IApiRouteExternalService apiRouteExternalService,
+            IConfiguration configuration,
+            IOptions<RotaDeAcesso> appSettingsConfig,
+            ICargoExternalService cargoExternalService) 
+            : base(paginationService,
+                  responseModel,
+                  apiRouteExternalService,
+                  configuration,
+                  appSettingsConfig)
         {
             _departamentoExternalService = departamentoExternalService;
             _cargoExternalService = cargoExternalService;

@@ -9,7 +9,7 @@
 
         public string Url { get; set; }          // URL base
 
-        public string Modulo { get; set; }       // Nome do módulo
+        public string ModuloDeAcesso { get; set; }       // Nome do módulo
 
         public string NomeDeAcesso { get; set; } // Nome do acesso ou ação (endpoint)
     }

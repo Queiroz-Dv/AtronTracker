@@ -1,7 +1,6 @@
 ﻿using Atron.Application.ApiInterfaces;
 using Atron.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,19 +17,18 @@ namespace Atron.WebApi.Controllers
             _apiRouteService = apiRouteService;
         }
 
-        [HttpGet("ObterRotas")]
-        public async Task<ActionResult<IEnumerable<ApiRoute>>> Get()
+        [HttpGet("MontarRotas/{modulo}")]
+        public async Task<ActionResult<IEnumerable<ApiRoute>>> Get(string modulo)
         {
-            var rotas = await _apiRouteService.ObterTodasRotasServiceAsync();
-            return rotas is not null ? Ok(rotas) : NoContent();
+            var rotas =  _apiRouteService.MontarRotasPorModuloService(modulo);
+            return Ok(rotas);
         }
 
-        [HttpPost("CriarRota")]
-        public async Task<ActionResult> Post([FromBody] ApiRoute apiRoute)
+        [HttpGet("ObterRotaPadrao/{modulo}")]
+        public async Task<ActionResult<ApiRoute>> GetRotaPadrao(string modulo)
         {
-            await _apiRouteService.CriarRotaAsync(apiRoute);
-            return !_apiRouteService.Messages.HasErrors() ?
-                Ok(_apiRouteService.Messages) : BadRequest(_apiRouteService.Messages);
+            var rotas = _apiRouteService.ObterRotaPorModulo(modulo);
+            return Ok(rotas);
         }
     }
 }

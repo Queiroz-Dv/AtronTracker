@@ -62,6 +62,12 @@ namespace Atron.Application.Services
 
         public async Task CriarAsync(DepartamentoDTO departamentoDTO)
         {
+            if (departamentoDTO is null)
+            {
+                messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                return;
+            }
+
             var departamento = _mapper.Map<Departamento>(departamentoDTO);
 
             var entity = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamento.Codigo);

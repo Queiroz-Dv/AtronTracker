@@ -3,7 +3,12 @@ using Atron.Domain.Entities;
 using Atron.WebViews.Models;
 using Communication.Extensions;
 using ExternalServices.Interfaces;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Shared.DTO.API;
+using Shared.Extensions;
 using Shared.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,20 +20,33 @@ namespace Atron.WebViews.Controllers
         private IDepartamentoExternalService _externalService;
 
         public DepartamentoController(
+            IOptions<RotaDeAcesso> appSettingsConfig,
+            IApiRouteExternalService apiRouteExternalService,
+            IConfiguration configuration,
             IResultResponseService resultResponse,
             IPaginationService<DepartamentoDTO> paginationService,
             IDepartamentoExternalService externalService)
-            : base(paginationService, resultResponse)
+            : base(paginationService,
+                  resultResponse,
+                  apiRouteExternalService,
+                  configuration,
+                  appSettingsConfig)
         {
+
             _externalService = externalService;
             CurrentController = nameof(Departamento);
+            MontarRotaDeAcesso();
+        }
+        private void MontarRotaDeAcesso()
+        {
+            _externalService.Uri = ObterRotaPadrao();
+            _externalService.Modulo = nameof(Departamento);
         }
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             var departamentos = await _externalService.ObterTodos();
-
             ConfigureDataTitleForView("Painel de departamentos");
             if (!departamentos.Any())
             {
@@ -47,6 +65,7 @@ namespace Atron.WebViews.Controllers
             return View(model);
         }
 
+
         [HttpGet]
         public IActionResult Cadastrar()
         {
@@ -61,9 +80,9 @@ namespace Atron.WebViews.Controllers
             {
                 await _externalService.Criar(departamento);
 
-                var responses = _externalService.ResultResponses;
-                CreateTempDataNotifications(responses);
-                return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
+                var messages = _externalService.GetMessages();
+                CreateTempDataMessages(messages);
+                return !messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
             }
 
             ConfigureDataTitleForView("Cadastro de departamentos");
@@ -91,8 +110,8 @@ namespace Atron.WebViews.Controllers
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
             await _externalService.Atualizar(codigo, departamentoDTO);
-            var response = _externalService.ResultResponses;
-            CreateTempDataNotifications(response);
+            var response = _externalService.GetMessages();
+            CreateTempDataMessages(response);
 
             return !response.HasErrors() ? RedirectToAction(nameof(Index)) : View(nameof(Atualizar), departamentoDTO);
         }
@@ -108,7 +127,7 @@ namespace Atron.WebViews.Controllers
             }
 
             await _externalService.Remover(codigo);
-            CreateTempDataNotifications(_externalService.ResultResponses);
+            CreateTempDataMessages(_externalService.GetMessages());
             return RedirectToAction(nameof(Index));
         }
 

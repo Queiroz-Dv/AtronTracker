@@ -20,7 +20,6 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("ObterCargos")]
         public async Task<ActionResult<IEnumerable<CargoDTO>>> Get()
         {
             var cargos = await _cargoService.ObterTodosAsync();
@@ -28,7 +27,6 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpPost]
-        [Route("CriarCargo")]
         public async Task<ActionResult> Post([FromBody] CargoDTO cargo)
         {
             await _cargoService.CriarAsync(cargo);
@@ -38,7 +36,7 @@ namespace Atron.WebApi.Controllers
                  Ok(ObterNotificacoes());
         }
 
-        [HttpPut("AtualizarCargo/{codigo}")]
+        [HttpPut("{codigo}")]
         public async Task<ActionResult<CargoDTO>> Put(string codigo, [FromBody] CargoDTO cargo)
         {
             await _cargoService.AtualizarAsync(codigo, cargo);
@@ -48,7 +46,7 @@ namespace Atron.WebApi.Controllers
                Ok(ObterNotificacoes());
         }
 
-        [HttpDelete("ExcluirCargo/{codigo}")]
+        [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
         {
             await _cargoService.RemoverAsync(codigo);
@@ -59,7 +57,7 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("ObterPorCodigo/{codigo}")]
+        [Route("{codigo}")]
         public async Task<ActionResult<IEnumerable<CargoDTO>>> Get(string codigo)
         {
             var cargo = await _cargoService.ObterPorCodigoAsync(codigo);
