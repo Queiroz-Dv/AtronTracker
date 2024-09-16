@@ -7,13 +7,15 @@ namespace ExternalServices.Interfaces
     /// <summary>
     /// Interface dos processos e fluxos do módulo de Departamentos
     /// </summary>
-    public interface IDepartamentoExternalService : IApiUri, IMessageModelService
+    public interface IDepartamentoExternalService : IApiUri
     {
         /// <summary>
         /// Método que obtém todos os departamentos
         /// </summary>
         /// <returns>Retorna uma lista de departamentos</returns>
         Task<List<DepartamentoDTO>> ObterTodos();
+
+        Task<DepartamentoDTO> ObterPorCodigo(string codigo);
 
         /// <summary>
         /// Método que cria um departamento

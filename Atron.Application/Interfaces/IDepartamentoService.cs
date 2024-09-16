@@ -1,14 +1,11 @@
 ﻿using Atron.Application.DTO;
-using Notification.Models;
-using Shared.Interfaces;
-using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Interfaces
 {
-    public interface IDepartamentoService : IMessageModelService
-    {        
+    public interface IDepartamentoService
+    {
         /// <summary>
         /// Obtém todos os departamentos
         /// </summary>

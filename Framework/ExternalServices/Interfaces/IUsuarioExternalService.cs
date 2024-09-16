@@ -1,12 +1,14 @@
 ﻿using Atron.Application.DTO;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using ExternalServices.Interfaces.ExternalMessage;
+using Shared.Interfaces;
 
 namespace ExternalServices.Interfaces
 {
     /// <summary>
     /// Interface dos processos e fluxos do módulo de Usuários
     /// </summary>
-    public interface IUsuarioExternalService : IExternalMessageService
+    public interface IUsuarioExternalService : IApiUri, IExternalMessageService
     {
         /// <summary>
         /// Método que cria um usuário

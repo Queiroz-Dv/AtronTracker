@@ -1,11 +1,10 @@
 ﻿using Atron.Application.DTO;
-using Shared.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Interfaces
 {
-    public interface ICargoService : IMessageModelService
+    public interface ICargoService
     {
         Task<List<CargoDTO>> ObterTodosAsync();
 

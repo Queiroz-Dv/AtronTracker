@@ -8,7 +8,7 @@ using Shared.Interfaces;
 
 namespace Atron.WebViews.Controllers
 {
-    public class HomeController : DefaultController<ApiRoute>
+    public class HomeController : Controller
     {
         private readonly RotaDeAcesso _appSettingsConfig;
         private IConfiguration _configuration;
@@ -16,28 +16,12 @@ namespace Atron.WebViews.Controllers
 
         private string RotaFixas { get; set; }
 
-        public HomeController(
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            IConfiguration configuration,
-            IApiRouteExternalService externalService,
-            IPaginationService<ApiRoute> paginationService,
-            IResultResponseService responseService) :
-            base(paginationService,
-                responseService,
-                externalService,
-                configuration,
-                appSettingsConfig)
-        {
-            _appSettingsConfig = appSettingsConfig.Value;
-            _externalService = externalService;
-            _configuration = configuration;
-            CurrentController = nameof(HomeController).Replace(nameof(Controller), "");
-        }
+        
 
         [HttpGet]
         public IActionResult Index(string searchString)
         {
-            ConfigureDataTitleForView("Atron Tracker");
+            
             return View();
         }
     }
