@@ -34,6 +34,7 @@ namespace Atron.WebViews.Controllers
             ICargoExternalService cargoExternalService) 
             : base(paginationService,
                   responseModel,
+                  externalService,
                   apiRouteExternalService,
                   configuration,
                   appSettingsConfig)

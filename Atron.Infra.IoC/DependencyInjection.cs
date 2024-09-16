@@ -1,6 +1,8 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Mapping;
 using Atron.Domain.ApiEntities;
+using Atron.Domain.Entities;
+using Atron.Domain.Validations;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Communication.Models;
@@ -47,7 +49,15 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IResultResponseService, ResultResponseModel>();
 
+            ConfigureDepartamentoServices(services);
+
             return services;
+        }
+
+        private static void ConfigureDepartamentoServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, DepartamentoMessageValidation>();
+            services.AddScoped<MessageModel<Departamento>, DepartamentoMessageValidation>();
         }
     }
 }

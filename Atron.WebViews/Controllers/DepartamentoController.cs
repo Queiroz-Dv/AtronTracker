@@ -10,37 +10,34 @@ using Microsoft.Extensions.Options;
 using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces;
+using Shared.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class DepartamentoController : DefaultController<DepartamentoDTO>
+    public class DepartamentoController : DefaultController<DepartamentoDTO, Departamento, IDepartamentoExternalService>
     {
-        private IDepartamentoExternalService _externalService;
+        //private IDepartamentoExternalService _externalService;
+        //private MessageModel<Departamento> _messageModel;
 
         public DepartamentoController(
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IResultResponseService resultResponse,
             IPaginationService<DepartamentoDTO> paginationService,
-            IDepartamentoExternalService externalService)
+            IDepartamentoExternalService externalService,
+            IApiRouteExternalService apiRouteExternalService,
+            IConfiguration configuration,         
+            IOptions<RotaDeAcesso> appSettingsConfig,
+            MessageModel<Departamento> messageModel)
             : base(paginationService,
-                  resultResponse,
-                  apiRouteExternalService,
-                  configuration,
-                  appSettingsConfig)
+                  externalService,
+                  apiRouteExternalService, 
+                  configuration, 
+                  appSettingsConfig, 
+                  messageModel)
         {
-
-            _externalService = externalService;
             CurrentController = nameof(Departamento);
-            MontarRotaDeAcesso();
-        }
-        private void MontarRotaDeAcesso()
-        {
-            _externalService.Uri = ObterRotaPadrao();
-            _externalService.Modulo = nameof(Departamento);
+            BuildRoute(nameof(Departamento));
+            _messageModel = messageModel;
         }
 
         [HttpGet, HttpPost]
@@ -91,26 +88,24 @@ namespace Atron.WebViews.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
-        {
-            if (codigo is null)
+        {                   
+            var departamentoDTO = await _externalService.ObterPorCodigo(codigo);
+
+            if (departamentoDTO is null || _externalService.GetMessages().HasErrors())
             {
-                _responseService.AddError("O código informado não foi encontrado");
-                CreateTempDataNotifications();
-                return View(codigo);
+                CreateTempDataMessages(_externalService.GetMessages());
+                return RedirectToAction(nameof(Index));
             }
 
-            var departamentos = await _externalService.ObterTodos();
-            var departamentoDTO = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
-
             ConfigureDataTitleForView("Atualizar informação de departamento");
-            return departamentoDTO is not null ? View(departamentoDTO) : View(codigo);
+            return View(departamentoDTO);
         }
 
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
             await _externalService.Atualizar(codigo, departamentoDTO);
-            var response = _externalService.GetMessages();
+            var response = _messageModel.Messages;
             CreateTempDataMessages(response);
 
             return !response.HasErrors() ? RedirectToAction(nameof(Index)) : View(nameof(Atualizar), departamentoDTO);

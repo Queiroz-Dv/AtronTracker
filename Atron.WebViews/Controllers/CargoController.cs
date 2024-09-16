@@ -22,17 +22,19 @@ namespace Atron.WebViews.Controllers
 
         public CargoController(
             IPaginationService<CargoDTO> paginationService,
-            IResultResponseService resultResponseModel,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
+            IResultResponseService responseModel,
+            IApiUri apiUri,
             IApiRouteExternalService apiRouteExternalService,
-            IDepartamentoExternalService departamentoService,
-            ICargoExternalService cargoExternalService)
+            IDepartamentoExternalService departamentoService,            
+            ICargoExternalService cargoExternalService,
+            IConfiguration configuration,
+            IOptions<RotaDeAcesso> appSettingsConfig)
             : base(paginationService,
-                resultResponseModel,
-                apiRouteExternalService,
-                configuration,
-                appSettingsConfig)
+                  responseModel, 
+                  cargoExternalService, 
+                  apiRouteExternalService, 
+                  configuration, 
+                  appSettingsConfig )
         {
             _departamentoService = departamentoService;
             _cargoExternalService = cargoExternalService;

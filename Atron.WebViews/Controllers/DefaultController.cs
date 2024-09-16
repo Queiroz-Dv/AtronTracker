@@ -1,4 +1,3 @@
-using Atron.Domain.ApiEntities;
 using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -8,20 +7,17 @@ using Shared.DTO;
 using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class DefaultController<T> : Controller
+    public abstract class ServiceConteinerController<DTO, Entity, ExternalService> : Controller
     {
-        protected readonly IPaginationService<T> _paginationService;
-        protected readonly IResultResponseService _responseService;
-        private readonly IApiRouteExternalService _apiRouteExternalService;
-        private IConfiguration _configuration;
-        private readonly RotaDeAcesso _appSettingsConfig;
+        protected IPaginationService<DTO> _paginationService;
+
+        protected ExternalService _service;
+
+        protected MessageModel<Entity> _messageModel;
 
         protected PageInfoDTO PageInfo { get; set; }
 
@@ -30,23 +26,50 @@ namespace Atron.WebViews.Controllers
         protected bool ForceFilter { get; set; } = true;
 
         protected string CurrentController { get; set; }
-        
-        public DefaultController(
-            IPaginationService<T> paginationService, 
-            IResultResponseService responseModel, 
-            IApiRouteExternalService apiRouteExternalService, 
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig)
+
+        protected ServiceConteinerController(
+            IPaginationService<DTO> paginationService,
+            ExternalService externalService,
+            MessageModel<Entity> messageModel)
         {
-            _appSettingsConfig = appSettingsConfig.Value;
-            _configuration = configuration;
-            _apiRouteExternalService = apiRouteExternalService;
-            _responseService = responseModel;
             _paginationService = paginationService;
+            _service = externalService;
+            _messageModel = messageModel;
+        }
+    }
+
+    public class DefaultController<DTO, Entity, ExternalService> : ServiceConteinerController<DTO, Entity, ExternalService>
+    {
+        protected readonly IApiUri _apiUri;
+        private readonly IApiRouteExternalService _apiRouteExternalService;
+        private IConfiguration _configuration;
+        private readonly RotaDeAcesso _appSettingsConfig;        
+
+        public DefaultController(
+            IPaginationService<DTO> paginationService,
+            ExternalService service,                        
+            IApiRouteExternalService apiRouteExternalService,
+            IConfiguration configuration,
+            IOptions<RotaDeAcesso> appSettingsConfig,
+            MessageModel<Entity> messageModel)
+            : base(paginationService, service, messageModel)
+        {
+            _apiRouteExternalService = apiRouteExternalService;
+            _apiUri = (IApiUri)service;
+            _configuration = configuration;
+            _appSettingsConfig = appSettingsConfig.Value;
             PageInfo = new PageInfoDTO();
+            _messageModel = messageModel;
         }
 
-        public string ObterRotaPadrao()
+        // Monta a rota de acordo com o módulo
+        protected void BuildRoute(string modulo)
+        {
+            _apiUri.Uri = GetDefaultRoute();
+            _apiUri.Modulo = modulo;
+        }
+
+        private string GetDefaultRoute()
         {
             var _config = _appSettingsConfig;
             string urlCompleta = $"{_config.Metodo}{_config.Url}/";
@@ -57,17 +80,10 @@ namespace Atron.WebViews.Controllers
             return urlCompleta;
         }
 
-        //public async Task<List<ApiRoute>> MontarRotas(string rota ,string modulo)
-        //{
-        //    _apiRouteExternalService.RotaDoConnect = rota;
-        //    var rotas = await _apiRouteExternalService.MontarRotaDoModulo(modulo);
-        //    return rotas;
-        //}
-
         /// <summary>
         /// Configura a paginação e prepara as entidades para a exibição na View.
         /// </summary>
-        /// <param name="items">Lista de entidades a serem paginadas</param>
+        /// <param name="itens">Lista de entidades a serem paginadas</param>
         /// <param name="itemPage">Número da página atual</param>
         protected virtual void ConfigurePaginationForView(List<T> itens, int itemPage = 1, string currentController = "", string filter = "")
         {
@@ -81,7 +97,7 @@ namespace Atron.WebViews.Controllers
             ProcessPagination(itens, itemPage, currentController, filter);
         }
 
-    
+
         private void ProcessPagination(List<T> itens, int itemPage, string currentController = "", string filter = "")
         {
             if (string.IsNullOrEmpty(currentController))
@@ -129,18 +145,8 @@ namespace Atron.WebViews.Controllers
         protected virtual void CreateTempDataMessages(IList<Message> messages)
         {
             var messagesSerialized = JsonConvert.SerializeObject(messages);
-            TempData["Notifications"] = messages;
-        }
-
-
-        /// <summary>
-        /// Cria as notificações de TempData usando o modelo de resposta atual.
-        /// </summary>
-        protected virtual void CreateTempDataNotifications()
-        {
-            var resultSerialized = JsonConvert.SerializeObject(_responseService.ResultMessages);
-            TempData["Notifications"] = resultSerialized;
-        }
+            TempData["Notifications"] = messagesSerialized;
+        }        
 
         /// <summary>
         /// Obtém as entidades paginadas da página atual.
@@ -164,5 +170,5 @@ namespace Atron.WebViews.Controllers
         {
             ViewData["Title"] = title;
         }
-    }   
+    }
 }
