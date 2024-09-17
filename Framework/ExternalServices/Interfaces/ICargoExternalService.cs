@@ -1,12 +1,14 @@
 ﻿using Atron.Application.DTO;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using ExternalServices.Interfaces.ExternalMessage;
+using Shared.Interfaces;
 
 namespace ExternalServices.Interfaces
 {
     /// <summary>
     /// Interface dos processos e fluxos do módulo de Cargos
     /// </summary>
-    public interface ICargoExternalService : IExternalMessageService
+    public interface ICargoExternalService : IApiUri, IExternalMessageService
     {
         /// <summary>
         /// Método que atualiza um cargo existente

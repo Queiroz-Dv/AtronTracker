@@ -30,6 +30,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5540A906-1B69-45A3-8E6F-D3E0B41D4307}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Departamento", "Departamento", "{FEFA0774-EAE7-4B39-A28F-FEB3AE678345}"
+	ProjectSection(SolutionItems) = preProject
+		TR_Departamento_UpperCase.sql = TR_Departamento_UpperCase.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +92,8 @@ Global
 		{86FAF893-A440-49B0-8E91-555A62217E7A} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
 		{F225BED3-3977-4B0C-B1F1-8AB85229F924} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
 		{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
+		{5540A906-1B69-45A3-8E6F-D3E0B41D4307} = {C8E95E49-4E58-4EB4-B156-82E6EF79D14B}
+		{FEFA0774-EAE7-4B39-A28F-FEB3AE678345} = {5540A906-1B69-45A3-8E6F-D3E0B41D4307}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76F4151D-172C-4239-BF99-E9C71E81BD38}

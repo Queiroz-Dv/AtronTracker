@@ -1,12 +1,15 @@
 ﻿using Shared.DTO;
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Communication.Interfaces.Services
 {
     /// <summary>
     /// Interface de comunicação dos resultados com a API
     /// </summary>
-    public interface ICommunicationService
+    public interface ICommunicationService : IMessages
     {
+
         /// <summary>
         /// Adiciona uma resultado da resposta da API
         /// </summary>
@@ -24,5 +27,10 @@ namespace Communication.Interfaces.Services
         /// </summary>
         /// <returns>Uma lista de resultados preenchidos internamente</returns>
         List<ResultResponseDTO> GetResultResponses();
+
+
+        void AddMessage(Message message);
+        void AddMessages(List<Message> messages);
+        List<Message> GetMessages();
     }
 }

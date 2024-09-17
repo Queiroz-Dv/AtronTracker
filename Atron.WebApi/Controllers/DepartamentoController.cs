@@ -1,7 +1,10 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Notification.Models;
+using Shared.Extensions;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,70 +13,60 @@ namespace Atron.WebApi.Controllers
     [Route("api/[controller]")]
     [Produces("application/json")]
     [ApiController]
-    public class DepartamentoController : ControllerBase
+    public class DepartamentoController : ModuleController<Departamento, IDepartamentoService>
     {
-        private readonly IDepartamentoService _departamentoService;
-
-        public DepartamentoController(IDepartamentoService departamentoService)
+        public DepartamentoController(IDepartamentoService departamentoService, MessageModel<Departamento> messageModel)
+            : base(departamentoService, messageModel)
         {
             // Injeta a dependência do serviço de departamento no construtor
-            _departamentoService = departamentoService;
+            // Porém aqui não é necessário pois a controller de módulos já faz automaticamente
         }
 
-        [HttpPost("CriarDepartamento")]
+        [HttpPost]
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
-        {
-            if (departamento == null)
-            {
-                return BadRequest("Registro inválido, tente novamente.");
-            }
-            await _departamentoService.CriarAsync(departamento);
+        {            
+            await _service.CriarAsync(departamento);
 
-            return Ok(_departamentoService.notificationMessages);
+            return _messageModel.Messages.HasErrors() ?
+                   BadRequest(ObterNotificacoes()) :
+                   Ok(ObterNotificacoes());
         }
 
         [HttpGet]
-        [Route("ObterDepartamentos")]
         public async Task<ActionResult<IEnumerable<DepartamentoDTO>>> Get()
         {
-            var departamentos = await _departamentoService.ObterTodosAsync();
-            if (departamentos is null)
-            {
-                return NotFound("Não foi encontrado nenhum registro");
-            }
-
+            var departamentos = await _service.ObterTodosAsync();
             return Ok(departamentos);
         }
 
-        [HttpPut("AtualizarDepartamento/{codigo}")]
+        [HttpPut("{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] DepartamentoDTO departamento)
         {
-            if (codigo != departamento.Codigo || codigo is null)
-            {
-                return BadRequest();
-            }
+            await _service.AtualizarAsync(codigo, departamento);
 
-            await _departamentoService.AtualizarAsync(departamento);
-            if (_departamentoService.notificationMessages.HasErrors())
-            {
-                return BadRequest(_departamentoService.notificationMessages);
-            }
-
-            return Ok(_departamentoService.notificationMessages);
+            return _messageModel.Messages.HasErrors() ?
+                   BadRequest(ObterNotificacoes()) :
+                   Ok(ObterNotificacoes());
         }
 
-        [HttpDelete("ExcluirDepartamento/{codigo}")]
-        public async Task<ActionResult<DepartamentoDTO>> Delete(string codigo)
+        [HttpDelete("{codigo}")]
+        public async Task<ActionResult> Delete(string codigo)
         {
-            var departamento = await _departamentoService.ObterPorCodigo(codigo);
+            await _service.RemoverAsync(codigo);
 
-            if (departamento is null)
-            {
-                return NotFound(new NotificationMessage("Departamento não encontrado"));
-            }
-            await _departamentoService.RemoverAsync(codigo);
-
-            return Ok(_departamentoService.notificationMessages);
+            return _messageModel.Messages.HasErrors() ?
+                BadRequest(ObterNotificacoes()) :
+                Ok(ObterNotificacoes());
         }
+
+        [HttpGet("{codigo}")]
+        public async Task<ActionResult<DepartamentoDTO>> Get(string codigo)
+        {
+            var departamento = await _service.ObterPorCodigo(codigo);
+
+            return departamento is null ?  
+                NotFound(ObterNotificacoes()) :  
+                Ok(departamento);            
+        }       
     }
 }

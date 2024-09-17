@@ -5,6 +5,7 @@ using ExternalServices.Interfaces;
 using Newtonsoft.Json;
 using Shared.DTO;
 using Shared.Enums;
+using Shared.Models;
 
 namespace ExternalServices.Services
 {
@@ -17,6 +18,8 @@ namespace ExternalServices.Services
         private readonly ICommunicationService _communicationService;
 
         public List<ResultResponseDTO> ResultResponses { get; set; }
+        public string Uri { get; set; }
+        public string Modulo { get; set; }
 
         public CargoExternalService(IApiClient apiClient, ICommunicationService communicationService)
         {
@@ -64,6 +67,11 @@ namespace ExternalServices.Services
         {
             await _apiClient.DeleteAsync("https://atron-hmg.azurewebsites.net/api/Cargo/ExcluirCargo/", codigo);
             ResultResponses.AddRange(_communicationService.GetResultResponses());
+        }
+
+        public IList<Message> GetMessages()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -9,7 +10,7 @@ namespace Atron.Application.DTO
     {
         [JsonIgnore]
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
-        public int Id { get; set; }
+        public int Id { get; set; }        
 
         [Required(ErrorMessage = "O campo código é obrigatório")]
         [MinLength(3, ErrorMessage = "O campo código deve conter 3 caracteres ou mais.")]

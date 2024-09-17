@@ -9,7 +9,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration
         public void Configure(EntityTypeBuilder<Usuario> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(usr => usr.Id).ValueGeneratedNever();
+            builder.Property(dpt => dpt.IdSequencial).IsRequired();
 
             builder.Property(usr => usr.Codigo).IsRequired().HasMaxLength(10);
             builder.Property(usr => usr.Nome).IsRequired().HasMaxLength(25);

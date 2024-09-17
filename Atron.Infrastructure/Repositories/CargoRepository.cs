@@ -48,7 +48,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<IEnumerable<Cargo>> ObterCargosAsync()
         {
-            var cargos = await context.Cargos.AsNoTracking().ToListAsync();
+            var cargos = await context.Cargos.Include(dpt => dpt.Departmento).AsNoTracking().ToListAsync();
             return cargos;
         }
 

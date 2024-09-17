@@ -10,8 +10,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration
         {
             builder.HasKey(dpt => dpt.Id);
 
-            builder.Property(dpt => dpt.Id)
-                   .ValueGeneratedNever();
+            builder.Property(dpt => dpt.IdSequencial).IsRequired();
 
             builder.Property(dpt => dpt.Codigo)
                    .IsRequired()

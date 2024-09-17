@@ -1,5 +1,6 @@
 ﻿using Communication.Interfaces.Services;
 using Shared.DTO;
+using Shared.Models;
 
 namespace Communication.Services
 {
@@ -10,6 +11,18 @@ namespace Communication.Services
     {
         private readonly List<ResultResponseDTO> responses = new List<ResultResponseDTO>();
 
+        public List<Message> Messages { get; set; } = new List<Message>();
+
+        public void AddMessage(Message message)
+        {
+            Messages.Add(message);
+        }
+
+        public void AddMessages(List<Message> messages)
+        {
+            Messages.AddRange(messages);
+        }
+
         public void AddResponseContent(ResultResponseDTO resultResponse)
         {
             responses.Add(resultResponse);
@@ -18,6 +31,11 @@ namespace Communication.Services
         public void AddResponseContent(List<ResultResponseDTO> resultResponses)
         {
             responses.AddRange(resultResponses);
+        }
+
+        public List<Message> GetMessages()
+        {
+            return Messages;
         }
 
         public List<ResultResponseDTO> GetResultResponses()
