@@ -11,6 +11,7 @@ using System.Collections.Generic;
 
 namespace Atron.WebViews.Controllers
 {
+    // Controller que serÃ¡ um conteiner para todos o fluxo
     public abstract class ServiceConteinerController<DTO, Entity, ExternalService> : Controller
     {
         protected IPaginationService<DTO> _paginationService;
@@ -35,6 +36,8 @@ namespace Atron.WebViews.Controllers
             _paginationService = paginationService;
             _service = externalService;
             _messageModel = messageModel;
+            PageInfo = new PageInfoDTO();
+            CurrentController = nameof(Entity);
         }
     }
 
@@ -43,11 +46,11 @@ namespace Atron.WebViews.Controllers
         protected readonly IApiUri _apiUri;
         private readonly IApiRouteExternalService _apiRouteExternalService;
         private IConfiguration _configuration;
-        private readonly RotaDeAcesso _appSettingsConfig;        
+        private readonly RotaDeAcesso _appSettingsConfig;
 
         public DefaultController(
             IPaginationService<DTO> paginationService,
-            ExternalService service,                        
+            ExternalService service,
             IApiRouteExternalService apiRouteExternalService,
             IConfiguration configuration,
             IOptions<RotaDeAcesso> appSettingsConfig,
@@ -58,11 +61,11 @@ namespace Atron.WebViews.Controllers
             _apiUri = (IApiUri)service;
             _configuration = configuration;
             _appSettingsConfig = appSettingsConfig.Value;
-            PageInfo = new PageInfoDTO();
-            _messageModel = messageModel;
+            CurrentController = nameof(Entity);
+            BuildRoute(nameof(Entity));
         }
 
-        // Monta a rota de acordo com o módulo
+        // Monta a rota de acordo com o mï¿½dulo
         protected void BuildRoute(string modulo)
         {
             _apiUri.Uri = GetDefaultRoute();
@@ -74,31 +77,31 @@ namespace Atron.WebViews.Controllers
             var _config = _appSettingsConfig;
             string urlCompleta = $"{_config.Metodo}{_config.Url}/";
 
-            // Adiciona o módulo de acesso e o nome de acesso
+            // Adiciona o mï¿½dulo de acesso e o nome de acesso
             urlCompleta += $"{_config.ModuloDeAcesso}/{_config.NomeDeAcesso}";
 
             return urlCompleta;
         }
 
         /// <summary>
-        /// Configura a paginação e prepara as entidades para a exibição na View.
+        /// Configura a paginaÃ§Ã£o e prepara as entidades para a exibiï¿½ï¿½o na View.
         /// </summary>
         /// <param name="itens">Lista de entidades a serem paginadas</param>
-        /// <param name="itemPage">Número da página atual</param>
-        protected virtual void ConfigurePaginationForView(List<T> itens, int itemPage = 1, string currentController = "", string filter = "")
+        /// <param name="itemPage">NÃºmero da pÃ¡gina atual</param>
+        protected virtual void ConfigurePaginationForView(List<DTO> itens, int itemPage = 1, string currentController = "", string filter = "")
         {
             ConfigureViewDataFilter();
             ConfigureViewBagCurrentController();
             ConfigurePagination(itens, itemPage, currentController, filter);
         }
 
-        public void ConfigurePagination(List<T> itens, int itemPage, string currentController = "", string filter = "")
+        public void ConfigurePagination(List<DTO> itens, int itemPage, string currentController = "", string filter = "")
         {
             ProcessPagination(itens, itemPage, currentController, filter);
         }
 
 
-        private void ProcessPagination(List<T> itens, int itemPage, string currentController = "", string filter = "")
+        private void ProcessPagination(List<DTO> itens, int itemPage, string currentController = "", string filter = "")
         {
             if (string.IsNullOrEmpty(currentController))
             {
@@ -132,27 +135,24 @@ namespace Atron.WebViews.Controllers
             ViewData["Filter"] = Filter;
         }
 
-        /// <summary>
-        /// Cria as notificações de TempData a partir das mensagens de resposta.
-        /// </summary>
-        /// <param name="resultResponses">Lista de respostas com notificações</param>
-        protected virtual void CreateTempDataNotifications(List<ResultResponseDTO> resultResponses)
+        protected virtual void CreateTempDataMessages()
         {
-            var responseSerialized = JsonConvert.SerializeObject(resultResponses);
-            TempData["Notifications"] = responseSerialized;
+            var messagesSerialized = JsonConvert.SerializeObject(_messageModel.Messages);
+            TempData["Notifications"] = messagesSerialized;
         }
+
 
         protected virtual void CreateTempDataMessages(IList<Message> messages)
         {
             var messagesSerialized = JsonConvert.SerializeObject(messages);
             TempData["Notifications"] = messagesSerialized;
-        }        
+        }
 
         /// <summary>
-        /// Obtém as entidades paginadas da página atual.
+        /// ObtÃ©m as entidades paginadas da pÃ¡gina atual.
         /// </summary>
         /// <returns>Lista de entidades paginadas</returns>
-        protected List<T> GetEntitiesPaginated()
+        protected List<DTO> GetEntitiesPaginated()
         {
             return _paginationService.GetEntitiesFilled();
         }
@@ -163,9 +163,9 @@ namespace Atron.WebViews.Controllers
         }
 
         /// <summary>
-        /// Configura o título da View usando ViewData.
+        /// Configura o tÃ­tulo da View usando ViewData.
         /// </summary>
-        /// <param name="title">Título da View</param>
+        /// <param name="title">TÃ­tulo da View</param>
         public virtual void ConfigureDataTitleForView(string title)
         {
             ViewData["Title"] = title;
