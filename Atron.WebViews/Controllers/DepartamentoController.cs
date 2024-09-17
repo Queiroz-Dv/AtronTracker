@@ -18,32 +18,25 @@ namespace Atron.WebViews.Controllers
 {
     public class DepartamentoController : DefaultController<DepartamentoDTO, Departamento, IDepartamentoExternalService>
     {
-        //private IDepartamentoExternalService _externalService;
-        //private MessageModel<Departamento> _messageModel;
-
         public DepartamentoController(
             IPaginationService<DepartamentoDTO> paginationService,
             IDepartamentoExternalService externalService,
             IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,         
+            IConfiguration configuration,
             IOptions<RotaDeAcesso> appSettingsConfig,
             MessageModel<Departamento> messageModel)
             : base(paginationService,
                   externalService,
-                  apiRouteExternalService, 
-                  configuration, 
-                  appSettingsConfig, 
+                  apiRouteExternalService,
+                  configuration,
+                  appSettingsConfig,
                   messageModel)
-        {
-            CurrentController = nameof(Departamento);
-            BuildRoute(nameof(Departamento));
-            _messageModel = messageModel;
-        }
+        { }
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
-            var departamentos = await _externalService.ObterTodos();
+            var departamentos = await _service.ObterTodos();
             ConfigureDataTitleForView("Painel de departamentos");
             if (!departamentos.Any())
             {
@@ -75,11 +68,9 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _externalService.Criar(departamento);
-
-                var messages = _externalService.GetMessages();
-                CreateTempDataMessages(messages);
-                return !messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
+                await _service.Criar(departamento);
+                CreateTempDataMessages();
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
             }
 
             ConfigureDataTitleForView("Cadastro de departamentos");
@@ -88,12 +79,12 @@ namespace Atron.WebViews.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
-        {                   
-            var departamentoDTO = await _externalService.ObterPorCodigo(codigo);
+        {
+            var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
-            if (departamentoDTO is null || _externalService.GetMessages().HasErrors())
+            if (departamentoDTO is null || _messageModel.Messages.HasErrors())
             {
-                CreateTempDataMessages(_externalService.GetMessages());
+                CreateTempDataMessages();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -104,33 +95,33 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
-            await _externalService.Atualizar(codigo, departamentoDTO);
-            var response = _messageModel.Messages;
-            CreateTempDataMessages(response);
+            await _service.Atualizar(codigo, departamentoDTO);
+            CreateTempDataMessages();
 
-            return !response.HasErrors() ? RedirectToAction(nameof(Index)) : View(nameof(Atualizar), departamentoDTO);
+            return !_messageModel.Messages.HasErrors() ?
+            RedirectToAction(nameof(Index)) :
+            View(nameof(Atualizar), departamentoDTO);
         }
 
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            if (string.IsNullOrEmpty(codigo))
-            {
-                _responseService.AddError("Código não informado, tente novamente.");
-                CreateTempDataNotifications();
-                return RedirectToAction(nameof(Index));
-            }
+            // if (string.IsNullOrEmpty(codigo))
+            // {
+            //     _messageModel.AddError("Código não informado, tente novamente.");
+            //     CreateTempDataMessages();
+            //     return RedirectToAction(nameof(Index));
+            // }
 
-            await _externalService.Remover(codigo);
-            CreateTempDataMessages(_externalService.GetMessages());
+            await _service.Remover(codigo);
+            CreateTempDataMessages();
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> ObterDepartamento(string codigoDepartamento)
         {
-            var departamentos = await _externalService.ObterTodos();
-            var departamento = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigoDepartamento);
+            var departamento = await _service.ObterPorCodigo(codigoDepartamento);
 
             return Ok(departamento);
         }
