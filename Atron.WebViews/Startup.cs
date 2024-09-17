@@ -24,7 +24,8 @@ namespace Atron.WebViews
             services.AddHttpClient();
             services.AddInfrastructure(Configuration);
             services.AddControllersWithViews();
-            services.Configure<AppSettingsConfigShared>(Configuration);
+
+            services.Configure<RotaDeAcesso>(Configuration.GetSection(nameof(RotaDeAcesso)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

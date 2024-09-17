@@ -4,6 +4,7 @@ using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Newtonsoft.Json;
 using Shared.DTO;
+using Shared.Models;
 
 namespace ExternalServices.Services
 {
@@ -16,6 +17,8 @@ namespace ExternalServices.Services
         private readonly ICommunicationService _communicationService;
 
         public List<ResultResponseDTO> ResultResponses { get; set; }
+        public string Uri {  get; set; }
+        public string Modulo {  get; set; }
 
         public UsuarioExternalService(IApiClient apiClient, ICommunicationService communicationService)
         {
@@ -38,6 +41,11 @@ namespace ExternalServices.Services
             var json = JsonConvert.SerializeObject(model);
             await _client.PostAsync("https://atron-hmg.azurewebsites.net/api/Usuario/CriarUsuario", json);
             ResultResponses.AddRange(_communicationService.GetResultResponses());
+        }
+
+        public IList<Message> GetMessages()
+        {
+            throw new NotImplementedException();
         }
     }
 }

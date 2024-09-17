@@ -19,6 +19,8 @@
         /// <returns>Retorna os registros obtidos</returns>
         Task<string> GetAsync(string uri);
 
+        Task<string> GetAsync(string uri, string parameter);
+
         /// <summary>
         /// Executa a criação de um registro
         /// </summary>

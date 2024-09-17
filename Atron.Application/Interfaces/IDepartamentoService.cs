@@ -1,5 +1,4 @@
 ﻿using Atron.Application.DTO;
-using Notification.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,10 +6,6 @@ namespace Atron.Application.Interfaces
 {
     public interface IDepartamentoService
     {
-        // Aqui eu preciso das notificações para informar a controller 
-        // caso algo deu certo ou errado
-        public List<NotificationMessage> notificationMessages { get; }
-
         /// <summary>
         /// Obtém todos os departamentos
         /// </summary>
@@ -42,7 +37,7 @@ namespace Atron.Application.Interfaces
         /// Atualiza um departamento existente
         /// </summary>
         /// <param name="departamentoDTO">Modelo que será atualizado</param>
-        Task AtualizarAsync(DepartamentoDTO departamentoDTO);
+        Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO);
 
         /// <summary>
         /// Exclui um departamento existente por código informado

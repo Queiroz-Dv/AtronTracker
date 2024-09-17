@@ -1,9 +1,12 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Application.Specifications.Departamento;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Notification.Models;
+using Shared.Extensions;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,11 +25,10 @@ namespace Atron.Application.Services
         private readonly IMapper _mapper;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly NotificationModel<Departamento> _notification;
-
-        public List<NotificationMessage> notificationMessages { get; set; }
+        private readonly MessageModel<Departamento> messageModel;
 
         public DepartamentoService(IMapper mapper, IDepartamentoRepository departamentoRepository,
-            NotificationModel<Departamento> notification)
+             MessageModel<Departamento> messageModel)
         {
             /* A Injeção de Dependência via construtor é usada para fornecer 
              * a dependência ao DepartamentoService. 
@@ -36,31 +38,50 @@ namespace Atron.Application.Services
              * como o repositório executa suas funções, promovendo o desacoplamento e a testabilidade. */
             _mapper = mapper;
             _departamentoRepository = departamentoRepository;
-            _notification = notification;
-            notificationMessages = new List<NotificationMessage>();
+            this.messageModel = messageModel;
         }
 
-
-        public async Task AtualizarAsync(DepartamentoDTO departamentoDTO)
+        public async Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
-            // Sempre que preciso conectar no repository
-            // também terei de remapear o objeto para um dto 
+            if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO) || 
+                string.IsNullOrEmpty(codigo))
+            {
+                messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                return;
+            }
+
             var departamento = _mapper.Map<Departamento>(departamentoDTO);
-            await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
-            notificationMessages.Add(new NotificationMessage($"Departamento: {departamento.Codigo} foi atualizado com sucesso."));
+            messageModel.Validate(departamento);
+
+            if (!messageModel.Messages.HasErrors())
+            {
+                await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
+                messageModel.AddUpdateMessage(nameof(Departamento));
+            }
         }
 
         public async Task CriarAsync(DepartamentoDTO departamentoDTO)
         {
-            departamentoDTO.Id = departamentoDTO.GerarIdentificador();
+            if (departamentoDTO is null)
+            {
+                messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                return;
+            }
 
             var departamento = _mapper.Map<Departamento>(departamentoDTO);
-            _notification.Validate(departamento);
 
-            if (!_notification.Messages.HasErrors())
+            var entity = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamento.Codigo);
+
+            if (entity is not null)
+            {
+                messageModel.AddRegisterExistMessage(nameof(Departamento));
+            }
+
+            messageModel.Validate(departamento);
+            if (!messageModel.Messages.HasErrors())
             {
                 await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
-                notificationMessages.Add(new NotificationMessage("Departamento criado com sucesso."));
+                messageModel.AddSuccessMessage(nameof(Departamento));
             }
         }
 
@@ -70,13 +91,11 @@ namespace Atron.Application.Services
 
             if (departamento is not null)
             {
-                var departamentoDTO = _mapper.Map<DepartamentoDTO>(departamento);
-                return departamentoDTO;
+                return _mapper.Map<DepartamentoDTO>(departamento);
             }
             else
             {
-                var message = new NotificationMessage("Código do departamento informado não existe.", Notification.Enums.ENotificationType.Error);
-                notificationMessages.Add(message);
+                messageModel.AddRegisterNotFoundMessage(nameof(Departamento));
                 return null;
             }
         }
@@ -85,7 +104,6 @@ namespace Atron.Application.Services
         {
             var entity = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);
             var dto = _mapper.Map<DepartamentoDTO>(entity);
-
             return dto;
         }
 
@@ -99,9 +117,16 @@ namespace Atron.Application.Services
         public async Task RemoverAsync(string codigo)
         {
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
-            await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
-            var message = new NotificationMessage("Departamento removido com sucesso.");
-            notificationMessages.Add(message);
-        }
+
+            if (departamento is not null)
+            {
+                await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
+                messageModel.AddRegisterRemovedSuccessMessage(nameof(Departamento));
+            }
+            else
+            {
+                messageModel.AddRegisterNotFoundMessage(nameof(Departamento));
+            }
+        }        
     }
 }

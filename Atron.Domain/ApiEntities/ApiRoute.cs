@@ -6,9 +6,7 @@ namespace Atron.Domain.ApiEntities
 {
     [Serializable]
     public class ApiRoute
-    {
-        public int Id { get; set; }
-        
+    {        
         [DisplayName("Módulo")]
         public string Modulo { get; set; } // Exemplo: Departamento
 
@@ -16,28 +14,25 @@ namespace Atron.Domain.ApiEntities
         [NotMapped]
         public string Url { get; set; } // Essa URL é fixa e será obtida do Json então não precisa gravar no banco
 
-        [DisplayName("Método")]
+        [DisplayName("Ação")]
         public ApiRouteAction Acao { get; set; } // São os verbos comumente utilizados na API
 
-        [DisplayName("Ativa")]
-        public bool Ativo { get; set; } // Utilizado pra saber se o endpoint está ativo ou não
-
-        public string NomeDaRotaDeAcesso { get; set; } // Nome de acesso descrito na rota
+        public string AcaoDescricao { get; set; }
     }
 
     [Serializable]
     public enum ApiRouteAction
     {
-        [Description("Obter")]
+        [Description("GET")]
         Get,
 
-        [Description("Criar")]
+        [Description("POST")]
         Post,
 
-        [Description("Atualizar")]
+        [Description("PUT")]
         Put,
 
-        [Description("Excluir")]
+        [Description("DELETE")]
         Delete
     }
 }

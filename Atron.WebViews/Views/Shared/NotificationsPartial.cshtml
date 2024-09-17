@@ -3,11 +3,12 @@
 @using Shared.Extensions;
 @using Newtonsoft.Json;
 @using Shared.Enums;
+@using Shared.Models
 
 @{
     var notificationsTempData = TempData["Notifications"];
-    List<ResultResponseDTO> notifications = notificationsTempData is not null ?
-    JsonConvert.DeserializeObject<List<ResultResponseDTO>>(notificationsTempData.ToString()) : null;
+    List<Message> notifications = notificationsTempData is not null ?
+    JsonConvert.DeserializeObject<List<Message>>(notificationsTempData.ToString()) : null;
 }
 
 @if (notifications != null)
@@ -27,7 +28,7 @@
                     Swal.fire({
                         icon: iconType,
                         title: title,
-                        text: ntf.Message,
+                        text: ntf.Description,
                         showConfirmButton: true
                     });
                 });

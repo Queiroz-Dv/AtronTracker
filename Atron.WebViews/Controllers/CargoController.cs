@@ -3,35 +3,51 @@ using Atron.Domain.Entities;
 using Atron.WebViews.Models;
 using Communication.Extensions;
 using ExternalServices.Interfaces;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Shared.DTO.API;
 using Shared.Interfaces;
+using Shared.Models;
+using Shared.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class CargoController : DefaultController<CargoDTO>
+    public class CargoController : DefaultController<CargoDTO, Cargo, ICargoExternalService>
     {
         private IDepartamentoExternalService _departamentoService;
-        private ICargoExternalService _cargoExternalService;
+        // private ICargoExternalService _cargoExternalService;
 
         public CargoController(
+            IUrlModuleFactory urlFactory,
             IPaginationService<CargoDTO> paginationService,
-            IResultResponseService resultResponseModel,
-            IDepartamentoExternalService departamentoService,
-            ICargoExternalService cargoExternalService) : base(paginationService, resultResponseModel)
+            ICargoExternalService cargoExternalService,                    
+            IApiRouteExternalService apiRouteExternalService,
+            IConfiguration configuration,
+            IOptions<RotaDeAcesso> appSettingsConfig,
+            MessageModel<Cargo> messageModel,
+            IDepartamentoExternalService departamentoExternalService
+            )
+            : base(urlFactory,
+                  paginationService,
+                  cargoExternalService, 
+                  apiRouteExternalService, 
+                  configuration, 
+                  appSettingsConfig,
+                  messageModel)
         {
-            _departamentoService = departamentoService;
-            _cargoExternalService = cargoExternalService;
-            CurrentController = nameof(Cargo);
+            _departamentoService = departamentoExternalService;             
         }
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de cargos");
-            var cargos = await _cargoExternalService.ObterTodos();
+            var cargos = await _service.ObterTodos();
 
             if (!cargos.Any())
             {
@@ -58,8 +74,8 @@ namespace Atron.WebViews.Controllers
 
             if (!departamentos.Any())
             {
-                _responseService.AddError("Para criar um cargo é necessário ter um departamento.");
-                CreateTempDataNotifications();
+                _messageModel.AddError("Para criar um cargo é necessário ter um departamento.");
+                CreateTempDataMessages();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -79,15 +95,14 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _cargoExternalService.Criar(model);
+                await _service.Criar(model);
 
-                var responses = _cargoExternalService.ResultResponses;
-                CreateTempDataNotifications(responses);
-                return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+                CreateTempDataMessages();
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
-            _responseService.AddError("Registro inválido para gravação. Tente novamente.");
-            CreateTempDataNotifications();
+            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
+            CreateTempDataMessages();
 
             return RedirectToAction(nameof(Cadastrar));
         }
@@ -97,12 +112,12 @@ namespace Atron.WebViews.Controllers
         {
             if (codigo is null)
             {
-                _responseService.AddError("O código informado não foi encontrado");
-                CreateTempDataNotifications();
+                _messageModel.AddError("O código informado não foi encontrado");
+                CreateTempDataMessages();
                 return View(codigo);
             }
 
-            var cargos = await _cargoExternalService.ObterTodos();
+            var cargos = await _service.ObterTodos();
             var cargoDTO = cargos.FirstOrDefault(crg => crg.Codigo == codigo);
 
             var departamentos = await _departamentoService.ObterTodos();
@@ -125,16 +140,16 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _cargoExternalService.Atualizar(codigo, cargoDTO);
+                await _service.Atualizar(codigo, cargoDTO);
             }
             else
             {
-                _responseService.AddError("Registro inválido tente novamente");
-                CreateTempDataNotifications();
+                _messageModel.AddError("Registro inválido tente novamente");
+                CreateTempDataMessages();
                 return RedirectToAction(nameof(Index));
             }
 
-            CreateTempDataNotifications(_cargoExternalService.ResultResponses);
+            CreateTempDataMessages();
 
             return RedirectToAction(nameof(Index));
         }
@@ -144,13 +159,13 @@ namespace Atron.WebViews.Controllers
         {
             if (string.IsNullOrEmpty(codigo))
             {
-                _responseService.AddError("Código não informado, tente novamente.");
-                CreateTempDataNotifications();
+                _messageModel.AddError("Código não informado, tente novamente.");
+                CreateTempDataMessages();
                 return RedirectToAction(nameof(Index));
             }
 
-            await _cargoExternalService.Remover(codigo);
-            CreateTempDataNotifications(_cargoExternalService.ResultResponses);
+            await _service.Remover(codigo);
+            CreateTempDataMessages();
             return RedirectToAction(nameof(Index));
         }
     }

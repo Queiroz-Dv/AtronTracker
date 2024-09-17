@@ -3,11 +3,9 @@ using Atron.Application.ApiServices;
 using Atron.Application.Interfaces;
 using Atron.Application.Mapping;
 using Atron.Application.Services;
-using Atron.Domain.ApiInterfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Validations;
-using Atron.Infrastructure.ApiRepositories;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +13,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Interfaces;
 using Notification.Models;
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Atron.Infra.IoC
 {
@@ -63,28 +63,42 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IPermissaoEstadoRepository, PermissaoEstadoRepository>();
 
-            services.AddScoped<IApiRouteRepository, ApiRouteRepository>();
             services.AddScoped<IApiRouteService, ApiRouteService>();
 
             // Serviços utilitários 
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
             // Serviços de Notificação e Validação
-            services.AddScoped<INotificationService, DepartamentoValidation>();
-            services.AddScoped<INotificationService, CargoValidation>();
+            //services.AddScoped<INotificationService, DepartamentoValidation>();
+            //services.AddScoped<INotificationService, CargoValidation>();
             services.AddScoped<INotificationService, UsuarioValidation>();
             services.AddScoped<INotificationService, TarefaValidation>();
             services.AddScoped<INotificationService, SalarioValidation>();
             services.AddScoped<INotificationService, PermissaoValidation>();
 
-            services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
-            services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
+            //services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
+            //services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
             services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();
             services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
             services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
             services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
-           
+
+            ConfigureDepartamentoServices(services);
+            ConfigureCargoServices(services);
+
             return services;
+        }
+
+        private static void ConfigureCargoServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, CargoMessageValidation>();
+            services.AddScoped<MessageModel<Cargo>, CargoMessageValidation>();
+        }
+
+        private static void ConfigureDepartamentoServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, DepartamentoMessageValidation>();
+            services.AddScoped<MessageModel<Departamento>, DepartamentoMessageValidation>();
         }
     }
 }

@@ -2,6 +2,7 @@
 using Communication.Interfaces.Services;
 using Newtonsoft.Json;
 using Shared.DTO;
+using Shared.Models;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -33,6 +34,14 @@ namespace Communication.Models
             return responseContent;
         }
 
+        public async Task<string> GetAsync(string uri, string parameter)
+        {           
+            var response = await _httpClient.GetAsync($"{uri}/{parameter}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return responseContent;
+
+        }
+
         public async Task PostAsync(string uri, string content)
         {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
@@ -47,8 +56,8 @@ namespace Communication.Models
         private async Task FillResultResponse(HttpResponseMessage response)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
-            var resultContent = JsonConvert.DeserializeObject<List<ResultResponseDTO>>(responseContent);
-            _communicationService.AddResponseContent(resultContent);
+            var messages = JsonConvert.DeserializeObject<List<Message>>(responseContent);
+            _communicationService.AddMessages(messages);
         }
 
         public async Task PutAsync(string uri, string parameter, string content)
@@ -68,11 +77,11 @@ namespace Communication.Models
 
         public async Task DeleteAsync(string uri, string codigo)
         {
-            var uriFormated = $"{uri}{codigo}";
+            var uriFormated = $"{uri}/{codigo}";
 
             var response = await _httpClient.DeleteAsync(uriFormated);
 
             await FillResultResponse(response);
-        }        
+        }     
     }
 }
