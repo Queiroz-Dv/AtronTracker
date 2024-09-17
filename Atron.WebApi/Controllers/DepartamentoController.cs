@@ -50,7 +50,7 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpDelete("{codigo}")]
-        public async Task<ActionResult<DepartamentoDTO>> Delete(string codigo)
+        public async Task<ActionResult> Delete(string codigo)
         {
             await _service.RemoverAsync(codigo);
 

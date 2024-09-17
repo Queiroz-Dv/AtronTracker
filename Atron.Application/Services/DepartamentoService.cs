@@ -127,11 +127,6 @@ namespace Atron.Application.Services
             {
                 messageModel.AddRegisterNotFoundMessage(nameof(Departamento));
             }
-        }
-
-        public IList<Message> GetMessages()
-        {
-            return messageModel.Messages;
-        }
+        }        
     }
 }

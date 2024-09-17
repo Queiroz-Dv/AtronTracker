@@ -23,6 +23,7 @@ namespace Atron.WebViews.Controllers
         // private ICargoExternalService _cargoExternalService;
 
         public CargoController(
+            IUrlModuleFactory urlFactory,
             IPaginationService<CargoDTO> paginationService,
             ICargoExternalService cargoExternalService,                    
             IApiRouteExternalService apiRouteExternalService,
@@ -31,7 +32,8 @@ namespace Atron.WebViews.Controllers
             MessageModel<Cargo> messageModel,
             IDepartamentoExternalService departamentoExternalService
             )
-            : base(paginationService,
+            : base(urlFactory,
+                  paginationService,
                   cargoExternalService, 
                   apiRouteExternalService, 
                   configuration, 

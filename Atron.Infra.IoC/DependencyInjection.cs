@@ -48,7 +48,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IPaginationService<UsuarioDTO>, PaginationService<UsuarioDTO>>();
 
             services.AddScoped<IResultResponseService, ResultResponseModel>();
-
+            services.AddScoped<IUrlModuleFactory, UrlFactory>();
             ConfigureDepartamentoServices(services);
 
             return services;
