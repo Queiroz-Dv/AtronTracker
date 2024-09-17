@@ -77,7 +77,7 @@ namespace Communication.Models
 
         public async Task DeleteAsync(string uri, string codigo)
         {
-            var uriFormated = $"{uri}{codigo}";
+            var uriFormated = $"{uri}/{codigo}";
 
             var response = await _httpClient.DeleteAsync(uriFormated);
 

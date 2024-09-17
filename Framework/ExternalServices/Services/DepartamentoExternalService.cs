@@ -1,6 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
+using Atron.Domain.Extensions;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
@@ -17,37 +18,35 @@ namespace ExternalServices.Services
     /// </summary>
     public class DepartamentoExternalService : IDepartamentoExternalService
     {
+        private readonly IUrlModuleFactory _urlFactory;
         private readonly IApiClient _apiClient;
         private readonly ICommunicationService _communicationService;
         private readonly IApiRouteExternalService _apiRouteExternalService;
         private readonly MessageModel<Departamento> _messageModel;
-
-        public List<ResultResponseDTO> ResultResponses { get; set; }
-
 
         public string Uri { get; set; }
 
         public string Modulo { get; set; }
 
         public DepartamentoExternalService(
-            MessageModel<Departamento> messageModel,
-            IApiClient apiClient, 
-            ICommunicationService communicationService, 
-            IApiRouteExternalService apiRouteExternalService)
+            IUrlModuleFactory urlFactory,
+            IApiClient apiClient,
+            ICommunicationService communicationService,
+            IApiRouteExternalService apiRouteExternalService,
+            MessageModel<Departamento> messageModel)
         {
+            _urlFactory = urlFactory;
             _apiRouteExternalService = apiRouteExternalService;
             _apiClient = apiClient;
             _communicationService = communicationService;
             _messageModel = messageModel;
         }
 
-
-
         public async Task Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
             var json = JsonConvert.SerializeObject(departamentoDTO);
 
-            if (string.IsNullOrEmpty(codigo) || string.IsNullOrEmpty(departamentoDTO.Codigo)) 
+            if (string.IsNullOrEmpty(codigo) || string.IsNullOrEmpty(departamentoDTO.Codigo))
             {
                 _messageModel.AddRegisterInvalidMessage(nameof(Departamento));
                 //_communicationService.AddMessage(new Message() { Description = "Código não informado", Level = MessageLevel.Error });
@@ -57,7 +56,7 @@ namespace ExternalServices.Services
             try
             {
                 var routa = await _apiRouteExternalService.MontarRotaDoModulo(Uri, Modulo);
-                string uri = routa.BuildUriRoute();
+                string uri = routa.BuildUri();
                 uri += $"/{string.Empty}";
 
                 await _apiClient.PutAsync(uri, codigo, json);
@@ -77,12 +76,12 @@ namespace ExternalServices.Services
         {
             if (string.IsNullOrEmpty(codigo))
             {
-                NewMethod();
+                _messageModel.AddRegisterInvalidMessage(nameof(Departamento));
                 return new DepartamentoDTO();
             }
 
             var rotaDepartamento = await _apiRouteExternalService.MontarRotaDoModulo(Uri, Modulo);
-            string uri = rotaDepartamento.BuildUriRoute();
+            string uri = rotaDepartamento.BuildUri();
             //melhorar essa parte
             uri += $"/{codigo}";
             var response = await _apiClient.GetAsync(uri);
@@ -90,26 +89,15 @@ namespace ExternalServices.Services
             return departamento;
         }
 
-        private void NewMethod()
-        {
-            _communicationService.AddMessage(new Message() { Description = "Código não foi informado.", Level = MessageLevel.Error });
-        }
-
         public async Task Criar(DepartamentoDTO departamento)
         {
-            var routes = await _apiRouteExternalService.MontarRotaDoModulo(Uri, Modulo);
-            string uri = routes.BuildUriRoute();
-
             var json = JsonConvert.SerializeObject(departamento);
-            await _apiClient.PostAsync(uri, json);
+            await _apiClient.PostAsync(_urlFactory.Url, json);
         }
 
         public async Task<List<DepartamentoDTO>> ObterTodos()
         {
-            var rotasDepartamento = await _apiRouteExternalService.MontarRotaDoModulo(Uri, Modulo);
-            string uri = rotasDepartamento.BuildUriRoute();
-
-            var response = await _apiClient.GetAsync(uri);
+            var response = await _apiClient.GetAsync(_urlFactory.Url);
 
             var departamentos = JsonConvert.DeserializeObject<List<DepartamentoDTO>>(response);
             return departamentos is not null ? departamentos : new List<DepartamentoDTO>();
@@ -119,23 +107,13 @@ namespace ExternalServices.Services
         {
             if (string.IsNullOrEmpty(codigo))
             {
-
+                _messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                return;
             }
-            await _apiClient.DeleteAsync("https://atron-hmg.azurewebsites.net/api/Departamento/ExcluirDepartamento/", codigo);
-            ResultResponses.AddRange(_communicationService.GetResultResponses());
-        }
 
-        public IList<Message> GetMessages()
-        {
-            return _communicationService.GetMessages();
-        }
-    }
-
-    public static class BuildModuleRouting
-    {
-        public static string BuildUriRoute(this ApiRoute route)
-        {
-            return route is null ? null : $"{route.Url}/{route.Modulo}";
+            var rotaDepartamento = await _apiRouteExternalService.MontarRotaDoModulo(Uri, Modulo);
+            string uri = rotaDepartamento.BuildUri();
+            await _apiClient.DeleteAsync(uri, codigo);
         }
     }
 }

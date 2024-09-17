@@ -19,23 +19,28 @@ namespace Atron.WebViews.Controllers
     public class DepartamentoController : DefaultController<DepartamentoDTO, Departamento, IDepartamentoExternalService>
     {
         public DepartamentoController(
+            IUrlModuleFactory urlFactory,
             IPaginationService<DepartamentoDTO> paginationService,
             IDepartamentoExternalService externalService,
             IApiRouteExternalService apiRouteExternalService,
             IConfiguration configuration,
             IOptions<RotaDeAcesso> appSettingsConfig,
             MessageModel<Departamento> messageModel)
-            : base(paginationService,
+            : base(urlFactory,
+                  paginationService,
                   externalService,
                   apiRouteExternalService,
                   configuration,
                   appSettingsConfig,
                   messageModel)
-        { }
+        {
+            CurrentController = nameof(Departamento);            
+        }
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
+            await BuildRoute(nameof(Departamento));
             var departamentos = await _service.ObterTodos();
             ConfigureDataTitleForView("Painel de departamentos");
             if (!departamentos.Any())
@@ -68,6 +73,7 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
+                await BuildRoute(nameof(Departamento));
                 await _service.Criar(departamento);
                 CreateTempDataMessages();
                 return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
@@ -106,14 +112,8 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            // if (string.IsNullOrEmpty(codigo))
-            // {
-            //     _messageModel.AddError("Código não informado, tente novamente.");
-            //     CreateTempDataMessages();
-            //     return RedirectToAction(nameof(Index));
-            // }
+             await _service.Remover(codigo);
 
-            await _service.Remover(codigo);
             CreateTempDataMessages();
             return RedirectToAction(nameof(Index));
         }

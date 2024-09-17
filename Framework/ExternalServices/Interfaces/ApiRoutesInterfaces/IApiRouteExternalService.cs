@@ -1,5 +1,4 @@
 ﻿using Atron.Domain.ApiEntities;
-using ExternalServices.Interfaces.ExternalMessage;
 
 namespace ExternalServices.Interfaces.ApiRoutesInterfaces
 {
@@ -7,8 +6,7 @@ namespace ExternalServices.Interfaces.ApiRoutesInterfaces
     /// Interface dos processos e fluxos do módulo de rotas da API
     /// </summary>
     public interface IApiRouteExternalService
-    {       
-
+    {
         /// <summary>
         /// Método que obtém todas as rotas
         /// </summary>

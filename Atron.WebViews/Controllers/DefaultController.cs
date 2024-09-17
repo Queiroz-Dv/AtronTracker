@@ -1,5 +1,5 @@
+using Atron.Domain.Extensions;
 using ExternalServices.Interfaces.ApiRoutesInterfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -7,48 +7,22 @@ using Shared.DTO;
 using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    // Controller que será um conteiner para todos o fluxo
-    public abstract class ServiceConteinerController<DTO, Entity, ExternalService> : Controller
-    {
-        protected IPaginationService<DTO> _paginationService;
-
-        protected ExternalService _service;
-
-        protected MessageModel<Entity> _messageModel;
-
-        protected PageInfoDTO PageInfo { get; set; }
-
-        protected string Filter { get; set; }
-
-        protected bool ForceFilter { get; set; } = true;
-
-        protected string CurrentController { get; set; }
-
-        protected ServiceConteinerController(
-            IPaginationService<DTO> paginationService,
-            ExternalService externalService,
-            MessageModel<Entity> messageModel)
-        {
-            _paginationService = paginationService;
-            _service = externalService;
-            _messageModel = messageModel;
-            PageInfo = new PageInfoDTO();
-            CurrentController = nameof(Entity);
-        }
-    }
-
     public class DefaultController<DTO, Entity, ExternalService> : ServiceConteinerController<DTO, Entity, ExternalService>
     {
         protected readonly IApiUri _apiUri;
+        protected readonly IUrlModuleFactory _urlFactory;
         private readonly IApiRouteExternalService _apiRouteExternalService;
         private IConfiguration _configuration;
         private readonly RotaDeAcesso _appSettingsConfig;
 
         public DefaultController(
+            IUrlModuleFactory urlFactory,
             IPaginationService<DTO> paginationService,
             ExternalService service,
             IApiRouteExternalService apiRouteExternalService,
@@ -57,19 +31,20 @@ namespace Atron.WebViews.Controllers
             MessageModel<Entity> messageModel)
             : base(paginationService, service, messageModel)
         {
+            _urlFactory = urlFactory;
             _apiRouteExternalService = apiRouteExternalService;
             _apiUri = (IApiUri)service;
             _configuration = configuration;
             _appSettingsConfig = appSettingsConfig.Value;
-            CurrentController = nameof(Entity);
-            BuildRoute(nameof(Entity));
         }
 
-        // Monta a rota de acordo com o m�dulo
-        protected void BuildRoute(string modulo)
+        // Monta a rota de acordo com o modulo
+        protected async Task BuildRoute(string modulo, string parametro = "")
         {
-            _apiUri.Uri = GetDefaultRoute();
-            _apiUri.Modulo = modulo;
+            var rotaDoConnect = GetDefaultRoute();
+            var rota =  await _apiRouteExternalService.MontarRotaDoModulo(rotaDoConnect, modulo);
+            string url = rota.BuildUri(parametro);
+            _urlFactory.Url = url;
         }
 
         private string GetDefaultRoute()
@@ -77,7 +52,7 @@ namespace Atron.WebViews.Controllers
             var _config = _appSettingsConfig;
             string urlCompleta = $"{_config.Metodo}{_config.Url}/";
 
-            // Adiciona o m�dulo de acesso e o nome de acesso
+            // Adiciona o modulo de acesso e o nome de acesso
             urlCompleta += $"{_config.ModuloDeAcesso}/{_config.NomeDeAcesso}";
 
             return urlCompleta;
