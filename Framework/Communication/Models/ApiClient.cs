@@ -61,12 +61,11 @@ namespace Communication.Models
         }
 
         public async Task PutAsync(string uri, string parameter, string content)
-        {
-            var uriFormated = $"{uri}{parameter}";
+        {           
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             try
             {
-                var response = await _httpClient.PutAsync(uriFormated, httpContent);
+                var response = await _httpClient.PutAsync(uri, httpContent);
                 await FillResultResponse(response);
             }
             catch (HttpRequestException)
@@ -77,9 +76,7 @@ namespace Communication.Models
 
         public async Task DeleteAsync(string uri, string codigo)
         {
-            var uriFormated = $"{uri}/{codigo}";
-
-            var response = await _httpClient.DeleteAsync(uriFormated);
+            var response = await _httpClient.DeleteAsync(uri);
 
             await FillResultResponse(response);
         }     

@@ -1,5 +1,7 @@
-﻿using Shared.DTO;
+﻿using Communication.Interfaces.Services;
+using Shared.DTO;
 using Shared.Enums;
+using Shared.Models;
 
 namespace Communication.Extensions
 {
@@ -15,6 +17,14 @@ namespace Communication.Extensions
         public static bool HasErrors(this List<ResultResponseDTO> resultResponses)
         {
             return resultResponses.Any(rst => rst.Level == ResultResponseLevelEnum.Error);
+        }
+
+        public static void FillMessages(this List<Message> messages, ICommunicationService communicationService)
+        {
+            if (communicationService.Messages != null)
+            {
+                messages.AddRange(communicationService.Messages);
+            }
         }
     }
 }
