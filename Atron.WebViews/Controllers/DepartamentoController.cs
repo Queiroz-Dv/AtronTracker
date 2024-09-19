@@ -86,6 +86,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
         {
+            await BuildRoute(nameof(Departamento), codigo);
             var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
             if (departamentoDTO is null || _messageModel.Messages.HasErrors())
@@ -101,6 +102,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
+            await BuildRoute(nameof(Departamento), codigo);
             await _service.Atualizar(codigo, departamentoDTO);
             CreateTempDataMessages();
 
@@ -112,7 +114,8 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-             await _service.Remover(codigo);
+            await BuildRoute(nameof(Departamento), codigo);
+            await _service.Remover(codigo);
 
             CreateTempDataMessages();
             return RedirectToAction(nameof(Index));

@@ -7,7 +7,6 @@ using Shared.DTO;
 using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,7 +14,6 @@ namespace Atron.WebViews.Controllers
 {
     public class DefaultController<DTO, Entity, ExternalService> : ServiceConteinerController<DTO, Entity, ExternalService>
     {
-        protected readonly IApiUri _apiUri;
         protected readonly IUrlModuleFactory _urlFactory;
         private readonly IApiRouteExternalService _apiRouteExternalService;
         private IConfiguration _configuration;
@@ -33,7 +31,6 @@ namespace Atron.WebViews.Controllers
         {
             _urlFactory = urlFactory;
             _apiRouteExternalService = apiRouteExternalService;
-            _apiUri = (IApiUri)service;
             _configuration = configuration;
             _appSettingsConfig = appSettingsConfig.Value;
         }
@@ -42,7 +39,7 @@ namespace Atron.WebViews.Controllers
         protected async Task BuildRoute(string modulo, string parametro = "")
         {
             var rotaDoConnect = GetDefaultRoute();
-            var rota =  await _apiRouteExternalService.MontarRotaDoModulo(rotaDoConnect, modulo);
+            var rota = await _apiRouteExternalService.MontarRotaDoModulo(rotaDoConnect, modulo);
             string url = rota.BuildUri(parametro);
             _urlFactory.Url = url;
         }
