@@ -20,13 +20,13 @@ namespace Atron.WebViews.Controllers
         private readonly RotaDeAcesso _appSettingsConfig;
 
         public DefaultController(
-            IUrlModuleFactory urlFactory,
-            IPaginationService<DTO> paginationService,
-            ExternalService service,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            MessageModel<Entity> messageModel)
+            IUrlModuleFactory urlFactory,                     // Interface de URLs
+            IPaginationService<DTO> paginationService,        // Interface de paginação
+            ExternalService service,                          // Interface do serviço da entidade
+            IApiRouteExternalService apiRouteExternalService, // Interface de serviços das rotas da API
+            IConfiguration configuration,                     // Interface de configuração do sistema
+            IOptions<RotaDeAcesso> appSettingsConfig,         // Interface que obtém as configurações do JSON
+            MessageModel<Entity> messageModel)                // Modelo de serviço de mensagem 
             : base(paginationService, service, messageModel)
         {
             _urlFactory = urlFactory;
@@ -38,13 +38,20 @@ namespace Atron.WebViews.Controllers
         // Monta a rota de acordo com o modulo
         protected async Task BuildRoute(string modulo, string parametro = "")
         {
-            var rotaDoConnect = GetDefaultRoute();
+            // Obtém rota do json 
+            var rotaDoConnect = ObterRotaDoConfig();
+
+            // Obtém a rota do módulo através da API
             var rota = await _apiRouteExternalService.MontarRotaDoModulo(rotaDoConnect, modulo);
+
+            // Monta a URI do módulo
             string url = rota.BuildUri(parametro);
+
+            // Passa a url para a interface que será utilizada nos serviços
             _urlFactory.Url = url;
         }
 
-        private string GetDefaultRoute()
+        private string ObterRotaDoConfig()
         {
             var _config = _appSettingsConfig;
             string urlCompleta = $"{_config.Metodo}{_config.Url}/";

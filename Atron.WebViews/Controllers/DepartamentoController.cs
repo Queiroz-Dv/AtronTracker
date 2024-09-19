@@ -74,12 +74,17 @@ namespace Atron.WebViews.Controllers
             if (ModelState.IsValid)
             {
                 await BuildRoute(nameof(Departamento));
+
                 await _service.Criar(departamento);
+
                 CreateTempDataMessages();
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
+
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) :
+                    View(nameof(Cadastrar), departamento);
             }
 
             ConfigureDataTitleForView("Cadastro de departamentos");
+
             return View(departamento);
         }
 
