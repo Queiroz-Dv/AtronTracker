@@ -74,18 +74,24 @@ namespace Atron.WebViews.Controllers
             if (ModelState.IsValid)
             {
                 await BuildRoute(nameof(Departamento));
+
                 await _service.Criar(departamento);
+
                 CreateTempDataMessages();
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
+
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) :
+                    View(nameof(Cadastrar), departamento);
             }
 
             ConfigureDataTitleForView("Cadastro de departamentos");
+
             return View(departamento);
         }
 
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
         {
+            await BuildRoute(nameof(Departamento), codigo);
             var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
             if (departamentoDTO is null || _messageModel.Messages.HasErrors())
@@ -101,6 +107,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
+            await BuildRoute(nameof(Departamento), codigo);
             await _service.Atualizar(codigo, departamentoDTO);
             CreateTempDataMessages();
 
@@ -112,7 +119,8 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-             await _service.Remover(codigo);
+            await BuildRoute(nameof(Departamento), codigo);
+            await _service.Remover(codigo);
 
             CreateTempDataMessages();
             return RedirectToAction(nameof(Index));

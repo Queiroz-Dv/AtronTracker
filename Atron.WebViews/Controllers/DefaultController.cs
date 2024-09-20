@@ -7,7 +7,6 @@ using Shared.DTO;
 using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,25 +14,23 @@ namespace Atron.WebViews.Controllers
 {
     public class DefaultController<DTO, Entity, ExternalService> : ServiceConteinerController<DTO, Entity, ExternalService>
     {
-        protected readonly IApiUri _apiUri;
         protected readonly IUrlModuleFactory _urlFactory;
         private readonly IApiRouteExternalService _apiRouteExternalService;
         private IConfiguration _configuration;
         private readonly RotaDeAcesso _appSettingsConfig;
 
         public DefaultController(
-            IUrlModuleFactory urlFactory,
-            IPaginationService<DTO> paginationService,
-            ExternalService service,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            MessageModel<Entity> messageModel)
+            IUrlModuleFactory urlFactory,                     // Interface de URLs
+            IPaginationService<DTO> paginationService,        // Interface de paginação
+            ExternalService service,                          // Interface do serviço da entidade
+            IApiRouteExternalService apiRouteExternalService, // Interface de serviços das rotas da API
+            IConfiguration configuration,                     // Interface de configuração do sistema
+            IOptions<RotaDeAcesso> appSettingsConfig,         // Interface que obtém as configurações do JSON
+            MessageModel<Entity> messageModel)                // Modelo de serviço de mensagem 
             : base(paginationService, service, messageModel)
         {
             _urlFactory = urlFactory;
             _apiRouteExternalService = apiRouteExternalService;
-            _apiUri = (IApiUri)service;
             _configuration = configuration;
             _appSettingsConfig = appSettingsConfig.Value;
         }
@@ -41,13 +38,20 @@ namespace Atron.WebViews.Controllers
         // Monta a rota de acordo com o modulo
         protected async Task BuildRoute(string modulo, string parametro = "")
         {
-            var rotaDoConnect = GetDefaultRoute();
-            var rota =  await _apiRouteExternalService.MontarRotaDoModulo(rotaDoConnect, modulo);
+            // Obtém rota do json 
+            var rotaDoConnect = ObterRotaDoConfig();
+
+            // Obtém a rota do módulo através da API
+            var rota = await _apiRouteExternalService.MontarRotaDoModulo(rotaDoConnect, modulo);
+
+            // Monta a URI do módulo
             string url = rota.BuildUri(parametro);
+
+            // Passa a url para a interface que será utilizada nos serviços
             _urlFactory.Url = url;
         }
 
-        private string GetDefaultRoute()
+        private string ObterRotaDoConfig()
         {
             var _config = _appSettingsConfig;
             string urlCompleta = $"{_config.Metodo}{_config.Url}/";
