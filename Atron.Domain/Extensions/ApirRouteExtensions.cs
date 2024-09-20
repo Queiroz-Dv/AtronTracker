@@ -12,7 +12,7 @@ namespace Atron.Domain.Extensions
             }
             else
             {
-                return route.BuildUri(parameter);
+                return $"{route.Url}/{route.Modulo}/{parameter}";
             }
         }
     }
