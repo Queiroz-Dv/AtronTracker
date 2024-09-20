@@ -6,7 +6,6 @@ using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Newtonsoft.Json;
-using Shared.Enums;
 using Shared.Models;
 
 namespace ExternalServices.Services
@@ -51,11 +50,11 @@ namespace ExternalServices.Services
             catch (HttpRequestException ex)
             {
                 var exceptionMessage = JsonConvert.DeserializeObject<List<Message>>(ex.Message);
-                _messageModel.Messages.AddRange(exceptionMessage);                
+                _messageModel.Messages.AddRange(exceptionMessage);
             }
             catch (Exception ex)
             {
-                _messageModel.AddError(ex.Message);                
+                _messageModel.AddError(ex.Message);
             }
         }
 
@@ -75,7 +74,7 @@ namespace ExternalServices.Services
         {
             var json = JsonConvert.SerializeObject(departamento);
             await _apiClient.PostAsync(_urlFactory.Url, json);
-            _messageModel.Messages.FillMessages(_communicationService); 
+            _messageModel.Messages.FillMessages(_communicationService);
         }
 
         public async Task<List<DepartamentoDTO>> ObterTodos()
