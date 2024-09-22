@@ -20,12 +20,11 @@ namespace Atron.WebViews.Controllers
     public class CargoController : DefaultController<CargoDTO, Cargo, ICargoExternalService>
     {
         private IDepartamentoExternalService _departamentoService;
-        // private ICargoExternalService _cargoExternalService;
 
         public CargoController(
             IUrlModuleFactory urlFactory,
             IPaginationService<CargoDTO> paginationService,
-            ICargoExternalService cargoExternalService,                    
+            ICargoExternalService cargoExternalService,
             IApiRouteExternalService apiRouteExternalService,
             IConfiguration configuration,
             IOptions<RotaDeAcesso> appSettingsConfig,
@@ -34,27 +33,23 @@ namespace Atron.WebViews.Controllers
             )
             : base(urlFactory,
                   paginationService,
-                  cargoExternalService, 
-                  apiRouteExternalService, 
-                  configuration, 
+                  cargoExternalService,
+                  apiRouteExternalService,
+                  configuration,
                   appSettingsConfig,
                   messageModel)
         {
-            _departamentoService = departamentoExternalService;             
+            _departamentoService = departamentoExternalService;
         }
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
-            ConfigureDataTitleForView("Painel de cargos");
+            await BuildRoute(nameof(Cargo));
+
             var cargos = await _service.ObterTodos();
-
-            if (!cargos.Any())
-            {
-                return View();
-            }
-
             Filter = filter;
+
             ConfigurePaginationForView(cargos, itemPage, CurrentController, filter);
             var model = new CargoModel()
             {
@@ -62,6 +57,7 @@ namespace Atron.WebViews.Controllers
                 PageInfo = PageInfo
             };
 
+            ConfigureDataTitleForView("Painel de cargos");
             return View(model);
         }
 
@@ -69,7 +65,7 @@ namespace Atron.WebViews.Controllers
         public async Task<IActionResult> Cadastrar()
         {
             ConfigureDataTitleForView("Cadastro de cargos");
-
+            await BuildRoute(nameof(Departamento));
             var departamentos = await _departamentoService.ObterTodos();
 
             if (!departamentos.Any())
@@ -95,6 +91,8 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
+                await BuildRoute(nameof(Cargo));
+
                 await _service.Criar(model);
 
                 CreateTempDataMessages();
@@ -117,9 +115,10 @@ namespace Atron.WebViews.Controllers
                 return View(codigo);
             }
 
-            var cargos = await _service.ObterTodos();
-            var cargoDTO = cargos.FirstOrDefault(crg => crg.Codigo == codigo);
+            await BuildRoute(nameof(Cargo), codigo);
+            var cargoDTO = await _service.ObterPorCodigo(codigo);
 
+            await BuildRoute(nameof(Departamento));
             var departamentos = await _departamentoService.ObterTodos();
 
             var departamentosFiltrados = departamentos.Select(dpt =>
@@ -140,13 +139,14 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
+                await BuildRoute(nameof(Cargo), codigo);
                 await _service.Atualizar(codigo, cargoDTO);
             }
             else
             {
                 _messageModel.AddError("Registro inválido tente novamente");
                 CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
+                return View(nameof(Index));
             }
 
             CreateTempDataMessages();
@@ -157,14 +157,9 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            if (string.IsNullOrEmpty(codigo))
-            {
-                _messageModel.AddError("Código não informado, tente novamente.");
-                CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
-            }
-
+            await BuildRoute(nameof(Cargo), codigo);
             await _service.Remover(codigo);
+
             CreateTempDataMessages();
             return RedirectToAction(nameof(Index));
         }

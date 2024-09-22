@@ -35,7 +35,7 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpPut("{codigo}")]
-        public async Task<ActionResult<CargoDTO>> Put(string codigo, [FromBody] CargoDTO cargo)
+        public async Task<ActionResult> Put(string codigo, [FromBody] CargoDTO cargo)
         {
             await _service.AtualizarAsync(codigo, cargo);
 
@@ -56,7 +56,7 @@ namespace Atron.WebApi.Controllers
 
         [HttpGet]
         [Route("{codigo}")]
-        public async Task<ActionResult<IEnumerable<CargoDTO>>> Get(string codigo)
+        public async Task<ActionResult<CargoDTO>> Get(string codigo)
         {
             var cargo = await _service.ObterPorCodigoAsync(codigo);
 

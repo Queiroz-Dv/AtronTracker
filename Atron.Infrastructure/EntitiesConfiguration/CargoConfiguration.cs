@@ -20,8 +20,8 @@ namespace Atron.Infrastructure.EntitiesConfiguration
                    .IsRequired()
                    .HasMaxLength(50);
 
-            builder.HasOne(dpt => dpt.Departmento) // Tem um departamento
-                   .WithMany() // com muitos cargos 
+            builder.HasOne(dpt => dpt.Departamento) // Tem um departamento
+                   .WithMany(crg => crg.Cargos) // com muitos cargos 
                    .HasForeignKey(key => key.DepartmentoId); // FK da relação
 
             // Exemplo pra preencher a tabela 

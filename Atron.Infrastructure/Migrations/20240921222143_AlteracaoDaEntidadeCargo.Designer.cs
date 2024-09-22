@@ -4,6 +4,7 @@ using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Atron.Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240921222143_AlteracaoDaEntidadeCargo")]
+    partial class AlteracaoDaEntidadeCargo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +55,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasIndex("DepartmentoId");
 
-                    b.ToTable("Cargos", (string)null);
+                    b.ToTable("Cargos");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Departamento", b =>
@@ -79,7 +81,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departamentos", (string)null);
+                    b.ToTable("Departamentos");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Mes", b =>
@@ -97,7 +99,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("MesId");
 
-                    b.ToTable("Meses", (string)null);
+                    b.ToTable("Meses");
 
                     b.HasData(
                         new
@@ -200,7 +202,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissoes", (string)null);
+                    b.ToTable("Permissoes");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.PermissaoEstado", b =>
@@ -218,7 +220,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PermissoesEstados", (string)null);
+                    b.ToTable("PermissoesEstados");
 
                     b.HasData(
                         new
@@ -269,7 +271,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Salarios", (string)null);
+                    b.ToTable("Salarios");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Tarefa", b =>
@@ -311,7 +313,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tarefas", (string)null);
+                    b.ToTable("Tarefas");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.TarefaEstado", b =>
@@ -328,7 +330,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TarefaEstados", (string)null);
+                    b.ToTable("TarefaEstados");
 
                     b.HasData(
                         new
@@ -398,7 +400,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Cargo", b =>
