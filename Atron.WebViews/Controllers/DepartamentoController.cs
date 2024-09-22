@@ -42,7 +42,6 @@ namespace Atron.WebViews.Controllers
         {
             await BuildRoute(nameof(Departamento));
             var departamentos = await _service.ObterTodos();
-            ConfigureDataTitleForView("Painel de departamentos");
             if (!departamentos.Any())
             {
                 return View();
@@ -57,6 +56,7 @@ namespace Atron.WebViews.Controllers
                 PageInfo = PageInfo
             };
 
+            ConfigureDataTitleForView("Painel de departamentos");
             return View(model);
         }
 

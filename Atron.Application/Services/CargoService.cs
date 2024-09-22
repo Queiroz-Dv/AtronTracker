@@ -21,7 +21,6 @@ namespace Atron.Application.Services
         private readonly IMapper _mapper;
         private ICargoRepository _cargoRepository;
         private IDepartamentoRepository _departamentoRepository;
-        private readonly NotificationModel<Cargo> _notification;
         private readonly MessageModel<Cargo> messageModel;
 
         public CargoService(IMapper mapper,
@@ -76,6 +75,7 @@ namespace Atron.Application.Services
             if (departamento is not null)
             {
                 cargo.DepartmentoId = departamento.Id;
+                cargo.Departamento = null;
             }
 
             messageModel.Validate(cargo);
@@ -102,6 +102,10 @@ namespace Atron.Application.Services
             {
                 var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
                 cargo.DepartmentoId = entidade.Id;
+
+                if (cargo.Departamento is not null)
+                    cargo.Departamento = null;
+                
             }
 
             messageModel.Validate(cargo);

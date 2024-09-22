@@ -22,7 +22,7 @@
             <a asp-action="Cadastrar" class="btn btn-success">
                 <span title="Cadastrar novo" class="fas fa-plus"></span> Cadastrar novo
             </a>
-        </div>        
+        </div>
     </div>
 </div>
 <br />
@@ -45,24 +45,27 @@
         </thead>
 
         <tbody>
-            @foreach (var item in Model.Cargos)
+            @if (Model is not null)
             {
-                <tr>
-                    <td>@item.Codigo</td>
-                    <td>@item.Descricao</td>                    
-                    <td>@item.DepartamentoCodigo</td>
+                @foreach (var item in Model.Cargos)
+                {
+                    <tr>
+                        <td>@item.Codigo</td>
+                        <td>@item.Descricao</td>
+                        <td>@item.DepartamentoCodigo</td>
 
-                    <td>
-                        <a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
-                            <span class="fas fa-edit">Atualizar</span>
-                        </a>
+                        <td>
+                            <a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
+                                <span class="fas fa-edit">Atualizar</span>
+                            </a>
 
-                        <a onclick="confirmarRemocao('@item.Codigo')" title="Remover"
-                           class="btn btn-danger">
-                            <span class="fas fa-trash-alt">Excluir</span>
-                        </a>
-                    </td>
-                </tr>
+                            <a onclick="confirmarRemocao('@item.Codigo')" title="Remover"
+                               class="btn btn-danger">
+                                <span class="fas fa-trash-alt">Excluir</span>
+                            </a>
+                        </td>
+                    </tr>
+                }
             }
         </tbody>
     </table>

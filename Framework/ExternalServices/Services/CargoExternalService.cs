@@ -1,10 +1,11 @@
 ﻿using Atron.Application.DTO;
+using Atron.Domain.Entities;
+using Communication.Extensions;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Newtonsoft.Json;
-using Shared.DTO;
-using Shared.Enums;
 using Shared.Models;
 
 namespace ExternalServices.Services
@@ -14,64 +15,88 @@ namespace ExternalServices.Services
     /// </summary>
     public class CargoExternalService : ICargoExternalService
     {
+        private readonly IUrlModuleFactory _urlModuleFactory;
         private readonly IApiClient _apiClient;
         private readonly ICommunicationService _communicationService;
+        private MessageModel<Cargo> _messageModel;
 
-        public List<ResultResponseDTO> ResultResponses { get; set; }
-        public string Uri { get; set; }
-        public string Modulo { get; set; }
-
-        public CargoExternalService(IApiClient apiClient, ICommunicationService communicationService)
+        public CargoExternalService(
+            IUrlModuleFactory urlModuleFactory,
+            IApiClient apiClient,
+            ICommunicationService communicationService,
+            MessageModel<Cargo> messageModel)
         {
+            _urlModuleFactory = urlModuleFactory;
             _apiClient = apiClient;
             _communicationService = communicationService;
-            ResultResponses = new List<ResultResponseDTO>();
+            _messageModel = messageModel;
         }
 
         public async Task Criar(CargoDTO cargoDTO)
         {
             var json = JsonConvert.SerializeObject(cargoDTO);
-            await _apiClient.PostAsync("https://atron-hmg.azurewebsites.net/api/Cargo/CriarCargo", json);
-            ResultResponses.AddRange(_communicationService.GetResultResponses());
+            await _apiClient.PostAsync(_urlModuleFactory.Url, json);
+            _messageModel.Messages.FillMessages(_communicationService);
         }
 
         public async Task<List<CargoDTO>> ObterTodos()
         {
-            var response = await _apiClient.GetAsync("https://atron-hmg.azurewebsites.net/api/Cargo/ObterCargos");
+            var response = await _apiClient.GetAsync(_urlModuleFactory.Url);
 
             var cargos = JsonConvert.DeserializeObject<List<CargoDTO>>(response);
-
-            return cargos;
+            return cargos is not null ? cargos : new List<CargoDTO>();
         }
 
         public async Task Atualizar(string codigo, CargoDTO cargoDTO)
         {
             var json = JsonConvert.SerializeObject(cargoDTO);
+
+
+            if (string.IsNullOrEmpty(codigo) || string.IsNullOrEmpty(cargoDTO.Codigo))
+            {
+                _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                return;
+            }
+
             try
             {
-                await _apiClient.PutAsync("https://atron-hmg.azurewebsites.net/api/Cargo/AtualizarCargo/", codigo, json);
-                ResultResponses.AddRange(_communicationService.GetResultResponses());
+                await _apiClient.PutAsync(_urlModuleFactory.Url, codigo, json);
+                _messageModel.Messages.FillMessages(_communicationService);
             }
             catch (HttpRequestException ex)
             {
-                var errorResponse = JsonConvert.DeserializeObject<List<ResultResponseDTO>>(ex.Message);
-                ResultResponses.AddRange(errorResponse);
+                var errorResponse = JsonConvert.DeserializeObject<List<Message>>(ex.Message);
+                _messageModel.Messages.AddRange(errorResponse);
             }
             catch (Exception ex)
             {
-                ResultResponses.Add(new ResultResponseDTO() { Message = ex.Message, Level = ResultResponseLevelEnum.Error });
+                _messageModel.AddError(ex.Message);
             }
         }
 
         public async Task Remover(string codigo)
         {
-            await _apiClient.DeleteAsync("https://atron-hmg.azurewebsites.net/api/Cargo/ExcluirCargo/", codigo);
-            ResultResponses.AddRange(_communicationService.GetResultResponses());
+            if (string.IsNullOrEmpty(codigo))
+            {
+                _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                return;
+            }
+
+            await _apiClient.DeleteAsync(_urlModuleFactory.Url, codigo);
+            _messageModel.Messages.FillMessages(_communicationService);
         }
 
-        public IList<Message> GetMessages()
+        public async Task<CargoDTO>? ObterPorCodigo(string codigo)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(codigo))
+            {
+                _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                return null;
+            }
+
+            var response = await _apiClient.GetAsync(_urlModuleFactory.Url);
+            return JsonConvert.DeserializeObject<CargoDTO>(response);
+
         }
     }
 }

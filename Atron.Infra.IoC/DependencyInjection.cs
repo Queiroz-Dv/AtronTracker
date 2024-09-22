@@ -35,7 +35,7 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IApiClient, ApiClient>();
             services.AddScoped<ICommunicationService, CommunicationService>();
-            
+
             services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
             services.AddScoped<ICargoExternalService, CargoExternalService>();
             services.AddScoped<IUsuarioExternalService, UsuarioExternalService>();
@@ -50,6 +50,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IResultResponseService, ResultResponseModel>();
             services.AddScoped<IUrlModuleFactory, UrlFactory>();
             ConfigureDepartamentoServices(services);
+            ConfgureCargoServices(services);
 
             return services;
         }
@@ -58,6 +59,12 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<IMessages, DepartamentoMessageValidation>();
             services.AddScoped<MessageModel<Departamento>, DepartamentoMessageValidation>();
+        }
+
+        private static void ConfgureCargoServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, CargoMessageValidation>();
+            services.AddScoped<MessageModel<Cargo>, CargoMessageValidation>();
         }
     }
 }
