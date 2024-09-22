@@ -1,4 +1,6 @@
-﻿namespace Atron.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace Atron.Domain.Entities
 {
     public sealed class Departamento : EntityBase
     {
@@ -9,5 +11,7 @@
         {
             Descricao = descricao;
         }
+
+        public List<Cargo> Cargos { get;  set; }
     }
 }
