@@ -55,7 +55,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
         {
-            var departamento = await _context.Departamentos.Where(dpt => dpt.Codigo == codigo).FirstOrDefaultAsync();
+            var departamento = await _context.Departamentos.FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
             return departamento;
         }
 

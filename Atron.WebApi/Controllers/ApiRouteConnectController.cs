@@ -1,7 +1,6 @@
 ﻿using Atron.Application.ApiInterfaces;
 using Atron.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
@@ -15,13 +14,6 @@ namespace Atron.WebApi.Controllers
         public ApiRouteConnectController(IApiRouteService apiRouteService)
         {
             _apiRouteService = apiRouteService;
-        }
-
-        [HttpGet("MontarRotas/{modulo}")]
-        public async Task<ActionResult<IEnumerable<ApiRoute>>> Get(string modulo)
-        {
-            var rotas =  _apiRouteService.MontarRotasPorModuloService(modulo);
-            return Ok(rotas);
         }
 
         [HttpGet("ObterRotaPadrao/{modulo}")]
