@@ -42,11 +42,7 @@ namespace Atron.WebViews.Controllers
         {
             await BuildRoute(nameof(Departamento));
             var departamentos = await _service.ObterTodos();
-            if (!departamentos.Any())
-            {
-                return View();
-            }
-
+          
             Filter = filter;
             ConfigurePaginationForView(departamentos, itemPage, CurrentController, filter);
 

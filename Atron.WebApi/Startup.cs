@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System;
 
 namespace Atron.WebApi
 {
@@ -35,7 +34,7 @@ namespace Atron.WebApi
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Atron API",
-                    Version = "v1", 
+                    Version = "v1",
                     Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
                     Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
                 });
@@ -50,7 +49,7 @@ namespace Atron.WebApi
                 app.UseDeveloperExceptionPage();
                 AddSwagger(app);
             }
-         
+
             AddSwagger(app);
             app.UseHttpsRedirection();
             app.UseStatusCodePages();

@@ -45,7 +45,7 @@ namespace ExternalServices.Services
             try
             {
                 await _apiClient.PutAsync(_urlFactory.Url, codigo, json);
-                _messageModel.Messages.FillMessages(_communicationService);
+                _messageModel.Messages.AddMessages(_communicationService);
             }
             catch (HttpRequestException ex)
             {
@@ -74,7 +74,7 @@ namespace ExternalServices.Services
         {
             var json = JsonConvert.SerializeObject(departamento);
             await _apiClient.PostAsync(_urlFactory.Url, json);
-            _messageModel.Messages.FillMessages(_communicationService);
+            _messageModel.Messages.AddMessages(_communicationService);
         }
 
         public async Task<List<DepartamentoDTO>> ObterTodos()
@@ -94,7 +94,7 @@ namespace ExternalServices.Services
             }
 
             await _apiClient.DeleteAsync(_urlFactory.Url, codigo);
-            _messageModel.Messages.FillMessages(_communicationService);
+            _messageModel.Messages.AddMessages(_communicationService);
         }
     }
 }

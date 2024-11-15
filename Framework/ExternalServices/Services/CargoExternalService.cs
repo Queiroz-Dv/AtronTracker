@@ -36,7 +36,7 @@ namespace ExternalServices.Services
         {
             var json = JsonConvert.SerializeObject(cargoDTO);
             await _apiClient.PostAsync(_urlModuleFactory.Url, json);
-            _messageModel.Messages.FillMessages(_communicationService);
+            _messageModel.Messages.AddMessages(_communicationService);
         }
 
         public async Task<List<CargoDTO>> ObterTodos()
@@ -61,7 +61,7 @@ namespace ExternalServices.Services
             try
             {
                 await _apiClient.PutAsync(_urlModuleFactory.Url, codigo, json);
-                _messageModel.Messages.FillMessages(_communicationService);
+                _messageModel.Messages.AddMessages(_communicationService);
             }
             catch (HttpRequestException ex)
             {
@@ -83,7 +83,7 @@ namespace ExternalServices.Services
             }
 
             await _apiClient.DeleteAsync(_urlModuleFactory.Url, codigo);
-            _messageModel.Messages.FillMessages(_communicationService);
+            _messageModel.Messages.AddMessages(_communicationService);
         }
 
         public async Task<CargoDTO>? ObterPorCodigo(string codigo)
