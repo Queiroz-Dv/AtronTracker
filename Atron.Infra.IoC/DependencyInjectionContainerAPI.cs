@@ -15,6 +15,7 @@ using Notification.Interfaces;
 using Notification.Models;
 using Shared.Interfaces;
 using Shared.Models;
+using System;
 
 namespace Atron.Infra.IoC
 {
@@ -69,36 +70,36 @@ namespace Atron.Infra.IoC
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
             // Serviços de Notificação e Validação
-            //services.AddScoped<INotificationService, DepartamentoValidation>();
-            //services.AddScoped<INotificationService, CargoValidation>();
-            services.AddScoped<INotificationService, UsuarioValidation>();
+            
             services.AddScoped<INotificationService, TarefaValidation>();
             services.AddScoped<INotificationService, SalarioValidation>();
             services.AddScoped<INotificationService, PermissaoValidation>();
-
-            //services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
-            //services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
-            services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();
+            
             services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
             services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
             services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
 
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
+            CargoonfigureUsuarioServices(services);
 
             return services;
         }
-
+        private static void ConfigureDepartamentoServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, DepartamentoMessageValidation>();
+            services.AddScoped<MessageModel<Departamento>, DepartamentoMessageValidation>();
+        }
         private static void ConfigureCargoServices(IServiceCollection services)
         {
             services.AddScoped<IMessages, CargoMessageValidation>();
             services.AddScoped<MessageModel<Cargo>, CargoMessageValidation>();
         }
 
-        private static void ConfigureDepartamentoServices(IServiceCollection services)
+        private static void CargoonfigureUsuarioServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, DepartamentoMessageValidation>();
-            services.AddScoped<MessageModel<Departamento>, DepartamentoMessageValidation>();
+            services.AddScoped<IMessages, UsuarioMessageValidation>();
+            services.AddScoped<MessageModel<Usuario>, UsuarioMessageValidation>();
         }
     }
 }

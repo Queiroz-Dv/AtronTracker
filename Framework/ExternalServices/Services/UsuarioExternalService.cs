@@ -1,9 +1,11 @@
 ﻿using Atron.Application.DTO;
+using Atron.Domain.Entities;
+using Communication.Extensions;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Newtonsoft.Json;
-using Shared.DTO;
 using Shared.Models;
 
 namespace ExternalServices.Services
@@ -15,37 +17,32 @@ namespace ExternalServices.Services
     {
         private readonly IApiClient _client;
         private readonly ICommunicationService _communicationService;
+        private readonly IUrlModuleFactory _urlModuleFactory;
+        private MessageModel<Usuario> _messageModel;
 
-        public List<ResultResponseDTO> ResultResponses { get; set; }
-        public string Uri {  get; set; }
-        public string Modulo {  get; set; }
-
-        public UsuarioExternalService(IApiClient apiClient, ICommunicationService communicationService)
+        public UsuarioExternalService(IApiClient apiClient,
+            ICommunicationService communicationService,
+            IUrlModuleFactory urlModuleFactory,
+            MessageModel<Usuario> messageModel)
         {
             _client = apiClient;
             _communicationService = communicationService;
-            ResultResponses = new List<ResultResponseDTO>();
+            _urlModuleFactory = urlModuleFactory;
+            _messageModel = messageModel;
         }
 
         public async Task<List<UsuarioDTO>> ObterTodos()
         {
-            var response = await _client.GetAsync("https://atron-hmg.azurewebsites.net/api/Usuario/ObterUsuarios");
+            var response = await _client.GetAsync(_urlModuleFactory.Url);
 
-            var usuarios = JsonConvert.DeserializeObject<List<UsuarioDTO>>(response);
-
-            return usuarios is not null ? usuarios : null;
+            return JsonConvert.DeserializeObject<List<UsuarioDTO>>(response);
         }
 
         public async Task Criar(UsuarioDTO model)
         {
             var json = JsonConvert.SerializeObject(model);
-            await _client.PostAsync("https://atron-hmg.azurewebsites.net/api/Usuario/CriarUsuario", json);
-            ResultResponses.AddRange(_communicationService.GetResultResponses());
-        }
-
-        public IList<Message> GetMessages()
-        {
-            throw new NotImplementedException();
+            await _client.PostAsync(_urlModuleFactory.Url, json);
+            _messageModel.Messages.AddMessages(_communicationService);
         }
     }
 }

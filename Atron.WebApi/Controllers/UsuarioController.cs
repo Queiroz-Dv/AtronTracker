@@ -1,92 +1,59 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Notification.Models;
+using Shared.Extensions;
+using Shared.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuarioController : ControllerBase
+    public class UsuarioController : ModuleController<Usuario, IUsuarioService>
     {
-        private readonly IUsuarioService _usuarioService;
 
-        public UsuarioController(IUsuarioService usuarioService)
-        {
-            _usuarioService = usuarioService;
-        }
+        public UsuarioController(IUsuarioService usuarioService,
+            MessageModel<Usuario> messageModel) :
+            base(usuarioService, messageModel)
+        { }
 
-        [Route("CriarUsuario")]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] UsuarioDTO usuario)
         {
-            if (usuario is null)
-            {
-                return BadRequest(new NotificationMessage("Registro inválido, tente novamente"));
-            }
+            await _service.CriarAsync(usuario);
 
-            await _usuarioService.CriarAsync(usuario);
-
-            return Ok(_usuarioService.notificationMessages);
+            return _messageModel.Messages.HasErrors() ?
+                     BadRequest(ObterNotificacoes()) :
+                     Ok(ObterNotificacoes());
         }
 
-        [Route("ObterUsuarios")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuarioDTO>>> Get()
         {
-            var usuarios = await _usuarioService.ObterTodosAsync();
-
-            if (usuarios is null)
-            {
-                return NotFound("Não foi encontrado nenhum registro");
-            }
-
+            var usuarios = await _service.ObterTodosAsync();
             return Ok(usuarios);
         }
 
-        [HttpPut("AtualizarUsuario/{codigo}")]
+        [HttpPut("{codigo}")]
         public async Task<ActionResult<UsuarioDTO>> Put(string codigo, [FromBody] UsuarioDTO usuario)
         {
-            if (!string.IsNullOrEmpty(codigo))
-            {
-                await _usuarioService.AtualizarAsync(usuario);
+            await _service.AtualizarAsync(usuario);
 
-                if (_usuarioService.notificationMessages.HasErrors())
-                {
-                    foreach (var item in _usuarioService.notificationMessages)
-                    {
-                        return BadRequest(item.Message);
-                    }
-                }
-
-                return Ok(_usuarioService.notificationMessages);
-            }
-
-            return BadRequest();
+            return _messageModel.Messages.HasErrors() ?
+                BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
         }
 
-        [HttpDelete("ExcluirUsuario")]
+        [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
         {
-            var usuario = await _usuarioService.ObterPorCodigoAsync(codigo);
-
-            if (usuario is null)
-            {
-                return NotFound(new NotificationMessage("Usuário não encontrado"));
-            }
-
-            await _usuarioService.RemoverAsync(usuario.Id);
-
-            if (_usuarioService.notificationMessages.HasErrors())
-            {
-                return BadRequest(_usuarioService.notificationMessages);
-            }
-
-            return Ok(_usuarioService.notificationMessages.First().Message);
+            await _service.RemoverAsync(codigo);
+            return _messageModel.Messages.HasErrors() ?
+                BadRequest(ObterNotificacoes()) :
+                Ok(ObterNotificacoes());
         }
     }
 }

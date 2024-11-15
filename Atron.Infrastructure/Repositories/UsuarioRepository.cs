@@ -11,7 +11,7 @@ namespace Atron.Infrastructure.Repositories
 {
     public class UsuarioRepository : IUsuarioRepository
     {
-        AtronDbContext _context;
+        private AtronDbContext _context;
 
         public UsuarioRepository(AtronDbContext context)
         {
@@ -22,9 +22,9 @@ namespace Atron.Infrastructure.Repositories
         {
             try
             {
-                var usuario =  _context.Usuarios.First(usr => usr.Id == usuarioId);
+                var usuario = _context.Usuarios.First(usr => usr.Id == usuarioId);
                 usuario.Salario = quantidadeTotal;
-                 _context.Update(usuario);
+                _context.Update(usuario);
             }
             catch (Exception ex)
             {
@@ -41,8 +41,18 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Usuario> CriarUsuarioAsync(Usuario usuario)
         {
-            await _context.Usuarios.AddAsync(usuario);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.Usuarios.AddAsync(usuario);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
             return usuario;
         }
 
