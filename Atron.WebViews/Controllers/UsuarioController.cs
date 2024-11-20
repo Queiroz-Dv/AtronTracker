@@ -5,20 +5,25 @@ using Communication.Extensions;
 using ExternalServices.Interfaces;
 using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
     public class UsuarioController : DefaultController<UsuarioDTO, Usuario, IUsuarioExternalService>
     {
+        public DataTable DataTable { get; set; }
         IDepartamentoExternalService _departamentoService;
         ICargoExternalService _cargoService;
         IPaginationService<CargoDTO> _cargoPager;
@@ -45,8 +50,21 @@ namespace Atron.WebViews.Controllers
             _departamentoService = departamentoExternalService;
             _cargoService = cargoExternalService;
             _cargoPager = cargoPager;
+            DataTable = new();
             CurrentController = nameof(Usuario);
         }
+
+        // Rever como automatizar o processo de montagem de rotas
+        private async Task BuildCargoRoute()
+        {
+            await BuildRoute(nameof(Cargo));
+        }
+
+        private async Task BuildDepartamentoRoute()
+        {
+            await BuildRoute(nameof(Departamento));
+        }
+
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
@@ -67,11 +85,10 @@ namespace Atron.WebViews.Controllers
             return View(model);
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> Cadastrar(int itemPage = 1)
+        public async Task<IActionResult> Cadastrar()
         {
-            ConfigureDataTitleForView("Cadastro de usuários");            
+            ConfigureDataTitleForView("Cadastro de usuários");
 
             await BuildRoute(nameof(Departamento));
             var departamentos = await _departamentoService.ObterTodos();
@@ -79,39 +96,47 @@ namespace Atron.WebViews.Controllers
             await BuildRoute(nameof(Cargo));
             var cargos = await _cargoService.ObterTodos();
 
+
             if (!departamentos.Any())
             {
-                _messageModel.AddError("Para criar um usuário é necessário ter um departamento.");
+                _messageModel.AddWarning("Para criar um usuário é necessário cadastrar um departamento.");
                 CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
             }
 
             if (!cargos.Any())
             {
-                _messageModel.AddError("Para criar um usuário é necessário ter um cargo.");
+                _messageModel.AddWarning("Para criar um usuário é necessário cadastrar um cargo.");
                 CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
             }
 
-            cargos = cargos.Join(departamentos,
-                                 crg => crg.DepartamentoCodigo,
-                                 dpt => dpt.Codigo,
-                                 (crg, dpt) => new CargoDTO
-                                 {
-                                     Codigo = crg.Codigo,
-                                     Descricao = crg.Descricao,
-                                     DepartamentoCodigo = crg.DepartamentoCodigo,
-                                     DepartamentoDescricao = dpt.Descricao
-                                 }).OrderBy(orderBy => orderBy.Codigo).ToList();
-
-
-            ConfigureViewDataFilter();
-            PaginacaoDeCargos(itemPage, cargos);
-
-            ViewBag.CargoComDepartamentos = _cargoPager.GetEntitiesFilled();
-            ViewBag.CargoPageInfo = _cargoPager.PageInfo;
-
+            MontarViewBagDepartamentos(departamentos);
+            MontarViewBagCargos(cargos);
             return View();
+        }
+
+        private void MontarViewBagCargos(List<CargoDTO> cargos)
+        {
+            var cargosFiltrados = cargos.Select(crg =>
+                            new
+                            {
+                                crg.Codigo,
+                                Descricao = $"{crg.Codigo} - {crg.Descricao}"
+                            }
+                        ).ToList();
+
+            ViewBag.Cargos = new SelectList(cargosFiltrados, "Codigo", "Descricao");
+        }
+
+        private void MontarViewBagDepartamentos(List<DepartamentoDTO> departamentos)
+        {
+            var departamentosFiltrados = departamentos.Select(dpt =>
+                new
+                {
+                    dpt.Codigo,
+                    Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
+                }).ToList();
+
+            ViewBag.Departamentos = new SelectList(departamentosFiltrados, nameof(DepartamentoDTO.Codigo), nameof(DepartamentoDTO.Descricao));
         }
 
         private void PaginacaoDeCargos(int itemPage, List<CargoDTO> cargos)
@@ -136,6 +161,47 @@ namespace Atron.WebViews.Controllers
             CreateTempDataMessages();
 
             return RedirectToAction(nameof(Cadastrar));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObterCargosAssociados(string codigoDepartamento)
+        {
+            await BuildCargoRoute();
+            var cargos = await _cargoService.ObterTodos();
+
+            if (!codigoDepartamento.IsNullOrEmpty())
+            {
+                cargos = cargos.Where(crg => crg.DepartamentoCodigo == codigoDepartamento).ToList();
+            }
+
+            var cargosFiltrados = cargos.Select(crg => new
+            {
+                crg.Codigo,
+                Descricao = $"{crg.Codigo} - {crg.Descricao}"
+            }).ToList();
+
+            return Json(cargosFiltrados);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObterDepartamentosAssociados(string codigoCargo)
+        {
+            await BuildCargoRoute();
+            var cargos = await _cargoService.ObterTodos();
+
+            if (!codigoCargo.IsNullOrEmpty())
+            {
+                // Preciso obter os departamentos a partir do código do cargo;
+                cargos = cargos.Where(crg => crg.Codigo == codigoCargo).ToList();
+            }
+
+            var departamentosFiltrados = cargos.Select(dpt => new
+            {
+                dpt.DepartamentoCodigo,
+                Descricao = $"{dpt.Departamento.Codigo} - {dpt.Departamento.Descricao}"
+            }).ToList();
+
+            return Json(departamentosFiltrados);
         }
 
         [HttpGet]
@@ -183,10 +249,11 @@ namespace Atron.WebViews.Controllers
 
 
             ConfigureViewDataFilter();
-            PaginacaoDeCargos(itemPage, cargos);
+            //PaginacaoDeCargos(itemPage, cargos);
 
             ViewBag.CargoComDepartamentos = _cargoPager.GetEntitiesFilled();
             ViewBag.CargoPageInfo = _cargoPager.PageInfo;
+            return View();
         }
     }
 }

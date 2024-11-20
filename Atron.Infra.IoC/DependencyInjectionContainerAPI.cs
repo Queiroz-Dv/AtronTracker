@@ -15,7 +15,6 @@ using Notification.Interfaces;
 using Notification.Models;
 using Shared.Interfaces;
 using Shared.Models;
-using System;
 
 namespace Atron.Infra.IoC
 {
@@ -70,11 +69,11 @@ namespace Atron.Infra.IoC
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
             // Serviços de Notificação e Validação
-            
+
             services.AddScoped<INotificationService, TarefaValidation>();
             services.AddScoped<INotificationService, SalarioValidation>();
             services.AddScoped<INotificationService, PermissaoValidation>();
-            
+
             services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
             services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
             services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();

@@ -6,10 +6,10 @@ BEGIN
     SET NOCOUNT ON;
 
     -- Atualiza a tabela 'Departamento' ajustando as colunas 'Codigo' e 'Descricao' para caixa alta
-    UPDATE Departamento
+    UPDATE Departamentos
     SET Codigo = UPPER(i.Codigo),
         Descricao = UPPER(i.Descricao)
     FROM inserted i
-    WHERE Departamento.Id = i.Id;
+    WHERE Departamentos.Id = i.Id;
 END;
 GO
