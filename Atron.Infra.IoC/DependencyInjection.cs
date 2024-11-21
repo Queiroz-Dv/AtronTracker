@@ -49,8 +49,10 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IResultResponseService, ResultResponseModel>();
             services.AddScoped<IUrlModuleFactory, UrlFactory>();
+
             ConfigureDepartamentoServices(services);
             ConfgureCargoServices(services);
+            CargoonfigureUsuarioServices(services);
 
             return services;
         }
@@ -65,6 +67,12 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<IMessages, CargoMessageValidation>();
             services.AddScoped<MessageModel<Cargo>, CargoMessageValidation>();
+        }
+
+        private static void CargoonfigureUsuarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, UsuarioMessageValidation>();
+            services.AddScoped<MessageModel<Usuario>, UsuarioMessageValidation>();
         }
     }
 }

@@ -4,6 +4,8 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Notification.Models;
+using Shared.Models;
+using Shared.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,26 +19,29 @@ namespace Atron.Application.Services
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly ICargoRepository _cargoRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly NotificationModel<Usuario> _notification;
-
-        public List<NotificationMessage> notificationMessages { get; set; }
+        private readonly MessageModel<Usuario> _messageModel;
 
         public UsuarioService(IMapper mapper,
                               IUsuarioRepository repository,
                               ICargoRepository cargoRepository,
                               IDepartamentoRepository departamentoRepository,
-                              NotificationModel<Usuario> notification)
+                              MessageModel<Usuario> messageModel)
         {
             _mapper = mapper;
             _usuarioRepository = repository;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
-            _notification = notification;
-            notificationMessages = new List<NotificationMessage>();
+            _messageModel = messageModel;
         }
 
         public async Task AtualizarAsync(UsuarioDTO usuarioDTO)
         {
+            if (usuarioDTO is null)
+            {
+                _messageModel.AddRegisterInvalidMessage(nameof(Usuario));
+                return;
+            }
+
             var usuario = _mapper.Map<Usuario>(usuarioDTO);
 
             var cargoExiste = _cargoRepository.CargoExiste(usuario.CargoCodigo);
@@ -51,27 +56,24 @@ namespace Atron.Application.Services
                 usuario.SetId(identificadorUsuario.Id);
                 usuario.CargoId = cargo.Id;
                 usuario.DepartamentoId = departamento.Id;
-            }
-            else
-            {
-                _notification.AddError("Usuário, Cargo ou Departamento não encontrados/cadastrados.");
-                return;
-            }
+            }           
 
-            _notification.Validate(usuario);
+            _messageModel.Validate(usuario);
 
-            if (!_notification.Messages.HasErrors())
+            if (!_messageModel.Messages.HasErrors())
             {
                 await _usuarioRepository.AtualizarUsuarioAsync(usuario);
-                notificationMessages.Add(new NotificationMessage($"Usuário: {usuario.Codigo} atualizado com sucesso."));
+               _messageModel.AddUpdateMessage(nameof(Usuario));
             }
-
-            notificationMessages.AddRange(_notification.Messages);
         }
 
         public async Task CriarAsync(UsuarioDTO usuarioDTO)
         {
-            usuarioDTO.Id = usuarioDTO.GerarIdentificador();
+            if (usuarioDTO is null)
+            {
+                _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                return;
+            }
 
             var cargoExiste = _cargoRepository.CargoExiste(usuarioDTO.CargoCodigo);
             var departamentoExiste = _departamentoRepository.DepartamentoExiste(usuarioDTO.DepartamentoCodigo);
@@ -80,26 +82,25 @@ namespace Atron.Application.Services
             {
                 var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
                 var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(usuarioDTO.DepartamentoCodigo);
+
                 usuarioDTO.CargoId = cargo.Id;
                 usuarioDTO.DepartamentoId = departamento.Id;
             }
             else
             {
-                _notification.AddError("Cargo ou Departamento não encontrados. Cadastre-os ou tente novamente.");
+                _messageModel.AddError("Cargo ou Departamento não encontrados. Cadastre-os ou tente novamente.");
                 return;
             }
 
             var usuario = _mapper.Map<Usuario>(usuarioDTO);
 
-            _notification.Validate(usuario);
+            _messageModel.Validate(usuario);
 
-            if (!_notification.Messages.HasErrors())
+            if (!_messageModel.Messages.HasErrors())
             {
                 await _usuarioRepository.CriarUsuarioAsync(usuario);
-                notificationMessages.Add(new NotificationMessage("Usuário criado com sucesso."));
+                _messageModel.AddSuccessMessage(nameof(Usuario));
             }
-
-            notificationMessages.AddRange(_notification.Messages);
         }
 
         public async Task<UsuarioDTO> ObterPorCodigoAsync(string codigo)
@@ -152,25 +153,34 @@ namespace Atron.Application.Services
                                          DataNascimento = usr.DataNascimento,
                                          CargoCodigo = usr.CargoCodigo,
                                          DepartamentoCodigo = usr.DepartamentoCodigo,
-                                         Cargo = new CargoDTO() { Codigo = usr.CargoCodigo, Descricao = crg.Descricao, DepartamentoCodigo = usr.DepartamentoCodigo },
-                                         Departamento = new DepartamentoDTO() { Codigo = usr.DepartamentoCodigo, Descricao = dpt.Descricao },
+                                         Cargo = new CargoDTO()
+                                         {
+                                             Codigo = usr.CargoCodigo,
+                                             Descricao = crg.Descricao,
+                                             DepartamentoCodigo = usr.DepartamentoCodigo
+                                         },
+                                         Departamento = new DepartamentoDTO()
+                                         {
+                                             Codigo = usr.DepartamentoCodigo,
+                                             Descricao = dpt.Descricao
+                                         },
                                      }).ToList();
 
             return usuarioPreenchido;
         }
 
-        public async Task RemoverAsync(int? id)
+        public async Task RemoverAsync(string codigo)
         {
-            var usuario = await _usuarioRepository.ObterUsuarioPorIdAsync(id);
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
 
             if (usuario == null)
             {
-                notificationMessages.Add(new NotificationMessage("Usuário não existe ou não se encontra cadastrado"));
+                _messageModel.AddRegisterNotFoundMessage(nameof(Usuario));
             }
             else
             {
                 await _usuarioRepository.RemoverUsuarioAsync(usuario);
-                notificationMessages.Add(new NotificationMessage("Usuário removido com sucesso"));
+                _messageModel.AddRegisterRemovedSuccessMessage(nameof(Usuario));
             }
         }
     }

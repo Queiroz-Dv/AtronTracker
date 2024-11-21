@@ -68,7 +68,7 @@ namespace Atron.Infrastructure.Repositories
         public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
         {
             var departamentos = await _context.Departamentos
-                                    .OrderByDescending(order => order.Codigo)
+                                    .OrderByDescending(order => order.Codigo)                                 
                                     .ToListAsync();
 
             return departamentos;

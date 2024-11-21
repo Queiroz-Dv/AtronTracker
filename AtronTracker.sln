@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication", "Framework\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalServices", "Framework\ExternalServices\ExternalServices.csproj", "{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atron.WebApi", "Atron.WebApi\Atron.WebApi.csproj", "{27F889AF-D98E-4D08-9DB6-9407F088902D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.WebApi", "Atron.WebApi\Atron.WebApi.csproj", "{27F889AF-D98E-4D08-9DB6-9407F088902D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{C8E95E49-4E58-4EB4-B156-82E6EF79D14B}"
 	ProjectSection(SolutionItems) = preProject
@@ -40,6 +40,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Departamento", "Departamento", "{66E09BBA-D4B3-4B75-A654-D571055145A4}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\Departamento\TR_Departamento_UpperCase.sql = Scripts\Departamento\TR_Departamento_UpperCase.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Usuarios", "Usuarios", "{83309F66-493B-4448-B818-6E91C948C1EC}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Usuarios\TR_Usuarios_UpperCase.sql = Scripts\Usuarios\TR_Usuarios_UpperCase.sql
 	EndProjectSection
 EndProject
 Global
@@ -100,6 +105,7 @@ Global
 		{B641274D-66BC-4EFE-AFFF-07B18ED0DC13} = {C8E95E49-4E58-4EB4-B156-82E6EF79D14B}
 		{8A9F5A55-F478-4218-97D4-579F1D159947} = {B641274D-66BC-4EFE-AFFF-07B18ED0DC13}
 		{66E09BBA-D4B3-4B75-A654-D571055145A4} = {B641274D-66BC-4EFE-AFFF-07B18ED0DC13}
+		{83309F66-493B-4448-B818-6E91C948C1EC} = {B641274D-66BC-4EFE-AFFF-07B18ED0DC13}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76F4151D-172C-4239-BF99-E9C71E81BD38}

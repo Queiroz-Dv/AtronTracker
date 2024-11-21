@@ -1,5 +1,5 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
-using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -33,5 +33,7 @@ namespace Atron.Application.DTO
         [JsonIgnore]
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public string CargoDescricao { get; set; }
+
+        public List<CargoDTO> Cargos { get; set; }
     }
 }

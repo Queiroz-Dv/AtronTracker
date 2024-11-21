@@ -57,8 +57,8 @@
                     <td>@item.Sobrenome</td>
                     <td>@item.Salario</td>
 
-                    <td>@item.CargoCodigo</td>
-                    <td>@item.DepartamentoCodigo</td>
+                    <td>@item.Cargo.Descricao</td>
+                    <td>@item.Departamento.Descricao</td>
 
                     <td>
                         <a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
