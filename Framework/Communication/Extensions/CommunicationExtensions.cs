@@ -19,7 +19,7 @@ namespace Communication.Extensions
             return resultResponses.Any(rst => rst.Level == ResultResponseLevelEnum.Error);
         }
 
-        public static void FillMessages(this List<Message> messages, ICommunicationService communicationService)
+        public static void AddMessages(this List<Message> messages, ICommunicationService communicationService)
         {
             if (communicationService.Messages != null)
             {

@@ -1,11 +1,11 @@
 ﻿using Atron.Domain.Entities;
-using Notification.Interfaces;
-using Notification.Models;
+using Shared.Interfaces;
+using Shared.Models;
 using System;
 
 namespace Atron.Domain.Validations
 {
-    public class UsuarioValidation : NotificationModel<Usuario>, INotificationService
+    public class UsuarioMessageValidation : MessageModel<Usuario>, IMessages
     {
         public override void Validate(Usuario entity)
         {
@@ -13,12 +13,7 @@ namespace Atron.Domain.Validations
             {
                 AddError("O campo código não está preenchido.");
             }
-
-            if (entity.Id == 0)
-            {
-                AddError("Identificador inválido, tente novamente.");
-            }
-
+            
             if (entity.Codigo.Length > 10)
             {
                 AddError("O código informado é muito longo.");

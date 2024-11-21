@@ -1,5 +1,4 @@
-﻿using Atron.Domain.ValueObjects;
-using System;
+﻿using System;
 
 namespace Atron.Domain.Entities
 {
@@ -13,6 +12,6 @@ namespace Atron.Domain.Entities
         public int CargoId { get; set; }
         public string CargoCodigo { get; set; }
         public int Salario { get; set; }
-        public DateTime? DataNascimento { get; set; }        
+        public DateTime? DataNascimento { get; set; }
     }
 }

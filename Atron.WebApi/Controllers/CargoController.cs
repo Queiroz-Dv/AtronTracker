@@ -14,7 +14,8 @@ namespace Atron.WebApi.Controllers
     [ApiController]
     public class CargoController : ModuleController<Cargo, ICargoService>
     {
-        public CargoController(ICargoService cargoService, MessageModel<Cargo> messageModel)
+        public CargoController(ICargoService cargoService,
+                               MessageModel<Cargo> messageModel)
             : base(cargoService, messageModel) { }
 
         [HttpGet]

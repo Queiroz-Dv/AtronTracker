@@ -40,6 +40,7 @@ namespace Atron.WebViews.Controllers
                   messageModel)
         {
             _departamentoService = departamentoExternalService;
+            CurrentController = nameof(Cargo);
         }
 
         [HttpGet, HttpPost]
@@ -48,8 +49,8 @@ namespace Atron.WebViews.Controllers
             await BuildRoute(nameof(Cargo));
 
             var cargos = await _service.ObterTodos();
-            Filter = filter;
 
+            Filter = filter;
             ConfigurePaginationForView(cargos, itemPage, CurrentController, filter);
             var model = new CargoModel()
             {
@@ -112,7 +113,7 @@ namespace Atron.WebViews.Controllers
             {
                 _messageModel.AddError("O código informado não foi encontrado");
                 CreateTempDataMessages();
-                return View(codigo);
+                return View(nameof(Index));
             }
 
             await BuildRoute(nameof(Cargo), codigo);
