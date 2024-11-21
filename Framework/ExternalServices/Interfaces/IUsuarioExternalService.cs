@@ -18,5 +18,12 @@ namespace ExternalServices.Interfaces
         /// </summary>
         /// <returns>Retorna uma lista de usuários</returns>
         Task<List<UsuarioDTO>> ObterTodos();
+
+
+        Task<UsuarioDTO> ObterPorCodigo(string codigo);
+
+        Task Atualizar(string codigoUsuario, UsuarioDTO usuario);
+
+        Task Remover(string codigo);
     }
 }

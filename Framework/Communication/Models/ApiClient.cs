@@ -1,7 +1,6 @@
 ﻿using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Newtonsoft.Json;
-using Shared.DTO;
 using Shared.Models;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
@@ -35,7 +34,7 @@ namespace Communication.Models
         }
 
         public async Task<string> GetAsync(string uri, string parameter)
-        {           
+        {
             var response = await _httpClient.GetAsync($"{uri}/{parameter}");
             var responseContent = await response.Content.ReadAsStringAsync();
             return responseContent;
@@ -61,7 +60,7 @@ namespace Communication.Models
         }
 
         public async Task PutAsync(string uri, string parameter, string content)
-        {           
+        {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             try
             {
@@ -79,6 +78,6 @@ namespace Communication.Models
             var response = await _httpClient.DeleteAsync(uri);
 
             await FillResultResponse(response);
-        }     
+        }
     }
 }

@@ -121,10 +121,9 @@ namespace Atron.WebViews.Controllers
                             {
                                 crg.Codigo,
                                 Descricao = $"{crg.Codigo} - {crg.Descricao}"
-                            }
-                        ).ToList();
+                            }).ToList();
 
-            ViewBag.Cargos = new SelectList(cargosFiltrados, "Codigo", "Descricao");
+            ViewBag.Cargos = new SelectList(cargosFiltrados, nameof(Cargo.Codigo), nameof(Cargo.Descricao));
         }
 
         private void MontarViewBagDepartamentos(List<DepartamentoDTO> departamentos)
@@ -137,12 +136,6 @@ namespace Atron.WebViews.Controllers
                 }).ToList();
 
             ViewBag.Departamentos = new SelectList(departamentosFiltrados, nameof(DepartamentoDTO.Codigo), nameof(DepartamentoDTO.Descricao));
-        }
-
-        private void PaginacaoDeCargos(int itemPage, List<CargoDTO> cargos)
-        {
-            _cargoPager.Paginate(cargos, itemPage, CurrentController, string.Empty, nameof(Cadastrar));
-            _cargoPager.ConfigureEntityPaginated(cargos, string.Empty);
         }
 
         [HttpPost]
@@ -209,51 +202,41 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Atualizar informação de usuário");
 
-            if (codigo is null)
-            {
-                _messageModel.AddError("O código informado não foi encontrado");
-                CreateTempDataMessages();
-                return View(nameof(Index));
-            }
-
-            await BuildRoute(nameof(Departamento));
+            await BuildDepartamentoRoute();
             var departamentos = await _departamentoService.ObterTodos();
 
-            await BuildRoute(nameof(Cargo));
+            await BuildCargoRoute();
             var cargos = await _cargoService.ObterTodos();
 
-            if (!departamentos.Any())
-            {
-                _messageModel.AddError("Para criar um usuário é necessário ter um departamento.");
-                CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
-            }
+            await BuildRoute(nameof(Usuario), codigo);
+            var usuario = await _service.ObterPorCodigo(codigo);
 
-            if (!cargos.Any())
-            {
-                _messageModel.AddError("Para criar um usuário é necessário ter um cargo.");
-                CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
-            }
+            MontarViewBagDepartamentos(departamentos);
+            MontarViewBagCargos(cargos);
 
-            cargos = cargos.Join(departamentos,
-                                 crg => crg.DepartamentoCodigo,
-                                 dpt => dpt.Codigo,
-                                 (crg, dpt) => new CargoDTO
-                                 {
-                                     Codigo = crg.Codigo,
-                                     Descricao = crg.Descricao,
-                                     DepartamentoCodigo = crg.DepartamentoCodigo,
-                                     DepartamentoDescricao = dpt.Descricao
-                                 }).OrderBy(orderBy => orderBy.Codigo).ToList();
+            return View(usuario);
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> Atualizar(string codigo, UsuarioDTO usuario)
+        {
+            await BuildRoute(nameof(Usuario), codigo);
+            await _service.Atualizar(codigo, usuario);
+            CreateTempDataMessages();
 
-            ConfigureViewDataFilter();
-            //PaginacaoDeCargos(itemPage, cargos);
+            return !_messageModel.Messages.HasErrors() ?
+            RedirectToAction(nameof(Index)) :
+            View(nameof(Atualizar), usuario);
+        }
 
-            ViewBag.CargoComDepartamentos = _cargoPager.GetEntitiesFilled();
-            ViewBag.CargoPageInfo = _cargoPager.PageInfo;
-            return View();
+        [HttpPost]
+        public async Task<IActionResult> Remover(string codigo)
+        {
+            await BuildRoute(nameof(Usuario), codigo);
+            await _service.Remover(codigo);
+
+            CreateTempDataMessages();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
