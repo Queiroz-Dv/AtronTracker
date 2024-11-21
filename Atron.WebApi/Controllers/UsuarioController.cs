@@ -41,6 +41,7 @@ namespace Atron.WebApi.Controllers
         [HttpPut("{codigo}")]
         public async Task<ActionResult<UsuarioDTO>> Put(string codigo, [FromBody] UsuarioDTO usuario)
         {
+            // Verificar o código que é enviado
             await _service.AtualizarAsync(usuario);
 
             return _messageModel.Messages.HasErrors() ?
@@ -51,9 +52,19 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult> Delete(string codigo)
         {
             await _service.RemoverAsync(codigo);
+
             return _messageModel.Messages.HasErrors() ?
                 BadRequest(ObterNotificacoes()) :
                 Ok(ObterNotificacoes());
+        }
+
+        [HttpGet("{codigo}")]
+        public async Task<ActionResult<UsuarioDTO>> Get(string codigo)
+        {
+            var usuario = await _service.ObterPorCodigoAsync(codigo);
+            return usuario is null ?
+             NotFound(ObterNotificacoes()) :
+             Ok(usuario);
         }
     }
 }

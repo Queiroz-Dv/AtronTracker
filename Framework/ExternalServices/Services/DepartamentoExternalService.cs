@@ -34,13 +34,13 @@ namespace ExternalServices.Services
 
         public async Task Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
-            var json = JsonConvert.SerializeObject(departamentoDTO);
-
             if (string.IsNullOrEmpty(codigo) || string.IsNullOrEmpty(departamentoDTO.Codigo))
             {
                 _messageModel.AddRegisterInvalidMessage(nameof(Departamento));
                 return;
             }
+
+            var json = JsonConvert.SerializeObject(departamentoDTO);
 
             try
             {
@@ -50,7 +50,14 @@ namespace ExternalServices.Services
             catch (HttpRequestException ex)
             {
                 var exceptionMessage = JsonConvert.DeserializeObject<List<Message>>(ex.Message);
-                _messageModel.Messages.AddRange(exceptionMessage);
+                if (exceptionMessage is not null)
+                {
+                    _messageModel.Messages.AddRange(exceptionMessage);
+                }
+                else
+                {
+                    _messageModel.AddError(ex.Message);
+                }
             }
             catch (Exception ex)
             {

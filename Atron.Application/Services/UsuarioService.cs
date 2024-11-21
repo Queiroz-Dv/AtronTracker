@@ -56,22 +56,15 @@ namespace Atron.Application.Services
                 usuario.SetId(identificadorUsuario.Id);
                 usuario.CargoId = cargo.Id;
                 usuario.DepartamentoId = departamento.Id;
-            }
-            else
-            {
-                _messageModel.AddError("Usuário, Cargo ou Departamento não encontrados/cadastrados.");
-                return;
-            }
+            }           
 
-            //_messageModel.Validate(usuario);
+            _messageModel.Validate(usuario);
 
             if (!_messageModel.Messages.HasErrors())
             {
                 await _usuarioRepository.AtualizarUsuarioAsync(usuario);
-                //_messageModel.Add(new NotificationMessage($"Usuário: {usuario.Codigo} atualizado com sucesso."));
+               _messageModel.AddUpdateMessage(nameof(Usuario));
             }
-
-            //notificationMessages.AddRange(_notification.Messages);
         }
 
         public async Task CriarAsync(UsuarioDTO usuarioDTO)
@@ -182,12 +175,12 @@ namespace Atron.Application.Services
 
             if (usuario == null)
             {
-                //notificationMessages.Add(new NotificationMessage("Usuário não existe ou não se encontra cadastrado"));
+                _messageModel.AddRegisterNotFoundMessage(nameof(Usuario));
             }
             else
             {
                 await _usuarioRepository.RemoverUsuarioAsync(usuario);
-                //notificationMessages.Add(new NotificationMessage("Usuário removido com sucesso"));
+                _messageModel.AddRegisterRemovedSuccessMessage(nameof(Usuario));
             }
         }
     }
