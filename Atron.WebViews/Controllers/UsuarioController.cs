@@ -23,15 +23,12 @@ namespace Atron.WebViews.Controllers
 {
     public class UsuarioController : DefaultController<UsuarioDTO, Usuario, IUsuarioExternalService>
     {
-        public DataTable DataTable { get; set; }
         IDepartamentoExternalService _departamentoService;
         ICargoExternalService _cargoService;
-        IPaginationService<CargoDTO> _cargoPager;
 
         public UsuarioController(
             IUrlModuleFactory urlModuleFactory,
             IPaginationService<UsuarioDTO> paginationService,
-            IPaginationService<CargoDTO> cargoPager,
             IUsuarioExternalService externalService,
             IDepartamentoExternalService departamentoExternalService,
             IApiRouteExternalService apiRouteExternalService,
@@ -49,8 +46,6 @@ namespace Atron.WebViews.Controllers
         {
             _departamentoService = departamentoExternalService;
             _cargoService = cargoExternalService;
-            _cargoPager = cargoPager;
-            DataTable = new();
             CurrentController = nameof(Usuario);
         }
 
@@ -64,7 +59,6 @@ namespace Atron.WebViews.Controllers
         {
             await BuildRoute(nameof(Departamento));
         }
-
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
@@ -95,19 +89,6 @@ namespace Atron.WebViews.Controllers
 
             await BuildRoute(nameof(Cargo));
             var cargos = await _cargoService.ObterTodos();
-
-
-            if (!departamentos.Any())
-            {
-                _messageModel.AddWarning("Para criar um usuário é necessário cadastrar um departamento.");
-                CreateTempDataMessages();
-            }
-
-            if (!cargos.Any())
-            {
-                _messageModel.AddWarning("Para criar um usuário é necessário cadastrar um cargo.");
-                CreateTempDataMessages();
-            }
 
             MontarViewBagDepartamentos(departamentos);
             MontarViewBagCargos(cargos);
@@ -237,6 +218,12 @@ namespace Atron.WebViews.Controllers
 
             CreateTempDataMessages();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObterUsuarioPorCodigo(string codigo)
+        {
+
         }
     }
 }

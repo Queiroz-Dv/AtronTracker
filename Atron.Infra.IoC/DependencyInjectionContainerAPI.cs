@@ -82,6 +82,8 @@ namespace Atron.Infra.IoC
             ConfigureCargoServices(services);
             CargoonfigureUsuarioServices(services);
 
+            services.AddScoped<IMessages, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
             return services;
         }
         private static void ConfigureDepartamentoServices(IServiceCollection services)
