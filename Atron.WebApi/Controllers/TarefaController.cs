@@ -1,9 +1,9 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
-using Atron.Application.Services;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Notification.Models;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,16 +11,20 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TarefaController : ControllerBase
+    public class TarefaController : ModuleController<Tarefa, ITarefaService>
     {
-        private ITarefaService _service;
+        public TarefaController(ITarefaService service, MessageModel<Tarefa> messageModel) : 
+            base(service, messageModel)
+        { }
 
-        public TarefaController(ITarefaService service)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TarefaDTO>>> Get()
         {
-            _service = service;
+            var tarefas = await _service.ObterTodosAsync();
+
+            return Ok(tarefas);
         }
 
-        [Route("CriarTarefa")]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] TarefaDTO tarefa)
         {
@@ -34,21 +38,7 @@ namespace Atron.WebApi.Controllers
             return Ok(_service.Messages);
         }
 
-        [Route("ObterTarefas")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TarefaDTO>>> Get()
-        {
-            var tarefas = await _service.ObterTodosAsync();
-
-            if (tarefas is null)
-            {
-                return NotFound("Não foi encontrado nenhum registro");
-            }
-
-            return Ok(tarefas);
-        }
-
-        [HttpPut("AtualizarTarefa")]
+        [HttpPut]
         public async Task<ActionResult> Put([FromBody] TarefaDTO tarefa)
         {
             await _service.AtualizarAsync(tarefa);
@@ -64,7 +54,7 @@ namespace Atron.WebApi.Controllers
             return Ok(_service.Messages);
         }
 
-        [HttpDelete("ExcluirTarefa")]
+        [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
             if (id != 0)
