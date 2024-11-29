@@ -10,7 +10,6 @@ using Microsoft.Extensions.Options;
 using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -79,17 +78,41 @@ namespace Atron.WebViews.Controllers
 
             ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
 
-            return View();
-        }
+            await BuildRoute(nameof(TarefaEstado));
+            var 
 
-        private void ObterUsuario(string usuarioCodigo)
-        {
-            
+            return View();
         }
 
         private async Task BuildUsuarioRoute()
         {
             await BuildRoute(nameof(Usuario));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CarregarFormularioTarefa(string codigoUsuario)
+        {
+            await BuildRoute(nameof(Usuario), codigoUsuario);
+            var usuario = await _usuarioService.ObterPorCodigo(codigoUsuario);
+
+            var tarefaDto = new TarefaDTO
+            {
+                UsuarioCodigo = usuario.Codigo,
+                Usuario = new UsuarioDTO()
+                {
+                    Codigo = usuario.Codigo,
+                    Cargo = new CargoDTO()
+                    {
+                        Descricao = usuario.Cargo.Descricao
+                    },
+                    Departamento = new DepartamentoDTO()
+                    {
+                        Descricao = usuario.Departamento.Descricao
+                    }
+                }
+            };
+
+            return PartialView("Partials/Tarefa/FormularioTarefa", tarefaDto);
         }
     }
 }

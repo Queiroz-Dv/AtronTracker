@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces;
@@ -16,7 +15,6 @@ using Shared.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
@@ -220,10 +218,19 @@ namespace Atron.WebViews.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ObterUsuarioPorCodigo(string codigo)
-        {
+        //[HttpGet]
+        //public async Task<IActionResult> ObterUsuarioPorCodigo(string codigoUsuario)
+        //{
+        //    await BuildRoute(nameof(Usuario), codigoUsuario);
+        //    var usuario = await _service.ObterPorCodigo(codigoUsuario);
+        //    var usuarioFiltrado = new
+        //    {
+        //        codigo = usuario.Codigo,
+        //        cargoDescricao = usuario.Cargo.Descricao,
+        //        departamentoDescricao = usuario.Departamento.Descricao
+        //    };
 
-        }
+        //    return Json(usuarioFiltrado);
+        //}        
     }
 }
