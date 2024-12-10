@@ -6,7 +6,7 @@
 
 <h1>Projeto Atron Tracker</h1>
 
-<p>Esse projeto tem como objetivo exemplificar todo o desenvolvimento e ciclo de um software. O projeto apresentado segue os padrões da Arquitetura Limpa com aplicação parcial do Domain-Driven Design (DDD) e MVC. As bases desse projeto foram desenvolvidas para desktop; no entanto, devido aos conhecimentos adquiridos após exercer minha função na área e dos estudos realizados, refatorei e reescrevi todo o sistema.</p>
+<p>Esse protótipo tem como objetivo exemplificar todo o desenvolvimento e ciclo de um software. O projeto apresentado segue os padrões da Arquitetura Limpa com aplicação parcial do Domain-Driven Design (DDD) e MVC. As bases desse projeto foram desenvolvidas para desktop; no entanto, devido aos conhecimentos adquiridos após exercer minha função na área e dos estudos realizados, estou constanemente refatorando e melhorando o sistema.</p>
 
 <h2>Estrutura dos Projetos</h2>
 
