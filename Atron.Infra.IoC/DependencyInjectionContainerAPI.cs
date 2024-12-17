@@ -51,7 +51,12 @@ namespace Atron.Infra.IoC
             services.AddScoped<ITarefaRepository, TarefaRepository>();
             services.AddScoped<ITarefaService, TarefaService>();
 
+            services.AddScoped<ITarefaEstadoService, TarefaEstadoService>();
             services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
+
+            //// Utilização dos repositories padronizados
+            services.AddScoped(typeof(IService<TarefaEstado>), typeof(Service<TarefaEstado>));
+            services.AddScoped(typeof(IRepository<TarefaEstado>), typeof(Repository<TarefaEstado>));
 
             services.AddScoped<ISalarioRepository, SalarioRepository>();
             services.AddScoped<ISalarioService, SalarioService>();
@@ -84,6 +89,8 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IMessages, TarefaMessageValidation>();
             services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<TarefaEstado>, TarefaEstadoMessageValidation>();
+
             return services;
         }
         private static void ConfigureDepartamentoServices(IServiceCollection services)

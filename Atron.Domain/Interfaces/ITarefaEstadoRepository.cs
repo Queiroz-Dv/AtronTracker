@@ -6,6 +6,6 @@ namespace Atron.Domain.Interfaces
 {
     public interface ITarefaEstadoRepository
     {
-        Task<List<TarefaEstado>> ObterTodosAsync();
+        //Task<List<TarefaEstado>> ObterTodosAsync();
     }
 }

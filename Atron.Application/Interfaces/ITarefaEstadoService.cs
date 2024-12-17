@@ -1,14 +1,7 @@
-﻿using Notification.Interfaces.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Atron.Domain.Entities;
 
 namespace Atron.Application.Interfaces
 {
-    public interface ITarefaEstadoService: INotificationMessage
-    {
-        Task<List<>>
-    }
+    public interface ITarefaEstadoService : IService<TarefaEstado>
+    { }
 }
