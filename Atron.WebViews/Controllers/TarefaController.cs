@@ -79,7 +79,7 @@ namespace Atron.WebViews.Controllers
             ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
 
             await BuildRoute(nameof(TarefaEstado));
-            var 
+            //var 
 
             return View();
         }

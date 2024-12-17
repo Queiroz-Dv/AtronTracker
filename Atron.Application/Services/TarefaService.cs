@@ -71,7 +71,7 @@ namespace Atron.Application.Services
         public async Task<List<TarefaDTO>> ObterTodosAsync()
         {
             var tarefas = await _tarefaRepository.ObterTodosRepositoryAsync();
-            var estadosDaTarefa = await _tarefaEstadoRepository.ObterTodosAsync();
+          //  var estadosDaTarefa = await _tarefaEstadoRepository.ObterTodosAsync();
             var usuarios = await _usuarioService.ObterTodosAsync();
 
             var tarefasDTO = _mapper.Map<IEnumerable<TarefaDTO>>(tarefas);
@@ -114,7 +114,7 @@ namespace Atron.Application.Services
                         tarefa.DataInicial = tarefaDTO.DataInicial.Date;
                         tarefa.DataFinal = tarefaDTO.DataFinal.Date;
                         tarefa.EstadoDaTarefa = tarefaDTO.EstadoDaTarefa;
-                        tarefa.EstadoDaTarefaDescricao = estadosDaTarefa.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Descricao;
+                        //tarefa.EstadoDaTarefaDescricao = estadosDaTarefa.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Descricao;
 
                         tarefasDTOList.Add(tarefa);
                     }
@@ -132,11 +132,11 @@ namespace Atron.Application.Services
             if (usuarioExiste)
             {
                 var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefa.UsuarioCodigo);
-                var tarefaEstados = await _tarefaEstadoRepository.ObterTodosAsync();
+                //var tarefaEstados = await _tarefaEstadoRepository.ObterTodosAsync();
 
                 tarefa.UsuarioId = usuario.Id;
                 tarefa.UsuarioCodigo = usuario.Codigo;
-                tarefa.EstadoDaTarefa = tarefaEstados.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Id;
+               // tarefa.EstadoDaTarefa = tarefaEstados.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Id;
 
                 _notification.Validate(tarefa);
 

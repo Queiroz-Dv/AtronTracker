@@ -59,6 +59,10 @@ namespace Atron.Infra.IoC
             services.AddScoped<IMessages, TarefaMessageValidation>();
             services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
 
+            //// Utilização dos repositories padronizados
+            //services.AddScoped(typeof(IDefaultService<TarefaEstado>), typeof(DefaultService<TarefaEstado>));
+            //services.AddScoped(typeof(IDefaultRepository<TarefaEstado>), typeof(DefaultRepository<TarefaEstado>));
+
             return services;
         }
 
