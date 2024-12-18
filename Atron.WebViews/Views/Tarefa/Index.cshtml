@@ -47,8 +47,8 @@
                     <td>@item.Usuario.Departamento.Descricao</td>
                     <td>@item.Titulo</td>
                     <td>@item.EstadoDaTarefaDescricao</td>
-                    <td>@item.DataInicial</td>
-                    <td>@item.DataFinal</td>
+                    <td>@item.DataInicial.Date.ToShortDateString()</td>
+                    <td>@item.DataFinal.Date.ToShortDateString()</td>
 
                     <td>
                         <a asp-action="Atualizar" asp-route-codigo="@item.IdSequencial" title="Atualizar" class="btn btn-warning">

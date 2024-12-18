@@ -16,6 +16,7 @@ namespace Atron.Domain.Entities
 
         public DateTime DataFinal { get; set; }
 
-        public int EstadoDaTarefa { get; set; }
+        public int EstadoDaTarefaId { get; set; }
+        public TarefaEstado TarefaEstado { get; set; }
     }
 }

@@ -52,7 +52,9 @@ namespace Atron.Application.Mapping
 
         private void CriarMapeamentoDeTarefa()
         {
-            CreateMap<Tarefa, TarefaDTO>().ReverseMap();
+            CreateMap<Tarefa, TarefaDTO>()
+                .ForPath(dto => dto.EstadoDaTarefa, opt => opt.MapFrom(src => src.EstadoDaTarefaId))
+                .ReverseMap();
         }
 
         private void CriarMapeamentoDeUsuario()

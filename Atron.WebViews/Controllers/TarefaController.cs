@@ -11,7 +11,9 @@ using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
 using System.Linq;
+using Shared.Extensions;
 using System.Threading.Tasks;
+using System;
 
 namespace Atron.WebViews.Controllers
 {
@@ -20,6 +22,7 @@ namespace Atron.WebViews.Controllers
         private readonly IUsuarioExternalService _usuarioService;
         private readonly IDepartamentoExternalService _departamentoService;
         private readonly ICargoExternalService _cargoService;
+        private readonly ITarefaEstadoExternalService _tarefaEstadoExternalService;
 
         public TarefaController(IUrlModuleFactory urlFactory,
                                 IPaginationService<TarefaDTO> paginationService,
@@ -28,7 +31,8 @@ namespace Atron.WebViews.Controllers
                                 IConfiguration configuration,
                                 IOptions<RotaDeAcesso> appSettingsConfig,
                                 MessageModel<Tarefa> messageModel,
-                                IUsuarioExternalService usuarioService) :
+                                IUsuarioExternalService usuarioService, 
+                                ITarefaEstadoExternalService tarefaEstadoExternalService) :
             base(urlFactory,
                  paginationService,
                  service,
@@ -37,6 +41,7 @@ namespace Atron.WebViews.Controllers
                  appSettingsConfig,
                  messageModel)
         {
+            _tarefaEstadoExternalService = tarefaEstadoExternalService;
             _usuarioService = usuarioService;
             CurrentController = nameof(Tarefa);
         }
@@ -50,6 +55,7 @@ namespace Atron.WebViews.Controllers
             var tarefas = await _service.ObterTodos();
 
             Filter = filter;
+            KeyToSearch = nameof(TarefaDTO.Titulo);
             ConfigurePaginationForView(tarefas, itemPage, CurrentController, filter);
 
             var model = new TarefaModel()
@@ -70,18 +76,31 @@ namespace Atron.WebViews.Controllers
             var usuarios = await _usuarioService.ObterTodos();
             var usuariosFiltrados = usuarios.Select(usr => new
             {
-                Codigo = usr.Codigo,
-                Nome = $"{usr.Nome} {usr.Sobrenome}",
-                //CargoDescricao = usr.Cargo.Descricao,
-                //DepartamentoDescricao = usr.Departamento.Descricao
+                usr.Codigo,
+                Nome = $"{usr.Nome} {usr.Sobrenome}",                
             }).ToList();
 
             ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
 
-            await BuildRoute(nameof(TarefaEstado));
-            //var 
-
+            await ConfigurarViewBagDeEstadoDasTarefas();
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Cadastrar(TarefaDTO tarefaDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                await BuildRoute(nameof(Tarefa));
+                await _service.Criar(tarefaDTO);
+                CreateTempDataMessages();
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+            }
+
+            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
+            CreateTempDataMessages();
+
+            return RedirectToAction(nameof(Cadastrar));
         }
 
         private async Task BuildUsuarioRoute()
@@ -109,10 +128,21 @@ namespace Atron.WebViews.Controllers
                     {
                         Descricao = usuario.Departamento.Descricao
                     }
-                }
+                },
             };
 
+            await ConfigurarViewBagDeEstadoDasTarefas();
+
             return PartialView("Partials/Tarefa/FormularioTarefa", tarefaDto);
+        }
+
+        private async Task ConfigurarViewBagDeEstadoDasTarefas()
+        {
+            await BuildRoute(nameof(TarefaEstado));
+
+            var estados = await _tarefaEstadoExternalService.ObterTodosAsync();
+
+            ViewBag.TarefaEstados = new SelectList(estados, nameof(TarefaEstado.Id), nameof(TarefaEstado.Descricao));
         }
     }
 }
