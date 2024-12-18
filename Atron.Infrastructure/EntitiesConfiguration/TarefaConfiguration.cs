@@ -18,7 +18,11 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.Property(trf => trf.Conteudo).HasMaxLength(2500);
             builder.Property(trf => trf.DataInicial);
             builder.Property(trf => trf.DataFinal);
-            builder.Property(trf => trf.EstadoDaTarefa);
+            
+
+            builder.HasOne(tre => tre.TarefaEstado)
+                   .WithMany(trf => trf.Tarefas)
+                   .HasForeignKey(fk => fk.EstadoDaTarefaId);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Atron.Application.DTO
         public string UsuarioCodigo { get; set; }
         public UsuarioDTO Usuario { get; set; }        
 
-        [DisplayName("Descrição")]
+        [DisplayName("Título")]
         public string Titulo { get; set; }
 
         public string Conteudo { get; set; }

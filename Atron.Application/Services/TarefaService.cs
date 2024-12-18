@@ -4,7 +4,9 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Notification.Models;
+using Shared.Models;
 using System.Collections.Generic;
+using Shared.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,43 +16,31 @@ namespace Atron.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IRepository<Tarefa> _repository;
-        private readonly ICargoRepository _cargoRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
+        private readonly IRepository<TarefaEstado> _repositoryTarefaEstado;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioService _usuarioService;
         private readonly ITarefaRepository _tarefaRepository;
-        private readonly ITarefaEstadoRepository _tarefaEstadoRepository;
-
-        private readonly NotificationModel<Tarefa> _notification;
-
-        public List<NotificationMessage> Messages { get; set; }
+        private readonly MessageModel<Tarefa> _messageModel;
 
         public TarefaService(IMapper mapper,
                              IRepository<Tarefa> repository,
-                             ICargoRepository cargoRepository,
-                             IDepartamentoRepository departamentoRepository,
+                             IRepository<TarefaEstado> repositoryTarefaEstado,                            
                              IUsuarioRepository usuarioRepository,
                              IUsuarioService usuarioService,
                              ITarefaRepository tarefaRepository,
-                             ITarefaEstadoRepository tarefaEstadoRepository,
-                             NotificationModel<Tarefa> notification)
+                             MessageModel<Tarefa> messageModel)
         {
             _mapper = mapper;
             _repository = repository;
-            _notification = notification;
-            _cargoRepository = cargoRepository;
-            _departamentoRepository = departamentoRepository;
+            _repositoryTarefaEstado = repositoryTarefaEstado;
+            _messageModel = messageModel;
             _usuarioRepository = usuarioRepository;
             _usuarioService = usuarioService;
             _tarefaRepository = tarefaRepository;
-            _tarefaEstadoRepository = tarefaEstadoRepository;
-            Messages = new List<NotificationMessage>();
         }
 
         public async Task CriarAsync(TarefaDTO tarefaDTO)
         {
-            tarefaDTO.Id = tarefaDTO.GerarIdentificador();
-
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefaDTO.UsuarioCodigo);
             if (usuario is not null)
             {
@@ -58,20 +48,19 @@ namespace Atron.Application.Services
             }
 
             var tarefa = _mapper.Map<Tarefa>(tarefaDTO);
+            _messageModel.Validate(tarefa);
 
-            _notification.Validate(tarefa);
-
-            if (!_notification.Messages.HasErrors())
+            if (!_messageModel.Messages.HasErrors())
             {
                 await _tarefaRepository.CriarRepositoryAsync(tarefa);
-                Messages.Add(new NotificationMessage("Tarefa criada com sucesso."));
+                _messageModel.AddSuccessMessage(nameof(Tarefa));                
             }
         }
 
         public async Task<List<TarefaDTO>> ObterTodosAsync()
         {
-            var tarefas = await _tarefaRepository.ObterTodosRepositoryAsync();
-          //  var estadosDaTarefa = await _tarefaEstadoRepository.ObterTodosAsync();
+            var tarefas = await _tarefaRepository.ObterTodasTarefasComEstado();
+            var estadosDaTarefa = await _repositoryTarefaEstado.ObterTodosRepositoryAsync();
             var usuarios = await _usuarioService.ObterTodosAsync();
 
             var tarefasDTO = _mapper.Map<IEnumerable<TarefaDTO>>(tarefas);
@@ -114,12 +103,13 @@ namespace Atron.Application.Services
                         tarefa.DataInicial = tarefaDTO.DataInicial.Date;
                         tarefa.DataFinal = tarefaDTO.DataFinal.Date;
                         tarefa.EstadoDaTarefa = tarefaDTO.EstadoDaTarefa;
-                        //tarefa.EstadoDaTarefaDescricao = estadosDaTarefa.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Descricao;
+                        tarefa.EstadoDaTarefaDescricao = estadosDaTarefa.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Descricao;
 
                         tarefasDTOList.Add(tarefa);
                     }
                 }
             }
+
             return tarefasDTOList;
         }
 
@@ -136,22 +126,22 @@ namespace Atron.Application.Services
 
                 tarefa.UsuarioId = usuario.Id;
                 tarefa.UsuarioCodigo = usuario.Codigo;
-               // tarefa.EstadoDaTarefa = tarefaEstados.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Id;
+                // tarefa.EstadoDaTarefa = tarefaEstados.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Id;
 
                 _notification.Validate(tarefa);
 
                 if (!_notification.Messages.HasErrors())
                 {
                     await _tarefaRepository.AtualizarRepositoryAsync(tarefa);
-                    Messages.Add(new NotificationMessage("Tarefa atualizada com sucesso."));
+                    //Messages.Add(new NotificationMessage("Tarefa atualizada com sucesso."));
                     return;
                 }
 
-                Messages.AddRange(_notification.Messages);
+                //Messages.AddRange(_notification.Messages);
             }
             else
             {
-                Messages.Add(new NotificationMessage("Código de usuário não existe. Tente novamente", Notification.Enums.ENotificationType.Error));
+                //Messages.Add(new NotificationMessage("Código de usuário não existe. Tente novamente", Notification.Enums.ENotificationType.Error));
                 return;
             }
         }
@@ -162,12 +152,12 @@ namespace Atron.Application.Services
 
             if (tarefa is null)
             {
-                Messages.Add(new NotificationMessage("Tarefa não existe. Tente novamente"));
+                // Messages.Add(new NotificationMessage("Tarefa não existe. Tente novamente"));
                 return;
             }
 
             await _repository.RemoverRepositoryAsync(tarefa);
-            Messages.Add(new NotificationMessage("Registro removido com sucesso"));
+            // Messages.Add(new NotificationMessage("Registro removido com sucesso"));
         }
     }
 }

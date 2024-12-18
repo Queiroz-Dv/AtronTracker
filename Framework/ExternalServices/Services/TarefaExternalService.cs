@@ -6,6 +6,7 @@ using ExternalServices.Interfaces;
 using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Shared.Models;
 using Newtonsoft.Json;
+using Communication.Extensions;
 
 namespace ExternalServices.Services
 {
@@ -26,6 +27,13 @@ namespace ExternalServices.Services
             _apiClient = apiClient;
             _communicationService = communicationService;
             _messageModel = messageModel;
+        }
+
+        public async Task Criar(TarefaDTO tarefaDTO)
+        {
+            var json = JsonConvert.SerializeObject(tarefaDTO);
+            await _apiClient.PostAsync(_urlModuleFactory.Url, json);
+            _messageModel.Messages.AddMessages(_communicationService);
         }
 
         public async Task<List<TarefaDTO>> ObterTodos()

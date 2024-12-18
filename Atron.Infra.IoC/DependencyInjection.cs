@@ -40,6 +40,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<ICargoExternalService, CargoExternalService>();
             services.AddScoped<IUsuarioExternalService, UsuarioExternalService>();
             services.AddScoped<ITarefaExternalService, TarefaExternalService>();
+            services.AddScoped<ITarefaEstadoExternalService, TarefaEstadoExternalService>();
 
             services.AddScoped<IApiRouteExternalService, ApiRouteExternalService>();
             services.AddScoped<IPaginationService<ApiRoute>, PaginationService<ApiRoute>>();
