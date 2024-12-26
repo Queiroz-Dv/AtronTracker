@@ -1,12 +1,15 @@
 ﻿@using Atron.Application.DTO
 @using System;
 @model TarefaDTO
+@{
+	var actionPage = ViewData["ActionPage"];
+}
 
-<form id="formTarefa" asp-action="Cadastrar" method="post" class="form-horizontal">
+<form id="formTarefa" asp-action="@actionPage" method="post" class="form-horizontal">
+	<input hidden type="text" value="@actionPage" id="actionPage" />
 	<!--Informações de usuário-->
 	<fieldset>
 		<legend class="fw-semibold">Informações do Usuário</legend>
-
 		<div class="row">
 			<div class="col">
 				<label asp-for="Usuario.Codigo" class="form-label">Código do Usuário</label>
@@ -36,23 +39,16 @@
 			<textarea asp-for="Conteudo" class="form-control"></textarea>
 		</div>
 		<div class="row">
-			<div class="col">
-				<label asp-for="DataInicial" class="form-label">Data Inicial</label>
-				<input asp-for="DataInicial" class="form-control" type="date" value="@DateTime.Today" />
-			</div>
-			<div class="col">
-				<label asp-for="DataFinal" class="form-label">Data Final</label>
-				<input asp-for="DataFinal" class="form-control" type="date" value="@DateTime.Today" />
-			</div>
+			<partial name="Partials/Tarefa/FormTarefaDatas" model="@Model"></partial>
 		</div>
 		<br />
 		<div row>
 			<div class="col-4">
-				<label asp-for="EstadoDaTarefa" class="form-label">Estado</label>
-				<select asp-for="EstadoDaTarefa" class="form-control" id="estadoTarefa" asp-items="@ViewBag.TarefaEstados">
+				<label asp-for="TarefaEstadoId" class="form-label">Estado</label>
+				<select asp-for="TarefaEstadoId" class="form-control" asp-items="@ViewBag.TarefaEstados">
 					<option value="">Selecione o estado da tarefa</option>
 				</select>
-				<span asp-validation-for="EstadoDaTarefa" class="text-danger"></span>
+				<span asp-validation-for="TarefaEstadoId" class="text-danger"></span>
 			</div>
 		</div>
 		<br />
@@ -60,9 +56,8 @@
 
 	<div class="form-group row">
 		<div class="col-md-offset-2 col-md-10">
-			<button type="submit" class="btn btn-success">Salvar Tarefa</button>
+			<input type="submit" class="btn btn-success" value="Salvar tarefa" />
 			<a asp-action="Index" class="btn btn-dark">Painel</a>
 		</div>
 	</div>
-
 </form>

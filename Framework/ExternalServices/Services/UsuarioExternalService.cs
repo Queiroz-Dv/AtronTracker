@@ -40,11 +40,17 @@ namespace ExternalServices.Services
             return JsonConvert.DeserializeObject<List<UsuarioDTO>>(response);
         }
 
-        public async Task Criar(UsuarioDTO model)
+        public async Task Criar(UsuarioDTO usuarioDTO)
         {
-            var json = JsonConvert.SerializeObject(model);
+            RemontarEntidade(usuarioDTO);
+            var json = JsonConvert.SerializeObject(usuarioDTO);
             await _client.PostAsync(_urlModuleFactory.Url, json);
             _messageModel.Messages.AddMessages(_communicationService);
+        }
+
+        private static void RemontarEntidade(UsuarioDTO usuarioDTO)
+        {
+            usuarioDTO.Codigo = usuarioDTO.Codigo.ToUpper();
         }
 
         public async Task<UsuarioDTO> ObterPorCodigo(string codigo)
@@ -85,6 +91,10 @@ namespace ExternalServices.Services
                 {
                     _messageModel.AddError(ex.Message);
                 }
+            }
+            catch(JsonSerializationException ex)
+            {
+                _messageModel.AddError(ex.Message);
             }
             catch (Exception ex)
             {

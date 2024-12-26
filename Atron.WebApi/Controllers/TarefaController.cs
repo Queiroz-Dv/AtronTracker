@@ -4,8 +4,10 @@ using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Notification.Models;
 using Shared.Models;
+using Shared.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace Atron.WebApi.Controllers
 {
@@ -13,7 +15,7 @@ namespace Atron.WebApi.Controllers
     [ApiController]
     public class TarefaController : ModuleController<Tarefa, ITarefaService>
     {
-        public TarefaController(ITarefaService service, MessageModel<Tarefa> messageModel) : 
+        public TarefaController(ITarefaService service, MessageModel<Tarefa> messageModel) :
             base(service, messageModel)
         { }
 
@@ -28,51 +30,40 @@ namespace Atron.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] TarefaDTO tarefa)
         {
-            if (tarefa is null)
-            {
-                return BadRequest(new NotificationMessage("Registro inválido, tente novamente"));
-            }
-
             await _service.CriarAsync(tarefa);
 
-            return Ok(_service.Messages);
+            return _messageModel.Messages.HasErrors() ?
+                   BadRequest(ObterNotificacoes()) :
+                   Ok(ObterNotificacoes());
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Put([FromBody] TarefaDTO tarefa)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(string id, [FromBody] TarefaDTO tarefa)
         {
             await _service.AtualizarAsync(tarefa);
 
-            if (_service.Messages.HasErrors())
-            {
-                foreach (var item in _service.Messages)
-                {
-                    return BadRequest(item.Message);
-                }
-            }
-
-            return Ok(_service.Messages);
+            return _messageModel.Messages.HasErrors() ?
+                 BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> Delete(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
-            if (id != 0)
-            {
-                await _service.ExcluirAsync(id);
+            await _service.ExcluirAsync(id);
 
-                if (_service.Messages.HasErrors())
-                {
-                    foreach (var item in _service.Messages)
-                    {
-                        return BadRequest(item.Message);
-                    }
-                }
+            return _messageModel.Messages.HasErrors() ?
+                    BadRequest(ObterNotificacoes()) :
+                    Ok(ObterNotificacoes());
+        }
 
-                return Ok(_service.Messages);
-            }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TarefaDTO>> Get(int id)
+        {
+            var tarefa = await _service.ObterPorId(id);
 
-            return BadRequest(new NotificationMessage("Identificador da permissão inválido", Notification.Enums.ENotificationType.Error));
+            return tarefa is null ?
+            NotFound(ObterNotificacoes()) :
+            Ok(tarefa);
         }
     }
 }

@@ -4,6 +4,7 @@ using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Atron.Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241224121611_AlterandoConfiguracaoDeData")]
+    partial class AlterandoConfiguracaoDeData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,11 +288,11 @@ namespace Atron.Infrastructure.Migrations
                     b.Property<DateTime>("DataInicial")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("EstadoDaTarefaId")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("IdSequencial")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TarefaEstadoId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
@@ -304,6 +306,8 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EstadoDaTarefaId");
 
                     b.HasIndex("UsuarioId", "UsuarioCodigo");
 
@@ -416,9 +420,17 @@ namespace Atron.Infrastructure.Migrations
 
             modelBuilder.Entity("Atron.Domain.Entities.Tarefa", b =>
                 {
+                    b.HasOne("Atron.Domain.Entities.TarefaEstado", "TarefaEstado")
+                        .WithMany("Tarefas")
+                        .HasForeignKey("EstadoDaTarefaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Atron.Domain.Entities.Usuario", "Usuario")
                         .WithMany("Tarefas")
                         .HasForeignKey("UsuarioId", "UsuarioCodigo");
+
+                    b.Navigation("TarefaEstado");
 
                     b.Navigation("Usuario");
                 });
@@ -448,6 +460,11 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("Cargos");
 
                     b.Navigation("Usuarios");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.TarefaEstado", b =>
+                {
+                    b.Navigation("Tarefas");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Usuario", b =>
