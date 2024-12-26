@@ -18,6 +18,8 @@ namespace Atron.WebViews.Controllers
 
         protected string Filter { get; set; }
 
+        protected string KeyToSearch { get; set; }
+
         protected bool ForceFilter { get; set; } = true;
 
         protected string CurrentController { get; set; }

@@ -49,7 +49,7 @@ namespace Atron.WebViews.Controllers
             await BuildRoute(nameof(Cargo));
 
             var cargos = await _service.ObterTodos();
-
+            
             Filter = filter;
             ConfigurePaginationForView(cargos, itemPage, CurrentController, filter);
             var model = new CargoModel()

@@ -44,7 +44,7 @@ namespace Atron.Application.Services
         public async Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
             if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO) || 
-                string.IsNullOrEmpty(codigo))
+                codigo.IsNullOrEmpty())
             {
                 messageModel.AddRegisterInvalidMessage(nameof(Departamento));
                 return;

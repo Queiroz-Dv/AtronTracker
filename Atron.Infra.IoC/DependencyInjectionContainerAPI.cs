@@ -51,7 +51,12 @@ namespace Atron.Infra.IoC
             services.AddScoped<ITarefaRepository, TarefaRepository>();
             services.AddScoped<ITarefaService, TarefaService>();
 
+            services.AddScoped<ITarefaEstadoService, TarefaEstadoService>();
             services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
+
+            //// Utilização dos repositories padronizados
+            services.AddScoped(typeof(IService<TarefaEstado>), typeof(Service<TarefaEstado>));
+            services.AddScoped(typeof(IRepository<TarefaEstado>), typeof(Repository<TarefaEstado>));
 
             services.AddScoped<ISalarioRepository, SalarioRepository>();
             services.AddScoped<ISalarioService, SalarioService>();
@@ -69,7 +74,6 @@ namespace Atron.Infra.IoC
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
             // Serviços de Notificação e Validação
-
             services.AddScoped<INotificationService, TarefaValidation>();
             services.AddScoped<INotificationService, SalarioValidation>();
             services.AddScoped<INotificationService, PermissaoValidation>();
@@ -81,6 +85,10 @@ namespace Atron.Infra.IoC
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
             CargoonfigureUsuarioServices(services);
+
+            services.AddScoped<IMessages, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<TarefaEstado>, TarefaEstadoMessageValidation>();
 
             return services;
         }

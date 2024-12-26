@@ -34,9 +34,34 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Usuario> AtualizarUsuarioAsync(Usuario usuario)
         {
-            _context.Update(usuario);
-            await _context.SaveChangesAsync();
+            var usuarioBd = await ObterUsuarioPorCodigoAsync(usuario.Codigo);
+            AtualizarEntidadeParaPersistencia(usuario, usuarioBd);
+
+            try
+            {
+                _context.Usuarios.Update(usuarioBd);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
             return new Usuario();
+        }
+
+        private static void AtualizarEntidadeParaPersistencia(Usuario usuario, Usuario usuarioBd)
+        {
+            usuarioBd.Nome = usuario.Nome;
+            usuarioBd.Sobrenome = usuario.Sobrenome;
+            usuarioBd.DataNascimento = usuario.DataNascimento;
+            usuarioBd.Salario = usuario.Salario;
+
+            usuarioBd.CargoId = usuario.CargoId;
+            usuarioBd.CargoCodigo = usuario.CargoCodigo;
+
+            usuarioBd.DepartamentoId = usuario.DepartamentoId;
+            usuarioBd.DepartamentoCodigo = usuario.DepartamentoCodigo;
         }
 
         public async Task<Usuario> CriarUsuarioAsync(Usuario usuario)
@@ -44,7 +69,6 @@ namespace Atron.Infrastructure.Repositories
             try
             {
                 await _context.Usuarios.AddAsync(usuario);
-
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -58,19 +82,25 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo)
         {
-            var usuario = await _context.Usuarios.AsNoTracking().FirstOrDefaultAsync(usr => usr.Codigo == codigo);
+            var usuario = await _context.Usuarios
+                .Include(crg => crg.Cargo)
+                .Include(dpt => dpt.Departamento)                
+                .FirstOrDefaultAsync(usr => usr.Codigo == codigo);
             return usuario;
         }
 
         public async Task<Usuario> ObterUsuarioPorIdAsync(int? id)
         {
-            var usuario = await _context.Usuarios.AsNoTracking().FirstOrDefaultAsync(usr => usr.Id == id);
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(usr => usr.Id == id);
             return usuario;
         }
 
         public async Task<IEnumerable<Usuario>> ObterUsuariosAsync()
         {
-            var usuarios = await _context.Usuarios.AsNoTracking().ToListAsync();
+            var usuarios = await _context.Usuarios
+                                         .Include(crg => crg.Cargo)
+                                         .Include(dpt => dpt.Departamento)
+                                         .ToListAsync();
             return usuarios;
         }
 
@@ -83,8 +113,7 @@ namespace Atron.Infrastructure.Repositories
 
         public bool UsuarioExiste(string codigo)
         {
-            var usuarioExiste = _context.Usuarios.Where(usr => usr.Codigo == codigo).Any();
-            return usuarioExiste;
+            return _context.Usuarios.Any(usr => usr.Codigo == codigo);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Atron.Infrastructure.Repositories
             {
                 if (entidade is not null)
                 {
-                    entidade.SetDescricao(departamento.Descricao);
+                    entidade.Descricao = departamento.Descricao;
                     await _context.SaveChangesAsync();
                     return entidade;
                 }
@@ -42,9 +42,18 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Departamento> CriarDepartamentoRepositoryAsync(Departamento departamento)
         {
-            _context.Add(departamento);
-            await _context.SaveChangesAsync();
-            return departamento;
+            try
+            {
+                await _context.AddAsync(departamento);
+
+                await _context.SaveChangesAsync();
+                return departamento;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public bool DepartamentoExiste(string codigo)
@@ -55,7 +64,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
         {
-            var departamento = await _context.Departamentos.FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
+            var departamento = await _context.Departamentos.AsNoTracking().FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
             return departamento;
         }
 
@@ -68,7 +77,7 @@ namespace Atron.Infrastructure.Repositories
         public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
         {
             var departamentos = await _context.Departamentos
-                                    .OrderByDescending(order => order.Codigo)                                 
+                                    .OrderByDescending(order => order.Codigo)
                                     .ToListAsync();
 
             return departamentos;

@@ -74,7 +74,7 @@ namespace Atron.Infrastructure.Repositories
             var cargoBd = await ObterCargoPorCodigoAsync(cargo.Codigo);
             cargoBd.Descricao = cargo.Descricao;
             cargo.DepartmentoId = cargo.DepartmentoId;
-            cargoBd.DepartmentoCodigo = cargo.DepartmentoCodigo;
+            cargoBd.DepartamentoCodigo = cargo.DepartamentoCodigo;
 
             try
             {
@@ -92,7 +92,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Cargo> ObterCargoPorCodigoAsync(string codigo)
         {
-            var cargo = await _context.Cargos.FirstOrDefaultAsync(crg => crg.Codigo == codigo);
+            var cargo = await _context.Cargos.AsNoTracking().FirstOrDefaultAsync(crg => crg.Codigo == codigo);
             return cargo;
         }
 

@@ -6,74 +6,59 @@
 @model UsuarioModel;
 
 <style>
-    .modal-lg {
-        max-width: 80%;
-    }
+	.modal-lg {
+		max-width: 80%;
+	}
 </style>
 
 <div>
-    <h2>@ViewData["Title"]</h2>
+	<h2>@ViewData["Title"]</h2>
 </div>
 <hr />
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="pull-left">
-            <a asp-action="Cadastrar" class="btn btn-success">
-                <span title="Cadastrar novo" class="fas fa-plus"></span> Cadastrar novo
-            </a>
-        </div>
-    </div>
-</div>
-<br />
-
+<partial name="Partials/CadastrarRegistroPartialModal"></partial>
 
 <div class="panel panel-default">
-    <form asp-controller="Usuario" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
-        <p>
-            <input type="text" name="filter" />
-            <input type="submit" value="Filtrar" />
-        </p>
-    </form>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Usuario.Codigo)</th>
-                <th>@Html.DisplayNameFor(model => model.Usuario.Nome)</th>
-                <th>@Html.DisplayNameFor(model => model.Usuario.Sobrenome)</th>
-                <th>@Html.DisplayNameFor(model => model.Usuario.Salario)</th>
-                
-                <th>Cargos</th>
-                <th>Departamentos</th>
-            </tr>
-        </thead>
+	<form asp-controller="Usuario" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
+		<p>
+			<input type="text" name="filter" />
+			<input type="submit" value="Filtrar" />
+		</p>
+	</form>
+	<fieldset>
+		<legend class="fw-semibold">Usuários</legend>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>@Html.DisplayNameFor(model => model.Usuario)</th>
+					<th>@Html.DisplayNameFor(model => model.Cargo)</th>
+					<th>@Html.DisplayNameFor(model => model.Departamento)</th>
+				</tr>
+			</thead>
 
-        <tbody>
-            @foreach (var item in Model.Usuarios)
-            {
-                <tr>
-                    <td>@item.Codigo</td>
-                    <td>@item.Nome</td>
-                    <td>@item.Sobrenome</td>
-                    <td>@item.Salario</td>
+			<tbody>
+				@foreach (var item in Model.Usuarios)
+				{
+					<tr>
+						<td>@item.Codigo - @item.Nome @item.Sobrenome</td>						
+						<td>@item.Cargo.ObterCodigoComDescricao()</td>
+						<td>@item.Departamento.ObterCodigoComDescricao()</td>
 
-                    <td>@item.Cargo.Descricao</td>
-                    <td>@item.Departamento.Descricao</td>
+						<td>
+							<a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
+								<span class="fas fa-edit">Atualizar</span>
+							</a>
 
-                    <td>
-                        <a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
-                            <span class="fas fa-edit">Atualizar</span>
-                        </a>
-
-                        <a onclick="confirmarRemocao('@item.Codigo')" title="Remover"
-                           class="btn btn-danger">
-                            <span class="fas fa-trash-alt">Excluir</span>
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <partial name="PagerPartial" model="Model.PageInfo" />
+							<a onclick="confirmarRemocao('@item.Codigo')" title="Remover"
+							   class="btn btn-danger">
+								<span class="fas fa-trash-alt">Excluir</span>
+							</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</fieldset>
+	<partial name="PagerPartial" model="Model.PageInfo" />
 </div>
 <partial name="Partials/ExcluirRegistroPartialModal" for="Usuario"></partial>
