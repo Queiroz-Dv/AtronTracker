@@ -22,7 +22,6 @@ namespace Atron.Application.Services
         private readonly ITarefaEstadoRepository _tarefaEstadoRepository;
         private readonly ISalarioRepository _salarioRepository;
         private readonly IMesRepository _mesRepository;
-        private readonly NotificationModel<Salario> _notification;
 
         public SalarioService(IMapper mapper,
                               IRepository<Salario> repository,
@@ -33,8 +32,7 @@ namespace Atron.Application.Services
                               ITarefaRepository tarefaRepository,
                               ITarefaEstadoRepository tarefaEstadoRepository,
                               ISalarioRepository salarioRepository,
-                              IMesRepository mesRepository,
-                              NotificationModel<Salario> notification)
+                              IMesRepository mesRepository)
         {
             _mapper = mapper;
             _repository = repository;
@@ -46,7 +44,6 @@ namespace Atron.Application.Services
             _tarefaEstadoRepository = tarefaEstadoRepository;
             _salarioRepository = salarioRepository;
             _mesRepository = mesRepository;
-            _notification = notification;
             Messages = new List<NotificationMessage>();
         }
 
@@ -77,16 +74,16 @@ namespace Atron.Application.Services
                 return;
             }
 
-            _notification.Validate(entidade);
+            //_notification.Validate(entidade);
 
-            if (!_notification.Messages.HasErrors())
-            {
-                await _repository.AtualizarRepositoryAsync(entidade);
-                Messages.Add(new NotificationMessage("Salário atualizado com sucesso."));
-                return;
-            }
+            //if (!_notification.Messages.HasErrors())
+            //{
+            //    await _repository.AtualizarRepositoryAsync(entidade);
+            //    Messages.Add(new NotificationMessage("Salário atualizado com sucesso."));
+            //    return;
+            //}
 
-            Messages.AddRange(_notification.Messages);
+            //Messages.AddRange(_notification.Messages);
         }
 
         public async Task CriarAsync(SalarioDTO salarioDTO)
@@ -107,19 +104,19 @@ namespace Atron.Application.Services
 
             var entidade = _mapper.Map<Salario>(salarioDTO);
 
-            _notification.Validate(entidade);
+            //_notification.Validate(entidade);
 
-            if (!_notification.Messages.HasErrors())
-            {
-                if (entidade.SalarioMensal > usuario.Salario)
-                {
-                    _usuarioRepository.AtualizarSalario(entidade.UsuarioId, entidade.SalarioMensal);
-                }
+            //if (!_notification.Messages.HasErrors())
+            //{
+            //    if (entidade.SalarioMensal > usuario.Salario)
+            //    {
+            //        _usuarioRepository.AtualizarSalario(entidade.UsuarioId, entidade.SalarioMensal);
+            //    }
 
 
-                await _salarioRepository.CriarRepositoryAsync(entidade);
-                Messages.Add(new NotificationMessage($"Salário incluso para o usuário {salarioDTO.Usuario.Nome}"));
-            }
+            //    await _salarioRepository.CriarRepositoryAsync(entidade);
+            //    Messages.Add(new NotificationMessage($"Salário incluso para o usuário {salarioDTO.Usuario.Nome}"));
+            //}
         }
 
         public async Task ExcluirServiceAsync(int id)
