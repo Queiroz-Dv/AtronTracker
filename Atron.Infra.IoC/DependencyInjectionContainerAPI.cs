@@ -74,24 +74,36 @@ namespace Atron.Infra.IoC
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
             // Serviços de Notificação e Validação
-            services.AddScoped<INotificationService, TarefaValidation>();
-            services.AddScoped<INotificationService, SalarioValidation>();
-            services.AddScoped<INotificationService, PermissaoValidation>();
+            //services.AddScoped<INotificationService, TarefaValidation>();
+            //services.AddScoped<INotificationService, SalarioValidation>();
+            //services.AddScoped<INotificationService, PermissaoValidation>();
 
-            services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
-            services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
-            services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
+            //services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
+            //services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
+            //services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
 
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
             CargoonfigureUsuarioServices(services);
-
-            services.AddScoped<IMessages, TarefaMessageValidation>();
-            services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
-            services.AddScoped<MessageModel<TarefaEstado>, TarefaEstadoMessageValidation>();
+            ConfigurarTarefaServices(services);
+            ConfigurarSalarioServices(services);
 
             return services;
         }
+
+        private static void ConfigurarSalarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, SalarioMessageValidation>();
+            services.AddScoped<MessageModel<Salario>, SalarioMessageValidation>();
+        }
+
+        private static void ConfigurarTarefaServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<TarefaEstado>, TarefaEstadoMessageValidation>();
+        }
+
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {
             services.AddScoped<IMessages, DepartamentoMessageValidation>();

@@ -56,15 +56,25 @@ namespace Atron.Infra.IoC
             ConfigureDepartamentoServices(services);
             ConfgureCargoServices(services);
             CargoonfigureUsuarioServices(services);
-
-            services.AddScoped<IMessages, TarefaMessageValidation>();
-            services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
-
-            //// Utilização dos repositories padronizados
-            //services.AddScoped(typeof(IDefaultService<TarefaEstado>), typeof(DefaultService<TarefaEstado>));
-            //services.AddScoped(typeof(IDefaultRepository<TarefaEstado>), typeof(DefaultRepository<TarefaEstado>));
+            ConfigurarTarefaServices(services);
+            ConfigurarSalarioServices(services);
 
             return services;
+        }
+
+        private static void ConfigurarSalarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IPaginationService<SalarioDTO>, PaginationService<SalarioDTO>>();
+            services.AddScoped<ISalarioExternalService, SalarioExternalService>();
+            services.AddScoped<IMessages, SalarioMessageValidation>();
+            services.AddScoped<MessageModel<Salario>, SalarioMessageValidation>();
+        }
+
+        private static void ConfigurarTarefaServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<TarefaEstado>, TarefaEstadoMessageValidation>();
         }
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)

@@ -11,7 +11,6 @@ using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -182,7 +181,7 @@ namespace Atron.WebViews.Controllers
             {
                 ConfigureCurrentPageAction(nameof(Atualizar));
                 return View(nameof(Atualizar), tarefaDTO);
-            }            
+            }
         }
         private async Task ConfigurarViewBagDeEstadoDasTarefas()
         {
