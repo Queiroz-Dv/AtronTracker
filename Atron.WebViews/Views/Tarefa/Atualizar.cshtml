@@ -6,6 +6,7 @@
 @model TarefaDTO;
 
 <h2 style="margin-bottom: 40px;">@ViewData["Title"]</h2>
+
 <div class="row">
     <div class="col-2">
         <label asp-for="UsuarioCodigo" style="font-size: larger;" class="form-label fw-bold">Usuários</label>
@@ -22,7 +23,7 @@
 <br />
 <!-- Contêiner para exibir o formulário de tarefa -->
 <div id="tarefaFormContainer">
-    <partial name="Partials/Tarefa/FormularioTarefa" model="new TarefaDTO()"> </partial>
+    <partial name="Partials/Tarefa/FormularioTarefa" model="@Model"> </partial>
 </div>
 
 @section Scripts {

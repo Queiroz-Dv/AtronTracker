@@ -148,6 +148,11 @@ namespace Atron.WebViews.Controllers
         public virtual void ConfigureDataTitleForView(string title)
         {
             ViewData["Title"] = title;
+        }        
+
+        public virtual void ConfigureCurrentPageAction(string action)
+        {
+            ViewData["ActionPage"] = action;
         }
     }
 }

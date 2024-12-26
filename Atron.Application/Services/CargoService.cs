@@ -37,22 +37,21 @@ namespace Atron.Application.Services
         public async Task<List<CargoDTO>> ObterTodosAsync()
         {
             var cargos = await _cargoRepository.ObterCargosAsync();
-            var departamentos = await _departamentoRepository.ObterDepartmentosAsync();
+            //  var departamentos = await _departamentoRepository.ObterDepartmentosAsync();
 
-            var cargosDTOs = _mapper.Map<IEnumerable<CargoDTO>>(cargos);
-            var departamentosDTOs = _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
+            var cargosDTOs = _mapper.Map<List<CargoDTO>>(cargos);
+            //   var departamentosDTOs = _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
 
-            var cargosComDepartamentos = (from pst in cargosDTOs
-                                          join dpt in departamentosDTOs on pst.DepartamentoCodigo equals dpt.Codigo
-                                          select new CargoDTO
-                                          {
-                                              Codigo = pst.Codigo,
-                                              Descricao = pst.Descricao,
-                                              DepartamentoCodigo = dpt.Codigo,
-                                              Departamento = new DepartamentoDTO() { Codigo = dpt.Codigo, Descricao = dpt.Descricao }
-                                          }).ToList();
+            cargosDTOs = (from crg in cargosDTOs
+                          select new CargoDTO
+                          {
+                              Codigo = crg.Codigo,
+                              Descricao = crg.Descricao,
+                              DepartamentoCodigo = crg.DepartamentoCodigo,
+                              Departamento = new DepartamentoDTO() { Codigo = crg.Departamento.Codigo, Descricao = crg.Departamento.Descricao }
+                          }).ToList();
 
-            return cargosComDepartamentos;
+            return cargosDTOs;
         }
 
         public async Task CriarAsync(CargoDTO cargoDTO)
@@ -67,7 +66,7 @@ namespace Atron.Application.Services
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
             var entity = await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
 
-            if (entity is not null && entity.DepartmentoCodigo == cargoDTO.DepartamentoCodigo)
+            if (entity is not null && entity.DepartamentoCodigo == cargoDTO.DepartamentoCodigo)
             {
                 messageModel.AddRegisterExistMessage(nameof(Cargo));
             }
@@ -105,7 +104,7 @@ namespace Atron.Application.Services
 
                 if (cargo.Departamento is not null)
                     cargo.Departamento = null;
-                
+
             }
 
             messageModel.Validate(cargo);
@@ -141,7 +140,7 @@ namespace Atron.Application.Services
             {
                 messageModel.AddRegisterNotFoundMessage(nameof(Cargo));
                 return null;
-            }            
+            }
         }
 
         public IList<Message> GetMessages()

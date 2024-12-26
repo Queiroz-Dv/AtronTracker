@@ -34,7 +34,7 @@ namespace Atron.Domain.Validations
                 AddError("A descricao é muito longa.");
             }
 
-            if (string.IsNullOrEmpty(entity.DepartmentoCodigo))
+            if (string.IsNullOrEmpty(entity.DepartamentoCodigo))
             {
                 AddError("Código do departamento obrigatório.");
             }

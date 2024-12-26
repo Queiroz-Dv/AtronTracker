@@ -8,13 +8,11 @@ namespace Atron.Infrastructure.EntitiesConfiguration
     {
         public void Configure(EntityTypeBuilder<Cargo> builder)
         {
-            builder.HasKey(pst => pst.Id);
+            builder.HasKey(crg => new { crg.Id, crg.Codigo });
+
+            builder.Property(ppt => ppt.Id).ValueGeneratedOnAdd();
 
             builder.Property(dpt => dpt.IdSequencial).IsRequired();
-
-            builder.Property(pst => pst.Codigo)
-                   .IsRequired()
-                   .HasMaxLength(10);
 
             builder.Property(pst => pst.Descricao)
                    .IsRequired()
@@ -22,7 +20,8 @@ namespace Atron.Infrastructure.EntitiesConfiguration
 
             builder.HasOne(dpt => dpt.Departamento) // Tem um departamento
                    .WithMany(crg => crg.Cargos) // com muitos cargos 
-                   .HasForeignKey(key => key.DepartmentoId); // FK da relação
+                   .HasForeignKey(key => new { key.DepartmentoId, key.DepartamentoCodigo }) // FK da relação
+                   .HasPrincipalKey(dpt => new { dpt.Id, dpt.Codigo });
 
             // Exemplo pra preencher a tabela 
             //builder.HasData(new Position(1, "Mkrt Manager"));

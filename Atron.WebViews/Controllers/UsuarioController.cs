@@ -99,7 +99,7 @@ namespace Atron.WebViews.Controllers
                             new
                             {
                                 crg.Codigo,
-                                Descricao = $"{crg.Codigo} - {crg.Descricao}"
+                                Descricao =  crg.ObterCodigoComDescricao()
                             }).ToList();
 
             ViewBag.Cargos = new SelectList(cargosFiltrados, nameof(Cargo.Codigo), nameof(Cargo.Descricao));
@@ -111,7 +111,7 @@ namespace Atron.WebViews.Controllers
                 new
                 {
                     dpt.Codigo,
-                    Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
+                    Descricao = dpt.ObterCodigoComDescricao()
                 }).ToList();
 
             ViewBag.Departamentos = new SelectList(departamentosFiltrados, nameof(DepartamentoDTO.Codigo), nameof(DepartamentoDTO.Descricao));
@@ -149,7 +149,7 @@ namespace Atron.WebViews.Controllers
             var cargosFiltrados = cargos.Select(crg => new
             {
                 crg.Codigo,
-                Descricao = $"{crg.Codigo} - {crg.Descricao}"
+                Descricao = crg.ObterCodigoComDescricao()
             }).ToList();
 
             return Json(cargosFiltrados);
@@ -170,7 +170,7 @@ namespace Atron.WebViews.Controllers
             var departamentosFiltrados = cargos.Select(dpt => new
             {
                 dpt.DepartamentoCodigo,
-                Descricao = $"{dpt.Departamento.Codigo} - {dpt.Departamento.Descricao}"
+                Descricao = dpt.ObterCodigoComDescricao()
             }).ToList();
 
             return Json(departamentosFiltrados);
@@ -216,21 +216,6 @@ namespace Atron.WebViews.Controllers
 
             CreateTempDataMessages();
             return RedirectToAction(nameof(Index));
-        }
-
-        //[HttpGet]
-        //public async Task<IActionResult> ObterUsuarioPorCodigo(string codigoUsuario)
-        //{
-        //    await BuildRoute(nameof(Usuario), codigoUsuario);
-        //    var usuario = await _service.ObterPorCodigo(codigoUsuario);
-        //    var usuarioFiltrado = new
-        //    {
-        //        codigo = usuario.Codigo,
-        //        cargoDescricao = usuario.Cargo.Descricao,
-        //        departamentoDescricao = usuario.Departamento.Descricao
-        //    };
-
-        //    return Json(usuarioFiltrado);
-        //}        
+        }            
     }
 }
