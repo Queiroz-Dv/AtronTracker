@@ -1,4 +1,5 @@
 ﻿using Shared.DTO;
+using Shared.Extensions;
 using Shared.Interfaces;
 
 namespace Shared.Services
@@ -34,8 +35,10 @@ namespace Shared.Services
         // Propriedades da interface
         public bool ForceFilter { get; set; }
         public string FilterBy { get; set; }
+        private string KeyToSearch { get; set; }
+
         public PageInfoDTO PageInfo { get; set; }
-        
+
         /// <summary>
         /// Método principal de paginação
         /// </summary>
@@ -75,7 +78,7 @@ namespace Shared.Services
             }
 
             CurrentPage = currentPage;
-            ItemsPerPage = itemsPerPage;       
+            ItemsPerPage = itemsPerPage;
 
             var pageInfo = new PageInfoDTO
             {
@@ -96,7 +99,7 @@ namespace Shared.Services
         {
             var filteredItems = ForceFilter ? ApplyFilter(values, FilterBy) : ApplyFilter(values, filter);
 
-            Entities = PaginateEntities(filteredItems);            
+            Entities = PaginateEntities(filteredItems);
         }
 
         /// <summary>
@@ -113,9 +116,19 @@ namespace Shared.Services
                 return items;
             }
 
-            // Aqui estou obtendo os itens pelo tipo, em seguida obtém a propriedade Codigo e obtenho o valor passando o item
-            // Após isso ei verifico se contém alguma entidade de acordo com o filtro informado
-            var entities = items.Where(item => item?.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString()?.Contains(filter) ?? false);
+            var entities = new List<T>();
+            if (!KeyToSearch.IsNullOrEmpty())
+            {
+                // Realiza a busca através de alguma propriedade informada
+                entities = items.Where(item => item?.GetType().GetProperty(KeyToSearch)?.GetValue(item)?.ToString()?.Contains(filter) ?? false).ToList();
+            }
+            else
+            {
+                // Busca padrão pelo código da entidade
+                // Aqui estou obtendo os itens pelo tipo, em seguida obtém a propriedade Codigo e obtenho o valor passando o item
+                // Após isso ei verifico se contém alguma entidade de acordo com o filtro informado
+                entities = items.Where(item => item?.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString()?.Contains(filter) ?? false).ToList();
+            }
             return entities;
         }
 
@@ -138,8 +151,13 @@ namespace Shared.Services
             return Entities;
         }
 
-        public void Paginate(List<T> items, int itemPage, string controllerName, string filter, string action = nameof(Index))
+        public void Paginate(List<T> items, int itemPage, string controllerName, string filter, string action = nameof(Index), string keyToSearch = "")
         {
+            if (!keyToSearch.IsNullOrEmpty())
+            {
+                KeyToSearch = keyToSearch;
+            }
+
             Paginate<T>(items, itemPage, controllerName, filter, action);
         }
     }

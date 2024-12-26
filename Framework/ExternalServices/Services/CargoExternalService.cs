@@ -34,9 +34,17 @@ namespace ExternalServices.Services
 
         public async Task Criar(CargoDTO cargoDTO)
         {
+            RemontarEntidade(cargoDTO);
+
             var json = JsonConvert.SerializeObject(cargoDTO);
             await _apiClient.PostAsync(_urlModuleFactory.Url, json);
             _messageModel.Messages.AddMessages(_communicationService);
+        }
+
+        private static void RemontarEntidade(CargoDTO cargoDTO)
+        {
+            cargoDTO.Codigo = cargoDTO.Codigo.ToUpper();
+            cargoDTO.Descricao = cargoDTO.Descricao.ToUpper();
         }
 
         public async Task<List<CargoDTO>> ObterTodos()
@@ -49,8 +57,9 @@ namespace ExternalServices.Services
 
         public async Task Atualizar(string codigo, CargoDTO cargoDTO)
         {
-            var json = JsonConvert.SerializeObject(cargoDTO);
+            RemontarEntidade(cargoDTO);
 
+            var json = JsonConvert.SerializeObject(cargoDTO);
 
             if (string.IsNullOrEmpty(codigo) || string.IsNullOrEmpty(cargoDTO.Codigo))
             {

@@ -52,7 +52,9 @@ namespace Atron.Application.Mapping
 
         private void CriarMapeamentoDeTarefa()
         {
-            CreateMap<Tarefa, TarefaDTO>().ReverseMap();
+            CreateMap<Tarefa, TarefaDTO>()
+                .ForPath(dto => dto.TarefaEstadoId, opt => opt.MapFrom(src => src.TarefaEstadoId))
+                .ReverseMap();
         }
 
         private void CriarMapeamentoDeUsuario()
@@ -67,7 +69,7 @@ namespace Atron.Application.Mapping
 
         private void CriarMapeamentoDeCargo()
         {
-            CreateMap<Cargo, CargoDTO>().ForMember(dto => dto.DepartamentoCodigo, opt => opt.MapFrom(src => src.DepartmentoCodigo)).ReverseMap();
+            CreateMap<Cargo, CargoDTO>().ForMember(dto => dto.DepartamentoCodigo, opt => opt.MapFrom(src => src.DepartamentoCodigo)).ReverseMap();
         }
 
         private void CriarMapeamentoDeDepartamento()

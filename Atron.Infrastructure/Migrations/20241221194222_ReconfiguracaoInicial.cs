@@ -5,39 +5,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Atron.Infrastructure.Migrations
 {
-    public partial class Inicial : Migration
+    public partial class ReconfiguracaoInicial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "ApiRoutes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Modulo = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
-                    Acao = table.Column<int>(type: "int", nullable: false),
-                    Ativo = table.Column<bool>(type: "bit", nullable: false),
-                    NomeDaRotaDeAcesso = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApiRoutes", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Departamentos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Codigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Codigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Descricao = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Departamentos", x => x.Id);
+                    table.PrimaryKey("PK_Departamentos", x => new { x.Id, x.Codigo });
                 });
 
             migrationBuilder.CreateTable(
@@ -118,23 +102,25 @@ namespace Atron.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tarefas",
+                name: "Cargos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UsuarioId = table.Column<long>(type: "bigint", nullable: false),
-                    UsuarioCodigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Titulo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Conteudo = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: true),
-                    DataInicial = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DataFinal = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EstadoDaTarefa = table.Column<int>(type: "int", nullable: false),
+                    Codigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Descricao = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DepartmentoId = table.Column<int>(type: "int", nullable: false),
+                    DepartamentoCodigo = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tarefas", x => x.Id);
+                    table.PrimaryKey("PK_Cargos", x => new { x.Id, x.Codigo });
+                    table.ForeignKey(
+                        name: "FK_Cargos_Departamentos_DepartmentoId_DepartamentoCodigo",
+                        columns: x => new { x.DepartmentoId, x.DepartamentoCodigo },
+                        principalTable: "Departamentos",
+                        principalColumns: new[] { "Id", "Codigo" });
                 });
 
             migrationBuilder.CreateTable(
@@ -143,44 +129,61 @@ namespace Atron.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Codigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Codigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Sobrenome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    DepartamentoId = table.Column<int>(type: "int", nullable: false),
-                    DepartamentoCodigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    CargoId = table.Column<int>(type: "int", nullable: false),
-                    CargoCodigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Salario = table.Column<int>(type: "int", nullable: false),
+                    CargoId = table.Column<int>(type: "int", nullable: false),
+                    CargoCodigo = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DepartamentoId = table.Column<int>(type: "int", nullable: false),
+                    DepartamentoCodigo = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     DataNascimento = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Usuarios", x => x.Id);
+                    table.PrimaryKey("PK_Usuarios", x => new { x.Id, x.Codigo });
+                    table.ForeignKey(
+                        name: "FK_Usuarios_Cargos_CargoId_CargoCodigo",
+                        columns: x => new { x.CargoId, x.CargoCodigo },
+                        principalTable: "Cargos",
+                        principalColumns: new[] { "Id", "Codigo" });
+                    table.ForeignKey(
+                        name: "FK_Usuarios_Departamentos_DepartamentoId_DepartamentoCodigo",
+                        columns: x => new { x.DepartamentoId, x.DepartamentoCodigo },
+                        principalTable: "Departamentos",
+                        principalColumns: new[] { "Id", "Codigo" });
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cargos",
+                name: "Tarefas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Codigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    DepartamentoId_Antigo = table.Column<int>(type: "int", nullable: false),
-                    DepartmentoId = table.Column<int>(type: "int", nullable: false),
-                    DepartmentoCodigo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UsuarioId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioCodigo = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Titulo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Conteudo = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: true),
+                    DataInicial = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataFinal = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EstadoDaTarefaId = table.Column<int>(type: "int", nullable: false),
                     IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cargos", x => x.Id);
+                    table.PrimaryKey("PK_Tarefas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cargos_Departamentos_DepartmentoId",
-                        column: x => x.DepartmentoId,
-                        principalTable: "Departamentos",
+                        name: "FK_Tarefas_TarefaEstados_EstadoDaTarefaId",
+                        column: x => x.EstadoDaTarefaId,
+                        principalTable: "TarefaEstados",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Tarefas_Usuarios_UsuarioId_UsuarioCodigo",
+                        columns: x => new { x.UsuarioId, x.UsuarioCodigo },
+                        principalTable: "Usuarios",
+                        principalColumns: new[] { "Id", "Codigo" });
                 });
 
             migrationBuilder.InsertData(
@@ -218,24 +221,40 @@ namespace Atron.Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, "Em atividade" },
-                    { 2, "Aprovada" },
-                    { 3, "Entregue" }
+                    { 2, "Pendente de aprovação" },
+                    { 3, "Entregue" },
+                    { 4, "Finalizada" },
+                    { 5, "Iniciada" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cargos_DepartmentoId",
+                name: "IX_Cargos_DepartmentoId_DepartamentoCodigo",
                 table: "Cargos",
-                column: "DepartmentoId");
+                columns: new[] { "DepartmentoId", "DepartamentoCodigo" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tarefas_EstadoDaTarefaId",
+                table: "Tarefas",
+                column: "EstadoDaTarefaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tarefas_UsuarioId_UsuarioCodigo",
+                table: "Tarefas",
+                columns: new[] { "UsuarioId", "UsuarioCodigo" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_CargoId_CargoCodigo",
+                table: "Usuarios",
+                columns: new[] { "CargoId", "CargoCodigo" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_DepartamentoId_DepartamentoCodigo",
+                table: "Usuarios",
+                columns: new[] { "DepartamentoId", "DepartamentoCodigo" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ApiRoutes");
-
-            migrationBuilder.DropTable(
-                name: "Cargos");
-
             migrationBuilder.DropTable(
                 name: "Meses");
 
@@ -249,13 +268,16 @@ namespace Atron.Infrastructure.Migrations
                 name: "Salarios");
 
             migrationBuilder.DropTable(
-                name: "TarefaEstados");
-
-            migrationBuilder.DropTable(
                 name: "Tarefas");
 
             migrationBuilder.DropTable(
+                name: "TarefaEstados");
+
+            migrationBuilder.DropTable(
                 name: "Usuarios");
+
+            migrationBuilder.DropTable(
+                name: "Cargos");
 
             migrationBuilder.DropTable(
                 name: "Departamentos");

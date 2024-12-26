@@ -39,13 +39,16 @@ namespace Atron.Infra.IoC
             services.AddScoped<IDepartamentoExternalService, DepartamentoExternalService>();
             services.AddScoped<ICargoExternalService, CargoExternalService>();
             services.AddScoped<IUsuarioExternalService, UsuarioExternalService>();
+            services.AddScoped<ITarefaExternalService, TarefaExternalService>();
+            services.AddScoped<ITarefaEstadoExternalService, TarefaEstadoExternalService>();
 
             services.AddScoped<IApiRouteExternalService, ApiRouteExternalService>();
             services.AddScoped<IPaginationService<ApiRoute>, PaginationService<ApiRoute>>();
 
-            services.AddScoped<IPaginationService<CargoDTO>, PaginationService<CargoDTO>>();
             services.AddScoped<IPaginationService<DepartamentoDTO>, PaginationService<DepartamentoDTO>>();
+            services.AddScoped<IPaginationService<CargoDTO>, PaginationService<CargoDTO>>();
             services.AddScoped<IPaginationService<UsuarioDTO>, PaginationService<UsuarioDTO>>();
+            services.AddScoped<IPaginationService<TarefaDTO>, PaginationService<TarefaDTO>>();
 
             services.AddScoped<IResultResponseService, ResultResponseModel>();
             services.AddScoped<IUrlModuleFactory, UrlFactory>();
@@ -53,6 +56,13 @@ namespace Atron.Infra.IoC
             ConfigureDepartamentoServices(services);
             ConfgureCargoServices(services);
             CargoonfigureUsuarioServices(services);
+
+            services.AddScoped<IMessages, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
+
+            //// Utilização dos repositories padronizados
+            //services.AddScoped(typeof(IDefaultService<TarefaEstado>), typeof(DefaultService<TarefaEstado>));
+            //services.AddScoped(typeof(IDefaultRepository<TarefaEstado>), typeof(DefaultRepository<TarefaEstado>));
 
             return services;
         }

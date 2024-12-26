@@ -7,6 +7,7 @@ using Shared.DTO;
 using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -79,7 +80,6 @@ namespace Atron.WebViews.Controllers
             ProcessPagination(itens, itemPage, currentController, filter);
         }
 
-
         private void ProcessPagination(List<DTO> itens, int itemPage, string currentController = "", string filter = "")
         {
             if (string.IsNullOrEmpty(currentController))
@@ -92,7 +92,7 @@ namespace Atron.WebViews.Controllers
                 Filter = filter;
             }
 
-            _paginationService.Paginate(itens, itemPage, CurrentController, Filter);
+            _paginationService.Paginate(itens, itemPage, CurrentController, Filter, nameof(Index), KeyToSearch);
 
             if (!string.IsNullOrEmpty(Filter))
             {
@@ -148,6 +148,11 @@ namespace Atron.WebViews.Controllers
         public virtual void ConfigureDataTitleForView(string title)
         {
             ViewData["Title"] = title;
+        }        
+
+        public virtual void ConfigureCurrentPageAction(string action)
+        {
+            ViewData["ActionPage"] = action;
         }
     }
 }

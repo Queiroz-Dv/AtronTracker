@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces;
@@ -16,22 +15,18 @@ using Shared.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
     public class UsuarioController : DefaultController<UsuarioDTO, Usuario, IUsuarioExternalService>
     {
-        public DataTable DataTable { get; set; }
         IDepartamentoExternalService _departamentoService;
         ICargoExternalService _cargoService;
-        IPaginationService<CargoDTO> _cargoPager;
 
         public UsuarioController(
             IUrlModuleFactory urlModuleFactory,
             IPaginationService<UsuarioDTO> paginationService,
-            IPaginationService<CargoDTO> cargoPager,
             IUsuarioExternalService externalService,
             IDepartamentoExternalService departamentoExternalService,
             IApiRouteExternalService apiRouteExternalService,
@@ -49,8 +44,6 @@ namespace Atron.WebViews.Controllers
         {
             _departamentoService = departamentoExternalService;
             _cargoService = cargoExternalService;
-            _cargoPager = cargoPager;
-            DataTable = new();
             CurrentController = nameof(Usuario);
         }
 
@@ -64,7 +57,6 @@ namespace Atron.WebViews.Controllers
         {
             await BuildRoute(nameof(Departamento));
         }
-
 
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
@@ -96,19 +88,6 @@ namespace Atron.WebViews.Controllers
             await BuildRoute(nameof(Cargo));
             var cargos = await _cargoService.ObterTodos();
 
-
-            if (!departamentos.Any())
-            {
-                _messageModel.AddWarning("Para criar um usuário é necessário cadastrar um departamento.");
-                CreateTempDataMessages();
-            }
-
-            if (!cargos.Any())
-            {
-                _messageModel.AddWarning("Para criar um usuário é necessário cadastrar um cargo.");
-                CreateTempDataMessages();
-            }
-
             MontarViewBagDepartamentos(departamentos);
             MontarViewBagCargos(cargos);
             return View();
@@ -120,7 +99,7 @@ namespace Atron.WebViews.Controllers
                             new
                             {
                                 crg.Codigo,
-                                Descricao = $"{crg.Codigo} - {crg.Descricao}"
+                                Descricao =  crg.ObterCodigoComDescricao()
                             }).ToList();
 
             ViewBag.Cargos = new SelectList(cargosFiltrados, nameof(Cargo.Codigo), nameof(Cargo.Descricao));
@@ -132,7 +111,7 @@ namespace Atron.WebViews.Controllers
                 new
                 {
                     dpt.Codigo,
-                    Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
+                    Descricao = dpt.ObterCodigoComDescricao()
                 }).ToList();
 
             ViewBag.Departamentos = new SelectList(departamentosFiltrados, nameof(DepartamentoDTO.Codigo), nameof(DepartamentoDTO.Descricao));
@@ -170,7 +149,7 @@ namespace Atron.WebViews.Controllers
             var cargosFiltrados = cargos.Select(crg => new
             {
                 crg.Codigo,
-                Descricao = $"{crg.Codigo} - {crg.Descricao}"
+                Descricao = crg.ObterCodigoComDescricao()
             }).ToList();
 
             return Json(cargosFiltrados);
@@ -191,7 +170,7 @@ namespace Atron.WebViews.Controllers
             var departamentosFiltrados = cargos.Select(dpt => new
             {
                 dpt.DepartamentoCodigo,
-                Descricao = $"{dpt.Departamento.Codigo} - {dpt.Departamento.Descricao}"
+                Descricao = dpt.ObterCodigoComDescricao()
             }).ToList();
 
             return Json(departamentosFiltrados);
@@ -237,6 +216,6 @@ namespace Atron.WebViews.Controllers
 
             CreateTempDataMessages();
             return RedirectToAction(nameof(Index));
-        }
+        }            
     }
 }

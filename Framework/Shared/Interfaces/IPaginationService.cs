@@ -16,7 +16,7 @@ namespace Shared.Interfaces
         /// <param name="controllerName">Nome do controlador utilizado no processo</param>
         /// <param name="filter">Filtro que será utilizado no processo interno</param>
         /// <param name="action">Nome da ação que será utilizada internamente onde por padrão é a index</param>
-        void Paginate(List<T> items, int itemPage, string controllerName, string filter, string action = nameof(Index));
+        void Paginate(List<T> items, int itemPage, string controllerName, string filter, string action = nameof(Index), string keyToSearch = "");
         
         /// <summary>
         /// Configura a entidade para ser paginada automaticamente
