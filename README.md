@@ -20,7 +20,7 @@
       </li>
       <br>
       <li>
-        <strong>ExternalServices:</strong> Responsável pela integração com serviços externos, conectando a aplicação com APIs de terceiros ou serviços como gateways de pagamento, serviços de autenticação, ou APIs de dados.
+        <strong>ExternalServices:</strong> Responsável pela integração com serviços externos, conectando a aplicação com APIs de terceiros ou serviços como gateways de pagamento, serviços de autenticação, ou APIs de dados. No entanto, esse módulo é responsável por abstrair a comunicação com o projeto de Web API, em outras palavras, é ele quem faz o processamento de envio e recebimento dos dados da view para a API.
       </li>
       <br>
       <li>
