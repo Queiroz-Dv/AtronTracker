@@ -3,16 +3,17 @@ using Atron.Application.ApiServices;
 using Atron.Application.Interfaces;
 using Atron.Application.Mapping;
 using Atron.Application.Services;
+using Atron.Domain.Account;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Validations;
 using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Identity;
 using Atron.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Notification.Interfaces;
-using Notification.Models;
 using Shared.Interfaces;
 using Shared.Models;
 
@@ -32,6 +33,13 @@ namespace Atron.Infra.IoC
             options.UseSqlServer(configuration.GetConnectionString("AtronConnection"),
             // Define o asembly de onde as migrações devem ser mantidas 
             m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                    .AddEntityFrameworkStores<AtronDbContext>()
+                    .AddDefaultTokenProviders();
+
+            // TODO: Criar a controller da Home no projeto de API
+            services.ConfigureApplicationCookie(options => options.AccessDeniedPath = "/Home/Index");
 
             //Repositórios e serviços padrões
             services.AddScoped<IRepository<Permissao>, Repository<Permissao>>();
@@ -73,20 +81,14 @@ namespace Atron.Infra.IoC
             // Serviços utilitários 
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
-            // Serviços de Notificação e Validação
-            //services.AddScoped<INotificationService, TarefaValidation>();
-            //services.AddScoped<INotificationService, SalarioValidation>();
-            //services.AddScoped<INotificationService, PermissaoValidation>();
-
-            //services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
-            //services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
-            //services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
-
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
             CargoonfigureUsuarioServices(services);
             ConfigurarTarefaServices(services);
             ConfigurarSalarioServices(services);
+
+            services.AddScoped<IAuthenticate, AuthenticateService>();
+            services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 
             return services;
         }

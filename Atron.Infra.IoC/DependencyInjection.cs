@@ -1,8 +1,11 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Mapping;
+using Atron.Domain.Account;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Validations;
+using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Identity;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Communication.Models;
@@ -11,6 +14,8 @@ using ExternalServices.Interfaces;
 using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using ExternalServices.Services;
 using ExternalServices.Services.ApiRouteServices;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Interfaces;
@@ -30,6 +35,20 @@ namespace Atron.Infra.IoC
             // O método Singleton indica que o serviço é criado uma vez para todas as requisições
             // O método Transiente indica que sempre será criado um novo serviço cada vez que for necessário
             // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo
+
+            // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo 
+            services.AddDbContext<AtronDbContext>(options =>
+            // Define o provedor e a string de conexão
+            options.UseSqlServer(configuration.GetConnectionString("AtronConnection"),
+            // Define o asembly de onde as migrações devem ser mantidas 
+            m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+              .AddEntityFrameworkStores<AtronDbContext>()
+              .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+             options.AccessDeniedPath = "/Home/Index");
 
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
@@ -58,6 +77,9 @@ namespace Atron.Infra.IoC
             CargoonfigureUsuarioServices(services);
             ConfigurarTarefaServices(services);
             ConfigurarSalarioServices(services);
+
+            services.AddScoped<IAuthenticate, AuthenticateService>();
+            services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 
             return services;
         }

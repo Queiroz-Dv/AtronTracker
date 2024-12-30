@@ -42,10 +42,18 @@ namespace Atron.Application.Services
                 return;
             }
 
-            await MontarEntidadesComplementares(usuarioDTO);
+            var entidade = new Usuario()
+            {
+                Id = usuarioDTO.Id,
+                IdSequencial = usuarioDTO.IdSequencial,
+                Codigo = usuarioDTO.Codigo,
+                Nome = usuarioDTO.Nome,
+                Sobrenome = usuarioDTO.Sobrenome,
+                DataNascimento = usuarioDTO.DataNascimento,
+                SalarioAtual = usuarioDTO.Salario,
+            };
 
-            var entidade = _mapper.Map<Usuario>(usuarioDTO);
-
+            await MontarEntidadesComplementares(usuarioDTO, entidade);
             _messageModel.Validate(entidade);
 
             if (!_messageModel.Messages.HasErrors())
@@ -63,10 +71,19 @@ namespace Atron.Application.Services
                 return;
             }
 
-            await MontarEntidadesComplementares(usuarioDTO);
+            var usuario = new Usuario()
+            {
+                Id = usuarioDTO.Id,
+                IdSequencial = usuarioDTO.IdSequencial,
+                //IdSequencial = usua
+                Codigo = usuarioDTO.Codigo,
+                Nome = usuarioDTO.Nome,
+                Sobrenome = usuarioDTO.Sobrenome,
+                DataNascimento = usuarioDTO.DataNascimento,
+                SalarioAtual = usuarioDTO.Salario,
+            };
 
-            var usuario = _mapper.Map<Usuario>(usuarioDTO);
-
+            await MontarEntidadesComplementares(usuarioDTO, usuario);
             _messageModel.Validate(usuario);
 
             if (!_messageModel.Messages.HasErrors())
@@ -76,18 +93,18 @@ namespace Atron.Application.Services
             }
         }
 
-        private async Task MontarEntidadesComplementares(UsuarioDTO usuarioDTO)
+        private async Task MontarEntidadesComplementares(UsuarioDTO usuarioDTO, Usuario usuario)
         {
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(usuarioDTO.DepartamentoCodigo);
 
             if (departamento is not null && cargo is not null)
-            {                
-                usuarioDTO.CargoId = cargo.Id;
-                usuarioDTO.CargoCodigo = cargo.Codigo;
+            {
+                usuario.CargoId = cargo.Id;
+                usuario.CargoCodigo = cargo.Codigo;
 
-                usuarioDTO.DepartamentoId = departamento.Id;
-                usuarioDTO.DepartamentoCodigo = departamento.Codigo;                
+                usuario.DepartamentoId = departamento.Id;
+                usuario.DepartamentoCodigo = departamento.Codigo;
             }
             else
             {
@@ -99,24 +116,22 @@ namespace Atron.Application.Services
         public async Task<UsuarioDTO> ObterPorCodigoAsync(string codigo)
         {
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-
-            var usuarioDTO = _mapper.Map<UsuarioDTO>(usuario);
-
-            var usuarioPreenchido = new UsuarioDTO()
+            
+            var usuarioDTO = new UsuarioDTO()
             {
-                Id = usuarioDTO.Id,
-                Codigo = usuarioDTO.Codigo,
-                Nome = usuarioDTO.Nome,
-                Sobrenome = usuarioDTO.Sobrenome,
-                Salario = usuarioDTO.Salario,
-                DataNascimento = usuarioDTO.DataNascimento,
-                CargoCodigo = usuarioDTO.CargoCodigo,
-                DepartamentoCodigo = usuarioDTO.DepartamentoCodigo,
-                Cargo = new CargoDTO() { Codigo = usuarioDTO.Cargo.Codigo, Descricao = usuarioDTO.Cargo.Descricao },
-                Departamento = new DepartamentoDTO() { Codigo = usuarioDTO.Departamento.Codigo, Descricao = usuarioDTO.Departamento.Descricao },
+                Id = usuario.Id,
+                Codigo = usuario.Codigo,
+                Nome = usuario.Nome,
+                Sobrenome = usuario.Sobrenome,
+                Salario = usuario.SalarioAtual,
+                DataNascimento = usuario.DataNascimento,
+                CargoCodigo = usuario.CargoCodigo,
+                DepartamentoCodigo = usuario.DepartamentoCodigo,
+                Cargo = new CargoDTO() { Codigo = usuario.Cargo.Codigo, Descricao = usuario.Cargo.Descricao },
+                Departamento = new DepartamentoDTO() { Codigo = usuario.Departamento.Codigo, Descricao = usuario.Departamento.Descricao },
             };
 
-            return usuarioPreenchido;
+            return usuarioDTO;
         }
 
         public async Task<List<UsuarioDTO>> ObterTodosAsync()

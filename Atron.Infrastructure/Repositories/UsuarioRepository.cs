@@ -18,13 +18,14 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public void AtualizarSalario(int usuarioId, int quantidadeTotal)
+        public async Task AtualizarSalario(int usuarioId, int quantidadeTotal)
         {
             try
             {
-                var usuario = _context.Usuarios.First(usr => usr.Id == usuarioId);
-                usuario.Salario = quantidadeTotal;
+                var usuario = await _context.Usuarios.FirstAsync(usr => usr.Id == usuarioId);
+                usuario.SalarioAtual = quantidadeTotal;
                 _context.Update(usuario);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -55,7 +56,7 @@ namespace Atron.Infrastructure.Repositories
             usuarioBd.Nome = usuario.Nome;
             usuarioBd.Sobrenome = usuario.Sobrenome;
             usuarioBd.DataNascimento = usuario.DataNascimento;
-            usuarioBd.Salario = usuario.Salario;
+            usuarioBd.SalarioAtual = usuario.SalarioAtual;
 
             usuarioBd.CargoId = usuario.CargoId;
             usuarioBd.CargoCodigo = usuario.CargoCodigo;
