@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Atron.Infrastructure.Migrations
 {
-    public partial class ReconfiguracaoInicial : Migration
+    public partial class ReconfiguracaoDosModulos : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,13 +28,14 @@ namespace Atron.Infrastructure.Migrations
                 name: "Meses",
                 columns: table => new
                 {
-                    MesId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Descricao = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false)
+                    Descricao = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Meses", x => x.MesId);
+                    table.PrimaryKey("PK_Meses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -68,24 +69,6 @@ namespace Atron.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PermissoesEstados", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Salarios",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UsuarioId = table.Column<int>(type: "int", nullable: false),
-                    UsuarioCodigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    MesId = table.Column<int>(type: "int", nullable: false),
-                    SalarioMensal = table.Column<int>(type: "int", nullable: false),
-                    Ano = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Salarios", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -132,7 +115,7 @@ namespace Atron.Infrastructure.Migrations
                     Codigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Sobrenome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Salario = table.Column<int>(type: "int", nullable: false),
+                    SalarioAtual = table.Column<int>(type: "int", nullable: false),
                     CargoId = table.Column<int>(type: "int", nullable: false),
                     CargoCodigo = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     DepartamentoId = table.Column<int>(type: "int", nullable: false),
@@ -156,6 +139,36 @@ namespace Atron.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Salarios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UsuarioId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioCodigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SalarioMensal = table.Column<int>(type: "int", nullable: false),
+                    Ano = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MesId = table.Column<int>(type: "int", nullable: false),
+                    IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Salarios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Salarios_Meses_MesId",
+                        column: x => x.MesId,
+                        principalTable: "Meses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Salarios_Usuarios_UsuarioId_UsuarioCodigo",
+                        columns: x => new { x.UsuarioId, x.UsuarioCodigo },
+                        principalTable: "Usuarios",
+                        principalColumns: new[] { "Id", "Codigo" },
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tarefas",
                 columns: table => new
                 {
@@ -167,18 +180,12 @@ namespace Atron.Infrastructure.Migrations
                     Conteudo = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: true),
                     DataInicial = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataFinal = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EstadoDaTarefaId = table.Column<int>(type: "int", nullable: false),
+                    TarefaEstadoId = table.Column<int>(type: "int", nullable: false),
                     IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tarefas", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tarefas_TarefaEstados_EstadoDaTarefaId",
-                        column: x => x.EstadoDaTarefaId,
-                        principalTable: "TarefaEstados",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Tarefas_Usuarios_UsuarioId_UsuarioCodigo",
                         columns: x => new { x.UsuarioId, x.UsuarioCodigo },
@@ -188,21 +195,21 @@ namespace Atron.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Meses",
-                columns: new[] { "MesId", "Descricao" },
+                columns: new[] { "Id", "Descricao", "IdSequencial" },
                 values: new object[,]
                 {
-                    { 1, "Janeiro" },
-                    { 2, "Fevereiro" },
-                    { 3, "Março" },
-                    { 4, "Abril" },
-                    { 5, "Maio" },
-                    { 6, "Junho" },
-                    { 7, "Julho" },
-                    { 8, "Agosto" },
-                    { 9, "Setembro" },
-                    { 10, "Outubro" },
-                    { 11, "Novembro" },
-                    { 12, "Dezembro" }
+                    { 1, "Janeiro", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 2, "Fevereiro", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 3, "Março", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 4, "Abril", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 5, "Maio", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 6, "Junho", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 7, "Julho", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 8, "Agosto", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 9, "Setembro", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 10, "Outubro", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 11, "Novembro", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 12, "Dezembro", new Guid("00000000-0000-0000-0000-000000000000") }
                 });
 
             migrationBuilder.InsertData(
@@ -233,9 +240,16 @@ namespace Atron.Infrastructure.Migrations
                 columns: new[] { "DepartmentoId", "DepartamentoCodigo" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tarefas_EstadoDaTarefaId",
-                table: "Tarefas",
-                column: "EstadoDaTarefaId");
+                name: "IX_Salarios_MesId",
+                table: "Salarios",
+                column: "MesId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Salarios_UsuarioId_UsuarioCodigo",
+                table: "Salarios",
+                columns: new[] { "UsuarioId", "UsuarioCodigo" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tarefas_UsuarioId_UsuarioCodigo",
@@ -256,9 +270,6 @@ namespace Atron.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Meses");
-
-            migrationBuilder.DropTable(
                 name: "Permissoes");
 
             migrationBuilder.DropTable(
@@ -268,10 +279,13 @@ namespace Atron.Infrastructure.Migrations
                 name: "Salarios");
 
             migrationBuilder.DropTable(
+                name: "TarefaEstados");
+
+            migrationBuilder.DropTable(
                 name: "Tarefas");
 
             migrationBuilder.DropTable(
-                name: "TarefaEstados");
+                name: "Meses");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

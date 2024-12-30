@@ -29,9 +29,41 @@ namespace ExternalServices.Services
             _messageModel = messageModel;
         }
 
-        public Task Atualizar(string id, SalarioDTO salarioDTO)
+        public async Task Atualizar(string id, SalarioDTO salarioDTO)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                _messageModel.AddRegisterInvalidMessage(nameof(Salario));
+                return;
+            }
+
+            var salarioJSon = JsonConvert.SerializeObject(salarioDTO);
+
+            try
+            {
+                await _apiClient.PutAsync(_urlModuleFactory.Url, id, salarioJSon);
+                _messageModel.Messages.AddMessages(_communicationService);
+            }
+            catch (HttpRequestException ex)
+            {
+                var exceptionMessage = JsonConvert.DeserializeObject<List<Message>>(ex.Message);
+                if (exceptionMessage is not null)
+                {
+                    _messageModel.Messages.AddRange(exceptionMessage);
+                }
+                else
+                {
+                    _messageModel.AddError(ex.Message);
+                }
+            }
+            catch (JsonSerializationException ex)
+            {
+                _messageModel.AddError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _messageModel.AddError(ex.Message);
+            }
         }
 
         public async Task Criar(SalarioDTO salarioDTO)
@@ -50,9 +82,24 @@ namespace ExternalServices.Services
 
         }
 
-        public Task<List<SalarioDTO>> ObterTodos()
+        public async Task<List<MesDTO>> ObterMeses()
         {
-            throw new NotImplementedException();
+            var response = await _apiClient.GetAsync(_urlModuleFactory.Url);
+
+            return JsonConvert.DeserializeObject<List<MesDTO>>(response);
+        }
+
+        public async Task<SalarioDTO> ObterPorId()
+        {
+            var response = await _apiClient.GetAsync(_urlModuleFactory.Url);
+            return JsonConvert.DeserializeObject<SalarioDTO>(response);
+        }
+
+        public async Task<List<SalarioDTO>> ObterTodos()
+        {
+            var response = await _apiClient.GetAsync(_urlModuleFactory.Url);
+
+            return JsonConvert.DeserializeObject<List<SalarioDTO>>(response);
         }
 
         public Task Remover(string id)

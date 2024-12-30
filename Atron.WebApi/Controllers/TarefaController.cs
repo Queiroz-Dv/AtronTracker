@@ -3,11 +3,10 @@ using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Notification.Models;
-using Shared.Models;
 using Shared.Extensions;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 
 namespace Atron.WebApi.Controllers
 {

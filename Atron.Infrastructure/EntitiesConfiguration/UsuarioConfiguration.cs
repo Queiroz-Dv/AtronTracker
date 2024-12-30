@@ -16,7 +16,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.Property(usr => usr.Nome).IsRequired().HasMaxLength(25);
             builder.Property(usr => usr.Sobrenome).IsRequired().HasMaxLength(50);
             builder.Property(usr => usr.DataNascimento);
-            builder.Property(usr => usr.Salario);
+            builder.Property(usr => usr.SalarioAtual);
 
             builder.HasOne(crg => crg.Cargo)
                    .WithMany(usr => usr.Usuarios)

@@ -10,9 +10,9 @@ namespace Atron.Application.DTO
     /// <summary>
     /// Classe utilizada utilizada para processos comuns entre as entidades
     /// </summary>
-    public class Factory : BaseDTO
+    public class FactoryDTO : BaseDTO
     {       
-        public Factory()
+        public FactoryDTO()
         {
             IdSequencial = NovoSequencial();
         }

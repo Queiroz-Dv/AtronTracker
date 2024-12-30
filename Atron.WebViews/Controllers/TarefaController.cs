@@ -81,7 +81,6 @@ namespace Atron.WebViews.Controllers
             }).ToList();
 
             ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
-
             await ConfigurarViewBagDeEstadoDasTarefas();
             return View();
         }
@@ -89,6 +88,8 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Cadastrar(TarefaDTO tarefaDTO)
         {
+            ConfigureCurrentPageAction(nameof(Cadastrar));
+
             if (ModelState.IsValid)
             {
                 await BuildRoute(nameof(Tarefa));
@@ -101,7 +102,6 @@ namespace Atron.WebViews.Controllers
             _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
             CreateTempDataMessages();
 
-            ConfigureCurrentPageAction(nameof(Cadastrar));
             return RedirectToAction(nameof(Cadastrar));
         }
 
@@ -143,14 +143,10 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Atualizar informação da tarefa");
             ConfigureCurrentPageAction(nameof(Atualizar));
-            //Obter  a tarefa por id
-            //Guid guidId = new Guid(id);
 
             await BuildRoute(nameof(Tarefa), id);
             var tarefa = await _service.ObterPorId();
-            // Alimentar o dto da tarefa
 
-            // Apresentar na view: todos os usuários e as informações da tarefa
             await BuildUsuarioRoute();
             var usuarios = await _usuarioService.ObterTodos();
             var usuariosFiltrados = usuarios.Select(usr => new

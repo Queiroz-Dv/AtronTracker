@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
-    public class UsuarioDTO : Factory
+    public class UsuarioDTO : FactoryDTO
     {        
         [JsonIgnore]
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
