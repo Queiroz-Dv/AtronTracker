@@ -47,15 +47,15 @@
                     <td>@item.Usuario.Departamento.Descricao</td>
                     <td>@item.Titulo</td>
                     <td>@item.EstadoDaTarefaDescricao</td>
-                    <td>@item.DataInicial.Date.ToShortDateString()</td>
-                    <td>@item.DataFinal.Date.ToShortDateString()</td>
+                    <td>@item.DataInicial.ToShortDateString()</td>
+                    <td>@item.DataFinal.ToShortDateString()</td>
 
                     <td>
-                        <a asp-action="Atualizar" asp-route-codigo="@item.IdSequencial" title="Atualizar" class="btn btn-warning">
+                        <a asp-action="Atualizar" asp-route-id="@item.Id" title="Atualizar" class="btn btn-warning">
                             <span class="fas fa-edit">Atualizar</span>
                         </a>
 
-                        <a onclick="confirmarRemocao('@item.IdSequencial')" title="Remover"
+                        <a onclick="confirmarRemocao('@item.Id')" title="Remover"
                            class="btn btn-danger">
                             <span class="fas fa-trash-alt">Excluir</span>
                         </a>
@@ -66,4 +66,4 @@
     </table>
     <partial name="PagerPartial" model="Model.PageInfo" />
 </div>
-<partial name="Partials/ExcluirRegistroPartialModal" for="Usuario"></partial>
+<partial name="Partials/ExcluirRegistroPartialModal" for="Tarefa"></partial>

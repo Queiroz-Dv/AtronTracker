@@ -10,11 +10,18 @@ namespace Atron.Infrastructure.EntitiesConfiguration
         {
             builder.HasKey(x => x.Id);
             builder.Property(dpt => dpt.IdSequencial).IsRequired();
-            builder.Property(slr => slr.UsuarioId).IsRequired();
-            builder.Property(slr => slr.UsuarioCodigo).IsRequired().HasMaxLength(10);
-            builder.Property(slr => slr.MesId).IsRequired();
             builder.Property(slr => slr.SalarioMensal).IsRequired();
-            builder.Property(slr => slr.Ano).IsRequired();
+            builder.Property(slr => slr.Ano).HasMaxLength(4).IsRequired();
+
+            builder.HasOne(slr => slr.Usuario)
+                   .WithOne(usr => usr.Salario)
+                   .HasForeignKey<Salario>(slr => new { slr.UsuarioId, slr.UsuarioCodigo})
+                   .IsRequired();
+
+            builder.HasOne(slr => slr.Mes)
+                   .WithOne(ms => ms.Salario)
+                   .HasForeignKey<Salario>(fk => fk.MesId)
+                   .IsRequired();
         }
     }
 }

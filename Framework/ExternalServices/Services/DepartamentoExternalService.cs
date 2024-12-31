@@ -40,6 +40,8 @@ namespace ExternalServices.Services
                 return;
             }
 
+            RemontarEntidade(departamentoDTO);
+
             var json = JsonConvert.SerializeObject(departamentoDTO);
 
             try
@@ -79,9 +81,17 @@ namespace ExternalServices.Services
 
         public async Task Criar(DepartamentoDTO departamento)
         {
+            RemontarEntidade(departamento);
+
             var json = JsonConvert.SerializeObject(departamento);
             await _apiClient.PostAsync(_urlFactory.Url, json);
             _messageModel.Messages.AddMessages(_communicationService);
+        }
+
+        private static void RemontarEntidade(DepartamentoDTO departamento)
+        {
+            departamento.Codigo = departamento.Codigo.ToUpper();
+            departamento.Descricao = departamento.Descricao.ToUpper();
         }
 
         public async Task<List<DepartamentoDTO>> ObterTodos()

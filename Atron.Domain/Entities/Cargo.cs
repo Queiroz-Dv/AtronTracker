@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Atron.Domain.Entities
 {
@@ -12,8 +13,9 @@ namespace Atron.Domain.Entities
 
         public int DepartmentoId { get; set; }
 
-        public string DepartmentoCodigo { get; set; }
+        public string DepartamentoCodigo { get; set; }
 
         public Departamento Departamento { get; set; }
+        public List<Usuario> Usuarios { get; set; }
     }
 }

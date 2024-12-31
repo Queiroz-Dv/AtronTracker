@@ -3,6 +3,7 @@ using Shared.Services;
 
 namespace Shared.Models
 {
+    //TODO: Verificar a criação de uma classe de extensão para os serviços de notificações
     [Serializable]
     public abstract class MessageModel<Entity> : MessageService
     {

@@ -8,13 +8,10 @@ namespace Atron.Infrastructure.EntitiesConfiguration
     {
         public void Configure(EntityTypeBuilder<Departamento> builder)
         {
-            builder.HasKey(dpt => dpt.Id);
+            builder.HasKey(dpt => new { dpt.Id, dpt.Codigo });
+            builder.Property(dpt => dpt.Id).ValueGeneratedOnAdd();
 
             builder.Property(dpt => dpt.IdSequencial).IsRequired();
-
-            builder.Property(dpt => dpt.Codigo)
-                   .IsRequired()
-                   .HasMaxLength(10);
 
             builder.Property(dpt => dpt.Descricao)
                    .IsRequired()
