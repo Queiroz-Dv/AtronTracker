@@ -5,18 +5,15 @@ using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
-    public class UsuarioDTO : Factory
-    {
+    public class UsuarioDTO : FactoryDTO
+    {        
         [JsonIgnore]
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
-        public int Id { get; set; }
-
-        [DisplayName("Código")]
-        public string Codigo { get; set; }
+        public int Id { get; set; }        
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
         public DateTime? DataNascimento { get; set; }
-        
+
         [DisplayName("Salário")]
         public int Salario { get; set; }
         public string CargoCodigo { get; set; }
@@ -32,6 +29,11 @@ namespace Atron.Application.DTO
 
         public DepartamentoDTO Departamento { get; set; }
 
-        public CargoDTO Cargo { get; set; }      
+        public CargoDTO Cargo { get; set; }
+
+        public string NomeCompleto()
+        {
+            return $"{Nome} {Sobrenome}";
+        }
     }
 }

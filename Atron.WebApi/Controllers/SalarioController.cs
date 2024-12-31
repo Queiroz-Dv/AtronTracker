@@ -1,7 +1,10 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Notification.Models;
+using Shared.Models;
+using Shared.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,65 +12,69 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SalarioController : ControllerBase
+    public class SalarioController : ModuleController<Salario, ISalarioService>
     {
-        private readonly ISalarioService _service;
 
-        public SalarioController(ISalarioService service)
-        {
-            _service = service;
-        }
-
-        [Route("CriarSalario")]
+        public SalarioController(ISalarioService service, 
+            MessageModel<Salario> messageModel)
+        : base(service, messageModel) 
+        { }
+        
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] SalarioDTO salario)
-        {
-            if (salario is null)
-                return BadRequest(new NotificationMessage("Registro inválido, tente novamente"));
-
+        {         
             await _service.CriarAsync(salario);
 
-            return Ok(_service.Messages);
+            return _messageModel.Messages.HasErrors() ?
+                   BadRequest(ObterNotificacoes()) :
+                   Ok(ObterNotificacoes());
         }
 
-        [Route("ObterSalarios")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SalarioDTO>>> Get()
         {
             var salarios = await _service.ObterTodosAsync();
-            if (salarios is null)
-                NotFound("Não foi encontrado nenum registro");
-
+            
             return Ok(salarios);
         }
 
-        [HttpPut("AtualizarSalario/{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] SalarioDTO salario)
+
+        [HttpGet]
+        [Route("ObterMeses")]
+        public async Task<ActionResult<IEnumerable<MesDTO>>> ObterMeses()
+        {
+            var meses = await _service.ObterMeses();
+
+            return Ok(meses);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(string id, [FromBody] SalarioDTO salario)
         {
             await _service.AtualizarServiceAsync(salario);
 
-            if (_service.Messages.HasErrors())
-            {
-                foreach (var item in _service.Messages)
-                    return BadRequest(item.Message);
-            }
-
-            return Ok(_service.Messages);
+            return _messageModel.Messages.HasErrors() ?
+                 BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
         }
 
-        // TODO: Testar depois
-        [HttpDelete("ExcluirPermissao")]
-        public async Task<ActionResult> Delete(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
-            await _service.ExcluirServiceAsync(id);
+            await _service.ExcluirAsync(id);
 
-            if (_service.Messages.HasErrors())
-            {
-                foreach (var item in _service.Messages)
-                    return BadRequest(item.Message);
-            }
+            return _messageModel.Messages.HasErrors() ?
+                    BadRequest(ObterNotificacoes()) :
+                    Ok(ObterNotificacoes());
+        }
 
-            return Ok(_service.Messages);
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SalarioDTO>> Get(int id)
+        {
+            var salario = await _service.ObterPorId(id);
+
+            return salario is null ?
+            NotFound(ObterNotificacoes()) :
+            Ok(salario);
         }
     }
 }

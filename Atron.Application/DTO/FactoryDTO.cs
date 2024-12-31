@@ -1,5 +1,7 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 
@@ -8,9 +10,9 @@ namespace Atron.Application.DTO
     /// <summary>
     /// Classe utilizada utilizada para processos comuns entre as entidades
     /// </summary>
-    public class Factory
-    {
-        public Factory()
+    public class FactoryDTO : BaseDTO
+    {       
+        public FactoryDTO()
         {
             IdSequencial = NovoSequencial();
         }
@@ -72,6 +74,26 @@ namespace Atron.Application.DTO
             // Cria um novo GUID a partir do array guidBytes e o retorna.
             return new Guid(guidBytes);
         }
+    }
 
+    public interface IBaseDTO
+    {
+        public string Codigo { get; set; }
+        public string Descricao { get; set; }
+    }
+
+    public class BaseDTO : IBaseDTO
+    {        
+        [MinLength(3, ErrorMessage = "O campo código deve conter 3 caracteres ou mais.")]
+        [MaxLength(10, ErrorMessage = "O campo código deve conter até 10 caracteres ou menos.")]
+        [DisplayName("Código")]
+        public virtual string Codigo { get; set; }
+
+        [MinLength(3, ErrorMessage = "O campo descrição deve conter 3 caracteres ou mais.")]
+        [MaxLength(50, ErrorMessage = "O campo descrição deve conter até 50 caracteres ou menos.")]
+        [DisplayName("Descrição")]
+        public virtual string Descricao { get; set; }
+
+        public string ObterCodigoComDescricao() => $"{Codigo} {Descricao}";
     }
 }

@@ -18,8 +18,18 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<IEnumerable<Mes>> ObterMesesRepositoryAsync()
         {
-            var meses = await _context.Meses.AsNoTracking().ToListAsync();
-            return meses;
+
+            try
+            {
+                var meses = await _context.Meses.ToListAsync();
+
+                return meses;
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿class CadastrarTarefa {
-    constructor(usuarioSelectId, tarefaFormContainerId) {
+    constructor(usuarioSelectId, tarefaFormContainerId, actionPage) {
         this.usuarioSelect = document.getElementById(usuarioSelectId);
         this.tarefaFormContainer = document.getElementById(tarefaFormContainerId);
-
+        this.formAction = document.getElementById(actionPage);
         this.init();
     }
 
@@ -12,7 +12,8 @@
 
     async carregarFormulario() {
         const codigoUsuario = this.usuarioSelect.value;
-
+        const actionPage = this.formAction.value;
+        
         // Limpa o formulário caso nenhum usuário seja selecionado
         if (!codigoUsuario) {
             this.tarefaFormContainer.innerHTML = "";
@@ -20,7 +21,7 @@
         }
 
         try {
-            const response = await fetch(`/Tarefa/CarregarFormularioTarefa?codigoUsuario=${codigoUsuario}`);
+            const response = await fetch(`/Tarefa/CarregarFormularioTarefa?codigoUsuario=${codigoUsuario}&actionPage=${actionPage}`);
 
             if (response.ok) {
                 const html = await response.text();
@@ -36,51 +37,5 @@
 
 // Inicializa o script
 document.addEventListener('DOMContentLoaded', () => {
-    new CadastrarTarefa('usuarioCodigo', 'tarefaFormContainer');
+    new CadastrarTarefa('usuarioCodigo', 'tarefaFormContainer', 'actionPage');
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//import { Tarefa } from "../models/tarefaModel.js";
-
-//class CadastrarTarefa {
-//    constructor(usuarioSelectId) {
-//        this.usuarioSelect = document.getElementById(usuarioSelectId);
-//        this.init();
-//    }
-
-//    init() {
-//        this.usuarioSelect.addEventListener('change', () => this.carregarTarefaForm());
-//    }
-
-
-//    async carregarTarefaForm() {
-//        const codigoUsuario = this.usuarioSelect.value;
-
-//        try {
-//            const response = await fetch(`/Usuario/ObterUsuarioPorCodigo?codigoUsuario=${codigoUsuario}`);
-
-//            const usuarioData = await response.json();
-
-//            const tarefaData = new Tarefa(usuarioData.codigo, usuarioData.cargoDescricao, usuarioData.departamentoDescricao);
-            
-//        } catch (error) {
-
-//        }
-//    }
-//}
-
-//document.addEventListener('DOMContentLoaded', () => {
-//    new CadastrarTarefa('usuarioCodigo');
-//});

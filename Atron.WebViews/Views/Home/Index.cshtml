@@ -1,46 +1,77 @@
 ﻿@using Atron.Domain.Entities
 <h3>Painel Principal</h3>
 <div class="container my-5">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <i class="fa-solid fa-building display-1"></i>
-                    <h5 class="card-title mt-3">Departamentos</h5>
-                    <p class="card-text">Gerencie os departamentos da empresa.</p>
-                    <a href="@Url.Action("Index", "Departamento")" class="btn btn-primary">Acessar</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <i class="fa-solid fa-briefcase display-1"></i>
-                    <h5 class="card-title mt-3">Cargos</h5>
-                    <p class="card-text">Gerencie os cargos da empresa.</p>
-                    <a href="@Url.Action("Index", "Cargo")" class="btn btn-primary">Acessar</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <i class="fa-solid fa-users display-1"></i>
-                    <h5 class="card-title mt-3">Usuários</h5>
-                    <p class="card-text">Gerencie os funcionários da empresa.</p>
-                    <a href="@Url.Action("Index", "Usuario")" class="btn btn-primary">Acessar</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <i class="fa-solid fa-users display-1"></i>
-                    <h5 class="card-title mt-3">Tarefas</h5>
-                    <p class="card-text">Gerencie as tarefas da empresa.</p>
-                    <a href="@Url.Action(nameof(Index), nameof(Tarefa))" class="btn btn-primary">Acessar</a>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row">
+
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-body text-center">
+					<i class="fa-solid fa-building display-1"></i>
+					<h5 class="card-title mt-3">Departamentos</h5>
+					<p class="card-text">Gerencie os departamentos da empresa.</p>
+					<a href="@Url.Action(nameof(Index), nameof(Departamento))" class="btn btn-primary">Acessar</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-body text-center">
+					<i class="fa-solid fa-briefcase display-1"></i>
+					<h5 class="card-title mt-3">Cargos</h5>
+					<p class="card-text">Gerencie os cargos da empresa.</p>
+					<a href="@Url.Action(nameof(Index), nameof(Cargo))" class="btn btn-primary">Acessar</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-body text-center">
+					<i class="fa-solid fa-users display-1"></i>
+					<h5 class="card-title mt-3">Usuários</h5>
+					<p class="card-text">Gerencie os colaboradores da empresa.</p>
+					<a href="@Url.Action(nameof(Index), nameof(Usuario))" class="btn btn-primary">Acessar</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container my-5">
+	<div class="row">
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-body text-center">
+					<i class="fa-solid fa-list-check display-1"></i>
+					<h5 class="card-title mt-3">Tarefas</h5>
+					<p class="card-text">Gerencie as tarefas da empresa.</p>
+					<a href="@Url.Action(nameof(Index), nameof(Tarefa))" class="btn btn-primary">Acessar</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-body text-center">
+					<i class="fa-solid fa-money-bill display-1"></i>
+					<h5 class="card-title mt-3">Salários</h5>
+					<p class="card-text">Gerencie o salário da empresa.</p>
+					<a href="@Url.Action(nameof(Index), nameof(Salario))" class="btn btn-primary">Acessar</a>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-body text-center">
+					<i class="fa-solid fa-sliders display-1"></i>
+					<h5 class="card-title mt-3">Permissões e Controle de Acesso</h5>
+					<p class="card-text">Gerencie o controle dos módulos da empresa.</p>
+					<a href="@Url.Action(nameof(Index), nameof(Permissao))" class="btn btn-primary">Acessar</a>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

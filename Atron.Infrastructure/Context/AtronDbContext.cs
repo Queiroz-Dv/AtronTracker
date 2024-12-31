@@ -1,10 +1,11 @@
-﻿using Atron.Domain.ApiEntities;
-using Atron.Domain.Entities;
+﻿using Atron.Domain.Entities;
+using Atron.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Atron.Infrastructure.Context
 {
-    public class AtronDbContext : DbContext
+    public class AtronDbContext : IdentityDbContext<ApplicationUser>
     {
         public AtronDbContext(DbContextOptions<AtronDbContext> options) : base(options) { }
 
