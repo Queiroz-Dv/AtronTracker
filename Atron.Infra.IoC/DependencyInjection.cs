@@ -29,8 +29,7 @@ namespace Atron.Infra.IoC
             // O método AddScoped indica que os serviços são criados uma vez por requisição HTTP
             // O método Singleton indica que o serviço é criado uma vez para todas as requisições
             // O método Transiente indica que sempre será criado um novo serviço cada vez que for necessário
-            // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo
-
+            // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo           
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
 
             services.AddScoped<IApiClient, ApiClient>();
@@ -56,15 +55,25 @@ namespace Atron.Infra.IoC
             ConfigureDepartamentoServices(services);
             ConfgureCargoServices(services);
             CargoonfigureUsuarioServices(services);
-
-            services.AddScoped<IMessages, TarefaMessageValidation>();
-            services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
-
-            //// Utilização dos repositories padronizados
-            //services.AddScoped(typeof(IDefaultService<TarefaEstado>), typeof(DefaultService<TarefaEstado>));
-            //services.AddScoped(typeof(IDefaultRepository<TarefaEstado>), typeof(DefaultRepository<TarefaEstado>));
+            ConfigurarTarefaServices(services);
+            ConfigurarSalarioServices(services);
 
             return services;
+        }
+
+        private static void ConfigurarSalarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IPaginationService<SalarioDTO>, PaginationService<SalarioDTO>>();
+            services.AddScoped<ISalarioExternalService, SalarioExternalService>();
+            services.AddScoped<IMessages, SalarioMessageValidation>();
+            services.AddScoped<MessageModel<Salario>, SalarioMessageValidation>();
+        }
+
+        private static void ConfigurarTarefaServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<Tarefa>, TarefaMessageValidation>();
+            services.AddScoped<MessageModel<TarefaEstado>, TarefaEstadoMessageValidation>();
         }
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)

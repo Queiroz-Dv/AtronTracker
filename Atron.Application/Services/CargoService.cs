@@ -36,12 +36,10 @@ namespace Atron.Application.Services
 
         public async Task<List<CargoDTO>> ObterTodosAsync()
         {
-            var cargos = await _cargoRepository.ObterCargosAsync();
-            //  var departamentos = await _departamentoRepository.ObterDepartmentosAsync();
+            var cargos = await _cargoRepository.ObterCargosAsync();        
 
             var cargosDTOs = _mapper.Map<List<CargoDTO>>(cargos);
-            //   var departamentosDTOs = _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
-
+      
             cargosDTOs = (from crg in cargosDTOs
                           select new CargoDTO
                           {

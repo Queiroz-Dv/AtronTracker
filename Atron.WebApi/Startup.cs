@@ -1,3 +1,4 @@
+using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Infra.IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,18 +43,21 @@ namespace Atron.WebApi
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICreateDefaultUserRoleRepository createDefaultUserRole)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                AddSwagger(app);
+                app.UseDeveloperExceptionPage();                
             }
 
             AddSwagger(app);
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
+
+            createDefaultUserRole.CreateDefaultRoles();
+            createDefaultUserRole.CreateDefaultUsers();
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

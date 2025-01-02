@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
-    public class TarefaDTO : Factory
+    public class TarefaDTO : FactoryDTO
     {
         public int Id { get; set; }
 

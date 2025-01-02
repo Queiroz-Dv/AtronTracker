@@ -92,7 +92,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Cargo> ObterCargoPorCodigoAsync(string codigo)
         {
-            var cargo = await _context.Cargos.AsNoTracking().FirstOrDefaultAsync(crg => crg.Codigo == codigo);
+            var cargo = await _context.Cargos.FirstOrDefaultAsync(crg => crg.Codigo == codigo);
             return cargo;
         }
 
