@@ -1,21 +1,24 @@
 ﻿using Atron.Application.ApiInterfaces;
+using Atron.Application.ApiInterfaces.ApplicationInterfaces;
 using Atron.Application.ApiServices;
+using Atron.Application.ApiServices.ApplicationServices;
 using Atron.Application.Interfaces;
 using Atron.Application.Mapping;
 using Atron.Application.Services;
-using Atron.Domain.Account;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Validations;
 using Atron.Infrastructure.Context;
-using Atron.Infrastructure.Identity;
 using Atron.Infrastructure.Repositories;
+using Atron.Infrastructure.Repositories.ApplicationRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Interfaces;
 using Shared.Models;
+using Shared.Models.ApplicationModels;
 
 namespace Atron.Infra.IoC
 {
@@ -34,7 +37,7 @@ namespace Atron.Infra.IoC
             // Define o asembly de onde as migrações devem ser mantidas 
             m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                     .AddEntityFrameworkStores<AtronDbContext>()
                     .AddDefaultTokenProviders();
 
@@ -83,12 +86,17 @@ namespace Atron.Infra.IoC
 
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
-            CargoonfigureUsuarioServices(services);
+            ConfigureUsuarioServices(services);
             ConfigurarTarefaServices(services);
             ConfigurarSalarioServices(services);
 
-            services.AddScoped<IAuthenticate, AuthenticateService>();
-            services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
+            
+            services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
+            services.AddScoped<ILoginUserService, LoginUserService>();
+            services.AddScoped<IRegisterUserService, RegisterUserService>();
+            services.AddScoped<ILoginApplicationRepository, LoginApplicationRepository>();
+            services.AddScoped<IRegisterApplicationRepository, RegisterApplicationRepository>();
+
 
             return services;
         }
@@ -117,7 +125,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<MessageModel<Cargo>, CargoMessageValidation>();
         }
 
-        private static void CargoonfigureUsuarioServices(IServiceCollection services)
+        private static void ConfigureUsuarioServices(IServiceCollection services)
         {
             services.AddScoped<IMessages, UsuarioMessageValidation>();
             services.AddScoped<MessageModel<Usuario>, UsuarioMessageValidation>();

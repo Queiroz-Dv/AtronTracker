@@ -1,22 +1,23 @@
-﻿using Atron.Domain.Account;
+﻿using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Microsoft.AspNetCore.Identity;
+using Shared.Models.ApplicationModels;
 using System;
 
-namespace Atron.Infrastructure.Identity
+namespace Atron.Infrastructure.Repositories.ApplicationRepositories
 {
-    public class SeedUserRoleInitial : ISeedUserRoleInitial
+    public class CreateDefaultUserRoleRepository : ICreateDefaultUserRoleRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-        public SeedUserRoleInitial(UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+        public CreateDefaultUserRoleRepository(UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
         }
 
-        public void SeedUsers()
+        public void CreateDefaultUsers()
         {
             // Use
             if (_userManager.FindByEmailAsync("atronUser@email.com").Result == null)
@@ -59,15 +60,16 @@ namespace Atron.Infrastructure.Identity
             }
         }
 
-        public void SeedRoles()
+        public void CreateDefaultRoles()
         {
             // Use
             if (!_roleManager.RoleExistsAsync("AtronUser").Result)
             {
-                IdentityRole role = new()
+                var role = new ApplicationRole()
                 {
                     Name = "AtronUser",
-                    NormalizedName = "ATRON_USER"
+                    NormalizedName = "ATRON_USER",
+                    ConcurrencyStamp = Guid.NewGuid().ToString()
                 };
 
                 _ = _roleManager.CreateAsync(role).Result;
@@ -76,15 +78,15 @@ namespace Atron.Infrastructure.Identity
             // Admin
             if (!_roleManager.RoleExistsAsync("AtronAdmin").Result)
             {
-                IdentityRole role = new()
+                var role = new ApplicationRole()
                 {
                     Name = "AtronAdmin",
-                    NormalizedName = "ATRON_ADMIN"
+                    NormalizedName = "ATRON_ADMIN",
+                    ConcurrencyStamp = Guid.NewGuid().ToString()
                 };
 
                 _ = _roleManager.CreateAsync(role).Result;
             }
         }
-
     }
 }

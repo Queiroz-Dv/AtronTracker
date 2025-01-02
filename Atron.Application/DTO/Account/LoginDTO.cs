@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Atron.Application.DTO
+namespace Atron.Application.DTO.Account
 {
     public class LoginDTO : FactoryDTO
     {
@@ -15,5 +15,9 @@ namespace Atron.Application.DTO
         public string Passsword { get; set; }
 
         public string ReturnUrl { get; set; }
+
+        public string ControllerName { get; set; }
+        public string ControllerAction { get; set; }
+        public bool Authtenticated { get; set; }
     }
 }
