@@ -54,15 +54,15 @@ namespace Atron.Domain.Validations
                 AddError("O nome é muito longo.");
             }
 
-            if (entity.DepartamentoId == 0 || string.IsNullOrEmpty(entity.DepartamentoCodigo))
-            {
-                AddError("Identificador ou código de departamento inválido, tente novamente.");
-            }
+            //if (entity.DepartamentoId == 0 || string.IsNullOrEmpty(entity.DepartamentoCodigo))
+            //{
+            //    AddError("Identificador ou código de departamento inválido, tente novamente.");
+            //}
 
-            if (entity.CargoId == 0 || string.IsNullOrEmpty(entity.CargoCodigo))
-            {
-                AddError("Identificador ou código de cargo inválido, tente novamente.");
-            }
+            //if (entity.CargoId == 0 || string.IsNullOrEmpty(entity.CargoCodigo))
+            //{
+            //    AddError("Identificador ou código de cargo inválido, tente novamente.");
+            //}
 
             if (entity.DataNascimento == DateTime.Now)
             {

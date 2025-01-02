@@ -1,10 +1,19 @@
-﻿using Atron.Domain.ApiEntities;
-using Atron.Domain.Entities;
+﻿using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Shared.Models.ApplicationModels;
 
 namespace Atron.Infrastructure.Context
 {
-    public class AtronDbContext : DbContext
+    public class AtronDbContext : IdentityDbContext<
+        ApplicationUser, 
+        ApplicationRole, 
+        int, 
+        ApplicationUserClaim, 
+        ApplicationUserRole, 
+        ApplicationUserLogin,
+        ApplicationRoleClaim, 
+        ApplicationUserToken>
     {
         public AtronDbContext(DbContextOptions<AtronDbContext> options) : base(options) { }
 
@@ -25,6 +34,8 @@ namespace Atron.Infrastructure.Context
         public DbSet<Permissao> Permissoes { get; set; }
 
         public DbSet<PermissaoEstado> PermissoesEstados { get; set; }
+
+        public DbSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
