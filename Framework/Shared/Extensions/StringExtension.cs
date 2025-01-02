@@ -6,5 +6,10 @@
         {
             return string.IsNullOrEmpty(value);
         }
+
+        public static int ToInt(this string value)
+        {
+            return Convert.ToInt32(value);
+        }
     }
 }

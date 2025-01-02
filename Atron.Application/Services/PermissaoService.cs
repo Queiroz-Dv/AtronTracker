@@ -5,6 +5,8 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Notification.Models;
+using Shared.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +20,7 @@ namespace Atron.Application.Services
         private readonly IPermissaoRepository _permissaoRepository;
         private readonly IPermissaoEstadoRepository _permissaoEstadoRepository;
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioService _usuarioService;        
+        private readonly IUsuarioService _usuarioService;
 
         public PermissaoService(IMapper mapper,
                                 IRepository<Permissao> repository,

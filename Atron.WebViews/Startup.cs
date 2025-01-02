@@ -1,6 +1,4 @@
-using Atron.Domain.Account;
 using Atron.Infra.IoC;
-using Atron.Infrastructure.Identity;
 using Atron.WebViews.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,7 +29,7 @@ namespace Atron.WebViews
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ISeedUserRoleInitial seedUserRoleInitial)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -47,11 +45,7 @@ namespace Atron.WebViews
             app.UseStaticFiles();
             app.UseRouting();
 
-            seedUserRoleInitial.SeedRoles();
-            seedUserRoleInitial.SeedUsers();
-
             app.UseAuthentication();
-
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
