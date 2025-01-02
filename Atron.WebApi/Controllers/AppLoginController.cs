@@ -19,7 +19,7 @@ namespace Atron.WebApi.Controllers
             _registerService = registerService;
         }
 
-        [Route("Login")]
+        [Route("Logar")]
         [HttpPost]
         public async Task<ActionResult<LoginDTO>> LoginUser([FromBody] LoginDTO loginDTO)
         {
@@ -37,11 +37,12 @@ namespace Atron.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
-        public async Task<ActionResult> Logout([FromBody] bool disconnect)
+        [Route("Disconectar")]
+        [HttpPut]
+        public async Task<ActionResult> Logout()
         {
             await _loginService.Logout();
-            return Ok(disconnect);
+            return Ok();
         }
     }
 }

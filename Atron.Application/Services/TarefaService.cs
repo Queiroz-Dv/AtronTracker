@@ -10,6 +10,7 @@ using Shared.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 
 namespace Atron.Application.Services
 {

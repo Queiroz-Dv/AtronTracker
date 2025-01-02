@@ -23,7 +23,7 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
             var applicationUser = new ApplicationUser()
             {
                 UserName = register.UserName,
-                Email = register.Email
+                Email = register.Email                
             };
 
             var result = await _userManager.CreateAsync(applicationUser, register.Password);

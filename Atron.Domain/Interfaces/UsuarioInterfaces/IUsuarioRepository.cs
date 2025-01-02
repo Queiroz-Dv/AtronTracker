@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Atron.Domain.Interfaces
+namespace Atron.Domain.Interfaces.UsuarioInterfaces
 {
     public interface IUsuarioRepository
     {
@@ -11,7 +11,7 @@ namespace Atron.Domain.Interfaces
         Task<Usuario> ObterUsuarioPorIdAsync(int? id);
         Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo);
 
-        Task<Usuario> CriarUsuarioAsync(Usuario usuario);
+        Task<bool> CriarUsuarioAsync(Usuario usuario);
 
         Task<Usuario> AtualizarUsuarioAsync(Usuario usuario);
 

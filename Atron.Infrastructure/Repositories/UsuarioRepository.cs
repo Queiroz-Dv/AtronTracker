@@ -1,5 +1,5 @@
 ﻿using Atron.Domain.Entities;
-using Atron.Domain.Interfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -57,35 +57,29 @@ namespace Atron.Infrastructure.Repositories
             usuarioBd.Sobrenome = usuario.Sobrenome;
             usuarioBd.DataNascimento = usuario.DataNascimento;
             usuarioBd.SalarioAtual = usuario.SalarioAtual;
-
-            usuarioBd.CargoId = usuario.CargoId;
-            usuarioBd.CargoCodigo = usuario.CargoCodigo;
-
-            usuarioBd.DepartamentoId = usuario.DepartamentoId;
-            usuarioBd.DepartamentoCodigo = usuario.DepartamentoCodigo;
+            usuarioBd.Email = usuario.Email;
         }
 
-        public async Task<Usuario> CriarUsuarioAsync(Usuario usuario)
-        {
+        public async Task<bool> CriarUsuarioAsync(Usuario usuario)
+        {            
             try
             {
                 await _context.Usuarios.AddAsync(usuario);
                 await _context.SaveChangesAsync();
+
+                return true;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
-
-            return usuario;
         }
 
         public async Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo)
         {
             var usuario = await _context.Usuarios
-                .Include(crg => crg.Cargo)
-                .Include(dpt => dpt.Departamento)                
+                //.Include(crg => crg.Cargo)
+                //.Include(dpt => dpt.Departamento)                
                 .FirstOrDefaultAsync(usr => usr.Codigo == codigo);
             return usuario;
         }
@@ -99,8 +93,8 @@ namespace Atron.Infrastructure.Repositories
         public async Task<IEnumerable<Usuario>> ObterUsuariosAsync()
         {
             var usuarios = await _context.Usuarios
-                                         .Include(crg => crg.Cargo)
-                                         .Include(dpt => dpt.Departamento)
+                                         //.Include(crg => crg.Cargo)
+                                         //.Include(dpt => dpt.Departamento)
                                          .ToListAsync();
             return usuarios;
         }

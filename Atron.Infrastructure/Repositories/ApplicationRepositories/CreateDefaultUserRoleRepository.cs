@@ -24,7 +24,7 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
             {
                 var applicationUser = new ApplicationUser();
                 applicationUser.UserName = "AtronUser@Tracker";
-                applicationUser.Email = "atroUsern@email.com";
+                applicationUser.Email = "atroUser@email.com";
                 applicationUser.NormalizedUserName = "ATRON_USER@TRACKER";
                 applicationUser.NormalizedEmail = "ATRON_USER@TRACKER";
                 applicationUser.EmailConfirmed = true;

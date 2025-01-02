@@ -8,6 +8,7 @@ using Atron.Application.Services;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Domain.Validations;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Repositories;

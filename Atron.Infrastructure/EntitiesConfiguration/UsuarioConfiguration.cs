@@ -15,18 +15,9 @@ namespace Atron.Infrastructure.EntitiesConfiguration
 
             builder.Property(usr => usr.Nome).IsRequired().HasMaxLength(25);
             builder.Property(usr => usr.Sobrenome).IsRequired().HasMaxLength(50);
+            builder.Property(usr => usr.Email).IsRequired().HasMaxLength(50);
             builder.Property(usr => usr.DataNascimento);
-            builder.Property(usr => usr.SalarioAtual);
-
-            builder.HasOne(crg => crg.Cargo)
-                   .WithMany(usr => usr.Usuarios)
-                   .HasForeignKey(key => new { key.CargoId, key.CargoCodigo })
-                   .HasPrincipalKey(crg => new { crg.Id, crg.Codigo });
-
-            builder.HasOne(crg => crg.Departamento)
-                   .WithMany(usr => usr.Usuarios)
-                   .HasForeignKey(key => new { key.DepartamentoId, key.DepartamentoCodigo })
-                   .HasPrincipalKey(dpt => new { dpt.Id, dpt.Codigo });
+            builder.Property(usr => usr.SalarioAtual);                    
         }
     }
 }

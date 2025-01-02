@@ -2,6 +2,7 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using AutoMapper;
 using Notification.Models;
 using Shared.Extensions;
@@ -147,17 +148,17 @@ namespace Atron.Application.Services
                     Nome = entidade.Usuario.Nome,
                     Sobrenome = entidade.Usuario.Sobrenome,
 
-                    Departamento = new DepartamentoDTO()
-                    {
-                        Codigo = entidade.Usuario.Departamento.Codigo,
-                        Descricao = entidade.Usuario.Departamento.Descricao
-                    },
+                    //Departamento = new DepartamentoDTO()
+                    //{
+                    //    Codigo = entidade.Usuario.Departamento.Codigo,
+                    //    Descricao = entidade.Usuario.Departamento.Descricao
+                    //},
 
-                    Cargo = new CargoDTO()
-                    {
-                        Codigo = entidade.Usuario.Cargo.Codigo,
-                        Descricao = entidade.Usuario.Cargo.Descricao,
-                    }
+                    //Cargo = new CargoDTO()
+                    //{
+                    //    Codigo = entidade.Usuario.Cargo.Codigo,
+                    //    Descricao = entidade.Usuario.Cargo.Descricao,
+                    //}
                 }
             };
 

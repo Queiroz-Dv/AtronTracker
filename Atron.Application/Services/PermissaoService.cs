@@ -3,6 +3,7 @@ using Atron.Application.Enums;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using AutoMapper;
 using Notification.Models;
 using Shared.Extensions;
