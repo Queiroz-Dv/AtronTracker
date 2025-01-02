@@ -35,6 +35,8 @@ namespace Atron.Infrastructure.Context
 
         public DbSet<PermissaoEstado> PermissoesEstados { get; set; }
 
+        public DbSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

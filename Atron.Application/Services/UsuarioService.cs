@@ -9,6 +9,9 @@ using Shared.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
+using Atron.Domain.ApiEntities;
 
 namespace Atron.Application.Services
 {
@@ -16,18 +19,26 @@ namespace Atron.Application.Services
     {
         // Sempre usar o repository pra acessar a camada de dados
         private readonly IMapper _mapper;
+        private readonly IRegisterApplicationRepository _registerApplicationRepository;
+        private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly ICargoRepository _cargoRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly MessageModel<Usuario> _messageModel;
 
+        public bool Registrar { get; set; }
+
         public UsuarioService(IMapper mapper,
+                              IRegisterApplicationRepository registerApplicationRepository,
+                              IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
                               IUsuarioRepository repository,
                               ICargoRepository cargoRepository,
                               IDepartamentoRepository departamentoRepository,
                               MessageModel<Usuario> messageModel)
         {
             _mapper = mapper;
+            _registerApplicationRepository = registerApplicationRepository;
+            _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
             _usuarioRepository = repository;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
@@ -53,7 +64,7 @@ namespace Atron.Application.Services
                 SalarioAtual = usuarioDTO.Salario,
             };
 
-            await MontarEntidadesComplementares(usuarioDTO, entidade);
+            // await MontarEntidadesComplementares(usuarioDTO, entidade);
             _messageModel.Validate(entidade);
 
             if (!_messageModel.Messages.HasErrors())
@@ -63,19 +74,18 @@ namespace Atron.Application.Services
             }
         }
 
-        public async Task CriarAsync(UsuarioDTO usuarioDTO)
+        public async Task<bool> CriarAsync(UsuarioDTO usuarioDTO)
         {
             if (usuarioDTO is null)
             {
                 _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
-                return;
+                return false;
             }
 
             var usuario = new Usuario()
             {
                 Id = usuarioDTO.Id,
                 IdSequencial = usuarioDTO.IdSequencial,
-                //IdSequencial = usua
                 Codigo = usuarioDTO.Codigo,
                 Nome = usuarioDTO.Nome,
                 Sobrenome = usuarioDTO.Sobrenome,
@@ -83,40 +93,61 @@ namespace Atron.Application.Services
                 SalarioAtual = usuarioDTO.Salario,
             };
 
-            await MontarEntidadesComplementares(usuarioDTO, usuario);
-            _messageModel.Validate(usuario);
+            var cargo = new Cargo();
+            var departamento = new Departamento();
 
+            if (!usuarioDTO.CargoCodigo.IsNullOrEmpty() && !usuarioDTO.DepartamentoCodigo.IsNullOrEmpty())
+            {
+                var departamentoBd = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(usuarioDTO.DepartamentoCodigo);
+                var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
+
+                departamento.Id = departamentoBd.Id;
+                departamento.Codigo = departamentoBd.Codigo;                
+                cargo.Id = cargoBd.Id;
+                cargo.Codigo = cargoBd.Codigo;                
+            }
+
+
+            // Usar specification e validation
+            _messageModel.Validate(usuario);
             if (!_messageModel.Messages.HasErrors())
             {
-                await _usuarioRepository.CriarUsuarioAsync(usuario);
-                _messageModel.AddSuccessMessage(nameof(Usuario));
-            }
-        }
+                var usr = await _usuarioRepository.CriarUsuarioAsync(usuario);
+                if (usr)
+                {
+                    if (!cargo.Codigo.IsNullOrEmpty() && !departamento.Codigo.IsNullOrEmpty())
+                    {
+                        await _usuarioCargoDepartamentoRepository.GravarAssociacaoUsuarioCargoDepartamento(usuario, cargo, departamento);
+                    }
 
-        private async Task MontarEntidadesComplementares(UsuarioDTO usuarioDTO, Usuario usuario)
-        {
-            var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
-            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(usuarioDTO.DepartamentoCodigo);
+                    _messageModel.AddSuccessMessage(nameof(Usuario));
 
-            if (departamento is not null && cargo is not null)
-            {
-                usuario.CargoId = cargo.Id;
-                usuario.CargoCodigo = cargo.Codigo;
+                    if (Registrar)
+                    {
+                        var register = new Register()
+                        {
+                            UserName = usuario.Nome,
+                            Email = usuario.Email,
+                            Password = usuarioDTO.Senha
+                        };
 
-                usuario.DepartamentoId = departamento.Id;
-                usuario.DepartamentoCodigo = departamento.Codigo;
+                        var registerOk = await _registerApplicationRepository.RegisterUserAccountAsync(register);
+
+                        if (registerOk)
+                        {
+                            _messageModel.AddMessage($"Usuário de acesso da aplicação: {usuarioDTO.Nome} cadastrado com sucesso");
+                        }
+                    }
+                }
             }
-            else
-            {
-                _messageModel.AddError("Cargo ou Departamento não encontrados. Cadastre-os ou tente novamente.");
-                return;
-            }
-        }
+
+            return false;
+        }      
 
         public async Task<UsuarioDTO> ObterPorCodigoAsync(string codigo)
         {
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-            
+
             var usuarioDTO = new UsuarioDTO()
             {
                 Id = usuario.Id,
@@ -125,10 +156,10 @@ namespace Atron.Application.Services
                 Sobrenome = usuario.Sobrenome,
                 Salario = usuario.SalarioAtual,
                 DataNascimento = usuario.DataNascimento,
-                CargoCodigo = usuario.CargoCodigo,
-                DepartamentoCodigo = usuario.DepartamentoCodigo,
-                Cargo = new CargoDTO() { Codigo = usuario.Cargo.Codigo, Descricao = usuario.Cargo.Descricao },
-                Departamento = new DepartamentoDTO() { Codigo = usuario.Departamento.Codigo, Descricao = usuario.Departamento.Descricao },
+                //CargoCodigo = usuario.CargoCodigo,
+                //DepartamentoCodigo = usuario.DepartamentoCodigo,
+                //Cargo = new CargoDTO() { Codigo = usuario.Cargo.Codigo, Descricao = usuario.Cargo.Descricao },
+                //Departamento = new DepartamentoDTO() { Codigo = usuario.Departamento.Codigo, Descricao = usuario.Departamento.Descricao },
             };
 
             return usuarioDTO;

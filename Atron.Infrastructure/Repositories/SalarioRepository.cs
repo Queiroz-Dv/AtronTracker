@@ -62,8 +62,8 @@ namespace Atron.Infrastructure.Repositories
         {
             return _context.Salarios
                 .Include(slr => slr.Usuario)
-                .ThenInclude(crg => crg.Cargo)
-                .Include(dpt => dpt.Usuario.Departamento)
+                //.ThenInclude(crg => crg.Cargo)
+               // .Include(dpt => dpt.Usuario.Departamento)
                 .FirstOrDefaultAsync(sr => sr.Id == id);
         }
 
@@ -71,8 +71,8 @@ namespace Atron.Infrastructure.Repositories
         {
             return _context.Salarios
                 .Include(slr => slr.Usuario)
-                .ThenInclude(crg => crg.Cargo)
-                .Include(dpt => dpt.Usuario.Departamento)
+               // .ThenInclude(crg => crg.Cargo)
+               // .Include(dpt => dpt.Usuario.Departamento)
                 .Include(ms => ms.Mes).ToListAsync();
         }
     }

@@ -65,17 +65,18 @@ namespace Atron.Infrastructure.Repositories
         {
             var entidade = await _context.Tarefas            
             .Include(usr => usr.Usuario)
-            .ThenInclude(crg => crg.Cargo)
-            .ThenInclude(dpt => dpt.Departamento).FirstOrDefaultAsync(trf => trf.Id == id);
+         //   .ThenInclude(crg => crg.Cargo)
+         //   .ThenInclude(dpt => dpt.Departamento)
+         .FirstOrDefaultAsync(trf => trf.Id == id);
             return entidade;
         }
 
         public async Task<List<Tarefa>> ObterTodasTarefas()
         {
             var entidades = await _context.Tarefas                
-                .Include(usr => usr.Usuario)
-                .ThenInclude(crg => crg.Cargo)
-                .ThenInclude(dpt => dpt.Departamento)
+                //.Include(usr => usr.Usuario)
+                //.ThenInclude(crg => crg.Cargo)
+                //.ThenInclude(dpt => dpt.Departamento)
                 .ToListAsync();
             return entidades;
         }
