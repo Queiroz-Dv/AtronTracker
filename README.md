@@ -7,6 +7,18 @@
 <h1>Projeto Atron Tracker</h1>
 
 <p>Esse protótipo tem como objetivo exemplificar todo o desenvolvimento e ciclo de um software. O projeto apresentado segue os padrões da Arquitetura Limpa com aplicação parcial do Domain-Driven Design (DDD) e MVC. As bases desse projeto foram desenvolvidas para desktop; no entanto, devido aos conhecimentos adquiridos após exercer minha função na área e dos estudos realizados, estou constanemente refatorando e melhorando o sistema.</p>
+<br>
+
+<div>
+  <h2>Como configurar?</h2>
+  <p> Para configurar e inicializar o sistema será necessário utilizar o Visual Studio Code ou instalar o Visual Studio 2022 na sua máquina.
+
+  Feita a instalação, configure o projeto inicial para o WebApi: <img src="images/ProjetoInicialConfig.png" alt="Configuração do projeto inicial">  
+
+  Em seguida, abra o Package Manager Console e digite <i>update-database</i> isso irá instalar e inicializar o banco de dados do projeto. Além disso você precisa configurar o projeto padrão para o <i>Atron.Infrastructure</i> pois as configurações de acesso a dados e das entidades estão concentradas nesse módulo.
+  <img src="images/ConfigPMC.png" alt="Configuração do PMC">
+  </p>
+</div>
 
 <h2>Estrutura dos Projetos</h2>
 
