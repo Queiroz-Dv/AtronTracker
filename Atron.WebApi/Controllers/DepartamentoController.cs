@@ -2,7 +2,6 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Models;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;
@@ -24,7 +23,7 @@ namespace Atron.WebApi.Controllers
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
-        {            
+        {
             await _service.CriarAsync(departamento);
 
             return _messageModel.Messages.HasErrors() ?
@@ -64,9 +63,9 @@ namespace Atron.WebApi.Controllers
         {
             var departamento = await _service.ObterPorCodigo(codigo);
 
-            return departamento is null ?  
-                NotFound(ObterNotificacoes()) :  
-                Ok(departamento);            
-        }       
+            return departamento is null ?
+                NotFound(ObterNotificacoes()) :
+                Ok(departamento);
+        }
     }
 }

@@ -8,6 +8,8 @@ namespace Atron.Application.DTO.Account
     {
         public int Id { get; set; }        
         public string UserName { get; set; }
+
+        public string Sobrenome { get; set; }
         public DateTime? DataNascimento { get; set; }
 
         [Required]

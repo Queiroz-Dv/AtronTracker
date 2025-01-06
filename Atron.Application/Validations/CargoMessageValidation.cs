@@ -2,14 +2,14 @@
 using Shared.Interfaces;
 using Shared.Models;
 
-namespace Atron.Domain.Validations
+namespace Atron.Application.Validations
 {
-    public class DepartamentoMessageValidation : MessageModel<Departamento>, IMessages
+    public class CargoMessageValidation : MessageModel<Cargo>, IMessages
     {
-        public override void Validate(Departamento entity)
+        public override void Validate(Cargo entity)
         {
             if (string.IsNullOrEmpty(entity.Descricao) ||
-               string.IsNullOrEmpty(entity.Codigo))
+                string.IsNullOrEmpty(entity.Codigo))
             {
                 AddError("O código ou a descrição não estão preenchidos.");
             }
@@ -32,6 +32,11 @@ namespace Atron.Domain.Validations
             if (entity.Descricao.Length > 50)
             {
                 AddError("A descricao é muito longa.");
+            }
+
+            if (string.IsNullOrEmpty(entity.DepartamentoCodigo))
+            {
+                AddError("Código do departamento obrigatório.");
             }
         }
     }

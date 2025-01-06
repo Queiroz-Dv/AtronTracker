@@ -2,7 +2,7 @@
 using Shared.Interfaces;
 using Shared.Models;
 
-namespace Atron.Domain.Validations
+namespace Atron.Application.Validations
 {
     public class TarefaMessageValidation : MessageModel<Tarefa>, IMessages
     {

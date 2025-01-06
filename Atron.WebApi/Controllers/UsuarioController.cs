@@ -1,10 +1,8 @@
 ﻿using Atron.Application.DTO;
-using Atron.Application.DTO.Account;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Notification.Models;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;

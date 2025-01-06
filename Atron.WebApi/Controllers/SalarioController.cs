@@ -2,9 +2,8 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Models;
-using Shared.Models;
 using Shared.Extensions;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,14 +14,14 @@ namespace Atron.WebApi.Controllers
     public class SalarioController : ModuleController<Salario, ISalarioService>
     {
 
-        public SalarioController(ISalarioService service, 
+        public SalarioController(ISalarioService service,
             MessageModel<Salario> messageModel)
-        : base(service, messageModel) 
+        : base(service, messageModel)
         { }
-        
+
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] SalarioDTO salario)
-        {         
+        {
             await _service.CriarAsync(salario);
 
             return _messageModel.Messages.HasErrors() ?
@@ -34,7 +33,7 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<SalarioDTO>>> Get()
         {
             var salarios = await _service.ObterTodosAsync();
-            
+
             return Ok(salarios);
         }
 

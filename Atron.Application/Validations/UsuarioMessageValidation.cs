@@ -3,7 +3,7 @@ using Shared.Interfaces;
 using Shared.Models;
 using System;
 
-namespace Atron.Domain.Validations
+namespace Atron.Application.Validations
 {
     public class UsuarioMessageValidation : MessageModel<Usuario>, IMessages
     {
@@ -13,7 +13,7 @@ namespace Atron.Domain.Validations
             {
                 AddError("O campo código não está preenchido.");
             }
-            
+
             if (entity.Codigo.Length > 10)
             {
                 AddError("O código informado é muito longo.");

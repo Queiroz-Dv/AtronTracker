@@ -4,7 +4,6 @@ using Atron.Application.Specifications.Departamento;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
-using Notification.Models;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;
@@ -24,7 +23,6 @@ namespace Atron.Application.Services
          *  em vez de uma implementação concreta (DepartamentoRepository).*/
         private readonly IMapper _mapper;
         private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly NotificationModel<Departamento> _notification;
         private readonly MessageModel<Departamento> messageModel;
 
         public DepartamentoService(IMapper mapper, IDepartamentoRepository departamentoRepository,
@@ -43,7 +41,7 @@ namespace Atron.Application.Services
 
         public async Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
-            if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO) || 
+            if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO) ||
                 codigo.IsNullOrEmpty())
             {
                 messageModel.AddRegisterInvalidMessage(nameof(Departamento));
@@ -127,6 +125,6 @@ namespace Atron.Application.Services
             {
                 messageModel.AddRegisterNotFoundMessage(nameof(Departamento));
             }
-        }        
+        }
     }
 }
