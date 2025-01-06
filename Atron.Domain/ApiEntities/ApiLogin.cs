@@ -1,6 +1,6 @@
 ﻿namespace Atron.Domain.ApiEntities
 {
-    public class Login
+    public class ApiLogin
     {
         public string Email { get; set; }
         public string Password { get; set; }

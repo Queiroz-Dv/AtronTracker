@@ -18,7 +18,7 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
             _signInManager = signInManager;
         }
 
-        public async Task<bool> RegisterUserAccountAsync(Register register)
+        public async Task<bool> RegisterUserAccountAsync(ApiRegister register)
         {
             var applicationUser = new ApplicationUser()
             {

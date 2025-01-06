@@ -19,7 +19,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
         public async Task<LoginDTO> Authenticate(LoginDTO loginDTO)
         {
-            var login = new Login()
+            var login = new ApiLogin()
             {
                 Email = loginDTO.Email,
                 Password = loginDTO.Passsword

@@ -123,7 +123,7 @@ namespace Atron.Application.Services
 
                     if (Registrar)
                     {
-                        var register = new Register()
+                        var register = new ApiRegister()
                         {
                             UserName = usuario.Nome,
                             Email = usuario.Email,

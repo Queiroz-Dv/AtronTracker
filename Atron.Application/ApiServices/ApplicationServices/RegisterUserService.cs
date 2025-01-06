@@ -22,7 +22,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
         public async Task<RegisterDTO> RegisterUser(RegisterDTO registerDTO)
         {
-            var register = new Register()
+            var register = new ApiRegister()
             {
                 UserName = registerDTO.UserName,
                 Email = registerDTO.Email,
