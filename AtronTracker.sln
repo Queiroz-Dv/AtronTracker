@@ -5,8 +5,6 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notification", "Framework\Notification\Notification.csproj", "{63BCD80A-D113-4D7D-B626-F838D19932A0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.Domain", "Atron.Domain\Atron.Domain.csproj", "{F0EE1EBE-747B-44E8-AE05-8715C5BCC8D5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.Infrastructure", "Atron.Infrastructure\Atron.Infrastructure.csproj", "{0AF24505-DE43-4A25-8A67-389787509981}"
@@ -50,10 +48,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{63BCD80A-D113-4D7D-B626-F838D19932A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63BCD80A-D113-4D7D-B626-F838D19932A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63BCD80A-D113-4D7D-B626-F838D19932A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63BCD80A-D113-4D7D-B626-F838D19932A0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F0EE1EBE-747B-44E8-AE05-8715C5BCC8D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F0EE1EBE-747B-44E8-AE05-8715C5BCC8D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0EE1EBE-747B-44E8-AE05-8715C5BCC8D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -95,7 +89,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{63BCD80A-D113-4D7D-B626-F838D19932A0} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
 		{86FAF893-A440-49B0-8E91-555A62217E7A} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
 		{F225BED3-3977-4B0C-B1F1-8AB85229F924} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
 		{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}

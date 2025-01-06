@@ -5,6 +5,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Atron.Domain\Atron.Domain.csproj" />
+		<ProjectReference Include="..\Framework\Shared\Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

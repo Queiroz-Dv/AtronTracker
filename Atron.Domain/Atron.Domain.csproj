@@ -5,7 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Framework\Notification\Notification.csproj" />
+	  <Folder Include="ValueObjects\" />
 	</ItemGroup>
 
 </Project>

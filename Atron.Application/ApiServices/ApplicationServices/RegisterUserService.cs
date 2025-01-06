@@ -27,6 +27,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                 UserName = registerDTO.UserName,
                 Email = registerDTO.Email,
                 Password = registerDTO.Passsword,
+                ConfirmPassword = registerDTO.ConfirmPasssword
             };
 
             var result = await _registerApp.RegisterUserAccountAsync(register);
@@ -39,6 +40,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                 {
                     Codigo = registerDTO.Codigo,
                     Nome = registerDTO.UserName,
+                    Sobrenome = registerDTO.Sobrenome,
                     DataNascimento = registerDTO.DataNascimento,
                     Email = registerDTO.Email
                 };

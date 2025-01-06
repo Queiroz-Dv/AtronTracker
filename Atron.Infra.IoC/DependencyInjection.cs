@@ -1,8 +1,8 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Mapping;
+using Atron.Application.Validations;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
-using Atron.Domain.Validations;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Communication.Models;

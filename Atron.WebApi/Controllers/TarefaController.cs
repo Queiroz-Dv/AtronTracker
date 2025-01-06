@@ -2,7 +2,6 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Models;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;

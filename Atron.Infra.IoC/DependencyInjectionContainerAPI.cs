@@ -5,11 +5,11 @@ using Atron.Application.ApiServices.ApplicationServices;
 using Atron.Application.Interfaces;
 using Atron.Application.Mapping;
 using Atron.Application.Services;
+using Atron.Application.Validations;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
-using Atron.Domain.Validations;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Repositories;
 using Atron.Infrastructure.Repositories.ApplicationRepositories;
@@ -97,7 +97,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IRegisterUserService, RegisterUserService>();
             services.AddScoped<ILoginApplicationRepository, LoginApplicationRepository>();
             services.AddScoped<IRegisterApplicationRepository, RegisterApplicationRepository>();
-
+            services.AddScoped<IUsuarioCargoDepartamentoRepository, UsuarioCargoDepartamentoRepository>();
 
             return services;
         }

@@ -3,7 +3,7 @@ using Shared.Interfaces;
 using Shared.Models;
 using System;
 
-namespace Atron.Domain.Validations
+namespace Atron.Application.Validations
 {
     public class TarefaEstadoMessageValidation : MessageModel<TarefaEstado>, IMessages
     {
