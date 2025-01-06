@@ -5,7 +5,7 @@ namespace Atron.Domain.Interfaces.ApplicationInterfaces
 {
     public interface ILoginApplicationRepository
     {
-        Task<bool> AuthenticateUserLoginAsync(Login login);
+        Task<bool> AuthenticateUserLoginAsync(ApiLogin login);
 
         Task Logout();
     }
