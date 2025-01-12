@@ -48,7 +48,7 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Painel de salários");
 
-            await BuildRoute(nameof(Salario));
+            BuildRoute(nameof(Salario));
             var salarios = await _service.ObterTodos();
 
             Filter = filter;
@@ -63,9 +63,9 @@ namespace Atron.WebViews.Controllers
 
             return View(model);
         }
-        private async Task BuildUsuarioRoute()
+        private void BuildUsuarioRoute()
         {
-            await BuildRoute(nameof(Usuario));
+            BuildRoute(nameof(Usuario));
         }
 
 
@@ -76,7 +76,7 @@ namespace Atron.WebViews.Controllers
             ConfigureCurrentPageAction(nameof(Cadastrar));
 
             //TODO: Criar um método de view bag de usuários
-            await BuildUsuarioRoute();
+            BuildUsuarioRoute();
             var usuarios = await _usuarioService.ObterTodos();
             var usuariosFiltrados = usuarios.Select(usr => new
             {
@@ -86,7 +86,7 @@ namespace Atron.WebViews.Controllers
 
             ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
 
-            await BuildRoute(nameof(Salario), "ObterMeses");
+            BuildRoute(nameof(Salario), "ObterMeses");
             var meses = await _service.ObterMeses();
 
             ViewBag.Meses = new SelectList(meses.ToList(), nameof(MesDTO.Id), nameof(MesDTO.Descricao));
@@ -100,7 +100,7 @@ namespace Atron.WebViews.Controllers
 
             if (ModelState.IsValid)
             {
-                await BuildRoute(nameof(Salario));
+                BuildRoute(nameof(Salario));
 
                 await _service.Criar(salarioDTO);
                 CreateTempDataMessages();
@@ -119,13 +119,13 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Atualização de salários");
             ConfigureCurrentPageAction(nameof(Atualizar));
-               
-            await BuildRoute(nameof(Salario), "ObterMeses");
+
+            BuildRoute(nameof(Salario), "ObterMeses");
             var meses = await _service.ObterMeses();
 
             ViewBag.Meses = new SelectList(meses.ToList(), nameof(MesDTO.Id), nameof(MesDTO.Descricao));
 
-            await BuildRoute(nameof(Salario), id);
+            BuildRoute(nameof(Salario), id);
             var salario = await _service.ObterPorId();
             return View(salario);
         }
@@ -133,7 +133,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Atualizar(string id, SalarioDTO salarioDTO)
         {
-            await BuildRoute(nameof(Salario), id);
+            BuildRoute(nameof(Salario), id);
             await _service.Atualizar(id, salarioDTO);
 
             CreateTempDataMessages();
@@ -153,7 +153,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> CarregarFormularioSalario(string codigoUsuario, string actionPage)
         {
-            await BuildRoute(nameof(Usuario), codigoUsuario);
+            BuildRoute(nameof(Usuario), codigoUsuario);
             var usuario = await _usuarioService.ObterPorCodigo(codigoUsuario);
             var salarioDTO = new SalarioDTO
 
@@ -173,7 +173,7 @@ namespace Atron.WebViews.Controllers
                 },
             };
 
-            await BuildRoute(nameof(Salario), "ObterMeses");
+            BuildRoute(nameof(Salario), "ObterMeses");
             var meses = await _service.ObterMeses();
 
             ViewBag.Meses = new SelectList(meses.ToList(), nameof(MesDTO.Id), nameof(MesDTO.Descricao));

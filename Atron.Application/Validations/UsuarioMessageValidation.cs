@@ -1,4 +1,5 @@
 ﻿using Atron.Domain.Entities;
+using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
 using System;
@@ -9,7 +10,7 @@ namespace Atron.Application.Validations
     {
         public override void Validate(Usuario entity)
         {
-            if (string.IsNullOrEmpty(entity.Codigo))
+            if (entity.Codigo.IsNullOrEmpty())
             {
                 AddError("O campo código não está preenchido.");
             }
@@ -24,7 +25,7 @@ namespace Atron.Application.Validations
                 AddError("O código informado é muito pequeno.");
             }
 
-            if (string.IsNullOrEmpty(entity.Nome))
+            if (entity.Nome.IsNullOrEmpty())
             {
                 AddError("Nome de usuário é obrigatório.");
             }
@@ -39,7 +40,7 @@ namespace Atron.Application.Validations
                 AddError("O nome é muito longo.");
             }
 
-            if (string.IsNullOrEmpty(entity.Sobrenome))
+            if (entity.Sobrenome.IsNullOrEmpty())
             {
                 AddError("Nome de usuário é obrigatório.");
             }
@@ -51,7 +52,12 @@ namespace Atron.Application.Validations
 
             if (entity.Sobrenome.Length > 50)
             {
-                AddError("O nome é muito longo.");
+                AddError("O sobrenome é muito longo.");
+            }
+
+            if (entity.DataNascimento == DateTime.Now)
+            {
+                AddError("Data de nascimento inválida, tente novamente");
             }
 
             //if (entity.DepartamentoId == 0 || string.IsNullOrEmpty(entity.DepartamentoCodigo))
@@ -63,11 +69,6 @@ namespace Atron.Application.Validations
             //{
             //    AddError("Identificador ou código de cargo inválido, tente novamente.");
             //}
-
-            if (entity.DataNascimento == DateTime.Now)
-            {
-                AddError("Data de nascimento inválida, tente novamente");
-            }
         }
     }
 }

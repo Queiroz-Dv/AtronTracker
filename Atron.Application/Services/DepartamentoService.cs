@@ -1,6 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
-using Atron.Application.Specifications.Departamento;
+using Atron.Application.Specifications.DepartamentoSpecifications;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;

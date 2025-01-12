@@ -46,7 +46,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
-            await BuildRoute(nameof(Cargo));
+            BuildRoute();
 
             var cargos = await _service.ObterTodos();
             
@@ -66,7 +66,7 @@ namespace Atron.WebViews.Controllers
         public async Task<IActionResult> Cadastrar()
         {
             ConfigureDataTitleForView("Cadastro de cargos");
-            await BuildRoute(nameof(Departamento));
+            BuildRoute(nameof(Departamento));
             var departamentos = await _departamentoService.ObterTodos();
 
             if (!departamentos.Any())
@@ -92,7 +92,7 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                await BuildRoute(nameof(Cargo));
+                BuildRoute(nameof(Cargo));
 
                 await _service.Criar(model);
 
@@ -116,10 +116,10 @@ namespace Atron.WebViews.Controllers
                 return View(nameof(Index));
             }
 
-            await BuildRoute(nameof(Cargo), codigo);
+            BuildRoute(nameof(Cargo), codigo);
             var cargoDTO = await _service.ObterPorCodigo(codigo);
 
-            await BuildRoute(nameof(Departamento));
+            BuildRoute(nameof(Departamento));
             var departamentos = await _departamentoService.ObterTodos();
 
             var departamentosFiltrados = departamentos.Select(dpt =>
@@ -140,7 +140,7 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                await BuildRoute(nameof(Cargo), codigo);
+                BuildRoute(nameof(Cargo), codigo);
                 await _service.Atualizar(codigo, cargoDTO);
             }
             else
@@ -158,7 +158,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            await BuildRoute(nameof(Cargo), codigo);
+            BuildRoute(nameof(Cargo), codigo);
             await _service.Remover(codigo);
 
             CreateTempDataMessages();

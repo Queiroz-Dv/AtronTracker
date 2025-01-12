@@ -1,11 +1,7 @@
 ﻿using Atron.Application.DTO;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Atron.Application.Specifications.Cargo
+namespace Atron.Application.Specifications.CargoSpecifications
 {
     public class CargoSpecification : ISpecification<CargoDTO>
     {
@@ -17,7 +13,9 @@ namespace Atron.Application.Specifications.Cargo
             _codigo = codigo;
             _codigoDepartamento = codigoDepartamento;
         }
-    
+
+        public List<string> Errors => throw new System.NotImplementedException();
+
         public bool IsSatisfiedBy(CargoDTO entity)
         {
             return entity.Codigo.Equals(_codigo) && entity.DepartamentoCodigo.Equals(_codigoDepartamento);

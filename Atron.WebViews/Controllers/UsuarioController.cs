@@ -48,14 +48,14 @@ namespace Atron.WebViews.Controllers
         }
 
         // Rever como automatizar o processo de montagem de rotas
-        private async Task BuildCargoRoute()
+        private void BuildCargoRoute()
         {
-            await BuildRoute(nameof(Cargo));
+            BuildRoute(nameof(Cargo));
         }
 
-        private async Task BuildDepartamentoRoute()
+        private void BuildDepartamentoRoute()
         {
-            await BuildRoute(nameof(Departamento));
+            BuildRoute(nameof(Departamento));
         }
 
         [HttpGet, HttpPost]
@@ -63,7 +63,7 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Painel de usuários");
 
-            await BuildRoute(nameof(Usuario));
+            BuildRoute(nameof(Usuario));
             var usuarios = await _service.ObterTodos();
 
             Filter = filter;
@@ -82,10 +82,10 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Cadastro de usuários");
 
-            await BuildRoute(nameof(Departamento));
+            BuildRoute(nameof(Departamento));
             var departamentos = await _departamentoService.ObterTodos();
 
-            await BuildRoute(nameof(Cargo));
+            BuildRoute(nameof(Cargo));
             var cargos = await _cargoService.ObterTodos();
 
             MontarViewBagDepartamentos(departamentos);
@@ -122,7 +122,7 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                await BuildRoute(nameof(Usuario));
+                BuildRoute(nameof(Usuario));
                 await _service.Criar(model);
 
                 CreateTempDataMessages();
@@ -138,7 +138,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterCargosAssociados(string codigoDepartamento)
         {
-            await BuildCargoRoute();
+            BuildCargoRoute();
             var cargos = await _cargoService.ObterTodos();
 
             if (!codigoDepartamento.IsNullOrEmpty())
@@ -158,7 +158,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterDepartamentosAssociados(string codigoCargo)
         {
-            await BuildCargoRoute();
+            BuildCargoRoute();
             var cargos = await _cargoService.ObterTodos();
 
             if (!codigoCargo.IsNullOrEmpty())
@@ -181,13 +181,13 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Atualizar informação de usuário");
 
-            await BuildDepartamentoRoute();
+            BuildDepartamentoRoute();
             var departamentos = await _departamentoService.ObterTodos();
 
-            await BuildCargoRoute();
+            BuildCargoRoute();
             var cargos = await _cargoService.ObterTodos();
 
-            await BuildRoute(nameof(Usuario), codigo);
+            BuildRoute(nameof(Usuario), codigo);
             var usuario = await _service.ObterPorCodigo(codigo);
 
             MontarViewBagDepartamentos(departamentos);
@@ -199,7 +199,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, UsuarioDTO usuario)
         {
-            await BuildRoute(nameof(Usuario), codigo);
+            BuildRoute(nameof(Usuario), codigo);
             await _service.Atualizar(codigo, usuario);
             CreateTempDataMessages();
 
@@ -211,7 +211,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            await BuildRoute(nameof(Usuario), codigo);
+            BuildRoute(nameof(Usuario), codigo);
             await _service.Remover(codigo);
 
             CreateTempDataMessages();

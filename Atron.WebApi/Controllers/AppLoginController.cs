@@ -1,38 +1,43 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.DTO.Account;
+using Atron.Application.DTO.ApiDTO;
+using Atron.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Shared.Models;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppLoginController : Controller
+    public class AppLoginController : ModuleController<ApiRegister, IRegisterUserService>
     {
         private readonly ILoginUserService _loginService;
-        private readonly IRegisterUserService _registerService;
 
-        public AppLoginController(ILoginUserService loginUserService, IRegisterUserService registerService)
+        public AppLoginController(
+            IRegisterUserService service,
+            MessageModel<ApiRegister> messageModel, 
+            ILoginUserService loginUserService)
+            : base(service, messageModel)
         {
             _loginService = loginUserService;
-            _registerService = registerService;
         }
-
+       
         [Route("Logar")]
         [HttpPost]
         public async Task<ActionResult<LoginDTO>> LoginUser([FromBody] LoginDTO loginDTO)
         {
             var result = await _loginService.Authenticate(loginDTO);
 
-            return Ok(result);
+            return RetornoPadrao(result);
         }
+      
 
         [Route("Registrar")]
         [HttpPost]
         public async Task<ActionResult<RegisterDTO>> RegisterUser([FromBody] RegisterDTO registerDTO)
         {
-            var result = await _registerService.RegisterUser(registerDTO);
+            var result = await _service.RegisterUser(registerDTO);
 
             return Ok(result);
         }

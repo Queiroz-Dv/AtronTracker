@@ -2,11 +2,11 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Atron.Application.DTO.Account
+namespace Atron.Application.DTO.ApiDTO
 {
     public class RegisterDTO : FactoryDTO
     {
-        public int Id { get; set; }        
+        public int Id { get; set; }
         public string UserName { get; set; }
 
         public string Sobrenome { get; set; }
