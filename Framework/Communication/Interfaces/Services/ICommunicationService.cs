@@ -1,11 +1,17 @@
-﻿using Shared.DTO;
+﻿using Shared.Interfaces;
+using Shared.Models;
 
 namespace Communication.Interfaces.Services
 {
-    public interface ICommunicationService
+    /// <summary>
+    /// Interface de comunicação dos resultados com a API
+    /// </summary>
+    public interface ICommunicationService : IMessages
     {
-        void AddResponseContent(ResultResponse resultResponse);
-        void AddResponseContent(List<ResultResponse> resultResponses);
-        List<ResultResponse> GetResultResponses();
+        void AddMessage(Message message);
+
+        void AddMessages(List<Message> messages);
+
+        List<Message> GetMessages();
     }
 }

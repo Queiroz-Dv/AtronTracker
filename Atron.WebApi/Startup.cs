@@ -1,3 +1,4 @@
+using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Infra.IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -5,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System;
 
 namespace Atron.WebApi
 {
@@ -26,6 +26,8 @@ namespace Atron.WebApi
 
             // Indica que usaremos as controllers para comunicação com os endpoints
             services.AddControllers();
+            services.AddHttpClient();
+            services.AddHttpContextAccessor();
 
             // Informa que usaremos o Swagger para documentação e testes
             services.AddSwaggerGen(c =>
@@ -41,18 +43,22 @@ namespace Atron.WebApi
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICreateDefaultUserRoleRepository createDefaultUserRole)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                AddSwagger(app);
+                app.UseDeveloperExceptionPage();                
             }
-          
+
             AddSwagger(app);
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
+
+            createDefaultUserRole.CreateDefaultRoles();
+            createDefaultUserRole.CreateDefaultUsers();
+
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

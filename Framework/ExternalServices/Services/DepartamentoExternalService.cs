@@ -1,80 +1,117 @@
 ﻿using Atron.Application.DTO;
+using Atron.Domain.Entities;
 using Communication.Extensions;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Newtonsoft.Json;
-using Shared.DTO;
+using Shared.Models;
 
 namespace ExternalServices.Services
 {
+    /// <summary>
+    /// Classe que implementa o processo e fluxo de departamentos
+    /// </summary>
     public class DepartamentoExternalService : IDepartamentoExternalService
     {
+        private readonly IUrlModuleFactory _urlFactory;
         private readonly IApiClient _apiClient;
         private readonly ICommunicationService _communicationService;
+        private readonly MessageModel<Departamento> _messageModel;
 
-        public DepartamentoExternalService(IApiClient apiClient, ICommunicationService communicationService)
+        public DepartamentoExternalService(
+            IUrlModuleFactory urlFactory,
+            IApiClient apiClient,
+            ICommunicationService communicationService,
+            MessageModel<Departamento> messageModel)
         {
+            _urlFactory = urlFactory;
             _apiClient = apiClient;
             _communicationService = communicationService;
+            _messageModel = messageModel;
         }
 
-        public async Task<(bool isSucess, List<ResultResponse> responses)> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
+        public async Task Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
+            if (string.IsNullOrEmpty(codigo) || string.IsNullOrEmpty(departamentoDTO.Codigo))
+            {
+                _messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                return;
+            }
+
+            RemontarEntidade(departamentoDTO);
+
             var json = JsonConvert.SerializeObject(departamentoDTO);
+
             try
             {
-                var response = await _apiClient.PutAsync("https://atron-hmg.azurewebsites.net/api/Departamento/AtualizarDepartamento/", codigo, json);
-                var notifications = _communicationService.GetResultResponses();
-                return (true, notifications);
+                await _apiClient.PutAsync(_urlFactory.Url, codigo, json);
+                _messageModel.Messages.AddMessages(_communicationService);
             }
             catch (HttpRequestException ex)
             {
-                var errorResponse = JsonConvert.DeserializeObject<List<ResultResponse>>(ex.Message);
-                return (false, errorResponse);
-                throw;
+                var exceptionMessage = JsonConvert.DeserializeObject<List<Message>>(ex.Message);
+                if (exceptionMessage is not null)
+                {
+                    _messageModel.Messages.AddRange(exceptionMessage);
+                }
+                else
+                {
+                    _messageModel.AddError(ex.Message);
+                }
             }
             catch (Exception ex)
             {
-                return (false, new List<ResultResponse> { new ResultResponse { Message = ex.Message } });
+                _messageModel.AddError(ex.Message);
             }
-
         }
 
-        public async Task<(bool isSucess, List<ResultResponse> responses)> Criar(DepartamentoDTO departamento)
+        public async Task<DepartamentoDTO> ObterPorCodigo(string codigo)
         {
-            var json = JsonConvert.SerializeObject(departamento);
-            var response = await _apiClient.PostAsync("https://atron-hmg.azurewebsites.net/api/Departamento/CriarDepartamento", json);
-            var notifications = _communicationService.GetResultResponses();
+            if (string.IsNullOrEmpty(codigo))
+            {
+                _messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                return new DepartamentoDTO();
+            }
 
-            if (!notifications.HasErrors())
-            {
-                return (true, notifications);
-            }
-            else
-            {
-                return (false, notifications);
-            }
+            var response = await _apiClient.GetAsync(_urlFactory.Url);
+            return JsonConvert.DeserializeObject<DepartamentoDTO>(response);
+        }
+
+        public async Task Criar(DepartamentoDTO departamento)
+        {
+            RemontarEntidade(departamento);
+
+            var json = JsonConvert.SerializeObject(departamento);
+            await _apiClient.PostAsync(_urlFactory.Url, json);
+            _messageModel.Messages.AddMessages(_communicationService);
+        }
+
+        private static void RemontarEntidade(DepartamentoDTO departamento)
+        {
+            departamento.Codigo = departamento.Codigo.ToUpper();
+            departamento.Descricao = departamento.Descricao.ToUpper();
         }
 
         public async Task<List<DepartamentoDTO>> ObterTodos()
         {
-            var response = await _apiClient.GetAsync("https://atron-hmg.azurewebsites.net/api/Departamento/ObterDepartamentos");
-            return JsonConvert.DeserializeObject<List<DepartamentoDTO>>(response);
+            var response = await _apiClient.GetAsync(_urlFactory.Url);
+
+            var departamentos = JsonConvert.DeserializeObject<List<DepartamentoDTO>>(response);
+            return departamentos is not null ? departamentos : new List<DepartamentoDTO>();
         }
 
-        public async Task<(bool isSuccess, List<ResultResponse> responses)> Remover(string codigo)
+        public async Task Remover(string codigo)
         {
-            var response = await _apiClient.DeleteAsync("https://atron-hmg.azurewebsites.net/api/Departamento/ExcluirDepartamento/", codigo);
-            var notifications = _communicationService.GetResultResponses();
-            if (!notifications.HasErrors())
+            if (string.IsNullOrEmpty(codigo))
             {
-                return (true, notifications);
+                _messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                return;
             }
-            else
-            {
-                return (false, notifications);
-            }
+
+            await _apiClient.DeleteAsync(_urlFactory.Url, codigo);
+            _messageModel.Messages.AddMessages(_communicationService);
         }
     }
 }

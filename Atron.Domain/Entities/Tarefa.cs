@@ -4,7 +4,7 @@ namespace Atron.Domain.Entities
 {
     public class Tarefa : EntityBase
     {
-        public long UsuarioId { get; set; }
+        public int UsuarioId { get; set; }
 
         public string UsuarioCodigo { get; set; }
 
@@ -16,6 +16,8 @@ namespace Atron.Domain.Entities
 
         public DateTime DataFinal { get; set; }
 
-        public int EstadoDaTarefa { get; set; }
+        public int TarefaEstadoId { get; set; }        
+
+        public Usuario Usuario { get; set; }
     }
 }

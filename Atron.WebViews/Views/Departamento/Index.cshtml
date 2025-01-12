@@ -7,77 +7,73 @@
 
 <link href="~/css/site.css" />
 <style>
-    .modal-lg {
-        max-width: 80%;
-    }
+	.modal-lg {
+		max-width: 80%;
+	}
 </style>
 
 <div>
-    <h2>@ViewData["Title"]</h2>
+	<h2>@ViewData["Title"]</h2>
 </div>
 <hr />
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="pull-left">
-            <a asp-action="Cadastrar" class="btn btn-success">
-                <span title="Cadastrar novo" class="fas fa-plus"></span> Cadastrar novo
-            </a>
-        </div>
-    </div>
+	<div class="col-md-12">
+		<div class="pull-left">
+			<a asp-action="Cadastrar" class="btn btn-success">
+				<span title="Cadastrar novo" class="fas fa-plus"></span> Cadastrar novo
+			</a>
+		</div>
+	</div>
 </div>
 <br />
 
 <div class="panel panel-default">
-    <form asp-controller="Departamento" asp-action="Index" method="get">
-        <p>
-            <input type="text" name="filter" />
-            <input type="submit" value="Filtrar" />
-        </p>
-    </form>
-    <div id="departamentos">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Departamento.Codigo)
-                    </th>
-                    <th>@Html.DisplayNameFor(model => model.Departamento.Descricao)</th>
-                </tr>
-            </thead>
+	<form asp-controller="Departamento" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
+		<p>
+			<input type="text" name="filter" />
+			<input type="submit" value="Filtrar" />
+		</p>
+	</form>
+	<fieldset>
+		<legend class="fw-semibold">Departamentos</legend>
+		<div id="departamentos">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>@Html.DisplayNameFor(model => model.Departamento.Codigo) </th>
+						<th>@Html.DisplayNameFor(model => model.Departamento.Descricao)</th>
+					</tr>
+				</thead>
 
-            <tbody>
-                @if (Model != null)
-                {
-                    @foreach (var item in Model.Departamentos)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(model_item => item.Codigo)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(model_item => item.Descricao)
-                            </td>
-                            <td>
+				<tbody>
+					@if (Model != null)
+					{
+						@foreach (var item in Model.Departamentos)
+						{
+							<tr>
+								<td>@item.Codigo</td>
+								<td>@item.Descricao</td>
+								<td>
+									<a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar"
+									   class="btn btn-warning">
+										<span class="fas fa-edit">Atualizar</span>
+									</a>
 
-                                <a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
-                                    <span class="fas fa-edit">Atualizar</span>
-                                </a>
-
-                                <a href="javascript:void(0);" onclick="confirmarRemocao('@item.Codigo')" title="Remover" class="btn btn-danger">
-                                    <span class="fas fa-trash-alt">Excluir</span>
-                                </a>
-
-                            </td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
-        <partial name="PagerPartial" model="Model.PageInfo" />
-    </div>
-
+									<a href="javascript:void(0);" onclick="confirmarRemocao('@item.Codigo')" title="Remover"
+									   class="btn btn-danger">
+										<span class="fas fa-trash-alt">Excluir</span>
+									</a>
+								</td>
+							</tr>
+						}
+					}
+				</tbody>
+			</table>
+			<partial name="PagerPartial" model="Model.PageInfo" />
+		</div>
+	</fieldset>
 </div>
 <br />
 <script src="~/js/departamentoScript.js"></script>
-<partial name="Partials/Departamento/ExcluirDepartamentoModal" for="Departamento"></partial>
+<partial name="Partials/ExcluirRegistroPartialModal" for="Departamento"></partial>

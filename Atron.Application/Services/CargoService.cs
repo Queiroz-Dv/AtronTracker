@@ -1,9 +1,11 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Application.Specifications.CargoSpecifications;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
-using Notification.Models;
+using Shared.Extensions;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,100 +20,129 @@ namespace Atron.Application.Services
         private readonly IMapper _mapper;
         private ICargoRepository _cargoRepository;
         private IDepartamentoRepository _departamentoRepository;
-        private readonly NotificationModel<Cargo> _notification;
-
-        public List<NotificationMessage> notificationMessages { get; set; }
-
+        private readonly MessageModel<Cargo> messageModel;
 
         public CargoService(IMapper mapper,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
-                            NotificationModel<Cargo> notification)
+                            MessageModel<Cargo> messageModel)
         {
             _mapper = mapper;
-            _notification = notification;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
-            notificationMessages = new List<NotificationMessage>();
+            this.messageModel = messageModel;
         }
 
         public async Task<List<CargoDTO>> ObterTodosAsync()
         {
             var cargos = await _cargoRepository.ObterCargosAsync();
-            var departamentos = await _departamentoRepository.ObterDepartmentosAsync();
 
-            var cargosDTOs = _mapper.Map<IEnumerable<CargoDTO>>(cargos);
-            var departamentosDTOs = _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
+            var cargosDTOs = _mapper.Map<List<CargoDTO>>(cargos);
 
-            var cargosComDepartamentos = (from pst in cargosDTOs
-                                          join dpt in departamentosDTOs on pst.DepartamentoCodigo equals dpt.Codigo
-                                          select new CargoDTO
-                                          {
-                                              Codigo = pst.Codigo,
-                                              Descricao = pst.Descricao,
-                                              DepartamentoCodigo = dpt.Codigo,
-                                              Departamento = new DepartamentoDTO() { Codigo = dpt.Codigo, Descricao = dpt.Descricao }
-                                          }).ToList();
+            cargosDTOs = (from crg in cargosDTOs
+                          select new CargoDTO
+                          {
+                              Codigo = crg.Codigo,
+                              Descricao = crg.Descricao,
+                              DepartamentoCodigo = crg.DepartamentoCodigo,
+                              Departamento = new DepartamentoDTO() { Codigo = crg.Departamento.Codigo, Descricao = crg.Departamento.Descricao }
+                          }).ToList();
 
-            return cargosComDepartamentos;
+            return cargosDTOs;
         }
 
         public async Task CriarAsync(CargoDTO cargoDTO)
         {
-            cargoDTO.Id = cargoDTO.GerarIdentificador();
+            if (cargoDTO is null)
+            {
+                messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                return;
+            }
+
             var cargo = _mapper.Map<Cargo>(cargoDTO);
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
+            var entity = await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
+
+            if (entity is not null && entity.DepartamentoCodigo == cargoDTO.DepartamentoCodigo)
+            {
+                messageModel.AddRegisterExistMessage(nameof(Cargo));
+            }
 
             if (departamento is not null)
             {
-                // Preciso obter o identificador do departamento através do código pra informar aqui
                 cargo.DepartmentoId = departamento.Id;
+                cargo.Departamento = null;
             }
 
-            _notification.Validate(cargo);
+            messageModel.Validate(cargo);
 
-            if (!_notification.Messages.HasErrors())
+            if (!messageModel.Messages.HasErrors())
             {
                 await _cargoRepository.CriarCargoAsync(cargo);
-                notificationMessages.Add(new NotificationMessage("Cargo criado com sucesso."));
+                messageModel.AddSuccessMessage(nameof(Cargo));
             }
-
-            notificationMessages.AddRange(_notification.Messages);
         }
 
-        public async Task AtualizarAsync(CargoDTO cargoDTO)
+        public async Task AtualizarAsync(string codigo, CargoDTO cargoDTO)
         {
+            if (!new CargoSpecification(codigo, cargoDTO.DepartamentoCodigo).IsSatisfiedBy(cargoDTO))
+            {
+                messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                return;
+            }
+
             var cargo = _mapper.Map<Cargo>(cargoDTO);
             var departamento = _departamentoRepository.DepartamentoExiste(cargoDTO.DepartamentoCodigo);
 
             if (departamento)
             {
-                var entidade= await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
-                cargo.DepartmentoId = entidade.DepartmentoId;
-                cargo.SetId(entidade.Id); // Atribuição de Id internamente
+                var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
+                cargo.DepartmentoId = entidade.Id;
+
+                if (cargo.Departamento is not null)
+                    cargo.Departamento = null;
+
             }
 
-            _notification.Validate(cargo);
-            if (!_notification.Messages.HasErrors())
+            messageModel.Validate(cargo);
+            if (!messageModel.Messages.HasErrors())
             {
                 await _cargoRepository.AtualizarCargoAsync(cargo);
-                notificationMessages.Add(new NotificationMessage("Cargo atualizado com sucesso."));
+                messageModel.AddUpdateMessage(nameof(Cargo));
             }
         }
 
-        public async Task RemoverAsync(int? id)
+        public async Task RemoverAsync(string codigo)
         {
-            var cargo = await _cargoRepository.ObterCargoPorIdAsync(id);
-            await _cargoRepository.RemoverCargoAsync(cargo);
+            var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
+            if (cargo is not null)
+            {
+                await _cargoRepository.RemoverCargoAsync(cargo);
+                messageModel.AddRegisterRemovedSuccessMessage(nameof(Cargo));
+            }
+            else
+            {
+                messageModel.AddRegisterNotFoundMessage(nameof(Cargo));
+            }
         }
 
         public async Task<CargoDTO> ObterPorCodigoAsync(string codigo)
         {
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
+            if (cargo is not null)
+            {
+                return _mapper.Map<CargoDTO>(cargo);
+            }
+            else
+            {
+                messageModel.AddRegisterNotFoundMessage(nameof(Cargo));
+                return null;
+            }
+        }
 
-            var cargoDTO = _mapper.Map<CargoDTO>(cargo);
-
-            return cargoDTO;
+        public IList<Message> GetMessages()
+        {
+            return messageModel.Messages;
         }
     }
 }

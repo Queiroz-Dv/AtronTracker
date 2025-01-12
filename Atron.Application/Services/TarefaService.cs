@@ -2,8 +2,11 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using AutoMapper;
-using Notification.Models;
+using Shared.Extensions;
+using Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,43 +17,31 @@ namespace Atron.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IRepository<Tarefa> _repository;
-        private readonly ICargoRepository _cargoRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
+        private readonly IRepository<TarefaEstado> _repositoryTarefaEstado;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioService _usuarioService;
         private readonly ITarefaRepository _tarefaRepository;
-        private readonly ITarefaEstadoRepository _tarefaEstadoRepository;
-
-        private readonly NotificationModel<Tarefa> _notification;
-
-        public List<NotificationMessage> _messages { get; set; }
+        private readonly MessageModel<Tarefa> _messageModel;
 
         public TarefaService(IMapper mapper,
                              IRepository<Tarefa> repository,
-                             ICargoRepository cargoRepository,
-                             IDepartamentoRepository departamentoRepository,
+                             IRepository<TarefaEstado> repositoryTarefaEstado,
                              IUsuarioRepository usuarioRepository,
                              IUsuarioService usuarioService,
                              ITarefaRepository tarefaRepository,
-                             ITarefaEstadoRepository tarefaEstadoRepository,
-                             NotificationModel<Tarefa> notification)
+                             MessageModel<Tarefa> messageModel)
         {
             _mapper = mapper;
             _repository = repository;
-            _notification = notification;
-            _cargoRepository = cargoRepository;
-            _departamentoRepository = departamentoRepository;
+            _repositoryTarefaEstado = repositoryTarefaEstado;
+            _messageModel = messageModel;
             _usuarioRepository = usuarioRepository;
             _usuarioService = usuarioService;
             _tarefaRepository = tarefaRepository;
-            _tarefaEstadoRepository = tarefaEstadoRepository;
-            _messages = new List<NotificationMessage>();
         }
 
         public async Task CriarAsync(TarefaDTO tarefaDTO)
         {
-            tarefaDTO.Id = tarefaDTO.GerarIdentificador();
-
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefaDTO.UsuarioCodigo);
             if (usuario is not null)
             {
@@ -59,115 +50,152 @@ namespace Atron.Application.Services
 
             var tarefa = _mapper.Map<Tarefa>(tarefaDTO);
 
-            _notification.Validate(tarefa);
+            var tarefaEstado = await _repositoryTarefaEstado.ObterPorIdRepositoryAsync(tarefaDTO.TarefaEstadoId);
 
-            if (!_notification.Messages.HasErrors())
+            if (tarefaEstado is not null)
             {
-                await _tarefaRepository.CriarRepositoryAsync(tarefa);
-                _messages.Add(new NotificationMessage("Tarefa criada com sucesso."));
+                tarefa.TarefaEstadoId = tarefaEstado.Id;
+            }
+
+            _messageModel.Validate(tarefa);
+
+            if (!_messageModel.Messages.HasErrors())
+            {
+                await _tarefaRepository.CriarTarefaAsync(tarefa);
+                _messageModel.AddSuccessMessage(nameof(Tarefa));
             }
         }
 
         public async Task<List<TarefaDTO>> ObterTodosAsync()
         {
-            var tarefas = await _tarefaRepository.ObterTodosRepositoryAsync();
-            var estadosDaTarefa = await _tarefaEstadoRepository.ObterTodosAsync();
-            var usuarios = await _usuarioService.ObterTodosAsync();
+            var tarefas = await _tarefaRepository.ObterTodasTarefas();
+            var tarefaEstado = await _repositoryTarefaEstado.ObterTodosRepositoryAsync();
 
             var tarefasDTO = _mapper.Map<IEnumerable<TarefaDTO>>(tarefas);
-            var tarefasDTOList = new List<TarefaDTO>();
 
-            foreach (var tarefaDTO in tarefasDTO)
-            {
-                foreach (var usuario in usuarios)
-                {
-                    if (tarefaDTO.UsuarioId == usuario.Id)
-                    {
-                        var tarefa = new TarefaDTO();
-                        tarefa.UsuarioCodigo = tarefaDTO.UsuarioCodigo;
+            var entidades = (from trf in tarefasDTO
+                             join tre in tarefaEstado on trf.TarefaEstadoId equals tre.Id
+                             select new TarefaDTO
+                             {
+                                 Id = trf.Id,
+                                 Titulo = trf.Titulo,
+                                 Conteudo = trf.Conteudo,
+                                 DataInicial = trf.DataInicial,
+                                 DataFinal = trf.DataFinal,
+                                 TarefaEstadoId = tre.Id,
+                                 EstadoDaTarefaDescricao = tre.Descricao,
+                                 UsuarioCodigo = trf.UsuarioCodigo,
 
-                        tarefa.Usuario = new UsuarioDTO()
-                        {
-                            Codigo = usuario.Codigo,
-                            Nome = usuario.Nome,
-                            Sobrenome = usuario.Sobrenome,
-                            DataNascimento = usuario.DataNascimento,
-                            Salario = usuario.Salario,
-                            CargoCodigo = usuario.CargoCodigo,
-                            DepartamentoCodigo = usuario.DepartamentoCodigo,
+                                 Usuario = new UsuarioDTO()
+                                 {
+                                     Codigo = trf.Usuario.Codigo,
+                                     Nome = trf.Usuario.Nome,
+                                     Sobrenome = trf.Usuario.Sobrenome,
+                                     DataNascimento = trf.Usuario.DataNascimento,
+                                     Salario = trf.Usuario.Salario,
+                                     CargoCodigo = trf.Usuario.CargoCodigo,
+                                     DepartamentoCodigo = trf.Usuario.DepartamentoCodigo,
 
-                            Departamento = new DepartamentoDTO()
-                            {
-                                Codigo = usuario.Departamento.Codigo,
-                                Descricao = usuario.Departamento.Descricao,
-                            },
+                                     Departamento = new DepartamentoDTO()
+                                     {
+                                         Codigo = trf.Usuario.Departamento.Codigo,
+                                         Descricao = trf.Usuario.Departamento.Descricao
+                                     },
 
-                            Cargo = new CargoDTO()
-                            {
-                                Codigo = usuario.Cargo.Codigo,
-                                Descricao = usuario.Cargo.Descricao,
-                            }
-                        };
+                                     Cargo = new CargoDTO()
+                                     {
+                                         Codigo = trf.Usuario.Cargo.Codigo,
+                                         Descricao = trf.Usuario.Cargo.Descricao
+                                     }
+                                 }
+                             }).ToList();
 
-                        tarefa.Titulo = tarefaDTO.Titulo;
-                        tarefa.Conteudo = tarefaDTO.Conteudo;
-                        tarefa.DataInicial = tarefaDTO.DataInicial.Date;
-                        tarefa.DataFinal = tarefaDTO.DataFinal.Date;
-                        tarefa.EstadoDaTarefa = tarefaDTO.EstadoDaTarefa;
-                        tarefa.EstadoDaTarefaDescricao = estadosDaTarefa.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Descricao;
-
-                        tarefasDTOList.Add(tarefa);
-                    }
-                }
-            }
-            return tarefasDTOList;
+            return entidades;
         }
 
         public async Task AtualizarAsync(TarefaDTO tarefaDTO)
         {
+            if (tarefaDTO is null)
+            {
+                _messageModel.AddRegisterInvalidMessage(nameof(Tarefa));
+                return;
+            }
+
             var tarefa = _mapper.Map<Tarefa>(tarefaDTO);
 
-            var usuarioExiste = _usuarioRepository.UsuarioExiste(tarefa.UsuarioCodigo);
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefa.UsuarioCodigo);
+            var tarefaEstado = await _repositoryTarefaEstado.ObterPorIdRepositoryAsync(tarefaDTO.TarefaEstadoId);
 
-            if (usuarioExiste)
+            tarefa.UsuarioId = usuario.Id;
+            tarefa.UsuarioCodigo = usuario.Codigo;
+            tarefa.TarefaEstadoId = tarefaEstado.Id;
+
+            _messageModel.Validate(tarefa);
+
+            if (!_messageModel.Messages.HasErrors())
             {
-                var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefa.UsuarioCodigo);
-                var tarefaEstados = await _tarefaEstadoRepository.ObterTodosAsync();
-
-                tarefa.UsuarioId = usuario.Id;
-                tarefa.UsuarioCodigo = usuario.Codigo;
-                tarefa.EstadoDaTarefa = tarefaEstados.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Id;
-
-                _notification.Validate(tarefa);
-
-                if (!_notification.Messages.HasErrors())
-                {
-                    await _tarefaRepository.AtualizarRepositoryAsync(tarefa);
-                    _messages.Add(new NotificationMessage("Tarefa atualizada com sucesso."));
-                    return;
-                }
-
-                _messages.AddRange(_notification.Messages);
-            }
-            else
-            {
-                _messages.Add(new NotificationMessage("Código de usuário não existe. Tente novamente", Notification.Enums.ENotificationType.Error));
+                await _tarefaRepository.AtualizarRepositoryAsync(tarefa);
+                _messageModel.AddUpdateMessage(nameof(Tarefa));
                 return;
             }
         }
 
-        public async Task ExcluirAsync(int id)
+        public async Task ExcluirAsync(string id)
         {
-            var tarefa = await _tarefaRepository.ObterPorIdRepositoryAsync(id);
+            var tarefa = await _tarefaRepository.ObterPorIdRepositoryAsync(Convert.ToInt32(id));
 
             if (tarefa is null)
             {
-                _messages.Add(new NotificationMessage("Tarefa não existe. Tente novamente"));
-                return;
+                _messageModel.AddRegisterNotFoundMessage(nameof(Tarefa));
             }
+            else
+            {
+                await _repository.RemoverRepositoryAsync(tarefa);
+                _messageModel.AddRegisterRemovedSuccessMessage(nameof(Tarefa));
+            }
+        }
 
-            await _repository.RemoverRepositoryAsync(tarefa);
-            _messages.Add(new NotificationMessage("Registro removido com sucesso"));
+        public async Task<TarefaDTO> ObterPorId(int id)
+        {
+            var tarefaRepository = await _tarefaRepository.ObterTarefaPorId(id);
+            var dto = _mapper.Map<TarefaDTO>(tarefaRepository);
+
+            var tarefaDTO = new TarefaDTO
+            {
+                Id = dto.Id,
+                Titulo = dto.Titulo,
+                Conteudo = dto.Conteudo,
+                DataInicial = dto.DataInicial,
+                DataFinal = dto.DataFinal,
+                TarefaEstadoId = dto.TarefaEstadoId,
+                EstadoDaTarefaDescricao = dto.EstadoDaTarefaDescricao,
+                UsuarioCodigo = dto.UsuarioCodigo,
+
+                Usuario = new UsuarioDTO()
+                {
+                    Codigo = dto.Usuario.Codigo,
+                    Nome = dto.Usuario.Nome,
+                    Sobrenome = dto.Usuario.Sobrenome,
+                    DataNascimento = dto.Usuario.DataNascimento,
+                    Salario = dto.Usuario.Salario,
+                    CargoCodigo = dto.Usuario.CargoCodigo,
+                    DepartamentoCodigo = dto.Usuario.DepartamentoCodigo,
+
+                    Departamento = new DepartamentoDTO()
+                    {
+                        Codigo = dto.Usuario.Departamento.Codigo,
+                        Descricao = dto.Usuario.Departamento.Descricao
+                    },
+
+                    Cargo = new CargoDTO()
+                    {
+                        Codigo = dto.Usuario.Cargo.Codigo,
+                        Descricao = dto.Usuario.Cargo.Descricao
+                    }
+                }
+            };
+
+            return tarefaDTO;
         }
     }
 }
