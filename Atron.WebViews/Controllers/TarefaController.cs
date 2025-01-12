@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class TarefaController : DefaultController<TarefaDTO, Tarefa, ITarefaExternalService>
+    public class TarefaController : MainController<TarefaDTO, Tarefa, ITarefaExternalService>
     {
         private readonly IUsuarioExternalService _usuarioService;
         private readonly IDepartamentoExternalService _departamentoService;

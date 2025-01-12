@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class DepartamentoController : DefaultController<DepartamentoDTO, Departamento, IDepartamentoExternalService>
+    public class DepartamentoController : MainController<DepartamentoDTO, Departamento, IDepartamentoExternalService>
     {
         public DepartamentoController(
             IUrlModuleFactory urlFactory,

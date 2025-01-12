@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class CargoController : DefaultController<CargoDTO, Cargo, ICargoExternalService>
+    public class CargoController : MainController<CargoDTO, Cargo, ICargoExternalService>
     {
         private IDepartamentoExternalService _departamentoService;
 

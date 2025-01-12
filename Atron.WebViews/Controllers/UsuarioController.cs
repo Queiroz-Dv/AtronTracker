@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class UsuarioController : DefaultController<UsuarioDTO, Usuario, IUsuarioExternalService>
+    public class UsuarioController : MainController<UsuarioDTO, Usuario, IUsuarioExternalService>
     {
         IDepartamentoExternalService _departamentoService;
         ICargoExternalService _cargoService;

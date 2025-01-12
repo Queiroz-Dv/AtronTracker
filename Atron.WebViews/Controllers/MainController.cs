@@ -14,14 +14,14 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class DefaultController<DTO, Entity, ExternalService> : ServiceConteinerController<DTO, Entity, ExternalService>
+    public class MainController<DTO, Entity, ExternalService> : ServiceConteinerController<DTO, Entity, ExternalService>
     {
         protected readonly IUrlModuleFactory _urlFactory;
         private readonly IApiRouteExternalService _apiRouteExternalService;
         private IConfiguration _configuration;
         private readonly RotaDeAcesso _appSettingsConfig;
 
-        public DefaultController(
+        public MainController(
             IUrlModuleFactory urlFactory,                     // Interface de URLs
             IPaginationService<DTO> paginationService,        // Interface de paginação
             ExternalService service,                          // Interface do serviço da entidade

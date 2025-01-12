@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class ApplicationLoginController : DefaultController<LoginDTO, ApiLogin, ILoginExternalService>
+    public class ApplicationLoginController : MainController<LoginDTO, ApiLogin, ILoginExternalService>
     {
         public ApplicationLoginController(IUrlModuleFactory urlFactory,
             IPaginationService<LoginDTO> paginationService,
