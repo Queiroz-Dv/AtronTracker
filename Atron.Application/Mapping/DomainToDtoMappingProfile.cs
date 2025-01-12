@@ -4,8 +4,12 @@ using AutoMapper;
 
 namespace Atron.Application.Mapping
 {
+    /// <summary>
+    /// Classe de mapeamento dos DTOs e entidades
+    /// </summary>
     public class DomainToDtoMappingProfile : Profile
     {
+        //TODO: Refazer o mapeamento manualmente ao invés do AutoMapper
         public DomainToDtoMappingProfile()
         {
             CriarMapeamentoDeDepartamento();
@@ -30,7 +34,6 @@ namespace Atron.Application.Mapping
         private void CriarMapeamentoDeMes()
         {
             CreateMap<Mes, MesDTO>()
-                .ForPath(dto => dto.Id, opt => opt.MapFrom(src => src.MesId))
                 .ForPath(dto => dto.Descricao, opt => opt.MapFrom(src => src.Descricao)).ReverseMap();
         }
 
@@ -49,22 +52,19 @@ namespace Atron.Application.Mapping
 
         private void CriarMapeamentoDeTarefa()
         {
-            CreateMap<Tarefa, TarefaDTO>().ReverseMap();
+            CreateMap<Tarefa, TarefaDTO>()
+                .ForPath(dto => dto.TarefaEstadoId, opt => opt.MapFrom(src => src.TarefaEstadoId))
+                .ReverseMap();
         }
 
         private void CriarMapeamentoDeUsuario()
         {
-            CreateMap<Usuario, UsuarioDTO>()
-                                .ForPath(dto => dto.DepartamentoId, opt => opt.MapFrom(src => src.DepartamentoId))
-                                .ForPath(dto => dto.DepartamentoCodigo, opt => opt.MapFrom(src => src.DepartamentoCodigo))
-                                .ForPath(dto => dto.CargoId, opt => opt.MapFrom(src => src.CargoId))
-                                .ForPath(dto => dto.CargoCodigo, opt => opt.MapFrom(src => src.CargoCodigo))
-                                .ReverseMap();
+            CreateMap<Usuario, UsuarioDTO>().ReverseMap();
         }
 
         private void CriarMapeamentoDeCargo()
         {
-            CreateMap<Cargo, CargoDTO>().ForMember(dto => dto.DepartamentoCodigo, opt => opt.MapFrom(src => src.DepartmentoCodigo)).ReverseMap();
+            CreateMap<Cargo, CargoDTO>().ForMember(dto => dto.DepartamentoCodigo, opt => opt.MapFrom(src => src.DepartamentoCodigo)).ReverseMap();
         }
 
         private void CriarMapeamentoDeDepartamento()

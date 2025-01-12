@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Shared.DTO.API;
 
 namespace Atron.WebViews
 {
@@ -23,6 +24,8 @@ namespace Atron.WebViews
             services.AddHttpClient();
             services.AddInfrastructure(Configuration);
             services.AddControllersWithViews();
+
+            services.Configure<RotaDeAcesso>(Configuration.GetSection(nameof(RotaDeAcesso)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,6 +34,7 @@ namespace Atron.WebViews
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHttpLogging();
             }
             else
             {
@@ -40,13 +44,15 @@ namespace Atron.WebViews
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.AddEntityRoutes();
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=ApplicationLogin}/{action=Login}");
             });
         }
     }

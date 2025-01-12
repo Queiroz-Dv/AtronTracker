@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class TarefaEstadoRepository : ITarefaEstadoRepository
+    public class TarefaEstadoRepository : Repository<TarefaEstado>, ITarefaEstadoRepository
     {
         private readonly AtronDbContext _context;
+        private readonly IRepository<TarefaEstado> _repository;
 
-        public TarefaEstadoRepository(AtronDbContext context)
+        public TarefaEstadoRepository(AtronDbContext context, IRepository<TarefaEstado> repository) : base(context)
         {
             _context = context;
+            _repository = repository;
         }
 
         public async Task<List<TarefaEstado>> ObterTodosAsync()

@@ -1,0 +1,69 @@
+﻿@using Atron.Application.DTO;
+@using Shared.DTO;
+@using Shared.Services;
+@using Newtonsoft.Json;
+@using Atron.WebViews.Models;
+@model TarefaModel;
+
+<style>
+    .modal-lg {
+        max-width: 80%;
+    }
+</style>
+
+<div>
+    <h2>@ViewData["Title"]</h2>
+</div>
+<hr />
+
+<partial name="Partials/CadastrarRegistroPartialModal"></partial>
+
+<div class="panel panel-default">
+    <form asp-controller="Tarefa" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
+        <p>
+            <input type="text" name="filter" />
+            <input type="submit" value="Filtrar" />
+        </p>
+    </form>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Usuario)</th>
+                <th>@Html.DisplayNameFor(model => model.Tarefa.Usuario.Cargo)</th>
+                <th>@Html.DisplayNameFor(model => model.Tarefa.Usuario.Departamento)</th>
+                <th>@Html.DisplayNameFor(model => model.Tarefa.Titulo)</th>
+                <th>@Html.DisplayNameFor(model => model.Tarefa.EstadoDaTarefaDescricao)</th>
+                <th>@Html.DisplayNameFor(model => model.Tarefa.DataInicial)</th>
+                <th>@Html.DisplayNameFor(model => model.Tarefa.DataFinal)</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.Tarefas)
+            {
+                <tr>
+                    <td>@item.Usuario.Nome</td>
+                    <td>@item.Usuario.Cargo.Descricao</td>
+                    <td>@item.Usuario.Departamento.Descricao</td>
+                    <td>@item.Titulo</td>
+                    <td>@item.EstadoDaTarefaDescricao</td>
+                    <td>@item.DataInicial.ToShortDateString()</td>
+                    <td>@item.DataFinal.ToShortDateString()</td>
+
+                    <td>
+                        <a asp-action="Atualizar" asp-route-id="@item.Id" title="Atualizar" class="btn btn-warning">
+                            <span class="fas fa-edit">Atualizar</span>
+                        </a>
+
+                        <a onclick="confirmarRemocao('@item.Id')" title="Remover"
+                           class="btn btn-danger">
+                            <span class="fas fa-trash-alt">Excluir</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="PagerPartial" model="Model.PageInfo" />
+</div>
+<partial name="Partials/ExcluirRegistroPartialModal" for="Tarefa"></partial>

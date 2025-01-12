@@ -18,7 +18,7 @@ namespace Atron.Infrastructure.Repositories
         }
 
         public async Task AtualizarRepositoryAsync(TEntity entity)
-        {
+        {            
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }

@@ -1,56 +1,66 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
+using Communication.Extensions;
 using ExternalServices.Interfaces;
+using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Shared.DTO;
-using Shared.Services;
-using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Shared.DTO.API;
+using Shared.Extensions;
+using Shared.Interfaces;
+using Shared.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class DepartamentoController : Controller
+    public class DepartamentoController : DefaultController<DepartamentoDTO, Departamento, IDepartamentoExternalService>
     {
-        private IDepartamentoExternalService _externalService;
-        private readonly PaginationService _paginationService;
-
-        public List<ResultResponse> ResultResponses { get; set; }
-
-        public DepartamentoController(IDepartamentoExternalService externalService, PaginationService paginationService)
+        public DepartamentoController(
+            IUrlModuleFactory urlFactory,
+            IPaginationService<DepartamentoDTO> paginationService,
+            IDepartamentoExternalService externalService,
+            IApiRouteExternalService apiRouteExternalService,
+            IConfiguration configuration,
+            IOptions<RotaDeAcesso> appSettingsConfig,
+            MessageModel<Departamento> messageModel)
+            : base(urlFactory,
+                  paginationService,
+                  externalService,
+                  apiRouteExternalService,
+                  configuration,
+                  appSettingsConfig,
+                  messageModel)
         {
-            _externalService = externalService;
-            _paginationService = paginationService;
-            ResultResponses = new List<ResultResponse>();
+            CurrentController = nameof(Departamento);            
         }
 
-        [HttpGet]
+        [HttpGet, HttpPost]
         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
-            ViewData["Title"] = "Painel de departamentos";
-            var departamentos = await _externalService.ObterTodos();
+            BuildRoute();
+            var departamentos = await _service.ObterTodos();
+          
+            Filter = filter;
+            ConfigurePaginationForView(departamentos, itemPage, CurrentController, filter);
 
-            if (!departamentos.Any())
-            {
-                return View();
-            }
-
-            var pageInfo = _paginationService.Paginate(departamentos, itemPage, nameof(Departamento), filter);
             var model = new DepartamentoModel()
             {
-                Departamentos = _paginationService.GetEntityPaginated(departamentos),
-                PageInfo = pageInfo
+                Departamentos = GetEntitiesPaginated(),
+                PageInfo = PageInfo
             };
 
+            ConfigureDataTitleForView("Painel de departamentos");
             return View(model);
         }
+
 
         [HttpGet]
         public IActionResult Cadastrar()
         {
-            ViewData["Title"] = "Cadastro de departamentos";
+            ConfigureDataTitleForView("Cadastro de departamentos");
             return View();
         }
 
@@ -59,88 +69,63 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _externalService.Criar(departamento);
-                ResultResponses.AddRange(response.responses);
+                BuildRoute();
 
-                var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
-                TempData["Notifications"] = responseSerialized;
-                return response.isSucess ? RedirectToAction(nameof(Cadastrar)) : View(nameof(Cadastrar), departamento);
+                await _service.Criar(departamento);
+
+                CreateTempDataMessages();
+
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) :
+                    View(nameof(Cadastrar), departamento);
             }
 
-            ViewData["Title"] = "Cadastro de departamentos";
+            ConfigureDataTitleForView("Cadastro de departamentos");
+
             return View(departamento);
         }
 
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
         {
-            if (codigo is null)
-            {
-                var notification = new ResultResponse() { Message = "O código informado não foi encontrado", Level = "Error" };
-                ResultResponses.Add(notification);
-                TempData["Notifications"] = JsonConvert.SerializeObject(ResultResponses);
+            BuildRoute(nameof(Departamento), codigo);
+            var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
-                return View(codigo);
+            if (departamentoDTO is null || _messageModel.Messages.HasErrors())
+            {
+                CreateTempDataMessages();
+                return RedirectToAction(nameof(Index));
             }
 
-            var departamentos = await _externalService.ObterTodos();
-
-            var departamentoDTO = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
-
-            if (departamentoDTO is not null)
-            {
-                ViewData["Title"] = "Atualizar informação de departamento";
-
-                return View(departamentoDTO);
-            }
-            else
-            {
-                return View(departamentoDTO);
-            }
+            ConfigureDataTitleForView("Atualizar informação de departamento");
+            return View(departamentoDTO);
         }
 
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
-            var response = await _externalService.Atualizar(codigo, departamentoDTO);
-            ResultResponses.AddRange(response.responses);
+            BuildRoute(nameof(Departamento), codigo);
+            await _service.Atualizar(codigo, departamentoDTO);
+            CreateTempDataMessages();
 
-            var responseSerialized = JsonConvert.SerializeObject(ResultResponses);
-            TempData["Notifications"] = responseSerialized;
-
-            return response.isSucess ? RedirectToAction(nameof(Index)) : View(nameof(Atualizar), departamentoDTO);
+            return !_messageModel.Messages.HasErrors() ?
+            RedirectToAction(nameof(Index)) :
+            View(nameof(Atualizar), departamentoDTO);
         }
 
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            if (string.IsNullOrEmpty(codigo))
-            {
-                TempData["Erro"] = JsonConvert.SerializeObject(new ResultResponse() { Message = "Código não informado, tente novamente." });
-                return RedirectToAction(nameof(Index));
-            }
+            BuildRoute(nameof(Departamento), codigo);
+            await _service.Remover(codigo);
 
-            var response = await _externalService.Remover(codigo);
-
-            if (response.isSuccess)
-            {
-                ResultResponses.AddRange(response.responses);
-                TempData["Notifications"] = JsonConvert.SerializeObject(ResultResponses);
-            }
-            else
-            {
-                ViewBag.Erros = JsonConvert.SerializeObject(response.responses);
-            }
-
+            CreateTempDataMessages();
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> ObterDepartamento(string codigoDepartamento)
         {
-            var departamentos = await _externalService.ObterTodos();
-
-            var departamento = departamentos.FirstOrDefault(dpt => dpt.Codigo == codigoDepartamento);
+            var departamento = await _service.ObterPorCodigo(codigoDepartamento);
 
             return Ok(departamento);
         }

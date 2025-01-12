@@ -3,8 +3,8 @@ using Atron.Application.Enums;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using AutoMapper;
-using Notification.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,15 +20,12 @@ namespace Atron.Application.Services
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioService _usuarioService;
 
-        private readonly NotificationModel<Permissao> _notification;
-
         public PermissaoService(IMapper mapper,
                                 IRepository<Permissao> repository,
                                 IPermissaoRepository permissaoRepository,
                                 IPermissaoEstadoRepository permissaoEstadoRepository,
                                 IUsuarioRepository usuarioRepository,
-                                IUsuarioService usuarioService,
-                                NotificationModel<Permissao> notification)
+                                IUsuarioService usuarioService)
         {
             _mapper = mapper;
             _repository = repository;
@@ -36,11 +33,8 @@ namespace Atron.Application.Services
             _permissaoEstadoRepository = permissaoEstadoRepository;
             _usuarioRepository = usuarioRepository;
             _usuarioService = usuarioService;
-            _notification = notification;
-            _messages = new List<NotificationMessage>();
         }
 
-        public List<NotificationMessage> _messages { get; set; }
 
         public async Task AtualizarPermissaoServiceAsync(PermissaoDTO permissaoDTO)
         {
@@ -58,19 +52,19 @@ namespace Atron.Application.Services
             }
             else
             {
-                _messages.Add(new NotificationMessage("Código de usuário não existe para atualização da permissão. Tente novamente.", Notification.Enums.ENotificationType.Error));
+                //    Messages.Add(new NotificationMessage("Código de usuário não existe para atualização da permissão. Tente novamente.", Notification.Enums.ENotificationType.Error));
                 return;
             }
 
-            _notification.Validate(permissao);
+            //_notification.Validate(permissao);
 
-            if (!_notification.Messages.HasErrors())
-            {
-                await _permissaoRepository.AtualizarRepositoryAsync(permissao);
-                _messages.Add(new NotificationMessage("Permissão atualizada com sucesso"));
-            }
+            //if (!_notification.Messages.HasErrors())
+            //{
+            //    await _permissaoRepository.AtualizarRepositoryAsync(permissao);
+            //    Messages.Add(new NotificationMessage("Permissão atualizada com sucesso"));
+            //}
 
-            _messages.AddRange(_notification.Messages);
+            //Messages.AddRange(_notification.Messages);
         }
 
         public async Task CriarPermissaoServiceAsync(PermissaoDTO permissaoDTO)
@@ -84,15 +78,15 @@ namespace Atron.Application.Services
             }
 
             var permissao = _mapper.Map<Permissao>(permissaoDTO);
-            _notification.Validate(permissao);
+            //_notification.Validate(permissao);
 
-            if (!_notification.Messages.HasErrors())
-            {
-                await _permissaoRepository.CriarRepositoryAsync(permissao);
-                _messages.Add(new NotificationMessage("Permissão foi adicionada com sucesso."));
-            }
+            //if (!_notification.Messages.HasErrors())
+            //{
+            //    await _permissaoRepository.CriarRepositoryAsync(permissao);
+            //    Messages.Add(new NotificationMessage("Permissão foi adicionada com sucesso."));
+            //}
 
-            _messages.AddRange(_notification.Messages);
+            //Messages.AddRange(_notification.Messages);
         }
 
         public async Task ExcluirPermissaoServiceAsync(int id)
@@ -101,20 +95,20 @@ namespace Atron.Application.Services
 
             if (permissao is null)
             {
-                _messages.Add(new NotificationMessage("Permissão não existe ou não foi associada a um usuário"));
+                // Messages.Add(new NotificationMessage("Permissão não existe ou não foi associada a um usuário"));
                 return;
             }
 
             if (permissao.PermissaoEstadoId is (int)EPermissaoEstados.Aprovada or
                 (int)EPermissaoEstados.Desaprovada)
             {
-                _messages.Add(new NotificationMessage("Não é possível excluir uma permissão aprovada ou desaprovada"));
+                //  Messages.Add(new NotificationMessage("Não é possível excluir uma permissão aprovada ou desaprovada"));
                 return;
             }
 
 
             await _repository.RemoverRepositoryAsync(permissao);
-            _messages.Add(new NotificationMessage("Registro removido com sucesso"));
+            //   Messages.Add(new NotificationMessage("Registro removido com sucesso"));
         }
 
         public async Task<List<PermissaoDTO>> ObterTodasPermissoesServiceAsync()

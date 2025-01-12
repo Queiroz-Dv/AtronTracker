@@ -8,18 +8,16 @@ namespace Atron.Infrastructure.EntitiesConfiguration
     {
         public void Configure(EntityTypeBuilder<Usuario> builder)
         {
-            builder.HasKey(x => x.Id);
-            builder.Property(usr => usr.Id).ValueGeneratedNever();
+            builder.HasKey(usr => new { usr.Id, usr.Codigo });
+            builder.Property(usr => usr.Id).ValueGeneratedOnAdd();
 
-            builder.Property(usr => usr.Codigo).IsRequired().HasMaxLength(10);
+            builder.Property(dpt => dpt.IdSequencial).IsRequired();
+
             builder.Property(usr => usr.Nome).IsRequired().HasMaxLength(25);
             builder.Property(usr => usr.Sobrenome).IsRequired().HasMaxLength(50);
+            builder.Property(usr => usr.Email).IsRequired().HasMaxLength(50);
             builder.Property(usr => usr.DataNascimento);
-            builder.Property(usr => usr.Salario);
-            builder.Property(usr => usr.CargoId).IsRequired();
-            builder.Property(usr => usr.DepartamentoId).IsRequired();
-            builder.Property(usr => usr.CargoCodigo).IsRequired().HasMaxLength(10);
-            builder.Property(usr => usr.DepartamentoCodigo).IsRequired().HasMaxLength(10);
+            builder.Property(usr => usr.SalarioAtual);                    
         }
     }
 }
