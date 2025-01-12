@@ -50,7 +50,7 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Painel de tarefas");
 
-            await BuildRoute(nameof(Tarefa));
+            BuildRoute(nameof(Tarefa));
             var tarefas = await _service.ObterTodos();
 
             Filter = filter;
@@ -72,7 +72,7 @@ namespace Atron.WebViews.Controllers
             ConfigureDataTitleForView("Cadastro de tarefas");
             ConfigureCurrentPageAction(nameof(Cadastrar));
 
-            await BuildUsuarioRoute();
+            BuildUsuarioRoute();
             var usuarios = await _usuarioService.ObterTodos();
             var usuariosFiltrados = usuarios.Select(usr => new
             {
@@ -92,7 +92,7 @@ namespace Atron.WebViews.Controllers
 
             if (ModelState.IsValid)
             {
-                await BuildRoute(nameof(Tarefa));
+                BuildRoute(nameof(Tarefa));
 
                 await _service.Criar(tarefaDTO);
                 CreateTempDataMessages();
@@ -105,15 +105,15 @@ namespace Atron.WebViews.Controllers
             return RedirectToAction(nameof(Cadastrar));
         }
 
-        private async Task BuildUsuarioRoute()
+        private void  BuildUsuarioRoute()
         {
-            await BuildRoute(nameof(Usuario));
+            BuildRoute(nameof(Usuario));
         }
 
         [HttpGet]
         public async Task<IActionResult> CarregarFormularioTarefa(string codigoUsuario, string actionPage)
         {
-            await BuildRoute(nameof(Usuario), codigoUsuario);
+            BuildRoute(nameof(Usuario), codigoUsuario);
             var usuario = await _usuarioService.ObterPorCodigo(codigoUsuario);
             var tarefaDto = new TarefaDTO
             {
@@ -144,10 +144,10 @@ namespace Atron.WebViews.Controllers
             ConfigureDataTitleForView("Atualizar informação da tarefa");
             ConfigureCurrentPageAction(nameof(Atualizar));
 
-            await BuildRoute(nameof(Tarefa), id);
+            BuildRoute(nameof(Tarefa), id);
             var tarefa = await _service.ObterPorId();
 
-            await BuildUsuarioRoute();
+            BuildUsuarioRoute();
             var usuarios = await _usuarioService.ObterTodos();
             var usuariosFiltrados = usuarios.Select(usr => new
             {
@@ -164,7 +164,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Atualizar(string id, TarefaDTO tarefaDTO)
         {
-            await BuildRoute(nameof(Tarefa), id);
+            BuildRoute(nameof(Tarefa), id);
 
             await _service.Atualizar(id, tarefaDTO);
 
@@ -181,7 +181,7 @@ namespace Atron.WebViews.Controllers
         }
         private async Task ConfigurarViewBagDeEstadoDasTarefas()
         {
-            await BuildRoute(nameof(TarefaEstado));
+            BuildRoute(nameof(TarefaEstado));
 
             var estados = await _tarefaEstadoExternalService.ObterTodosAsync();
 
@@ -191,7 +191,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            await BuildRoute(nameof(Tarefa), codigo);
+            BuildRoute(nameof(Tarefa), codigo);
             await _service.Remover(codigo);
 
             CreateTempDataMessages();

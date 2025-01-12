@@ -1,5 +1,5 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.DTO.Account;
+using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Shared.Extensions;
@@ -19,7 +19,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
         public async Task<LoginDTO> Authenticate(LoginDTO loginDTO)
         {
-            var login = new Login()
+            var login = new ApiLogin()
             {
                 Email = loginDTO.Email,
                 Password = loginDTO.Passsword
@@ -27,7 +27,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
             var result = await _loginApplication.AuthenticateUserLoginAsync(login);
 
-            loginDTO.Authtenticated = result;
+            loginDTO.Authenticated = result;
 
             if (loginDTO.ReturnUrl.IsNullOrEmpty())
             {

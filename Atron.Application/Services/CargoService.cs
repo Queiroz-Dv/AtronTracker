@@ -1,15 +1,14 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Application.Specifications.CargoSpecifications;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Shared.Extensions;
 using AutoMapper;
-using Notification.Models;
+using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Atron.Application.Specifications.Cargo;
 
 namespace Atron.Application.Services
 {
@@ -36,10 +35,10 @@ namespace Atron.Application.Services
 
         public async Task<List<CargoDTO>> ObterTodosAsync()
         {
-            var cargos = await _cargoRepository.ObterCargosAsync();        
+            var cargos = await _cargoRepository.ObterCargosAsync();
 
             var cargosDTOs = _mapper.Map<List<CargoDTO>>(cargos);
-      
+
             cargosDTOs = (from crg in cargosDTOs
                           select new CargoDTO
                           {
