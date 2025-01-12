@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class SalarioController : DefaultController<SalarioDTO, Salario, ISalarioExternalService>
+    public class SalarioController : MainController<SalarioDTO, Salario, ISalarioExternalService>
     {
         private readonly IUsuarioExternalService _usuarioService;
 
