@@ -1,6 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
-using Atron.Application.Specifications.Cargo;
+using Atron.Application.Specifications.CargoSpecifications;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;

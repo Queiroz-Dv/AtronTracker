@@ -23,6 +23,7 @@ namespace Atron.WebViews.Controllers
         protected bool ForceFilter { get; set; } = true;
 
         protected string CurrentController { get; set; }
+        protected string ActionName { get; set; }
 
         protected ServiceConteinerController(
             IPaginationService<DTO> paginationService,

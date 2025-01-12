@@ -1,4 +1,5 @@
-﻿using Atron.Domain.ApiEntities;
+﻿using Atron.Application.DTO.ApiDTO;
+using Atron.Domain.ApiEntities;
 
 namespace ExternalServices.Interfaces.ApiRoutesInterfaces
 {
@@ -12,6 +13,6 @@ namespace ExternalServices.Interfaces.ApiRoutesInterfaces
         /// </summary>
         /// <param name="modulo">Rota de acesso principal</param>
         /// <returns>Retorna todas as rotas disponíveis</returns>
-        Task<ApiRoute> MontarRotaDoModulo(string rota, string modulo);
+        Task<ApiRoute> MontarRotaDoModulo(string rota, string modulo);       
     }
 }

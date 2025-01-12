@@ -1,4 +1,5 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.DTO.ApiDTO;
 using Atron.Application.Mapping;
 using Atron.Application.Validations;
 using Atron.Domain.ApiEntities;
@@ -48,6 +49,11 @@ namespace Atron.Infra.IoC
             services.AddScoped<IPaginationService<CargoDTO>, PaginationService<CargoDTO>>();
             services.AddScoped<IPaginationService<UsuarioDTO>, PaginationService<UsuarioDTO>>();
             services.AddScoped<IPaginationService<TarefaDTO>, PaginationService<TarefaDTO>>();
+
+            services.AddScoped<IPaginationService<LoginDTO>, PaginationService<LoginDTO>>();
+            services.AddScoped<IMessages, LoginMessageValidation>();
+            services.AddScoped<MessageModel<ApiLogin>, LoginMessageValidation>();
+            services.AddScoped<ILoginExternalService, LoginExternalService>();
 
             services.AddScoped<IResultResponseService, ResultResponseModel>();
             services.AddScoped<IUrlModuleFactory, UrlFactory>();

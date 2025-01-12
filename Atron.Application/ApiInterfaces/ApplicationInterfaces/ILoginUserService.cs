@@ -1,4 +1,4 @@
-﻿using Atron.Application.DTO.Account;
+﻿using Atron.Application.DTO.ApiDTO;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiInterfaces.ApplicationInterfaces

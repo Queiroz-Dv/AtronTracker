@@ -6,6 +6,7 @@ using Atron.Application.Interfaces;
 using Atron.Application.Mapping;
 using Atron.Application.Services;
 using Atron.Application.Validations;
+using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
@@ -80,7 +81,7 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IPermissaoEstadoRepository, PermissaoEstadoRepository>();
 
-            services.AddScoped<IApiRouteService, ApiRouteService>();
+            
 
             // Serviços utilitários 
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
@@ -91,7 +92,12 @@ namespace Atron.Infra.IoC
             ConfigurarTarefaServices(services);
             ConfigurarSalarioServices(services);
 
-            
+            services.AddScoped<IMessages, ApiRegisterMessageValidation>();
+            services.AddScoped<MessageModel<ApiRegister>, ApiRegisterMessageValidation>();
+
+            services.AddScoped<IMessages, LoginMessageValidation>();
+            services.AddScoped<MessageModel<ApiLogin>, LoginMessageValidation>();
+
             services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
             services.AddScoped<ILoginUserService, LoginUserService>();
             services.AddScoped<IRegisterUserService, RegisterUserService>();
