@@ -2,15 +2,14 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using AutoMapper;
-using Notification.Models;
-using Shared.Models;
-using System.Collections.Generic;
 using Shared.Extensions;
+using Shared.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
-using Atron.Domain.Interfaces.UsuarioInterfaces;
 
 namespace Atron.Application.Services
 {

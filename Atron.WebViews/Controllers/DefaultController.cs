@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Shared.DTO;
 using Shared.DTO.API;
+using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
 using System;
@@ -37,30 +38,18 @@ namespace Atron.WebViews.Controllers
         }
 
         // Monta a rota de acordo com o modulo
-        protected async Task BuildRoute(string modulo, string parametro = "")
+        protected void BuildRoute(string controlador = "", string parametro = "")
         {
-            // Obtém rota do json 
-            var rotaDoConnect = ObterRotaDoConfig();
-
-            // Obtém a rota do módulo através da API
-            var rota = await _apiRouteExternalService.MontarRotaDoModulo(rotaDoConnect, modulo);
+            var config = _appSettingsConfig;
 
             // Monta a URI do módulo
-            string url = rota.BuildUri(parametro);
+            string rota = ApiRouteBuilder.BuildRoute(config.Protocolo, config.Url);
+            string url = controlador.IsNullOrEmpty() ? ApiRouteBuilder.BuildUrl(rota, CurrentController, ActionName, parametro) :
+                                                       ApiRouteBuilder.BuildUrl(rota, controlador, ActionName, parametro);
 
             // Passa a url para a interface que será utilizada nos serviços
             _urlFactory.Url = url;
-        }
-
-        private string ObterRotaDoConfig()
-        {
-            var _config = _appSettingsConfig;
-            string urlCompleta = $"{_config.Metodo}{_config.Url}/";
-
-            // Adiciona o modulo de acesso e o nome de acesso
-            urlCompleta += $"{_config.ModuloDeAcesso}/{_config.NomeDeAcesso}";
-
-            return urlCompleta;
+            
         }
 
         /// <summary>
@@ -148,7 +137,7 @@ namespace Atron.WebViews.Controllers
         public virtual void ConfigureDataTitleForView(string title)
         {
             ViewData["Title"] = title;
-        }        
+        }
 
         public virtual void ConfigureCurrentPageAction(string action)
         {

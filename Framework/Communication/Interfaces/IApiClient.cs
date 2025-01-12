@@ -28,6 +28,8 @@
         /// <param name="content">Conteúdo que será enviado para criação</param>
         Task PostAsync(string uri, string content);
 
+        Task<DTO> PostAsync<DTO>(string url, string content);
+
         /// <summary>
         /// Executa a ação de atualizar um registro
         /// </summary>

@@ -38,7 +38,6 @@ namespace Communication.Models
             var response = await _httpClient.GetAsync($"{uri}/{parameter}");
             var responseContent = await response.Content.ReadAsStringAsync();
             return responseContent;
-
         }
 
         public async Task PostAsync(string uri, string content)
@@ -78,6 +77,16 @@ namespace Communication.Models
             var response = await _httpClient.DeleteAsync(uri);
 
             await FillResultResponse(response);
+        }
+
+        public async Task<DTO> PostAsync<DTO>(string url, string content)
+        {
+            var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
+            var response = await _httpClient.PostAsync(url, httpContent);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var jsonContent = JsonConvert.DeserializeObject<DTO>(responseContent);
+            return jsonContent;
         }
     }
 }

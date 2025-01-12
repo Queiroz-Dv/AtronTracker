@@ -2,7 +2,6 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Models;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;
@@ -29,11 +28,8 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult> Post([FromBody] CargoDTO cargo)
         {
             await _service.CriarAsync(cargo);
-
-            return _messageModel.Messages.HasErrors() ?
-                 BadRequest(ObterNotificacoes()) :
-                 Ok(ObterNotificacoes());
-        }
+            return RetornoPadrao(cargo);
+        }        
 
         [HttpPut("{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] CargoDTO cargo)
@@ -64,6 +60,6 @@ namespace Atron.WebApi.Controllers
             return cargo is null ?
                NotFound(ObterNotificacoes()) :
                Ok(cargo);
-        }       
+        }
     }
 }

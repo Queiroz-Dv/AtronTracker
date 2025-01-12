@@ -1,17 +1,16 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using AutoMapper;
-using Notification.Models;
-using Shared.Models;
 using Shared.Extensions;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Atron.Domain.Interfaces.ApplicationInterfaces;
-using Atron.Domain.Interfaces.UsuarioInterfaces;
-using Atron.Domain.ApiEntities;
 
 namespace Atron.Application.Services
 {
@@ -102,9 +101,9 @@ namespace Atron.Application.Services
                 var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
 
                 departamento.Id = departamentoBd.Id;
-                departamento.Codigo = departamentoBd.Codigo;                
+                departamento.Codigo = departamentoBd.Codigo;
                 cargo.Id = cargoBd.Id;
-                cargo.Codigo = cargoBd.Codigo;                
+                cargo.Codigo = cargoBd.Codigo;
             }
 
 
@@ -124,7 +123,7 @@ namespace Atron.Application.Services
 
                     if (Registrar)
                     {
-                        var register = new Register()
+                        var register = new ApiRegister()
                         {
                             UserName = usuario.Nome,
                             Email = usuario.Email,
@@ -142,7 +141,7 @@ namespace Atron.Application.Services
             }
 
             return false;
-        }      
+        }
 
         public async Task<UsuarioDTO> ObterPorCodigoAsync(string codigo)
         {

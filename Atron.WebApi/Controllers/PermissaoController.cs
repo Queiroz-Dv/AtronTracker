@@ -1,7 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,11 +23,11 @@ namespace Atron.WebApi.Controllers
         {
             if (permissao is null)
             {
-                return BadRequest(new NotificationMessage("Registro inválido, tente novamente"));
+               // return BadRequest(new NotificationMessage("Registro inválido, tente novamente"));
             }
 
             await _permissaoService.CriarPermissaoServiceAsync(permissao);
-            return Ok(_permissaoService.Messages);
+            return Ok();
         }
 
         [Route("ObterPermissoes")]
@@ -50,15 +49,15 @@ namespace Atron.WebApi.Controllers
         {
             await _permissaoService.AtualizarPermissaoServiceAsync(permissao);
 
-            if (_permissaoService.Messages.HasErrors())
-            {
-                foreach (var item in _permissaoService.Messages)
-                {
-                    return BadRequest(item.Message);
-                }
-            }
+            //if (_permissaoService.Messages.HasErrors())
+            //{
+            //    foreach (var item in _permissaoService.Messages)
+            //    {
+            //        return BadRequest(item.Message);
+            //    }
+            //}
 
-            return Ok(_permissaoService.Messages);
+            return Ok();
         }
 
         // TODO: Testar depois
@@ -69,18 +68,18 @@ namespace Atron.WebApi.Controllers
             {
                 await _permissaoService.ExcluirPermissaoServiceAsync(id);
 
-                if (_permissaoService.Messages.HasErrors())
-                {
-                    foreach (var item in _permissaoService.Messages)
-                    {
-                        return BadRequest(item.Message);
-                    }
-                }
+                //if (_permissaoService.Messages.HasErrors())
+                //{
+                //    foreach (var item in _permissaoService.Messages)
+                //    {
+                //        return BadRequest(item.Message);
+                //    }
+                //}
 
-                return Ok(_permissaoService.Messages);
+                return Ok();
             }
 
-            return BadRequest(new NotificationMessage("Identificador da permissão inválido", Notification.Enums.ENotificationType.Error));
+            return BadRequest();
         }
     }
 }
