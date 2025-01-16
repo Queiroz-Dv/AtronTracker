@@ -44,7 +44,7 @@ namespace Atron.WebViews.Controllers
 
             // Monta a URI do módulo
             string rota = ApiRouteBuilder.BuildRoute(config.Protocolo, config.Url);
-            string url = controlador.IsNullOrEmpty() ? ApiRouteBuilder.BuildUrl(rota, CurrentController, ActionName, parametro) :
+            string url = controlador.IsNullOrEmpty() ? ApiRouteBuilder.BuildUrl(rota, ApiController, ActionName, parametro) :
                                                        ApiRouteBuilder.BuildUrl(rota, controlador, ActionName, parametro);
 
             // Passa a url para a interface que será utilizada nos serviços
@@ -73,7 +73,7 @@ namespace Atron.WebViews.Controllers
         {
             if (string.IsNullOrEmpty(currentController))
             {
-                CurrentController = currentController;
+                ApiController = currentController;
             }
 
             if (string.IsNullOrEmpty(filter))
@@ -81,7 +81,7 @@ namespace Atron.WebViews.Controllers
                 Filter = filter;
             }
 
-            _paginationService.Paginate(itens, itemPage, CurrentController, Filter, nameof(Index), KeyToSearch);
+            _paginationService.Paginate(itens, itemPage, ApiController, Filter, nameof(Index), KeyToSearch);
 
             if (!string.IsNullOrEmpty(Filter))
             {
@@ -95,7 +95,7 @@ namespace Atron.WebViews.Controllers
 
         private void ConfigureViewBagCurrentController()
         {
-            ViewBag.CurrentController = CurrentController;
+            ViewBag.CurrentController = ApiController;
         }
 
         protected void ConfigureViewDataFilter()

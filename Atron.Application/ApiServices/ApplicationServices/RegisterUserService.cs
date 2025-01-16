@@ -34,14 +34,14 @@ namespace Atron.Application.ApiServices.ApplicationServices
         {
             var register = new ApiRegister()
             {                
-                UserName = registerDTO.UserName,
+                UserName = registerDTO.Codigo,
                 Email = registerDTO.Email,
-                Password = registerDTO.Passsword,
-                ConfirmPassword = registerDTO.ConfirmPasssword
+                Password = registerDTO.Senha,
+                ConfirmPassword = registerDTO.ConfirmaSenha
             };
 
             _messageModel.Validate(register);
-            registerDTO.RegisterConfirmed = false; 
+            registerDTO.Registrado = false; 
 
             if (!_messageModel.Messages.HasErrors())
             {
@@ -53,7 +53,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                     {
                         IdSequencial = registerDTO.IdSequencial,
                         Codigo = registerDTO.Codigo,
-                        Nome = registerDTO.UserName,
+                        Nome = registerDTO.Nome,
                         Sobrenome = registerDTO.Sobrenome,
                         DataNascimento = registerDTO.DataNascimento,
                         Email = registerDTO.Email
@@ -61,6 +61,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
                     _usuarioMessageModel.Validate(usuario);                    
                     var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Nome, usuario.Sobrenome, usuario.Email);
+
                     if (!usuarioSpec.IsSatisfiedBy(usuario))
                     {
                         foreach (var error in usuarioSpec.Errors)
@@ -74,7 +75,8 @@ namespace Atron.Application.ApiServices.ApplicationServices
                         var usuarioGravado = await _usuarioRepository.CriarUsuarioAsync(usuario);
                         if (usuarioGravado)
                         {
-                            registerDTO.RegisterConfirmed = result;
+                            _messageModel.AddMessage("Usuário registrado e cadastrado com sucesso.");
+                            registerDTO.Registrado = result;
                         }
                     }
                 }

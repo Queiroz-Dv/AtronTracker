@@ -44,7 +44,7 @@ namespace Atron.WebViews.Controllers
         {
             _departamentoService = departamentoExternalService;
             _cargoService = cargoExternalService;
-            CurrentController = nameof(Usuario);
+            ApiController = nameof(Usuario);
         }
 
         // Rever como automatizar o processo de montagem de rotas
@@ -67,7 +67,7 @@ namespace Atron.WebViews.Controllers
             var usuarios = await _service.ObterTodos();
 
             Filter = filter;
-            ConfigurePaginationForView(usuarios, itemPage, CurrentController, filter);
+            ConfigurePaginationForView(usuarios, itemPage, ApiController, filter);
             var model = new UsuarioModel()
             {
                 Usuarios = GetEntitiesPaginated(),

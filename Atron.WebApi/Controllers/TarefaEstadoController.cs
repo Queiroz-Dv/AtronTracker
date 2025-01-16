@@ -1,5 +1,6 @@
 ﻿using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 using System.Collections;
@@ -10,6 +11,7 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TarefaEstadoController : ModuleController<TarefaEstado, ITarefaEstadoService>
     {
         //TODO: Sempre que tenho uma entidade simplificada sou forçado a ter um message model dela para validação

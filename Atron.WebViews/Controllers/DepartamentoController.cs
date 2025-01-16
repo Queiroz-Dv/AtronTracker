@@ -34,7 +34,7 @@ namespace Atron.WebViews.Controllers
                   appSettingsConfig,
                   messageModel)
         {
-            CurrentController = nameof(Departamento);            
+            ApiController = nameof(Departamento);            
         }
 
         [HttpGet, HttpPost]
@@ -44,7 +44,7 @@ namespace Atron.WebViews.Controllers
             var departamentos = await _service.ObterTodos();
           
             Filter = filter;
-            ConfigurePaginationForView(departamentos, itemPage, CurrentController, filter);
+            ConfigurePaginationForView(departamentos, itemPage, ApiController, filter);
 
             var model = new DepartamentoModel()
             {

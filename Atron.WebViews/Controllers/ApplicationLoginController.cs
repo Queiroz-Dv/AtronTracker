@@ -30,7 +30,7 @@ namespace Atron.WebViews.Controllers
                 appSettingsConfig,
                 messageModel)
         {
-            CurrentController = "ApplicationLogin";
+            ApiController = "AppLogin";
         }
 
         [HttpGet]
@@ -45,7 +45,8 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
-             BuildRoute("AppLogin");
+            ActionName = "Logar";
+            BuildRoute();
             var login = await _service.Autenticar(loginDTO);
 
             if (login.Authenticated)

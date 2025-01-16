@@ -40,7 +40,7 @@ namespace Atron.WebViews.Controllers
                   messageModel)
         {
             _departamentoService = departamentoExternalService;
-            CurrentController = nameof(Cargo);
+            ApiController = nameof(Cargo);
         }
 
         [HttpGet, HttpPost]
@@ -51,7 +51,7 @@ namespace Atron.WebViews.Controllers
             var cargos = await _service.ObterTodos();
             
             Filter = filter;
-            ConfigurePaginationForView(cargos, itemPage, CurrentController, filter);
+            ConfigurePaginationForView(cargos, itemPage, ApiController, filter);
             var model = new CargoModel()
             {
                 Cargos = GetEntitiesPaginated(),

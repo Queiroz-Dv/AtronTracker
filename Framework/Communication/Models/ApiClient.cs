@@ -85,6 +85,7 @@ namespace Communication.Models
             var response = await _httpClient.PostAsync(url, httpContent);
 
             var responseContent = await response.Content.ReadAsStringAsync();
+            
             var jsonContent = JsonConvert.DeserializeObject<DTO>(responseContent);
             return jsonContent;
         }
