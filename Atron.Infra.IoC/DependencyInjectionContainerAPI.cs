@@ -43,9 +43,6 @@ namespace Atron.Infra.IoC
                     .AddEntityFrameworkStores<AtronDbContext>()
                     .AddDefaultTokenProviders();
 
-            // TODO: Criar a controller da Home no projeto de API
-            services.ConfigureApplicationCookie(options => options.AccessDeniedPath = "/Home/Index");
-
             //Repositórios e serviços padrões
             services.AddScoped<IRepository<Permissao>, Repository<Permissao>>();
             services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();

@@ -51,9 +51,14 @@ namespace Atron.Infra.IoC
             services.AddScoped<IPaginationService<TarefaDTO>, PaginationService<TarefaDTO>>();
 
             services.AddScoped<IPaginationService<LoginDTO>, PaginationService<LoginDTO>>();
+            services.AddScoped<IPaginationService<RegisterDTO>, PaginationService<RegisterDTO>>();
             services.AddScoped<IMessages, LoginMessageValidation>();
             services.AddScoped<MessageModel<ApiLogin>, LoginMessageValidation>();
             services.AddScoped<ILoginExternalService, LoginExternalService>();
+
+            services.AddScoped<IMessages, ApiRegisterMessageValidation>();
+            services.AddScoped<MessageModel<ApiRegister>, ApiRegisterMessageValidation>();
+            services.AddScoped<IRegisterExternalService, RegisterExternalService>();
 
             services.AddScoped<IResultResponseService, ResultResponseModel>();
             services.AddScoped<IUrlModuleFactory, UrlFactory>();

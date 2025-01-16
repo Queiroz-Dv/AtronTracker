@@ -9,7 +9,7 @@ namespace Atron.Application.Validations
     {
         public override void Validate(ApiLogin entity)
         {
-            if (entity.Email.IsNullOrEmpty())
+            if (entity.UserName.IsNullOrEmpty())
             {
                 AddError("E-mail vazio");
             }

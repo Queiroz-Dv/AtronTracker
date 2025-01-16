@@ -155,6 +155,7 @@ namespace Atron.Application.Services
                 Sobrenome = usuario.Sobrenome,
                 Salario = usuario.SalarioAtual,
                 DataNascimento = usuario.DataNascimento,
+                Email = usuario.Email,
                 //CargoCodigo = usuario.CargoCodigo,
                 //DepartamentoCodigo = usuario.DepartamentoCodigo,
                 //Cargo = new CargoDTO() { Codigo = usuario.Cargo.Codigo, Descricao = usuario.Cargo.Descricao },

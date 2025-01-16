@@ -23,24 +23,15 @@ namespace Atron.WebApi
         {
             // Aqui registramos os serviços da API como repositorios e Validações
             services.AddInfrastructureAPI(Configuration);
+            services.AddInfrastructureSecurity(Configuration);
+            services.AddDependencyInjectionApiDoc();
 
             // Indica que usaremos as controllers para comunicação com os endpoints
             services.AddControllers();
             services.AddHttpClient();
             services.AddHttpContextAccessor();
 
-            // Informa que usaremos o Swagger para documentação e testes
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Atron API",
-                    Version = "v1",
-                    Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
-                    Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
-                });
-                c.EnableAnnotations();
-            });
+          
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICreateDefaultUserRoleRepository createDefaultUserRole)

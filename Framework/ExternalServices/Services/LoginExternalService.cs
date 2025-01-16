@@ -14,8 +14,7 @@ namespace ExternalServices.Services
 
         public LoginExternalService(
             IUrlModuleFactory urlModuleFactory,
-            IApiClient apiClient, 
-            ICommunicationService communicationService)
+            IApiClient apiClient)
         {
             _urlModuleFactory = urlModuleFactory;
             _apiClient = apiClient;            

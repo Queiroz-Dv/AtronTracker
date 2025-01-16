@@ -38,7 +38,7 @@ namespace Atron.WebViews.Controllers
                 appSettingsConfig,
                 messageModel)
         {
-            CurrentController = nameof(Salario);
+            ApiController = nameof(Salario);
             _usuarioService = usuarioService;
         }
 
@@ -53,7 +53,7 @@ namespace Atron.WebViews.Controllers
 
             Filter = filter;
             KeyToSearch = nameof(TarefaDTO.Titulo);
-            ConfigurePaginationForView(salarios, itemPage, CurrentController, filter);
+            ConfigurePaginationForView(salarios, itemPage, ApiController, filter);
 
             var model = new SalarioModel()
             {

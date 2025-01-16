@@ -1,0 +1,55 @@
+﻿@model RegisterDTO
+
+<link href="~/css/auth.css" rel="stylesheet">
+<div class="login-container d-flex align-items-center justify-content-center vh-100">
+    <div class="card shadow-lg p-5">
+        <h2 class="text-center mb-4">Registrar Usuário</h2>
+        <form asp-controller="ApplicationRegister" asp-action="Registrar" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <div class="form-group mb-4">
+                <input asp-for="Codigo" class="form-control" placeholder="Digite seu código de acesso" />
+                <span asp-validation-for="Codigo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <input asp-for="Nome" class="form-control" placeholder="Digite seu nome" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <input asp-for="Sobrenome" class="form-control" placeholder="Digite seu sobrenome" />
+                <span asp-validation-for="Sobrenome" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <input asp-for="DataNascimento" class="form-control" placeholder="Data de nascimento" type="date" />
+                <span asp-validation-for="DataNascimento" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <input asp-for="Email" class="form-control" placeholder="Digite seu email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <input asp-for="Senha" type="password" class="form-control" placeholder="Digite sua senha" />
+                <span asp-validation-for="Senha" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-5">
+                <input asp-for="ConfirmaSenha" type="password" class="form-control" placeholder="Confirme sua senha" />
+                <span asp-validation-for="ConfirmaSenha" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid gap-2 text-center mb-2">
+                <button type="submit" class="btn btn-outline-primary">Registrar</button>
+                <a asp-controller="ApplicationLogin" asp-action="Login" class="btn btn-outline-secondary">Login</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/auth.js"></script>
+}

@@ -42,7 +42,7 @@ namespace Atron.WebViews.Controllers
         {
             _tarefaEstadoExternalService = tarefaEstadoExternalService;
             _usuarioService = usuarioService;
-            CurrentController = nameof(Tarefa);
+            ApiController = nameof(Tarefa);
         }
 
         [HttpGet, HttpPost]
@@ -55,7 +55,7 @@ namespace Atron.WebViews.Controllers
 
             Filter = filter;
             KeyToSearch = nameof(TarefaDTO.Titulo);
-            ConfigurePaginationForView(tarefas, itemPage, CurrentController, filter);
+            ConfigurePaginationForView(tarefas, itemPage, ApiController, filter);
 
             var model = new TarefaModel()
             {
