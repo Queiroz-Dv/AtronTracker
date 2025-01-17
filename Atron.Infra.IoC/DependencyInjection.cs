@@ -25,7 +25,7 @@ namespace Atron.Infra.IoC
     /// </summary>
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             // O método AddScoped indica que os serviços são criados uma vez por requisição HTTP
             // O método Singleton indica que o serviço é criado uma vez para todas as requisições

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace Atron.WebApi
 {
@@ -21,24 +20,23 @@ namespace Atron.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Aqui registramos os serviços da API como repositorios e Validações
-            services.AddInfrastructureAPI(Configuration);
-            services.AddInfrastructureSecurity(Configuration);
-            services.AddDependencyInjectionApiDoc();
+            // Aqui registramos os serviços da API
+            services.AddInfrastructureAPI(Configuration);         // Adiciona a injeção de dependência da camada de infraestrutura
+            services.AddInfrastructureSecurity(Configuration);   // Adiciona a injeção de dependência da camada de segurança
+            services.AddServiceMappings();                      // Adiciona a injeção de dependência dos mapeamentos
+            services.AddDependencyInjectionApiDoc();           // Adiciona a injeção de dependência da documentação da API
 
             // Indica que usaremos as controllers para comunicação com os endpoints
             services.AddControllers();
             services.AddHttpClient();
             services.AddHttpContextAccessor();
-
-          
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICreateDefaultUserRoleRepository createDefaultUserRole)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();                
+                app.UseDeveloperExceptionPage();
             }
 
             AddSwagger(app);
