@@ -5,8 +5,10 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Shared.Extensions;
+using Shared.Interfaces.Mapper;
 using Shared.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Services
@@ -21,11 +23,13 @@ namespace Atron.Application.Services
          *  essa responsabilidade é delegada ao contêiner de IoC. 
          *  O serviço depende de uma abstração (IDepartamentoRepository) 
          *  em vez de uma implementação concreta (DepartamentoRepository).*/
-        private readonly IMapper _mapper;
+        private readonly IApplicationMapService<DepartamentoDTO, Departamento> _map;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly MessageModel<Departamento> messageModel;
 
-        public DepartamentoService(IMapper mapper, IDepartamentoRepository departamentoRepository,
+        public DepartamentoService(
+            IApplicationMapService<DepartamentoDTO, Departamento> map,
+            IDepartamentoRepository departamentoRepository,
              MessageModel<Departamento> messageModel)
         {
             /* A Injeção de Dependência via construtor é usada para fornecer 
@@ -34,21 +38,20 @@ namespace Atron.Application.Services
              * sem instanciar a classe concreta dentro do serviço.
              * Isso permite que o DepartamentoService não precise saber
              * como o repositório executa suas funções, promovendo o desacoplamento e a testabilidade. */
-            _mapper = mapper;
+            _map = map;
             _departamentoRepository = departamentoRepository;
             this.messageModel = messageModel;
         }
 
         public async Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
-            if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO) ||
-                codigo.IsNullOrEmpty())
+            if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO))
             {
                 messageModel.AddRegisterInvalidMessage(nameof(Departamento));
                 return;
             }
 
-            var departamento = _mapper.Map<Departamento>(departamentoDTO);
+            var departamento = _map.MapToEntity(departamentoDTO);
             messageModel.Validate(departamento);
 
             if (!messageModel.Messages.HasErrors())
@@ -66,7 +69,7 @@ namespace Atron.Application.Services
                 return;
             }
 
-            var departamento = _mapper.Map<Departamento>(departamentoDTO);
+            var departamento = _map.MapToEntity(departamentoDTO);
 
             var entity = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamento.Codigo);
 
@@ -89,7 +92,7 @@ namespace Atron.Application.Services
 
             if (departamento is not null)
             {
-                return _mapper.Map<DepartamentoDTO>(departamento);
+                return _map.MapToDTO(departamento);
             }
             else
             {
@@ -100,16 +103,14 @@ namespace Atron.Application.Services
 
         public async Task<DepartamentoDTO> ObterPorIdAsync(int? departamentoId)
         {
-            var entity = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);
-            var dto = _mapper.Map<DepartamentoDTO>(entity);
-            return dto;
+            var entity = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);            
+            return _map.MapToDTO(entity);
         }
 
         public async Task<IEnumerable<DepartamentoDTO>> ObterTodosAsync()
         {
             var entities = await _departamentoRepository.ObterDepartmentosAsync();
-            var dtos = _mapper.Map<List<DepartamentoDTO>>(entities);
-            return dtos;
+            return _map.MapToListDTO(entities.ToList());
         }
 
         public async Task RemoverAsync(string codigo)

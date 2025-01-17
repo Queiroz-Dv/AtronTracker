@@ -22,7 +22,7 @@ namespace Atron.WebViews
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
-            services.AddInfrastructure(Configuration);
+            services.AddInfrastructure();
             services.AddControllersWithViews();
 
             services.Configure<RotaDeAcesso>(Configuration.GetSection(nameof(RotaDeAcesso)));
