@@ -1,5 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -36,6 +37,10 @@ namespace Atron.Application.DTO
         public DepartamentoDTO Departamento { get; set; }
 
         public CargoDTO Cargo { get; set; }
+
+        public List<DepartamentoDTO> Departamentos { get; set; }
+
+        public List<CargoDTO> Cargos { get; set; }
 
         public bool AssociarCargoDepartamento { get; set; } = false;
 

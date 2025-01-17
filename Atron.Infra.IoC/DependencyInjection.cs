@@ -12,7 +12,6 @@ using ExternalServices.Interfaces;
 using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using ExternalServices.Services;
 using ExternalServices.Services.ApiRouteServices;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Interfaces;
 using Shared.Models;
