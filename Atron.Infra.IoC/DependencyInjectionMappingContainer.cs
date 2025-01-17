@@ -3,7 +3,6 @@ using Atron.Application.Mapping;
 using Atron.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Interfaces.Mapper;
-using Shared.Services.Mapper;
 
 namespace Atron.Infra.IoC
 {
@@ -11,8 +10,9 @@ namespace Atron.Infra.IoC
     {
         public static IServiceCollection AddServiceMappings(this IServiceCollection services)
         {
-            //IApplicationMapService<DepartamentoDTO, Departamento>,
             services.AddScoped<IApplicationMapService<DepartamentoDTO, Departamento>, DepartamentoMapping>();
+            services.AddScoped<IApplicationMapService<CargoDTO, Cargo>, CargoMapping>();
+            services.AddScoped<IApplicationMapService<UsuarioDTO, Usuario>, UsuarioMapping>();
             return services;
         }
     }
