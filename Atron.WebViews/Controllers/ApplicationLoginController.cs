@@ -2,14 +2,17 @@
 using Atron.Domain.ApiEntities;
 using ExternalServices.Interfaces;
 using ExternalServices.Interfaces.ApiRoutesInterfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
 using System;
 using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace Atron.WebViews.Controllers
 {
@@ -51,6 +54,8 @@ namespace Atron.WebViews.Controllers
 
             if (login.Authenticated)
             {
+                // Configura o token nos cookies e na sessão
+                SetAuthToken(login.UserToken.Token, login.UserToken.Expires);
                 return RedirectToAction(nameof(Index), "Home");
             }
             else

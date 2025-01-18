@@ -1,5 +1,6 @@
 using Atron.Domain.Extensions;
 using ExternalServices.Interfaces.ApiRoutesInterfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -48,8 +49,7 @@ namespace Atron.WebViews.Controllers
                                                        ApiRouteBuilder.BuildUrl(rota, controlador, ActionName, parametro);
 
             // Passa a url para a interface que será utilizada nos serviços
-            _urlFactory.Url = url;
-            
+            _urlFactory.Url = url;            
         }
 
         /// <summary>
@@ -142,6 +142,21 @@ namespace Atron.WebViews.Controllers
         public virtual void ConfigureCurrentPageAction(string action)
         {
             ViewData["ActionPage"] = action;
+        }
+
+        protected void SetAuthToken(string token, DateTime expires)
+        {
+            // Configurar o token nos cookies
+            HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions
+            {
+                HttpOnly = true, // Apenas acessível via HTTP
+                Secure = true, // Apenas HTTPS
+                SameSite = SameSiteMode.Strict, // Restringir a envio a requisições da mesma origem
+                Expires = expires, // Tempo de expiração
+            });
+
+            // Configurar o token na sessão
+            HttpContext.Session.SetString("AuthToken", token);
         }
     }
 }

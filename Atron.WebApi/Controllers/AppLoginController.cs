@@ -24,10 +24,11 @@ namespace Atron.WebApi.Controllers
         /// <param name="loginDTO">DTO que será autenticado </param>
         /// <returns>O resultado do processamento</returns>
         [HttpPost]
-        [Route("Logar")]        
+        [Route("Logar")]
         public async Task<ActionResult<LoginDTO>> Logar([FromBody] LoginDTO loginDTO)
         {
             var result = await _service.Authenticate(loginDTO);
+            Response.Headers.Add("Authorization", $"Bearer {result.UserToken.Token}");
 
             return Ok(result);
         }

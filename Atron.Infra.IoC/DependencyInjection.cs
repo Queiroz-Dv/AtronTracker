@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Services;
+using System;
 
 namespace Atron.Infra.IoC
 {
@@ -31,7 +32,7 @@ namespace Atron.Infra.IoC
             // O método Transiente indica que sempre será criado um novo serviço cada vez que for necessário
             // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo           
             services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
-
+           
             services.AddScoped<IApiClient, ApiClient>();
             services.AddScoped<ICommunicationService, CommunicationService>();
 
