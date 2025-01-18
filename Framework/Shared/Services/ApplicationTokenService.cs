@@ -39,7 +39,7 @@ namespace Shared.Services
             var userSigningCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
 
             // Definir o tempo de expiração do token
-            var tokenExpiration = DateTime.UtcNow.AddHours(1);
+            var tokenExpiration = DateTime.Now.AddHours(1);
 
             // Gerar o token
             var token = new JwtSecurityToken(
@@ -50,14 +50,24 @@ namespace Shared.Services
                 signingCredentials: userSigningCredentials
             );
 
-            // Retornar o token
-            var userToken = new UserToken()
+            try
             {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expires = tokenExpiration
-            };
+                var tokenCreated = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return userToken;
+                // Retornar o token
+                var userToken = new UserToken()
+                {
+                    Token = tokenCreated,
+                    Expires = tokenExpiration
+                };
+
+                return userToken;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }
