@@ -1,10 +1,12 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using AutoMapper;
 using Shared.Extensions;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +26,8 @@ namespace Atron.Application.Services
         private readonly ITarefaEstadoRepository _tarefaEstadoRepository;
         private readonly ISalarioRepository _salarioRepository;
         private readonly IMesRepository _mesRepository;
-        private readonly MessageModel<Salario> _messageModel;
+        private readonly IValidateModel<Salario> _validateModel;
+        private readonly MessageModel _messageModel;
 
         public SalarioService(IMapper mapper,
                               IRepository<Salario> repository,
@@ -36,7 +39,8 @@ namespace Atron.Application.Services
                               ITarefaEstadoRepository tarefaEstadoRepository,
                               ISalarioRepository salarioRepository,
                               IMesRepository mesRepository,
-                              MessageModel<Salario> messageModel)
+                              MessageModel messageModel,
+                              IValidateModel<Salario> validateModel)
         {
             _mapper = mapper;
             _repository = repository;
@@ -49,6 +53,7 @@ namespace Atron.Application.Services
             _salarioRepository = salarioRepository;
             _mesRepository = mesRepository;
             _messageModel = messageModel;
+            _validateModel = validateModel;
         }
 
         public async Task AtualizarServiceAsync(SalarioDTO salarioDTO)
@@ -62,7 +67,7 @@ namespace Atron.Application.Services
             entidade.UsuarioCodigo = usuario.Codigo;
             entidade.MesId = salarioDTO.MesId;
 
-            _messageModel.Validate(entidade);
+            _validateModel.Validate(entidade);
 
             if (!_messageModel.Messages.HasErrors())
             {
@@ -87,8 +92,7 @@ namespace Atron.Application.Services
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(salarioDTO.UsuarioCodigo);
 
             var entidade = new Salario()
-            {
-                IdSequencial = salarioDTO.IdSequencial,
+            {                
                 SalarioMensal = salarioDTO.SalarioMensal,
                 Ano = salarioDTO.Ano,
                 MesId = salarioDTO.MesId,
@@ -96,7 +100,7 @@ namespace Atron.Application.Services
                 UsuarioCodigo = salarioDTO.UsuarioCodigo,
             };
 
-            _messageModel.Validate(entidade);
+            _validateModel.Validate(entidade);
 
             if (!_messageModel.Messages.HasErrors())
             {

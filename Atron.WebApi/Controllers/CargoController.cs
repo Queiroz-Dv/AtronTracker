@@ -16,7 +16,7 @@ namespace Atron.WebApi.Controllers
     public class CargoController : ModuleController<Cargo, ICargoService>
     {
         public CargoController(ICargoService cargoService,
-                               MessageModel<Cargo> messageModel)
+                               MessageModel messageModel)
             : base(cargoService, messageModel) { }
 
         [HttpGet]
@@ -31,7 +31,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.CriarAsync(cargo);
             return RetornoPadrao(cargo);
-        }        
+        }
 
         [HttpPut("{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] CargoDTO cargo)

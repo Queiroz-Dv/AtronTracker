@@ -6,7 +6,7 @@ namespace Atron.Infra.IoC
 {
     public static class DependencyInjectionApiDoc
     {
-        public static void AddDependencyInjectionApiDoc(this IServiceCollection services)
+        public static IServiceCollection AddDependencyInjectionApiDoc(this IServiceCollection services)
         {
             // Informa que usaremos o Swagger para documentação e testes
             services.AddSwaggerGen(c =>
@@ -16,7 +16,8 @@ namespace Atron.Infra.IoC
                     Title = "Atron API",
                     Version = "v1",
                     Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
-                    Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
+                    Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }                    
+                    
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -33,7 +34,7 @@ namespace Atron.Infra.IoC
                 {
                     {
                         new OpenApiSecurityScheme
-                        {                            
+                        {
                             Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
@@ -46,6 +47,8 @@ namespace Atron.Infra.IoC
                 });
                 c.EnableAnnotations();
             });
+            
+            return services;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Atron.WebApi.Controllers
     [Authorize]
     public class DepartamentoController : ModuleController<Departamento, IDepartamentoService>
     {
-        public DepartamentoController(IDepartamentoService departamentoService, MessageModel<Departamento> messageModel)
+        public DepartamentoController(IDepartamentoService departamentoService, MessageModel messageModel)
             : base(departamentoService, messageModel)
         {
             // Injeta a dependência do serviço de departamento no construtor

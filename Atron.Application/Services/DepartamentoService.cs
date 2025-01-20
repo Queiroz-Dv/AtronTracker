@@ -1,11 +1,13 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Application.Specifications.DepartamentoSpecifications;
+using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Shared.Extensions;
 using Shared.Interfaces.Mapper;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +27,14 @@ namespace Atron.Application.Services
          *  em vez de uma implementação concreta (DepartamentoRepository).*/
         private readonly IApplicationMapService<DepartamentoDTO, Departamento> _map;
         private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly MessageModel<Departamento> messageModel;
+        private readonly IValidateModel<Departamento> _validateModel;
+        private readonly MessageModel messageModel;
 
         public DepartamentoService(
             IApplicationMapService<DepartamentoDTO, Departamento> map,
             IDepartamentoRepository departamentoRepository,
-             MessageModel<Departamento> messageModel)
+             MessageModel messageModel,
+             IValidateModel<Departamento> validateModel)
         {
             /* A Injeção de Dependência via construtor é usada para fornecer 
              * a dependência ao DepartamentoService. 
@@ -41,6 +45,7 @@ namespace Atron.Application.Services
             _map = map;
             _departamentoRepository = departamentoRepository;
             this.messageModel = messageModel;
+            _validateModel = validateModel;
         }
 
         public async Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
@@ -52,7 +57,7 @@ namespace Atron.Application.Services
             }
 
             var departamento = _map.MapToEntity(departamentoDTO);
-            messageModel.Validate(departamento);
+            _validateModel.Validate(departamento);
 
             if (!messageModel.Messages.HasErrors())
             {
@@ -78,7 +83,7 @@ namespace Atron.Application.Services
                 messageModel.AddRegisterExistMessage(nameof(Departamento));
             }
 
-            messageModel.Validate(departamento);
+            _validateModel.Validate(departamento);
             if (!messageModel.Messages.HasErrors())
             {
                 await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);

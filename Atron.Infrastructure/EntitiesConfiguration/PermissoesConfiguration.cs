@@ -10,7 +10,6 @@ namespace Atron.Infrastructure.EntitiesConfiguration
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(dpt => dpt.IdSequencial).IsRequired();
             builder.Property(pms => pms.UsuarioId).IsRequired();
             builder.Property(pms =>pms.UsuarioCodigo).IsRequired().HasMaxLength(10);
             builder.Property(pms => pms.DataInicial).IsRequired();

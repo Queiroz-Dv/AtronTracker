@@ -17,7 +17,7 @@ namespace Atron.WebApi.Controllers
     {
 
         public SalarioController(ISalarioService service,
-            MessageModel<Salario> messageModel)
+            MessageModel messageModel)
         : base(service, messageModel)
         { }
 

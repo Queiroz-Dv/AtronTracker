@@ -2,8 +2,8 @@
 
 namespace Atron.WebViews.Models
 {
-    public class DefaultModel
+    public class DefaultModel<DTO>
     {
-        public PageInfoDTO PageInfo { get; set; }
+        public PageInfoDTO<DTO> PageInfo { get; set; }
     }
 }

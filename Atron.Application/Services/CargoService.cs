@@ -5,9 +5,9 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using AutoMapper;
 using Shared.Extensions;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Services
@@ -20,17 +20,20 @@ namespace Atron.Application.Services
         private readonly IMapper _mapper;
         private ICargoRepository _cargoRepository;
         private IDepartamentoRepository _departamentoRepository;
-        private readonly MessageModel<Cargo> messageModel;
+        private readonly IValidateModel<Cargo> _validateModel;
+        private readonly MessageModel _messageModel;
 
         public CargoService(IMapper mapper,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
-                            MessageModel<Cargo> messageModel)
+                            MessageModel messageModel,
+                            IValidateModel<Cargo> validateModel)
         {
             _mapper = mapper;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
-            this.messageModel = messageModel;
+            _messageModel = messageModel;
+            _validateModel = validateModel;
         }
 
         public async Task<List<CargoDTO>> ObterTodosAsync()
@@ -39,14 +42,14 @@ namespace Atron.Application.Services
 
             var cargosDTOs = _mapper.Map<List<CargoDTO>>(cargos);
 
-            cargosDTOs = (from crg in cargosDTOs
-                          select new CargoDTO
-                          {
-                              Codigo = crg.Codigo,
-                              Descricao = crg.Descricao,
-                              DepartamentoCodigo = crg.DepartamentoCodigo,
-                              Departamento = new DepartamentoDTO() { Codigo = crg.Departamento.Codigo, Descricao = crg.Departamento.Descricao }
-                          }).ToList();
+            //cargosDTOs = (from crg in cargosDTOs
+            //              select new CargoDTO(crg.Codigo, crg.Descricao, new DepartamentoDTO(crg.Departamento.Codigo, ))
+            //              {
+            //                  Codigo = crg.Codigo,
+            //                  Descricao = crg.Descricao,
+            //                  DepartamentoCodigo = crg.DepartamentoCodigo,
+            //                  Departamento =  { Codigo = crg.Departamento.Codigo, Descricao = crg.Departamento.Descricao }
+            //              }).ToList();
 
             return cargosDTOs;
         }
@@ -55,7 +58,7 @@ namespace Atron.Application.Services
         {
             if (cargoDTO is null)
             {
-                messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
                 return;
             }
 
@@ -65,7 +68,7 @@ namespace Atron.Application.Services
 
             if (entity is not null && entity.DepartamentoCodigo == cargoDTO.DepartamentoCodigo)
             {
-                messageModel.AddRegisterExistMessage(nameof(Cargo));
+                _messageModel.AddRegisterExistMessage(nameof(Cargo));
             }
 
             if (departamento is not null)
@@ -74,12 +77,12 @@ namespace Atron.Application.Services
                 cargo.Departamento = null;
             }
 
-            messageModel.Validate(cargo);
+            _validateModel.Validate(cargo);
 
-            if (!messageModel.Messages.HasErrors())
+            if (!_messageModel.Messages.HasErrors())
             {
                 await _cargoRepository.CriarCargoAsync(cargo);
-                messageModel.AddSuccessMessage(nameof(Cargo));
+                _messageModel.AddSuccessMessage(nameof(Cargo));
             }
         }
 
@@ -87,7 +90,7 @@ namespace Atron.Application.Services
         {
             if (!new CargoSpecification(codigo, cargoDTO.DepartamentoCodigo).IsSatisfiedBy(cargoDTO))
             {
-                messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
                 return;
             }
 
@@ -104,11 +107,11 @@ namespace Atron.Application.Services
 
             }
 
-            messageModel.Validate(cargo);
-            if (!messageModel.Messages.HasErrors())
+            _validateModel.Validate(cargo);
+            if (!_messageModel.Messages.HasErrors())
             {
                 await _cargoRepository.AtualizarCargoAsync(cargo);
-                messageModel.AddUpdateMessage(nameof(Cargo));
+                _messageModel.AddUpdateMessage(nameof(Cargo));
             }
         }
 
@@ -118,11 +121,11 @@ namespace Atron.Application.Services
             if (cargo is not null)
             {
                 await _cargoRepository.RemoverCargoAsync(cargo);
-                messageModel.AddRegisterRemovedSuccessMessage(nameof(Cargo));
+                _messageModel.AddRegisterRemovedSuccessMessage(nameof(Cargo));
             }
             else
             {
-                messageModel.AddRegisterNotFoundMessage(nameof(Cargo));
+                _messageModel.AddRegisterNotFoundMessage(nameof(Cargo));
             }
         }
 
@@ -135,14 +138,9 @@ namespace Atron.Application.Services
             }
             else
             {
-                messageModel.AddRegisterNotFoundMessage(nameof(Cargo));
+                _messageModel.AddRegisterNotFoundMessage(nameof(Cargo));
                 return null;
             }
-        }
-
-        public IList<Message> GetMessages()
-        {
-            return messageModel.Messages;
         }
     }
 }

@@ -1,8 +1,6 @@
-using Atron.Application.Interfaces;
 using Atron.Infra.IoC;
-using Atron.WebViews.Delegates;
 using Atron.WebViews.Helpers;
-using Atron.WebViews.Middlewares;
+using Communication.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,12 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shared.DTO.API;
-using System;
-using System.Net.Http.Headers;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
 using Shared.Extensions;
 
 namespace Atron.WebViews
@@ -34,12 +26,11 @@ namespace Atron.WebViews
         {
             services.AddHttpClient();
             services.AddHttpContextAccessor();
-            services.AddInfrastructure();
-            services.AddCustomCookieConfiguration();
-            services.AddInfrastructureSecurity(Configuration);
+            services.AddInfrastructure(Configuration);           
             services.AddControllersWithViews();
-          
-            services.Configure<RotaDeAcesso>(Configuration.GetSection(nameof(RotaDeAcesso)));
+
+            //services.Configure<RotaDeAcesso>(Configuration.GetSection(nameof(RotaDeAcesso)));
+            AppSettings.RotaDeAcesso = Configuration.GetSection(nameof(RotaDeAcesso)).Get<RotaDeAcesso>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,6 +67,7 @@ namespace Atron.WebViews
                 if (!token.IsNullOrEmpty())
                 {
                     context.Request.Headers["Authorization"] = $"Bearer {token}";
+                    TokenServiceStore.Token = token;
                 }
 
                 // Call the next delegate/middleware in the pipeline
@@ -98,5 +90,5 @@ namespace Atron.WebViews
                     pattern: "{controller=ApplicationLogin}/{action=Login}");
             });
         }
-    }   
+    }
 }

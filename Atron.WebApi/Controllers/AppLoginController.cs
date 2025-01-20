@@ -13,7 +13,7 @@ namespace Atron.WebApi.Controllers
     public class AppLoginController : ModuleController<ApiLogin, ILoginUserService>
     {
         public AppLoginController(
-            MessageModel<ApiLogin> messageModel,
+            MessageModel messageModel,
             ILoginUserService loginUserService)
             : base(loginUserService, messageModel)
         { }

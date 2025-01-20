@@ -15,7 +15,7 @@ namespace Atron.WebApi.Controllers
     [Authorize]
     public class TarefaController : ModuleController<Tarefa, ITarefaService>
     {
-        public TarefaController(ITarefaService service, MessageModel<Tarefa> messageModel) :
+        public TarefaController(ITarefaService service, MessageModel messageModel) :
             base(service, messageModel)
         { }
 

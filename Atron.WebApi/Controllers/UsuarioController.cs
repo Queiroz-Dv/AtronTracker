@@ -18,7 +18,7 @@ namespace Atron.WebApi.Controllers
     {
 
         public UsuarioController(IUsuarioService usuarioService,
-            MessageModel<Usuario> messageModel) :
+            MessageModel messageModel) :
             base(usuarioService, messageModel)
         { }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Atron.WebViews.Models
 {
-    public class CargoModel : DefaultModel
+    public class CargoModel : DefaultModel<CargoDTO>
     {
         public CargoModel()
         {

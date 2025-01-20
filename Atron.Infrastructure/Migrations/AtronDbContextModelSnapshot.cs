@@ -44,9 +44,6 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id", "Codigo");
 
                     b.HasIndex("DepartmentoId", "DepartamentoCodigo");
@@ -69,9 +66,6 @@ namespace Atron.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id", "Codigo");
 
@@ -176,9 +170,6 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(2500)
                         .HasColumnType("nvarchar(2500)");
 
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("PermissaoEstadoId")
                         .HasColumnType("int");
 
@@ -247,9 +238,6 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)");
 
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("MesId")
                         .HasColumnType("int");
 
@@ -291,9 +279,6 @@ namespace Atron.Infrastructure.Migrations
 
                     b.Property<DateTime>("DataInicial")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TarefaEstadoId")
                         .HasColumnType("int");
@@ -378,9 +363,6 @@ namespace Atron.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Nome")
                         .IsRequired()

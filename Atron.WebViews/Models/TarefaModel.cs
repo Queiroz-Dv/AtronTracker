@@ -5,13 +5,13 @@ using System.ComponentModel;
 
 namespace Atron.WebViews.Models
 {
-    public class TarefaModel : DefaultModel
+    public class TarefaModel : DefaultModel<TarefaDTO>
     {
         public TarefaModel()
         {           
             Usuarios = new List<UsuarioDTO>();
             Tarefas = new List<TarefaDTO>();
-            PageInfo = new PageInfoDTO();
+            PageInfo = new PageInfoDTO<TarefaDTO>();
             Tarefa = new TarefaDTO();
             Usuario = new UsuarioDTO();
         }

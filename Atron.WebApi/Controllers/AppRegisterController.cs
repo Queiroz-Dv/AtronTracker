@@ -1,7 +1,6 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
 using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
-using Communication.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
 using Shared.Models;
@@ -16,7 +15,7 @@ namespace Atron.WebApi.Controllers
     {
         public AppRegisterController(
             IRegisterUserService service,
-            MessageModel<ApiRegister> messageModel) :
+            MessageModel messageModel) :
             base(service, messageModel)
         { }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Atron.WebViews.Models
 {
-    public class UsuarioModel : DefaultModel
+    public class UsuarioModel : DefaultModel<UsuarioDTO>
     {
         public UsuarioModel()
         {
