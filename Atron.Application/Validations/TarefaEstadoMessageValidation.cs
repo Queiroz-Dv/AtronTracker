@@ -1,13 +1,14 @@
 ﻿using Atron.Domain.Entities;
 using Shared.Interfaces;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 using System;
 
 namespace Atron.Application.Validations
 {
-    public class TarefaEstadoMessageValidation : MessageModel<TarefaEstado>, IMessages
+    public class TarefaEstadoMessageValidation : MessageModel, IMessages, IValidateModel<TarefaEstado>
     {
-        public override void Validate(TarefaEstado entity)
+        public void Validate(TarefaEstado entity)
         {
             throw new NotImplementedException();
         }

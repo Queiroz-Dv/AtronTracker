@@ -1,13 +1,10 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
-using Communication.Extensions;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Shared.DTO.API;
+using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
@@ -16,25 +13,17 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class DepartamentoController : MainController<DepartamentoDTO, Departamento, IDepartamentoExternalService>
+    [Authorize]
+    public class DepartamentoController : MainController<DepartamentoDTO, Departamento>
     {
-        public DepartamentoController(
-            IUrlModuleFactory urlFactory,
-            IPaginationService<DepartamentoDTO> paginationService,
-            IDepartamentoExternalService externalService,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            MessageModel<Departamento> messageModel)
-            : base(urlFactory,
-                  paginationService,
-                  externalService,
-                  apiRouteExternalService,
-                  configuration,
-                  appSettingsConfig,
-                  messageModel)
+        private readonly IExternalService<DepartamentoDTO> _service;
+
+        public DepartamentoController(IPaginationService<DepartamentoDTO> paginationService,
+                                      MessageModel messageModel, IExternalService<DepartamentoDTO> service)
+            : base(messageModel, paginationService)
         {
-            ApiController = nameof(Departamento);            
+            _paginationService = paginationService;
+            _service = service;
         }
 
         [HttpGet, HttpPost]
@@ -42,14 +31,24 @@ namespace Atron.WebViews.Controllers
         {
             BuildRoute();
             var departamentos = await _service.ObterTodos();
-          
-            Filter = filter;
-            ConfigurePaginationForView(departamentos, itemPage, ApiController, filter);
+
+
+            ConfigurePaginationForView(new PageInfoDTO<DepartamentoDTO>()
+            {
+                Entities = departamentos.ToList(),
+                CurrentPage = itemPage,
+                PageRequestInfo = new PageRequestInfoDTO()
+                {
+                    Action = nameof(Index),
+                    CurrentController = nameof(Departamento),
+                    Filter = filter,
+                }
+            });
 
             var model = new DepartamentoModel()
             {
-                Departamentos = GetEntitiesPaginated(),
-                PageInfo = PageInfo
+                Departamentos = _paginationService.GetPageInfo().Entities,
+                PageInfo = _paginationService.GetPageInfo()
             };
 
             ConfigureDataTitleForView("Painel de departamentos");
@@ -87,7 +86,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
         {
-            BuildRoute(nameof(Departamento), codigo);
+            // BuildRoute(nameof(Departamento), codigo);
             var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
             if (departamentoDTO is null || _messageModel.Messages.HasErrors())
@@ -103,7 +102,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
-            BuildRoute(nameof(Departamento), codigo);
+            //BuildRoute(nameof(Departamento), codigo);
             await _service.Atualizar(codigo, departamentoDTO);
             CreateTempDataMessages();
 
@@ -115,7 +114,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            BuildRoute(nameof(Departamento), codigo);
+            // BuildRoute(nameof(Departamento), codigo);
             await _service.Remover(codigo);
 
             CreateTempDataMessages();

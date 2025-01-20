@@ -11,8 +11,6 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.HasKey(usr => new { usr.Id, usr.Codigo });
             builder.Property(usr => usr.Id).ValueGeneratedOnAdd();
 
-            builder.Property(dpt => dpt.IdSequencial).IsRequired();
-
             builder.Property(usr => usr.Nome).IsRequired().HasMaxLength(25);
             builder.Property(usr => usr.Sobrenome).IsRequired().HasMaxLength(50);
             builder.Property(usr => usr.Email).IsRequired().HasMaxLength(50);

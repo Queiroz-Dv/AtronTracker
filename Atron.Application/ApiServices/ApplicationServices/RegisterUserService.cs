@@ -6,6 +6,7 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Threading.Tasks;
 
@@ -15,19 +16,22 @@ namespace Atron.Application.ApiServices.ApplicationServices
     {
         private readonly IRegisterApplicationRepository _registerApp;
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly MessageModel<ApiRegister> _messageModel;
-        private readonly MessageModel<Usuario> _usuarioMessageModel;
+        private readonly IValidateModel<ApiRegister> _validateModel;
+        private readonly IValidateModel<Usuario> _validateUsuario;
+        private readonly MessageModel _messageModel;
 
         public RegisterUserService(
+            IValidateModel<ApiRegister> validateModel,
             IRegisterApplicationRepository registerApp,
             IUsuarioRepository usuarioRepository,
-            MessageModel<ApiRegister> messageModel,
-            MessageModel<Usuario> usuarioMessageModel)
+            MessageModel messageModel,
+            IValidateModel<Usuario> validateUsuario)
         {
             _registerApp = registerApp;
             _usuarioRepository = usuarioRepository;
             _messageModel = messageModel;
-            _usuarioMessageModel = usuarioMessageModel;
+            _validateModel = validateModel;
+            _validateUsuario = validateUsuario;
         }
 
         public async Task<RegisterDTO> RegisterUser(RegisterDTO registerDTO)
@@ -40,7 +44,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                 ConfirmPassword = registerDTO.ConfirmaSenha
             };
 
-            _messageModel.Validate(register);
+            _validateModel.Validate(register);
             registerDTO.Registrado = false; 
 
             if (!_messageModel.Messages.HasErrors())
@@ -50,8 +54,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                 if (result)
                 {
                     var usuario = new Usuario()
-                    {
-                        IdSequencial = registerDTO.IdSequencial,
+                    {                      
                         Codigo = registerDTO.Codigo,
                         Nome = registerDTO.Nome,
                         Sobrenome = registerDTO.Sobrenome,
@@ -59,7 +62,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                         Email = registerDTO.Email
                     };
 
-                    _usuarioMessageModel.Validate(usuario);                    
+                    _validateUsuario.Validate(usuario);                    
                     var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Nome, usuario.Sobrenome, usuario.Email);
 
                     if (!usuarioSpec.IsSatisfiedBy(usuario))
@@ -70,7 +73,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                         }
                     }
 
-                    if (!_usuarioMessageModel.Messages.HasErrors())
+                    if (!_messageModel.Messages.HasErrors())
                     {
                         var usuarioGravado = await _usuarioRepository.CriarUsuarioAsync(usuario);
                         if (usuarioGravado)

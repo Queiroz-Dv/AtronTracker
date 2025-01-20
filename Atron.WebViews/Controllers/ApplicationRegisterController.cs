@@ -1,11 +1,7 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
@@ -13,24 +9,14 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class ApplicationRegisterController : MainController<RegisterDTO, ApiRegister, IRegisterExternalService>
+    public class ApplicationRegisterController : MainController<RegisterDTO, ApiRegister>
     {
-        public ApplicationRegisterController(IUrlModuleFactory urlFactory,
-           IPaginationService<RegisterDTO> paginationService,
-           IRegisterExternalService service,
-           IApiRouteExternalService apiRouteExternalService,
-           IConfiguration configuration,
-           IOptions<RotaDeAcesso> appSettingsConfig,
-           MessageModel<ApiRegister> messageModel) :
-            base(urlFactory,
-                paginationService,
-                service,
-                apiRouteExternalService,
-                configuration,
-                appSettingsConfig,
-                messageModel)
+        private readonly IRegisterExternalService _service;
+
+        public ApplicationRegisterController(IRegisterExternalService service, MessageModel messageModel, IPaginationService<RegisterDTO> paginationService)
+            : base(messageModel, paginationService)
         {
-            ApiController = "AppRegister";
+            _service = service;
         }
 
         [HttpGet]
@@ -42,8 +28,10 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Registrar(RegisterDTO registerDTO)
         {
-            ActionName = nameof(Registrar);
+
             BuildRoute();
+
+            _paginationService.ConfigurePageRequestInfo("Registrar", "ApplicationRegister");
 
             await _service.Registrar(registerDTO);
 

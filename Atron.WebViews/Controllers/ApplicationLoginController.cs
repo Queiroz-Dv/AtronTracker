@@ -1,39 +1,29 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
+using Communication.Interfaces.Services;
+using Communication.Services;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
 using System;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
 
 namespace Atron.WebViews.Controllers
 {
-    public class ApplicationLoginController : MainController<LoginDTO, ApiLogin, ILoginExternalService>
+    public class ApplicationLoginController : MainController<LoginDTO, ApiLogin>
     {
-        public ApplicationLoginController(IUrlModuleFactory urlFactory,
+        private readonly ILoginExternalService _service;
+
+        public ApplicationLoginController(
+            ILoginExternalService service, 
+            MessageModel messageModel, 
             IPaginationService<LoginDTO> paginationService,
-            ILoginExternalService service,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            MessageModel<ApiLogin> messageModel) :
-            base(urlFactory,
-                paginationService,
-                service,
-                apiRouteExternalService,
-                configuration,
-                appSettingsConfig,
-                messageModel)
+            IRouterBuilderService router) :
+            base(messageModel, paginationService)
         {
-            ApiController = "AppLogin";
+            _router = router;
+            _service = service;         
         }
 
         [HttpGet]
@@ -48,7 +38,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
-            ActionName = "Logar";
+            _paginationService.ConfigurePageRequestInfo("AppLogin", "Logar");
             BuildRoute();
             var login = await _service.Autenticar(loginDTO);
 

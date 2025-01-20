@@ -8,7 +8,7 @@ namespace Atron.Application.Mapping
     {
         public override DepartamentoDTO MapToDTO(Departamento entity)
         {
-            return new DepartamentoDTO() { IdSequencial = entity.IdSequencial, Codigo = entity.Codigo, Descricao = entity.Descricao };
+            return new DepartamentoDTO() { Codigo = entity.Codigo, Descricao = entity.Descricao };
         }
 
         public override Departamento MapToEntity(DepartamentoDTO dto)

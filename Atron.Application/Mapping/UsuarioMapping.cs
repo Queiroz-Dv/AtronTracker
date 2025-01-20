@@ -27,7 +27,6 @@ namespace Atron.Application.Mapping
         {
             var usuario = new UsuarioDTO
             {
-                IdSequencial = entity.IdSequencial,
                 Codigo = entity.Codigo,
                 Nome = entity.Nome,
                 Sobrenome = entity.Sobrenome,
@@ -57,8 +56,7 @@ namespace Atron.Application.Mapping
         public override Usuario MapToEntity(UsuarioDTO dto)
         {
             var usuario = new Usuario
-            {
-                IdSequencial = dto.IdSequencial,
+            {            
                 Codigo = dto.Codigo,
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,

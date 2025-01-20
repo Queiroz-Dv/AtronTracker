@@ -18,7 +18,7 @@ namespace Atron.WebApi.Controllers
         // Necessário criar uma forma de não ter um messageModel 
         // Necessário rever a alteração da regra para que os estados de uma tarefa façam parte da tabela de tarefas
         public TarefaEstadoController(ITarefaEstadoService service,
-            MessageModel<TarefaEstado> messageModel) :
+            MessageModel messageModel) :
             base(service, messageModel)
         { }
 
