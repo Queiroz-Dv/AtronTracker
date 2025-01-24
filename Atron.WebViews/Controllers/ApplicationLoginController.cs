@@ -1,11 +1,8 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
+using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Models;
 using System;
@@ -13,24 +10,20 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class ApplicationLoginController : DefaultController<LoginDTO, ApiLogin, ILoginExternalService>
+    public class ApplicationLoginController : MainController<LoginDTO, ApiLogin>
     {
-        public ApplicationLoginController(IUrlModuleFactory urlFactory,
-            IPaginationService<LoginDTO> paginationService,
+        private readonly ILoginExternalService _service;
+
+        public ApplicationLoginController(
             ILoginExternalService service,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            MessageModel<ApiLogin> messageModel) :
-            base(urlFactory,
-                paginationService,
-                service,
-                apiRouteExternalService,
-                configuration,
-                appSettingsConfig,
-                messageModel)
+            MessageModel messageModel,
+            IPaginationService<LoginDTO> paginationService,
+            IRouterBuilderService router) :
+            base(messageModel, paginationService)
         {
-            CurrentController = "ApplicationLogin";
+            _router = router;
+            _service = service;
+            ApiControllerName = "AppLogin";
         }
 
         [HttpGet]
@@ -44,12 +37,14 @@ namespace Atron.WebViews.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
-        {
-             BuildRoute("AppLogin");
+        {            
+            BuildRoute("Logar");
             var login = await _service.Autenticar(loginDTO);
 
             if (login.Authenticated)
             {
+                // Configura o token nos cookies e na sessão
+                SetAuthToken(login.UserToken.Token, login.UserToken.Expires);
                 return RedirectToAction(nameof(Index), "Home");
             }
             else
@@ -57,6 +52,6 @@ namespace Atron.WebViews.Controllers
                 ModelState.AddModelError("", "Usuário não foi autenticado, tente novamente ou contate a administração.");
                 return View(loginDTO);
             }
-        }
+        }        
     }
 }

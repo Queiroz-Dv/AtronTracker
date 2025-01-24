@@ -1,6 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
 using Shared.Models;
@@ -11,9 +12,10 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TarefaController : ModuleController<Tarefa, ITarefaService>
     {
-        public TarefaController(ITarefaService service, MessageModel<Tarefa> messageModel) :
+        public TarefaController(ITarefaService service, MessageModel messageModel) :
             base(service, messageModel)
         { }
 

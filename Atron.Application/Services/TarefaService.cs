@@ -1,10 +1,12 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using AutoMapper;
 using Shared.Extensions;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -21,7 +23,8 @@ namespace Atron.Application.Services
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioService _usuarioService;
         private readonly ITarefaRepository _tarefaRepository;
-        private readonly MessageModel<Tarefa> _messageModel;
+        private readonly IValidateModel<Tarefa> _validateModel;
+        private readonly MessageModel _messageModel;
 
         public TarefaService(IMapper mapper,
                              IRepository<Tarefa> repository,
@@ -29,7 +32,8 @@ namespace Atron.Application.Services
                              IUsuarioRepository usuarioRepository,
                              IUsuarioService usuarioService,
                              ITarefaRepository tarefaRepository,
-                             MessageModel<Tarefa> messageModel)
+                             MessageModel messageModel,
+                             IValidateModel<Tarefa> validateModel)
         {
             _mapper = mapper;
             _repository = repository;
@@ -38,6 +42,7 @@ namespace Atron.Application.Services
             _usuarioRepository = usuarioRepository;
             _usuarioService = usuarioService;
             _tarefaRepository = tarefaRepository;
+            _validateModel = validateModel;
         }
 
         public async Task CriarAsync(TarefaDTO tarefaDTO)
@@ -57,7 +62,7 @@ namespace Atron.Application.Services
                 tarefa.TarefaEstadoId = tarefaEstado.Id;
             }
 
-            _messageModel.Validate(tarefa);
+            _validateModel.Validate(tarefa);
 
             if (!_messageModel.Messages.HasErrors())
             {
@@ -130,7 +135,7 @@ namespace Atron.Application.Services
             tarefa.UsuarioCodigo = usuario.Codigo;
             tarefa.TarefaEstadoId = tarefaEstado.Id;
 
-            _messageModel.Validate(tarefa);
+            _validateModel.Validate(tarefa);
 
             if (!_messageModel.Messages.HasErrors())
             {

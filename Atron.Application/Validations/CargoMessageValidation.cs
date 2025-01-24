@@ -1,12 +1,13 @@
 ﻿using Atron.Domain.Entities;
 using Shared.Interfaces;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 
 namespace Atron.Application.Validations
 {
-    public class CargoMessageValidation : MessageModel<Cargo>, IMessages
+    public class CargoMessageValidation : MessageModel, IMessages, IValidateModel<Cargo>
     {
-        public override void Validate(Cargo entity)
+        public void Validate(Cargo entity)
         {
             if (string.IsNullOrEmpty(entity.Descricao) ||
                 string.IsNullOrEmpty(entity.Codigo))

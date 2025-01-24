@@ -10,34 +10,25 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppLoginController : ModuleController<ApiRegister, IRegisterUserService>
+    public class AppLoginController : ModuleController<ApiLogin, ILoginUserService>
     {
-        private readonly ILoginUserService _loginService;
-
         public AppLoginController(
-            IRegisterUserService service,
-            MessageModel<ApiRegister> messageModel, 
+            MessageModel messageModel,
             ILoginUserService loginUserService)
-            : base(service, messageModel)
-        {
-            _loginService = loginUserService;
-        }
-       
+            : base(loginUserService, messageModel)
+        { }
+
+        /// <summary>
+        /// Endpoint para logar um usuário no sistema
+        /// </summary>
+        /// <param name="loginDTO">DTO que será autenticado </param>
+        /// <returns>O resultado do processamento</returns>
+        [HttpPost]
         [Route("Logar")]
-        [HttpPost]
-        public async Task<ActionResult<LoginDTO>> LoginUser([FromBody] LoginDTO loginDTO)
+        public async Task<ActionResult<LoginDTO>> Logar([FromBody] LoginDTO loginDTO)
         {
-            var result = await _loginService.Authenticate(loginDTO);
-
-            return RetornoPadrao(result);
-        }
-      
-
-        [Route("Registrar")]
-        [HttpPost]
-        public async Task<ActionResult<RegisterDTO>> RegisterUser([FromBody] RegisterDTO registerDTO)
-        {
-            var result = await _service.RegisterUser(registerDTO);
+            var result = await _service.Authenticate(loginDTO);
+            Response.Headers.Add("Authorization", $"Bearer {result.UserToken.Token}");
 
             return Ok(result);
         }
@@ -46,7 +37,7 @@ namespace Atron.WebApi.Controllers
         [HttpPut]
         public async Task<ActionResult> Logout()
         {
-            await _loginService.Logout();
+            await _service.Logout();
             return Ok();
         }
     }

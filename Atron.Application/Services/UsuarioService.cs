@@ -7,6 +7,7 @@ using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using AutoMapper;
 using Shared.Extensions;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,8 @@ namespace Atron.Application.Services
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly ICargoRepository _cargoRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly MessageModel<Usuario> _messageModel;
+        private readonly IValidateModel<Usuario> _validateModel;
+        private readonly MessageModel _messageModel;
 
         public bool Registrar { get; set; }
 
@@ -33,7 +35,8 @@ namespace Atron.Application.Services
                               IUsuarioRepository repository,
                               ICargoRepository cargoRepository,
                               IDepartamentoRepository departamentoRepository,
-                              MessageModel<Usuario> messageModel)
+                              MessageModel messageModel,
+                              IValidateModel<Usuario> validateModel)
         {
             _mapper = mapper;
             _registerApplicationRepository = registerApplicationRepository;
@@ -42,6 +45,7 @@ namespace Atron.Application.Services
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
             _messageModel = messageModel;
+            _validateModel = validateModel;
         }
 
         public async Task AtualizarAsync(UsuarioDTO usuarioDTO)
@@ -54,8 +58,7 @@ namespace Atron.Application.Services
 
             var entidade = new Usuario()
             {
-                Id = usuarioDTO.Id,
-                IdSequencial = usuarioDTO.IdSequencial,
+                Id = usuarioDTO.Id,             
                 Codigo = usuarioDTO.Codigo,
                 Nome = usuarioDTO.Nome,
                 Sobrenome = usuarioDTO.Sobrenome,
@@ -64,7 +67,7 @@ namespace Atron.Application.Services
             };
 
             // await MontarEntidadesComplementares(usuarioDTO, entidade);
-            _messageModel.Validate(entidade);
+            _validateModel.Validate(entidade);
 
             if (!_messageModel.Messages.HasErrors())
             {
@@ -83,8 +86,7 @@ namespace Atron.Application.Services
 
             var usuario = new Usuario()
             {
-                Id = usuarioDTO.Id,
-                IdSequencial = usuarioDTO.IdSequencial,
+                Id = usuarioDTO.Id,             
                 Codigo = usuarioDTO.Codigo,
                 Nome = usuarioDTO.Nome,
                 Sobrenome = usuarioDTO.Sobrenome,
@@ -108,7 +110,7 @@ namespace Atron.Application.Services
 
 
             // Usar specification e validation
-            _messageModel.Validate(usuario);
+            _validateModel.Validate(usuario);
             if (!_messageModel.Messages.HasErrors())
             {
                 var usr = await _usuarioRepository.CriarUsuarioAsync(usuario);
@@ -155,6 +157,7 @@ namespace Atron.Application.Services
                 Sobrenome = usuario.Sobrenome,
                 Salario = usuario.SalarioAtual,
                 DataNascimento = usuario.DataNascimento,
+                Email = usuario.Email,
                 //CargoCodigo = usuario.CargoCodigo,
                 //DepartamentoCodigo = usuario.DepartamentoCodigo,
                 //Cargo = new CargoDTO() { Codigo = usuario.Cargo.Codigo, Descricao = usuario.Cargo.Descricao },

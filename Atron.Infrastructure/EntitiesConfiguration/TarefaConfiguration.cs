@@ -9,7 +9,6 @@ namespace Atron.Infrastructure.EntitiesConfiguration
         public void Configure(EntityTypeBuilder<Tarefa> builder)
         {
             builder.HasKey(key => key.Id);
-            builder.Property(dpt => dpt.IdSequencial).IsRequired();
 
             builder.Property(trf => trf.Titulo).IsRequired().HasMaxLength(50);
             builder.Property(trf => trf.Conteudo).HasMaxLength(2500);

@@ -1,14 +1,15 @@
 ﻿using Atron.Domain.Entities;
 using Shared.Extensions;
 using Shared.Interfaces;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 using System;
 
 namespace Atron.Application.Validations
 {
-    public class UsuarioMessageValidation : MessageModel<Usuario>, IMessages
+    public class UsuarioMessageValidation : MessageModel, IMessages, IValidateModel<Usuario>
     {
-        public override void Validate(Usuario entity)
+        public void Validate(Usuario entity)
         {
             if (entity.Codigo.IsNullOrEmpty())
             {

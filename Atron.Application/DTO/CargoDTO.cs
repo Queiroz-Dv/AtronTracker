@@ -1,28 +1,31 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
-    public class CargoDTO : FactoryDTO
+    public class CargoDTO
     {
-        [JsonIgnore]
-        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
+        public CargoDTO() { }
+        public CargoDTO(string codigo, string descricao)
+        {
+            Codigo = codigo.ToUpper();
+            Descricao = descricao.ToUpper();
+        }
+
         public int Id { get; set; }
+        public string Codigo { get; set; }
+        public string Descricao { get; set; }
 
-        [JsonIgnore]
-        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public int DepartamentoId { get; set; }
-
         [Required(ErrorMessage = "Um departamento precisa ser selecionado")]
         public string DepartamentoCodigo { get; set; }
-
-        [JsonIgnore]
-        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
         public string DepartamentoDescricao { get; set; }
-
         [DisplayName("Departamentos")]
-        public DepartamentoDTO Departamento { get; set; }        
+        public DepartamentoDTO Departamento { get; set; }
+
+        public string ObterCodigoComDescricao()
+        {
+            return $"{Codigo} - {Descricao}";
+        }
     }
 }

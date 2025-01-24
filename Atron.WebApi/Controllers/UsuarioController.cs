@@ -1,6 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.Extensions;
@@ -12,11 +13,12 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsuarioController : ModuleController<Usuario, IUsuarioService>
     {
 
         public UsuarioController(IUsuarioService usuarioService,
-            MessageModel<Usuario> messageModel) :
+            MessageModel messageModel) :
             base(usuarioService, messageModel)
         { }
 

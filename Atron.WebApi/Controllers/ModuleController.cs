@@ -11,9 +11,9 @@ namespace Atron.WebApi.Controllers
     public class ModuleController<Entity, Service> : ControllerBase
     {
         protected readonly Service _service; // Serviço da entidade
-        protected readonly MessageModel<Entity> _messageModel; // Modelo de notificações e validações para a entidade
+        protected readonly MessageModel _messageModel; // Modelo de notificações e validações para a entidade
 
-        public ModuleController(Service service, MessageModel<Entity> messageModel)
+        public ModuleController(Service service, MessageModel messageModel)
         {
             // Injeta as dependências necessárias para os processos automatizados
             _service = service;

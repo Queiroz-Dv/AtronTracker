@@ -12,8 +12,6 @@ namespace Atron.Infrastructure.EntitiesConfiguration
 
             builder.Property(ppt => ppt.Id).ValueGeneratedOnAdd();
 
-            builder.Property(dpt => dpt.IdSequencial).IsRequired();
-
             builder.Property(pst => pst.Descricao)
                    .IsRequired()
                    .HasMaxLength(50);

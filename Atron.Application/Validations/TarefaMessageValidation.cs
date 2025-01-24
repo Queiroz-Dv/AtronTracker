@@ -1,12 +1,13 @@
 ﻿using Atron.Domain.Entities;
 using Shared.Interfaces;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 
 namespace Atron.Application.Validations
 {
-    public class TarefaMessageValidation : MessageModel<Tarefa>, IMessages
+    public class TarefaMessageValidation : MessageModel, IMessages, IValidateModel<Tarefa>
     {
-        public override void Validate(Tarefa entity)
+        public  void Validate(Tarefa entity)
         {
             if (entity.UsuarioId == 0)
             {
