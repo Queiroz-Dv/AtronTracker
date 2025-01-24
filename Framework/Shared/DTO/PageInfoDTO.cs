@@ -3,7 +3,7 @@
     /// <summary>
     /// Classe que define a estrutura de informações para paginação das entidades
     /// </summary>
-    public class PageInfoDTO<T>
+    public class PageInfoDTO
     {        
         public int StartPage { get; set; }
         public int EndPage { get; set; }
@@ -14,12 +14,11 @@
 
 
         public PageRequestInfoDTO? PageRequestInfo { get; set; }
-        public List<T> Entities { get; set; } = new List<T>();
     }
 
     public class PageRequestInfoDTO
     {
-        public string CurrentController { get; set; }
+        public string CurrentViewController { get; set; }
         public string Action { get; set; } = nameof(Index);
         public string Parameter { get; set; }
         public string Filter { get; set; }

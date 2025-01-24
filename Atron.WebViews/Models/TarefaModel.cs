@@ -11,7 +11,7 @@ namespace Atron.WebViews.Models
         {           
             Usuarios = new List<UsuarioDTO>();
             Tarefas = new List<TarefaDTO>();
-            PageInfo = new PageInfoDTO<TarefaDTO>();
+            PageInfo = new PageInfoDTO();
             Tarefa = new TarefaDTO();
             Usuario = new UsuarioDTO();
         }

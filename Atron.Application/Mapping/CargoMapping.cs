@@ -8,23 +8,17 @@ namespace Atron.Application.Mapping
     {
         public override CargoDTO MapToDTO(Cargo entity)
         {
-            var cargo = new CargoDTO(entity.Codigo, entity.Descricao, entity.Departamento == null ? null : new DepartamentoDTO(entity.Departamento.Codigo, entity.Departamento.Descricao))
+            return new CargoDTO(entity.Codigo, entity.Descricao)
             {
-                DepartamentoCodigo = entity.DepartamentoCodigo
+                DepartamentoCodigo = entity.DepartamentoCodigo,
+                Departamento = new DepartamentoDTO(entity.Departamento.Codigo, entity.Departamento.Descricao)
             };
-            return cargo;
+
         }
 
         public override Cargo MapToEntity(CargoDTO dto)
         {
-            var cargo = new Cargo
-            {                
-                Codigo = dto.Codigo,
-                Descricao = dto.Descricao,
-                DepartamentoCodigo = dto.DepartamentoCodigo
-            };
-
-            return cargo;
+            return new Cargo(dto.Codigo, dto.Descricao, dto.DepartamentoCodigo);
         }
     }
 }

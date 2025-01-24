@@ -40,23 +40,32 @@ namespace Communication.Models
 
         public async Task<string> GetAsync(string parameter)
         {
-            var response = await _httpClient.GetAsync($"{Url}/{parameter}");
-            var responseContent = await response.Content.ReadAsStringAsync();
-            return responseContent;
+            var response = await _httpClient.GetAsync($"{Url}{parameter}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return responseContent;
+            }
+            else
+            {
+                _messageModel.AddError("Não foi possível obter o registro.");
+                return null;
+            }
         }
 
         public async Task PostAsync(string content)
         {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
-            await _httpClient.PostAsync(Url, httpContent);           
+            await _httpClient.PostAsync(Url, httpContent);
         }
-        
+
         public async Task PutAsync(string parameter, string content)
         {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             try
             {
-                var response = await _httpClient.PutAsync(Url, httpContent);                
+                var response = await _httpClient.PutAsync($"{Url}{parameter}", httpContent);
             }
             catch (HttpRequestException)
             {
@@ -66,7 +75,7 @@ namespace Communication.Models
 
         public async Task DeleteAsync(string codigo)
         {
-            var response = await _httpClient.DeleteAsync(Url);
+            var response = await _httpClient.DeleteAsync($"{Url}{codigo}");
 
             if (response.IsSuccessStatusCode)
             {

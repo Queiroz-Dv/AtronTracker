@@ -1,168 +1,160 @@
-﻿//using Atron.Application.DTO;
-//using Atron.Domain.Entities;
-//using Atron.WebViews.Models;
-//using Communication.Extensions;
-//using ExternalServices.Interfaces;
-//using ExternalServices.Interfaces.ApiRoutesInterfaces;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Mvc.Rendering;
-//using Microsoft.Extensions.Configuration;
-//using Microsoft.Extensions.Options;
-//using Shared.DTO.API;
-//using Shared.Interfaces;
-//using Shared.Models;
-//using Shared.Extensions;
-//using System.Linq;
-//using System.Threading.Tasks;
+﻿using Atron.Application.DTO;
+using Atron.Domain.Entities;
+using Atron.WebViews.Models;
+using Communication.Interfaces.Services;
+using ExternalServices.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Shared.DTO;
+using Shared.Extensions;
+using Shared.Interfaces;
+using Shared.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
-//namespace Atron.WebViews.Controllers
-//{
-//    public class CargoController : MainController<CargoDTO, Cargo, ICargoExternalService>
-//    {
-//        private IDepartamentoExternalService _departamentoService;
+namespace Atron.WebViews.Controllers
+{
+    public class CargoController : MainController<CargoDTO, Cargo>
+    {
+        private readonly IExternalService<CargoDTO> _service;
+        private readonly IExternalService<DepartamentoDTO> _departamentoService;
 
-//        public CargoController(
-//            IUrlTransfer urlFactory,
-//            IPaginationService<CargoDTO> paginationService,
-//            ICargoExternalService cargoExternalService,
-//            IApiRouteExternalService apiRouteExternalService,
-//            IConfiguration configuration,
-//            IOptions<RotaDeAcesso> appSettingsConfig,
-//            MessageModel<Cargo> messageModel,
-//            IDepartamentoExternalService departamentoExternalService
-//            )
-//            : base(urlFactory,
-//                  paginationService,
-//                  cargoExternalService,
-//                  apiRouteExternalService,
-//                  configuration,
-//                  appSettingsConfig,
-//                  messageModel)
-//        {
-//            _departamentoService = departamentoExternalService;
-//            ApiController = nameof(Cargo);
-//        }
+        public CargoController(
+            IExternalService<CargoDTO> service,
+            IPaginationService<CargoDTO> paginationService,
+            IRouterBuilderService router,
+            IExternalService<DepartamentoDTO> departamentoService,
+            MessageModel messageModel)
+            : base(messageModel, paginationService)
+        {
+            _departamentoService = departamentoService;
+            _service = service;
+            _router = router;
+            ApiControllerName = nameof(Cargo);
+        }
 
-//        [HttpGet, HttpPost]
-//        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
-//        {
-//            BuildRoute();
+        [HttpGet, HttpPost]
+        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        {
+            ConfigureDataTitleForView("Painel de cargos");
 
-//            var cargos = await _service.ObterTodos();
-            
-//            Filter = filter;
-//            ConfigurePaginationForView(cargos, itemPage, ApiController, filter);
-//            var model = new CargoModel()
-//            {
-//                Cargos = GetEntitiesPaginated(),
-//                PageInfo = PageInfo
-//            };
+            BuildRoute();
+            var cargos = await _service.ObterTodos();
 
-//            ConfigureDataTitleForView("Painel de cargos");
-//            return View(model);
-//        }
+            ConfigurePaginationForView(cargos, new PageInfoDTO()
+            {
+                CurrentPage = itemPage,
+                PageRequestInfo = new PageRequestInfoDTO()
+                {
+                    CurrentViewController = ApiControllerName,
+                    Action = nameof(Index),
+                    Filter = filter,
+                }
+            });
 
-//        [HttpGet]
-//        public async Task<IActionResult> Cadastrar()
-//        {
-//            ConfigureDataTitleForView("Cadastro de cargos");
-//            BuildRoute(nameof(Departamento));
-//            var departamentos = await _departamentoService.ObterTodos();
+            var model = new CargoModel()
+            {
+                Cargos = _paginationService.GetEntitiesFilled(),
+                PageInfo = _paginationService.GetPageInfo()
+            };
 
-//            if (!departamentos.Any())
-//            {
-//                _messageModel.AddError("Para criar um cargo é necessário ter um departamento.");
-//                CreateTempDataMessages();
-//                return RedirectToAction(nameof(Index));
-//            }
+            return View(model);
+        }
 
-//            var departamentosFiltrados = departamentos.Select(dpt =>
-//                new
-//                {
-//                    dpt.Codigo,
-//                    Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
-//                }).ToList();
+        [HttpGet]
+        public async Task<IActionResult> Cadastrar()
+        {
+            ConfigureDataTitleForView("Cadastro de cargos");
 
-//            ViewBag.Departamentos = new SelectList(departamentosFiltrados, "Codigo", "Descricao");
-//            return View();
-//        }
+            await FetchDepartamentosData();
+            return _messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Index)) : View();
+        }
 
-//        [HttpPost]
-//        public async Task<IActionResult> Cadastrar(CargoDTO model)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                BuildRoute(nameof(Cargo));
+        private async Task FetchDepartamentosData()
+        {
+            ApiControllerName = nameof(Departamento);
+            BuildRoute();
+            var departamentos = await _departamentoService.ObterTodos();
 
-//                await _service.Criar(model);
+            if (!departamentos.Any())
+            {
+                _messageModel.AddError("Para criar um cargo é necessário ter um departamento.");
+                CreateTempDataMessages();
+            }
 
-//                CreateTempDataMessages();
-//                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
-//            }
+            var departamentosFiltrados = departamentos.Select(dpt =>
+                new
+                {
+                    dpt.Codigo,
+                    Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
+                }).ToList();
 
-//            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
-//            CreateTempDataMessages();
+            ViewBag.Departamentos = new SelectList(departamentosFiltrados, "Codigo", "Descricao");
+        }
 
-//            return RedirectToAction(nameof(Cadastrar));
-//        }
+        [HttpPost]
+        public async Task<IActionResult> Cadastrar(CargoDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                BuildRoute();
 
-//        [HttpGet]
-//        public async Task<IActionResult> Atualizar(string codigo)
-//        {
-//            if (codigo is null)
-//            {
-//                _messageModel.AddError("O código informado não foi encontrado");
-//                CreateTempDataMessages();
-//                return View(nameof(Index));
-//            }
+                await _service.Criar(model);
 
-//            BuildRoute(nameof(Cargo), codigo);
-//            var cargoDTO = await _service.ObterPorCodigo(codigo);
+                CreateTempDataMessages();
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+            }
 
-//            BuildRoute(nameof(Departamento));
-//            var departamentos = await _departamentoService.ObterTodos();
+            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
+            CreateTempDataMessages();
 
-//            var departamentosFiltrados = departamentos.Select(dpt =>
-//                new
-//                {
-//                    dpt.Codigo,
-//                    Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
-//                }).ToList();
+            return RedirectToAction(nameof(Cadastrar));
+        }
 
-//            ViewBag.Departamentos = new SelectList(departamentosFiltrados, "Codigo", "Descricao");
-//            ViewBag.CodigoDoDepartamentoRelacionado = cargoDTO.DepartamentoCodigo;
-//            ConfigureDataTitleForView("Atualizar informação de cargo");
-//            return View(cargoDTO);
-//        }
+        [HttpGet]
+        public async Task<IActionResult> Atualizar(string codigo)
+        {
+            ConfigureDataTitleForView("Atualizar informação de cargo");
+            if (codigo is null)
+            {
+                _messageModel.AddError("O código informado não foi encontrado");
+                CreateTempDataMessages();
+                return View(nameof(Index));
+            }
 
-//        [HttpPost]
-//        public async Task<IActionResult> Atualizar(string codigo, CargoDTO cargoDTO)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                BuildRoute(nameof(Cargo), codigo);
-//                await _service.Atualizar(codigo, cargoDTO);
-//            }
-//            else
-//            {
-//                _messageModel.AddError("Registro inválido tente novamente");
-//                CreateTempDataMessages();
-//                return View(nameof(Index));
-//            }
+            BuildRoute();
+            var cargoDTO = await _service.ObterPorCodigo(codigo);
 
-//            CreateTempDataMessages();
+            await FetchDepartamentosData();
 
-//            return RedirectToAction(nameof(Index));
-//        }
+            ViewBag.CodigoDoDepartamentoRelacionado = cargoDTO.DepartamentoCodigo;
+            return View(cargoDTO);
+        }
 
-//        [HttpPost]
-//        public async Task<IActionResult> Remover(string codigo)
-//        {
-//            BuildRoute(nameof(Cargo), codigo);
-//            await _service.Remover(codigo);
+        [HttpPost]
+        public async Task<IActionResult> Atualizar(string codigo, CargoDTO cargoDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                BuildRoute();
+                await _service.Atualizar(codigo, cargoDTO);
+                CreateTempDataMessages();
+                return RedirectToAction(nameof(Index));
+            }
 
-//            CreateTempDataMessages();
-//            return RedirectToAction(nameof(Index));
-//        }
-//    }
-//}
+            _messageModel.AddError("Registro inválido tente novamente");
+            CreateTempDataMessages();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Remover(string codigo)
+        {
+            BuildRoute();
+            await _service.Remover(codigo);
+
+            CreateTempDataMessages();
+            return RedirectToAction(nameof(Index));
+        }
+    }
+}

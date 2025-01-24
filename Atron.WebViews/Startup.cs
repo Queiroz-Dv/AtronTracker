@@ -26,7 +26,7 @@ namespace Atron.WebViews
         {
             services.AddHttpClient();
             services.AddHttpContextAccessor();
-            services.AddInfrastructure(Configuration);           
+            services.AddInfrastructure(Configuration);
             services.AddControllersWithViews();
 
             //services.Configure<RotaDeAcesso>(Configuration.GetSection(nameof(RotaDeAcesso)));
@@ -67,7 +67,11 @@ namespace Atron.WebViews
                 if (!token.IsNullOrEmpty())
                 {
                     context.Request.Headers["Authorization"] = $"Bearer {token}";
-                    TokenServiceStore.Token = token;
+
+                    if (TokenServiceStore.Token.IsNullOrEmpty())
+                    {
+                        TokenServiceStore.Token = token;
+                    }
                 }
 
                 // Call the next delegate/middleware in the pipeline

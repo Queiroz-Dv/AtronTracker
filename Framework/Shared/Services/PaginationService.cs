@@ -9,68 +9,62 @@ namespace Shared.Services
     /// <typeparam name="T">Entidade que será utilizada no processo</typeparam>
     public class PaginationService<T> : IPaginationService<T>
     {
-        private IPageRequestService PageRequestService;
         private readonly IFilterService<T> _filterService;
 
-        private PageInfoDTO<T> Page { get; set; }
+        private List<T> Entities { get; set; }
+
+        private PageInfoDTO Page { get; set; }
         
-        public PaginationService(IFilterService<T> filterService, IPageRequestService pageRequestService)
+        public PaginationService(IFilterService<T> filterService)
         {
             _filterService = filterService;
-            PageRequestService = pageRequestService;
-            Page = new PageInfoDTO<T>();
+            Page = new PageInfoDTO();
+            Entities = new List<T>();
         }
 
-        public void ConfigurePagination(PageInfoDTO<T> pageInfo)
+        public void ConfigurePagination(List<T> itens, PageInfoDTO pageInfo)
         {
-            var itensFiltrados = _filterService.ApplyFilter(pageInfo.Entities, pageInfo.PageRequestInfo.Filter, pageInfo.PageRequestInfo.KeyToSearch);
+            var itensFiltrados = _filterService.ApplyFilter(itens, pageInfo.PageRequestInfo.Filter, pageInfo.PageRequestInfo.KeyToSearch);
             var totalItems = itensFiltrados.Count;
 
-            PaginationService<T>.CalculatePageRange(pageInfo);
-            PaginationService<T>.PaginateEntities(pageInfo);
+            CalculatePageRange(pageInfo);
+            Entities = PaginateEntities(itens, pageInfo);
 
-            var pageInfoDTO = new PageInfoDTO<T>()
+            var pageInfoDTO = new PageInfoDTO()
             {
                 TotalItems = totalItems,
                 CurrentPage = pageInfo.CurrentPage,
-                ItemsPerPage = pageInfo.ItemsPerPage,
-                Entities = pageInfo.Entities,
+                ItemsPerPage = pageInfo.ItemsPerPage,             
                 StartPage = pageInfo.StartPage,
                 EndPage = pageInfo.EndPage,
                 PageRequestInfo = pageInfo.PageRequestInfo
             };
 
-            Page = pageInfoDTO;
-            PageRequestService.ConfigurePageRequestInfo(Page.PageRequestInfo.ApiControllerName, Page.PageRequestInfo.ApiControllerAction, Page.PageRequestInfo.Filter);
+            Page = pageInfoDTO;           
         }
 
-        private static void PaginateEntities(PageInfoDTO<T> pageInfo)
+        private List<T> PaginateEntities(List<T> entities, PageInfoDTO pageInfo)
         {
-            pageInfo.Entities = pageInfo.Entities
+           return entities
                   .Skip((pageInfo.CurrentPage - 1) * pageInfo.ItemsPerPage)
                   .Take(pageInfo.ItemsPerPage)
                   .ToList();
         }
 
-        private static void CalculatePageRange(PageInfoDTO<T> pageInfo)
+        private static void CalculatePageRange(PageInfoDTO pageInfo)
         {
             pageInfo.StartPage = pageInfo.CurrentPage - 2 > 0 ? pageInfo.CurrentPage - 2 : 1;
             pageInfo.EndPage = pageInfo.StartPage + 4 <= pageInfo.TotalPages ? pageInfo.StartPage + 4 : pageInfo.TotalPages;
         }
 
-        public PageInfoDTO<T> GetPageInfo()
+        public PageInfoDTO GetPageInfo()
         {
             return Page;
-        }
+        }        
 
-        public PageRequestInfoDTO GetPageRequestInfo()
+        public List<T> GetEntitiesFilled()
         {
-            return PageRequestService.GetPageRequestInfo();
-        }
-
-        public void ConfigurePageRequestInfo(string apiControllerName, string apiControllerAction, string filter = "")
-        {
-            PageRequestService.ConfigurePageRequestInfo(apiControllerName, apiControllerAction, filter);
+            return Entities;
         }
     }
 }

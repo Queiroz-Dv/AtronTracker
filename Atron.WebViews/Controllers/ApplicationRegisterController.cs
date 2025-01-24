@@ -17,6 +17,7 @@ namespace Atron.WebViews.Controllers
             : base(messageModel, paginationService)
         {
             _service = service;
+            ApiControllerName = "AppRegister";
         }
 
         [HttpGet]
@@ -28,10 +29,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Registrar(RegisterDTO registerDTO)
         {
-
-            BuildRoute();
-
-            _paginationService.ConfigurePageRequestInfo("Registrar", "ApplicationRegister");
+            BuildRoute("Registrar");
 
             await _service.Registrar(registerDTO);
 
