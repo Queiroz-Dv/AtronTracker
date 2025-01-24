@@ -19,7 +19,7 @@ namespace ExternalServices.Services.ApiRouteServices
 
         public async Task<ApiRoute> MontarRotaDoModulo(string rota, string modulo)
         {
-            var response = await _apiClient.GetAsync(rota, modulo);
+            var response = await _apiClient.GetAsync(modulo);
             var rotas = JsonConvert.DeserializeObject<ApiRoute>(response);
             return rotas;
         }

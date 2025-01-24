@@ -7,7 +7,7 @@ namespace Atron.Application.DTO.ApiDTO
     public class RegisterDTO : FactoryDTO
     {
         public int Id { get; set; }
-        public string UserName { get; set; }
+        public string Nome { get; set; }
 
         public string Sobrenome { get; set; }
         public DateTime? DataNascimento { get; set; }
@@ -18,12 +18,17 @@ namespace Atron.Application.DTO.ApiDTO
 
         [Required]
         [DataType(DataType.Password)]
-        public string Passsword { get; set; }
+        public string Senha { get; set; }
 
         [DataType(DataType.Password)]
         [DisplayName("Confirme a senha")]
-        [Compare(nameof(Passsword), ErrorMessage = "As senhas informadas não são iguais")]
-        public string ConfirmPasssword { get; set; }
-        public bool RegisterConfirmed { get; set; }
+        [Compare(nameof(Senha), ErrorMessage = "As senhas informadas não são iguais")]
+        public string ConfirmaSenha { get; set; }
+        public bool Registrado { get; set; }
+
+        public string GerarUserName()
+        {
+            return $"{Nome}@{Sobrenome}";
+        }
     }
 }

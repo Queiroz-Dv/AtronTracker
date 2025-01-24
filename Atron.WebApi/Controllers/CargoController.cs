@@ -1,6 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
 using Shared.Models;
@@ -11,10 +12,11 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CargoController : ModuleController<Cargo, ICargoService>
     {
         public CargoController(ICargoService cargoService,
-                               MessageModel<Cargo> messageModel)
+                               MessageModel messageModel)
             : base(cargoService, messageModel) { }
 
         [HttpGet]
@@ -29,7 +31,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.CriarAsync(cargo);
             return RetornoPadrao(cargo);
-        }        
+        }
 
         [HttpPut("{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] CargoDTO cargo)

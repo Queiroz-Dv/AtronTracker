@@ -1,5 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PermissaoController : ControllerBase
     {
         private IPermissaoService _permissaoService;

@@ -1,6 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
 using Shared.Models;
@@ -11,11 +12,12 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SalarioController : ModuleController<Salario, ISalarioService>
     {
 
         public SalarioController(ISalarioService service,
-            MessageModel<Salario> messageModel)
+            MessageModel messageModel)
         : base(service, messageModel)
         { }
 

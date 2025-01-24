@@ -23,38 +23,22 @@ namespace Atron.Application.Mapping
 
         private void CriarMapeamentoDePermissao()
         {
-            CreateMap<Permissao, PermissaoDTO>()
-                            .ForPath(dto => dto.UsuarioId, opt => opt.MapFrom(src => src.UsuarioId))
-                            .ForPath(dto => dto.UsuarioCodigo, opt => opt.MapFrom(src => src.UsuarioCodigo))
-                            .ForPath(dto => dto.Usuario.Id, opt => opt.MapFrom(src => src.UsuarioId))
-                            .ForPath(dto => dto.Usuario.Codigo, opt => opt.MapFrom(src => src.UsuarioCodigo))
-                            .ReverseMap();
+            CreateMap<Permissao, PermissaoDTO>().ReverseMap();
         }
 
         private void CriarMapeamentoDeMes()
         {
-            CreateMap<Mes, MesDTO>()
-                .ForPath(dto => dto.Descricao, opt => opt.MapFrom(src => src.Descricao)).ReverseMap();
+            CreateMap<Mes, MesDTO>().ReverseMap();
         }
 
         private void CriarMapeamentoDeSalario()
         {
-            CreateMap<Salario, SalarioDTO>()
-                .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.Id))
-                .ForPath(dto => dto.SalarioMensal, opt => opt.MapFrom(src => src.SalarioMensal))
-                .ForPath(dto => dto.UsuarioId, opt => opt.MapFrom(src => src.UsuarioId))
-                .ForPath(dto => dto.Usuario.Id, opt => opt.MapFrom(src => src.UsuarioId))
-                .ForPath(dto => dto.MesId, opt => opt.MapFrom(src => src.MesId))
-                .ForPath(dto => dto.Mes.Id, opt => opt.MapFrom(src => src.MesId))
-                .ForPath(dto => dto.Ano, opt => opt.MapFrom(src => src.Ano))
-                .ReverseMap();
+            CreateMap<Salario, SalarioDTO>().ReverseMap();
         }
 
         private void CriarMapeamentoDeTarefa()
         {
-            CreateMap<Tarefa, TarefaDTO>()
-                .ForPath(dto => dto.TarefaEstadoId, opt => opt.MapFrom(src => src.TarefaEstadoId))
-                .ReverseMap();
+            CreateMap<Tarefa, TarefaDTO>().ReverseMap();
         }
 
         private void CriarMapeamentoDeUsuario()
@@ -64,7 +48,7 @@ namespace Atron.Application.Mapping
 
         private void CriarMapeamentoDeCargo()
         {
-            CreateMap<Cargo, CargoDTO>().ForMember(dto => dto.DepartamentoCodigo, opt => opt.MapFrom(src => src.DepartamentoCodigo)).ReverseMap();
+            CreateMap<Cargo, CargoDTO>().ReverseMap();
         }
 
         private void CriarMapeamentoDeDepartamento()
