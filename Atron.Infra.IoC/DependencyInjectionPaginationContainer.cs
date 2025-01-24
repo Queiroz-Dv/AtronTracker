@@ -9,10 +9,7 @@ namespace Atron.Infra.IoC
     public static class DependencyInjectionPaginationContainer
     {
         public static IServiceCollection AddPaginationServices(this IServiceCollection services)
-        {
-
-            services.AddScoped<IPageRequestService, PageRequestService>();
-
+        {    
             services.AddScoped<IPaginationService<DepartamentoDTO>, PaginationService<DepartamentoDTO>>();
             services.AddScoped<IPaginationService<CargoDTO>, PaginationService<CargoDTO>>();
             services.AddScoped<IPaginationService<UsuarioDTO>, PaginationService<UsuarioDTO>>();

@@ -3,11 +3,12 @@ using Atron.Application.Interfaces;
 using Atron.Application.Specifications.CargoSpecifications;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using AutoMapper;
 using Shared.Extensions;
+using Shared.Interfaces.Mapper;
 using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Services
@@ -17,39 +18,30 @@ namespace Atron.Application.Services
     /// </summary>
     public class CargoService : ICargoService
     {
-        private readonly IMapper _mapper;
         private ICargoRepository _cargoRepository;
         private IDepartamentoRepository _departamentoRepository;
+        private IApplicationMapService<CargoDTO, Cargo> _map;
         private readonly IValidateModel<Cargo> _validateModel;
         private readonly MessageModel _messageModel;
 
-        public CargoService(IMapper mapper,
+        public CargoService(IApplicationMapService<CargoDTO, Cargo> map,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
-                            MessageModel messageModel,
-                            IValidateModel<Cargo> validateModel)
+                            IValidateModel<Cargo> validateModel,
+                            MessageModel messageModel)
         {
-            _mapper = mapper;
+            _map = map;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
-            _messageModel = messageModel;
             _validateModel = validateModel;
+            _messageModel = messageModel;
         }
 
         public async Task<List<CargoDTO>> ObterTodosAsync()
         {
             var cargos = await _cargoRepository.ObterCargosAsync();
 
-            var cargosDTOs = _mapper.Map<List<CargoDTO>>(cargos);
-
-            //cargosDTOs = (from crg in cargosDTOs
-            //              select new CargoDTO(crg.Codigo, crg.Descricao, new DepartamentoDTO(crg.Departamento.Codigo, ))
-            //              {
-            //                  Codigo = crg.Codigo,
-            //                  Descricao = crg.Descricao,
-            //                  DepartamentoCodigo = crg.DepartamentoCodigo,
-            //                  Departamento =  { Codigo = crg.Departamento.Codigo, Descricao = crg.Departamento.Descricao }
-            //              }).ToList();
+            var cargosDTOs = _map.MapToListDTO(cargos.ToList());
 
             return cargosDTOs;
         }
@@ -62,7 +54,7 @@ namespace Atron.Application.Services
                 return;
             }
 
-            var cargo = _mapper.Map<Cargo>(cargoDTO);
+            var cargo = _map.MapToEntity(cargoDTO);
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
             var entity = await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
 
@@ -94,17 +86,13 @@ namespace Atron.Application.Services
                 return;
             }
 
-            var cargo = _mapper.Map<Cargo>(cargoDTO);
-            var departamento = _departamentoRepository.DepartamentoExiste(cargoDTO.DepartamentoCodigo);
+            var cargo = _map.MapToEntity(cargoDTO);
+            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
 
-            if (departamento)
-            {
-                var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
-                cargo.DepartmentoId = entidade.Id;
-
-                if (cargo.Departamento is not null)
-                    cargo.Departamento = null;
-
+            if (departamento is not null)
+            {                
+                cargo.DepartmentoId = departamento.Id;
+                cargo.DepartamentoCodigo = departamento.Codigo;
             }
 
             _validateModel.Validate(cargo);
@@ -134,7 +122,7 @@ namespace Atron.Application.Services
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
             if (cargo is not null)
             {
-                return _mapper.Map<CargoDTO>(cargo);
+                return _map.MapToDTO(cargo);
             }
             else
             {

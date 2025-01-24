@@ -1,16 +1,20 @@
 ﻿using Communication.Interfaces;
 using ExternalServices.Interfaces;
 using Newtonsoft.Json;
+using Shared.Extensions;
+using Shared.Models;
 
 namespace ExternalServices.Services
 {
     public class ExternalService<DTO> : IExternalService<DTO>
     {
         private readonly IApiClient _apiClient;
+        private readonly MessageModel _messageModel;
 
-        public ExternalService(IApiClient apiClient)
+        public ExternalService(IApiClient apiClient, MessageModel messageModel)
         {
             _apiClient = apiClient;
+            _messageModel = messageModel;
         }
 
         public async Task Atualizar(string codigo, DTO dto)
@@ -27,7 +31,13 @@ namespace ExternalServices.Services
         public async Task<DTO> ObterPorCodigo(string codigo)
         {
             var response = await _apiClient.GetAsync(codigo);
-            var dto = JsonConvert.DeserializeObject<DTO>(response);
+            DTO? dto = default;
+
+            if (!_messageModel.Messages.HasErrors())
+            {
+                dto = JsonConvert.DeserializeObject<DTO>(response);
+            }
+
             return dto;
         }
 

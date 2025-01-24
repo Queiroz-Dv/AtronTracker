@@ -2,41 +2,46 @@ using Atron.WebViews.Helpers;
 using Communication.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Shared.DTO;
+using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.Services;
 using System;
+using System.Collections.Generic;
 
 namespace Atron.WebViews.Controllers
 {
     public class MainController<DTO, Entity> : ServiceConteinerController<DTO, Entity>
     {
         protected IRouterBuilderService _router;
+        protected string ApiControllerName;
 
-        public MainController(MessageModel messageModel, IPaginationService<DTO> paginationService)               
+        public MainController(MessageModel messageModel, IPaginationService<DTO> paginationService)
             : base(messageModel)
-        { 
-          _paginationService = paginationService;
+        {
+            _paginationService = paginationService;
         }
 
         // Monta a rota de acordo com o modulo
-        protected void BuildRoute()
-        {
-            var rota = _router.BuildRoute(AppSettings.RotaDeAcesso.Protocolo, AppSettings.RotaDeAcesso.Url);
-
-            _router.BuildUrl(rota, _paginationService.GetPageRequestInfo());
+        protected void BuildRoute(string apiActionName = "", string parameter = "")
+        {            
+            ConfigureApiInfo.ApiControllerName =  ApiControllerName;
+            ConfigureApiInfo.ApiActionName = apiActionName;
+            ConfigureApiInfo.Parameter = parameter;
+            ConfigureApiInfo.BuildMainRoute();
+            ConfigureApiInfo.BuildModuleUrl();
+            _router.TransferRouteToApiClient(ConfigureApiInfo.GetUrlPath());
         }
-
+        
         /// <summary>
         /// Configura a paginação
         /// </summary>
         /// <param name="itens">Lista de entidades a serem paginadas</param>
         /// <param name="itemPage">Número da página atual</param>
-        protected virtual void ConfigurePaginationForView(PageInfoDTO<DTO> pageInfo)
+        protected virtual void ConfigurePaginationForView(List<DTO> itens, PageInfoDTO pageInfo)
         {
+            _paginationService.ConfigurePagination(itens, pageInfo);
             ConfigureViewDataFilter();
             ConfigureViewBagCurrentController();
-            _paginationService.ConfigurePagination(pageInfo);
         }
 
         protected void SetAuthToken(string token, DateTime expires)

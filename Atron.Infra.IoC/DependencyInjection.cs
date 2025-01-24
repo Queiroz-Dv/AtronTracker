@@ -1,21 +1,13 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Mapping;
-using Atron.Application.Validations;
-using Atron.Domain.Entities;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Communication.Models;
 using Communication.Services;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using ExternalServices.Services;
-using ExternalServices.Services.ApiRouteServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Interfaces;
-using Shared.Interfaces.Validations;
-using Shared.Models;
-using Shared.Services;
 
 namespace Atron.Infra.IoC
 {
@@ -36,8 +28,12 @@ namespace Atron.Infra.IoC
             services.AddScoped<IUrlTransferService, ApiClient>();
             services.AddScoped<IRouterBuilderService, RouterBuilder>();
 
-            services.AddScoped<ILoginExternalService, LoginExternalService>();         
+            services.AddScoped<ILoginExternalService, LoginExternalService>();
             services.AddScoped<IRegisterExternalService, RegisterExternalService>();
+
+            // Configuração dos serviços genéricos 
+            services.AddScoped<IExternalService<DepartamentoDTO>, ExternalService<DepartamentoDTO>>();
+            services.AddScoped<IExternalService<CargoDTO>, ExternalService<CargoDTO>>();
 
             services = services.AddMessageValidationServices();
             services = services.AddCustomCookieConfiguration();
@@ -45,6 +41,6 @@ namespace Atron.Infra.IoC
             services = services.AddInfrastructureSecurity(configuration);
 
             return services;
-        }        
+        }
     }
 }

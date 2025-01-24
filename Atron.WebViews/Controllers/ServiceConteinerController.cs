@@ -21,7 +21,7 @@ namespace Atron.WebViews.Controllers
 
         public void ConfigureCurrentPageAction()
         {
-            ViewData["ActionPage"] = _paginationService.GetPageRequestInfo().Action;
+            ViewData["ActionPage"] = _paginationService.GetPageInfo().PageRequestInfo.Action;
         }
 
         public void ConfigureDataTitleForView(string title)
@@ -31,12 +31,12 @@ namespace Atron.WebViews.Controllers
 
         public void ConfigureViewBagCurrentController()
         {
-            ViewBag.CurrentController = _paginationService.GetPageRequestInfo().CurrentController;
+            ViewBag.CurrentController = _paginationService.GetPageInfo().PageRequestInfo.CurrentViewController;
         }
 
         public void ConfigureViewDataFilter()
         {
-            ViewData["Filter"] = _paginationService.GetPageRequestInfo().Filter;
+            ViewData["Filter"] = _paginationService.GetPageInfo().PageRequestInfo.Filter;
         }
 
         public void CreateTempDataMessages()

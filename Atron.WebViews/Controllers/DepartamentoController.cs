@@ -1,6 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
+using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,6 @@ using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
@@ -18,12 +18,17 @@ namespace Atron.WebViews.Controllers
     {
         private readonly IExternalService<DepartamentoDTO> _service;
 
-        public DepartamentoController(IPaginationService<DepartamentoDTO> paginationService,
-                                      MessageModel messageModel, IExternalService<DepartamentoDTO> service)
+        public DepartamentoController(
+            IExternalService<DepartamentoDTO> service,
+            IPaginationService<DepartamentoDTO> paginationService,
+            IRouterBuilderService router,
+            MessageModel messageModel)
             : base(messageModel, paginationService)
         {
             _paginationService = paginationService;
             _service = service;
+            _router = router;
+            ApiControllerName = nameof(Departamento);
         }
 
         [HttpGet, HttpPost]
@@ -32,22 +37,20 @@ namespace Atron.WebViews.Controllers
             BuildRoute();
             var departamentos = await _service.ObterTodos();
 
-
-            ConfigurePaginationForView(new PageInfoDTO<DepartamentoDTO>()
+            ConfigurePaginationForView(departamentos, new PageInfoDTO()
             {
-                Entities = departamentos.ToList(),
                 CurrentPage = itemPage,
                 PageRequestInfo = new PageRequestInfoDTO()
                 {
+                    CurrentViewController = ApiControllerName,
                     Action = nameof(Index),
-                    CurrentController = nameof(Departamento),
                     Filter = filter,
                 }
             });
 
             var model = new DepartamentoModel()
             {
-                Departamentos = _paginationService.GetPageInfo().Entities,
+                Departamentos = _paginationService.GetEntitiesFilled(),
                 PageInfo = _paginationService.GetPageInfo()
             };
 
@@ -67,7 +70,7 @@ namespace Atron.WebViews.Controllers
         public async Task<IActionResult> Cadastrar(DepartamentoDTO departamento)
         {
             if (ModelState.IsValid)
-            {
+            {              
                 BuildRoute();
 
                 await _service.Criar(departamento);
@@ -85,8 +88,8 @@ namespace Atron.WebViews.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
-        {
-            // BuildRoute(nameof(Departamento), codigo);
+        {           
+            BuildRoute();
             var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
             if (departamentoDTO is null || _messageModel.Messages.HasErrors())
@@ -101,8 +104,8 @@ namespace Atron.WebViews.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
-        {
-            //BuildRoute(nameof(Departamento), codigo);
+        {           
+            BuildRoute();
             await _service.Atualizar(codigo, departamentoDTO);
             CreateTempDataMessages();
 
@@ -113,8 +116,8 @@ namespace Atron.WebViews.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
-        {
-            // BuildRoute(nameof(Departamento), codigo);
+        {           
+            BuildRoute();
             await _service.Remover(codigo);
 
             CreateTempDataMessages();

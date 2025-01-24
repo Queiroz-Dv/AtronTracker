@@ -1,10 +1,8 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Application.Specifications.DepartamentoSpecifications;
-using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using AutoMapper;
 using Shared.Extensions;
 using Shared.Interfaces.Mapper;
 using Shared.Interfaces.Validations;
@@ -30,11 +28,10 @@ namespace Atron.Application.Services
         private readonly IValidateModel<Departamento> _validateModel;
         private readonly MessageModel messageModel;
 
-        public DepartamentoService(
-            IApplicationMapService<DepartamentoDTO, Departamento> map,
-            IDepartamentoRepository departamentoRepository,
-             MessageModel messageModel,
-             IValidateModel<Departamento> validateModel)
+        public DepartamentoService(IApplicationMapService<DepartamentoDTO, Departamento> map,
+                                   IDepartamentoRepository departamentoRepository,
+                                   IValidateModel<Departamento> validateModel,
+                                   MessageModel messageModel)
         {
             /* A Injeção de Dependência via construtor é usada para fornecer 
              * a dependência ao DepartamentoService. 
@@ -108,7 +105,7 @@ namespace Atron.Application.Services
 
         public async Task<DepartamentoDTO> ObterPorIdAsync(int? departamentoId)
         {
-            var entity = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);            
+            var entity = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);
             return _map.MapToDTO(entity);
         }
 

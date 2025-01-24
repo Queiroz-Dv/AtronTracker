@@ -1,28 +1,33 @@
-﻿using Communication.Interfaces.Services;
-using Shared.DTO;
-using Shared.Extensions;
+﻿using Communication.Interfaces;
+using Communication.Interfaces.Services;
 
 namespace Communication.Services
 {
     public class RouterBuilder : IRouterBuilderService
     {
-        private readonly IUrlTransferService _urlTransferService;
+        private readonly IApiClient _apiClient;
 
-        public RouterBuilder(IUrlTransferService urlTransferService)
+        public RouterBuilder(IApiClient apiClient)
         {
-            _urlTransferService = urlTransferService;
+            _apiClient = apiClient;
         }
 
-        public string BuildRoute(string protocolo, string url)
-        {
-            return $"{protocolo}{url}/";
-        }
+        //public string BuildRoute(string protocolo, string url)
+        //{
+        //    return $"{protocolo}{url}/";
+        //}
 
-        public void BuildUrl(string route, PageRequestInfoDTO requestInfoDTO)
+        //public void BuildUrl(string route, PageRequestInfoDTO requestInfoDTO)
+        //{
+        //    var url = requestInfoDTO.Parameter.IsNullOrEmpty() ? $"{route}{requestInfoDTO.ApiControllerName}/{requestInfoDTO.ApiControllerAction}" :
+        //                                            $"{route}{requestInfoDTO.ApiControllerName}/{requestInfoDTO.ApiControllerAction}/{requestInfoDTO.Parameter}";
+
+        //    _apiClient.Url = url;
+        //}
+
+        public void TransferRouteToApiClient(string url)
         {
-            var url = requestInfoDTO.Parameter.IsNullOrEmpty() ? $"{route}{requestInfoDTO.ApiControllerName}/{requestInfoDTO.ApiControllerAction}" :
-                                                    $"{route}{requestInfoDTO.ApiControllerName}/{requestInfoDTO.ApiControllerAction}/{requestInfoDTO.Parameter}";
-            _urlTransferService.Url = url;
+            _apiClient.Url = url;
         }
     }
 }

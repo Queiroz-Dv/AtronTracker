@@ -1,7 +1,6 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
 using Communication.Interfaces.Services;
-using Communication.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Interfaces;
@@ -16,14 +15,15 @@ namespace Atron.WebViews.Controllers
         private readonly ILoginExternalService _service;
 
         public ApplicationLoginController(
-            ILoginExternalService service, 
-            MessageModel messageModel, 
+            ILoginExternalService service,
+            MessageModel messageModel,
             IPaginationService<LoginDTO> paginationService,
             IRouterBuilderService router) :
             base(messageModel, paginationService)
         {
             _router = router;
-            _service = service;         
+            _service = service;
+            ApiControllerName = "AppLogin";
         }
 
         [HttpGet]
@@ -37,9 +37,8 @@ namespace Atron.WebViews.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
-        {
-            _paginationService.ConfigurePageRequestInfo("AppLogin", "Logar");
-            BuildRoute();
+        {            
+            BuildRoute("Logar");
             var login = await _service.Autenticar(loginDTO);
 
             if (login.Authenticated)
@@ -53,6 +52,6 @@ namespace Atron.WebViews.Controllers
                 ModelState.AddModelError("", "Usuário não foi autenticado, tente novamente ou contate a administração.");
                 return View(loginDTO);
             }
-        }
+        }        
     }
 }

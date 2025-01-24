@@ -4,10 +4,8 @@ namespace Atron.Application.DTO
 {
     public class DepartamentoDTO
     {
-        public DepartamentoDTO()
-        {
-            
-        }
+        public DepartamentoDTO() { }
+
         public DepartamentoDTO(string codigo, string descricao)
         {
             Codigo = codigo.ToUpper();
