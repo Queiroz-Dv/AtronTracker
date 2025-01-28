@@ -18,7 +18,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<bool> GravarAssociacaoUsuarioCargoDepartamento(Usuario usuario, Cargo cargo, Departamento departamento)
         {
-            var usuarioBd = _context.Usuarios.FirstAsync(usr => usr.Id == usuario.Id);
+            var usuarioBd = await _context.Usuarios.FirstAsync(usr => usr.Codigo == usuario.Codigo);
 
             var associacao = new UsuarioCargoDepartamento()
             {
@@ -41,7 +41,6 @@ namespace Atron.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

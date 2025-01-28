@@ -38,9 +38,9 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(string id, [FromBody] TarefaDTO tarefa)
+        public async Task<ActionResult> Put(int id, [FromBody] TarefaDTO tarefa)
         {
-            await _service.AtualizarAsync(tarefa);
+            await _service.AtualizarAsync(id, tarefa);
 
             return _messageModel.Messages.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());

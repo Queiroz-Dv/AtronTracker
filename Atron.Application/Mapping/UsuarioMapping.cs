@@ -1,26 +1,20 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
-using Shared.Interfaces.Mapper;
+using Atron.Domain.Interfaces;
 using Shared.Services.Mapper;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Atron.Application.Mapping
 {
     public class UsuarioMapping : ApplicationMapService<UsuarioDTO, Usuario>
     {
-        private readonly IApplicationMapService<CargoDTO, Cargo> _cargoMapping;
-        private readonly IApplicationMapService<DepartamentoDTO, Departamento> _departamentoMapping;
+        private readonly IDepartamentoRepository _departamentoRepository;
+        private readonly ICargoRepository _cargoRepository;
 
-        public UsuarioMapping(
-            IApplicationMapService<CargoDTO, Cargo> cargoMapping,
-            IApplicationMapService<DepartamentoDTO, Departamento> departamentoMapping)
+        public UsuarioMapping(IDepartamentoRepository departamentoRepository, ICargoRepository cargoRepository)
         {
-            _cargoMapping = cargoMapping;
-            _departamentoMapping = departamentoMapping;
+            _departamentoRepository = departamentoRepository;
+            _cargoRepository = cargoRepository;
         }
 
         public override UsuarioDTO MapToDTO(Usuario entity)
@@ -31,20 +25,38 @@ namespace Atron.Application.Mapping
                 Nome = entity.Nome,
                 Sobrenome = entity.Sobrenome,
                 Email = entity.Email,
+                Salario = entity.SalarioAtual,
+                DataNascimento = entity.DataNascimento,
                 Cargos = new List<CargoDTO>(),
                 Departamentos = new List<DepartamentoDTO>(),
             };
 
-
-            if (entity.UsuarioCargoDepartamentos != null || entity.UsuarioCargoDepartamentos.Count > 0)
-            {                
+            if (entity.UsuarioCargoDepartamentos is not null)
+            {
                 foreach (var item in entity.UsuarioCargoDepartamentos)
                 {
-                    var cargo = _cargoMapping.MapToDTO(item.Cargo);
-                    var departamento = _departamentoMapping.MapToDTO(item.Cargo.Departamento);
+                    var cargoBdTask = _cargoRepository.ObterCargoPorCodigoAsyncAsNoTracking(item.CargoCodigo);
+                    cargoBdTask.Wait();
+                    var cargoBd = cargoBdTask.Result;
 
-                    usuario.Cargos.Add(cargo);
-                    usuario.Departamentos.Add(departamento);
+                    var departamentoBdTask = _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(item.DepartamentoCodigo);
+                    departamentoBdTask.Wait();
+                    var departamentoBd = departamentoBdTask.Result;
+
+                    usuario.Cargo = new CargoDTO
+                    {
+                        Codigo = cargoBd.Codigo,
+                        Descricao = cargoBd.Descricao
+                    };
+
+                    usuario.Departamento = new DepartamentoDTO
+                    {
+                        Codigo = departamentoBd.Codigo,
+                        Descricao = departamentoBd.Descricao
+                    };
+
+                    usuario.CargoCodigo = cargoBd.Codigo;
+                    usuario.DepartamentoCodigo = departamentoBd.Codigo;
                 }
 
                 return usuario;
@@ -55,27 +67,16 @@ namespace Atron.Application.Mapping
 
         public override Usuario MapToEntity(UsuarioDTO dto)
         {
-            var usuario = new Usuario
-            {            
+            // 1. Mapear o DTO para a entidade
+            return new Usuario()
+            {
                 Codigo = dto.Codigo,
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,
-                Email = dto.Email                
+                Email = dto.Email,
+                DataNascimento = dto.DataNascimento,
+                SalarioAtual = dto.Salario
             };
-
-            var cargo = _cargoMapping.MapToEntity(dto.Cargo);
-            var departamento = _departamentoMapping.MapToEntity(dto.Departamento);
-
-            usuario.UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>
-            {
-                new UsuarioCargoDepartamento
-                {
-                    Cargo = cargo,
-                    Departamento = departamento
-                }
-            };
-
-            return usuario;
         }
     }
 }

@@ -13,7 +13,10 @@ namespace Atron.WebViews.Controllers
     {
         private readonly IRegisterExternalService _service;
 
-        public ApplicationRegisterController(IRegisterExternalService service, MessageModel messageModel, IPaginationService<RegisterDTO> paginationService)
+        public ApplicationRegisterController(
+            IRegisterExternalService service, 
+            IPaginationService<RegisterDTO> paginationService,
+            MessageModel messageModel)
             : base(messageModel, paginationService)
         {
             _service = service;

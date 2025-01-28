@@ -24,6 +24,11 @@ namespace Atron.WebViews.Controllers
             ViewData["ActionPage"] = _paginationService.GetPageInfo().PageRequestInfo.Action;
         }
 
+        public void ConfigureCurrentPageAction(string currentPageAction)
+        {
+            ViewData["ActionPage"] = currentPageAction;
+        }
+
         public void ConfigureDataTitleForView(string title)
         {
             ViewData["Title"] = title;

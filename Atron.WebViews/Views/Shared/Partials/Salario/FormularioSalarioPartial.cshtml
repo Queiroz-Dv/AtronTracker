@@ -51,10 +51,12 @@
 		<br />
 	</fieldset>
 
-	<div class="form-group row">
-		<div class="col-md-offset-2 col-md-10">
-			<input type="submit" class="btn btn-success" value="Salvar" />
-			<a asp-action="Index" class="btn btn-dark">Painel</a>
-		</div>
-	</div>
+	@if (actionPage.Equals("Cadastrar"))
+	{
+		<partial name="Partials/BtnSubmitCadastrar"></partial>
+	}
+	else
+	{
+		<partial name="Partials/BtnSubmitAtualizar"></partial>
+	}
 </form>

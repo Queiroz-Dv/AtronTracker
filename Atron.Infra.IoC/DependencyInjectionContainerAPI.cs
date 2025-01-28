@@ -59,9 +59,9 @@ namespace Atron.Infra.IoC
             ConfigurePermissaoServices(services);
             ConfigurePermissaoRepositoryServices(services);
             ConfigurePermissaoEstadoServices(services);
+
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
-
             ConfigureUserAuthenticationServices(services);
 
             return services;

@@ -95,6 +95,12 @@ namespace Atron.Infrastructure.Repositories
             return await _context.Cargos.Include(dpt => dpt.Departamento).FirstOrDefaultAsync(crg => crg.Codigo == codigo);
         }
 
+        public async Task<Cargo> ObterCargoPorCodigoAsyncAsNoTracking(string codigo)
+        {
+            return await _context.Cargos.Include(dpt => dpt.Departamento).AsNoTracking().FirstOrDefaultAsync(crg => crg.Codigo == codigo);
+        }
+
+
         public bool CargoExiste(string codigo)
         {
             return _context.Cargos.Any(crg => crg.Codigo == codigo);

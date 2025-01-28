@@ -11,6 +11,8 @@ namespace Atron.Domain.Interfaces
         Task<Cargo> ObterCargoPorIdAsync(int? id);
         Task<Cargo> ObterCargoPorCodigoAsync(string codigo);
 
+        Task<Cargo> ObterCargoPorCodigoAsyncAsNoTracking(string codigo);
+
         Task<Cargo> CriarCargoAsync(Cargo cargo);
 
         Task<Cargo> AtualizarCargoAsync(Cargo cargo);

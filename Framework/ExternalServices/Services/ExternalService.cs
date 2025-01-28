@@ -22,6 +22,13 @@ namespace ExternalServices.Services
             var json = JsonConvert.SerializeObject(dto);
             await _apiClient.PutAsync(codigo, json);
         }
+
+        public async Task AtualizarPorId(string id, DTO dto)
+        {
+            var json = JsonConvert.SerializeObject(dto);
+            await _apiClient.PutAsyncById(Convert.ToInt32(id), json);
+        }
+
         public async Task Criar(DTO dto)
         {
             var json = JsonConvert.SerializeObject(dto);
@@ -31,6 +38,19 @@ namespace ExternalServices.Services
         public async Task<DTO> ObterPorCodigo(string codigo)
         {
             var response = await _apiClient.GetAsync(codigo);
+            DTO? dto = default;
+
+            if (!_messageModel.Messages.HasErrors())
+            {
+                dto = JsonConvert.DeserializeObject<DTO>(response);
+            }
+
+            return dto;
+        }
+
+        public async Task<DTO> ObterPorId(string id)
+        {
+            var response = await _apiClient.GetAsync(Convert.ToInt32(id));
             DTO? dto = default;
 
             if (!_messageModel.Messages.HasErrors())

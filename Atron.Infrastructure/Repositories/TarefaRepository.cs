@@ -17,9 +17,9 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Tarefa> AtualizarTarefaAsync(Tarefa tarefa)
+        public async Task<Tarefa> AtualizarTarefaAsync(int id, Tarefa tarefa)
         {
-            var tarefaBD = await ObterTarefaPorId(tarefa.Id);
+            var tarefaBD = await ObterTarefaPorId(id);
             AtualizarEntidadeParaPersistencia(tarefa, tarefaBD);
             try
             {
@@ -63,22 +63,24 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Tarefa> ObterTarefaPorId(int id)
         {
-            var entidade = await _context.Tarefas            
-            .Include(usr => usr.Usuario)
-         //   .ThenInclude(crg => crg.Cargo)
-         //   .ThenInclude(dpt => dpt.Departamento)
-         .FirstOrDefaultAsync(trf => trf.Id == id);
-            return entidade;
+            return await _context.Tarefas
+                                 .Include(usr => usr.Usuario)
+                                 .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
+                                 .ThenInclude(crg => crg.Cargo)
+                                 .ThenInclude(dpt => dpt.Departamento)
+                                 .FirstOrDefaultAsync(trf => trf.Id == id);
+
         }
 
         public async Task<List<Tarefa>> ObterTodasTarefas()
         {
-            var entidades = await _context.Tarefas                
-                //.Include(usr => usr.Usuario)
-                //.ThenInclude(crg => crg.Cargo)
-                //.ThenInclude(dpt => dpt.Departamento)
+            var entidades = await _context.Tarefas
+                .Include(usr => usr.Usuario) // Obtém o usuário associado a tarefa
+                .ThenInclude(rel => rel.UsuarioCargoDepartamentos) // Obtém os relacionamentos associados ao usuário
+                .ThenInclude(crg => crg.Cargo) // Obtém o cargo associado relacionamento do usuário
+                .ThenInclude(dpt => dpt.Departamento) // Obtém o departamento associado ao relacionamento de cargo
                 .ToListAsync();
             return entidades;
-        }
+        }       
     }
 }
