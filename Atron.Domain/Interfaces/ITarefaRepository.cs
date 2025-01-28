@@ -12,6 +12,6 @@ namespace Atron.Domain.Interfaces
 
         Task<Tarefa> CriarTarefaAsync(Tarefa tarefa);
 
-        Task<Tarefa> AtualizarTarefaAsync(Tarefa tarefa);
+        Task<Tarefa> AtualizarTarefaAsync(int id, Tarefa tarefa);
     }
 }

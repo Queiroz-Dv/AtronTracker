@@ -13,10 +13,10 @@ namespace Atron.Domain.Interfaces.UsuarioInterfaces
 
         Task<bool> CriarUsuarioAsync(Usuario usuario);
 
-        Task<Usuario> AtualizarUsuarioAsync(Usuario usuario);
+        Task<bool> AtualizarUsuarioAsync(string codigo, Usuario usuario);
 
         Task<Usuario> RemoverUsuarioAsync(Usuario usuario);
         bool UsuarioExiste(string codigo);
-        Task AtualizarSalario(int usuarioId, int quantidadeTotal);
+        Task<bool> AtualizarSalario(int usuarioId, int quantidadeTotal);
     }
 }

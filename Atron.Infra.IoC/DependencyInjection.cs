@@ -1,5 +1,7 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.DTO.ApiDTO;
 using Atron.Application.Mapping;
+using Atron.Domain.Entities;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Communication.Models;
@@ -32,8 +34,12 @@ namespace Atron.Infra.IoC
             services.AddScoped<IRegisterExternalService, RegisterExternalService>();
 
             // Configuração dos serviços genéricos 
+            services.AddScoped<IExternalService<RegisterDTO>, ExternalService<RegisterDTO>>();
             services.AddScoped<IExternalService<DepartamentoDTO>, ExternalService<DepartamentoDTO>>();
             services.AddScoped<IExternalService<CargoDTO>, ExternalService<CargoDTO>>();
+            services.AddScoped<IExternalService<UsuarioDTO>, ExternalService<UsuarioDTO>>();
+            services.AddScoped<IExternalService<TarefaDTO>, ExternalService<TarefaDTO>>();
+            services.AddScoped<IExternalService<TarefaEstado>, ExternalService<TarefaEstado>>();
 
             services = services.AddMessageValidationServices();
             services = services.AddCustomCookieConfiguration();

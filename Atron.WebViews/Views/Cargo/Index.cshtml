@@ -5,28 +5,9 @@
 @using Atron.WebViews.Models;
 @model CargoModel;
 
-<style>
-	.modal-lg {
-		max-width: 80%;
-	}
-</style>
-
-<div>
-	<h2>@ViewData["Title"]</h2>
-</div>
-<hr />
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="pull-left">
-			<a asp-action="Cadastrar" class="btn btn-success">
-				<span title="Cadastrar novo" class="fas fa-plus"></span> Cadastrar novo
-			</a>
-		</div>
-	</div>
-</div>
-<br />
-
+<link href="~/css/site.css" />
+<partial name="Partials/TitleLabel"></partial>
+<partial name="Partials/BtnCadastrar"></partial>
 
 <div class="panel panel-default">
 	<form asp-controller="Cargo" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
@@ -56,15 +37,9 @@
 							<td>@item.Descricao</td>
 							<td>@item.DepartamentoCodigo - @item.Departamento.Descricao</td>
 
-							<td>
-								<a asp-action="Atualizar" asp-route-codigo="@item.Codigo" title="Atualizar" class="btn btn-warning">
-									<span class="fas fa-edit">Atualizar</span>
-								</a>
-
-								<a onclick="confirmarRemocao('@item.Codigo')" title="Remover"
-								   class="btn btn-danger">
-									<span class="fas fa-trash-alt">Excluir</span>
-								</a>
+							<td class="text-end">
+								<partial name="Partials/BtnAtualizar" model="item.Codigo" />
+								<partial name="Partials/BtnExcluir" model="item.Codigo" />
 							</td>
 						</tr>
 					}
@@ -74,4 +49,4 @@
 	</fieldset>
 	<partial name="PagerPartial" model="Model.PageInfo" />
 </div>
-<partial name="Partials/ExcluirRegistroPartialModal" for="Cargo"></partial>
+<partial name="Partials/ExcluirRegistro" for="Cargo"></partial>

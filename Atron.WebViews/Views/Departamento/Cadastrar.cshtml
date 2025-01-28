@@ -4,10 +4,10 @@
 @using Shared.Extensions;
 @model DepartamentoDTO;
 
-<h2>@ViewData["Title"]</h2>
 <link href="~/css/site.css" rel="stylesheet" />
+
+<partial name="Partials/TitleLabel"></partial>
 <form asp-action="Cadastrar" method="post" class="form-horizontal">
-    <hr />
 
     <div class="form-group row">
         <label asp-for="Codigo" class="col-md-2 control-label font-weight-bold"></label>
@@ -26,11 +26,6 @@
 
     </div>
 
-    <div class="form-group row">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Cadastrar" class="btn btn-success" />
-            <a asp-action="Index" class="btn btn-dark">Painel</a>
-        </div>
-    </div>
+    <partial name="Partials/BtnSubmitCadastrar"></partial>
 </form>
 <script src="~/js/departamentoScript.js"></script>

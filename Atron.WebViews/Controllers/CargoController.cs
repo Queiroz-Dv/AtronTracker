@@ -3,6 +3,7 @@ using Atron.Domain.Entities;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Shared.DTO;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
+    [Authorize]
     public class CargoController : MainController<CargoDTO, Cargo>
     {
         private readonly IExternalService<CargoDTO> _service;
@@ -22,8 +24,8 @@ namespace Atron.WebViews.Controllers
         public CargoController(
             IExternalService<CargoDTO> service,
             IPaginationService<CargoDTO> paginationService,
-            IRouterBuilderService router,
             IExternalService<DepartamentoDTO> departamentoService,
+            IRouterBuilderService router,
             MessageModel messageModel)
             : base(messageModel, paginationService)
         {

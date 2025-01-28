@@ -4,6 +4,7 @@ using Shared.Interfaces;
 using Shared.Interfaces.Validations;
 using Shared.Models;
 using System;
+using System.Linq;
 
 namespace Atron.Application.Validations
 {
@@ -58,18 +59,8 @@ namespace Atron.Application.Validations
 
             if (entity.DataNascimento == DateTime.Now)
             {
-                AddError("Data de nascimento inválida, tente novamente");
-            }
-
-            //if (entity.DepartamentoId == 0 || string.IsNullOrEmpty(entity.DepartamentoCodigo))
-            //{
-            //    AddError("Identificador ou código de departamento inválido, tente novamente.");
-            //}
-
-            //if (entity.CargoId == 0 || string.IsNullOrEmpty(entity.CargoCodigo))
-            //{
-            //    AddError("Identificador ou código de cargo inválido, tente novamente.");
-            //}
+                AddError("Data de nascimento inválida.");
+            }           
         }
     }
 }

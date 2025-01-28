@@ -93,5 +93,34 @@ namespace Communication.Models
             var jsonContent = JsonConvert.DeserializeObject<DTO>(responseContent);
             return jsonContent;
         }
+
+        public async Task<string> GetAsync(int parameter)
+        {
+            var response = await _httpClient.GetAsync($"{Url}{parameter}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return responseContent;
+            }
+            else
+            {
+                _messageModel.AddError("Não foi possível obter o registro.");
+                return null;
+            }
+        }
+
+        public async Task PutAsyncById(int parameter, string content)
+        {
+            var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
+            try
+            {
+                var response = await _httpClient.PutAsync($"{Url}{parameter}", httpContent);
+            }
+            catch (HttpRequestException)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -5,8 +5,25 @@ using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
-    public class TarefaDTO : FactoryDTO
+    public class TarefaDTO
     {
+        public TarefaDTO() { }
+
+        public TarefaDTO(int id,
+            string titulo,
+            string conteudo,
+            DateTime dataInicial,
+            DateTime dataFinal,
+            string usuarioCodigo)
+        {
+            Id = id;
+            Titulo = titulo;
+            Conteudo = conteudo;
+            DataInicial = dataInicial;
+            DataFinal = dataFinal;
+            UsuarioCodigo = usuarioCodigo;
+        }
+
         public int Id { get; set; }
 
         [JsonIgnore]

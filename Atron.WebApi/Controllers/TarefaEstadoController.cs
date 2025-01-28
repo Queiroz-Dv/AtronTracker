@@ -3,7 +3,6 @@ using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

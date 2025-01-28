@@ -16,8 +16,8 @@ namespace Atron.WebApi.Controllers
     [Authorize]
     public class UsuarioController : ModuleController<Usuario, IUsuarioService>
     {
-
-        public UsuarioController(IUsuarioService usuarioService,
+        public UsuarioController(
+            IUsuarioService usuarioService,
             MessageModel messageModel) :
             base(usuarioService, messageModel)
         { }
@@ -43,7 +43,7 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult<UsuarioDTO>> Put(string codigo, [FromBody] UsuarioDTO usuario)
         {
             // Verificar o código que é enviado
-            await _service.AtualizarAsync(usuario);
+            await _service.AtualizarAsync(codigo, usuario);
 
             return _messageModel.Messages.HasErrors() ?
                 BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
