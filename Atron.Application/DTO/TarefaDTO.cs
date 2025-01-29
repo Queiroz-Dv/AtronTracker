@@ -7,7 +7,10 @@ namespace Atron.Application.DTO
 {
     public class TarefaDTO
     {
-        public TarefaDTO() { }
+        public TarefaDTO()
+        {
+            Usuario = new UsuarioDTO();
+        }
 
         public TarefaDTO(int id,
             string titulo,

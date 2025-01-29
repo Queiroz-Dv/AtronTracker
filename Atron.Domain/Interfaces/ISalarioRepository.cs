@@ -9,7 +9,7 @@ namespace Atron.Domain.Interfaces
         Task CriarSalarioAsync(Salario entidade);
         Task<Salario> ObterSalarioPorCodigoUsuario(string codigoUsuario);
 
-        Task AtualizarSalarioRepositoryAsync(Salario salario);
+        Task AtualizarSalarioRepositoryAsync(int id, Salario salario);
         Task<Salario> ObterSalarioPorIdAsync(int id);
 
         Task<List<Salario>> ObterSalariosRepository();

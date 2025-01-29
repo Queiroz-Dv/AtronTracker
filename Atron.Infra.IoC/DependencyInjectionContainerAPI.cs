@@ -103,6 +103,7 @@ namespace Atron.Infra.IoC
         private static void ConfigureMesRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<IMesRepository, MesRepository>();
+            services.AddScoped(typeof(IRepository<Mes>), typeof(Repository<Mes>));
         }
 
         private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
@@ -131,6 +132,7 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)

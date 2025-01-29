@@ -10,7 +10,6 @@ using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -126,7 +125,6 @@ namespace Atron.WebViews.Controllers
                 BuildRoute();
 
                 await _service.Criar(tarefaDTO);
-                _messageModel.AddSuccessMessage(nameof(Tarefa));
                 CreateTempDataMessages();
                 return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
@@ -158,7 +156,7 @@ namespace Atron.WebViews.Controllers
                 tarefaDTO.UsuarioCodigo = usuario.Codigo;
 
                 tarefaDTO.Usuario = new UsuarioDTO()
-                {                    
+                {
                     Codigo = usuario.Codigo,
                     Cargo = new CargoDTO()
                     {
@@ -228,7 +226,6 @@ namespace Atron.WebViews.Controllers
                 return View(nameof(Atualizar), tarefaDTO);
             }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)

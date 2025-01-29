@@ -16,8 +16,6 @@
         const actionPage = this.formAction.value;
         const tarefaId = this.tarefaIdentity.value;
 
-        console.log(tarefaId);
-
         // Limpa o formulário caso nenhum usuário seja selecionado
         if (!codigoUsuario) {
             this.tarefaFormContainer.innerHTML = "";

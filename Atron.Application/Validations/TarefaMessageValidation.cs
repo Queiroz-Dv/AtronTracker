@@ -9,7 +9,7 @@ namespace Atron.Application.Validations
     {
         public  void Validate(Tarefa entity)
         {
-            if (entity.UsuarioId == 0)
+            if (entity.UsuarioId <= 0)
             {
                 AddError("Identificador de usuário é inválido.");
             }

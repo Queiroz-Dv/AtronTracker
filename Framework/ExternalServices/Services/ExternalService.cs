@@ -68,6 +68,13 @@ namespace ExternalServices.Services
             return dtos is not null ? dtos : new List<DTO>();
         }
 
+        public async Task<List<T>> ObterTodos<T>()
+        {
+            var entities = await _apiClient.GetAsync();
+            var dtos = JsonConvert.DeserializeObject<List<T>>(entities);
+            return dtos is not null ? dtos : new List<T>();
+        }
+
         public async Task Remover(string codigo)
         {
             await _apiClient.DeleteAsync(codigo);

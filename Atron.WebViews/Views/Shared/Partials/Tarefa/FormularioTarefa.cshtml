@@ -6,8 +6,10 @@
 }
 
 <form id="formTarefa" asp-action="@actionPage" method="post" class="form-horizontal">
+    
     <input hidden type="text" value="@actionPage" id="actionPage" />
     <input asp-for="Id" value="@Model.Id" type="text" id="tarefaId" hidden="hidden" />
+
     <!--Informações de usuário-->
     <fieldset>
         <legend class="fw-semibold">Informações do Usuário</legend>
