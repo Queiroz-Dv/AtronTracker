@@ -1,7 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
 using Shared.Services.Mapper;
 using System.Linq;
@@ -11,14 +10,12 @@ namespace Atron.Application.Mapping
     public class TarefaMapping : ApplicationMapService<TarefaDTO, Tarefa>
     {
         private readonly IRepository<TarefaEstado> _repositoryTarefaEstado;
-        private readonly ICargoRepository cargoRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IRepository<Usuario> _usuarioRepository;
 
-        public TarefaMapping(IRepository<TarefaEstado> repository, IUsuarioRepository usuarioRepository, ICargoRepository cargoRepository)
+        public TarefaMapping(IRepository<TarefaEstado> repository, IRepository<Usuario> usuarioRepository)
         {
             _repositoryTarefaEstado = repository;
             _usuarioRepository = usuarioRepository;
-            this.cargoRepository = cargoRepository;
         }
 
         public override TarefaDTO MapToDTO(Tarefa entity)
@@ -65,7 +62,7 @@ namespace Atron.Application.Mapping
 
         public override Tarefa MapToEntity(TarefaDTO dto)
         {
-            var usuarioBdTask = _usuarioRepository.ObterUsuarioPorCodigoAsync(dto.UsuarioCodigo);
+            var usuarioBdTask = _usuarioRepository.ObterPorCodigoRepositoryAsync(dto.UsuarioCodigo);
             usuarioBdTask.Wait();
             var usuario = usuarioBdTask.Result;
 

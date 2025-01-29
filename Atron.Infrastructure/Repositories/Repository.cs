@@ -40,7 +40,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<TEntity> ObterPorCodigoRepositoryAsync(string codigo)
         {
-            var entidade = await _dbSet.FindAsync(codigo);
+            var entidade = await _dbSet.SingleOrDefaultAsync(e => EF.Property<string>(e, "Codigo") == codigo);
             return entidade;
         }
 
@@ -58,7 +58,6 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task RemoverRepositoryAsync(TEntity entity)
         {
-            // Usar o context para remover as entidades
             _context.Remove(entity);
             await _context.SaveChangesAsync();
         }

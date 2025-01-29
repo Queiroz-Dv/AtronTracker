@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class UsuarioRepository : Repository<Usuario>, IUsuarioRepository
     {
         private AtronDbContext _context;
 
-        public UsuarioRepository(AtronDbContext context)
+        public UsuarioRepository(AtronDbContext context) : base(context)
         {
             _context = context;
         }
@@ -23,8 +23,11 @@ namespace Atron.Infrastructure.Repositories
             try
             {
                 var usuario = await _context.Usuarios.FirstAsync(usr => usr.Id == usuarioId);
+
                 usuario.SalarioAtual = quantidadeTotal;
+
                 _context.Update(usuario);
+
                 var result = await _context.SaveChangesAsync();
                 return result > 0;
             }

@@ -5,6 +5,16 @@ namespace Atron.Domain.Entities
 {
     public class Usuario : EntityBase
     {
+        public Usuario() { }
+
+        public Usuario(string codigo, string nome = "", string sobrenome = "", string email = "")
+        {
+            Codigo = codigo;
+            Nome = nome;
+            Sobrenome = sobrenome;
+            Email = email;
+        }
+
         public string Codigo { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }

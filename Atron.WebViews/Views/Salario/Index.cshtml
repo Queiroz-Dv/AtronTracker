@@ -5,18 +5,9 @@
 @using Atron.WebViews.Models;
 @model SalarioModel;
 
-<style>
-    .modal-lg {
-        max-width: 80%;
-    }
-</style>
-
-<div>
-    <h2>@ViewData["Title"]</h2>
-</div>
-<hr />
-
-<partial name="Partials/CadastrarRegistroPartialModal"></partial>
+<link href="~/css/site.css" />
+<partial name="Partials/TitleLabel"></partial>
+<partial name="Partials/BtnCadastrar"></partial>
 
 <div class="panel panel-default">
     <form asp-controller="Salario" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
@@ -39,11 +30,11 @@
             @foreach (var item in Model.Salarios)
             {
                 <tr>
-                    <td>@item.Usuario.NomeCompleto()</td>
+                    <td>@item.Usuario.Codigo - @item.Usuario.NomeCompleto()</td>
                     <td>@item.Usuario.Cargo.Descricao</td>
                     <td>@item.Usuario.Departamento.Descricao</td>
-                    <td>@item.SalarioMensal</td>                    
-                    <td>
+                    <td>@item.SalarioMensal</td>
+                    <td class="text-end">
                         <a asp-action="Atualizar" asp-route-id="@item.Id" title="Atualizar" class="btn btn-warning">
                             <span class="fas fa-edit">Atualizar</span>
                         </a>

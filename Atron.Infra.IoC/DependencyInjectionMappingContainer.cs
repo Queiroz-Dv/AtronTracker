@@ -14,6 +14,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IApplicationMapService<CargoDTO, Cargo>, CargoMapping>();
             services.AddScoped<IApplicationMapService<UsuarioDTO, Usuario>, UsuarioMapping>();
             services.AddScoped<IApplicationMapService<TarefaDTO, Tarefa>, TarefaMapping>();
+            services.AddScoped<IApplicationMapService<SalarioDTO, Salario>, SalarioMapping>();
             return services;
         }
     }
