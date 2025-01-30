@@ -11,9 +11,9 @@ namespace Atron.Application.Interfaces
 
         Task<UsuarioDTO> ObterPorCodigoAsync(string codigo);
 
-        Task<bool> CriarAsync(UsuarioDTO usuarioDTO);
+        Task<UsuarioDTO> CriarAsync(UsuarioDTO usuarioDTO);
 
-        Task AtualizarAsync(UsuarioDTO usuarioDTO);
+        Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO);
 
         Task RemoverAsync(string codigo);
     }

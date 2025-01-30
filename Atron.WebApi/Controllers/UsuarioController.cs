@@ -1,10 +1,9 @@
 ﻿using Atron.Application.DTO;
-using Atron.Application.DTO.Account;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Notification.Models;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;
@@ -14,11 +13,12 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsuarioController : ModuleController<Usuario, IUsuarioService>
     {
-
-        public UsuarioController(IUsuarioService usuarioService,
-            MessageModel<Usuario> messageModel) :
+        public UsuarioController(
+            IUsuarioService usuarioService,
+            MessageModel messageModel) :
             base(usuarioService, messageModel)
         { }
 
@@ -43,7 +43,7 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult<UsuarioDTO>> Put(string codigo, [FromBody] UsuarioDTO usuario)
         {
             // Verificar o código que é enviado
-            await _service.AtualizarAsync(usuario);
+            await _service.AtualizarAsync(codigo, usuario);
 
             return _messageModel.Messages.HasErrors() ?
                 BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());

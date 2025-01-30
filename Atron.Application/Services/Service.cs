@@ -8,7 +8,6 @@ namespace Atron.Application.Services
 {
     public class Service<TModel> : IService<TModel> where TModel : class
     {
-        //private readonly IMapper _mapper;
         public readonly IRepository<TModel> _repository;
 
         public Service(IRepository<TModel> repository)

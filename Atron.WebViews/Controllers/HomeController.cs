@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Atron.WebViews.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
-
         [HttpGet]
-        public IActionResult Index(string searchString)
+        public IActionResult Index()
         {
-
             return View();
         }
     }

@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace Atron.WebViews.Models
 {
-    public class TarefaModel : DefaultModel
+    public class TarefaModel : DefaultModel<TarefaDTO>
     {
         public TarefaModel()
         {           

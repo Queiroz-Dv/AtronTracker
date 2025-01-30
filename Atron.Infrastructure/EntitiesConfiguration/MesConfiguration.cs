@@ -11,8 +11,6 @@ namespace Atron.Infrastructure.EntitiesConfiguration
 
             builder.HasKey(mth => mth.Id);
 
-            builder.Ignore(mth => mth.IdSequencial);
-
             builder.Property(mth => mth.Descricao)
                    .IsRequired()
                    .HasMaxLength(15);

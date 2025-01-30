@@ -15,9 +15,9 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
             _signInManager = signInManager;
         }
 
-        public async Task<bool> AuthenticateUserLoginAsync(Login login)
+        public async Task<bool> AuthenticateUserLoginAsync(ApiLogin login)
         {
-            var authenticated = await _signInManager.PasswordSignInAsync(login.Email, login.Password, false, false);
+            var authenticated = await _signInManager.PasswordSignInAsync(login.UserName, login.Password, true, false);
 
             return authenticated.Succeeded;
         }
