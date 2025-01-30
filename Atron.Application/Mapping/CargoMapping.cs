@@ -18,7 +18,12 @@ namespace Atron.Application.Mapping
 
         public override Cargo MapToEntity(CargoDTO dto)
         {
-            return new Cargo(dto.Codigo, dto.Descricao, dto.DepartamentoCodigo);
+            return new Cargo
+            {
+                Codigo = dto.Codigo.ToUpper(),
+                Descricao = dto.Descricao.ToUpper(),
+                DepartamentoCodigo = dto.DepartamentoCodigo.ToUpper()
+            };
         }
     }
 }

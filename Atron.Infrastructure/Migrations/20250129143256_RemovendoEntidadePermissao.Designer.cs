@@ -4,6 +4,7 @@ using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Atron.Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250129143256_RemovendoEntidadePermissao")]
+    partial class RemovendoEntidadePermissao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,14 +33,13 @@ namespace Atron.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Codigo")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DepartamentoCodigo")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("DepartamentoId")
+                    b.Property<int>("DepartmentoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Descricao")
@@ -48,7 +49,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id", "Codigo");
 
-                    b.HasIndex("DepartamentoId", "DepartamentoCodigo");
+                    b.HasIndex("DepartmentoId", "DepartamentoCodigo");
 
                     b.ToTable("Cargos");
                 });
@@ -62,8 +63,7 @@ namespace Atron.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Codigo")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -201,6 +201,7 @@ namespace Atron.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Conteudo")
+                        .IsRequired()
                         .HasMaxLength(2500)
                         .HasColumnType("nvarchar(2500)");
 
@@ -219,6 +220,7 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("UsuarioCodigo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("UsuarioId")
@@ -240,6 +242,7 @@ namespace Atron.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Descricao")
+                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
@@ -324,13 +327,13 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CargoCodigo")
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("DepartamentoId")
                         .HasColumnType("int");
 
                     b.Property<string>("DepartamentoCodigo")
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UsuarioId", "UsuarioCodigo", "CargoId", "CargoCodigo", "DepartamentoId", "DepartamentoCodigo");
 
@@ -556,7 +559,9 @@ namespace Atron.Infrastructure.Migrations
                 {
                     b.HasOne("Atron.Domain.Entities.Departamento", "Departamento")
                         .WithMany("Cargos")
-                        .HasForeignKey("DepartamentoId", "DepartamentoCodigo");
+                        .HasForeignKey("DepartmentoId", "DepartamentoCodigo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Departamento");
                 });
@@ -584,7 +589,9 @@ namespace Atron.Infrastructure.Migrations
                 {
                     b.HasOne("Atron.Domain.Entities.Usuario", "Usuario")
                         .WithMany("Tarefas")
-                        .HasForeignKey("UsuarioId", "UsuarioCodigo");
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Usuario");
                 });
@@ -681,12 +688,14 @@ namespace Atron.Infrastructure.Migrations
 
             modelBuilder.Entity("Atron.Domain.Entities.Mes", b =>
                 {
-                    b.Navigation("Salario");
+                    b.Navigation("Salario")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Usuario", b =>
                 {
-                    b.Navigation("Salario");
+                    b.Navigation("Salario")
+                        .IsRequired();
 
                     b.Navigation("Tarefas");
 

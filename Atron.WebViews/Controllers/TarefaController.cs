@@ -171,7 +171,7 @@ namespace Atron.WebViews.Controllers
             else
             {
                 // Se for cadastro
-                var tarefaDto = new TarefaDTO
+                tarefaDTO = new TarefaDTO
                 {
                     UsuarioCodigo = usuario.Codigo,
                     Usuario = new UsuarioDTO()

@@ -13,7 +13,11 @@ namespace Atron.Application.DTO
         }
 
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Código requerido")]
         public string Codigo { get; set; }
+
+        [Required(ErrorMessage = "Descrição requerida")]
         public string Descricao { get; set; }
 
         public int DepartamentoId { get; set; }

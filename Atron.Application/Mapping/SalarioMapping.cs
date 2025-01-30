@@ -47,7 +47,14 @@ namespace Atron.Application.Mapping
             usuarioBdTask.Wait();
             var usuario = usuarioBdTask.Result;
 
-            return new Salario(usuario.Id, usuario.Codigo, dto.SalarioMensal, dto.Ano, dto.MesId);
+            return new Salario()
+            {
+                UsuarioId = usuario.Id,
+                UsuarioCodigo = dto.UsuarioCodigo.ToUpper(),
+                SalarioMensal = dto.SalarioMensal,
+                Ano = dto.Ano,
+                MesId = dto.MesId
+            };
         }
     }
 }

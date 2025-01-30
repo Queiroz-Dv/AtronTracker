@@ -30,7 +30,9 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult> Post([FromBody] CargoDTO cargo)
         {
             await _service.CriarAsync(cargo);
-            return RetornoPadrao(cargo);
+            return _messageModel.Messages.HasErrors() ?
+               BadRequest(ObterNotificacoes()) :
+               Ok(ObterNotificacoes());
         }
 
         [HttpPut("{codigo}")]

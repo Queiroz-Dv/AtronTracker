@@ -65,7 +65,7 @@ namespace Atron.Application.Services
 
             if (departamento is not null)
             {
-                cargo.DepartmentoId = departamento.Id;
+                cargo.DepartamentoId = departamento.Id;
                 cargo.Departamento = null;
             }
 
@@ -91,7 +91,7 @@ namespace Atron.Application.Services
 
             if (departamento is not null)
             {                
-                cargo.DepartmentoId = departamento.Id;
+                cargo.DepartamentoId = departamento.Id;
                 cargo.DepartamentoCodigo = departamento.Codigo;
             }
 

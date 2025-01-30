@@ -18,7 +18,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration
 
             builder.HasOne(dpt => dpt.Departamento) // Tem um departamento
                    .WithMany(crg => crg.Cargos) // com muitos cargos 
-                   .HasForeignKey(key => new { key.DepartmentoId, key.DepartamentoCodigo }) // FK da relação
+                   .HasForeignKey(key => new { key.DepartamentoId, key.DepartamentoCodigo }) // FK da relação
                    .HasPrincipalKey(dpt => new { dpt.Id, dpt.Codigo });
 
             // Exemplo pra preencher a tabela 
