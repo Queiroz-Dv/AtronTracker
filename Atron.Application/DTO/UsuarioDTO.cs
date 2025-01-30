@@ -1,16 +1,18 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Atron.Application.DTO
 {
-    public class UsuarioDTO : FactoryDTO
+    public class UsuarioDTO
     {        
         [JsonIgnore]
         [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
-        public int Id { get; set; }        
+        public int Id { get; set; }
+        public string Codigo { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
         public DateTime? DataNascimento { get; set; }

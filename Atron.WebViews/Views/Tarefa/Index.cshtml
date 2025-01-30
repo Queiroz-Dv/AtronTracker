@@ -5,18 +5,9 @@
 @using Atron.WebViews.Models;
 @model TarefaModel;
 
-<style>
-    .modal-lg {
-        max-width: 80%;
-    }
-</style>
-
-<div>
-    <h2>@ViewData["Title"]</h2>
-</div>
-<hr />
-
-<partial name="Partials/CadastrarRegistroPartialModal"></partial>
+<link href="~/css/site.css" />
+<partial name="Partials/TitleLabel"></partial>
+<partial name="Partials/BtnCadastrar"></partial>
 
 <div class="panel panel-default">
     <form asp-controller="Tarefa" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
@@ -50,7 +41,7 @@
                     <td>@item.DataInicial.ToShortDateString()</td>
                     <td>@item.DataFinal.ToShortDateString()</td>
 
-                    <td>
+                    <td class="text-end">
                         <a asp-action="Atualizar" asp-route-id="@item.Id" title="Atualizar" class="btn btn-warning">
                             <span class="fas fa-edit">Atualizar</span>
                         </a>
@@ -66,4 +57,4 @@
     </table>
     <partial name="PagerPartial" model="Model.PageInfo" />
 </div>
-<partial name="Partials/ExcluirRegistroPartialModal" for="Tarefa"></partial>
+<partial name="Partials/ExcluirRegistro" for="Tarefa"></partial>

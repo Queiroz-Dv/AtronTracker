@@ -13,7 +13,7 @@ namespace Atron.Application.DTO
     public class FactoryDTO : BaseDTO
     {       
         public FactoryDTO()
-        {
+        {            
             IdSequencial = NovoSequencial();
         }
 

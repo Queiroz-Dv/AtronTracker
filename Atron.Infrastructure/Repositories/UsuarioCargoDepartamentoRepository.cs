@@ -7,18 +7,23 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class UsuarioCargoDepartamentoRepository : IUsuarioCargoDepartamentoRepository
+    public class UsuarioCargoDepartamentoRepository : Repository<UsuarioCargoDepartamento>, IUsuarioCargoDepartamentoRepository
     {
         private readonly AtronDbContext _context;
 
-        public UsuarioCargoDepartamentoRepository(AtronDbContext context)
+        public UsuarioCargoDepartamentoRepository(AtronDbContext context) : base(context)
         {
             _context = context;
         }
 
+        public async Task<UsuarioCargoDepartamento> ObterPorChaveDoUsuario(int usuarioId, string usuarioCodigo)
+        {
+            return await _context.UsuarioCargoDepartamentos.FirstOrDefaultAsync(rel => rel.UsuarioId == usuarioId && rel.UsuarioCodigo == usuarioCodigo);
+        }
+
         public async Task<bool> GravarAssociacaoUsuarioCargoDepartamento(Usuario usuario, Cargo cargo, Departamento departamento)
         {
-            var usuarioBd = _context.Usuarios.FirstAsync(usr => usr.Id == usuario.Id);
+            var usuarioBd = await _context.Usuarios.FirstAsync(usr => usr.Codigo == usuario.Codigo);
 
             var associacao = new UsuarioCargoDepartamento()
             {
@@ -41,7 +46,6 @@ namespace Atron.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

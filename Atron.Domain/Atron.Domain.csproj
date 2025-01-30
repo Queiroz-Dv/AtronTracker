@@ -2,10 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
+		
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Framework\Notification\Notification.csproj" />
-	</ItemGroup>
 
 </Project>

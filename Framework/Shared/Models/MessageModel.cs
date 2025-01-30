@@ -5,8 +5,8 @@ namespace Shared.Models
 {
     //TODO: Verificar a criação de uma classe de extensão para os serviços de notificações
     [Serializable]
-    public abstract class MessageModel<Entity> : MessageService
-    {
+    public abstract class MessageModel : MessageService
+    {        
         public override void AddError(string description)
         {
             AddNotification(description, MessageLevel.Error);
@@ -50,8 +50,6 @@ namespace Shared.Models
         public override void AddWarning(string description)
         {
             AddNotification(description, MessageLevel.Warning);
-        }
-
-        public abstract void Validate(Entity entity);
+        }      
     }
 }

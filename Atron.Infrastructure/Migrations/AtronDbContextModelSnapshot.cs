@@ -31,12 +31,14 @@ namespace Atron.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Codigo")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("DepartamentoCodigo")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
-                    b.Property<int>("DepartmentoId")
+                    b.Property<int>("DepartamentoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Descricao")
@@ -44,12 +46,9 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id", "Codigo");
 
-                    b.HasIndex("DepartmentoId", "DepartamentoCodigo");
+                    b.HasIndex("DepartamentoId", "DepartamentoCodigo");
 
                     b.ToTable("Cargos");
                 });
@@ -63,15 +62,13 @@ namespace Atron.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Codigo")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id", "Codigo");
 
@@ -158,82 +155,6 @@ namespace Atron.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Atron.Domain.Entities.Permissao", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("DataFinal")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataInicial")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Descricao")
-                        .HasMaxLength(2500)
-                        .HasColumnType("nvarchar(2500)");
-
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("PermissaoEstadoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QuantidadeDeDias")
-                        .HasMaxLength(365)
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsuarioCodigo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Permissoes");
-                });
-
-            modelBuilder.Entity("Atron.Domain.Entities.PermissaoEstado", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Descricao")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PermissoesEstados");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Descricao = "Em atividade"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Descricao = "Aprovada"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Descricao = "Desaprovada"
-                        });
-                });
-
             modelBuilder.Entity("Atron.Domain.Entities.Salario", b =>
                 {
                     b.Property<int>("Id")
@@ -246,9 +167,6 @@ namespace Atron.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)");
-
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("MesId")
                         .HasColumnType("int");
@@ -291,9 +209,6 @@ namespace Atron.Infrastructure.Migrations
 
                     b.Property<DateTime>("DataInicial")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TarefaEstadoId")
                         .HasColumnType("int");
@@ -379,9 +294,6 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("IdSequencial")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(25)
@@ -412,13 +324,13 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CargoCodigo")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("DepartamentoId")
                         .HasColumnType("int");
 
                     b.Property<string>("DepartamentoCodigo")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("UsuarioId", "UsuarioCodigo", "CargoId", "CargoCodigo", "DepartamentoId", "DepartamentoCodigo");
 
@@ -502,8 +414,8 @@ namespace Atron.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -515,8 +427,8 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(50)
@@ -644,7 +556,7 @@ namespace Atron.Infrastructure.Migrations
                 {
                     b.HasOne("Atron.Domain.Entities.Departamento", "Departamento")
                         .WithMany("Cargos")
-                        .HasForeignKey("DepartmentoId", "DepartamentoCodigo");
+                        .HasForeignKey("DepartamentoId", "DepartamentoCodigo");
 
                     b.Navigation("Departamento");
                 });

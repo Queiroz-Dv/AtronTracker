@@ -1,11 +1,14 @@
 using Atron.Infra.IoC;
 using Atron.WebViews.Helpers;
+using Communication.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shared.DTO.API;
+using Shared.Extensions;
 
 namespace Atron.WebViews
 {
@@ -22,10 +25,12 @@ namespace Atron.WebViews
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
+            services.AddHttpContextAccessor();
             services.AddInfrastructure(Configuration);
             services.AddControllersWithViews();
 
-            services.Configure<RotaDeAcesso>(Configuration.GetSection(nameof(RotaDeAcesso)));
+            //services.Configure<RotaDeAcesso>(Configuration.GetSection(nameof(RotaDeAcesso)));
+            AppSettings.RotaDeAcesso = Configuration.GetSection(nameof(RotaDeAcesso)).Get<RotaDeAcesso>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,18 +46,52 @@ namespace Atron.WebViews
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseSession();
+            // Middleware para adicionar o token de autenticação no header da requisição
+            app.Use(async (context, next) =>
+            {
+                string token = null;
+
+                // Verifica primeiro se o token está presente nos cookies
+                if (context.Request.Cookies.TryGetValue("AuthToken", out var cookieToken))
+                {
+                    token = cookieToken;
+                }
+                else
+                {
+                    // Caso não esteja nos cookies, verifica se o token está na sessão
+                    token = context.Session.GetString("AuthToken");
+                }
+
+                // Se o token foi encontrado, adiciona no header da requisição
+                if (!token.IsNullOrEmpty())
+                {
+                    context.Request.Headers["Authorization"] = $"Bearer {token}";
+
+                    if (TokenServiceStore.Token.IsNullOrEmpty())
+                    {
+                        TokenServiceStore.Token = token;
+                    }
+                }
+
+                // Call the next delegate/middleware in the pipeline
+                await next();
+            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.AddEntityRoutes();
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=ApplicationLogin}/{action=Login}");
             });
         }
     }

@@ -1,6 +1,7 @@
 ﻿class CadastrarTarefa {
-    constructor(usuarioSelectId, tarefaFormContainerId, actionPage) {
+    constructor(tarefaId, usuarioSelectId, tarefaFormContainerId, actionPage) {
         this.usuarioSelect = document.getElementById(usuarioSelectId);
+        this.tarefaIdentity = document.getElementById(tarefaId);
         this.tarefaFormContainer = document.getElementById(tarefaFormContainerId);
         this.formAction = document.getElementById(actionPage);
         this.init();
@@ -13,7 +14,8 @@
     async carregarFormulario() {
         const codigoUsuario = this.usuarioSelect.value;
         const actionPage = this.formAction.value;
-        
+        const tarefaId = this.tarefaIdentity.value;
+
         // Limpa o formulário caso nenhum usuário seja selecionado
         if (!codigoUsuario) {
             this.tarefaFormContainer.innerHTML = "";
@@ -21,7 +23,7 @@
         }
 
         try {
-            const response = await fetch(`/Tarefa/CarregarFormularioTarefa?codigoUsuario=${codigoUsuario}&actionPage=${actionPage}`);
+            const response = await fetch(`/Tarefa/CarregarFormularioTarefa?tarefaId=${tarefaId}&codigoUsuario=${codigoUsuario}&actionPage=${actionPage}`);
 
             if (response.ok) {
                 const html = await response.text();
@@ -37,5 +39,5 @@
 
 // Inicializa o script
 document.addEventListener('DOMContentLoaded', () => {
-    new CadastrarTarefa('usuarioCodigo', 'tarefaFormContainer', 'actionPage');
+    new CadastrarTarefa('tarefaId', 'usuarioCodigo', 'tarefaFormContainer', 'actionPage');
 });

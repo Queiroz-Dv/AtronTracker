@@ -1,8 +1,8 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Models;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;
@@ -12,9 +12,10 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TarefaController : ModuleController<Tarefa, ITarefaService>
     {
-        public TarefaController(ITarefaService service, MessageModel<Tarefa> messageModel) :
+        public TarefaController(ITarefaService service, MessageModel messageModel) :
             base(service, messageModel)
         { }
 
@@ -37,9 +38,9 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(string id, [FromBody] TarefaDTO tarefa)
+        public async Task<ActionResult> Put(int id, [FromBody] TarefaDTO tarefa)
         {
-            await _service.AtualizarAsync(tarefa);
+            await _service.AtualizarAsync(id, tarefa);
 
             return _messageModel.Messages.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());

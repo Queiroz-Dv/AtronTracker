@@ -43,13 +43,13 @@ namespace Atron.Infrastructure.Repositories
         public async Task<Cargo> ObterCargoComDepartamentoPorIdAsync(int? id)
         {
             var cargos = await (from pst in _context.Cargos
-                                join dept in _context.Departamentos on pst.DepartmentoId equals dept.Id
+                                join dept in _context.Departamentos on pst.DepartamentoId equals dept.Id
                                 where dept.Id == id
                                 select new Cargo
                                 {
                                     Descricao = pst.Descricao,
                                     Departamento = dept,
-                                    DepartmentoId = dept.Id
+                                    DepartamentoId = dept.Id
                                 }).FirstOrDefaultAsync();
 
 
@@ -73,7 +73,7 @@ namespace Atron.Infrastructure.Repositories
         {
             var cargoBd = await ObterCargoPorCodigoAsync(cargo.Codigo);
             cargoBd.Descricao = cargo.Descricao;
-            cargo.DepartmentoId = cargo.DepartmentoId;
+            cargoBd.DepartamentoId = cargo.DepartamentoId;
             cargoBd.DepartamentoCodigo = cargo.DepartamentoCodigo;
 
             try
@@ -92,9 +92,14 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Cargo> ObterCargoPorCodigoAsync(string codigo)
         {
-            var cargo = await _context.Cargos.FirstOrDefaultAsync(crg => crg.Codigo == codigo);
-            return cargo;
+            return await _context.Cargos.Include(dpt => dpt.Departamento).FirstOrDefaultAsync(crg => crg.Codigo == codigo);
         }
+
+        public async Task<Cargo> ObterCargoPorCodigoAsyncAsNoTracking(string codigo)
+        {
+            return await _context.Cargos.Include(dpt => dpt.Departamento).AsNoTracking().FirstOrDefaultAsync(crg => crg.Codigo == codigo);
+        }
+
 
         public bool CargoExiste(string codigo)
         {

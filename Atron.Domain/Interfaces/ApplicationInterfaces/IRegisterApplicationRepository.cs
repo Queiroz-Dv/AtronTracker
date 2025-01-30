@@ -5,6 +5,8 @@ namespace Atron.Domain.Interfaces.ApplicationInterfaces
 {
     public interface IRegisterApplicationRepository
     {
-        Task<bool> RegisterUserAccountAsync(Register register);
+        Task<bool> UpdateUserAccountAsync(ApiRegister register);
+        Task<bool> RegisterUserAccountAsync(ApiRegister register);
+        Task DeleteAccountUserAsync(string userName);
     }
 }
