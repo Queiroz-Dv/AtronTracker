@@ -212,5 +212,10 @@ namespace Atron.WebViews.Controllers
             ApiControllerName = nameof(Departamento);
             BuildRoute();
         }
+
+        public override Task<string> ObterMensagemExclusao()
+        {
+            return Task.FromResult("Ao excluir o usuário todos os registros serão removidos também. Deseja prosseguir ?");
+        }
     }
 }

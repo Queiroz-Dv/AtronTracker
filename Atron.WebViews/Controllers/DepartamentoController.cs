@@ -130,6 +130,6 @@ namespace Atron.WebViews.Controllers
             var departamento = await _service.ObterPorCodigo(codigoDepartamento);
 
             return Ok(departamento);
-        }
+        }      
     }
 }

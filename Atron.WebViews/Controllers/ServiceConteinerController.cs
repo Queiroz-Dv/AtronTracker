@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.Interfaces;
 using Shared.Models;
+using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
@@ -48,5 +49,13 @@ namespace Atron.WebViews.Controllers
         {
             TempData["Notifications"] = JsonConvert.SerializeObject(_messageModel.Messages);
         }
+
+        public void AddNotificationMessage(string message)
+        {
+            ViewBag.NotificationMessage = message;
+        }
+
+        [HttpGet]
+        public abstract Task<string> ObterMensagemExclusao();
     }
 }

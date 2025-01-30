@@ -96,9 +96,17 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Usuario> RemoverUsuarioAsync(Usuario usuario)
         {
-            _context.Usuarios.Remove(usuario);
-            await _context.SaveChangesAsync();
-            return new Usuario();
+            try
+            {
+                _context.Usuarios.Remove(usuario);
+                await _context.SaveChangesAsync();
+                return new Usuario();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public bool UsuarioExiste(string codigo)

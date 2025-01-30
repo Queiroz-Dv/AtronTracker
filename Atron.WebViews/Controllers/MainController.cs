@@ -2,15 +2,15 @@ using Atron.WebViews.Helpers;
 using Communication.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Shared.DTO;
-using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class MainController<DTO, Entity> : ServiceConteinerController<DTO, Entity>
+    public  class MainController<DTO, Entity> : ServiceConteinerController<DTO, Entity>
     {
         protected IRouterBuilderService _router;
         protected string ApiControllerName;
@@ -21,17 +21,22 @@ namespace Atron.WebViews.Controllers
             _paginationService = paginationService;
         }
 
+        public override Task<string> ObterMensagemExclusao()
+        {
+            return Task.FromResult("Tem certeza que deseja remover este registro ?");
+        }
+
         // Monta a rota de acordo com o modulo
         protected void BuildRoute(string apiActionName = "", string parameter = "")
-        {            
-            ConfigureApiInfo.ApiControllerName =  ApiControllerName;
+        {
+            ConfigureApiInfo.ApiControllerName = ApiControllerName;
             ConfigureApiInfo.ApiActionName = apiActionName;
             ConfigureApiInfo.Parameter = parameter;
             ConfigureApiInfo.BuildMainRoute();
             ConfigureApiInfo.BuildModuleUrl();
             _router.TransferRouteToApiClient(ConfigureApiInfo.GetUrlPath());
         }
-        
+
         /// <summary>
         /// Configura a paginação
         /// </summary>
