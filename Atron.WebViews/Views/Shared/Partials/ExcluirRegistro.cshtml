@@ -10,8 +10,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                Tem certeza que deseja remover este registro?
+            <div class="modal-body" id="modal-body-message">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="btnCancelar" data-dismiss="modal">Cancelar</button>
@@ -22,54 +21,65 @@
 </div>
 
 <script>
-     let codigoParaRemover = '';
+    let codigoParaRemover = '';
 
     document.getElementById('btnClose').addEventListener('click', function(){
         ocultarModal();
     });
 
-     document.getElementById('btnCancelar').addEventListener('click', function(){
+    document.getElementById('btnCancelar').addEventListener('click', function(){
         ocultarModal();
-     });
+    });
 
-     function ocultarModal(){
-          $('#confirmacaoModal').modal('hide');
-     }
-     function confirmarRemocao(codigo) {
-         codigoParaRemover = codigo;
-         $('#confirmacaoModal').modal('show');
-     }
+    function ocultarModal(){
+        $('#confirmacaoModal').modal('hide');
+    }
 
-     document.getElementById('btnConfirmarRemocao').addEventListener('click', async function () {
-         $('#confirmacaoModal').modal('hide');
-         await excluirRegistro(codigoParaRemover);
-     });
+    async function confirmarRemocao(codigo) {
+        codigoParaRemover = codigo;
+        await obterMensagemConfigurada();
+        $('#confirmacaoModal').modal('show');
+    }
 
-     async function excluirRegistro(codigo) {
-         const response = await fetch(`@Url.Action("Remover", controllerAtual)?codigo=${codigo}`, {
-             method: 'POST'
-         });
+    async function obterMensagemConfigurada(){
+        const response = await fetch(`@Url.Action("ObterMensagemExclusao", controllerAtual)`, {
+            method: 'GET'
+        });
 
-         if (response.ok) {
-             Swal.fire({
-                 icon: 'success',
-                 title: 'Sucesso!',
-                 text: 'Registro removido com sucesso!',
-                 showConfirmButton: true
-             }).then((result) => {
-                 if (result.isConfirmed) {
-                     location.reload();
-                 }
-             });
-         } else {
-             Swal.fire({
-                 icon: 'error',
-                 title: 'Erro!',
-                 text: 'Ocorreu um erro ao tentar remover o registro.',
-                 timer: 3000
-             }).then(() => {
-                 location.reload();
-             });
-         }
-     }
+       const message = await response.text();
+       document.getElementById('modal-body-message').innerText = message;
+    }
+
+    document.getElementById('btnConfirmarRemocao').addEventListener('click', async function () {
+        $('#confirmacaoModal').modal('hide');
+        await excluirRegistro(codigoParaRemover);
+    });
+
+    async function excluirRegistro(codigo) {
+        const response = await fetch(`@Url.Action("Remover", controllerAtual)?codigo=${codigo}`, {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: 'Registro removido com sucesso!',
+                showConfirmButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'Ocorreu um erro ao tentar remover o registro.',
+                timer: 3000
+            }).then(() => {
+                location.reload();
+            });
+        }
+    }
 </script>
