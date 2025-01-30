@@ -67,6 +67,11 @@ namespace Atron.Infrastructure.Repositories
                 .FirstOrDefaultAsync(sr => sr.Id == id);
         }
 
+        public Task<Salario> ObterSalarioPorUsuario(int usuarioId, string usuarioCodigo)
+        {
+            return _context.Salarios.FirstOrDefaultAsync(slr => slr.UsuarioId == usuarioId && slr.UsuarioCodigo == usuarioCodigo);
+        }
+
         public Task<List<Salario>> ObterSalariosRepository()
         {
             return _context.Salarios
