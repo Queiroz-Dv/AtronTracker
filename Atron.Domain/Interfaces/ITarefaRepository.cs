@@ -10,6 +10,8 @@ namespace Atron.Domain.Interfaces
 
         Task<List<Tarefa>> ObterTodasTarefas();
 
+        Task<IEnumerable<Tarefa>> ObterTodasTarefasPorUsuario(int id, string codigo);
+
         Task<Tarefa> CriarTarefaAsync(Tarefa tarefa);
 
         Task<Tarefa> AtualizarTarefaAsync(int id, Tarefa tarefa);

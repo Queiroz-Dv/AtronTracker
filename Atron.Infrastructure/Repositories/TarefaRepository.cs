@@ -4,6 +4,7 @@ using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
@@ -81,6 +82,12 @@ namespace Atron.Infrastructure.Repositories
                 .ThenInclude(dpt => dpt.Departamento) // Obtém o departamento associado ao relacionamento de cargo
                 .ToListAsync();
             return entidades;
-        }       
+        }
+
+        public async Task<IEnumerable<Tarefa>> ObterTodasTarefasPorUsuario(int usuarioId, string usuarioCodigo)
+        {
+            return await _context.Tarefas.Where(trf => trf.UsuarioId == usuarioId && trf.UsuarioCodigo == usuarioCodigo).ToListAsync();
+                                 
+        }
     }
 }

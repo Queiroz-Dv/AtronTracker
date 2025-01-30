@@ -24,6 +24,8 @@ namespace Atron.Application.Services
         private readonly IRegisterApplicationRepository _registerApplicationRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly ICargoRepository _cargoRepository;
+        private readonly ITarefaRepository _tarefaRepository;
+        private readonly ISalarioRepository _salarioRepository;
         private readonly IValidateModel<Usuario> _validateModel;
         private readonly MessageModel _messageModel;
 
@@ -36,7 +38,9 @@ namespace Atron.Application.Services
                               IDepartamentoRepository departamentoRepository,
                               ICargoRepository cargoRepository,
                               IValidateModel<Usuario> validateModel,
-                              MessageModel messageModel)
+                              MessageModel messageModel,
+                              ITarefaRepository tarefaRepository,
+                              ISalarioRepository salarioRepository)
         {
             _map = map;
             _usuarioRepository = repository;
@@ -46,6 +50,8 @@ namespace Atron.Application.Services
             _cargoRepository = cargoRepository;
             _validateModel = validateModel;
             _messageModel = messageModel;
+            _tarefaRepository = tarefaRepository;
+            _salarioRepository = salarioRepository;
         }
 
         public async Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO)
@@ -84,7 +90,7 @@ namespace Atron.Application.Services
                 if (resultRepo)
                 {
                     var register = new ApiRegister(entidade.Codigo, entidade.Email, usuarioDTO.Senha, usuarioDTO.Senha);
-                  
+
                     var registerResult = await _registerApplicationRepository.UpdateUserAccountAsync(register);
 
                     if (registerResult)
@@ -155,8 +161,8 @@ namespace Atron.Application.Services
         public async Task<UsuarioDTO> ObterPorCodigoAsync(string codigo)
         {
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-            
-            return  usuario is null ? null : _map.MapToDTO(usuario);
+
+            return usuario is null ? null : _map.MapToDTO(usuario);
         }
 
         public async Task<List<UsuarioDTO>> ObterTodosAsync()
@@ -175,9 +181,39 @@ namespace Atron.Application.Services
             }
             else
             {
+                // Obtém todas as tarefas do usuário
+                IEnumerable<Tarefa> tarefasDoUsuario = await _tarefaRepository.ObterTodasTarefasPorUsuario(usuario.Id, usuario.Codigo);
+
+                if (tarefasDoUsuario.Any())
+                {
+                    foreach (var item in tarefasDoUsuario)
+                    {
+                        await _tarefaRepository.RemoverRepositoryAsync(item);
+                    }
+                }
+
+                // Salário sempre será um registro por usuário
+                Salario salarioDoUsuario = await _salarioRepository.ObterSalarioPorUsuario(usuario.Id, usuario.Codigo);
+
+                if (salarioDoUsuario is not null)
+                {
+                    await _salarioRepository.RemoverRepositoryAsync(salarioDoUsuario);
+                }
+      
+                // O relacionamento será apenas um por usuário
+                var associacao = await _usuarioCargoDepartamentoRepository.ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
+
+                if (associacao is not null)
+                {
+                    await _usuarioCargoDepartamentoRepository.RemoverRepositoryAsync(associacao);
+                }
+
+                // Como o usuário já existe será removido do cadastro da aplicação
+                await _registerApplicationRepository.DeleteAccountUserAsync(codigo);
+
+                // Remove o usuário por completo
                 await _usuarioRepository.RemoverUsuarioAsync(usuario);
 
-                await _registerApplicationRepository.DeleteAccountUserAsync(codigo);
                 _messageModel.AddRegisterRemovedSuccessMessage(nameof(Usuario));
             }
         }

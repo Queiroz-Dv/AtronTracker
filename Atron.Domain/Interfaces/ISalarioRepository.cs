@@ -13,5 +13,6 @@ namespace Atron.Domain.Interfaces
         Task<Salario> ObterSalarioPorIdAsync(int id);
 
         Task<List<Salario>> ObterSalariosRepository();
+        Task<Salario> ObterSalarioPorUsuario(int id, string codigo);
     }
 }
