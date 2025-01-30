@@ -26,9 +26,7 @@ namespace Atron.Application.Mapping
                 Sobrenome = entity.Sobrenome,
                 Email = entity.Email,
                 Salario = entity.SalarioAtual,
-                DataNascimento = entity.DataNascimento,
-                Cargos = new List<CargoDTO>(),
-                Departamentos = new List<DepartamentoDTO>(),
+                DataNascimento = entity.DataNascimento
             };
 
             if (entity.UsuarioCargoDepartamentos is not null)
@@ -70,7 +68,7 @@ namespace Atron.Application.Mapping
             // 1. Mapear o DTO para a entidade
             return new Usuario()
             {
-                Codigo = dto.Codigo,
+                Codigo = dto.Codigo.ToUpper(),
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,
                 Email = dto.Email,

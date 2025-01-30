@@ -1,5 +1,6 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
+using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
@@ -14,11 +15,13 @@ namespace Atron.WebViews.Controllers
         private readonly IRegisterExternalService _service;
 
         public ApplicationRegisterController(
-            IRegisterExternalService service, 
+            IRegisterExternalService service,
             IPaginationService<RegisterDTO> paginationService,
+            IRouterBuilderService router,
             MessageModel messageModel)
             : base(messageModel, paginationService)
         {
+            _router = router;
             _service = service;
             ApiControllerName = "AppRegister";
         }
@@ -33,7 +36,6 @@ namespace Atron.WebViews.Controllers
         public async Task<IActionResult> Registrar(RegisterDTO registerDTO)
         {
             BuildRoute("Registrar");
-
             await _service.Registrar(registerDTO);
 
             CreateTempDataMessages();

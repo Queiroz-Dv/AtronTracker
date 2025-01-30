@@ -1,6 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Shared.Services.Mapper;
+using System.Linq;
 
 namespace Atron.Application.Mapping
 {
@@ -8,12 +9,21 @@ namespace Atron.Application.Mapping
     {
         public override DepartamentoDTO MapToDTO(Departamento entity)
         {
-            return new DepartamentoDTO(entity.Codigo, entity.Descricao);
+            return new DepartamentoDTO
+            {
+                Id = entity.Id,
+                Codigo = entity.Codigo,
+                Descricao = entity.Descricao                
+            };
         }
 
         public override Departamento MapToEntity(DepartamentoDTO dto)
         {
-            return new Departamento(dto.Codigo, dto.Descricao);
+            return new Departamento
+            {
+                Codigo = dto.Codigo.ToUpper(),
+                Descricao = dto.Descricao.ToUpper()                
+            };
         }
     }
 }

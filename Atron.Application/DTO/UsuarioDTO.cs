@@ -39,10 +39,6 @@ namespace Atron.Application.DTO
 
         public CargoDTO Cargo { get; set; }
 
-        public List<DepartamentoDTO> Departamentos { get; set; }
-
-        public List<CargoDTO> Cargos { get; set; }
-
         public bool AssociarCargoDepartamento { get; set; } = false;
 
         public string NomeCompleto()

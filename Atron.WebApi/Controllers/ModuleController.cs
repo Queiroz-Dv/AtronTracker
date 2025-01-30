@@ -25,22 +25,6 @@ namespace Atron.WebApi.Controllers
         {
             // Passar para um método de extensão
             return _messageModel.Messages.ConvertMessageToJson();
-        }      
-
-        protected virtual ActionResult RetornoPadrao<DTO>(DTO dto)
-        {
-            if (dto is null)
-            {
-                return _messageModel.Messages.HasErrors() ?
-                BadRequest(ObterNotificacoes()) :
-                Ok(ObterNotificacoes());
-            }
-            else
-            {
-                return _messageModel.Messages.HasErrors() ?
-                     BadRequest(ObterNotificacoes()) :
-                     Ok(dto);
-            }
-        }
+        }              
     }
 }

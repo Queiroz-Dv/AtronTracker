@@ -66,13 +66,16 @@ namespace Atron.Application.Mapping
             usuarioBdTask.Wait();
             var usuario = usuarioBdTask.Result;
 
-            return new Tarefa(usuario.Id,
-                              usuario.Codigo,
-                              dto.Titulo,
-                              dto.Conteudo,
-                              dto.DataInicial,
-                              dto.DataFinal,
-                              dto.TarefaEstadoId);
+            return new Tarefa
+            {
+                UsuarioId = usuario.Id,
+                UsuarioCodigo = usuario.Codigo,
+                Titulo = dto.Titulo,
+                Conteudo = dto.Conteudo,
+                DataInicial = dto.DataInicial,
+                DataFinal = dto.DataFinal,
+                TarefaEstadoId = dto.TarefaEstadoId
+            };            
         }
     }
 }

@@ -35,10 +35,7 @@ namespace Atron.Infra.IoC
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                     .AddEntityFrameworkStores<AtronDbContext>()
-                    .AddDefaultTokenProviders();
-
-            // Serviços utilitários 
-            services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
+                    .AddDefaultTokenProviders();         
 
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
@@ -56,10 +53,6 @@ namespace Atron.Infra.IoC
             ConfigureTarefaEstadoServices(services);
             ConfigureSalarioRepositoryServices(services);
             ConfigureMesRepositoryServices(services);
-            ConfigurePermissaoServices(services);
-            ConfigurePermissaoRepositoryServices(services);
-            ConfigurePermissaoEstadoServices(services);
-
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigureUserAuthenticationServices(services);
@@ -87,17 +80,6 @@ namespace Atron.Infra.IoC
         private static void ConfigureDefaultUserRoleServices(IServiceCollection services)
         {
             services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
-        }
-
-        private static void ConfigurePermissaoEstadoServices(IServiceCollection services)
-        {
-            services.AddScoped<IPermissaoEstadoRepository, PermissaoEstadoRepository>();
-        }
-
-        private static void ConfigurePermissaoServices(IServiceCollection services)
-        {
-            services.AddScoped<IPermissaoRepository, PermissaoRepository>();
-            services.AddScoped<IPermissaoService, PermissaoService>();
         }
 
         private static void ConfigureMesRepositoryServices(IServiceCollection services)
@@ -155,11 +137,6 @@ namespace Atron.Infra.IoC
         private static void ConfigureTarefaServices(IServiceCollection services)
         {
             services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
-        }
-
-        private static void ConfigurePermissaoRepositoryServices(IServiceCollection services)
-        {
-            services.AddScoped<IRepository<Permissao>, Repository<Permissao>>();
-        }
+        }        
     }
 }

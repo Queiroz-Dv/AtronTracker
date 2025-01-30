@@ -91,12 +91,14 @@ namespace Atron.WebViews.Controllers
                     Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
                 }).ToList();
 
-            ViewBag.Departamentos = new SelectList(departamentosFiltrados, "Codigo", "Descricao");
+            ViewBag.Departamentos = new SelectList(departamentosFiltrados, nameof(Departamento.Codigo), nameof(Departamento.Descricao));
         }
 
         [HttpPost]
         public async Task<IActionResult> Cadastrar(CargoDTO model)
         {
+            ConfigureDataTitleForView("Cadastro de cargos");
+
             if (ModelState.IsValid)
             {
                 BuildRoute();
@@ -107,10 +109,9 @@ namespace Atron.WebViews.Controllers
                 return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
-            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
             CreateTempDataMessages();
 
-            return RedirectToAction(nameof(Cadastrar));
+            return View(model);
         }
 
         [HttpGet]

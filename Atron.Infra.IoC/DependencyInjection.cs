@@ -1,6 +1,5 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.DTO.ApiDTO;
-using Atron.Application.Mapping;
 using Atron.Domain.Entities;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
@@ -23,9 +22,8 @@ namespace Atron.Infra.IoC
             // O método AddScoped indica que os serviços são criados uma vez por requisição HTTP
             // O método Singleton indica que o serviço é criado uma vez para todas as requisições
             // O método Transiente indica que sempre será criado um novo serviço cada vez que for necessário
-            // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo           
-            services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
-
+            // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo
+            // 
             services.AddScoped<IApiClient, ApiClient>();
             services.AddScoped<IUrlTransferService, ApiClient>();
             services.AddScoped<IRouterBuilderService, RouterBuilder>();

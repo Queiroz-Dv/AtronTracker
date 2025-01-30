@@ -57,7 +57,20 @@ namespace Communication.Models
         public async Task PostAsync(string content)
         {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
-            await _httpClient.PostAsync(Url, httpContent);
+            var response = await _httpClient.PostAsync(Url, httpContent);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            FillMessageModel(responseContent);
+        }
+
+        private void FillMessageModel(string responseContent)
+        {
+            if (responseContent.Contains(nameof(Message)))
+            {
+                var messages = JsonConvert.DeserializeObject<List<Message>>(responseContent);
+
+                _messageModel.Messages.AddRange(messages);
+            }
         }
 
         public async Task PutAsync(string parameter, string content)
@@ -66,6 +79,9 @@ namespace Communication.Models
             try
             {
                 var response = await _httpClient.PutAsync($"{Url}{parameter}", httpContent);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                FillMessageModel(responseContent);
+
             }
             catch (HttpRequestException)
             {
@@ -89,6 +105,7 @@ namespace Communication.Models
             var response = await _httpClient.PostAsync(Url, httpContent);
 
             var responseContent = await response.Content.ReadAsStringAsync();
+            FillMessageModel(responseContent);
 
             var jsonContent = JsonConvert.DeserializeObject<DTO>(responseContent);
             return jsonContent;
@@ -100,7 +117,8 @@ namespace Communication.Models
 
             if (response.IsSuccessStatusCode)
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync();                
+                FillMessageModel(responseContent);
                 return responseContent;
             }
             else
@@ -116,6 +134,8 @@ namespace Communication.Models
             try
             {
                 var response = await _httpClient.PutAsync($"{Url}{parameter}", httpContent);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                FillMessageModel(responseContent);
             }
             catch (HttpRequestException)
             {
