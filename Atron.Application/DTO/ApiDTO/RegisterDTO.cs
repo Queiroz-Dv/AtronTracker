@@ -4,9 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Atron.Application.DTO.ApiDTO
 {
-    public class RegisterDTO : FactoryDTO
+    public class RegisterDTO
     {
         public int Id { get; set; }
+        public string Codigo { get; set; }
         public string Nome { get; set; }
 
         public string Sobrenome { get; set; }

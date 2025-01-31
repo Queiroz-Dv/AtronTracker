@@ -34,9 +34,7 @@ namespace Atron.WebViews.Controllers
             ApiControllerName = nameof(Salario);
         }
 
-
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de salários");
 

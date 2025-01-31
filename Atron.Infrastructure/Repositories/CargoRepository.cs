@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class CargoRepository : ICargoRepository
+    public class CargoRepository : Repository<Cargo>, ICargoRepository
     {
         private AtronDbContext _context;
 
-        public CargoRepository(AtronDbContext context)
+        public CargoRepository(AtronDbContext context) : base(context)
         {
             _context = context;
         }
@@ -104,6 +104,11 @@ namespace Atron.Infrastructure.Repositories
         public bool CargoExiste(string codigo)
         {
             return _context.Cargos.Any(crg => crg.Codigo == codigo);
+        }
+
+        public async Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo)
+        {
+            return await _context.Cargos.Where(crg => crg.DepartamentoId == departamentoId && crg.DepartamentoCodigo == departamentoCodigo).ToListAsync();
         }
     }
 }

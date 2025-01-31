@@ -7,12 +7,15 @@
   <ItemGroup>
     <Compile Remove="DTO\Request\**" />
     <Compile Remove="DTO\Response\**" />
+    <Compile Remove="Enums\**" />
     <Compile Remove="ValueObjects\**" />
     <EmbeddedResource Remove="DTO\Request\**" />
     <EmbeddedResource Remove="DTO\Response\**" />
+    <EmbeddedResource Remove="Enums\**" />
     <EmbeddedResource Remove="ValueObjects\**" />
     <None Remove="DTO\Request\**" />
     <None Remove="DTO\Response\**" />
+    <None Remove="Enums\**" />
     <None Remove="ValueObjects\**" />
   </ItemGroup>
 
@@ -24,10 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Atron.Domain\Atron.Domain.csproj" />
     <ProjectReference Include="..\Framework\Shared\Shared.csproj" />
-  </ItemGroup>
-	
-  <ItemGroup>
-    <Folder Include="Enums\" />
   </ItemGroup>
 
 </Project>

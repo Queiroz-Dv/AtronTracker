@@ -44,8 +44,7 @@ namespace Atron.WebViews.Controllers
             ApiControllerName = nameof(Usuario);
         }
 
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de usuários");
             BuildRoute();
