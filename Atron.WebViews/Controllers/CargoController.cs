@@ -35,8 +35,7 @@ namespace Atron.WebViews.Controllers
             ApiControllerName = nameof(Cargo);
         }
 
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de cargos");
 

@@ -31,8 +31,7 @@ namespace Atron.WebViews.Controllers
             ApiControllerName = nameof(Departamento);
         }
 
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        public  async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             BuildRoute();
             var departamentos = await _service.ObterTodos();
@@ -130,6 +129,12 @@ namespace Atron.WebViews.Controllers
             var departamento = await _service.ObterPorCodigo(codigoDepartamento);
 
             return Ok(departamento);
-        }      
+        }
+
+        public override Task<string> ObterMensagemExclusao()
+        {
+            return Task.FromResult("Ao excluir esse departamento os cargos associados a ele serão excluídos e os usuários podem não ter acesso a alguns módulos." +
+                                    " Deseja prosseguir ?");
+        }
     }
 }

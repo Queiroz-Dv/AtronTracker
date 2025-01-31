@@ -28,8 +28,6 @@ namespace Atron.WebViews
             services.AddHttpContextAccessor();
             services.AddInfrastructure(Configuration);
             services.AddControllersWithViews();
-
-            //services.Configure<RotaDeAcesso>(Configuration.GetSection(nameof(RotaDeAcesso)));
             AppSettings.RotaDeAcesso = Configuration.GetSection(nameof(RotaDeAcesso)).Get<RotaDeAcesso>();
         }
 
@@ -68,13 +66,13 @@ namespace Atron.WebViews
                 {
                     context.Request.Headers["Authorization"] = $"Bearer {token}";
 
-                    if (TokenServiceStore.Token.IsNullOrEmpty())
+                    if (string.IsNullOrEmpty(TokenServiceStore.Token))
                     {
                         TokenServiceStore.Token = token;
                     }
                 }
 
-                // Call the next delegate/middleware in the pipeline
+                // Chama o próximo middleware na pipeline
                 await next();
             });
 
@@ -89,7 +87,9 @@ namespace Atron.WebViews
             app.UseEndpoints(endpoints =>
             {
                 endpoints.AddEntityRoutes();
+
                 endpoints.MapControllerRoute(
+
                     name: "default",
                     pattern: "{controller=ApplicationLogin}/{action=Login}");
             });

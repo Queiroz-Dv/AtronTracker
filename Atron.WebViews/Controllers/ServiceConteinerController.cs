@@ -57,5 +57,10 @@ namespace Atron.WebViews.Controllers
 
         [HttpGet]
         public abstract Task<string> ObterMensagemExclusao();
+
+
+        [HttpGet, HttpPost]
+        [Route("[controller]/MenuPrincipal")]
+        public abstract Task<IActionResult> Index(string filter = "", int itemPage = 1);
     }
 }

@@ -1,6 +1,7 @@
 using Atron.WebViews.Helpers;
 using Communication.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Shared.DTO;
 using Shared.Interfaces;
 using Shared.Models;
@@ -9,7 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
-{
+{    
     public  class MainController<DTO, Entity> : ServiceConteinerController<DTO, Entity>
     {
         protected IRouterBuilderService _router;
@@ -19,6 +20,11 @@ namespace Atron.WebViews.Controllers
             : base(messageModel)
         {
             _paginationService = paginationService;
+        }
+
+        public override Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        {
+            return Task.FromResult<IActionResult>(View());
         }
 
         public override Task<string> ObterMensagemExclusao()

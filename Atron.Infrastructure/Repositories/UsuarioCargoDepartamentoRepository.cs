@@ -3,6 +3,8 @@ using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
@@ -48,6 +50,11 @@ namespace Atron.Infrastructure.Repositories
             {
                 throw ex;
             }
+        }
+
+        public async Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorDepartamento(int id, string codigo)
+        {
+            return await _context.UsuarioCargoDepartamentos.Where(rel => rel.DepartamentoId == id && rel.DepartamentoCodigo == codigo).ToListAsync();
         }
     }
 }
