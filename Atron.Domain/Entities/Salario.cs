@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace Atron.Domain.Entities
+﻿namespace Atron.Domain.Entities
 {
+
     public class Salario : EntityBase
     {
         public int UsuarioId { get; set; }
 
         public string UsuarioCodigo { get; set; }
         public Usuario Usuario { get; set; }
-
 
         public int SalarioMensal { get; set; }
 

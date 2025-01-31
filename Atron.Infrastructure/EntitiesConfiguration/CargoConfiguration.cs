@@ -12,15 +12,13 @@ namespace Atron.Infrastructure.EntitiesConfiguration
 
             builder.Property(ppt => ppt.Id).ValueGeneratedOnAdd();
 
-            builder.Property(dpt => dpt.IdSequencial).IsRequired();
-
             builder.Property(pst => pst.Descricao)
                    .IsRequired()
                    .HasMaxLength(50);
 
             builder.HasOne(dpt => dpt.Departamento) // Tem um departamento
                    .WithMany(crg => crg.Cargos) // com muitos cargos 
-                   .HasForeignKey(key => new { key.DepartmentoId, key.DepartamentoCodigo }) // FK da relação
+                   .HasForeignKey(key => new { key.DepartamentoId, key.DepartamentoCodigo }) // FK da relação
                    .HasPrincipalKey(dpt => new { dpt.Id, dpt.Codigo });
 
             // Exemplo pra preencher a tabela 

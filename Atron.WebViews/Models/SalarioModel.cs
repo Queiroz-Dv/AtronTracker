@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Atron.WebViews.Models
 {
-    public class SalarioModel : DefaultModel
+    public class SalarioModel : DefaultModel<SalarioDTO>
     {
         public SalarioModel()
         {

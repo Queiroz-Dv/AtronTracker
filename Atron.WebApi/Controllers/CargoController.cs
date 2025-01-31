@@ -1,8 +1,8 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Models;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;
@@ -12,10 +12,11 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CargoController : ModuleController<Cargo, ICargoService>
     {
         public CargoController(ICargoService cargoService,
-                               MessageModel<Cargo> messageModel)
+                               MessageModel messageModel)
             : base(cargoService, messageModel) { }
 
         [HttpGet]
@@ -29,10 +30,9 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult> Post([FromBody] CargoDTO cargo)
         {
             await _service.CriarAsync(cargo);
-
             return _messageModel.Messages.HasErrors() ?
-                 BadRequest(ObterNotificacoes()) :
-                 Ok(ObterNotificacoes());
+               BadRequest(ObterNotificacoes()) :
+               Ok(ObterNotificacoes());
         }
 
         [HttpPut("{codigo}")]
@@ -64,6 +64,6 @@ namespace Atron.WebApi.Controllers
             return cargo is null ?
                NotFound(ObterNotificacoes()) :
                Ok(cargo);
-        }       
+        }
     }
 }

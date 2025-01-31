@@ -23,14 +23,14 @@ namespace Atron.WebViews.Helpers
                defaults: new { controller = nameof(Cargo), action = nameof(Index) });
 
             endpoints.MapControllerRoute(
-             name: "usuario",
-             pattern: "Usuario/Index/{filter?}/{itemPage?}",
-             defaults: new { controller = nameof(Usuario), action = nameof(Index) });
+                 name: "usuario",
+                 pattern: "Usuario/Index/{filter?}/{itemPage?}",
+                 defaults: new { controller = nameof(Usuario), action = nameof(Index) });
 
-            endpoints.MapControllerRoute(
-             name: "usuario",
-             pattern: "Usuario/Cadastrar/{filter?}/{itemPage?}",
-             defaults: new { controller = nameof(Usuario), action = "Cadastrar" });
+            //endpoints.MapControllerRoute(
+            // name: "usuario",
+            // pattern: "Usuario/Cadastrar/{filter?}/{itemPage?}",
+            // defaults: new { controller = nameof(Usuario), action = "Cadastrar" });
         }
     }
 }

@@ -6,13 +6,14 @@ namespace Atron.Application.Interfaces
 {
     public interface IUsuarioService
     {
+        public bool Registrar { get; set; }
         Task<List<UsuarioDTO>> ObterTodosAsync();
 
         Task<UsuarioDTO> ObterPorCodigoAsync(string codigo);
 
-        Task CriarAsync(UsuarioDTO usuarioDTO);
+        Task<UsuarioDTO> CriarAsync(UsuarioDTO usuarioDTO);
 
-        Task AtualizarAsync(UsuarioDTO usuarioDTO);
+        Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO);
 
         Task RemoverAsync(string codigo);
     }
