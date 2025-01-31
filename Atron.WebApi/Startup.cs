@@ -1,10 +1,10 @@
+using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Infra.IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace Atron.WebApi
 {
@@ -20,40 +20,30 @@ namespace Atron.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Aqui registramos os serviços da API como repositorios e Validações
-            services.AddInfrastructureAPI(Configuration);
+            // Aqui registramos os serviços da API
+            services.AddInfrastructureAPI(Configuration);         // Adiciona a injeção de dependência da camada de infraestrutura
 
             // Indica que usaremos as controllers para comunicação com os endpoints
             services.AddControllers();
             services.AddHttpClient();
             services.AddHttpContextAccessor();
-
-            // Informa que usaremos o Swagger para documentação e testes
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Atron API",
-                    Version = "v1",
-                    Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
-                    Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
-                });
-                c.EnableAnnotations();
-            });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICreateDefaultUserRoleRepository createDefaultUserRole)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                AddSwagger(app);
             }
 
             AddSwagger(app);
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
+
+            createDefaultUserRole.CreateDefaultRoles();
+            createDefaultUserRole.CreateDefaultUsers();
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

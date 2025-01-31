@@ -1,77 +1,70 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
-using Communication.Extensions;
+using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Shared.DTO.API;
+using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class UsuarioController : DefaultController<UsuarioDTO, Usuario, IUsuarioExternalService>
+    [Authorize]
+    public class UsuarioController : MainController<UsuarioDTO, Usuario>
     {
-        IDepartamentoExternalService _departamentoService;
-        ICargoExternalService _cargoService;
+        private readonly IExternalService<UsuarioDTO> _service;
+        private readonly IExternalService<CargoDTO> _cargoService;
+        private readonly IExternalService<DepartamentoDTO> _departamentoService;
+
+        // Aqui eu preciso do Register para fazer o registro de usuários
+        private readonly IExternalService<RegisterDTO> _registerService;
 
         public UsuarioController(
-            IUrlModuleFactory urlModuleFactory,
+            IExternalService<UsuarioDTO> service,
             IPaginationService<UsuarioDTO> paginationService,
-            IUsuarioExternalService externalService,
-            IDepartamentoExternalService departamentoExternalService,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            ICargoExternalService cargoExternalService,
-            MessageModel<Usuario> messageModel)
-            : base(urlModuleFactory,
-                   paginationService,
-                   externalService,
-                   apiRouteExternalService,
-                   configuration,
-                   appSettingsConfig,
-                   messageModel)
+            IExternalService<DepartamentoDTO> departamentoExternalService,
+            IExternalService<CargoDTO> cargoExternalService,
+            IExternalService<RegisterDTO> registerService,
+            IRouterBuilderService router,
+            MessageModel messageModel)
+            : base(messageModel, paginationService)
         {
+            _service = service;
             _departamentoService = departamentoExternalService;
             _cargoService = cargoExternalService;
-            CurrentController = nameof(Usuario);
+            _registerService = registerService;
+            _router = router;
+            ApiControllerName = nameof(Usuario);
         }
 
-        // Rever como automatizar o processo de montagem de rotas
-        private async Task BuildCargoRoute()
-        {
-            await BuildRoute(nameof(Cargo));
-        }
-
-        private async Task BuildDepartamentoRoute()
-        {
-            await BuildRoute(nameof(Departamento));
-        }
-
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de usuários");
-
-            await BuildRoute(nameof(Usuario));
+            BuildRoute();
             var usuarios = await _service.ObterTodos();
 
-            Filter = filter;
-            ConfigurePaginationForView(usuarios, itemPage, CurrentController, filter);
+            ConfigurePaginationForView(usuarios, new PageInfoDTO()
+            {
+                CurrentPage = itemPage,
+                PageRequestInfo = new PageRequestInfoDTO()
+                {
+                    CurrentViewController = ApiControllerName,
+                    Action = nameof(Index),
+                    Filter = filter,
+                }
+            });
+
             var model = new UsuarioModel()
             {
-                Usuarios = GetEntitiesPaginated(),
-                PageInfo = PageInfo
+                Usuarios = _paginationService.GetEntitiesFilled(),
+                PageInfo = _paginationService.GetPageInfo()
             };
 
             return View(model);
@@ -80,33 +73,31 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> Cadastrar()
         {
-            ConfigureDataTitleForView("Cadastro de usuários");
-
-            await BuildRoute(nameof(Departamento));
-            var departamentos = await _departamentoService.ObterTodos();
-
-            await BuildRoute(nameof(Cargo));
-            var cargos = await _cargoService.ObterTodos();
-
-            MontarViewBagDepartamentos(departamentos);
-            MontarViewBagCargos(cargos);
-            return View();
+            ConfigureDataTitleForView("Cadastro de usuários");            
+            await FetchDepartamentosData();
+            await FetchCargosData();
+            return View(new UsuarioDTO());
         }
 
-        private void MontarViewBagCargos(List<CargoDTO> cargos)
+        private async Task FetchCargosData()
         {
+            BuildCargoRoute();
+            var cargos = await _cargoService.ObterTodos();
             var cargosFiltrados = cargos.Select(crg =>
                             new
                             {
                                 crg.Codigo,
-                                Descricao =  crg.ObterCodigoComDescricao()
+                                Descricao = crg.ObterCodigoComDescricao()
                             }).ToList();
 
             ViewBag.Cargos = new SelectList(cargosFiltrados, nameof(Cargo.Codigo), nameof(Cargo.Descricao));
         }
 
-        private void MontarViewBagDepartamentos(List<DepartamentoDTO> departamentos)
+        private async Task FetchDepartamentosData()
         {
+            BuildDepartamentoRoute();
+            var departamentos = await _departamentoService.ObterTodos();
+
             var departamentosFiltrados = departamentos.Select(dpt =>
                 new
                 {
@@ -122,7 +113,7 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                await BuildRoute(nameof(Usuario));
+                BuildRoute();
                 await _service.Criar(model);
 
                 CreateTempDataMessages();
@@ -131,14 +122,13 @@ namespace Atron.WebViews.Controllers
 
             _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
             CreateTempDataMessages();
-
             return RedirectToAction(nameof(Cadastrar));
         }
 
         [HttpGet]
         public async Task<IActionResult> ObterCargosAssociados(string codigoDepartamento)
         {
-            await BuildCargoRoute();
+            BuildCargoRoute();
             var cargos = await _cargoService.ObterTodos();
 
             if (!codigoDepartamento.IsNullOrEmpty())
@@ -158,7 +148,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterDepartamentosAssociados(string codigoCargo)
         {
-            await BuildCargoRoute();
+            BuildCargoRoute();
             var cargos = await _cargoService.ObterTodos();
 
             if (!codigoCargo.IsNullOrEmpty())
@@ -179,19 +169,12 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
         {
-            ConfigureDataTitleForView("Atualizar informação de usuário");
-
-            await BuildDepartamentoRoute();
-            var departamentos = await _departamentoService.ObterTodos();
-
-            await BuildCargoRoute();
-            var cargos = await _cargoService.ObterTodos();
-
-            await BuildRoute(nameof(Usuario), codigo);
+            ConfigureDataTitleForView("Atualizar informação de usuário");           
+            BuildRoute();
             var usuario = await _service.ObterPorCodigo(codigo);
 
-            MontarViewBagDepartamentos(departamentos);
-            MontarViewBagCargos(cargos);
+            await FetchDepartamentosData();
+            await FetchCargosData();
 
             return View(usuario);
         }
@@ -199,7 +182,7 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, UsuarioDTO usuario)
         {
-            await BuildRoute(nameof(Usuario), codigo);
+            BuildRoute();
             await _service.Atualizar(codigo, usuario);
             CreateTempDataMessages();
 
@@ -211,11 +194,27 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            await BuildRoute(nameof(Usuario), codigo);
+            BuildRoute();
             await _service.Remover(codigo);
-
             CreateTempDataMessages();
             return RedirectToAction(nameof(Index));
-        }            
+        }
+
+        private void BuildCargoRoute()
+        {
+            ApiControllerName = nameof(Cargo);
+            BuildRoute();
+        }
+
+        private void BuildDepartamentoRoute()
+        {
+            ApiControllerName = nameof(Departamento);
+            BuildRoute();
+        }
+
+        public override Task<string> ObterMensagemExclusao()
+        {
+            return Task.FromResult("Ao excluir o usuário todos os registros serão removidos também. Deseja prosseguir ?");
+        }
     }
 }

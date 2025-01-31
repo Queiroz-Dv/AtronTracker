@@ -1,13 +1,8 @@
-﻿@using Atron.Application.DTO;
-@using Shared.DTO;
-@using Shared.Services;
-@using Newtonsoft.Json;
-@using Atron.WebViews.Models;
-@model CargoDTO;
+﻿@model CargoDTO;
 
-<h2 style="margin-bottom: 40px;">@ViewData["Title"]</h2>
+<partial name="Partials/TitleLabel"></partial>
 <form asp-action="Cadastrar" method="post" class="form-horizontal">
-
+    <span asp-validation-s ></span>
     <div class="form-group row">
         <label asp-for="Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
         <div class="col-md-5 mb-3">
@@ -34,12 +29,8 @@
         </div>
     </div>
 
-    <div class="form-group row">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Cadastrar" class="btn btn-success" />
-            <a asp-action="Index" class="btn btn-dark">Painel</a>
-        </div>
-    </div>
+    <br />
+    <partial name="Partials/BtnSubmitCadastrar"></partial>
 </form>
 @section Scripts {    
     <script type="text/javascript">

@@ -1,8 +1,8 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Models;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;
@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
-    [Produces("application/json")]
     [ApiController]
+    [Authorize]
     public class DepartamentoController : ModuleController<Departamento, IDepartamentoService>
     {
-        public DepartamentoController(IDepartamentoService departamentoService, MessageModel<Departamento> messageModel)
+        public DepartamentoController(IDepartamentoService departamentoService, MessageModel messageModel)
             : base(departamentoService, messageModel)
         {
             // Injeta a dependência do serviço de departamento no construtor
@@ -24,7 +24,7 @@ namespace Atron.WebApi.Controllers
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
-        {            
+        {
             await _service.CriarAsync(departamento);
 
             return _messageModel.Messages.HasErrors() ?
@@ -64,9 +64,9 @@ namespace Atron.WebApi.Controllers
         {
             var departamento = await _service.ObterPorCodigo(codigo);
 
-            return departamento is null ?  
-                NotFound(ObterNotificacoes()) :  
-                Ok(departamento);            
-        }       
+            return departamento is null ?
+                NotFound(ObterNotificacoes()) :
+                Ok(departamento);
+        }
     }
 }

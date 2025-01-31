@@ -1,13 +1,14 @@
-﻿@using Atron.Application.DTO
-@using System;
-@model SalarioDTO
+﻿@model SalarioDTO;
 
 @{
 	var actionPage = ViewData["ActionPage"];
 }
 
 <form id="formSalario" asp-action="@actionPage" method="post" class="form-horizontal">
+
 	<input hidden type="text" value="@actionPage" id="actionPage" />
+
+	<input asp-for="Id" value="@Model.Id" type="text" id="tarefaId" hidden="hidden" />
 	<!--Informações de usuário-->
 	<fieldset>
 		<legend class="fw-semibold">Informações do Usuário</legend>
@@ -51,10 +52,12 @@
 		<br />
 	</fieldset>
 
-	<div class="form-group row">
-		<div class="col-md-offset-2 col-md-10">
-			<input type="submit" class="btn btn-success" value="Salvar" />
-			<a asp-action="Index" class="btn btn-dark">Painel</a>
-		</div>
-	</div>
+	@if (actionPage.Equals("Cadastrar"))
+	{
+		<partial name="Partials/BtnSubmitCadastrar"></partial>
+	}
+	else
+	{
+		<partial name="Partials/BtnSubmitAtualizar"></partial>
+	}
 </form>
