@@ -1,0 +1,53 @@
+﻿@using Atron.Application.DTO;
+@using Shared.DTO;
+@using Shared.Services;
+@using Newtonsoft.Json;
+@using Atron.WebViews.Models;
+@model SalarioModel;
+
+<link href="~/css/site.css" />
+<partial name="Partials/TitleLabel"></partial>
+<partial name="Partials/BtnCadastrar"></partial>
+
+<div class="panel panel-default">
+    <form asp-controller="Salario" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
+        <p>
+            <input type="text" name="filter" />
+            <input type="submit" value="Filtrar" />
+        </p>
+    </form>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Usuario)</th>
+                <th>@Html.DisplayNameFor(model => model.Usuario.Cargo)</th>
+                <th>@Html.DisplayNameFor(model => model.Usuario.Departamento)</th>
+                <th>@Html.DisplayNameFor(model => model.Usuario.Salario)</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.Salarios)
+            {
+                <tr>
+                    <td>@item.Usuario.Codigo - @item.Usuario.NomeCompleto()</td>
+                    <td>@item.Usuario.Cargo.Descricao</td>
+                    <td>@item.Usuario.Departamento.Descricao</td>
+                    <td>@item.SalarioMensal</td>
+                    <td class="text-end">
+                        <a asp-action="Atualizar" asp-route-id="@item.Id" title="Atualizar" class="btn btn-warning">
+                            <span class="fas fa-edit">Atualizar</span>
+                        </a>
+
+                        <a onclick="confirmarRemocao('@item.Id')" title="Remover"
+                           class="btn btn-danger">
+                            <span class="fas fa-trash-alt">Excluir</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="PagerPartial" model="Model.PageInfo" />
+</div>
+<partial name="Partials/ExcluirRegistro" for="Salario"></partial>

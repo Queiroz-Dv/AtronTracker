@@ -2,172 +2,93 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using AutoMapper;
-using Notification.Models;
+using Shared.Extensions;
+using Shared.Interfaces.Mapper;
+using Shared.Interfaces.Validations;
+using Shared.Models;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Services
 {
     public class TarefaService : ITarefaService
     {
-        private readonly IMapper _mapper;
-        private readonly IRepository<Tarefa> _repository;
-        private readonly ICargoRepository _cargoRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioService _usuarioService;
+        private readonly IApplicationMapService<TarefaDTO, Tarefa> _map;
+        private readonly IRepository<TarefaEstado> _repositoryTarefaEstado;
         private readonly ITarefaRepository _tarefaRepository;
-        private readonly ITarefaEstadoRepository _tarefaEstadoRepository;
+        private readonly IValidateModel<Tarefa> _validateModel;
+        private readonly MessageModel _messageModel;
 
-        private readonly NotificationModel<Tarefa> _notification;
-
-        public List<NotificationMessage> Messages { get; set; }
-
-        public TarefaService(IMapper mapper,
-                             IRepository<Tarefa> repository,
-                             ICargoRepository cargoRepository,
-                             IDepartamentoRepository departamentoRepository,
-                             IUsuarioRepository usuarioRepository,
-                             IUsuarioService usuarioService,
+        public TarefaService(IApplicationMapService<TarefaDTO, Tarefa> map,
+                             IRepository<TarefaEstado> repositoryTarefaEstado,
                              ITarefaRepository tarefaRepository,
-                             ITarefaEstadoRepository tarefaEstadoRepository,
-                             NotificationModel<Tarefa> notification)
+                             MessageModel messageModel,
+                             IValidateModel<Tarefa> validateModel)
         {
-            _mapper = mapper;
-            _repository = repository;
-            _notification = notification;
-            _cargoRepository = cargoRepository;
-            _departamentoRepository = departamentoRepository;
-            _usuarioRepository = usuarioRepository;
-            _usuarioService = usuarioService;
+            _map = map;
+            _repositoryTarefaEstado = repositoryTarefaEstado;
+            _messageModel = messageModel;
             _tarefaRepository = tarefaRepository;
-            _tarefaEstadoRepository = tarefaEstadoRepository;
-            Messages = new List<NotificationMessage>();
+            _validateModel = validateModel;
         }
 
         public async Task CriarAsync(TarefaDTO tarefaDTO)
         {
-            tarefaDTO.Id = tarefaDTO.GerarIdentificador();
+            var tarefa = _map.MapToEntity(tarefaDTO);
+            _validateModel.Validate(tarefa);
 
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefaDTO.UsuarioCodigo);
-            if (usuario is not null)
+            if (!_messageModel.Messages.HasErrors())
             {
-                tarefaDTO.UsuarioId = usuario.Id;
-            }
-
-            var tarefa = _mapper.Map<Tarefa>(tarefaDTO);
-
-            _notification.Validate(tarefa);
-
-            if (!_notification.Messages.HasErrors())
-            {
-                await _tarefaRepository.CriarRepositoryAsync(tarefa);
-                Messages.Add(new NotificationMessage("Tarefa criada com sucesso."));
+                await _tarefaRepository.CriarTarefaAsync(tarefa);
+                _messageModel.AddSuccessMessage(nameof(Tarefa));
             }
         }
 
         public async Task<List<TarefaDTO>> ObterTodosAsync()
         {
-            var tarefas = await _tarefaRepository.ObterTodosRepositoryAsync();
-            var estadosDaTarefa = await _tarefaEstadoRepository.ObterTodosAsync();
-            var usuarios = await _usuarioService.ObterTodosAsync();
-
-            var tarefasDTO = _mapper.Map<IEnumerable<TarefaDTO>>(tarefas);
-            var tarefasDTOList = new List<TarefaDTO>();
-
-            foreach (var tarefaDTO in tarefasDTO)
-            {
-                foreach (var usuario in usuarios)
-                {
-                    if (tarefaDTO.UsuarioId == usuario.Id)
-                    {
-                        var tarefa = new TarefaDTO();
-                        tarefa.UsuarioCodigo = tarefaDTO.UsuarioCodigo;
-
-                        tarefa.Usuario = new UsuarioDTO()
-                        {
-                            Codigo = usuario.Codigo,
-                            Nome = usuario.Nome,
-                            Sobrenome = usuario.Sobrenome,
-                            DataNascimento = usuario.DataNascimento,
-                            Salario = usuario.Salario,
-                            CargoCodigo = usuario.CargoCodigo,
-                            DepartamentoCodigo = usuario.DepartamentoCodigo,
-
-                            Departamento = new DepartamentoDTO()
-                            {
-                                Codigo = usuario.Departamento.Codigo,
-                                Descricao = usuario.Departamento.Descricao,
-                            },
-
-                            Cargo = new CargoDTO()
-                            {
-                                Codigo = usuario.Cargo.Codigo,
-                                Descricao = usuario.Cargo.Descricao,
-                            }
-                        };
-
-                        tarefa.Titulo = tarefaDTO.Titulo;
-                        tarefa.Conteudo = tarefaDTO.Conteudo;
-                        tarefa.DataInicial = tarefaDTO.DataInicial.Date;
-                        tarefa.DataFinal = tarefaDTO.DataFinal.Date;
-                        tarefa.EstadoDaTarefa = tarefaDTO.EstadoDaTarefa;
-                        tarefa.EstadoDaTarefaDescricao = estadosDaTarefa.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Descricao;
-
-                        tarefasDTOList.Add(tarefa);
-                    }
-                }
-            }
-            return tarefasDTOList;
+            var tarefas = await _tarefaRepository.ObterTodasTarefas();
+            return _map.MapToListDTO(tarefas);            
         }
 
-        public async Task AtualizarAsync(TarefaDTO tarefaDTO)
+        public async Task AtualizarAsync(int id, TarefaDTO tarefaDTO)
         {
-            var tarefa = _mapper.Map<Tarefa>(tarefaDTO);
-
-            var usuarioExiste = _usuarioRepository.UsuarioExiste(tarefa.UsuarioCodigo);
-
-            if (usuarioExiste)
+            if (tarefaDTO is null)
             {
-                var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefa.UsuarioCodigo);
-                var tarefaEstados = await _tarefaEstadoRepository.ObterTodosAsync();
-
-                tarefa.UsuarioId = usuario.Id;
-                tarefa.UsuarioCodigo = usuario.Codigo;
-                tarefa.EstadoDaTarefa = tarefaEstados.FirstOrDefault(tre => tre.Id == tarefa.EstadoDaTarefa).Id;
-
-                _notification.Validate(tarefa);
-
-                if (!_notification.Messages.HasErrors())
-                {
-                    await _tarefaRepository.AtualizarRepositoryAsync(tarefa);
-                    Messages.Add(new NotificationMessage("Tarefa atualizada com sucesso."));
-                    return;
-                }
-
-                Messages.AddRange(_notification.Messages);
+                _messageModel.AddRegisterInvalidMessage(nameof(Tarefa));
+                return;
             }
-            else
+
+            var tarefa = _map.MapToEntity(tarefaDTO);
+            _validateModel.Validate(tarefa);
+
+            if (!_messageModel.Messages.HasErrors())
             {
-                Messages.Add(new NotificationMessage("Código de usuário não existe. Tente novamente", Notification.Enums.ENotificationType.Error));
+                await _tarefaRepository.AtualizarTarefaAsync(id, tarefa);
+                _messageModel.AddUpdateMessage(nameof(Tarefa));
                 return;
             }
         }
 
-        public async Task ExcluirAsync(int id)
+        public async Task ExcluirAsync(string id)
         {
-            var tarefa = await _tarefaRepository.ObterPorIdRepositoryAsync(id);
+            var tarefa = await _tarefaRepository.ObterPorIdRepositoryAsync(Convert.ToInt32(id));
 
             if (tarefa is null)
             {
-                Messages.Add(new NotificationMessage("Tarefa não existe. Tente novamente"));
-                return;
+                _messageModel.AddRegisterNotFoundMessage(nameof(Tarefa));
             }
+            else
+            {
+                await _tarefaRepository.RemoverRepositoryAsync(tarefa);
+                _messageModel.AddRegisterRemovedSuccessMessage(nameof(Tarefa));
+            }
+        }
 
-            await _repository.RemoverRepositoryAsync(tarefa);
-            Messages.Add(new NotificationMessage("Registro removido com sucesso"));
+        public async Task<TarefaDTO> ObterPorId(int id)
+        {
+            var tarefaRepository = await _tarefaRepository.ObterTarefaPorId(id);
+            return _map.MapToDTO(tarefaRepository);            
         }
     }
 }

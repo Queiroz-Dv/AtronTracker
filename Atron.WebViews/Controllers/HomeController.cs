@@ -1,27 +1,15 @@
-﻿using Atron.Domain.ApiEntities;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Shared.DTO.API;
-using Shared.Interfaces;
 
 namespace Atron.WebViews.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
-        private readonly RotaDeAcesso _appSettingsConfig;
-        private IConfiguration _configuration;
-        private IApiRouteExternalService _externalService;
-
-        private string RotaFixas { get; set; }
-
-        
-
         [HttpGet]
-        public IActionResult Index(string searchString)
+        [Route("[controller]/MenuPrincipal")] // Esse é o nome que será exibido na URL
+        public IActionResult Index() // Esse é o método que é acessado pelas outras controllers
         {
-            
             return View();
         }
     }

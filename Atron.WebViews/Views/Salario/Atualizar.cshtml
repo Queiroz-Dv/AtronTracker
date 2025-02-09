@@ -1,0 +1,14 @@
+﻿@using Atron.Application.DTO;
+@using Shared.DTO;
+@using Shared.Services;
+@using Newtonsoft.Json;
+@using Atron.WebViews.Models;
+@model SalarioDTO;
+
+<partial name="Partials/TitleLabel"></partial>
+
+<br />
+<!-- Contêiner para exibir o formulário de salario -->
+<div id="salarioFormContainer">
+    <partial name="Partials/Salario/FormularioSalarioPartial" model="@Model"> </partial>
+</div>

@@ -10,16 +10,13 @@ namespace Shared.Extensions
             return messages.Any(m => m.Level == MessageLevel.Error);
         }
 
-        public static IEnumerable<dynamic> ConvertMessageToJson(this IList<Message> messages)
+        public static IEnumerable<object> ConvertMessageToJson(this IList<Message> messages)
         {
-            var message = from ms in messages
-                          select new
-                          {
-                              ms.Description,
-                              Level = ms.Level.GetEnumDescription(),
-                          };
-
-            return message;
+            return messages.Select(ms => new
+            {
+                ms.Description,
+                Level = ms.Level.GetEnumDescription(),
+            });
         }
     }
 }
