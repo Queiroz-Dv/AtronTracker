@@ -88,7 +88,7 @@ namespace Communication.Models
                 throw;
             }
         }
-
+      
         public async Task DeleteAsync(string codigo)
         {
             var response = await _httpClient.DeleteAsync($"{Url}{codigo}");

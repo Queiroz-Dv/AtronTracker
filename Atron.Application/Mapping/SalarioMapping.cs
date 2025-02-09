@@ -20,23 +20,19 @@ namespace Atron.Application.Mapping
             var dto = new SalarioDTO(entity.Id, entity.UsuarioId, entity.UsuarioCodigo, entity.SalarioMensal, entity.Ano, entity.MesId);
 
 
-            var usuarioRelacionado = entity.Usuario.UsuarioCargoDepartamentos.First();
+            var usuario = entity.Usuario.UsuarioCargoDepartamentos.First();
 
             dto.Usuario = new UsuarioDTO()
             {
-                Codigo = usuarioRelacionado.UsuarioCodigo,
-                Nome = usuarioRelacionado.Usuario.Nome,
-                Sobrenome = usuarioRelacionado.Usuario.Sobrenome,
+                Codigo = usuario.UsuarioCodigo,
+                Nome = usuario.Usuario.Nome,
+                Sobrenome = usuario.Usuario.Sobrenome,
                 Cargo = new CargoDTO()
                 {
-                    Codigo = usuarioRelacionado.Cargo.Codigo,
-                    Descricao = usuarioRelacionado.Cargo.Descricao,
+                    Codigo = usuario.Cargo.Codigo,
+                    Descricao = usuario.Cargo.Descricao,
                 },
-                Departamento = new DepartamentoDTO()
-                {
-                    Codigo = usuarioRelacionado.Departamento.Codigo,
-                    Descricao = usuarioRelacionado.Departamento.Descricao
-                }
+                Departamento = new DepartamentoDTO(usuario.Departamento.Codigo, usuario.Departamento.Descricao)             
             };
             return dto;
         }

@@ -47,12 +47,8 @@ namespace Atron.Application.Mapping
                         Descricao = cargoBd.Descricao
                     };
 
-                    usuario.Departamento = new DepartamentoDTO
-                    {
-                        Codigo = departamentoBd.Codigo,
-                        Descricao = departamentoBd.Descricao
-                    };
-
+                    usuario.Departamento = new DepartamentoDTO(departamentoBd.Codigo, departamentoBd.Descricao);
+                        
                     usuario.CargoCodigo = cargoBd.Codigo;
                     usuario.DepartamentoCodigo = departamentoBd.Codigo;
                 }

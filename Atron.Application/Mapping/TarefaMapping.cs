@@ -38,22 +38,18 @@ namespace Atron.Application.Mapping
                 dto.EstadoDaTarefaDescricao = tarefaEstado.Descricao;
             }
 
-            var usuarioRelacionado = entity.Usuario.UsuarioCargoDepartamentos.First();
+            var usuario = entity.Usuario.UsuarioCargoDepartamentos.First();
 
             dto.Usuario = new UsuarioDTO()
             {
-                Codigo = usuarioRelacionado.UsuarioCodigo,
-                Nome = usuarioRelacionado.Usuario.Nome,
+                Codigo = usuario.UsuarioCodigo,
+                Nome = usuario.Usuario.Nome,
                 Cargo = new CargoDTO()
                 {
-                    Codigo = usuarioRelacionado.Cargo.Codigo,
-                    Descricao = usuarioRelacionado.Cargo.Descricao,
+                    Codigo = usuario.Cargo.Codigo,
+                    Descricao = usuario.Cargo.Descricao,
                 },
-                Departamento = new DepartamentoDTO()
-                {
-                    Codigo = usuarioRelacionado.Departamento.Codigo,
-                    Descricao = usuarioRelacionado.Departamento.Descricao
-                }
+                Departamento = new DepartamentoDTO(usuario.Departamento.Codigo, usuario.Departamento.Descricao)            
             };
 
 

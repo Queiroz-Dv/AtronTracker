@@ -10,8 +10,6 @@ namespace Atron.Application.DTO.ApiDTO
         [DataType(DataType.Password)]
         public string Passsword { get; set; }
 
-        public string ReturnUrl { get; set; }
-
         public bool Authenticated { get; set; }
         public UserToken UserToken { get; set; }
     }

@@ -2,11 +2,12 @@
 using Atron.Domain.ApiEntities;
 using Atron.WebViews.Helpers;
 using Communication.Interfaces.Services;
+using Communication.Security;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using System;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
@@ -18,9 +19,9 @@ namespace Atron.WebViews.Controllers
 
         public ApplicationLoginController(
             ILoginExternalService service,
-            MessageModel messageModel,
             IPaginationService<LoginDTO> paginationService,
-            IRouterBuilderService router) :
+            IRouterBuilderService router,
+            MessageModel messageModel) :
             base(messageModel, paginationService)
         {
             _router = router;
@@ -28,13 +29,26 @@ namespace Atron.WebViews.Controllers
             ApiControllerName = "AppLogin";
         }
 
-        [HttpGet]
-        public IActionResult Login(string returnUrl)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LogoutUser()
         {
-            return View(new LoginDTO()
+            BuildRoute("Disconectar");
+            await _service.Logout();
+            Response.Cookies.Delete("AuthToken");            
+
+            if (!TokenServiceStore.Token.IsNullOrEmpty())
             {
-                ReturnUrl = returnUrl,
-            });
+                TokenServiceStore.Token = string.Empty;
+            }
+
+            return RedirectToAction(nameof(Login), string.Empty);
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View(new LoginDTO());
         }
 
         [HttpPost]

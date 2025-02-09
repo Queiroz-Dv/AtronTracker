@@ -6,7 +6,6 @@ namespace Atron.Application.Interfaces
 {
     public interface IUsuarioService
     {
-        public bool Registrar { get; set; }
         Task<List<UsuarioDTO>> ObterTodosAsync();
 
         Task<UsuarioDTO> ObterPorCodigoAsync(string codigo);

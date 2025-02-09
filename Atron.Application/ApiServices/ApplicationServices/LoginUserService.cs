@@ -3,16 +3,14 @@ using Atron.Application.DTO.ApiDTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
-using Shared.Extensions;
 using Shared.Interfaces;
-using System;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.ApplicationServices
 {
     public class LoginUserService : ILoginUserService
     {
-        private readonly IApplicationTokenService   _tokenService;
+        private readonly IApplicationTokenService _tokenService;
         private readonly ILoginApplicationRepository _loginApplication;
         private readonly IUsuarioService _usuarioService;
 
@@ -44,7 +42,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                 var userToken = _tokenService.GenerateToken(user.Nome, loginDTO.Codigo, user.Email);
 
                 // Set token
-                loginDTO.UserToken = userToken;                
+                loginDTO.UserToken = userToken;
             }
 
             return loginDTO;

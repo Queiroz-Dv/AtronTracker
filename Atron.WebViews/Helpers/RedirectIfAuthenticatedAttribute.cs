@@ -21,10 +21,13 @@ namespace Atron.WebViews.Helpers
             var session = context.HttpContext.Session;
 
             // Try to get the authentication token from the session or cookies
-            var token = session.GetString("AuthToken") ?? context.HttpContext.Request.Cookies["AuthToken"];
+           var token = session.GetString("AuthToken") ?? context.HttpContext.Request.Cookies["AuthToken"];
 
-            // If the token is not null or empty, redirect to the Home page
-            if (!token.IsNullOrEmpty())
+            // Check if the user is trying to access the Logout endpoint
+            var isLogoutEndpoint = context.HttpContext.Request.Path.Value?.ToLower().Contains("/logout") ?? false;
+
+            // If the token is not null or empty and the user is not trying to logout, redirect to the Home page
+            if (!token.IsNullOrEmpty() && !isLogoutEndpoint)
             {
                 context.Result = new RedirectToActionResult("Index", "Home", null);
             }

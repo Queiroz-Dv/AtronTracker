@@ -23,9 +23,9 @@ namespace ExternalServices.Services
             return loginResult;
         }
 
-        public Task Logout()
+        public async Task Logout()
         {
-            throw new NotImplementedException();
+            await _apiClient.GetAsync();
         }
     }
 }

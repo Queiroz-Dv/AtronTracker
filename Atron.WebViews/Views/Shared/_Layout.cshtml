@@ -32,7 +32,12 @@
                             </li>
                         </ul>
                         <ul class="navbar-nav ml-auto">
-                            @await Html.PartialAsync("_LoginPartial")
+                            <li class="nav-item ms-auto">
+                                <form asp-area="" asp-controller="ApplicationLogin" asp-action="LogoutUser" method="post" class="form-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="submit" class="nav-link btn btn-link text-capitalize btn btn-outline-danger" value="@Context.User.Identity.Name - Logout">
+                                </form>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -42,14 +47,14 @@
 
     <div class="container">
         <main role="main" class="pb-3">
-           <partial name="NotificationsPartial" model="null"></partial>
+            <partial name="NotificationsPartial" model="null"></partial>
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - Atron Tracker - 0.0.2
+            &copy; 2024 - Atron Tracker
         </div>
     </footer>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
