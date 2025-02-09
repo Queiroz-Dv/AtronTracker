@@ -180,10 +180,7 @@ namespace Atron.WebViews.Controllers
                     {
                         Descricao = usuario.Cargo.Descricao
                     },
-                    Departamento = new DepartamentoDTO()
-                    {
-                        Descricao = usuario.Departamento.Descricao
-                    }
+                    Departamento = new DepartamentoDTO(usuario.Departamento.Codigo, usuario.Departamento.Descricao)                   
                 };
             }
             else
@@ -199,10 +196,7 @@ namespace Atron.WebViews.Controllers
                         {
                             Descricao = usuario.Cargo.Descricao
                         },
-                        Departamento = new DepartamentoDTO()
-                        {
-                            Descricao = usuario.Departamento.Descricao
-                        }
+                        Departamento = new DepartamentoDTO(usuario.Departamento.Codigo,usuario.Departamento.Descricao)                   
                     },
                 };
             }

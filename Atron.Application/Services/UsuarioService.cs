@@ -29,8 +29,6 @@ namespace Atron.Application.Services
         private readonly IValidateModel<Usuario> _validateModel;
         private readonly MessageModel _messageModel;
 
-        public bool Registrar { get; set; }
-
         public UsuarioService(IApplicationMapService<UsuarioDTO, Usuario> map,
                               IUsuarioRepository repository,
                               IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,

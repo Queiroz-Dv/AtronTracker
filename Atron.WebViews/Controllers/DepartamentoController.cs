@@ -5,7 +5,6 @@ using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
@@ -31,32 +30,15 @@ namespace Atron.WebViews.Controllers
             ApiControllerName = nameof(Departamento);
         }
 
-        public  async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             BuildRoute();
             var departamentos = await _service.ObterTodos();
 
-            ConfigurePaginationForView(departamentos, new PageInfoDTO()
-            {
-                CurrentPage = itemPage,
-                PageRequestInfo = new PageRequestInfoDTO()
-                {
-                    CurrentViewController = ApiControllerName,
-                    Action = nameof(Index),
-                    Filter = filter,
-                }
-            });
-
-            var model = new DepartamentoModel()
-            {
-                Departamentos = _paginationService.GetEntitiesFilled(),
-                PageInfo = _paginationService.GetPageInfo()
-            };
-
+            ConfigurePaginationForView(departamentos, nameof(Index), itemPage, filter);
             ConfigureDataTitleForView("Painel de departamentos");
-            return View(model);
+            return View(GetModel<DepartamentoModel>());
         }
-
 
         [HttpGet]
         public IActionResult Cadastrar()
@@ -68,26 +50,27 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Cadastrar(DepartamentoDTO departamento)
         {
+            ConfigureDataTitleForView("Cadastro de departamentos");
+
             if (ModelState.IsValid)
-            {              
+            {
                 BuildRoute();
 
                 await _service.Criar(departamento);
 
                 CreateTempDataMessages();
 
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) :
+                return !_messageModel.Messages.HasErrors() ?
+                    RedirectToAction(nameof(Cadastrar)) :
                     View(nameof(Cadastrar), departamento);
             }
-
-            ConfigureDataTitleForView("Cadastro de departamentos");
 
             return View(departamento);
         }
 
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
-        {           
+        {
             BuildRoute();
             var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
@@ -103,7 +86,7 @@ namespace Atron.WebViews.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
-        {           
+        {
             BuildRoute();
             await _service.Atualizar(codigo, departamentoDTO);
             CreateTempDataMessages();
@@ -115,7 +98,7 @@ namespace Atron.WebViews.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
-        {           
+        {
             BuildRoute();
             await _service.Remover(codigo);
 

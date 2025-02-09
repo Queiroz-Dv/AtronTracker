@@ -34,7 +34,7 @@ namespace Atron.WebApi.Controllers
         }
 
         [Route("Disconectar")]
-        [HttpPut]
+        [HttpGet]
         public async Task<ActionResult> Logout()
         {
             await _service.Logout();
