@@ -89,7 +89,6 @@ body {
     color: #fff;
 }
 
-
 /* Botão de Atualizar */
 .btn-warning {
     background-color: #ffc107;
@@ -117,5 +116,50 @@ body {
 
 /* Adicionando efeitos de transição */
 .btn {
-    transition: all 2s ease;
+    transition: all 0.3s ease;
 }
+
+.modal-lg {
+    max-width: 80%;
+}
+
+.text-end {
+    text-align: right; /* Alinha o conteúdo ao canto direito */
+    white-space: nowrap; /* Impede que os botões quebrem de linha */
+}
+
+/* Estilização customizada para inputs */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="submit"],
+button {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+input[type="submit"],
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+    input[type="submit"]:hover,
+    button:hover {
+        background-color: #0056b3;
+        color: white;
+    }
+
+/* Estilização customizada para formulários */
+.form-inline {
+    display: flex;
+    align-items: center;
+}
+
+    .form-inline input[type="submit"] {
+        margin-left: 10px;
+    }

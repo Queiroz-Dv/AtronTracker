@@ -11,19 +11,20 @@ namespace Atron.WebApi.Controllers
     public class ModuleController<Entity, Service> : ControllerBase
     {
         protected readonly Service _service; // Serviço da entidade
-        protected readonly MessageModel<Entity> _messageModel; // Modelo de mensagem da entidade
+        protected readonly MessageModel _messageModel; // Modelo de notificações e validações para a entidade
 
-        public ModuleController(Service service, MessageModel<Entity> messageModel)
+        public ModuleController(Service service, MessageModel messageModel)
         {
             // Injeta as dependências necessárias para os processos automatizados
             _service = service;
             _messageModel = messageModel;
         }
 
-        // Serve para retornar um objeto dinâmico como modelo json
+        // Serve para retornar um objeto dinâmico (aqui estou retornando a conversão em json)
         protected virtual IEnumerable<dynamic> ObterNotificacoes()
         {
+            // Passar para um método de extensão
             return _messageModel.Messages.ConvertMessageToJson();
-        }
+        }              
     }
 }

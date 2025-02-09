@@ -1,18 +1,18 @@
 ﻿using Atron.Application.DTO;
-using Notification.Interfaces.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Interfaces
 {
-    public interface ITarefaService : INotificationMessage
+    public interface ITarefaService
     {
         Task<List<TarefaDTO>> ObterTodosAsync();
 
         Task CriarAsync(TarefaDTO tarefaDTO);
 
-        Task AtualizarAsync(TarefaDTO tarefaDTO);
+        Task AtualizarAsync(int id, TarefaDTO tarefaDTO);
 
-        Task ExcluirAsync(int id);
+        Task ExcluirAsync(string id);
+        Task<TarefaDTO> ObterPorId(int id);
     }
 }

@@ -1,11 +1,14 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using AutoMapper;
-using Notification.Models;
-using Shared.Models;
+using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
+using Shared.Interfaces.Mapper;
+using Shared.Interfaces.Validations;
+using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,26 +18,41 @@ namespace Atron.Application.Services
     public class UsuarioService : IUsuarioService
     {
         // Sempre usar o repository pra acessar a camada de dados
-        private readonly IMapper _mapper;
+        private readonly IApplicationMapService<UsuarioDTO, Usuario> _map;
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly ICargoRepository _cargoRepository;
+        private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
+        private readonly IRegisterApplicationRepository _registerApplicationRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly MessageModel<Usuario> _messageModel;
+        private readonly ICargoRepository _cargoRepository;
+        private readonly ITarefaRepository _tarefaRepository;
+        private readonly ISalarioRepository _salarioRepository;
+        private readonly IValidateModel<Usuario> _validateModel;
+        private readonly MessageModel _messageModel;
 
-        public UsuarioService(IMapper mapper,
+        public UsuarioService(IApplicationMapService<UsuarioDTO, Usuario> map,
                               IUsuarioRepository repository,
-                              ICargoRepository cargoRepository,
+                              IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
+                              IRegisterApplicationRepository registerApplicationRepository,
                               IDepartamentoRepository departamentoRepository,
-                              MessageModel<Usuario> messageModel)
+                              ICargoRepository cargoRepository,
+                              IValidateModel<Usuario> validateModel,
+                              MessageModel messageModel,
+                              ITarefaRepository tarefaRepository,
+                              ISalarioRepository salarioRepository)
         {
-            _mapper = mapper;
+            _map = map;
             _usuarioRepository = repository;
-            _cargoRepository = cargoRepository;
+            _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
+            _registerApplicationRepository = registerApplicationRepository;
             _departamentoRepository = departamentoRepository;
+            _cargoRepository = cargoRepository;
+            _validateModel = validateModel;
             _messageModel = messageModel;
+            _tarefaRepository = tarefaRepository;
+            _salarioRepository = salarioRepository;
         }
 
-        public async Task AtualizarAsync(UsuarioDTO usuarioDTO)
+        public async Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO)
         {
             if (usuarioDTO is null)
             {
@@ -42,131 +60,113 @@ namespace Atron.Application.Services
                 return;
             }
 
-            var usuario = _mapper.Map<Usuario>(usuarioDTO);
+            var entidade = _map.MapToEntity(usuarioDTO);
 
-            var cargoExiste = _cargoRepository.CargoExiste(usuario.CargoCodigo);
-            var departamentoExiste = _departamentoRepository.DepartamentoExiste(usuario.DepartamentoCodigo);
-            var usuarioExiste = _usuarioRepository.UsuarioExiste(usuarioDTO.Codigo);
-
-            if (departamentoExiste && cargoExiste && usuarioExiste)
-            {
-                var identificadorUsuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
-                var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(usuario.CargoCodigo);
-                var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(usuario.DepartamentoCodigo);
-                usuario.SetId(identificadorUsuario.Id);
-                usuario.CargoId = cargo.Id;
-                usuario.DepartamentoId = departamento.Id;
-            }           
-
-            _messageModel.Validate(usuario);
+            _validateModel.Validate(entidade);
 
             if (!_messageModel.Messages.HasErrors())
             {
-                await _usuarioRepository.AtualizarUsuarioAsync(usuario);
-               _messageModel.AddUpdateMessage(nameof(Usuario));
+                if (!usuarioDTO.DepartamentoCodigo.IsNullOrEmpty())
+                {
+                    var departamentoBd = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(usuarioDTO.DepartamentoCodigo);
+                    var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsyncAsNoTracking(usuarioDTO.CargoCodigo);
+
+                    entidade.UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>()
+                    {
+                      new()
+                      {
+                         CargoId = cargoBd.Id,
+                         CargoCodigo = cargoBd.Codigo,
+                         DepartamentoId = departamentoBd.Id,
+                         DepartamentoCodigo = departamentoBd.Codigo
+                      }
+                    };
+                }
+
+                var resultRepo = await _usuarioRepository.AtualizarUsuarioAsync(codigo, entidade);
+
+                if (resultRepo)
+                {
+                    var register = new ApiRegister(entidade.Codigo, entidade.Email, usuarioDTO.Senha, usuarioDTO.Senha);
+
+                    var registerResult = await _registerApplicationRepository.UpdateUserAccountAsync(register);
+
+                    if (registerResult)
+                    {
+                        _messageModel.AddUpdateMessage(nameof(Usuario));
+                    }
+                }
             }
         }
 
-        public async Task CriarAsync(UsuarioDTO usuarioDTO)
+        public async Task<UsuarioDTO> CriarAsync(UsuarioDTO usuarioDTO)
         {
             if (usuarioDTO is null)
             {
-                _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
-                return;
+                _messageModel.AddRegisterInvalidMessage(nameof(Usuario));
+                return usuarioDTO;
             }
 
-            var cargoExiste = _cargoRepository.CargoExiste(usuarioDTO.CargoCodigo);
-            var departamentoExiste = _departamentoRepository.DepartamentoExiste(usuarioDTO.DepartamentoCodigo);
+            var entidade = _map.MapToEntity(usuarioDTO);
 
-            if (departamentoExiste && cargoExiste)
+            if (!usuarioDTO.DepartamentoCodigo.IsNullOrEmpty())
             {
-                var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
-                var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(usuarioDTO.DepartamentoCodigo);
+                var departamentoBd = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(usuarioDTO.DepartamentoCodigo);
+                var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsyncAsNoTracking(usuarioDTO.CargoCodigo);
 
-                usuarioDTO.CargoId = cargo.Id;
-                usuarioDTO.DepartamentoId = departamento.Id;
+                // A associação de cargo e departamento ao usuário será gravada
+                // automaticamente informando o código do cargo e do departamento
+                entidade.UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>()
+                {
+                    new()
+                    {
+                        CargoId = cargoBd.Id,
+                        CargoCodigo = cargoBd.Codigo,
+                        DepartamentoId = departamentoBd.Id,
+                        DepartamentoCodigo = departamentoBd.Codigo
+                    }
+                };
             }
-            else
-            {
-                _messageModel.AddError("Cargo ou Departamento não encontrados. Cadastre-os ou tente novamente.");
-                return;
-            }
 
-            var usuario = _mapper.Map<Usuario>(usuarioDTO);
-
-            _messageModel.Validate(usuario);
-
+            _validateModel.Validate(entidade);
             if (!_messageModel.Messages.HasErrors())
             {
-                await _usuarioRepository.CriarUsuarioAsync(usuario);
-                _messageModel.AddSuccessMessage(nameof(Usuario));
+                var usr = await _usuarioRepository.CriarUsuarioAsync(entidade);
+
+                if (usr)
+                {
+                    var register = new ApiRegister()
+                    {
+                        UserName = entidade.Codigo,
+                        Email = entidade.Email,
+                        Password = usuarioDTO.Senha,
+                        ConfirmPassword = usuarioDTO.Senha
+                    };
+
+                    var registerOk = await _registerApplicationRepository.RegisterUserAccountAsync(register);
+
+                    if (registerOk)
+                    {
+                        _messageModel.AddSuccessMessage(nameof(Usuario));
+                        _messageModel.AddMessage($"Usuário de acesso da aplicação: {usuarioDTO.Nome} cadastrado com sucesso");
+                    }
+                }
             }
+
+            return usuarioDTO;
         }
 
         public async Task<UsuarioDTO> ObterPorCodigoAsync(string codigo)
         {
-            var cargos = await _cargoRepository.ObterCargosAsync();
-            var departamentos = await _departamentoRepository.ObterDepartmentosAsync();
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
 
-            var cargosDTOs = _mapper.Map<IEnumerable<CargoDTO>>(cargos);
-            var departamentosDTOs = _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
-            var usuarioDTO = _mapper.Map<UsuarioDTO>(usuario);
-
-            var usuarioPreenchido = new UsuarioDTO()
-            {
-                Id = usuarioDTO.Id,
-                Codigo = usuarioDTO.Codigo,
-                Nome = usuarioDTO.Nome,
-                Sobrenome = usuarioDTO.Sobrenome,
-                Salario = usuarioDTO.Salario,
-                DataNascimento = usuarioDTO.DataNascimento,
-                CargoCodigo = usuarioDTO.CargoCodigo,
-                DepartamentoCodigo = usuarioDTO.DepartamentoCodigo,
-                Cargo = new CargoDTO() { Codigo = usuarioDTO.CargoCodigo, Descricao = cargosDTOs.FirstOrDefault(crg => crg.Id == usuarioDTO.CargoId).Descricao, DepartamentoCodigo = usuarioDTO.DepartamentoCodigo },
-                Departamento = new DepartamentoDTO() { Codigo = usuarioDTO.DepartamentoCodigo, Descricao = departamentosDTOs.FirstOrDefault(dpt => dpt.Id == usuarioDTO.DepartamentoId).Descricao },
-            };
-
-            return usuarioPreenchido;
+            return usuario is null ? null : _map.MapToDTO(usuario);
         }
 
         public async Task<List<UsuarioDTO>> ObterTodosAsync()
         {
-            var cargos = await _cargoRepository.ObterCargosAsync();
-            var departamentos = await _departamentoRepository.ObterDepartmentosAsync();
             var usuarios = await _usuarioRepository.ObterUsuariosAsync();
-
-            var cargosDTOs = _mapper.Map<IEnumerable<CargoDTO>>(cargos);
-            var departamentosDTOs = _mapper.Map<IEnumerable<DepartamentoDTO>>(departamentos);
-            var usuariosDTOs = _mapper.Map<IEnumerable<UsuarioDTO>>(usuarios);
-
-            var usuarioPreenchido = (from usr in usuariosDTOs
-                                     join dpt in departamentosDTOs on usr.DepartamentoId equals dpt.Id
-                                     join crg in cargosDTOs on usr.CargoId equals crg.Id
-                                     select new UsuarioDTO
-                                     {
-                                         Id = usr.Id,
-                                         Codigo = usr.Codigo,
-                                         Nome = usr.Nome,
-                                         Sobrenome = usr.Sobrenome,
-                                         Salario = usr.Salario,
-                                         DataNascimento = usr.DataNascimento,
-                                         CargoCodigo = usr.CargoCodigo,
-                                         DepartamentoCodigo = usr.DepartamentoCodigo,
-                                         Cargo = new CargoDTO()
-                                         {
-                                             Codigo = usr.CargoCodigo,
-                                             Descricao = crg.Descricao,
-                                             DepartamentoCodigo = usr.DepartamentoCodigo
-                                         },
-                                         Departamento = new DepartamentoDTO()
-                                         {
-                                             Codigo = usr.DepartamentoCodigo,
-                                             Descricao = dpt.Descricao
-                                         },
-                                     }).ToList();
-
-            return usuarioPreenchido;
+            return _map.MapToListDTO(usuarios.ToList());
         }
 
         public async Task RemoverAsync(string codigo)
@@ -179,7 +179,39 @@ namespace Atron.Application.Services
             }
             else
             {
+                // Obtém todas as tarefas do usuário
+                IEnumerable<Tarefa> tarefasDoUsuario = await _tarefaRepository.ObterTodasTarefasPorUsuario(usuario.Id, usuario.Codigo);
+
+                if (tarefasDoUsuario.Any())
+                {
+                    foreach (var item in tarefasDoUsuario)
+                    {
+                        await _tarefaRepository.RemoverRepositoryAsync(item);
+                    }
+                }
+
+                // Salário sempre será um registro por usuário
+                Salario salarioDoUsuario = await _salarioRepository.ObterSalarioPorUsuario(usuario.Id, usuario.Codigo);
+
+                if (salarioDoUsuario is not null)
+                {
+                    await _salarioRepository.RemoverRepositoryAsync(salarioDoUsuario);
+                }
+      
+                // O relacionamento será apenas um por usuário
+                var associacao = await _usuarioCargoDepartamentoRepository.ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
+
+                if (associacao is not null)
+                {
+                    await _usuarioCargoDepartamentoRepository.RemoverRepositoryAsync(associacao);
+                }
+
+                // Como o usuário já existe será removido do cadastro da aplicação
+                await _registerApplicationRepository.DeleteAccountUserAsync(codigo);
+
+                // Remove o usuário por completo
                 await _usuarioRepository.RemoverUsuarioAsync(usuario);
+
                 _messageModel.AddRegisterRemovedSuccessMessage(nameof(Usuario));
             }
         }

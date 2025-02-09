@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Atron.Domain.Entities
 {
@@ -7,11 +8,14 @@ namespace Atron.Domain.Entities
         public string Codigo { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
-        public int DepartamentoId { get; set; }
-        public string DepartamentoCodigo { get; set; }
-        public int CargoId { get; set; }
-        public string CargoCodigo { get; set; }
-        public int Salario { get; set; }
+        public int? SalarioAtual { get; set; }
+        public string Email { get; set; }
+
+        public List<Tarefa> Tarefas { get; set; }
+        public Salario Salario { get; set; }
+
         public DateTime? DataNascimento { get; set; }
+
+        public List<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
     }
 }
