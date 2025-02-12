@@ -1,0 +1,86 @@
+﻿@using Atron.Application.DTO;
+@using Shared.DTO;
+@using Shared.Services;
+@using Newtonsoft.Json;
+@using Atron.WebViews.Models;
+@model UsuarioDTO;
+
+<partial name="Partials/TitleLabel"></partial>
+
+<form id="usuarioForm" asp-action="Atualizar" method="post" class="form-horizontal">
+    <div class="form-group row">
+        <label asp-for="Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
+        <div class="col-md-5 mb-3">
+            <input asp-for="Codigo" class="form-control" disabled="disabled" />
+            <input hidden="hidden" asp-for="Codigo" />
+            <span asp-validation-for="Codigo" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="Nome" class="col-md-2 col-form-label font-weight-bold"></label>
+        <div class="col-md-7 mb-3">
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="Sobrenome" class="col-md-2 col-form-label font-weight-bold"></label>
+        <div class="col-md-7 mb-3">
+            <input asp-for="Sobrenome" class="form-control" />
+            <span asp-validation-for="Sobrenome" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="Salario" class="col-md-2 col-form-label font-weight-bold"></label>
+        <div class="col-md-7 mb-3">
+            <input asp-for="Salario" class="form-control" />
+            <span asp-validation-for="Salario" class="text-danger"></span>
+        </div>
+    </div>
+    
+    <div class="form-group row">
+        <label asp-for="DataNascimento" class="col-md-2 col-form-label font-weight-bold">Data de nascimento</label>
+        <div class="col-md-7 mb-3">
+            <input asp-for="DataNascimento" type="date" class="form-control" />
+            <span asp-validation-for="DataNascimento" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="Email" class="col-md-2 col-form-label font-weight-bold"></label>
+        <div class="col-md-7 mb-3">
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="DepartamentoCodigo" class="col-md-2 col-form-label font-weight-bold">Departamentos</label>
+        <div class="col-md-7 mb-3" id="departamentoSelectContainer">
+            <select asp-for="DepartamentoCodigo" id="departamentoCodigo"
+                    class="form-control" asp-items="@ViewBag.Departamentos">
+                <option value="">Selecione um departamento</option>
+            </select>
+            <span asp-validation-for="DepartamentoCodigo" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="CargoCodigo" class="col-md-2 col-form-label font-weight-bold">Cargos</label>
+        <div class="col-md-7 mb-3" id="cargoSelectContainer">
+            <select asp-for="CargoCodigo" id="cargoCodigo" class="form-control" asp-items="@ViewBag.Cargos">
+                <option value="">Selecione um cargo</option>
+            </select>
+            <span asp-validation-for="CargoCodigo" class="text-danger"></span>
+        </div>
+    </div>
+
+    <partial name="Partials/BtnSubmitAtualizar"></partial>
+</form>
+
+@section Scripts {
+    <script type="module" src="/js/views/cadastrarUsuario.js"></script>
+}

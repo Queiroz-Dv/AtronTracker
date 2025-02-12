@@ -203,7 +203,6 @@ project.lock.json
 
 # Output folder used by Webpack or other FE stuff
 **/node_modules/*
-**/wwwroot/*
 
 # SpecFlow specific
 *.feature.cs
@@ -2379,3 +2378,5 @@ Atron.WebViews/assets/fontawesome/webfonts/fa-solid-900.ttf
 Atron.WebViews/assets/fontawesome/webfonts/fa-solid-900.woff2
 Atron.WebViews/assets/fontawesome/webfonts/fa-v4compatibility.ttf
 Atron.WebViews/assets/fontawesome/webfonts/fa-v4compatibility.woff2
+/Atron.WebApi/appsettings.json
+/Atron.WebViews/appsettings.json

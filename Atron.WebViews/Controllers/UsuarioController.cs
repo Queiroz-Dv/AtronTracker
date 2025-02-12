@@ -1,139 +1,204 @@
-﻿// using Atron.Application.DTO;
-// using Atron.Domain.Entities;
-// using Atron.WebViews.Models;
-// using Communication.Extensions;
-// using ExternalServices.Interfaces;
-// using ExternalServices.Interfaces.ApiRoutesInterfaces;
-// using Microsoft.AspNetCore.Mvc;
-// using Microsoft.Extensions.Configuration;
-// using Microsoft.Extensions.Options;
-// using Shared.DTO.API;
-// using Shared.Interfaces;
-// using System.Collections.Generic;
-// using System.Linq;
-// using System.Threading.Tasks;
+﻿using Atron.Application.DTO;
+using Atron.Application.DTO.ApiDTO;
+using Atron.Domain.Entities;
+using Atron.WebViews.Models;
+using Communication.Interfaces.Services;
+using ExternalServices.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Shared.DTO;
+using Shared.Extensions;
+using Shared.Interfaces;
+using Shared.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
-// namespace Atron.WebViews.Controllers
-// {
-//     public class UsuarioController : Controller
-//     {
-//         IUsuarioExternalService _externalService;
-//         IDepartamentoExternalService _departamentoExternalService;
-//         ICargoExternalService _cargoExternalService;
-//         IPaginationService<CargoDTO> _cargoPager;
+namespace Atron.WebViews.Controllers
+{
+    [Authorize]
+    public class UsuarioController : MainController<UsuarioDTO, Usuario>
+    {
+        private readonly IExternalService<UsuarioDTO> _service;
+        private readonly IExternalService<CargoDTO> _cargoService;
+        private readonly IExternalService<DepartamentoDTO> _departamentoService;
 
-//         public UsuarioController(
-//             IPaginationService<UsuarioDTO> paginationService,
-//             IPaginationService<CargoDTO> cargoPager,
-//             IResultResponseService responseModel,
-//             IUsuarioExternalService externalService,
-//             IDepartamentoExternalService departamentoExternalService,
-//             IApiRouteExternalService apiRouteExternalService,
-//             IConfiguration configuration,
-//             IOptions<RotaDeAcesso> appSettingsConfig,
-//             ICargoExternalService cargoExternalService) 
-//             : base(paginationService,
-//                   responseModel,
-//                   externalService,
-//                   apiRouteExternalService,
-//                   configuration,
-//                   appSettingsConfig)
-//         {
-//             _departamentoExternalService = departamentoExternalService;
-//             _cargoExternalService = cargoExternalService;
-//             _externalService = externalService;
-//             _cargoPager = cargoPager;
-//             CurrentController = nameof(Usuario);
-//         }
+        // Aqui eu preciso do Register para fazer o registro de usuários
+        private readonly IExternalService<RegisterDTO> _registerService;
 
-//         [HttpGet, HttpPost]
-//         public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
-//         {
-//             ConfigureDataTitleForView("Painel de usuários");
-//             var usuarios = await _externalService.ObterTodos();
+        public UsuarioController(
+            IExternalService<UsuarioDTO> service,
+            IPaginationService<UsuarioDTO> paginationService,
+            IExternalService<DepartamentoDTO> departamentoExternalService,
+            IExternalService<CargoDTO> cargoExternalService,
+            IExternalService<RegisterDTO> registerService,
+            IRouterBuilderService router,
+            MessageModel messageModel)
+            : base(messageModel, paginationService)
+        {
+            _service = service;
+            _departamentoService = departamentoExternalService;
+            _cargoService = cargoExternalService;
+            _registerService = registerService;
+            _router = router;
+            ApiControllerName = nameof(Usuario);
+        }
 
-//             if (!usuarios.Any())
-//             {
-//                 return View();
-//             }
+        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        {
+            ConfigureDataTitleForView("Painel de usuários");
+            BuildRoute();
+            var usuarios = await _service.ObterTodos();
 
-//             Filter = filter;
-//             ConfigurePaginationForView(usuarios, itemPage);
-//             var model = new UsuarioModel()
-//             {
-//                 Usuarios = GetEntitiesPaginated(),
-//                 PageInfo = PageInfo
-//             };
+            ConfigurePaginationForView(usuarios, nameof(Index), itemPage, filter);
+            return View(GetModel<UsuarioModel>());          
+        }
 
-//             return View(model);
-//         }
+        [HttpGet]
+        public async Task<IActionResult> Cadastrar()
+        {
+            ConfigureDataTitleForView("Cadastro de usuários");            
+            await FetchDepartamentosData();
+            await FetchCargosData();
+            return View(new UsuarioDTO());
+        }
 
+        private async Task FetchCargosData()
+        {
+            BuildCargoRoute();
+            var cargos = await _cargoService.ObterTodos();
+            var cargosFiltrados = cargos.Select(crg =>
+                            new
+                            {
+                                crg.Codigo,
+                                Descricao = crg.ObterCodigoComDescricao()
+                            }).ToList();
 
-//         [HttpGet]
-//         public async Task<IActionResult> Cadastrar(int itemPage = 1)
-//         {
-//             ConfigureDataTitleForView("Cadastro de usuários");
-//             ViewBag.CurrentController = CurrentController;
+            ViewBag.Cargos = new SelectList(cargosFiltrados, nameof(Cargo.Codigo), nameof(Cargo.Descricao));
+        }
 
-//             var departamentos = await _departamentoExternalService.ObterTodos();
-//             var cargos = await _cargoExternalService.ObterTodos();
+        private async Task FetchDepartamentosData()
+        {
+            BuildDepartamentoRoute();
+            var departamentos = await _departamentoService.ObterTodos();
 
-//             if (!departamentos.Any())
-//             {
-//                 _responseService.AddError("Para criar um usuário é necessário ter um departamento.");
-//                 CreateTempDataNotifications();
-//                 return RedirectToAction(nameof(Index));
-//             }
+            var departamentosFiltrados = departamentos.Select(dpt =>
+                new
+                {
+                    dpt.Codigo,
+                    Descricao = dpt.ObterCodigoComDescricao()
+                }).ToList();
 
-//             if (!cargos.Any())
-//             {
-//                 _responseService.AddError("Para criar um usuário é necessário ter um cargo.");
-//                 CreateTempDataNotifications();
-//                 return RedirectToAction(nameof(Index));
-//             }
+            ViewBag.Departamentos = new SelectList(departamentosFiltrados, nameof(DepartamentoDTO.Codigo), nameof(DepartamentoDTO.Descricao));
+        }
 
-//             cargos = cargos.Join(departamentos,
-//                                  crg => crg.DepartamentoCodigo,
-//                                  dpt => dpt.Codigo,
-//                                  (crg, dpt) => new CargoDTO
-//                                  {
-//                                      Codigo = crg.Codigo,
-//                                      Descricao = crg.Descricao,
-//                                      DepartamentoCodigo = crg.DepartamentoCodigo,
-//                                      DepartamentoDescricao = dpt.Descricao
-//                                  }).OrderBy(orderBy => orderBy.Codigo).ToList();
+        [HttpPost]
+        public async Task<IActionResult> Cadastrar(UsuarioDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                BuildRoute();
+                await _service.Criar(model);
 
+                CreateTempDataMessages();
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+            }
 
-//             ConfigureViewDataFilter();
-//             PaginacaoDeCargos(itemPage, cargos);
+            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
+            CreateTempDataMessages();
+            return RedirectToAction(nameof(Cadastrar));
+        }
 
-//             ViewBag.CargoComDepartamentos = _cargoPager.GetEntitiesFilled();
-//             ViewBag.CargoPageInfo = _cargoPager.PageInfo;
+        [HttpGet]
+        public async Task<IActionResult> ObterCargosAssociados(string codigoDepartamento)
+        {
+            BuildCargoRoute();
+            var cargos = await _cargoService.ObterTodos();
 
-//             return View();
-//         }
+            if (!codigoDepartamento.IsNullOrEmpty())
+            {
+                cargos = cargos.Where(crg => crg.DepartamentoCodigo == codigoDepartamento).ToList();
+            }
 
-//         private void PaginacaoDeCargos(int itemPage, List<CargoDTO> cargos)
-//         {
-//             _cargoPager.Paginate(cargos, itemPage, CurrentController, string.Empty, nameof(Cadastrar));
-//             _cargoPager.ConfigureEntityPaginated(cargos, string.Empty);
-//         }
+            var cargosFiltrados = cargos.Select(crg => new
+            {
+                crg.Codigo,
+                Descricao = crg.ObterCodigoComDescricao()
+            }).ToList();
 
-//         [HttpPost]
-//         public async Task<IActionResult> Cadastrar(UsuarioDTO model)
-//         {
-//             if (ModelState.IsValid)
-//             {
-//                 await _externalService.Criar(model);
-//                 var responses = _externalService.ResultResponses;
-//                 CreateTempDataNotifications(responses);
-//                 return !responses.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
-//             }
+            return Json(cargosFiltrados);
+        }
 
-//             _responseService.AddError("Registro inválido para gravação. Tente novamente.");
-//             CreateTempDataNotifications();
+        [HttpGet]
+        public async Task<IActionResult> ObterDepartamentosAssociados(string codigoCargo)
+        {
+            BuildCargoRoute();
+            var cargos = await _cargoService.ObterTodos();
 
-//             return RedirectToAction(nameof(Cadastrar));
-//         }       
-//     }
-// }
+            if (!codigoCargo.IsNullOrEmpty())
+            {
+                // Preciso obter os departamentos a partir do código do cargo;
+                cargos = cargos.Where(crg => crg.Codigo == codigoCargo).ToList();
+            }
+
+            var departamentosFiltrados = cargos.Select(dpt => new
+            {
+                dpt.DepartamentoCodigo,
+                Descricao = dpt.ObterCodigoComDescricao()
+            }).ToList();
+
+            return Json(departamentosFiltrados);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Atualizar(string codigo)
+        {
+            ConfigureDataTitleForView("Atualizar informação de usuário");           
+            BuildRoute();
+            var usuario = await _service.ObterPorCodigo(codigo);
+
+            await FetchDepartamentosData();
+            await FetchCargosData();
+
+            return View(usuario);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Atualizar(string codigo, UsuarioDTO usuario)
+        {
+            BuildRoute();
+            await _service.Atualizar(codigo, usuario);
+            CreateTempDataMessages();
+
+            return !_messageModel.Messages.HasErrors() ?
+            RedirectToAction(nameof(Index)) :
+            View(nameof(Atualizar), usuario);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Remover(string codigo)
+        {
+            BuildRoute();
+            await _service.Remover(codigo);
+            CreateTempDataMessages();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private void BuildCargoRoute()
+        {
+            ApiControllerName = nameof(Cargo);
+            BuildRoute();
+        }
+
+        private void BuildDepartamentoRoute()
+        {
+            ApiControllerName = nameof(Departamento);
+            BuildRoute();
+        }
+
+        public override Task<string> ObterMensagemExclusao()
+        {
+            return Task.FromResult("Ao excluir o usuário todos os registros serão removidos também. Deseja prosseguir ?");
+        }
+    }
+}

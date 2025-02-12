@@ -29,6 +29,8 @@ namespace Atron.Domain.Interfaces
         /// <returns>Um departamento</returns>
         Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo);
 
+        Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo);
+
         /// <summary>
         /// Cria um departamento
         /// </summary>
