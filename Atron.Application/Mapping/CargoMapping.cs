@@ -11,9 +11,12 @@ namespace Atron.Application.Mapping
             return new CargoDTO(entity.Codigo, entity.Descricao)
             {
                 DepartamentoCodigo = entity.DepartamentoCodigo,
-                Departamento = new DepartamentoDTO(entity.Departamento.Codigo, entity.Departamento.Descricao)
+                Departamento = new DepartamentoDTO
+                {
+                    Codigo = entity.Departamento.Codigo,
+                    Descricao = entity.Departamento.Descricao
+                }
             };
-
         }
 
         public override Cargo MapToEntity(CargoDTO dto)

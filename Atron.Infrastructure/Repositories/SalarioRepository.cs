@@ -63,7 +63,6 @@ namespace Atron.Infrastructure.Repositories
                 .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
                 .ThenInclude(crg => crg.Cargo)
                 .ThenInclude(dpt => dpt.Departamento)
-                .Include(ms => ms.Mes)
                 .FirstOrDefaultAsync(sr => sr.Id == id);
         }
 
@@ -79,7 +78,7 @@ namespace Atron.Infrastructure.Repositories
                 .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
                 .ThenInclude(crg => crg.Cargo)
                 .ThenInclude(dpt => dpt.Departamento)
-                .Include(ms => ms.Mes).ToListAsync();
+                .ToListAsync();
         }
     }
 }

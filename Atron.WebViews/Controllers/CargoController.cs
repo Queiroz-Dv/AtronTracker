@@ -38,28 +38,11 @@ namespace Atron.WebViews.Controllers
         public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de cargos");
-
             BuildRoute();
             var cargos = await _service.ObterTodos();
 
-            ConfigurePaginationForView(cargos, new PageInfoDTO()
-            {
-                CurrentPage = itemPage,
-                PageRequestInfo = new PageRequestInfoDTO()
-                {
-                    CurrentViewController = ApiControllerName,
-                    Action = nameof(Index),
-                    Filter = filter,
-                }
-            });
-
-            var model = new CargoModel()
-            {
-                Cargos = _paginationService.GetEntitiesFilled(),
-                PageInfo = _paginationService.GetPageInfo()
-            };
-
-            return View(model);
+            ConfigurePaginationForView(cargos, nameof(Index), itemPage, filter);
+            return View(GetModel<CargoModel>());            
         }
 
         [HttpGet]

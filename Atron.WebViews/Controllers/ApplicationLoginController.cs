@@ -33,7 +33,7 @@ namespace Atron.WebViews.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogoutUser()
         {
-            BuildRoute("Disconectar");
+            BuildRoute("Desconectar");
             await _service.Logout();
             Response.Cookies.Delete("AuthToken");            
 

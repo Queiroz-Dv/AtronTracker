@@ -50,24 +50,9 @@ namespace Atron.WebViews.Controllers
             BuildRoute();
             var tarefas = await _service.ObterTodos();
 
-            ConfigurePaginationForView(tarefas, new PageInfoDTO()
-            {
-                CurrentPage = itemPage,
-                PageRequestInfo = new PageRequestInfoDTO()
-                {
-                    CurrentViewController = ApiControllerName,
-                    Action = nameof(Index),
-                    Filter = filter,
-                }
-            });
+            ConfigurePaginationForView(tarefas, nameof(Index), itemPage, filter);
 
-            var model = new TarefaModel()
-            {
-                Tarefas = _paginationService.GetEntitiesFilled(),
-                PageInfo = _paginationService.GetPageInfo()
-            };
-
-            return View(model);
+            return View(GetModel<TarefaModel>());           
         }
 
         private void BuildUsuarioRoute()

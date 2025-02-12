@@ -32,11 +32,11 @@ namespace Atron.WebViews.Controllers
 
         public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
+            ConfigureDataTitleForView("Painel de departamentos");
             BuildRoute();
             var departamentos = await _service.ObterTodos();
 
             ConfigurePaginationForView(departamentos, nameof(Index), itemPage, filter);
-            ConfigureDataTitleForView("Painel de departamentos");
             return View(GetModel<DepartamentoModel>());
         }
 
