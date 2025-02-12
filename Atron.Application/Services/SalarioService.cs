@@ -2,8 +2,12 @@
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using AutoMapper;
-using Notification.Models;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
+using Shared.Extensions;
+using Shared.Interfaces.Mapper;
+using Shared.Interfaces.Validations;
+using Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,184 +16,99 @@ namespace Atron.Application.Services
 {
     public class SalarioService : ISalarioService
     {
-        private readonly IMapper _mapper;
-        private readonly IRepository<Salario> _repository;
-        private readonly ICargoRepository _cargoRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioService _usuarioService;
-        private readonly ITarefaRepository _tarefaRepository;
-        private readonly ITarefaEstadoRepository _tarefaEstadoRepository;
+        private readonly IApplicationMapService<SalarioDTO, Salario> _map;
         private readonly ISalarioRepository _salarioRepository;
-        private readonly IMesRepository _mesRepository;
-        private readonly NotificationModel<Salario> _notification;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IValidateModel<Salario> _validateModel;
+        private readonly MessageModel _messageModel;
 
-        public SalarioService(IMapper mapper,
-                              IRepository<Salario> repository,
-                              ICargoRepository cargoRepository,
-                              IDepartamentoRepository departamentoRepository,
-                              IUsuarioRepository usuarioRepository,
-                              IUsuarioService usuarioService,
-                              ITarefaRepository tarefaRepository,
-                              ITarefaEstadoRepository tarefaEstadoRepository,
+        public SalarioService(IApplicationMapService<SalarioDTO, Salario> map,
                               ISalarioRepository salarioRepository,
-                              IMesRepository mesRepository,
-                              NotificationModel<Salario> notification)
+                              IUsuarioRepository usuarioRepository,
+                              IValidateModel<Salario> validateModel,
+                              MessageModel messageModel)
+
         {
-            _mapper = mapper;
-            _repository = repository;
-            _cargoRepository = cargoRepository;
-            _departamentoRepository = departamentoRepository;
+            _map = map;
             _usuarioRepository = usuarioRepository;
-            _usuarioService = usuarioService;
-            _tarefaRepository = tarefaRepository;
-            _tarefaEstadoRepository = tarefaEstadoRepository;
             _salarioRepository = salarioRepository;
-            _mesRepository = mesRepository;
-            _notification = notification;
-            Messages = new List<NotificationMessage>();
+            _messageModel = messageModel;
+            _validateModel = validateModel;
         }
 
-        public List<NotificationMessage> Messages { get; set; }
-
-        public async Task AtualizarServiceAsync(SalarioDTO salarioDTO)
+        public async Task AtualizarServiceAsync(int id, SalarioDTO salarioDTO)
         {
-            var entidade = _mapper.Map<Salario>(salarioDTO);
+            var entidade = _map.MapToEntity(salarioDTO);
+            var usuario = await _usuarioRepository.ObterPorCodigoRepositoryAsync(entidade.UsuarioCodigo);
 
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.UsuarioCodigo);
-            var meses = await _mesRepository.ObterMesesRepositoryAsync();
+            _validateModel.Validate(entidade);
 
-            if (usuario is not null)
+            if (!_messageModel.Messages.HasErrors())
             {
-                entidade.UsuarioId = usuario.Id;
-                entidade.UsuarioCodigo = usuario.Codigo;
-                entidade.MesId = meses.FirstOrDefault(ms => ms.MesId == entidade.MesId).MesId;
-                // Sempre que o meu salário for maior do que o cadastrado em usuário
-                // ele sofrerá a atualização
-                if (entidade.SalarioMensal > usuario.Salario)
-                {
-                    _usuarioRepository.AtualizarSalario(entidade.UsuarioId, entidade.SalarioMensal);
-                }
-            }
-            else
-            {
-                Messages.Add(new NotificationMessage("Usuário informado não está cadastrado.", Notification.Enums.ENotificationType.Error));
+                await AtualizarSalarioUsuario(entidade, usuario);
+                await _salarioRepository.AtualizarSalarioRepositoryAsync(id, entidade);
+                _messageModel.AddUpdateMessage(nameof(Salario));
                 return;
             }
+        }
 
-            _notification.Validate(entidade);
-
-            if (!_notification.Messages.HasErrors())
+        // Sempre que salário atual for maior do que o cadastrado em usuário ele será atualizado
+        private async Task AtualizarSalarioUsuario(Salario entidade, Usuario usuario)
+        {
+            if (entidade.SalarioMensal > usuario.SalarioAtual)
             {
-                await _repository.AtualizarRepositoryAsync(entidade);
-                Messages.Add(new NotificationMessage("Salário atualizado com sucesso."));
-                return;
+                await _usuarioRepository.AtualizarSalario(entidade.UsuarioId, entidade.SalarioMensal);
             }
-
-            Messages.AddRange(_notification.Messages);
         }
 
         public async Task CriarAsync(SalarioDTO salarioDTO)
         {
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(salarioDTO.Usuario.Codigo);
-            var mes = await _mesRepository.ObterMesesRepositoryAsync();
-            var mesDoSalario = mes.Where(ms => ms.MesId == salarioDTO.Mes.Id).FirstOrDefault();
+            var entidade = _map.MapToEntity(salarioDTO);
+            var usuario = await _usuarioRepository.ObterPorCodigoRepositoryAsync(salarioDTO.UsuarioCodigo);
 
-            if (usuario is not null)
+            _validateModel.Validate(entidade);
+
+            if (!_messageModel.Messages.HasErrors())
             {
-                salarioDTO.Usuario.Id = usuario.Id;
-            }
-
-            if (mesDoSalario is not null)
-            {
-                salarioDTO.Mes.Id = mesDoSalario.MesId;
-            }
-
-            var entidade = _mapper.Map<Salario>(salarioDTO);
-
-            _notification.Validate(entidade);
-
-            if (!_notification.Messages.HasErrors())
-            {
-                if (entidade.SalarioMensal > usuario.Salario)
-                {
-                    _usuarioRepository.AtualizarSalario(entidade.UsuarioId, entidade.SalarioMensal);
-                }
-
-
-                await _salarioRepository.CriarRepositoryAsync(entidade);
-                Messages.Add(new NotificationMessage($"Salário incluso para o usuário {salarioDTO.Usuario.Nome}"));
+                await AtualizarSalarioUsuario(entidade, usuario);
+                await _salarioRepository.CriarSalarioAsync(entidade);
+                _messageModel.AddSuccessMessage(nameof(Salario));
             }
         }
 
-        public async Task ExcluirServiceAsync(int id)
+        public async Task ExcluirAsync(string id)
         {
-            var salario = await _salarioRepository.ObterPorIdRepositoryAsync(id);
+            var salario = await _salarioRepository.ObterPorIdRepositoryAsync(Convert.ToInt32(id));
 
             if (salario is not null)
             {
                 await _salarioRepository.RemoverRepositoryAsync(salario);
-                Messages.Add(new NotificationMessage("Registro removido com sucesso."));
+                _messageModel.AddRegisterRemovedSuccessMessage(nameof(Salario));
             }
+        }
+
+        public  Task<List<MesDTO>> ObterMeses()
+        {
+            return null;
+            //var mesesRepo = await _mesRepository.ObterTodosRepositoryAsync();
+
+            //return mesesRepo.Select(mes => new MesDTO
+            //{
+            //    Id = mes.Id,
+            //    Descricao = mes.Descricao
+            //}).ToList();
+        }
+
+        public async Task<SalarioDTO> ObterPorId(int id)
+        {
+            var entidade = await _salarioRepository.ObterSalarioPorIdAsync(id);
+            return _map.MapToDTO(entidade);
         }
 
         public async Task<List<SalarioDTO>> ObterTodosAsync()
         {
-            var usuariosDTO = await _usuarioService.ObterTodosAsync();
-            var mesesRepository = await _mesRepository.ObterMesesRepositoryAsync();
-            var salariosRepository = await _salarioRepository.ObterTodosRepositoryAsync();
-
-            var salariosDTO = _mapper.Map<IEnumerable<SalarioDTO>>(salariosRepository);
-
-            var salarios = salariosDTO
-                          // Faz a junção da tabela de usuários com salários             
-                          .Join(usuariosDTO,
-                                salario => salario.Usuario.Id, // FK de salario
-                                usuario => usuario.Id, // PK de usuário
-                                (salario, usuario) => new { salario, usuario }) // resultado 
-
-                          // Faz a junção da tabela de meses com salários
-                          .Join(mesesRepository,
-                                slr => slr.salario.Mes.Id, // FK de mês
-                                mes => mes.MesId, // PK de mês
-
-                                // Monta a entidade completa
-                                (slr, mes) => new SalarioDTO
-                                {
-                                    Id = slr.salario.Id,
-                                    Usuario = new UsuarioDTO()
-                                    {
-                                        Codigo = slr.usuario.Codigo,
-                                        Nome = slr.usuario.Nome,
-                                        Sobrenome = slr.usuario.Sobrenome,
-                                        DataNascimento = slr.usuario.DataNascimento,
-                                        Salario = slr.usuario.Salario,
-
-                                        Departamento = new DepartamentoDTO()
-                                        {
-                                            Codigo = slr.usuario.Departamento.Codigo,
-                                            Descricao = slr.usuario.Departamento.Descricao
-                                        },
-
-                                        Cargo = new CargoDTO()
-                                        {
-                                            Codigo = slr.usuario.Cargo.Codigo,
-                                            Descricao = slr.usuario.Cargo.Descricao,
-                                            DepartamentoCodigo = slr.usuario.Cargo.DepartamentoCodigo,
-                                            DepartamentoDescricao = slr.usuario.Cargo.DepartamentoDescricao,
-                                        }
-                                    },
-
-                                    Mes = new MesDTO()
-                                    {
-                                        Id = mes.MesId,
-                                        Descricao = mes.Descricao
-                                    },
-                                    Ano = slr.salario.Ano,
-                                    SalarioMensal = slr.salario.SalarioMensal
-                                }).OrderByDescending(slr => slr.Ano).ToList();
-
-            return salarios;
+            var salariosRepository = await _salarioRepository.ObterSalariosRepository();
+            return _map.MapToListDTO(salariosRepository.ToList());
         }
     }
 }

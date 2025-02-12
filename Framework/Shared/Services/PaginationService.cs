@@ -9,138 +9,62 @@ namespace Shared.Services
     /// <typeparam name="T">Entidade que será utilizada no processo</typeparam>
     public class PaginationService<T> : IPaginationService<T>
     {
-        public PaginationService()
+        private readonly IFilterService<T> _filterService;
+
+        private List<T> Entities { get; set; }
+
+        private PageInfoDTO Page { get; set; }
+        
+        public PaginationService(IFilterService<T> filterService)
         {
-            PageInfo = new PageInfoDTO();
+            _filterService = filterService;
+            Page = new PageInfoDTO();
             Entities = new List<T>();
         }
 
-        /// <summary>
-        /// Entidades que serão atualizadas e utilizadas ao longo do processo
-        /// </summary>
-        private List<T> Entities { get; set; }
-
-        /// <summary>
-        /// Páginal atual
-        /// </summary>
-        private int CurrentPage { get; set; }
-
-        /// <summary>
-        /// Itens por página
-        /// </summary>
-        private int ItemsPerPage { get; set; }
-
-
-        // Propriedades da interface
-        public bool ForceFilter { get; set; }
-        public string FilterBy { get; set; }
-        public PageInfoDTO PageInfo { get; set; }
-        
-        /// <summary>
-        /// Método principal de paginação
-        /// </summary>
-        /// <typeparam name="T">Tipo da entidade que é utilizada no processo</typeparam>
-        /// <param name="allItens">Todos os itens que serão utilizados no processo</param>
-        /// <param name="currentPage">Página atual quando o processo inicia</param>
-        /// <param name="controllerRoute">Rota do controlador</param>
-        /// <param name="filter">Filtro utilizado para buscar os registros de acordo com o valor informado</param>
-        /// <param name="action">Nome da action de acordo com o controlador que disparou</param>
-        /// <param name="itemsPerPage">Itens por página</param>
-        private void Paginate<T>(IEnumerable<T> allItens,
-            int currentPage,
-            string controllerRoute,
-            string filter = "",
-            string action = nameof(Index),
-            int itemsPerPage = 5)
+        public void ConfigurePagination(List<T> itens, PageInfoDTO pageInfo)
         {
-            var filteredItens = ApplyFilter(allItens, filter);
-            var totalItems = filteredItens.Count();
-            var totalPages = (int)Math.Ceiling((decimal)totalItems / itemsPerPage);
-            var startPage = currentPage - 2;
-            var endPage = currentPage + 2;
+            var itensFiltrados = _filterService.ApplyFilter(itens, pageInfo.PageRequestInfo.Filter, pageInfo.PageRequestInfo.KeyToSearch);
+            var totalItems = itensFiltrados.Count;
 
-            if (startPage <= 0)
-            {
-                endPage = endPage - (startPage - 1);
-                startPage = 1;
-            }
+            CalculatePageRange(pageInfo);
+            Entities = PaginateEntities(itens, pageInfo);
 
-            if (endPage > totalPages)
-            {
-                endPage = totalPages;
-                if (endPage > 5)
-                {
-                    startPage = endPage - 4;
-                }
-            }
-
-            CurrentPage = currentPage;
-            ItemsPerPage = itemsPerPage;       
-
-            var pageInfo = new PageInfoDTO
+            var pageInfoDTO = new PageInfoDTO()
             {
                 TotalItems = totalItems,
-                ItemsPerPage = itemsPerPage,
-                CurrentPage = currentPage,
-                CurrentController = controllerRoute,
-                Action = action,
-                Filter = filter,
-                StartPage = startPage,
-                EndPage = endPage
+                CurrentPage = pageInfo.CurrentPage,
+                ItemsPerPage = pageInfo.ItemsPerPage,             
+                StartPage = pageInfo.StartPage,
+                EndPage = pageInfo.EndPage,
+                PageRequestInfo = pageInfo.PageRequestInfo
             };
 
-            PageInfo = pageInfo;
+            Page = pageInfoDTO;           
         }
 
-        public void ConfigureEntityPaginated(List<T> values, string filter = "")
+        private List<T> PaginateEntities(List<T> entities, PageInfoDTO pageInfo)
         {
-            var filteredItems = ForceFilter ? ApplyFilter(values, FilterBy) : ApplyFilter(values, filter);
-
-            Entities = PaginateEntities(filteredItems);            
+           return entities
+                  .Skip((pageInfo.CurrentPage - 1) * pageInfo.ItemsPerPage)
+                  .Take(pageInfo.ItemsPerPage)
+                  .ToList();
         }
 
-        /// <summary>
-        /// Método que aplica a filtragem nos itens 
-        /// </summary>
-        /// <typeparam name="T">Tipo da entidade</typeparam>
-        /// <param name="items">Itens que serão processados</param>
-        /// <param name="filter">Filtro que será usado para realizar o processo e atualizar a lista</param>
-        /// <returns></returns>
-        private IEnumerable<T> ApplyFilter<T>(IEnumerable<T> items, string filter)
+        private static void CalculatePageRange(PageInfoDTO pageInfo)
         {
-            if (string.IsNullOrEmpty(filter))
-            {
-                return items;
-            }
-
-            // Aqui estou obtendo os itens pelo tipo, em seguida obtém a propriedade Codigo e obtenho o valor passando o item
-            // Após isso ei verifico se contém alguma entidade de acordo com o filtro informado
-            var entities = items.Where(item => item?.GetType().GetProperty("Codigo")?.GetValue(item)?.ToString()?.Contains(filter) ?? false);
-            return entities;
+            pageInfo.StartPage = pageInfo.CurrentPage - 2 > 0 ? pageInfo.CurrentPage - 2 : 1;
+            pageInfo.EndPage = pageInfo.StartPage + 4 <= pageInfo.TotalPages ? pageInfo.StartPage + 4 : pageInfo.TotalPages;
         }
 
-        /// <summary>
-        /// Método que realiza a operação de paginar as entidades
-        /// </summary>
-        /// <typeparam name="T">Tipo da entidade processada</typeparam>
-        /// <param name="items">Itens que serão processados</param>
-        /// <returns>Uma lista de entidades paginadas</returns>
-        private List<T> PaginateEntities<T>(IEnumerable<T> items)
+        public PageInfoDTO GetPageInfo()
         {
-            var entities = items.Skip((CurrentPage - 1) * ItemsPerPage)
-                                .Take(ItemsPerPage)
-                                .ToList();
-            return entities;
-        }
+            return Page;
+        }        
 
         public List<T> GetEntitiesFilled()
         {
             return Entities;
-        }
-
-        public void Paginate(List<T> items, int itemPage, string controllerName, string filter, string action = nameof(Index))
-        {
-            Paginate<T>(items, itemPage, controllerName, filter, action);
         }
     }
 }

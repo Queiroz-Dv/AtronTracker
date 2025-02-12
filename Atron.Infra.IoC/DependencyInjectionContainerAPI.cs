@@ -1,20 +1,20 @@
-﻿using Atron.Application.ApiInterfaces;
-using Atron.Application.ApiServices;
+﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
+using Atron.Application.ApiServices.ApplicationServices;
 using Atron.Application.Interfaces;
 using Atron.Application.Mapping;
 using Atron.Application.Services;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Atron.Domain.Validations;
+using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Repositories;
+using Atron.Infrastructure.Repositories.ApplicationRepositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Notification.Interfaces;
-using Notification.Models;
-using Shared.Interfaces;
-using Shared.Models;
+using Shared.Models.ApplicationModels;
 
 namespace Atron.Infra.IoC
 {
@@ -33,72 +33,103 @@ namespace Atron.Infra.IoC
             // Define o asembly de onde as migrações devem ser mantidas 
             m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
 
-            //Repositórios e serviços padrões
-            services.AddScoped<IRepository<Permissao>, Repository<Permissao>>();
-            services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
-            services.AddScoped<IRepository<Salario>, Repository<Salario>>();
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                    .AddEntityFrameworkStores<AtronDbContext>()
+                    .AddDefaultTokenProviders();         
 
-            // Registra os repositories e services
-            services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
-            services.AddScoped<IDepartamentoService, DepartamentoService>();
+            // Registra os repositories e services da API
+            services = services.AddDependencyInjectionApiDoc();
+            services = services.AddServiceMappings();
+            services = services.AddMessageValidationServices();
+            services = services.AddInfrastructureSecurity(configuration);
 
-            services.AddScoped<ICargoRepository, CargoRepository>();
-            services.AddScoped<ICargoService, CargoService>();
-
-            services.AddScoped<IUsuarioService, UsuarioService>();
-            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-
-            services.AddScoped<ITarefaRepository, TarefaRepository>();
-            services.AddScoped<ITarefaService, TarefaService>();
-
-            services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
-
-            services.AddScoped<ISalarioRepository, SalarioRepository>();
-            services.AddScoped<ISalarioService, SalarioService>();
-
-            services.AddScoped<IMesRepository, MesRepository>();
-
-            services.AddScoped<IPermissaoRepository, PermissaoRepository>();
-            services.AddScoped<IPermissaoService, PermissaoService>();
-
-            services.AddScoped<IPermissaoEstadoRepository, PermissaoEstadoRepository>();
-
-            services.AddScoped<IApiRouteService, ApiRouteService>();
-
-            // Serviços utilitários 
-            services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
-
-            // Serviços de Notificação e Validação
-            //services.AddScoped<INotificationService, DepartamentoValidation>();
-            //services.AddScoped<INotificationService, CargoValidation>();
-            services.AddScoped<INotificationService, UsuarioValidation>();
-            services.AddScoped<INotificationService, TarefaValidation>();
-            services.AddScoped<INotificationService, SalarioValidation>();
-            services.AddScoped<INotificationService, PermissaoValidation>();
-
-            //services.AddScoped<NotificationModel<Departamento>, DepartamentoValidation>();
-            //services.AddScoped<NotificationModel<Cargo>, CargoValidation>();
-            services.AddScoped<NotificationModel<Usuario>, UsuarioValidation>();
-            services.AddScoped<NotificationModel<Tarefa>, TarefaValidation>();
-            services.AddScoped<NotificationModel<Salario>, SalarioValidation>();
-            services.AddScoped<NotificationModel<Permissao>, PermissaoValidation>();
-
+            ConfigureTarefaServices(services);
+            ConfigureSalarioServices(services);
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
+            ConfigureUsuarioServices(services);
+            ConfigureUsuarioCargoDepartamentoServices(services);
+            ConfigureTarefaRepositoryServices(services);
+            ConfigureTarefaEstadoServices(services);
+            ConfigureSalarioRepositoryServices(services);     
+            ConfigureDefaultUserRoleServices(services);
+            ConfigureAuthenticationServices(services);
+            ConfigureUserAuthenticationServices(services);
 
             return services;
         }
 
+        private static void ConfigureUsuarioCargoDepartamentoServices(IServiceCollection services)
+        {
+            services.AddScoped<IUsuarioCargoDepartamentoRepository, UsuarioCargoDepartamentoRepository>();
+        }
+
+        private static void ConfigureUserAuthenticationServices(IServiceCollection services)
+        {
+            services.AddScoped<ILoginApplicationRepository, LoginApplicationRepository>();
+            services.AddScoped<IRegisterApplicationRepository, RegisterApplicationRepository>();
+        }
+
+        private static void ConfigureAuthenticationServices(IServiceCollection services)
+        {
+            services.AddScoped<ILoginUserService, LoginUserService>();
+            services.AddScoped<IRegisterUserService, RegisterUserService>();
+        }
+
+        private static void ConfigureDefaultUserRoleServices(IServiceCollection services)
+        {
+            services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
+        }
+        
+        private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
+        {
+            services.AddScoped<ISalarioRepository, SalarioRepository>();
+            services.AddScoped<ISalarioService, SalarioService>();
+        }
+
+        private static void ConfigureTarefaEstadoServices(IServiceCollection services)
+        {
+            services.AddScoped<ITarefaEstadoService, TarefaEstadoService>();
+            services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
+
+            //// Utilização dos repositories padronizados
+            services.AddScoped(typeof(IService<TarefaEstado>), typeof(Service<TarefaEstado>));
+            services.AddScoped(typeof(IRepository<TarefaEstado>), typeof(Repository<TarefaEstado>));
+        }
+
+        private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
+        {
+            services.AddScoped<ITarefaRepository, TarefaRepository>();
+            services.AddScoped<ITarefaService, TarefaService>();
+        }
+
+        private static void ConfigureUsuarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
+        }
+
         private static void ConfigureCargoServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, CargoMessageValidation>();
-            services.AddScoped<MessageModel<Cargo>, CargoMessageValidation>();
+            services.AddScoped<ICargoRepository, CargoRepository>();
+            services.AddScoped<ICargoService, CargoService>();
         }
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, DepartamentoMessageValidation>();
-            services.AddScoped<MessageModel<Departamento>, DepartamentoMessageValidation>();
+            services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
+            services.AddScoped<IDepartamentoService, DepartamentoService>();
         }
+
+        private static void ConfigureSalarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IRepository<Salario>, Repository<Salario>>();
+        }
+
+        private static void ConfigureTarefaServices(IServiceCollection services)
+        {
+            services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
+        }        
     }
 }

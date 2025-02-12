@@ -5,8 +5,6 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notification", "Framework\Notification\Notification.csproj", "{63BCD80A-D113-4D7D-B626-F838D19932A0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.Domain", "Atron.Domain\Atron.Domain.csproj", "{F0EE1EBE-747B-44E8-AE05-8715C5BCC8D5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.Infrastructure", "Atron.Infrastructure\Atron.Infrastructure.csproj", "{0AF24505-DE43-4A25-8A67-389787509981}"
@@ -23,24 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication", "Framework\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalServices", "Framework\ExternalServices\ExternalServices.csproj", "{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atron.WebApi", "Atron.WebApi\Atron.WebApi.csproj", "{27F889AF-D98E-4D08-9DB6-9407F088902D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{C8E95E49-4E58-4EB4-B156-82E6EF79D14B}"
-	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B641274D-66BC-4EFE-AFFF-07B18ED0DC13}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cargo", "Cargo", "{8A9F5A55-F478-4218-97D4-579F1D159947}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Cargo\TR_Cargo_UpperCase.sql = Scripts\Cargo\TR_Cargo_UpperCase.sql
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Departamento", "Departamento", "{66E09BBA-D4B3-4B75-A654-D571055145A4}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Departamento\TR_Departamento_UpperCase.sql = Scripts\Departamento\TR_Departamento_UpperCase.sql
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.WebApi", "Atron.WebApi\Atron.WebApi.csproj", "{27F889AF-D98E-4D08-9DB6-9407F088902D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,10 +29,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{63BCD80A-D113-4D7D-B626-F838D19932A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63BCD80A-D113-4D7D-B626-F838D19932A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63BCD80A-D113-4D7D-B626-F838D19932A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63BCD80A-D113-4D7D-B626-F838D19932A0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F0EE1EBE-747B-44E8-AE05-8715C5BCC8D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F0EE1EBE-747B-44E8-AE05-8715C5BCC8D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0EE1EBE-747B-44E8-AE05-8715C5BCC8D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -93,13 +70,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{63BCD80A-D113-4D7D-B626-F838D19932A0} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
 		{86FAF893-A440-49B0-8E91-555A62217E7A} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
 		{F225BED3-3977-4B0C-B1F1-8AB85229F924} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
 		{5BB742E6-08A4-4DFA-BBCA-AE53FCF060C2} = {8539B2CC-2BCD-4086-A35B-7DCEBD85BBF4}
-		{B641274D-66BC-4EFE-AFFF-07B18ED0DC13} = {C8E95E49-4E58-4EB4-B156-82E6EF79D14B}
-		{8A9F5A55-F478-4218-97D4-579F1D159947} = {B641274D-66BC-4EFE-AFFF-07B18ED0DC13}
-		{66E09BBA-D4B3-4B75-A654-D571055145A4} = {B641274D-66BC-4EFE-AFFF-07B18ED0DC13}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76F4151D-172C-4239-BF99-E9C71E81BD38}

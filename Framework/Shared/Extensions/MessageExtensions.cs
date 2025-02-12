@@ -1,5 +1,6 @@
 ﻿using Shared.Enums;
 using Shared.Models;
+using System.Text.Json;
 
 namespace Shared.Extensions
 {
@@ -10,16 +11,13 @@ namespace Shared.Extensions
             return messages.Any(m => m.Level == MessageLevel.Error);
         }
 
-        public static IEnumerable<dynamic> ConvertMessageToJson(this IList<Message> messages)
+        public static IEnumerable<string> ConvertMessageToJson(this IList<Message> messages)
         {
-            var message = from ms in messages
-                          select new
-                          {
-                              ms.Description,
-                              Level = ms.Level.GetEnumDescription(),
-                          };
-
-            return message;
+            return new List<string> { JsonSerializer.Serialize(messages.Select(ms => new
+            {
+                ms.Description,
+                Level = ms.Level.GetEnumDescription(),
+            }), new JsonSerializerOptions { WriteIndented = true }) };
         }
     }
 }

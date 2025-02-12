@@ -1,78 +1,69 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
-using Communication.Extensions;
+using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Shared.DTO.API;
+using Shared.DTO;
+using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class CargoController : DefaultController<CargoDTO, Cargo, ICargoExternalService>
+    [Authorize]
+    public class CargoController : MainController<CargoDTO, Cargo>
     {
-        private IDepartamentoExternalService _departamentoService;
+        private readonly IExternalService<CargoDTO> _service;
+        private readonly IExternalService<DepartamentoDTO> _departamentoService;
 
         public CargoController(
-            IUrlModuleFactory urlFactory,
+            IExternalService<CargoDTO> service,
             IPaginationService<CargoDTO> paginationService,
-            ICargoExternalService cargoExternalService,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            MessageModel<Cargo> messageModel,
-            IDepartamentoExternalService departamentoExternalService
-            )
-            : base(urlFactory,
-                  paginationService,
-                  cargoExternalService,
-                  apiRouteExternalService,
-                  configuration,
-                  appSettingsConfig,
-                  messageModel)
+            IExternalService<DepartamentoDTO> departamentoService,
+            IRouterBuilderService router,
+            MessageModel messageModel)
+            : base(messageModel, paginationService)
         {
-            _departamentoService = departamentoExternalService;
+            _departamentoService = departamentoService;
+            _service = service;
+            _router = router;
+            ApiControllerName = nameof(Cargo);
         }
 
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
         {
-            await BuildRoute(nameof(Cargo));
-
-            var cargos = await _service.ObterTodos();
-            Filter = filter;
-
-            ConfigurePaginationForView(cargos, itemPage, CurrentController, filter);
-            var model = new CargoModel()
-            {
-                Cargos = GetEntitiesPaginated(),
-                PageInfo = PageInfo
-            };
-
             ConfigureDataTitleForView("Painel de cargos");
-            return View(model);
+            BuildRoute();
+            var cargos = await _service.ObterTodos();
+
+            ConfigurePaginationForView(cargos, nameof(Index), itemPage, filter);
+            return View(GetModel<CargoModel>());            
         }
 
         [HttpGet]
         public async Task<IActionResult> Cadastrar()
         {
             ConfigureDataTitleForView("Cadastro de cargos");
-            await BuildRoute(nameof(Departamento));
+
+            await FetchDepartamentosData();
+            return _messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Index)) : View();
+        }
+
+        private async Task FetchDepartamentosData()
+        {
+            ApiControllerName = nameof(Departamento);
+            BuildRoute();
             var departamentos = await _departamentoService.ObterTodos();
 
             if (!departamentos.Any())
             {
                 _messageModel.AddError("Para criar um cargo é necessário ter um departamento.");
                 CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
             }
 
             var departamentosFiltrados = departamentos.Select(dpt =>
@@ -82,16 +73,17 @@ namespace Atron.WebViews.Controllers
                     Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
                 }).ToList();
 
-            ViewBag.Departamentos = new SelectList(departamentosFiltrados, "Codigo", "Descricao");
-            return View();
+            ViewBag.Departamentos = new SelectList(departamentosFiltrados, nameof(Departamento.Codigo), nameof(Departamento.Descricao));
         }
 
         [HttpPost]
         public async Task<IActionResult> Cadastrar(CargoDTO model)
         {
+            ConfigureDataTitleForView("Cadastro de cargos");
+
             if (ModelState.IsValid)
             {
-                await BuildRoute(nameof(Cargo));
+                BuildRoute();
 
                 await _service.Criar(model);
 
@@ -99,38 +91,28 @@ namespace Atron.WebViews.Controllers
                 return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
-            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
             CreateTempDataMessages();
 
-            return RedirectToAction(nameof(Cadastrar));
+            return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
         {
+            ConfigureDataTitleForView("Atualizar informação de cargo");
             if (codigo is null)
             {
                 _messageModel.AddError("O código informado não foi encontrado");
                 CreateTempDataMessages();
-                return View(codigo);
+                return View(nameof(Index));
             }
 
-            await BuildRoute(nameof(Cargo), codigo);
+            BuildRoute();
             var cargoDTO = await _service.ObterPorCodigo(codigo);
 
-            await BuildRoute(nameof(Departamento));
-            var departamentos = await _departamentoService.ObterTodos();
+            await FetchDepartamentosData();
 
-            var departamentosFiltrados = departamentos.Select(dpt =>
-                new
-                {
-                    dpt.Codigo,
-                    Descricao = $"{dpt.Codigo} - {dpt.Descricao}"
-                }).ToList();
-
-            ViewBag.Departamentos = new SelectList(departamentosFiltrados, "Codigo", "Descricao");
             ViewBag.CodigoDoDepartamentoRelacionado = cargoDTO.DepartamentoCodigo;
-            ConfigureDataTitleForView("Atualizar informação de cargo");
             return View(cargoDTO);
         }
 
@@ -139,25 +121,21 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-                await BuildRoute(nameof(Cargo), codigo);
+                BuildRoute();
                 await _service.Atualizar(codigo, cargoDTO);
-            }
-            else
-            {
-                _messageModel.AddError("Registro inválido tente novamente");
                 CreateTempDataMessages();
-                return View(nameof(Index));
+                return RedirectToAction(nameof(Index));
             }
 
+            _messageModel.AddError("Registro inválido tente novamente");
             CreateTempDataMessages();
-
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            await BuildRoute(nameof(Cargo), codigo);
+            BuildRoute();
             await _service.Remover(codigo);
 
             CreateTempDataMessages();

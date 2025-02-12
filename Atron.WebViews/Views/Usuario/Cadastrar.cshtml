@@ -5,12 +5,7 @@
 @using Atron.WebViews.Models;
 @model UsuarioDTO;
 
-@{
-    List<CargoDTO> cargoComDepartamentos = ViewBag.CargoComDepartamentos;
-    PageInfoDTO cargoPageInfo = ViewBag.CargoPageInfo;
-}
-
-<h2 style="margin-bottom: 40px;">@ViewData["Title"]</h2>
+<partial name="Partials/TitleLabel"></partial>
 <form id="usuarioForm" asp-action="Cadastrar" method="post" class="form-horizontal">
     <div class="form-group row">
         <label asp-for="Codigo" class="col-md-2 col-control-label font-weight-bold"></label>
@@ -45,6 +40,22 @@
     </div>
 
     <div class="form-group row">
+        <label asp-for="Email" class="col-md-2 col-form-label font-weight-bold"></label>
+        <div class="col-md-7 mb-3">
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="Senha" class="col-md-2 col-form-label font-weight-bold"></label>
+        <div class="col-md-7 mb-3">
+            <input asp-for="Senha" class="form-control" />
+            <span asp-validation-for="Senha" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
         <label asp-for="DataNascimento" class="col-md-2 col-form-label font-weight-bold">Data de nascimento</label>
         <div class="col-md-7 mb-3">
             <input asp-for="DataNascimento" type="date" class="form-control" />
@@ -52,61 +63,30 @@
         </div>
     </div>
 
-    <fieldset class="border p-2">
-        <legend class="w-auto">Cargos e Departamentos</legend>               
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th></th>
-                    <th>Código do Cargo</th>
-                    <th>Descrição do Cargo</th>
-                    <th>Descrição do Departamento</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in cargoComDepartamentos)
-                {
-                    <tr>
-                        <td>
-                            <input asp-for="CargoCodigo" type="radio" value="@item.Codigo" />
-                        </td>
-                        <td>@item.Codigo</td>
-                        <td>@item.Descricao</td>
-                        <td hidden="hidden">
-                            <input hidden="hidden" asp-for="DepartamentoCodigo" value="@item.DepartamentoCodigo" />
-                        </td>
-                        <td>@item.DepartamentoDescricao</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </fieldset>
-
-    <div class="form-group row p-3">
-        <partial name="PagerPartial" model="@cargoPageInfo"></partial>
-    </div>
-
-
     <div class="form-group row">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Cadastrar" class="btn btn-success" />
-            <a asp-action="Index" class="btn btn-dark">Painel</a>
+        <label asp-for="DepartamentoCodigo" class="col-md-2 col-form-label font-weight-bold">Departamentos</label>
+        <div class="col-md-7 mb-3" id="departamentoSelectContainer">
+            <select asp-for="DepartamentoCodigo" id="departamentoCodigo"
+                    class="form-control" asp-items="@ViewBag.Departamentos">
+                <option value="">Selecione um departamento</option>
+            </select>
+            <span asp-validation-for="DepartamentoCodigo" class="text-danger"></span>
         </div>
     </div>
+
+    <div class="form-group row">
+        <label asp-for="CargoCodigo" class="col-md-2 col-form-label font-weight-bold">Cargos</label>
+        <div class="col-md-7 mb-3" id="cargoSelectContainer">
+            <select asp-for="CargoCodigo" id="cargoCodigo" class="form-control" asp-items="@ViewBag.Cargos">
+                <option value="">Selecione um cargo</option>
+            </select>
+            <span asp-validation-for="CargoCodigo" class="text-danger"></span>
+        </div>
+    </div>
+
+    <partial name="Partials/BtnSubmitCadastrar"></partial>
 </form>
 
 @section Scripts {
-    <script type="text/javascript">
-
-        // document.getElementById('inputFilter').addEventListener('click', async function () {
-        //     const codigo = document.getElementById('filterText').value;
-        //     await filtrar(codigo);
-        // });
-
-        // async function filtrar(codigo) {
-        //     const response = await fetch(`@Url.Action("Filtrar", "Usuario")?codigo=${codigo}`, {
-        //         method: 'POST'
-        //     });
-        // }
-    </script>
+    <script type="module" src="/js/views/cadastrarUsuario.js"></script>
 }
