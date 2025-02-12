@@ -51,8 +51,7 @@ namespace Atron.Infra.IoC
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
             ConfigureTarefaEstadoServices(services);
-            ConfigureSalarioRepositoryServices(services);
-            ConfigureMesRepositoryServices(services);
+            ConfigureSalarioRepositoryServices(services);     
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigureUserAuthenticationServices(services);
@@ -81,13 +80,7 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
         }
-
-        private static void ConfigureMesRepositoryServices(IServiceCollection services)
-        {
-            services.AddScoped<IMesRepository, MesRepository>();
-            services.AddScoped(typeof(IRepository<Mes>), typeof(Repository<Mes>));
-        }
-
+        
         private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ISalarioRepository, SalarioRepository>();

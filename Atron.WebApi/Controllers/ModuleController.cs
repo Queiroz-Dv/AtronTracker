@@ -2,12 +2,16 @@
 using Shared.Models;
 using System.Collections.Generic;
 using Shared.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace Atron.WebApi.Controllers
 {
     // Qual o objetivo da controller de módulos?
-    // Centralizar operações repetitivas e segregar responsabilidades da controller dos módulos
-    [ApiController]
+    // Centralizar operações repetitivas e segregar responsabilidades da controller dos módulos   
+    [Produces("application/json")]
+    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+    //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class ModuleController<Entity, Service> : ControllerBase
     {
         protected readonly Service _service; // Serviço da entidade
@@ -25,6 +29,6 @@ namespace Atron.WebApi.Controllers
         {
             // Passar para um método de extensão
             return _messageModel.Messages.ConvertMessageToJson();
-        }              
-    }
+        }                      
+    }   
 }

@@ -13,6 +13,5 @@
         public string? Ano { get; set; }
 
         public int MesId { get; set; }
-        public Mes Mes { get; set; }
     }
 }

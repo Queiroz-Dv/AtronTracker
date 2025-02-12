@@ -19,13 +19,11 @@ namespace Atron.Application.Services
         private readonly IApplicationMapService<SalarioDTO, Salario> _map;
         private readonly ISalarioRepository _salarioRepository;
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IMesRepository _mesRepository;
         private readonly IValidateModel<Salario> _validateModel;
         private readonly MessageModel _messageModel;
 
         public SalarioService(IApplicationMapService<SalarioDTO, Salario> map,
                               ISalarioRepository salarioRepository,
-                              IMesRepository mesRepository,
                               IUsuarioRepository usuarioRepository,
                               IValidateModel<Salario> validateModel,
                               MessageModel messageModel)
@@ -34,7 +32,6 @@ namespace Atron.Application.Services
             _map = map;
             _usuarioRepository = usuarioRepository;
             _salarioRepository = salarioRepository;
-            _mesRepository = mesRepository;
             _messageModel = messageModel;
             _validateModel = validateModel;
         }
@@ -90,15 +87,16 @@ namespace Atron.Application.Services
             }
         }
 
-        public async Task<List<MesDTO>> ObterMeses()
+        public  Task<List<MesDTO>> ObterMeses()
         {
-            var mesesRepo = await _mesRepository.ObterTodosRepositoryAsync();
+            return null;
+            //var mesesRepo = await _mesRepository.ObterTodosRepositoryAsync();
 
-            return mesesRepo.Select(mes => new MesDTO
-            {
-                Id = mes.Id,
-                Descricao = mes.Descricao
-            }).ToList();
+            //return mesesRepo.Select(mes => new MesDTO
+            //{
+            //    Id = mes.Id,
+            //    Descricao = mes.Descricao
+            //}).ToList();
         }
 
         public async Task<SalarioDTO> ObterPorId(int id)

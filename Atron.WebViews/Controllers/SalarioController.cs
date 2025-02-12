@@ -10,6 +10,7 @@ using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,24 +42,8 @@ namespace Atron.WebViews.Controllers
             BuildRoute();
             var salarios = await _service.ObterTodos();
 
-            ConfigurePaginationForView(salarios, new PageInfoDTO()
-            {
-                CurrentPage = itemPage,
-                PageRequestInfo = new PageRequestInfoDTO()
-                {
-                    CurrentViewController = ApiControllerName,
-                    Action = nameof(Index),
-                    Filter = filter,
-                }
-            });
-
-            var model = new SalarioModel()
-            {
-                Salarios = _paginationService.GetEntitiesFilled(),
-                PageInfo = _paginationService.GetPageInfo()
-            };
-
-            return View(model);
+            ConfigurePaginationForView(salarios, nameof(Index), itemPage, filter);
+            return View(GetModel<SalarioModel>());
         }
 
         private void BuildUsuarioRoute()
@@ -80,13 +65,25 @@ namespace Atron.WebViews.Controllers
             ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
         }
 
-        private async Task FetchMesesData()
+        private void FetchMesesData()
         {
-            ApiControllerName = nameof(Salario);
-            BuildRoute("ObterMeses");
-            var meses = await _service.ObterTodos<MesDTO>();
+            var meses = new List<MesDTO>
+            {
+                new() { Id = 1, Descricao = "Janeiro" },
+                new() { Id = 2, Descricao = "Fevereiro" },
+                new() { Id = 3, Descricao = "Março" },
+                new() { Id = 4, Descricao = "Abril" },
+                new() { Id = 5, Descricao = "Maio" },
+                new() { Id = 6, Descricao = "Junho" },
+                new() { Id = 7, Descricao = "Julho" },
+                new() { Id = 8, Descricao = "Agosto" },
+                new() { Id = 9, Descricao = "Setembro" },
+                new() { Id = 10, Descricao = "Outubro" },
+                new() { Id = 11, Descricao = "Novembro" },
+                new() { Id = 12, Descricao = "Dezembro" }
+            };
 
-            ViewBag.Meses = new SelectList(meses.ToList(), nameof(MesDTO.Id), nameof(MesDTO.Descricao));
+            ViewBag.Meses = new SelectList(meses, nameof(MesDTO.Id), nameof(MesDTO.Descricao));
         }
 
         [HttpGet]
@@ -95,7 +92,7 @@ namespace Atron.WebViews.Controllers
             ConfigureDataTitleForView("Cadastro de salários");
             ConfigureCurrentPageAction(nameof(Cadastrar));
 
-            await FetchMesesData();
+            FetchMesesData();
             await FetchUsuarioData();
 
             return View(new SalarioDTO());
@@ -132,7 +129,7 @@ namespace Atron.WebViews.Controllers
             BuildRoute();
             var salario = await _service.ObterPorId(id);
 
-            await FetchMesesData();
+            FetchMesesData();
             await FetchUsuarioData();
             return View(salario);
         }
@@ -201,7 +198,7 @@ namespace Atron.WebViews.Controllers
                 };
             }
 
-            await FetchMesesData();
+            FetchMesesData();
 
             ConfigureCurrentPageAction(actionPage);
 

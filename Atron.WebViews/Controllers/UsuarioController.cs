@@ -50,24 +50,8 @@ namespace Atron.WebViews.Controllers
             BuildRoute();
             var usuarios = await _service.ObterTodos();
 
-            ConfigurePaginationForView(usuarios, new PageInfoDTO()
-            {
-                CurrentPage = itemPage,
-                PageRequestInfo = new PageRequestInfoDTO()
-                {
-                    CurrentViewController = ApiControllerName,
-                    Action = nameof(Index),
-                    Filter = filter,
-                }
-            });
-
-            var model = new UsuarioModel()
-            {
-                Usuarios = _paginationService.GetEntitiesFilled(),
-                PageInfo = _paginationService.GetPageInfo()
-            };
-
-            return View(model);
+            ConfigurePaginationForView(usuarios, nameof(Index), itemPage, filter);
+            return View(GetModel<UsuarioModel>());          
         }
 
         [HttpGet]

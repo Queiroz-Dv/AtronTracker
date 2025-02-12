@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Atron.Application.DTO
@@ -28,11 +27,6 @@ namespace Atron.Application.DTO
         [Required(ErrorMessage = "O campo Descrição é obrigatório.")]
         [DisplayName("Descrição")]
         public string Descricao { get; set; }
-
-        public int CargoId { get; set; }
-        public string CargoCodigo { get; set; }
-        public string CargoDescricao { get; set; }
-        public List<CargoDTO> Cargos { get; set; }
 
         public string ObterCodigoComDescricao()
         {
