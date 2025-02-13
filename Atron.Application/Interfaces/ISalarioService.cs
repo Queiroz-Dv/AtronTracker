@@ -10,8 +10,6 @@ namespace Atron.Application.Interfaces
 
         Task<List<SalarioDTO>> ObterTodosAsync();
 
-        Task<List<MesDTO>> ObterMeses();
-
         Task AtualizarServiceAsync(int id, SalarioDTO salarioDTO);
         
         Task ExcluirAsync(string id);

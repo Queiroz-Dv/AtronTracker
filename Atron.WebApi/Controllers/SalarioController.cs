@@ -38,15 +38,6 @@ namespace Atron.WebApi.Controllers
             return Ok(salarios);
         }
 
-        [HttpGet]
-        [Route("ObterMeses")]
-        public async Task<ActionResult<IEnumerable<MesDTO>>> ObterMeses()
-        {
-            var meses = await _service.ObterMeses();
-
-            return Ok(meses);
-        }
-
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] SalarioDTO salario)
         {

@@ -6,6 +6,7 @@ namespace Atron.Application.DTO
     public class CargoDTO
     {
         public CargoDTO() { }
+
         public CargoDTO(string codigo, string descricao)
         {
             Codigo = codigo.ToUpper();
