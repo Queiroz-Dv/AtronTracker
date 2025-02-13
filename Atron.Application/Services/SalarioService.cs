@@ -85,19 +85,7 @@ namespace Atron.Application.Services
                 await _salarioRepository.RemoverRepositoryAsync(salario);
                 _messageModel.AddRegisterRemovedSuccessMessage(nameof(Salario));
             }
-        }
-
-        public  Task<List<MesDTO>> ObterMeses()
-        {
-            return null;
-            //var mesesRepo = await _mesRepository.ObterTodosRepositoryAsync();
-
-            //return mesesRepo.Select(mes => new MesDTO
-            //{
-            //    Id = mes.Id,
-            //    Descricao = mes.Descricao
-            //}).ToList();
-        }
+        }        
 
         public async Task<SalarioDTO> ObterPorId(int id)
         {

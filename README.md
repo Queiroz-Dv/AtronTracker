@@ -53,10 +53,10 @@
   <li>
     <h3>Framework</h3>
     <p>Decidi modelar e montar a estrutura interna dos processos e fluxos do sistema por conta própria, apesar de ter outras abordagens que poderiam ser utilizadas. No entanto, para me desafiar, centralizei tudo nessa pasta a fim de organizar as bibliotecas do fluxo do sistema.</p>
-    <img src="images/AtronFramework.png" alt="Módulos do framework" />
+    <img src="images/AtronFrameworkFolder.png" alt="Módulos do framework" />
     <ul>
       <li>
-        <p><strong>Communication:</strong> Gerencia a comunicação dentro da aplicação, incluindo serviços de envio de e-mails, notificações, mensagens de texto, ou qualquer outro tipo de comunicação necessária.</p>
+        <p><strong> <link href="/Framework/Communication/README.md">Communication:</link></strong> Gerencia a comunicação dentro da aplicação, incluindo serviços de envio de e-mails, notificações, mensagens de texto, ou qualquer outro tipo de comunicação necessária.</p>
       </li> 
       <br>     
       <li>

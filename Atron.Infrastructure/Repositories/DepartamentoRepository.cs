@@ -58,13 +58,12 @@ namespace Atron.Infrastructure.Repositories
 
         public bool DepartamentoExiste(string codigo)
         {
-            var departamentoExiste = _context.Departamentos.Any(dpt => dpt.Codigo == codigo);
-            return departamentoExiste;
+            return _context.Departamentos.Any(dpt => dpt.Codigo == codigo);
         }
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
         {
-            return await _context.Departamentos.FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);            
+            return await _context.Departamentos.FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
         }
 
 
@@ -75,17 +74,12 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
         {
-            var departamento = await _context.Departamentos.AsNoTracking().FirstOrDefaultAsync(dpt => dpt.Id == id);
-            return departamento;
+            return  await _context.Departamentos.AsNoTracking().FirstOrDefaultAsync(dpt => dpt.Id == id);
         }
 
         public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
         {
-            var departamentos = await _context.Departamentos
-                                    .OrderByDescending(order => order.Codigo)
-                                    .ToListAsync();
-
-            return departamentos;
+            return await _context.Departamentos.OrderByDescending(order => order.Codigo).ToListAsync();
         }
 
         public async Task<Departamento> RemoverDepartmentoRepositoryAsync(Departamento departamento)
