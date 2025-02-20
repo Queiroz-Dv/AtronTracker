@@ -1,56 +1,70 @@
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Infra.IoC;
+using Atron.WebApi.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace Atron.WebApi
 {
-    /* Classe principal onde é definido as configurações e serviços da API */
+    /// <summary>
+    /// Classe principal onde é definido as configurações e serviços da API
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Gets the configuration.
+        /// </summary>
         public IConfiguration Configuration { get; }
 
+        /// <summary>
+        /// Configures the services for the API.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // Aqui registramos os serviços da API como repositorios e Validações
-            services.AddInfrastructureAPI(Configuration);
+            // Aqui registramos os serviços da API
+            services.AddInfrastructureAPI(Configuration);         // Adiciona a injeção de dependência da camada de infraestrutura
 
             // Indica que usaremos as controllers para comunicação com os endpoints
             services.AddControllers();
             services.AddHttpClient();
             services.AddHttpContextAccessor();
-
-            // Informa que usaremos o Swagger para documentação e testes
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Atron API",
-                    Version = "v1",
-                    Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
-                    Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
-                });
-                c.EnableAnnotations();
-            });
+            services.AddSwaggerGen(c => c.OperationFilter<SwaggerResponseFilter>());
         }
 
+        /// <summary>
+        /// Configures the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">The application builder.</param>
+        /// <param name="env">The web host environment.</param>
+        /// <param name="createDefaultUserRole">The default user role creator.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICreateDefaultUserRoleRepository createDefaultUserRole)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();                
+                app.UseDeveloperExceptionPage();
             }
 
             AddSwagger(app);
+            app.UseReDoc(c =>
+             {
+                 c.RoutePrefix = "docs";
+                 c.DocumentTitle = "Atron WebApi Doc";
+                 c.SpecUrl = "/swagger/v1/swagger.json";
+                 c.ExpandResponses("200,201");
+             });
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseRouting();
@@ -69,7 +83,7 @@ namespace Atron.WebApi
         private static void AddSwagger(IApplicationBuilder app)
         {
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron.WebApi v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron WebApi Doc v1"));
         }
     }
 }

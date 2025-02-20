@@ -10,7 +10,7 @@ namespace Atron.Application.Interfaces
 
         Task CriarAsync(TarefaDTO tarefaDTO);
 
-        Task AtualizarAsync(TarefaDTO tarefaDTO);
+        Task AtualizarAsync(int id, TarefaDTO tarefaDTO);
 
         Task ExcluirAsync(string id);
         Task<TarefaDTO> ObterPorId(int id);

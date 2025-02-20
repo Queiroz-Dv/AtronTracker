@@ -34,7 +34,7 @@ namespace Atron.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "PhoneNumber",
                 table: "AppUser",
-                type: "nvarchar(max)",
+                type: "nvarchar(25)",
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(25)",

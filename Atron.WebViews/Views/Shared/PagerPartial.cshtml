@@ -14,10 +14,10 @@
                 @if (Model.CurrentPage > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-controller="@Model.CurrentController"
-                           asp-action="@Model.Action"
+                        <a class="page-link" asp-controller="@Model.PageRequestInfo.CurrentViewController"
+                           asp-action="@Model.PageRequestInfo.Action"
+                           asp-route-filter="@Model.PageRequestInfo.Filter"
                            asp-route-itemPage="@(Model.CurrentPage - 1)"
-                           asp-route-filter="@Model.Filter"
                            aria-label="Anterior">
                             <span aria-hidden="true">&laquo;</span>
                             <span class="sr-only">Anterior</span>
@@ -30,8 +30,8 @@
                 {
                     <li class="page-item" @(pager == Model.CurrentPage ? "active" : "")>
                         <a class="page-link"
-                           asp-controller="@Model.CurrentController" asp-action="@Model.Action"
-                           asp-route-filter="@Model.Filter"
+                           asp-controller="@Model.PageRequestInfo.CurrentViewController" asp-action="@Model.PageRequestInfo.Action"
+                           asp-route-filter="@Model.PageRequestInfo.Filter"
                            asp-route-itemPage="@pager">@pager</a>
                     </li>
                 }
@@ -39,9 +39,9 @@
                 @if (Model.CurrentPage < Model.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-controller="@Model.CurrentController"
-                           asp-action="@Model.Action"
-                           asp-route-filter="@Model.Filter"
+                        <a class="page-link" asp-controller="@Model.PageRequestInfo.CurrentViewController"
+                           asp-action="@Model.PageRequestInfo.Action"
+                           asp-route-filter="@Model.PageRequestInfo.Filter"
                            asp-route-itemPage="@(Model.CurrentPage + 1)">
                             <span aria-hidden="true">&raquo;</span>
                             <span class="sr-only">Próximo</span>

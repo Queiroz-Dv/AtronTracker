@@ -6,6 +6,7 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Threading.Tasks;
 
@@ -15,72 +16,88 @@ namespace Atron.Application.ApiServices.ApplicationServices
     {
         private readonly IRegisterApplicationRepository _registerApp;
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly MessageModel<ApiRegister> _messageModel;
-        private readonly MessageModel<Usuario> _usuarioMessageModel;
+        private readonly IValidateModel<ApiRegister> _validateModel;
+        private readonly IValidateModel<Usuario> _validateUsuario;
+        private readonly MessageModel _messageModel;
 
         public RegisterUserService(
             IRegisterApplicationRepository registerApp,
             IUsuarioRepository usuarioRepository,
-            MessageModel<ApiRegister> messageModel,
-            MessageModel<Usuario> usuarioMessageModel)
+            IValidateModel<ApiRegister> validateModel,
+            IValidateModel<Usuario> validateUsuario,
+            MessageModel messageModel)
         {
             _registerApp = registerApp;
             _usuarioRepository = usuarioRepository;
             _messageModel = messageModel;
-            _usuarioMessageModel = usuarioMessageModel;
+            _validateModel = validateModel;
+            _validateUsuario = validateUsuario;
+        }
+
+        public async Task<bool> EmailExists(string email)
+        {
+            return await _registerApp.UserExistsByEmail(email);            
         }
 
         public async Task<RegisterDTO> RegisterUser(RegisterDTO registerDTO)
         {
             var register = new ApiRegister()
-            {                
-                UserName = registerDTO.UserName,
+            {
+                UserName = registerDTO.Codigo.ToUpper(),
                 Email = registerDTO.Email,
-                Password = registerDTO.Passsword,
-                ConfirmPassword = registerDTO.ConfirmPasssword
+                Password = registerDTO.Senha,
+                ConfirmPassword = registerDTO.ConfirmaSenha
             };
 
-            _messageModel.Validate(register);
-            registerDTO.RegisterConfirmed = false; 
+            _validateModel.Validate(register);
 
             if (!_messageModel.Messages.HasErrors())
             {
+                var userExists = await _registerApp.UserExists(register);
+                if (userExists)
+                {
+                    _messageModel.AddError("Usuário já cadastrado.");
+                    return null;
+                }
+
                 var result = await _registerApp.RegisterUserAccountAsync(register);
 
                 if (result)
                 {
                     var usuario = new Usuario()
                     {
-                        IdSequencial = registerDTO.IdSequencial,
-                        Codigo = registerDTO.Codigo,
-                        Nome = registerDTO.UserName,
+                        Codigo = registerDTO.Codigo.ToUpper(),
+                        Nome = registerDTO.Nome,
                         Sobrenome = registerDTO.Sobrenome,
                         DataNascimento = registerDTO.DataNascimento,
                         Email = registerDTO.Email
                     };
 
-                    _usuarioMessageModel.Validate(usuario);                    
+                    _validateUsuario.Validate(usuario);
+
                     var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Nome, usuario.Sobrenome, usuario.Email);
                     if (!usuarioSpec.IsSatisfiedBy(usuario))
                     {
-                        foreach (var error in usuarioSpec.Errors)
-                        {
-                            _messageModel.AddError(error);
-                        }
+                        usuarioSpec.Errors.ForEach(error => _messageModel.AddError(error));                       
                     }
 
-                    if (!_usuarioMessageModel.Messages.HasErrors())
+                    if (!_messageModel.Messages.HasErrors())
                     {
                         var usuarioGravado = await _usuarioRepository.CriarUsuarioAsync(usuario);
                         if (usuarioGravado)
                         {
-                            registerDTO.RegisterConfirmed = result;
+                            _messageModel.AddMessage($"Usuário: {usuario.Codigo} - {usuario.Nome} registrado e cadastrado com sucesso.");
                         }
                     }
                 }
             }
 
             return registerDTO;
+        }
+
+        public async Task<bool> UserExists(string code)
+        {
+            return await _registerApp.UserExistsByUserCode(code);            
         }
     }
 }

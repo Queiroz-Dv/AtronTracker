@@ -1,61 +1,45 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
-using Communication.Extensions;
+using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class DepartamentoController : DefaultController<DepartamentoDTO, Departamento, IDepartamentoExternalService>
+    [Authorize]
+    public class DepartamentoController : MainController<DepartamentoDTO, Departamento>
     {
+        private readonly IExternalService<DepartamentoDTO> _service;
+
         public DepartamentoController(
-            IUrlModuleFactory urlFactory,
+            IExternalService<DepartamentoDTO> service,
             IPaginationService<DepartamentoDTO> paginationService,
-            IDepartamentoExternalService externalService,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            MessageModel<Departamento> messageModel)
-            : base(urlFactory,
-                  paginationService,
-                  externalService,
-                  apiRouteExternalService,
-                  configuration,
-                  appSettingsConfig,
-                  messageModel)
+            IRouterBuilderService router,
+            MessageModel messageModel)
+            : base(messageModel, paginationService)
         {
-            CurrentController = nameof(Departamento);            
+            _paginationService = paginationService;
+            _service = service;
+            _router = router;
+            ApiControllerName = nameof(Departamento);           
         }
 
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        [HttpGet]
+        public async Task<IActionResult> MenuPrincipal(string filter = "", int itemPage = 1)
         {
+            ConfigureDataTitleForView("Painel de departamentos");
             BuildRoute();
             var departamentos = await _service.ObterTodos();
-          
-            Filter = filter;
-            ConfigurePaginationForView(departamentos, itemPage, CurrentController, filter);
 
-            var model = new DepartamentoModel()
-            {
-                Departamentos = GetEntitiesPaginated(),
-                PageInfo = PageInfo
-            };
-
-            ConfigureDataTitleForView("Painel de departamentos");
-            return View(model);
+            ConfigurePaginationForView(departamentos, nameof(MenuPrincipal), itemPage, filter);
+            return View(GetModel<DepartamentoModel>());
         }
-
 
         [HttpGet]
         public IActionResult Cadastrar()
@@ -67,6 +51,8 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Cadastrar(DepartamentoDTO departamento)
         {
+            ConfigureDataTitleForView("Cadastro de departamentos");
+
             if (ModelState.IsValid)
             {
                 BuildRoute();
@@ -75,11 +61,10 @@ namespace Atron.WebViews.Controllers
 
                 CreateTempDataMessages();
 
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) :
+                return !_messageModel.Messages.HasErrors() ?
+                    RedirectToAction(nameof(Cadastrar)) :
                     View(nameof(Cadastrar), departamento);
             }
-
-            ConfigureDataTitleForView("Cadastro de departamentos");
 
             return View(departamento);
         }
@@ -87,13 +72,13 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
         {
-            BuildRoute(nameof(Departamento), codigo);
+            BuildRoute();
             var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
             if (departamentoDTO is null || _messageModel.Messages.HasErrors())
             {
                 CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MenuPrincipal));
             }
 
             ConfigureDataTitleForView("Atualizar informação de departamento");
@@ -103,23 +88,23 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
         {
-            BuildRoute(nameof(Departamento), codigo);
+            BuildRoute();
             await _service.Atualizar(codigo, departamentoDTO);
             CreateTempDataMessages();
 
             return !_messageModel.Messages.HasErrors() ?
-            RedirectToAction(nameof(Index)) :
+            RedirectToAction(nameof(MenuPrincipal)) :
             View(nameof(Atualizar), departamentoDTO);
         }
 
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            BuildRoute(nameof(Departamento), codigo);
+            BuildRoute();
             await _service.Remover(codigo);
 
             CreateTempDataMessages();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MenuPrincipal));
         }
 
         [HttpGet]
@@ -128,6 +113,12 @@ namespace Atron.WebViews.Controllers
             var departamento = await _service.ObterPorCodigo(codigoDepartamento);
 
             return Ok(departamento);
+        }
+
+        public override Task<string> ObterMensagemExclusao()
+        {
+            return Task.FromResult("Ao excluir esse departamento os cargos associados a ele serão excluídos e os usuários podem não ter acesso a alguns módulos." +
+                                    " Deseja prosseguir ?");
         }
     }
 }

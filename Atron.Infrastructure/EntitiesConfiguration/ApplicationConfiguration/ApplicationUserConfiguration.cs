@@ -18,8 +18,8 @@ namespace Atron.Infrastructure.EntitiesConfiguration.ApplicationConfiguration
 
             builder.Property(u => u.UserName).HasMaxLength(50).IsRequired();
             builder.Property(u => u.NormalizedUserName).HasMaxLength(50);
-            builder.Property(u => u.Email).IsRequired().HasMaxLength(25);
-            builder.Property(u => u.NormalizedEmail).HasMaxLength(25);
+            builder.Property(u => u.Email).IsRequired().HasMaxLength(60);
+            builder.Property(u => u.NormalizedEmail).HasMaxLength(60);
             builder.Property(u => u.PhoneNumberConfirmed);
             builder.Property(u => u.TwoFactorEnabled);
             builder.Property(u => u.LockoutEnd);

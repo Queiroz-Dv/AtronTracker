@@ -1,37 +1,38 @@
-﻿@using Communication.Extensions;
-@using Shared.DTO;
-@using Shared.Extensions;
-@using Newtonsoft.Json;
-@using Shared.Enums;
-@using Shared.Models
-
-@{
+﻿@{
     var notificationsTempData = TempData["Notifications"];
-    List<Message> notifications = notificationsTempData is not null ?
-    JsonConvert.DeserializeObject<List<Message>>(notificationsTempData.ToString()) : null;
+    List<Message> notifications = notificationsTempData is not null
+        ? JsonConvert.DeserializeObject<List<Message>>(notificationsTempData.ToString())
+        : null;
 }
 
-@if (notifications != null)
+@if (notifications != null && notifications.Any())
 {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var messages = @Html.Raw(JsonConvert.SerializeObject(notifications))
-                messages.forEach(function (ntf) {
-                    var iconType = ntf.Level === "Error" ? "error" :
-                        ntf.Level === "Warning" ? "warning" :
-                            "success";
+            // Centraliza a configuração do SweetAlert
+            function showNotification(level, description) {
+                const config = {
+                    Error:   { icon: "error",   title: "Erro!",    confirmButton: true },
+                    Warning: { icon: "warning", title: "Aviso!",   confirmButton: true },
+                    Success: { icon: "success", title: "Sucesso!", confirmButton: false },
+                };
 
-                    var title = ntf.Level === "Error" ? "Erro!" :
-                        ntf.Level === "Warning" ? "Aviso!" :
-                            "Sucesso!";
-
-                    Swal.fire({
-                        icon: iconType,
-                        title: title,
-                        text: ntf.Description,
-                        showConfirmButton: true
-                    });
+                const notification = config[level] || config["Success"];
+                Swal.fire({
+                    icon: notification.icon,
+                    title: notification.title,
+                    text: description,
+                    showConfirmButton: notification.confirmButton
                 });
+            };
+
+            // Recupera mensagens e exibe notificações
+            var messages = @Html.Raw(JsonConvert.SerializeObject(notifications));
+
+            console.log(messages);
+            messages.forEach(function (ntf) {
+                showNotification(ntf.Level, ntf.Description);
+            });
         });
     </script>
 }
