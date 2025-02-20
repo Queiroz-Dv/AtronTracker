@@ -71,13 +71,13 @@ namespace Atron.WebViews.Controllers
         {
             SetViewData("Filter", _paginationService.GetPageInfo().PageRequestInfo.Filter);
         }
-
+        
         /// <summary>
         /// Cria mensagens de dados temporários para notificações.
         /// </summary>
         public void CreateTempDataMessages()
         {
-            SetTempData("Notifications", JsonSerializer.Serialize(_messageModel.Messages, new JsonSerializerOptions { WriteIndented = true }));
+            SetTempData("Notifications", JsonSerializer.Serialize(_messageModel.Messages));
         }
 
         /// <summary>
@@ -95,17 +95,7 @@ namespace Atron.WebViews.Controllers
         /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa contém a mensagem de exclusão.</returns>
         [HttpGet]
         public abstract Task<string> ObterMensagemExclusao();
-
-        /// <summary>
-        /// Método abstrato para lidar com a ação do menu principal.
-        /// </summary>
-        /// <param name="filter">O filtro a ser aplicado.</param>
-        /// <param name="itemPage">O número da página de itens a ser exibida.</param>
-        /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa contém o resultado da ação.</returns>
-        [HttpGet, HttpPost]
-        [Route("[controller]/MenuPrincipal")]
-        public abstract Task<IActionResult> Index(string filter = "", int itemPage = 1);
-
+        
         /// <summary>
         /// Método auxiliar para definir dados no ViewData.
         /// </summary>

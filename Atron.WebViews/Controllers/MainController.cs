@@ -2,8 +2,8 @@ using Atron.WebViews.Helpers;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Shared.DTO;
+using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
 using System;
@@ -16,21 +16,18 @@ namespace Atron.WebViews.Controllers
     {
         protected IRouterBuilderService _router;
         protected string ApiControllerName;
+        protected string KeyToSearch;
 
         public MainController(MessageModel messageModel, IPaginationService<DTO> paginationService)
             : base(messageModel)
         {
             _paginationService = paginationService;
+            KeyToSearch = "Codigo";
         }
 
         public override void ConfigureViewBagCurrentController()
         {
             ViewBag.CurrentController = ApiControllerName;
-        }
-
-        public override async Task<IActionResult> Index(string filter = "", int itemPage = 1)
-        {
-            return await Task.FromResult(RedirectToAction(nameof(Index), "Home"));
         }
 
         public override Task<string> ObterMensagemExclusao()
@@ -65,7 +62,8 @@ namespace Atron.WebViews.Controllers
                 {
                     CurrentViewController = ApiControllerName,
                     Action = action,
-                    Filter = filter
+                    Filter = filter,
+                    KeyToSearch = KeyToSearch.IsNullOrEmpty() ? string.Empty : KeyToSearch
                 }
             };
 

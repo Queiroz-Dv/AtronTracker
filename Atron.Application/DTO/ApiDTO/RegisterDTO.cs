@@ -25,7 +25,6 @@ namespace Atron.Application.DTO.ApiDTO
         [DisplayName("Confirme a senha")]
         [Compare(nameof(Senha), ErrorMessage = "As senhas informadas não são iguais")]
         public string ConfirmaSenha { get; set; }
-        public bool Registrado { get; set; }
 
         public string GerarUserName()
         {

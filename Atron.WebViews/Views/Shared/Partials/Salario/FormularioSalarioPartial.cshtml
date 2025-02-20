@@ -4,41 +4,43 @@
 	var actionPage = ViewData["ActionPage"];
 }
 
-<form id="formSalario" asp-action="@actionPage" method="post" class="form-horizontal">
+<form id="formSalario" asp-action="@actionPage" method="post">
 
 	<input hidden type="text" value="@actionPage" id="actionPage" />
-
 	<input asp-for="Id" value="@Model.Id" type="text" id="tarefaId" hidden="hidden" />
+
 	<!--Informações de usuário-->
 	<fieldset>
-		<legend class="fw-semibold">Informações do Usuário</legend>
-		<div class="row">
-			<div class="col">
-				<label asp-for="Usuario.Codigo" class="form-label">Código do Usuário</label>
-				<input asp-for="Usuario.Codigo" type="text" aria-label="@Model.UsuarioCodigo" class="form-control" disabled />
+		<legend>Informações do Usuário</legend>
+		<div class="row mb-4 mt-5">
+			<div class="col-md-3">
+				<label asp-for="UsuarioCodigo" class="form-label">Código do Usuário</label>
+				<input asp-for="UsuarioCodigo" type="text" class="form-control" disabled />
 				<input asp-for="UsuarioCodigo" hidden="hidden" />
 			</div>
-			<div class="col">
-				<label asp-for="Usuario.Cargo.Descricao" class="form-label">Cargo</label>
-				<input asp-for="Usuario.Cargo.Descricao" type="text" class="form-control" disabled />
+			<div class="col-md-5">
+				<label asp-for="CargoDescricao" class="form-label">Cargo</label>
+				<input asp-for="CargoDescricao" type="text" class="form-control" disabled />
 			</div>
-			<div class="col">
-				<label asp-for="Usuario.Departamento.Descricao" class="form-label">Departamento</label>
-				<input asp-for="Usuario.Departamento.Descricao" type="text" class="form-control" disabled />
+			<div class="col-md-4">
+				<label asp-for="DepartamentoDescricao" class="form-label">Departamento</label>
+				<input asp-for="DepartamentoDescricao" type="text" class="form-control" disabled />
 			</div>
 		</div>
 	</fieldset>
 	<hr />
-	<!--Informações da tarefa-->
+
 	<fieldset>
-		<legend class="fw-semibold">Informar novo salário</legend>
-		<div class="mb-4">
+		<legend>Informar novo salário</legend>
+		<div class="mb-4 mt-5">
 			<label asp-for="SalarioMensal" class="form-label">Salário</label>
-			<input asp-for="SalarioMensal" type="number" class="form-control" />
+			<input asp-for="SalarioMensal" class="form-control" />
+			<span asp-validation-for="SalarioMensal" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
 			<label asp-for="Ano" class="form-label">Ano</label>
 			<input asp-for="Ano" type="text" class="form-control" />
+			<span asp-validation-for="Ano" class="text-danger"></span>
 		</div>
 		<div row>
 			<div class="col-4">
@@ -54,10 +56,10 @@
 
 	@if (actionPage.Equals("Cadastrar"))
 	{
-		<partial name="Partials/BtnSubmitCadastrar"></partial>
+		<partial name="Partials/Buttons/BtnSubmitCadastrar"></partial>
 	}
 	else
 	{
-		<partial name="Partials/BtnSubmitAtualizar"></partial>
+		<partial name="Partials/Buttons/BtnSubmitAtualizar"></partial>
 	}
 </form>

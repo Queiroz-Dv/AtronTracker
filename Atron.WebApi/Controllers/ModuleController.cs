@@ -7,7 +7,7 @@ namespace Atron.WebApi.Controllers
 {
     // Qual o objetivo da controller de módulos?
     // Centralizar operações repetitivas e segregar responsabilidades da controller dos módulos   
-    [Produces("application/json")]
+    //[Produces("application/json")]
     public class ModuleController<Entity, Service> : ControllerBase
     {
         protected readonly Service _service; // Serviço da entidade

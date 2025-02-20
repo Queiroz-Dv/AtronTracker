@@ -8,7 +8,7 @@ namespace Atron.WebViews.Controllers
     {
         [HttpGet]
         [Route("[controller]/MenuPrincipal")] // Esse é o nome que será exibido na URL
-        public IActionResult Index() // Esse é o método que é acessado pelas outras controllers
+        public IActionResult MenuPrincipal() // Esse é o método que é acessado pelas outras controllers
         {
             return View();
         }

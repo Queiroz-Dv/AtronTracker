@@ -1,6 +1,4 @@
-﻿using Shared.Enums;
-using Shared.Models;
-using System.Text.Json;
+﻿using Shared.Models;
 
 namespace Shared.Extensions
 {
@@ -8,16 +6,16 @@ namespace Shared.Extensions
     {
         public static bool HasErrors(this IList<Message> messages)
         {
-            return messages.Any(m => m.Level == MessageLevel.Error);
+            return messages.Any(m => m.Level == Level.Error);
         }
 
-        public static IEnumerable<string> ConvertMessageToJson(this IList<Message> messages)
+        public static IEnumerable<object> ConvertMessageToJson(this IList<Message> messages)
         {
-            return new List<string> { JsonSerializer.Serialize(messages.Select(ms => new
+            return messages.Select(ms => new
             {
                 ms.Description,
-                Level = ms.Level.GetEnumDescription(),
-            }), new JsonSerializerOptions { WriteIndented = true }) };
+                ms.Level
+            });
         }
     }
 }

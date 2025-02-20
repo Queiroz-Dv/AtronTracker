@@ -1,6 +1,7 @@
-﻿namespace Atron.Domain.Entities
+﻿
+namespace Atron.Application.DTO
 {
-    public class TarefaEstado
+    public class TarefaEstadoDTO
     {
         public int Id { get; set; }
         public string Descricao { get; set; }

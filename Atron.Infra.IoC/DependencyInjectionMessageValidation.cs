@@ -47,9 +47,7 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<IMessages, TarefaMessageValidation>();
             services.AddScoped<IValidateModel<Tarefa>, TarefaMessageValidation>();
-            services.AddScoped<IValidateModel<TarefaEstado>, TarefaEstadoMessageValidation>();
             services.AddScoped<MessageModel, TarefaMessageValidation>();
-            services.AddScoped<MessageModel, TarefaEstadoMessageValidation>();
 
         }
 

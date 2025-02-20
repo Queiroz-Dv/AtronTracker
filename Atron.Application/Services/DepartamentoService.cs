@@ -56,7 +56,7 @@ namespace Atron.Application.Services
         {
             if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO))
             {
-                messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                messageModel.AddRegisterInvalidMessage(codigo);
                 return;
             }
 
@@ -66,7 +66,7 @@ namespace Atron.Application.Services
             if (!messageModel.Messages.HasErrors())
             {
                 await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
-                messageModel.AddUpdateMessage(nameof(Departamento));
+                messageModel.AddUpdateMessage(departamentoDTO.Codigo);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Atron.Application.Services
         {
             if (departamentoDTO is null)
             {
-                messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                messageModel.AddRegisterInvalidMessage();
                 return;
             }
 
@@ -84,14 +84,14 @@ namespace Atron.Application.Services
 
             if (entity is not null)
             {
-                messageModel.AddRegisterExistMessage(nameof(Departamento));
+                messageModel.AddRegisterExistMessage(departamentoDTO.Codigo);
             }
 
             _validateModel.Validate(departamento);
             if (!messageModel.Messages.HasErrors())
             {
                 await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
-                messageModel.AddSuccessMessage(nameof(Departamento));
+                messageModel.AddSuccessMessage(departamentoDTO.Codigo);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Atron.Application.Services
             }
             else
             {
-                messageModel.AddRegisterNotFoundMessage(nameof(Departamento));
+                messageModel.AddRegisterNotFoundMessage(departamento.Codigo);
                 return null;
             }
         }
@@ -148,11 +148,11 @@ namespace Atron.Application.Services
                 }
 
                 await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
-                messageModel.AddRegisterRemovedSuccessMessage(nameof(Departamento));
+                messageModel.AddRegisterRemovedSuccessMessage(codigo);
             }
             else
             {
-                messageModel.AddRegisterNotFoundMessage(nameof(Departamento));
+                messageModel.AddRegisterNotFoundMessage(codigo);
             }
         }
     }

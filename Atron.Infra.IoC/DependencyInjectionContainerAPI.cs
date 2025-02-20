@@ -50,7 +50,6 @@ namespace Atron.Infra.IoC
             ConfigureUsuarioServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
-            ConfigureTarefaEstadoServices(services);
             ConfigureSalarioRepositoryServices(services);     
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
@@ -86,17 +85,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<ISalarioRepository, SalarioRepository>();
             services.AddScoped<ISalarioService, SalarioService>();
         }
-
-        private static void ConfigureTarefaEstadoServices(IServiceCollection services)
-        {
-            services.AddScoped<ITarefaEstadoService, TarefaEstadoService>();
-            services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
-
-            //// Utilização dos repositories padronizados
-            services.AddScoped(typeof(IService<TarefaEstado>), typeof(Service<TarefaEstado>));
-            services.AddScoped(typeof(IRepository<TarefaEstado>), typeof(Repository<TarefaEstado>));
-        }
-
+        
         private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ITarefaRepository, TarefaRepository>();

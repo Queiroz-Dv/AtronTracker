@@ -3,6 +3,7 @@ using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models.ApplicationModels;
+using System;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories.ApplicationRepositories
@@ -18,17 +19,15 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
 
         public async Task<bool> RegisterUserAccountAsync(ApiRegister register)
         {
-            ApplicationUser applicationUser = CreateUser(register);
-
             try
             {
+                ApplicationUser applicationUser = CreateUser(register);
                 var result = await _userManager.CreateAsync(applicationUser, register.Password);
-
                 return result.Succeeded;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                throw ex;
+                return false;
             }
         }
 
@@ -60,6 +59,24 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(reg => reg.UserName == userName);
             await _userManager.DeleteAsync(user);
+        }
+
+        public async Task<bool> UserExists(ApiRegister register)
+        {
+            var userExistsByName = await _userManager.Users.AnyAsync(reg => reg.UserName == register.UserName);
+            var userExistsByEmail = await _userManager.Users.AnyAsync(reg => reg.Email == register.Email);
+
+            return userExistsByName || userExistsByEmail;
+        }
+
+        public async Task<bool> UserExistsByUserCode(string code)
+        {
+            return await _userManager.Users.AnyAsync(reg => reg.UserName == code);
+        }
+
+        public async Task<bool> UserExistsByEmail(string email)
+        {
+            return await _userManager.Users.AnyAsync(reg => reg.Email == email);
         }
     }
 }

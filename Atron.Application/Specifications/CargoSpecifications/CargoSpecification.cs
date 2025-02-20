@@ -1,5 +1,4 @@
 ﻿using Atron.Application.DTO;
-using System.Collections.Generic;
 
 namespace Atron.Application.Specifications.CargoSpecifications
 {
@@ -14,11 +13,10 @@ namespace Atron.Application.Specifications.CargoSpecifications
             _codigoDepartamento = codigoDepartamento;
         }
 
-        public List<string> Errors => throw new System.NotImplementedException();
-
         public bool IsSatisfiedBy(CargoDTO entity)
         {
-            return entity.Codigo.Equals(_codigo) && entity.DepartamentoCodigo.Equals(_codigoDepartamento);
+            return entity.Codigo.Equals(_codigo) &&
+                   entity.DepartamentoCodigo.Equals(_codigoDepartamento);
         }
     }
 }

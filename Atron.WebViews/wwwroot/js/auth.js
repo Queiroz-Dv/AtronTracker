@@ -12,5 +12,5 @@ document.addEventListener("DOMContentLoaded", () => {
         input.addEventListener("blur", () => {
             input.style.boxShadow = "";
         });
-    });
+    });    
 });

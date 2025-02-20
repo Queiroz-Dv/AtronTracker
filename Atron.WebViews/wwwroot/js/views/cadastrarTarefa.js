@@ -17,8 +17,7 @@
         const tarefaId = this.tarefaIdentity.value;
 
         // Limpa o formulário caso nenhum usuário seja selecionado
-        if (!codigoUsuario) {
-            this.tarefaFormContainer.innerHTML = "";
+        if (!codigoUsuario) {      
             return;
         }
 

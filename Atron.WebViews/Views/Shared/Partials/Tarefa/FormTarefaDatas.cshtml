@@ -1,29 +1,33 @@
-﻿@using Atron.Application.DTO;
-@model TarefaDTO
+﻿@model TarefaDTO;
 
 @{
-	var actionPage = ViewData["ActionPage"];
+    var actionPage = ViewData["ActionPage"];
 }
 
 @if (actionPage.Equals("Cadastrar"))
 {
-	<div class="col">
-		<label asp-for="DataInicial" class="form-label">Data Inicial</label>
-		<input asp-for="DataInicial" id="dataInicial" class="form-control" type="date" value="@Model.DataInicial" />
-	</div>
-	<div class="col">
-		<label asp-for="DataFinal" class="form-label">Data Final</label>
-		<input asp-for="DataFinal" id="dataFinal" class="form-control" type="date" value="@Model.DataInicial" />
-	</div>
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="DataInicial" class="form-label">Data Inicial</label>
+            <input asp-for="DataInicial" id="dataInicial" class="form-control" type="date" value="@Model.DataInicial" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DataFinal" class="form-label">Data Final</label>
+            <input asp-for="DataFinal" id="dataFinal" class="form-control" type="date" value="@Model.DataInicial" />
+        </div>
+    </div>
 }
 else
 {
-	<div class="col">
-		<label asp-for="DataInicial" class="form-label">Data Inicial</label>
-		<input asp-for="DataInicial" id="dataInicial" class="form-control" type="date" />
-	</div>
-	<div class="col">
-		<label asp-for="DataFinal" class="form-label">Data Final</label>
-		<input asp-for="DataFinal" id="dataFinal" class="form-control" type="date" />
-	</div>
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="DataInicial" class="form-label">Data Inicial</label>
+            <input asp-for="DataInicial" id="dataInicial" class="form-control" type="date" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DataFinal" class="form-label">Data Final</label>
+            <input asp-for="DataFinal" id="dataFinal" class="form-control" type="date" />
+        </div>
+    </div>
+
 }

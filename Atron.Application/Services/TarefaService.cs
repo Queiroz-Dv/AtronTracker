@@ -15,19 +15,16 @@ namespace Atron.Application.Services
     public class TarefaService : ITarefaService
     {
         private readonly IApplicationMapService<TarefaDTO, Tarefa> _map;
-        private readonly IRepository<TarefaEstado> _repositoryTarefaEstado;
         private readonly ITarefaRepository _tarefaRepository;
         private readonly IValidateModel<Tarefa> _validateModel;
         private readonly MessageModel _messageModel;
 
         public TarefaService(IApplicationMapService<TarefaDTO, Tarefa> map,
-                             IRepository<TarefaEstado> repositoryTarefaEstado,
                              ITarefaRepository tarefaRepository,
                              MessageModel messageModel,
                              IValidateModel<Tarefa> validateModel)
         {
             _map = map;
-            _repositoryTarefaEstado = repositoryTarefaEstado;
             _messageModel = messageModel;
             _tarefaRepository = tarefaRepository;
             _validateModel = validateModel;
@@ -41,7 +38,7 @@ namespace Atron.Application.Services
             if (!_messageModel.Messages.HasErrors())
             {
                 await _tarefaRepository.CriarTarefaAsync(tarefa);
-                _messageModel.AddSuccessMessage(nameof(Tarefa));
+                _messageModel.AddMessage("Tarefa gravada com sucesso.");
             }
         }
 
@@ -55,7 +52,7 @@ namespace Atron.Application.Services
         {
             if (tarefaDTO is null)
             {
-                _messageModel.AddRegisterInvalidMessage(nameof(Tarefa));
+                _messageModel.AddRegisterInvalidMessage();
                 return;
             }
 
@@ -65,7 +62,7 @@ namespace Atron.Application.Services
             if (!_messageModel.Messages.HasErrors())
             {
                 await _tarefaRepository.AtualizarTarefaAsync(id, tarefa);
-                _messageModel.AddUpdateMessage(nameof(Tarefa));
+                _messageModel.AddMessage("Tarefa atualizada com sucesso");
                 return;
             }
         }
@@ -81,13 +78,20 @@ namespace Atron.Application.Services
             else
             {
                 await _tarefaRepository.RemoverRepositoryAsync(tarefa);
-                _messageModel.AddRegisterRemovedSuccessMessage(nameof(Tarefa));
+                _messageModel.AddMessage("Tarefa removida com sucesso");
             }
         }
 
         public async Task<TarefaDTO> ObterPorId(int id)
         {
             var tarefaRepository = await _tarefaRepository.ObterTarefaPorId(id);
+
+            if (tarefaRepository is null)
+            {
+                _messageModel.AddRegisterNotFoundMessage();
+                return null;
+            }
+
             return _map.MapToDTO(tarefaRepository);            
         }
     }

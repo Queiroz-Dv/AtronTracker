@@ -44,6 +44,7 @@ namespace Atron.Infra.IoC
                             status = 401,
                             message = "Token inválido ou ausente."
                         });
+                        context.Response.Headers["Location"] = "ApplicationLogin/Login"; // Redireciona para a página de Login                        
                         return context.Response.WriteAsync(result);
                     },
 

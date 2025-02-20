@@ -40,7 +40,9 @@ namespace Communication.Models
 
         public async Task<string> GetAsync(string parameter)
         {
-            var response = await _httpClient.GetAsync($"{Url}{parameter}");
+            NormalizeUrl();
+
+            var response = await _httpClient.GetAsync($"{Url}/{parameter}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -54,6 +56,11 @@ namespace Communication.Models
             }
         }
 
+        private void NormalizeUrl()
+        {
+            Url = Url.TrimEnd('/');
+        }
+
         public async Task PostAsync(string content)
         {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
@@ -65,11 +72,13 @@ namespace Communication.Models
 
         private void FillMessageModel(string responseContent)
         {
-            if (responseContent.Contains(nameof(Message)))
+            if (responseContent.Contains("description"))
             {
                 var messages = JsonConvert.DeserializeObject<List<Message>>(responseContent);
-
-                _messageModel.Messages.AddRange(messages);
+                if (messages != null)
+                {
+                    _messageModel.Messages.AddRange(messages);
+                }
             }
         }
 
@@ -78,7 +87,8 @@ namespace Communication.Models
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             try
             {
-                var response = await _httpClient.PutAsync($"{Url}{parameter}", httpContent);
+                NormalizeUrl();
+                var response = await _httpClient.PutAsync($"{Url}/{parameter}", httpContent);
                 var responseContent = await response.Content.ReadAsStringAsync();
                 FillMessageModel(responseContent);
 
@@ -88,15 +98,25 @@ namespace Communication.Models
                 throw;
             }
         }
-      
+
         public async Task DeleteAsync(string codigo)
         {
-            var response = await _httpClient.DeleteAsync($"{Url}{codigo}");
+            NormalizeUrl();
+            var response = await _httpClient.DeleteAsync($"{Url}/{codigo}");
 
             if (response.IsSuccessStatusCode)
             {
                 _messageModel.AddRegisterRemovedSuccessMessage(Modulo);
             }
+        }
+
+        public async Task<DTO> GetAsync<DTO>(string parameter)
+        {
+            var response = await _httpClient.GetAsync($"{Url}/{parameter}");
+
+            var responseContent = await response.Content.ReadAsStringAsync();            
+            var jsonContent = JsonConvert.DeserializeObject<DTO>(responseContent);
+            return jsonContent;
         }
 
         public async Task<DTO> PostAsync<DTO>(string content)
@@ -117,7 +137,7 @@ namespace Communication.Models
 
             if (response.IsSuccessStatusCode)
             {
-                var responseContent = await response.Content.ReadAsStringAsync();                
+                var responseContent = await response.Content.ReadAsStringAsync();
                 FillMessageModel(responseContent);
                 return responseContent;
             }

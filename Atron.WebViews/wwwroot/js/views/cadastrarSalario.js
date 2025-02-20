@@ -22,11 +22,10 @@
 
         // Limpa o formulário caso nenhum usuário seja selecionado
         if (!codigoUsuario) {
-            this.tarefaFormContainer.innerHTML = "";
             return;
         }
 
-        try {
+        try {           
             const response = await fetch(`/Salario/CarregarFormularioSalario?salarioId=${salarioId}&codigoUsuario=${codigoUsuario}&actionPage=${actionPage}`);
 
             if (response.ok) {

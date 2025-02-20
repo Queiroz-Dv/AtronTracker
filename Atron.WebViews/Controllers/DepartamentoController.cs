@@ -27,16 +27,17 @@ namespace Atron.WebViews.Controllers
             _paginationService = paginationService;
             _service = service;
             _router = router;
-            ApiControllerName = nameof(Departamento);
+            ApiControllerName = nameof(Departamento);           
         }
 
-        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        [HttpGet]
+        public async Task<IActionResult> MenuPrincipal(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de departamentos");
             BuildRoute();
             var departamentos = await _service.ObterTodos();
 
-            ConfigurePaginationForView(departamentos, nameof(Index), itemPage, filter);
+            ConfigurePaginationForView(departamentos, nameof(MenuPrincipal), itemPage, filter);
             return View(GetModel<DepartamentoModel>());
         }
 
@@ -77,7 +78,7 @@ namespace Atron.WebViews.Controllers
             if (departamentoDTO is null || _messageModel.Messages.HasErrors())
             {
                 CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MenuPrincipal));
             }
 
             ConfigureDataTitleForView("Atualizar informação de departamento");
@@ -92,7 +93,7 @@ namespace Atron.WebViews.Controllers
             CreateTempDataMessages();
 
             return !_messageModel.Messages.HasErrors() ?
-            RedirectToAction(nameof(Index)) :
+            RedirectToAction(nameof(MenuPrincipal)) :
             View(nameof(Atualizar), departamentoDTO);
         }
 
@@ -103,7 +104,7 @@ namespace Atron.WebViews.Controllers
             await _service.Remover(codigo);
 
             CreateTempDataMessages();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MenuPrincipal));
         }
 
         [HttpGet]
