@@ -11,6 +11,7 @@ using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -44,13 +45,14 @@ namespace Atron.WebViews.Controllers
             ApiControllerName = nameof(Usuario);
         }
 
-        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        [HttpGet]
+        public async Task<IActionResult> MenuPrincipal(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de usuários");
             BuildRoute();
             var usuarios = await _service.ObterTodos();
 
-            ConfigurePaginationForView(usuarios, nameof(Index), itemPage, filter);
+            ConfigurePaginationForView(usuarios, nameof(MenuPrincipal), itemPage, filter);
             return View(GetModel<UsuarioModel>());          
         }
 
@@ -103,10 +105,8 @@ namespace Atron.WebViews.Controllers
                 CreateTempDataMessages();
                 return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
-
-            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
-            CreateTempDataMessages();
-            return RedirectToAction(nameof(Cadastrar));
+            
+            return View();
         }
 
         [HttpGet]
@@ -171,7 +171,7 @@ namespace Atron.WebViews.Controllers
             CreateTempDataMessages();
 
             return !_messageModel.Messages.HasErrors() ?
-            RedirectToAction(nameof(Index)) :
+            RedirectToAction(nameof(MenuPrincipal)) :
             View(nameof(Atualizar), usuario);
         }
 
@@ -181,7 +181,7 @@ namespace Atron.WebViews.Controllers
             BuildRoute();
             await _service.Remover(codigo);
             CreateTempDataMessages();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MenuPrincipal));
         }
 
         private void BuildCargoRoute()

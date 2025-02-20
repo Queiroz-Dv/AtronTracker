@@ -1,23 +1,17 @@
 ﻿@model DepartamentoModel;
 
-<link href="~/css/site.css" />
 <partial name="Partials/TitleLabel"></partial>
-<partial name="Partials/BtnCadastrar"></partial>
+<partial name="Partials/Buttons/BtnCadastrar"></partial>
 
 <div class="panel panel-default">
-    <form asp-controller="Departamento" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
-        <p>
-            <input type="text" name="filter" />
-            <input type="submit" value="Filtrar" />
-        </p>
-    </form>
+    <partial name="Partials/Panels/FilterForm"></partial>
     <fieldset>
         <legend class="fw-semibold">Departamentos</legend>
         <div id="departamentos">
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.Departamento.Codigo) </th>
+                        <th>@Html.DisplayNameFor(model => model.Departamento.Codigo)</th>
                         <th>@Html.DisplayNameFor(model => model.Departamento.Descricao)</th>
                     </tr>
                 </thead>
@@ -31,8 +25,8 @@
                                 <td>@item.Codigo</td>
                                 <td>@item.Descricao</td>
                                 <td class="text-end">
-                                    <partial name="Partials/BtnAtualizar" model="item.Codigo" />
-                                    <partial name="Partials/BtnExcluir" model="item.Codigo" />
+                                    <partial name="Partials/Buttons/BtnAtualizar" model="item.Codigo" />
+                                    <partial name="Partials/Buttons/BtnExcluir" model="item.Codigo" />
                                 </td>
                             </tr>
                         }

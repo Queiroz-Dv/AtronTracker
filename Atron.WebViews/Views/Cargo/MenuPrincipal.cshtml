@@ -1,0 +1,42 @@
+﻿@model CargoModel;
+
+<link href="~/css/site.css" />
+<partial name="Partials/TitleLabel"></partial>
+<partial name="Partials/Buttons/BtnCadastrar"></partial>
+
+<div class="panel panel-default">
+    <partial name="Partials/Panels/FilterForm"></partial>
+    <fieldset>
+        <legend class="fw-semibold">Cargos</legend>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Cargo.Codigo)</th>
+                    <th>@Html.DisplayNameFor(model => model.Cargo.Descricao)</th>
+                    <th>Departamento</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model is not null)
+                {
+                    @foreach (var item in Model.Entities)
+                    {
+                        <tr>
+                            <td>@item.Codigo</td>
+                            <td>@item.Descricao</td>
+                            <td>@item.DepartamentoCodigo - @item.Departamento.Descricao</td>
+
+                            <td class="text-end">
+                                <partial name="Partials/Buttons/BtnAtualizar" model="item.Codigo" />
+                                <partial name="Partials/Buttons/BtnExcluir" model="item.Codigo" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+    <partial name="PagerPartial" model="Model.PageInfo" />
+</div>
+<partial name="Partials/ExcluirRegistro" for="Cargo"></partial>

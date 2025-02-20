@@ -72,6 +72,11 @@ namespace Atron.WebViews
                     }
                 }
 
+                if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
+                {
+                    context.Response.Redirect("/ApplicationLogin/Login");
+                }
+
                 // Chama o próximo middleware na pipeline
                 await next();
             });
@@ -82,12 +87,9 @@ namespace Atron.WebViews
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-
+          
             app.UseEndpoints(endpoints =>
             {
-                endpoints.AddEntityRoutes();
-
                 endpoints.MapControllerRoute(
 
                     name: "default",

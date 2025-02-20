@@ -29,7 +29,7 @@ namespace Atron.WebViews.Helpers
             // If the token is not null or empty and the user is not trying to logout, redirect to the Home page
             if (!token.IsNullOrEmpty() && !isLogoutEndpoint)
             {
-                context.Result = new RedirectToActionResult("Index", "Home", null);
+                context.Result = new RedirectToActionResult("MenuPrincipal", "Home", null);
             }
 
             // Call the base method to continue the action execution pipeline

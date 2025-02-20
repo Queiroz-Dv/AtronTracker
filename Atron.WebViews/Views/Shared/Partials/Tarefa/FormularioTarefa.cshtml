@@ -1,68 +1,66 @@
-﻿@using Atron.Application.DTO
-@using System;
-@model TarefaDTO
+﻿@model TarefaDTO
 @{
     var actionPage = ViewData["ActionPage"];
 }
 
-<form id="formTarefa" asp-action="@actionPage" method="post" class="form-horizontal">
+<form id="formTarefa" asp-action="@actionPage" method="post">
     
     <input hidden type="text" value="@actionPage" id="actionPage" />
     <input asp-for="Id" value="@Model.Id" type="text" id="tarefaId" hidden="hidden" />
 
-    <!--Informações de usuário-->
     <fieldset>
-        <legend class="fw-semibold">Informações do Usuário</legend>
-        <div id="usuarioFormContainer" class="row">
-            <div class="col">
-                <label asp-for="Usuario.Codigo" class="form-label">Código do Usuário</label>
-                <input asp-for="Usuario.Codigo" type="text" aria-label="@Model.Usuario.Codigo" class="form-control" disabled />
+        <legend>Informações do Usuário</legend>
+        <div class="row mb-4 mt-5">
+            <div class="col-md-3">
+                <label asp-for="UsuarioCodigo" class="form-label">Código do Usuário</label>
+                <input asp-for="UsuarioCodigo" type="text" class="form-control" disabled />
                 <input asp-for="UsuarioCodigo" hidden="hidden" />
             </div>
-            <div class="col">
-                <label asp-for="Usuario.Cargo.Descricao" class="form-label">Cargo</label>
-                <input asp-for="Usuario.Cargo.Descricao" type="text" class="form-control" disabled />
+            <div class="col-md-5">
+                <label asp-for="CargoDescricao" class="form-label">Cargo</label>
+                <input asp-for="CargoDescricao" type="text" class="form-control" disabled />
             </div>
-            <div class="col">
-                <label asp-for="Usuario.Departamento.Descricao" class="form-label">Departamento</label>
-                <input asp-for="Usuario.Departamento.Descricao" type="text" class="form-control" disabled />
+            <div class="col-md-4">
+                <label asp-for="DepartamentoDescricao" class="form-label">Departamento</label>
+                <input asp-for="DepartamentoDescricao" type="text" class="form-control" disabled />
             </div>
         </div>
     </fieldset>
+
     <hr />
-    <!--Informações da tarefa-->
+    
     <fieldset>
-        <legend class="fw-semibold">Nova Tarefa</legend>        
-        <div class="mb-4">
+        <legend>Nova Tarefa</legend>        
+        <div class="mb-4 mt-5">
             <label asp-for="Titulo" class="form-label">Título</label>
             <input asp-for="Titulo" class="form-control" />
+            <span asp-validation-for="Titulo" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="Conteudo" class="form-label">Descrição</label>
             <textarea asp-for="Conteudo" class="form-control"></textarea>
+            <span asp-validation-for="Conteudo" class="text-danger"></span>
         </div>
-        <div class="row">
+        <div class="row mb-3">
             <partial name="Partials/Tarefa/FormTarefaDatas" model="@Model"></partial>
-        </div>
-        <br />
-        <div row>
-            <div class="col-4">
-                <label asp-for="TarefaEstadoId" class="form-label">Estado</label>
-                <select asp-for="TarefaEstadoId" class="form-control" asp-items="@ViewBag.TarefaEstados">
+        </div>        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label asp-for="EstadoDaTarefaId" class="form-label">Estado</label>
+                <select asp-for="EstadoDaTarefaId" class="form-control" asp-items="@ViewBag.TarefaEstados">
                     <option value="">Selecione o estado da tarefa</option>
                 </select>
-                <span asp-validation-for="TarefaEstadoId" class="text-danger"></span>
+                <span asp-validation-for="EstadoDaTarefaId" class="text-danger"></span>
             </div>
         </div>
-        <br />
     </fieldset>
 
     @if (actionPage.Equals("Cadastrar"))
     {
-        <partial name="Partials/BtnSubmitCadastrar"></partial>
+        <partial name="Partials/Buttons/BtnSubmitCadastrar"></partial>
     }
     else
     {
-        <partial name="Partials/BtnSubmitAtualizar"></partial>
+        <partial name="Partials/Buttons/BtnSubmitAtualizar"></partial>
     }
 </form>

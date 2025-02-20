@@ -149,50 +149,6 @@ namespace Atron.Infrastructure.Migrations
                     b.ToTable("Tarefas");
                 });
 
-            modelBuilder.Entity("Atron.Domain.Entities.TarefaEstado", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Descricao")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TarefaEstados");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Descricao = "Em atividade"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Descricao = "Pendente de aprovação"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Descricao = "Entregue"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Descricao = "Finalizada"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Descricao = "Iniciada"
-                        });
-                });
-
             modelBuilder.Entity("Atron.Domain.Entities.Usuario", b =>
                 {
                     b.Property<int>("Id")

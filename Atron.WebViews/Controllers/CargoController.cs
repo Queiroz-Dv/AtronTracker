@@ -10,6 +10,7 @@ using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,13 +36,14 @@ namespace Atron.WebViews.Controllers
             ApiControllerName = nameof(Cargo);
         }
 
-        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        [HttpGet]
+        public async Task<IActionResult> MenuPrincipal(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de cargos");
             BuildRoute();
             var cargos = await _service.ObterTodos();
 
-            ConfigurePaginationForView(cargos, nameof(Index), itemPage, filter);
+            ConfigurePaginationForView(cargos, nameof(MenuPrincipal), itemPage, filter);
             return View(GetModel<CargoModel>());            
         }
 
@@ -51,7 +53,7 @@ namespace Atron.WebViews.Controllers
             ConfigureDataTitleForView("Cadastro de cargos");
 
             await FetchDepartamentosData();
-            return _messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Index)) : View();
+            return _messageModel.Messages.HasErrors() ? RedirectToAction(nameof(MenuPrincipal)) : View();
         }
 
         private async Task FetchDepartamentosData()
@@ -104,7 +106,7 @@ namespace Atron.WebViews.Controllers
             {
                 _messageModel.AddError("O código informado não foi encontrado");
                 CreateTempDataMessages();
-                return View(nameof(Index));
+                return View(nameof(MenuPrincipal));
             }
 
             BuildRoute();
@@ -124,12 +126,12 @@ namespace Atron.WebViews.Controllers
                 BuildRoute();
                 await _service.Atualizar(codigo, cargoDTO);
                 CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MenuPrincipal));
             }
 
             _messageModel.AddError("Registro inválido tente novamente");
             CreateTempDataMessages();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MenuPrincipal));
         }
 
         [HttpPost]
@@ -139,7 +141,13 @@ namespace Atron.WebViews.Controllers
             await _service.Remover(codigo);
 
             CreateTempDataMessages();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MenuPrincipal));
+        }
+
+        public override Task<string> ObterMensagemExclusao()
+        {
+            return Task.FromResult("Ao excluir esse cargo os departamentos associados a ele serão excluídos e os usuários podem não ter acesso a alguns módulos." +
+                                    " Deseja prosseguir ?");
         }
     }
 }

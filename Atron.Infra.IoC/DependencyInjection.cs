@@ -37,7 +37,6 @@ namespace Atron.Infra.IoC
             services.AddScoped<IExternalService<CargoDTO>, ExternalService<CargoDTO>>();
             services.AddScoped<IExternalService<UsuarioDTO>, ExternalService<UsuarioDTO>>();
             services.AddScoped<IExternalService<TarefaDTO>, ExternalService<TarefaDTO>>();
-            services.AddScoped<IExternalService<TarefaEstado>, ExternalService<TarefaEstado>>();
             services.AddScoped<IExternalService<SalarioDTO>, ExternalService<SalarioDTO>>();
 
             services = services.AddMessageValidationServices();

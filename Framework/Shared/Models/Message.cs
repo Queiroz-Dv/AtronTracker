@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json.Converters;
-using Shared.Enums;
-using System.Text.Json.Serialization;
-
+﻿#nullable disable
 namespace Shared.Models
 {
     [Serializable]
@@ -9,7 +6,6 @@ namespace Shared.Models
     {
         public string Description { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public MessageLevel Level { get; set; }
+        public string Level { get; set; }       
     }
 }

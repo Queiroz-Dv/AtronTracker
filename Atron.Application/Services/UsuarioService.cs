@@ -93,7 +93,7 @@ namespace Atron.Application.Services
 
                     if (registerResult)
                     {
-                        _messageModel.AddUpdateMessage(nameof(Usuario));
+                        _messageModel.AddUpdateMessage(usuarioDTO.Nome);
                     }
                 }
             }

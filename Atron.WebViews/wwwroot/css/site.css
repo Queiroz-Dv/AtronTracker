@@ -48,6 +48,12 @@ html {
   min-height: 100%;
 }
 
+label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
@@ -80,3 +86,17 @@ body {
   display: flex;
   align-items: center;
 }
+
+/* Adicionando estilos para centralizar o formulário */
+.full-height {
+    height: 100vh;
+}
+
+.mid-height {
+    height: 50vh;
+}
+
+.centered-container {  
+    margin-top: 150px; /* Adiciona um espaçamento superior */    
+}
+

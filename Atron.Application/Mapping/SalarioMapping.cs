@@ -2,7 +2,6 @@
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Shared.Services.Mapper;
-using System.Linq;
 
 namespace Atron.Application.Mapping
 {
@@ -15,27 +14,14 @@ namespace Atron.Application.Mapping
             _usuarioRepository = usuarioRepository;
         }
 
-        public override SalarioDTO MapToDTO(Salario entity)
+        public override SalarioDTO MapToDTO(Salario entity) => new SalarioDTO
         {
-            var dto = new SalarioDTO(entity.Id, entity.UsuarioId, entity.UsuarioCodigo, entity.SalarioMensal, entity.Ano, entity.MesId);
-
-
-            var usuario = entity.Usuario.UsuarioCargoDepartamentos.First();
-
-            dto.Usuario = new UsuarioDTO()
-            {
-                Codigo = usuario.UsuarioCodigo,
-                Nome = usuario.Usuario.Nome,
-                Sobrenome = usuario.Usuario.Sobrenome,
-                Cargo = new CargoDTO()
-                {
-                    Codigo = usuario.Cargo.Codigo,
-                    Descricao = usuario.Cargo.Descricao,
-                },
-                Departamento = new DepartamentoDTO(usuario.Departamento.Codigo, usuario.Departamento.Descricao)             
-            };
-            return dto;
-        }
+            Id = entity.Id,
+            UsuarioCodigo = entity.UsuarioCodigo,
+            SalarioMensal = entity.SalarioMensal,
+            Ano = entity.Ano,
+            MesId = entity.MesId
+        };
 
         public override Salario MapToEntity(SalarioDTO dto)
         {

@@ -29,20 +29,41 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public IActionResult Registrar()
         {
-            return View(new RegisterDTO());
+            return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Registrar(RegisterDTO registerDTO)
         {
-            BuildRoute("Registrar");
-            await _service.Registrar(registerDTO);
+            if (ModelState.IsValid)
+            {
 
-            CreateTempDataMessages();
+                BuildRoute("Registrar");
+                await _service.Registrar(registerDTO);
+                CreateTempDataMessages();
 
-            return !_messageModel.Messages.HasErrors() ?
-                    RedirectToAction("Login", "ApplicationLogin") :
-                    View(registerDTO);
+                return !_messageModel.Messages.HasErrors() ?
+                        RedirectToAction("Login", "ApplicationLogin") :
+                        View(registerDTO);
+            }
+
+            return View(registerDTO);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerificarUsuarioPorCodigo(string codigo)
+        {
+            BuildRoute("VerificarUsuarioPorCodigo");
+            var usuarioExiste = await _service.UsuarioExiste(codigo);
+            return Json(new { usuarioExiste });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerificarEmail(string email)
+        {
+            BuildRoute(nameof(VerificarEmail));
+            var emailResponse = await _service.EmailExiste(email);
+            return Json(new { emailResponse });
         }
     }
 }

@@ -7,6 +7,9 @@ namespace Atron.Domain.Interfaces.ApplicationInterfaces
     {
         Task<bool> UpdateUserAccountAsync(ApiRegister register);
         Task<bool> RegisterUserAccountAsync(ApiRegister register);
+        Task<bool> UserExists(ApiRegister register);
         Task DeleteAccountUserAsync(string userName);
+        Task<bool> UserExistsByUserCode(string code);
+        Task<bool> UserExistsByEmail(string email);
     }
 }

@@ -21,11 +21,11 @@ namespace Atron.Application.ApiServices.ApplicationServices
         private readonly MessageModel _messageModel;
 
         public RegisterUserService(
-            IValidateModel<ApiRegister> validateModel,
             IRegisterApplicationRepository registerApp,
             IUsuarioRepository usuarioRepository,
-            MessageModel messageModel,
-            IValidateModel<Usuario> validateUsuario)
+            IValidateModel<ApiRegister> validateModel,
+            IValidateModel<Usuario> validateUsuario,
+            MessageModel messageModel)
         {
             _registerApp = registerApp;
             _usuarioRepository = usuarioRepository;
@@ -34,43 +34,51 @@ namespace Atron.Application.ApiServices.ApplicationServices
             _validateUsuario = validateUsuario;
         }
 
+        public async Task<bool> EmailExists(string email)
+        {
+            return await _registerApp.UserExistsByEmail(email);            
+        }
+
         public async Task<RegisterDTO> RegisterUser(RegisterDTO registerDTO)
         {
             var register = new ApiRegister()
-            {                
-                UserName = registerDTO.Codigo,
+            {
+                UserName = registerDTO.Codigo.ToUpper(),
                 Email = registerDTO.Email,
                 Password = registerDTO.Senha,
                 ConfirmPassword = registerDTO.ConfirmaSenha
             };
 
             _validateModel.Validate(register);
-            registerDTO.Registrado = false; 
 
             if (!_messageModel.Messages.HasErrors())
             {
+                var userExists = await _registerApp.UserExists(register);
+                if (userExists)
+                {
+                    _messageModel.AddError("Usuário já cadastrado.");
+                    return null;
+                }
+
                 var result = await _registerApp.RegisterUserAccountAsync(register);
 
                 if (result)
                 {
                     var usuario = new Usuario()
-                    {                      
-                        Codigo = registerDTO.Codigo,
+                    {
+                        Codigo = registerDTO.Codigo.ToUpper(),
                         Nome = registerDTO.Nome,
                         Sobrenome = registerDTO.Sobrenome,
                         DataNascimento = registerDTO.DataNascimento,
                         Email = registerDTO.Email
                     };
 
-                    _validateUsuario.Validate(usuario);                    
-                    var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Nome, usuario.Sobrenome, usuario.Email);
+                    _validateUsuario.Validate(usuario);
 
+                    var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Nome, usuario.Sobrenome, usuario.Email);
                     if (!usuarioSpec.IsSatisfiedBy(usuario))
                     {
-                        foreach (var error in usuarioSpec.Errors)
-                        {
-                            _messageModel.AddError(error);
-                        }
+                        usuarioSpec.Errors.ForEach(error => _messageModel.AddError(error));                       
                     }
 
                     if (!_messageModel.Messages.HasErrors())
@@ -78,14 +86,18 @@ namespace Atron.Application.ApiServices.ApplicationServices
                         var usuarioGravado = await _usuarioRepository.CriarUsuarioAsync(usuario);
                         if (usuarioGravado)
                         {
-                            _messageModel.AddMessage("Usuário registrado e cadastrado com sucesso.");
-                            registerDTO.Registrado = result;
+                            _messageModel.AddMessage($"Usuário: {usuario.Codigo} - {usuario.Nome} registrado e cadastrado com sucesso.");
                         }
                     }
                 }
             }
 
             return registerDTO;
+        }
+
+        public async Task<bool> UserExists(string code)
+        {
+            return await _registerApp.UserExistsByUserCode(code);            
         }
     }
 }

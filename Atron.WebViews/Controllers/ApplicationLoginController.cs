@@ -36,7 +36,7 @@ namespace Atron.WebViews.Controllers
             BuildRoute("Desconectar");
             await _service.Logout();
             Response.Cookies.Delete("AuthToken");            
-
+            
             if (!TokenServiceStore.Token.IsNullOrEmpty())
             {
                 TokenServiceStore.Token = string.Empty;
@@ -61,7 +61,7 @@ namespace Atron.WebViews.Controllers
             {
                 // Configura o token nos cookies e na sessão
                 SetAuthToken(login.UserToken.Token, login.UserToken.Expires);
-                return RedirectToAction(nameof(Index), "Home");
+                return RedirectToAction("MenuPrincipal", "Home");
             }
             else
             {

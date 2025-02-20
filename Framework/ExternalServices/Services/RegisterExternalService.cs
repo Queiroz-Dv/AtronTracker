@@ -7,27 +7,34 @@ using Shared.Models;
 
 namespace ExternalServices.Services
 {
-    public class RegisterExternalService : IRegisterExternalService
+    public class RegisterExternalService : ExternalService<RegisterDTO>, IRegisterExternalService
     {
-        private readonly IUrlTransferService _urlModuleFactory;
-        private readonly MessageModel _messageModel;
         private readonly IApiClient _apiClient;
 
         public RegisterExternalService(
             IUrlTransferService urlModuleFactory,
             MessageModel messageModel,
-            IApiClient apiClient)
+            IApiClient apiClient) : base(apiClient)
         {
-            _urlModuleFactory = urlModuleFactory;
             _apiClient = apiClient;
-            _messageModel = messageModel;
+        }
+
+        public async Task<bool> EmailExiste(string email)
+        {
+            var dto = await _apiClient.GetAsync<RegisterDTO>(email);
+            return dto is not null;
         }
 
         public async Task Registrar(RegisterDTO registerDTO)
         {
             var json = JsonConvert.SerializeObject(registerDTO);
             await _apiClient.PostAsync(json);
-            // _messageModel.Messages.AddMessages(_communicationService);
+        }
+
+        public async Task<bool> UsuarioExiste(string codigo)
+        {
+            var dto = await ObterPorCodigo(codigo);
+            return dto is not null;
         }
     }
 }

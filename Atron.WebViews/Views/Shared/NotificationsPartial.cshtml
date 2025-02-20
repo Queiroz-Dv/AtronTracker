@@ -27,7 +27,7 @@
             };
 
             // Recupera mensagens e exibe notificações
-            var messages = @Html.Raw(JsonConvert.SerializeObject(notifications.ConvertMessageToJson()));
+            var messages = @Html.Raw(JsonConvert.SerializeObject(notifications));
 
             console.log(messages);
             messages.forEach(function (ntf) {

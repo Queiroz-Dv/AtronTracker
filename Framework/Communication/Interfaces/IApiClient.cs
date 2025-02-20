@@ -22,6 +22,7 @@ namespace Communication.Interfaces
         Task<string> GetAsync(string parameter);
 
         Task<string> GetAsync(int parameter);
+        Task<DTO> GetAsync<DTO>(string parameter);
 
         /// <summary>
         /// Executa a criação de um registro

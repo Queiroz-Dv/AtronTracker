@@ -6,10 +6,10 @@ using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,7 +22,14 @@ namespace Atron.WebViews.Controllers
         private readonly IExternalService<UsuarioDTO> _usuarioService;
         private readonly IExternalService<CargoDTO> _cargoService;
         private readonly IExternalService<DepartamentoDTO> _departamentoService;
-        private readonly IExternalService<TarefaEstado> _tarefaEstadoService;
+        private static readonly List<TarefaEstadoDTO> TarefaEstados = new()
+        {
+            new() { Id = 1, Descricao = "Em atividade" },
+            new() { Id = 2, Descricao = "Pendente de aprovação" },
+            new() { Id = 3, Descricao = "Entregue" },
+            new() { Id = 4, Descricao = "Finalizada" },
+            new() { Id = 5, Descricao = "Iniciada" }
+        };
 
         public TarefaController(
                         IExternalService<TarefaDTO> service,
@@ -30,7 +37,6 @@ namespace Atron.WebViews.Controllers
                         IExternalService<UsuarioDTO> usuarioService,
                         IExternalService<CargoDTO> cargoService,
                         IExternalService<DepartamentoDTO> departamentoService,
-                        IExternalService<TarefaEstado> tarefaEstadoService,
                         IRouterBuilderService router,
                         MessageModel messageModel)
             : base(messageModel, paginationService)
@@ -39,31 +45,49 @@ namespace Atron.WebViews.Controllers
             _usuarioService = usuarioService;
             _cargoService = cargoService;
             _departamentoService = departamentoService;
-            _tarefaEstadoService = tarefaEstadoService;
             _router = router;
             ApiControllerName = nameof(Tarefa);
         }
 
-        public async override Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        [HttpGet]
+        public async Task<IActionResult> MenuPrincipal(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de tarefas");
             BuildRoute();
             var tarefas = await _service.ObterTodos();
 
-            ConfigurePaginationForView(tarefas, nameof(Index), itemPage, filter);
+            BuildUsuarioRoute();
+            var usuarios = await _usuarioService.ObterTodos();
 
-            return View(GetModel<TarefaModel>());           
+            tarefas = tarefas.Join(usuarios, tarefa =>
+                tarefa.UsuarioCodigo,
+                usuario => usuario.Codigo,
+                (tarefa, usuario) =>
+                {
+                    tarefa.NomeUsuario = usuario.Nome;
+                    tarefa.CargoDescricao = usuario.Cargo.Descricao;
+                    tarefa.DepartamentoDescricao = usuario.Departamento.Descricao;
+                    return tarefa;
+                }
+            ).Join(TarefaEstados, tarefa =>
+                tarefa.EstadoDaTarefaId,
+                tarefaEstado => tarefaEstado.Id.ToString(),
+                (tarefa, tarefaEstado) =>
+                {
+                    tarefa.EstadoDaTarefaDescricao = tarefaEstado.Descricao;
+                    return tarefa;
+                }
+            ).ToList();
+
+            ApiControllerName = nameof(Tarefa);
+            ConfigurePaginationForView(tarefas, nameof(MenuPrincipal), itemPage, filter);
+
+            return View(GetModel<TarefaModel>());
         }
 
         private void BuildUsuarioRoute()
         {
             ApiControllerName = nameof(Usuario);
-            BuildRoute();
-        }
-
-        private void BuildTarefaEstadoRoute()
-        {
-            ApiControllerName = nameof(TarefaEstado);
             BuildRoute();
         }
 
@@ -80,12 +104,10 @@ namespace Atron.WebViews.Controllers
             ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
         }
 
-        private async Task FetchTarefaEstadoData()
-        {
-            BuildTarefaEstadoRoute();
-            var estados = await _tarefaEstadoService.ObterTodos();
 
-            ViewBag.TarefaEstados = new SelectList(estados, nameof(TarefaEstado.Id), nameof(TarefaEstado.Descricao));
+        private void PreencherViewBagTarefaEstados()
+        {
+            ViewBag.TarefaEstados = new SelectList(TarefaEstados, nameof(TarefaEstadoDTO.Id), nameof(TarefaEstadoDTO.Descricao));
         }
 
         [HttpGet]
@@ -93,32 +115,35 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Cadastro de tarefas");
             ConfigureCurrentPageAction(nameof(Cadastrar));
+            await CarregarCamposComplementares();
+            return View();
+        }
 
+        private async Task CarregarCamposComplementares()
+        {
             await FetchUsuarioData();
-            await FetchTarefaEstadoData();
-            return View(new TarefaDTO());
+            PreencherViewBagTarefaEstados();
         }
 
         [HttpPost]
         public async Task<IActionResult> Cadastrar(TarefaDTO tarefaDTO)
         {
             ConfigureCurrentPageAction(nameof(Cadastrar));
+            ConfigureDataTitleForView("Cadastro de tarefas");
 
             if (ModelState.IsValid)
-            {
+            {                
                 BuildRoute();
 
                 await _service.Criar(tarefaDTO);
                 CreateTempDataMessages();
                 return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
-            else
-            {
-                _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
-                CreateTempDataMessages();
 
-                return RedirectToAction(nameof(Cadastrar));
-            }
+            await CarregarCamposComplementares();
+            ApiControllerName = nameof(Tarefa);
+
+            return View();
         }
 
 
@@ -138,16 +163,8 @@ namespace Atron.WebViews.Controllers
                 tarefaDTO = await _service.ObterPorId(tarefaId);
 
                 tarefaDTO.UsuarioCodigo = usuario.Codigo;
-
-                tarefaDTO.Usuario = new UsuarioDTO()
-                {
-                    Codigo = usuario.Codigo,
-                    Cargo = new CargoDTO()
-                    {
-                        Descricao = usuario.Cargo.Descricao
-                    },
-                    Departamento = new DepartamentoDTO(usuario.Departamento.Codigo, usuario.Departamento.Descricao)                   
-                };
+                tarefaDTO.CargoDescricao = usuario.Cargo.Descricao;
+                tarefaDTO.DepartamentoDescricao = usuario.Departamento.Descricao;
             }
             else
             {
@@ -155,19 +172,12 @@ namespace Atron.WebViews.Controllers
                 tarefaDTO = new TarefaDTO
                 {
                     UsuarioCodigo = usuario.Codigo,
-                    Usuario = new UsuarioDTO()
-                    {
-                        Codigo = usuario.Codigo,
-                        Cargo = new CargoDTO()
-                        {
-                            Descricao = usuario.Cargo.Descricao
-                        },
-                        Departamento = new DepartamentoDTO(usuario.Departamento.Codigo, usuario.Departamento.Descricao)                       
-                    },
+                    CargoDescricao = usuario.Cargo.Descricao,
+                    DepartamentoDescricao = usuario.Departamento.Descricao,
                 };
             }
 
-            await FetchTarefaEstadoData();
+            PreencherViewBagTarefaEstados();
             ConfigureCurrentPageAction(actionPage);
             return PartialView("Partials/Tarefa/FormularioTarefa", tarefaDTO);
         }
@@ -181,8 +191,13 @@ namespace Atron.WebViews.Controllers
             BuildRoute();
             var tarefa = await _service.ObterPorId(id);
 
-            await FetchUsuarioData();
-            await FetchTarefaEstadoData();
+            BuildUsuarioRoute();
+            var usuario = await _usuarioService.ObterPorCodigo(tarefa.UsuarioCodigo);
+
+            tarefa.CargoDescricao = usuario.Cargo.Descricao;
+            tarefa.DepartamentoDescricao = usuario.Departamento.Descricao;
+
+            await CarregarCamposComplementares();
             return View(tarefa);
         }
 
@@ -196,7 +211,7 @@ namespace Atron.WebViews.Controllers
             CreateTempDataMessages();
             if (!_messageModel.Messages.HasErrors())
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MenuPrincipal));
             }
             else
             {
@@ -212,7 +227,7 @@ namespace Atron.WebViews.Controllers
             await _service.Remover(codigo);
 
             CreateTempDataMessages();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MenuPrincipal));
         }
     }
 }

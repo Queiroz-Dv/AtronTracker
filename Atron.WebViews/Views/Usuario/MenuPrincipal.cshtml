@@ -1,22 +1,10 @@
-﻿@using Atron.Application.DTO;
-@using Shared.DTO;
-@using Shared.Services;
-@using Newtonsoft.Json;
-@using Atron.WebViews.Models;
-@model UsuarioModel;
-
-<link href="~/css/site.css" />
+﻿@model UsuarioModel;
 
 <partial name="Partials/TitleLabel"></partial>
-<partial name="Partials/BtnCadastrar"></partial>
+<partial name="Partials/Buttons/BtnCadastrar"></partial>
 
 <div class="panel panel-default">
-    <form asp-controller="Usuario" asp-action="Index" asp-route-filter="@ViewData["Filter"]" method="post">
-        <p>
-            <input type="text" name="filter" />
-            <input type="submit" value="Filtrar" />
-        </p>
-    </form>
+    <partial name="Partials/Panels/FilterForm"></partial>
     <fieldset>
         <legend class="fw-semibold">Usuários</legend>
         <table class="table table-striped">
@@ -38,8 +26,8 @@
                         <td>@(item.Departamento?.ObterCodigoComDescricao() ?? string.Empty)</td>
 
                         <td class="text-end">
-                            <partial name="Partials/BtnAtualizar" model="item.Codigo" />
-                            <partial name="Partials/BtnExcluir" model="item.Codigo" />
+                            <partial name="Partials/Buttons/BtnAtualizar" model="item.Codigo" />
+                            <partial name="Partials/Buttons/BtnExcluir" model="item.Codigo" />
                         </td>
                     </tr>
                 }

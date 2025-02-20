@@ -6,50 +6,50 @@ namespace Shared.Models
     //TODO: Verificar a criação de uma classe de extensão para os serviços de notificações
     [Serializable]
     public abstract class MessageModel : MessageService
-    {        
+    {
         public override void AddError(string description)
         {
-            AddNotification(description, MessageLevel.Error);
+            AddNotification(description, Level.Error);
         }
 
         public override void AddMessage(string description)
         {
-            AddNotification(description, MessageLevel.Message);
+            AddNotification(description, Level.Message);
         }
 
-        public override void AddSuccessMessage(string moduleName)
+        public override void AddSuccessMessage(string key)
         {
-            AddMessage($"{moduleName} salvo com sucesso.");
+            AddMessage($"Registro {key} salvo com sucesso.");
         }
 
-        public override void AddUpdateMessage(string moduleName)
+        public override void AddUpdateMessage(string key)
         {
-            AddMessage($"{moduleName} atualizado com sucesso.");
+            AddMessage($"Registro {key} atualizado com sucesso.");
         }
 
-        public override void AddRegisterNotFoundMessage(string moduleName)
+        public override void AddRegisterNotFoundMessage(string key = "")
         {
-            AddError($"{moduleName} não encontrado.");
+            AddError($"Registro {key} não encontrado.");
         }
 
-        public override void AddRegisterRemovedSuccessMessage(string moduleName)
+        public override void AddRegisterRemovedSuccessMessage(string key)
         {
-            AddMessage($"{moduleName} removido com sucesso");
+            AddMessage($"Registro {key} removido com sucesso");
         }
 
-        public override void AddRegisterInvalidMessage(string moduleName)
+        public override void AddRegisterInvalidMessage(string key = "")
         {
-            AddError($"{moduleName} inválido");
+            AddError($"Registro {key} inválido");
         }
 
-        public override void AddRegisterExistMessage(string moduleName)
+        public override void AddRegisterExistMessage(string key)
         {
-            AddError($"{moduleName} já existe.");
+            AddError($"Registro {key} já existe.");
         }
 
         public override void AddWarning(string description)
         {
-            AddNotification(description, MessageLevel.Warning);
-        }      
+            AddNotification(description, Level.Warning);
+        }
     }
 }

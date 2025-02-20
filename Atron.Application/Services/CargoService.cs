@@ -41,16 +41,14 @@ namespace Atron.Application.Services
         {
             var cargos = await _cargoRepository.ObterCargosAsync();
 
-            var cargosDTOs = _map.MapToListDTO(cargos.ToList());
-
-            return cargosDTOs;
+            return _map.MapToListDTO(cargos.ToList());
         }
 
         public async Task CriarAsync(CargoDTO cargoDTO)
         {
             if (cargoDTO is null)
             {
-                _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                _messageModel.AddRegisterInvalidMessage();
                 return;
             }
 
@@ -60,21 +58,20 @@ namespace Atron.Application.Services
 
             if (entity is not null && entity.DepartamentoCodigo == cargoDTO.DepartamentoCodigo)
             {
-                _messageModel.AddRegisterExistMessage(nameof(Cargo));
+                _messageModel.AddRegisterExistMessage(cargoDTO.Codigo);
+                return;
             }
 
             if (departamento is not null)
             {
                 cargo.DepartamentoId = departamento.Id;
-                cargo.Departamento = null;
             }
 
             _validateModel.Validate(cargo);
-
             if (!_messageModel.Messages.HasErrors())
             {
                 await _cargoRepository.CriarCargoAsync(cargo);
-                _messageModel.AddSuccessMessage(nameof(Cargo));
+                _messageModel.AddSuccessMessage(cargo.Codigo);
             }
         }
 
@@ -82,7 +79,7 @@ namespace Atron.Application.Services
         {
             if (!new CargoSpecification(codigo, cargoDTO.DepartamentoCodigo).IsSatisfiedBy(cargoDTO))
             {
-                _messageModel.AddRegisterInvalidMessage(nameof(Cargo));
+                _messageModel.AddRegisterInvalidMessage();
                 return;
             }
 
@@ -99,7 +96,7 @@ namespace Atron.Application.Services
             if (!_messageModel.Messages.HasErrors())
             {
                 await _cargoRepository.AtualizarCargoAsync(cargo);
-                _messageModel.AddUpdateMessage(nameof(Cargo));
+                _messageModel.AddUpdateMessage(cargo.Codigo);
             }
         }
 
@@ -109,11 +106,11 @@ namespace Atron.Application.Services
             if (cargo is not null)
             {
                 await _cargoRepository.RemoverCargoAsync(cargo);
-                _messageModel.AddRegisterRemovedSuccessMessage(nameof(Cargo));
+                _messageModel.AddRegisterRemovedSuccessMessage(cargo.Codigo);
             }
             else
             {
-                _messageModel.AddRegisterNotFoundMessage(nameof(Cargo));
+                _messageModel.AddRegisterNotFoundMessage(codigo);
             }
         }
 
@@ -126,7 +123,7 @@ namespace Atron.Application.Services
             }
             else
             {
-                _messageModel.AddRegisterNotFoundMessage(nameof(Cargo));
+                _messageModel.AddRegisterNotFoundMessage(codigo);
                 return null;
             }
         }
