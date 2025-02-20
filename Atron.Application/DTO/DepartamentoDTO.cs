@@ -1,25 +1,36 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Atron.Application.DTO
 {
-    public class DepartamentoDTO : FactoryDTO
+    public class DepartamentoDTO
     {
-        [JsonIgnore]
-        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
+        public DepartamentoDTO() { }
+
+        public DepartamentoDTO(string codigo, string descricao)
+        {
+            Codigo = codigo.ToUpper();
+            Descricao = descricao.ToUpper();
+        }
+
         public int Id { get; set; }
 
-        [JsonIgnore]
-        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
-        public int CargoId { get; set; }
-        [JsonIgnore]
-        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
-        public string CargoCodigo { get; set; }
-        [JsonIgnore]
-        [SwaggerSchema(ReadOnly = true, WriteOnly = true)]
-        public string CargoDescricao { get; set; }
+        [MaxLength(10, ErrorMessage = "O tamanho máximo do código é de até 10 caracteres.")]
+        [MinLength(3, ErrorMessage = "O tamanho mínimo do código é de 3 caracteres.")]
+        [Required(ErrorMessage = "O campo Código é obrigatório.")]
+        [DisplayName("Código")]
+        public string Codigo { get; set; }
 
-        public List<CargoDTO> Cargos { get; set; }
+
+        [MaxLength(50, ErrorMessage = "O tamanho máximo do código é de até 50 caracteres.")]
+        [MinLength(3, ErrorMessage = "O tamanho mínimo do código é de 3 caracteres.")]
+        [Required(ErrorMessage = "O campo Descrição é obrigatório.")]
+        [DisplayName("Descrição")]
+        public string Descricao { get; set; }
+
+        public string ObterCodigoComDescricao()
+        {
+            return $"{Codigo} - {Descricao}";
+        }
     }
 }

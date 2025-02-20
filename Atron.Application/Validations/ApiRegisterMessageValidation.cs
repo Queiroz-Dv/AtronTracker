@@ -1,13 +1,14 @@
 ﻿using Atron.Domain.ApiEntities;
 using Shared.Extensions;
 using Shared.Interfaces;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 
 namespace Atron.Application.Validations
 {
-    public class ApiRegisterMessageValidation : MessageModel<ApiRegister>, IMessages
+    public class ApiRegisterMessageValidation : MessageModel, IMessages, IValidateModel<ApiRegister>
     {
-        public override void Validate(ApiRegister entity)
+        public void Validate(ApiRegister entity)
         {
             if (entity.UserName.IsNullOrEmpty())
             {

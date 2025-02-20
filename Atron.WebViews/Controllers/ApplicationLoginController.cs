@@ -1,56 +1,67 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
+using Atron.WebViews.Helpers;
+using Communication.Interfaces.Services;
+using Communication.Security;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Shared.DTO.API;
+using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using System;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class ApplicationLoginController : DefaultController<LoginDTO, ApiLogin, ILoginExternalService>
+    [RedirectIfAuthenticated]
+    public class ApplicationLoginController : MainController<LoginDTO, ApiLogin>
     {
-        public ApplicationLoginController(IUrlModuleFactory urlFactory,
-            IPaginationService<LoginDTO> paginationService,
+        private readonly ILoginExternalService _service;
+
+        public ApplicationLoginController(
             ILoginExternalService service,
-            IApiRouteExternalService apiRouteExternalService,
-            IConfiguration configuration,
-            IOptions<RotaDeAcesso> appSettingsConfig,
-            MessageModel<ApiLogin> messageModel) :
-            base(urlFactory,
-                paginationService,
-                service,
-                apiRouteExternalService,
-                configuration,
-                appSettingsConfig,
-                messageModel)
+            IPaginationService<LoginDTO> paginationService,
+            IRouterBuilderService router,
+            MessageModel messageModel) :
+            base(messageModel, paginationService)
         {
-            CurrentController = "ApplicationLogin";
+            _router = router;
+            _service = service;
+            ApiControllerName = "AppLogin";
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LogoutUser()
+        {
+            BuildRoute("Desconectar");
+            await _service.Logout();
+            Response.Cookies.Delete("AuthToken");            
+            
+            if (!TokenServiceStore.Token.IsNullOrEmpty())
+            {
+                TokenServiceStore.Token = string.Empty;
+            }
+
+            return RedirectToAction(nameof(Login), string.Empty);
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl)
+        public IActionResult Login()
         {
-            return View(new LoginDTO()
-            {
-                ReturnUrl = returnUrl,
-            });
+            return View(new LoginDTO());
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
-             BuildRoute("AppLogin");
+            BuildRoute("Logar");
             var login = await _service.Autenticar(loginDTO);
 
             if (login.Authenticated)
             {
-                return RedirectToAction(nameof(Index), "Home");
+                // Configura o token nos cookies e na sessão
+                SetAuthToken(login.UserToken.Token, login.UserToken.Expires);
+                return RedirectToAction("MenuPrincipal", "Home");
             }
             else
             {

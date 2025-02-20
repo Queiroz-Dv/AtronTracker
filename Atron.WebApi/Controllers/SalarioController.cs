@@ -1,6 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
 using Shared.Models;
@@ -11,11 +12,11 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SalarioController : ModuleController<Salario, ISalarioService>
     {
-
         public SalarioController(ISalarioService service,
-            MessageModel<Salario> messageModel)
+            MessageModel messageModel)
         : base(service, messageModel)
         { }
 
@@ -37,20 +38,10 @@ namespace Atron.WebApi.Controllers
             return Ok(salarios);
         }
 
-
-        [HttpGet]
-        [Route("ObterMeses")]
-        public async Task<ActionResult<IEnumerable<MesDTO>>> ObterMeses()
-        {
-            var meses = await _service.ObterMeses();
-
-            return Ok(meses);
-        }
-
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(string id, [FromBody] SalarioDTO salario)
+        public async Task<ActionResult> Put(int id, [FromBody] SalarioDTO salario)
         {
-            await _service.AtualizarServiceAsync(salario);
+            await _service.AtualizarServiceAsync(id, salario);
 
             return _messageModel.Messages.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());

@@ -1,69 +1,113 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
+using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
-using ExternalServices.Interfaces.ApiRoutesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
 {
-    public class TarefaController : DefaultController<TarefaDTO, Tarefa, ITarefaExternalService>
+    [Authorize]
+    public class TarefaController : MainController<TarefaDTO, Tarefa>
     {
-        private readonly IUsuarioExternalService _usuarioService;
-        private readonly IDepartamentoExternalService _departamentoService;
-        private readonly ICargoExternalService _cargoService;
-        private readonly ITarefaEstadoExternalService _tarefaEstadoExternalService;
-
-        public TarefaController(IUrlModuleFactory urlFactory,
-                                IPaginationService<TarefaDTO> paginationService,
-                                ITarefaExternalService service,
-                                IApiRouteExternalService apiRouteExternalService,
-                                IConfiguration configuration,
-                                IOptions<RotaDeAcesso> appSettingsConfig,
-                                MessageModel<Tarefa> messageModel,
-                                IUsuarioExternalService usuarioService,
-                                ITarefaEstadoExternalService tarefaEstadoExternalService) :
-            base(urlFactory,
-                 paginationService,
-                 service,
-                 apiRouteExternalService,
-                 configuration,
-                 appSettingsConfig,
-                 messageModel)
+        private readonly IExternalService<TarefaDTO> _service;
+        private readonly IExternalService<UsuarioDTO> _usuarioService;
+        private readonly IExternalService<CargoDTO> _cargoService;
+        private readonly IExternalService<DepartamentoDTO> _departamentoService;
+        private static readonly List<TarefaEstadoDTO> TarefaEstados = new()
         {
-            _tarefaEstadoExternalService = tarefaEstadoExternalService;
+            new() { Id = 1, Descricao = "Em atividade" },
+            new() { Id = 2, Descricao = "Pendente de aprovação" },
+            new() { Id = 3, Descricao = "Entregue" },
+            new() { Id = 4, Descricao = "Finalizada" },
+            new() { Id = 5, Descricao = "Iniciada" }
+        };
+
+        public TarefaController(
+                        IExternalService<TarefaDTO> service,
+                        IPaginationService<TarefaDTO> paginationService,
+                        IExternalService<UsuarioDTO> usuarioService,
+                        IExternalService<CargoDTO> cargoService,
+                        IExternalService<DepartamentoDTO> departamentoService,
+                        IRouterBuilderService router,
+                        MessageModel messageModel)
+            : base(messageModel, paginationService)
+        {
+            _service = service;
             _usuarioService = usuarioService;
-            CurrentController = nameof(Tarefa);
+            _cargoService = cargoService;
+            _departamentoService = departamentoService;
+            _router = router;
+            ApiControllerName = nameof(Tarefa);
         }
 
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        [HttpGet]
+        public async Task<IActionResult> MenuPrincipal(string filter = "", int itemPage = 1)
         {
             ConfigureDataTitleForView("Painel de tarefas");
-
-            BuildRoute(nameof(Tarefa));
+            BuildRoute();
             var tarefas = await _service.ObterTodos();
 
-            Filter = filter;
-            KeyToSearch = nameof(TarefaDTO.Titulo);
-            ConfigurePaginationForView(tarefas, itemPage, CurrentController, filter);
+            BuildUsuarioRoute();
+            var usuarios = await _usuarioService.ObterTodos();
 
-            var model = new TarefaModel()
+            tarefas = tarefas.Join(usuarios, tarefa =>
+                tarefa.UsuarioCodigo,
+                usuario => usuario.Codigo,
+                (tarefa, usuario) =>
+                {
+                    tarefa.NomeUsuario = usuario.Nome;
+                    tarefa.CargoDescricao = usuario.Cargo.Descricao;
+                    tarefa.DepartamentoDescricao = usuario.Departamento.Descricao;
+                    return tarefa;
+                }
+            ).Join(TarefaEstados, tarefa =>
+                tarefa.EstadoDaTarefaId,
+                tarefaEstado => tarefaEstado.Id.ToString(),
+                (tarefa, tarefaEstado) =>
+                {
+                    tarefa.EstadoDaTarefaDescricao = tarefaEstado.Descricao;
+                    return tarefa;
+                }
+            ).ToList();
+
+            ApiControllerName = nameof(Tarefa);
+            ConfigurePaginationForView(tarefas, nameof(MenuPrincipal), itemPage, filter);
+
+            return View(GetModel<TarefaModel>());
+        }
+
+        private void BuildUsuarioRoute()
+        {
+            ApiControllerName = nameof(Usuario);
+            BuildRoute();
+        }
+
+        private async Task FetchUsuarioData()
+        {
+            BuildUsuarioRoute();
+            var usuarios = await _usuarioService.ObterTodos();
+            var usuariosFiltrados = usuarios.Where(usr => usr.Departamento is not null).Select(usr => new
             {
-                Tarefas = GetEntitiesPaginated(),
-                PageInfo = PageInfo
-            };
+                usr.Codigo,
+                Nome = usr.NomeCompleto(),
+            }).ToList();
 
-            return View(model);
+            ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
+        }
+
+
+        private void PreencherViewBagTarefaEstados()
+        {
+            ViewBag.TarefaEstados = new SelectList(TarefaEstados, nameof(TarefaEstadoDTO.Id), nameof(TarefaEstadoDTO.Descricao));
         }
 
         [HttpGet]
@@ -71,71 +115,71 @@ namespace Atron.WebViews.Controllers
         {
             ConfigureDataTitleForView("Cadastro de tarefas");
             ConfigureCurrentPageAction(nameof(Cadastrar));
-
-            BuildUsuarioRoute();
-            var usuarios = await _usuarioService.ObterTodos();
-            var usuariosFiltrados = usuarios.Select(usr => new
-            {
-                usr.Codigo,
-                Nome = usr.NomeCompleto(),
-            }).ToList();
-
-            ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
-            await ConfigurarViewBagDeEstadoDasTarefas();
+            await CarregarCamposComplementares();
             return View();
+        }
+
+        private async Task CarregarCamposComplementares()
+        {
+            await FetchUsuarioData();
+            PreencherViewBagTarefaEstados();
         }
 
         [HttpPost]
         public async Task<IActionResult> Cadastrar(TarefaDTO tarefaDTO)
         {
             ConfigureCurrentPageAction(nameof(Cadastrar));
+            ConfigureDataTitleForView("Cadastro de tarefas");
 
             if (ModelState.IsValid)
-            {
-                BuildRoute(nameof(Tarefa));
+            {                
+                BuildRoute();
 
                 await _service.Criar(tarefaDTO);
                 CreateTempDataMessages();
                 return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
-            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
-            CreateTempDataMessages();
+            await CarregarCamposComplementares();
+            ApiControllerName = nameof(Tarefa);
 
-            return RedirectToAction(nameof(Cadastrar));
+            return View();
         }
 
-        private void  BuildUsuarioRoute()
-        {
-            BuildRoute(nameof(Usuario));
-        }
 
         [HttpGet]
-        public async Task<IActionResult> CarregarFormularioTarefa(string codigoUsuario, string actionPage)
+        public async Task<IActionResult> CarregarFormularioTarefa(string tarefaId, string codigoUsuario, string actionPage)
         {
-            BuildRoute(nameof(Usuario), codigoUsuario);
+            BuildUsuarioRoute();
             var usuario = await _usuarioService.ObterPorCodigo(codigoUsuario);
-            var tarefaDto = new TarefaDTO
+
+            var tarefaDTO = new TarefaDTO();
+
+            if (!tarefaId.Equals(0) && actionPage.Equals(nameof(Atualizar)))
             {
-                UsuarioCodigo = usuario.Codigo,
-                Usuario = new UsuarioDTO()
+                ApiControllerName = nameof(Tarefa);
+                BuildRoute();
+                // Se for update 
+                tarefaDTO = await _service.ObterPorId(tarefaId);
+
+                tarefaDTO.UsuarioCodigo = usuario.Codigo;
+                tarefaDTO.CargoDescricao = usuario.Cargo.Descricao;
+                tarefaDTO.DepartamentoDescricao = usuario.Departamento.Descricao;
+            }
+            else
+            {
+                // Se for cadastro
+                tarefaDTO = new TarefaDTO
                 {
-                    Codigo = usuario.Codigo,
-                    Cargo = new CargoDTO()
-                    {
-                        Descricao = usuario.Cargo.Descricao
-                    },
-                    Departamento = new DepartamentoDTO()
-                    {
-                        Descricao = usuario.Departamento.Descricao
-                    }
-                },
-            };
+                    UsuarioCodigo = usuario.Codigo,
+                    CargoDescricao = usuario.Cargo.Descricao,
+                    DepartamentoDescricao = usuario.Departamento.Descricao,
+                };
+            }
 
-            await ConfigurarViewBagDeEstadoDasTarefas();
+            PreencherViewBagTarefaEstados();
             ConfigureCurrentPageAction(actionPage);
-
-            return PartialView("Partials/Tarefa/FormularioTarefa", tarefaDto);
+            return PartialView("Partials/Tarefa/FormularioTarefa", tarefaDTO);
         }
 
         [HttpGet]
@@ -144,34 +188,30 @@ namespace Atron.WebViews.Controllers
             ConfigureDataTitleForView("Atualizar informação da tarefa");
             ConfigureCurrentPageAction(nameof(Atualizar));
 
-            BuildRoute(nameof(Tarefa), id);
-            var tarefa = await _service.ObterPorId();
+            BuildRoute();
+            var tarefa = await _service.ObterPorId(id);
 
             BuildUsuarioRoute();
-            var usuarios = await _usuarioService.ObterTodos();
-            var usuariosFiltrados = usuarios.Select(usr => new
-            {
-                usr.Codigo,
-                Nome = usr.NomeCompleto(),
-            }).ToList();
+            var usuario = await _usuarioService.ObterPorCodigo(tarefa.UsuarioCodigo);
 
-            ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
+            tarefa.CargoDescricao = usuario.Cargo.Descricao;
+            tarefa.DepartamentoDescricao = usuario.Departamento.Descricao;
 
-            await ConfigurarViewBagDeEstadoDasTarefas();
+            await CarregarCamposComplementares();
             return View(tarefa);
         }
 
         [HttpPost]
         public async Task<IActionResult> Atualizar(string id, TarefaDTO tarefaDTO)
         {
-            BuildRoute(nameof(Tarefa), id);
+            BuildRoute();
 
-            await _service.Atualizar(id, tarefaDTO);
+            await _service.AtualizarPorId(id, tarefaDTO);
 
             CreateTempDataMessages();
             if (!_messageModel.Messages.HasErrors())
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MenuPrincipal));
             }
             else
             {
@@ -179,23 +219,15 @@ namespace Atron.WebViews.Controllers
                 return View(nameof(Atualizar), tarefaDTO);
             }
         }
-        private async Task ConfigurarViewBagDeEstadoDasTarefas()
-        {
-            BuildRoute(nameof(TarefaEstado));
-
-            var estados = await _tarefaEstadoExternalService.ObterTodosAsync();
-
-            ViewBag.TarefaEstados = new SelectList(estados, nameof(TarefaEstado.Id), nameof(TarefaEstado.Descricao));
-        }
 
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
         {
-            BuildRoute(nameof(Tarefa), codigo);
+            BuildRoute();
             await _service.Remover(codigo);
 
             CreateTempDataMessages();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MenuPrincipal));
         }
     }
 }

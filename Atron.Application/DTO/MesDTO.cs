@@ -1,7 +1,8 @@
 ﻿namespace Atron.Application.DTO
 {
-    public class MesDTO : FactoryDTO
+    public class MesDTO
     {
         public int Id { get; set; }
+        public string Descricao { get; set; }
     }
 }

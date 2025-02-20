@@ -1,26 +1,22 @@
 ﻿@model LoginDTO
 
-<h3>@ViewData["Title"]</h3>
-<link href="~/css/login.css" rel="stylesheet">
+<link href="~/css/auth.css" rel="stylesheet">
 <div class="login-container d-flex align-items-center justify-content-center vh-100">
     <div class="card shadow-lg p-5">
         <h2 class="text-center mb-4">Atron Tracker</h2>
-
         <form asp-controller="ApplicationLogin" asp-action="Login" method="post">
-            <input type="hidden" asp-for="ReturnUrl" />
-
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
             <div class="form-group mb-4">
                 <div class="input-group">
                     <div class="input-group-prepend p-2">
                         <span class="input-group-text">
-                            <i class="fas fa-envelope"></i>
+                            <i class="fas fa-user"></i>
                         </span>
                     </div>
-                    <input asp-for="Email" class="form-control" id="txtEmail" placeholder="Digite seu e-mail" />
+                    <input asp-for="Codigo" class="form-control" placeholder="Digite o código do seu usuário" />
                 </div>
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <span asp-validation-for="Codigo" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-5">
@@ -37,12 +33,12 @@
 
             <div class="d-grid gap-2 text-center mb-2">
                 <button type="submit" class="btn btn-outline-primary">Login</button>
-                <a asp-action="Register" class="btn btn-outline-secondary">Registrar</a>
+                <a asp-controller="ApplicationRegister" asp-action="Registrar" class="btn btn-outline-secondary">Registrar</a>
             </div>
         </form>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/js/login.js"></script>
+    <script src="~/js/auth.js"></script>
 }

@@ -1,15 +1,17 @@
 ﻿using Atron.Domain.Entities;
+using Shared.Extensions;
 using Shared.Interfaces;
+using Shared.Interfaces.Validations;
 using Shared.Models;
 
 namespace Atron.Application.Validations
 {
-    public class DepartamentoMessageValidation : MessageModel<Departamento>, IMessages
+    public class DepartamentoMessageValidation : MessageModel, IMessages, IValidateModel<Departamento>
     {
-        public override void Validate(Departamento entity)
+        public void Validate(Departamento entity)
         {
-            if (string.IsNullOrEmpty(entity.Descricao) ||
-               string.IsNullOrEmpty(entity.Codigo))
+            if (entity.Descricao.IsNullOrEmpty() ||
+                entity.Codigo.IsNullOrEmpty())
             {
                 AddError("O código ou a descrição não estão preenchidos.");
             }

@@ -1,37 +1,21 @@
-﻿@using Atron.Application.DTO;
-@using Newtonsoft.Json;
-@using Communication.Extensions;
-@using Shared.DTO;
-@using Shared.Extensions;
-@model DepartamentoDTO;
+﻿@model DepartamentoDTO;
 
-<h2>@ViewData["Title"]</h2>
-<link href="~/css/site.css" rel="stylesheet" />
-<form asp-action="Cadastrar" method="post" class="form-horizontal">
-    <hr />
+<div class="d-flex justify-content-center align-items-center mid-height centered-container">
+    <form asp-action="Cadastrar" method="post">
+        <partial name="Partials/TitleLabel"></partial>
 
-    <div class="form-group row">
-        <label asp-for="Codigo" class="col-md-2 control-label font-weight-bold"></label>
-        <div class="col-md-5 mb-3">
-            <input asp-for="Codigo" class="form-control" />
+        <div class="mb-4">
+            <label asp-for="Codigo" class="form-label"></label>
+            <input asp-for="Codigo" class="form-control" />            
             <span asp-validation-for="Codigo" class="text-danger"></span>
         </div>
-    </div>
 
-    <div class="form-group row">
-        <label asp-for="Descricao" class="col-md-2 col-form-label font-weight-bolder"></label>
-        <div class="col-md-7 mb-3">
+        <div class="mb-5">
+            <label asp-for="Descricao" class="form-label"></label>
             <input asp-for="Descricao" class="form-control" />
             <span asp-validation-for="Descricao" class="text-danger"></span>
         </div>
 
-    </div>
-
-    <div class="form-group row">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Cadastrar" class="btn btn-success" />
-            <a asp-action="Index" class="btn btn-dark">Painel</a>
-        </div>
-    </div>
-</form>
-<script src="~/js/departamentoScript.js"></script>
+        <partial name="Partials/Buttons/BtnSubmitCadastrar"></partial>
+    </form>
+</div>

@@ -2,7 +2,7 @@
 
 namespace ExternalServices.Interfaces
 {
-    public interface ILoginExternalService
+    public interface ILoginExternalService 
     {
         Task<LoginDTO> Autenticar(LoginDTO loginDTO);
         

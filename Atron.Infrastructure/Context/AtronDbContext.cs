@@ -21,19 +21,11 @@ namespace Atron.Infrastructure.Context
 
         public DbSet<Cargo> Cargos { get; set; }
 
-        public DbSet<Mes> Meses { get; set; }
-
         public DbSet<Usuario> Usuarios { get; set; }
 
         public DbSet<Tarefa> Tarefas { get; set; }
 
-        public DbSet<TarefaEstado> TarefaEstados { get; set; }
-
-        public DbSet<Salario> Salarios { get; set; }
-
-        public DbSet<Permissao> Permissoes { get; set; }
-
-        public DbSet<PermissaoEstado> PermissoesEstados { get; set; }
+        public DbSet<Salario> Salarios { get; set; }       
 
         public DbSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
 

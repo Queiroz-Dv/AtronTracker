@@ -2,6 +2,7 @@
 using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
@@ -23,6 +24,14 @@ namespace Atron.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task AtualizarRepositoryAsync(int id, TEntity entity)
+        {
+            TEntity entityBd = await _dbSet.FindAsync(id);
+            entityBd = entity;
+            _dbSet.Update(entityBd);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task CriarRepositoryAsync(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
@@ -31,7 +40,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<TEntity> ObterPorCodigoRepositoryAsync(string codigo)
         {
-            var entidade = await _dbSet.FindAsync(codigo);
+            var entidade = await _dbSet.SingleOrDefaultAsync(e => EF.Property<string>(e, "Codigo") == codigo);
             return entidade;
         }
 
@@ -49,7 +58,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task RemoverRepositoryAsync(TEntity entity)
         {
-            _dbSet.Remove(entity);
+            _context.Remove(entity);
             await _context.SaveChangesAsync();
         }
     }
