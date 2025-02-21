@@ -2,9 +2,9 @@
 {
     public class Level
     {
-        public const string Success = "success";
-        public const string Warning = "warning";
-        public const string Message = "message";
-        public const string Error = "error";
+        public const string Success = "Success";
+        public const string Warning = "Warning";
+        public const string Message = "Message";
+        public const string Error = "Error";
     }
 }
