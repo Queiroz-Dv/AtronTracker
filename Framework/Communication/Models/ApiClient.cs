@@ -2,6 +2,7 @@
 using Communication.Security;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Shared.Extensions;
 using Shared.Models;
 using System.Net.Http.Headers;
 using System.Text;
@@ -16,6 +17,7 @@ namespace Communication.Models
     {
         private readonly MessageModel _messageModel;
         private readonly HttpClient _httpClient;
+        public static Level LeveL;
 
         public string Url { get; set; }
         public string Modulo { get; set; }
@@ -72,7 +74,10 @@ namespace Communication.Models
 
         private void FillMessageModel(string responseContent)
         {
-            if (responseContent.Contains("description"))
+            if (responseContent.Contains(Level.Success) ||
+                responseContent.Contains(Level.Message) ||
+                responseContent.Contains(Level.Warning) ||
+                responseContent.Contains(Level.Error))
             {
                 var messages = JsonConvert.DeserializeObject<List<Message>>(responseContent);
                 if (messages != null)
@@ -114,7 +119,7 @@ namespace Communication.Models
         {
             var response = await _httpClient.GetAsync($"{Url}/{parameter}");
 
-            var responseContent = await response.Content.ReadAsStringAsync();            
+            var responseContent = await response.Content.ReadAsStringAsync();
             var jsonContent = JsonConvert.DeserializeObject<DTO>(responseContent);
             return jsonContent;
         }
@@ -127,8 +132,9 @@ namespace Communication.Models
             var responseContent = await response.Content.ReadAsStringAsync();
             FillMessageModel(responseContent);
 
-            var jsonContent = JsonConvert.DeserializeObject<DTO>(responseContent);
-            return jsonContent;
+            return _messageModel.Messages.HasErrors() ?
+                await Task.FromResult<DTO>(default) :
+                JsonConvert.DeserializeObject<DTO>(responseContent);            
         }
 
         public async Task<string> GetAsync(int parameter)

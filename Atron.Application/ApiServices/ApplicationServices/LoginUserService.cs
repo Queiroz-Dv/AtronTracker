@@ -4,6 +4,7 @@ using Atron.Application.Interfaces;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Shared.Interfaces;
+using Shared.Models;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.ApplicationServices
@@ -13,12 +14,18 @@ namespace Atron.Application.ApiServices.ApplicationServices
         private readonly IApplicationTokenService _tokenService;
         private readonly ILoginApplicationRepository _loginApplication;
         private readonly IUsuarioService _usuarioService;
+        private readonly MessageModel _messageModel;
 
-        public LoginUserService(ILoginApplicationRepository loginApplication, IApplicationTokenService tokenService, IUsuarioService usuarioService)
+        public LoginUserService(
+            ILoginApplicationRepository loginApplication,
+            IApplicationTokenService tokenService,
+            IUsuarioService usuarioService,
+            MessageModel messageModel)
         {
             _loginApplication = loginApplication;
             _tokenService = tokenService;
             _usuarioService = usuarioService;
+            _messageModel = messageModel;
         }
 
         public async Task<LoginDTO> Authenticate(LoginDTO loginDTO)
@@ -26,7 +33,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
             var login = new ApiLogin()
             {
                 UserName = loginDTO.Codigo,
-                Password = loginDTO.Passsword
+                Password = loginDTO.Password
             };
 
             var result = await _loginApplication.AuthenticateUserLoginAsync(login);
@@ -43,6 +50,10 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
                 // Set token
                 loginDTO.UserToken = userToken;
+            }
+            else
+            {
+                _messageModel.AddError("Usuário ou senha inválidos");
             }
 
             return loginDTO;

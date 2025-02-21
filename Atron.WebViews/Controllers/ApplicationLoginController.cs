@@ -35,8 +35,8 @@ namespace Atron.WebViews.Controllers
         {
             BuildRoute("Desconectar");
             await _service.Logout();
-            Response.Cookies.Delete("AuthToken");            
-            
+            Response.Cookies.Delete("AuthToken");
+
             if (!TokenServiceStore.Token.IsNullOrEmpty())
             {
                 TokenServiceStore.Token = string.Empty;
@@ -54,20 +54,25 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
-            BuildRoute("Logar");
-            var login = await _service.Autenticar(loginDTO);
+            if (ModelState.IsValid)
+            {
+                BuildRoute("Logar");
+                var login = await _service.Autenticar(loginDTO);
 
-            if (login.Authenticated)
-            {
-                // Configura o token nos cookies e na sessão
-                SetAuthToken(login.UserToken.Token, login.UserToken.Expires);
-                return RedirectToAction("MenuPrincipal", "Home");
+                if (login != null)
+                {
+                    // Configura o token nos cookies e na sessão
+                    SetAuthToken(login.UserToken.Token, login.UserToken.Expires);
+                    return RedirectToAction("MenuPrincipal", "Home");
+                }
+                else
+                {
+                    CreateTempDataMessages();
+                    return View(loginDTO);
+                }
             }
-            else
-            {
-                ModelState.AddModelError("", "Usuário não foi autenticado, tente novamente ou contate a administração.");
-                return View(loginDTO);
-            }
+
+            return View(loginDTO);
         }
     }
 }

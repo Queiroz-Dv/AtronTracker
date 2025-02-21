@@ -37,7 +37,6 @@ namespace Atron.WebViews.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 BuildRoute("Registrar");
                 await _service.Registrar(registerDTO);
                 CreateTempDataMessages();
