@@ -292,6 +292,10 @@ button.accept-policy {
     color: #9b59b6; /* Roxo */
 }
 
+.icon-modulo {
+    color: #ddcb38; /* Amarelo */
+}
+
 /* ==========================================================================
    LAYOUT E POSICIONAMENTO
    ========================================================================== */
@@ -362,7 +366,8 @@ button.accept-policy {
         }
 
 
-@media (max-width: 480px) { /* Smartphones pequenos */  
+@media (max-width: 480px) { /* Smartphones pequenos */
+
 }
 
 @media (max-width: 768px) { /* Tablets */

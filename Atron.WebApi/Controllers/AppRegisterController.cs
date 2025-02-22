@@ -10,7 +10,7 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppRegisterController : ModuleController<ApiRegister, IRegisterUserService>
+    public class AppRegisterController : ApiBaseConfigurationController<ApiRegister, IRegisterUserService>
     {
         public AppRegisterController(
             IRegisterUserService service,

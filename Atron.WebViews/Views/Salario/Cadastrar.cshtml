@@ -8,7 +8,7 @@
             <div class="mb-4">
                 <label asp-for="UsuarioCodigo" class="form-label">Usuários</label>
                 <select asp-for="UsuarioCodigo" id="usuarioCodigo"
-                        class="form-control" asp-items="@ViewBag.Usuarios">
+                        class="form-select" asp-items="@ViewBag.Usuarios">
                     <option value="">Selecione um usuário</option>
                 </select>
                 <span asp-validation-for="UsuarioCodigo" class="text-danger"></span>
@@ -23,4 +23,9 @@
 
 @section Scripts {
     <script type="module" src="/js/views/cadastrarSalario.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#usuarioCodigo").select2();
+        });
+    </script>
 }

@@ -1,6 +1,5 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.DTO.ApiDTO;
-using Atron.Domain.Entities;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Communication.Models;
@@ -38,6 +37,8 @@ namespace Atron.Infra.IoC
             services.AddScoped<IExternalService<UsuarioDTO>, ExternalService<UsuarioDTO>>();
             services.AddScoped<IExternalService<TarefaDTO>, ExternalService<TarefaDTO>>();
             services.AddScoped<IExternalService<SalarioDTO>, ExternalService<SalarioDTO>>();
+
+            services.AddScoped<IExternalService<ModuloDTO>, ExternalService<ModuloDTO>>();
 
             services = services.AddMessageValidationServices();
             services = services.AddCustomCookieConfiguration();

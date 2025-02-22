@@ -1,4 +1,5 @@
-﻿@model CargoDTO;
+﻿
+@model CargoDTO;
 
 <div class="d-flex justify-content-center align-items-center mid-height centered-container">
     <form asp-action="Cadastrar" method="post">
@@ -10,7 +11,7 @@
             <span asp-validation-for="Codigo" class="text-danger"></span>
         </div>
 
-        <div class="col-12 mb-5">
+        <div class="col-6 mb-5">
             <div class="col-12 mb-3">
                 <label asp-for="Descricao" class="form-label"></label>
                 <input asp-for="Descricao" class="form-control" />
@@ -19,7 +20,7 @@
             <div>
                 <label class="form-label">Departamentos</label>
                 <div>
-                    <select asp-for="DepartamentoCodigo" id="departamentoCodigo" class="form-control" asp-items="@ViewBag.Departamentos">
+                    <select asp-for="DepartamentoCodigo" id="departamentoCodigo" class="form-select" asp-items="@ViewBag.Departamentos">
                         <option value="">Selecione um departamento</option>
                     </select>
                     <span asp-validation-for="DepartamentoCodigo" class="text-danger"></span>

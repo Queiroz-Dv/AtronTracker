@@ -19,6 +19,7 @@ namespace Atron.Infra.IoC
             ConfigureUsuarioServices(services);
             ConfigurarTarefaServices(services);
             ConfigurarSalarioServices(services);
+            ConfigureModuloServices(services);
             return services;
         }
 
@@ -70,6 +71,13 @@ namespace Atron.Infra.IoC
             services.AddScoped<IMessages, UsuarioMessageValidation>();
             services.AddScoped<IValidateModel<Usuario>, UsuarioMessageValidation>();
             services.AddScoped<MessageModel, UsuarioMessageValidation>();
+        }
+
+        private static void ConfigureModuloServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, ModuloMessageValidation>();
+            services.AddScoped<IValidateModel<Modulo>, ModuloMessageValidation>();
+            services.AddScoped<MessageModel, ModuloMessageValidation>();
         }
     }
 }

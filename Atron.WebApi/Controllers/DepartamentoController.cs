@@ -16,7 +16,7 @@ namespace Atron.WebApi.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class DepartamentoController : ModuleController<Departamento, IDepartamentoService>
+    public class DepartamentoController : ApiBaseConfigurationController<Departamento, IDepartamentoService>
     {
         /// <summary>
         /// Inicializa uma nova instância da classe <see cref="DepartamentoController"/>.
