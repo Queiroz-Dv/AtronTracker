@@ -7,7 +7,7 @@
 
     <partial name="Partials/Panels/FilterForm"></partial>
 
-    <table class="table table-striped">
+    <table class="table table-dark table-striped table-hover">
         <thead>
             <tr>
                 <th>@Html.DisplayNameFor(model => model.Usuario)</th>
@@ -16,7 +16,7 @@
                 <th>@Html.DisplayNameFor(model => model.Tarefa.Titulo)</th>
                 <th>@Html.DisplayNameFor(model => model.Tarefa.EstadoDaTarefaDescricao)</th>
                 <th>@Html.DisplayNameFor(model => model.Tarefa.DataInicial)</th>
-                <th>@Html.DisplayNameFor(model => model.Tarefa.DataFinal)</th>
+                <th colspan="2">@Html.DisplayNameFor(model => model.Tarefa.DataFinal)</th>
             </tr>
         </thead>
 

@@ -16,7 +16,7 @@ namespace Atron.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class CargoController : ModuleController<Cargo, ICargoService>
+    public class CargoController : ApiBaseConfigurationController<Cargo, ICargoService>
     {
         /// <summary>
         /// Inicializa uma nova instância da classe <see cref="CargoController"/>.

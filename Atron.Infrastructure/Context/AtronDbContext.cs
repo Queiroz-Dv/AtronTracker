@@ -29,6 +29,10 @@ namespace Atron.Infrastructure.Context
 
         public DbSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
 
+        public DbSet<PerfilDeAcesso> PerfilDeAcesso { get; set; }
+
+        public DbSet<Modulo> Modulo { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

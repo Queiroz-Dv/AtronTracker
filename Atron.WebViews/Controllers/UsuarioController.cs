@@ -1,5 +1,4 @@
 ﻿using Atron.Application.DTO;
-using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.Entities;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
@@ -7,11 +6,9 @@ using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,15 +21,11 @@ namespace Atron.WebViews.Controllers
         private readonly IExternalService<CargoDTO> _cargoService;
         private readonly IExternalService<DepartamentoDTO> _departamentoService;
 
-        // Aqui eu preciso do Register para fazer o registro de usuários
-        private readonly IExternalService<RegisterDTO> _registerService;
-
         public UsuarioController(
             IExternalService<UsuarioDTO> service,
             IPaginationService<UsuarioDTO> paginationService,
             IExternalService<DepartamentoDTO> departamentoExternalService,
             IExternalService<CargoDTO> cargoExternalService,
-            IExternalService<RegisterDTO> registerService,
             IRouterBuilderService router,
             MessageModel messageModel)
             : base(messageModel, paginationService)
@@ -40,7 +33,6 @@ namespace Atron.WebViews.Controllers
             _service = service;
             _departamentoService = departamentoExternalService;
             _cargoService = cargoExternalService;
-            _registerService = registerService;
             _router = router;
             ApiControllerName = nameof(Usuario);
         }
@@ -53,13 +45,13 @@ namespace Atron.WebViews.Controllers
             var usuarios = await _service.ObterTodos();
 
             ConfigurePaginationForView(usuarios, nameof(MenuPrincipal), itemPage, filter);
-            return View(GetModel<UsuarioModel>());          
+            return View(GetModel<UsuarioModel>());
         }
 
         [HttpGet]
         public async Task<IActionResult> Cadastrar()
         {
-            ConfigureDataTitleForView("Cadastro de usuários");            
+            ConfigureDataTitleForView("Cadastro de usuários");
             await FetchDepartamentosData();
             await FetchCargosData();
             return View(new UsuarioDTO());
@@ -105,7 +97,7 @@ namespace Atron.WebViews.Controllers
                 CreateTempDataMessages();
                 return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
-            
+
             return View();
         }
 
@@ -153,7 +145,7 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
         {
-            ConfigureDataTitleForView("Atualizar informação de usuário");           
+            ConfigureDataTitleForView("Atualizar informação de usuário");
             BuildRoute();
             var usuario = await _service.ObterPorCodigo(codigo);
 

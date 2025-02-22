@@ -54,7 +54,7 @@ namespace Atron.Infra.IoC
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigureUserAuthenticationServices(services);
-
+            ConfigureModuloServices(services);
             return services;
         }
 
@@ -109,6 +109,12 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
+        }
+
+        private static void ConfigureModuloServices(IServiceCollection services)
+        {
+            services.AddScoped<IModuloRepository, ModuloRepository>();
+            services.AddScoped<IModuloService, ModuloService>();
         }
 
         private static void ConfigureSalarioServices(IServiceCollection services)

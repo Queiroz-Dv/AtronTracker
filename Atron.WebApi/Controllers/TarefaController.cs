@@ -13,7 +13,7 @@ namespace Atron.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class TarefaController : ModuleController<Tarefa, ITarefaService>
+    public class TarefaController : ApiBaseConfigurationController<Tarefa, ITarefaService>
     {
         public TarefaController(ITarefaService service, MessageModel messageModel) :
             base(service, messageModel)

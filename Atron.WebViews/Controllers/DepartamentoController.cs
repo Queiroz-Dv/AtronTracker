@@ -92,6 +92,8 @@ namespace Atron.WebViews.Controllers
             await _service.Atualizar(codigo, departamentoDTO);
             CreateTempDataMessages();
 
+            ConfigureDataTitleForView("Atualizar informação de departamento");
+
             return !_messageModel.Messages.HasErrors() ?
             RedirectToAction(nameof(MenuPrincipal)) :
             View(nameof(Atualizar), departamentoDTO);

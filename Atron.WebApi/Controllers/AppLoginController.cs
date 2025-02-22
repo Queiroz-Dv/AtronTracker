@@ -10,7 +10,7 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppLoginController : ModuleController<ApiLogin, ILoginUserService>
+    public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginUserService>
     {
         public AppLoginController(
             MessageModel messageModel,

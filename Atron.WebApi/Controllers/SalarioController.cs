@@ -13,7 +13,7 @@ namespace Atron.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class SalarioController : ModuleController<Salario, ISalarioService>
+    public class SalarioController : ApiBaseConfigurationController<Salario, ISalarioService>
     {
         public SalarioController(ISalarioService service,
             MessageModel messageModel)

@@ -7,13 +7,13 @@
 <div class="panel panel-default">
     <partial name="Partials/Panels/FilterForm"></partial>
     <fieldset>
-        <legend class="fw-semibold">Cargos</legend>
-        <table class="table table-striped">
+        <legend>Cargos</legend>
+        <table class="table table-dark table-striped table-hover">
             <thead>
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.Cargo.Codigo)</th>
                     <th>@Html.DisplayNameFor(model => model.Cargo.Descricao)</th>
-                    <th>Departamento</th>
+                    <th colspan="2">@Html.DisplayNameFor(model => model.Cargo.Departamento)</th>
                 </tr>
             </thead>
 

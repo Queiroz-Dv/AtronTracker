@@ -3,16 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Atron.Application.DTO
 {
-    public class DepartamentoDTO
+    public class ModuloDTO
     {
-        public DepartamentoDTO() { }
-
-        public DepartamentoDTO(string codigo, string descricao)
-        {
-            Codigo = codigo.ToUpper();
-            Descricao = descricao.ToUpper();
-        }
-
         public int Id { get; set; }
 
         [MaxLength(10, ErrorMessage = "O tamanho máximo do código é de até 10 caracteres.")]
@@ -27,10 +19,5 @@ namespace Atron.Application.DTO
         [Required(ErrorMessage = "O campo Descrição é obrigatório.")]
         [DisplayName("Descrição")]
         public string Descricao { get; set; }
-
-        public string ObterCodigoComDescricao()
-        {
-            return $"{Codigo} - {Descricao}";
-        }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model DepartamentoModel;
+﻿@model ModuloModel;
 
 <partial name="Partials/TitleLabel"></partial>
 <partial name="Partials/Buttons/BtnCadastrar"></partial>
@@ -6,13 +6,13 @@
 <div class="panel panel-default">
     <partial name="Partials/Panels/FilterForm"></partial>
     <fieldset>
-        <legend>Departamentos</legend>
-        <div id="departamentos">
+        <legend>Módulos</legend>
+        <div id="modulos">
             <table class="table table-dark table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.Departamento.Codigo)</th>
-                        <th colspan="2">@Html.DisplayNameFor(model => model.Departamento.Descricao)</th>                        
+                        <th>@Html.DisplayNameFor(model => model.Modulo.Codigo)</th>
+                        <th colspan="2">@Html.DisplayNameFor(model => model.Modulo.Descricao)</th>
                     </tr>
                 </thead>
 
@@ -38,5 +38,6 @@
     </fieldset>
 </div>
 <br />
+
 <script src="~/js/departamentoScript.js"></script>
-<partial name="Partials/ExcluirRegistro" for="Departamento"></partial>
+<partial name="Partials/ExcluirRegistro" for="Modulo"></partial>
