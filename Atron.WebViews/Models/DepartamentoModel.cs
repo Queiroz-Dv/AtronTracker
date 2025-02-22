@@ -1,13 +1,15 @@
 ﻿using Atron.Application.DTO;
-using Shared.DTO;
 using System.Collections.Generic;
 
 namespace Atron.WebViews.Models
 {
     public class DepartamentoModel : DefaultModel<DepartamentoDTO>
-    {        
-        public DepartamentoDTO Departamento { get; set; }  
+    {
+        public DepartamentoModel()
+        {
+            Entities = new List<DepartamentoDTO>();
+        }
 
-        public IEnumerable<DepartamentoDTO> Departamentos { get; set; }
+        public DepartamentoDTO Departamento { get; set; }
     }
 }

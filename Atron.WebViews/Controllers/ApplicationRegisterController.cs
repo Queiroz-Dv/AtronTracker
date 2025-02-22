@@ -1,5 +1,6 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
+using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
@@ -13,9 +14,14 @@ namespace Atron.WebViews.Controllers
     {
         private readonly IRegisterExternalService _service;
 
-        public ApplicationRegisterController(IRegisterExternalService service, MessageModel messageModel, IPaginationService<RegisterDTO> paginationService)
+        public ApplicationRegisterController(
+            IRegisterExternalService service,
+            IPaginationService<RegisterDTO> paginationService,
+            IRouterBuilderService router,
+            MessageModel messageModel)
             : base(messageModel, paginationService)
         {
+            _router = router;
             _service = service;
             ApiControllerName = "AppRegister";
         }
@@ -23,21 +29,40 @@ namespace Atron.WebViews.Controllers
         [HttpGet]
         public IActionResult Registrar()
         {
-            return View(new RegisterDTO());
+            return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Registrar(RegisterDTO registerDTO)
         {
-            BuildRoute("Registrar");
+            if (ModelState.IsValid)
+            {
+                BuildRoute("Registrar");
+                await _service.Registrar(registerDTO);
+                CreateTempDataMessages();
 
-            await _service.Registrar(registerDTO);
+                return !_messageModel.Messages.HasErrors() ?
+                        RedirectToAction("Login", "ApplicationLogin") :
+                        View(registerDTO);
+            }
 
-            CreateTempDataMessages();
+            return View(registerDTO);
+        }
 
-            return !_messageModel.Messages.HasErrors() ?
-                    RedirectToAction("Login", "ApplicationLogin") :
-                    View(registerDTO);
+        [HttpGet]
+        public async Task<IActionResult> VerificarUsuarioPorCodigo(string codigo)
+        {
+            BuildRoute("VerificarUsuarioPorCodigo");
+            var usuarioExiste = await _service.UsuarioExiste(codigo);
+            return Json(new { usuarioExiste });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerificarEmail(string email)
+        {
+            BuildRoute(nameof(VerificarEmail));
+            var emailResponse = await _service.EmailExiste(email);
+            return Json(new { emailResponse });
         }
     }
 }

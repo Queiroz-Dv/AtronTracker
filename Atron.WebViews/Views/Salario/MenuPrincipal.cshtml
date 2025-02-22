@@ -1,0 +1,38 @@
+﻿@model SalarioModel;
+
+<partial name="Partials/TitleLabel"></partial>
+<partial name="Partials/Buttons/BtnCadastrar"></partial>
+
+<div class="panel panel-default">
+
+    <partial name="Partials/Panels/FilterForm"></partial>
+
+    <table class="table table-dark table-striped table-hover">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Usuario)</th>
+                <th>@Html.DisplayNameFor(model => model.Usuario.Cargo)</th>
+                <th>@Html.DisplayNameFor(model => model.Usuario.Departamento)</th>
+                <th colspan="2">@Html.DisplayNameFor(model => model.Usuario.Salario)</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.Entities)
+            {
+                <tr>
+                    <td>@item.NomeUsuario</td>
+                    <td>@item.CargoDescricao</td>
+                    <td>@item.DepartamentoDescricao</td>
+                    <td>@item.SalarioMensal</td>
+                    <td class="text-end">
+                        <partial name="Partials/Buttons/BtnAtualizarPorId" model="item.Id" />
+                        <partial name="Partials/Buttons/BtnExcluir" model="item.Id" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="PagerPartial" model="Model.PageInfo" />
+</div>
+<partial name="Partials/ExcluirRegistro" for="Salario"></partial>

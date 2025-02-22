@@ -5,7 +5,6 @@ using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.DTO;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
@@ -28,36 +27,19 @@ namespace Atron.WebViews.Controllers
             _paginationService = paginationService;
             _service = service;
             _router = router;
-            ApiControllerName = nameof(Departamento);
+            ApiControllerName = nameof(Departamento);           
         }
 
-        [HttpGet, HttpPost]
-        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
+        [HttpGet]
+        public async Task<IActionResult> MenuPrincipal(string filter = "", int itemPage = 1)
         {
+            ConfigureDataTitleForView("Painel de departamentos");
             BuildRoute();
             var departamentos = await _service.ObterTodos();
 
-            ConfigurePaginationForView(departamentos, new PageInfoDTO()
-            {
-                CurrentPage = itemPage,
-                PageRequestInfo = new PageRequestInfoDTO()
-                {
-                    CurrentViewController = ApiControllerName,
-                    Action = nameof(Index),
-                    Filter = filter,
-                }
-            });
-
-            var model = new DepartamentoModel()
-            {
-                Departamentos = _paginationService.GetEntitiesFilled(),
-                PageInfo = _paginationService.GetPageInfo()
-            };
-
-            ConfigureDataTitleForView("Painel de departamentos");
-            return View(model);
+            ConfigurePaginationForView(departamentos, nameof(MenuPrincipal), itemPage, filter);
+            return View(GetModel<DepartamentoModel>());
         }
-
 
         [HttpGet]
         public IActionResult Cadastrar()
@@ -69,33 +51,34 @@ namespace Atron.WebViews.Controllers
         [HttpPost]
         public async Task<IActionResult> Cadastrar(DepartamentoDTO departamento)
         {
+            ConfigureDataTitleForView("Cadastro de departamentos");
+
             if (ModelState.IsValid)
-            {              
+            {
                 BuildRoute();
 
                 await _service.Criar(departamento);
 
                 CreateTempDataMessages();
 
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) :
+                return !_messageModel.Messages.HasErrors() ?
+                    RedirectToAction(nameof(Cadastrar)) :
                     View(nameof(Cadastrar), departamento);
             }
-
-            ConfigureDataTitleForView("Cadastro de departamentos");
 
             return View(departamento);
         }
 
         [HttpGet]
         public async Task<IActionResult> Atualizar(string codigo)
-        {           
+        {
             BuildRoute();
             var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
             if (departamentoDTO is null || _messageModel.Messages.HasErrors())
             {
                 CreateTempDataMessages();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MenuPrincipal));
             }
 
             ConfigureDataTitleForView("Atualizar informação de departamento");
@@ -104,24 +87,26 @@ namespace Atron.WebViews.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Atualizar(string codigo, DepartamentoDTO departamentoDTO)
-        {           
+        {
             BuildRoute();
             await _service.Atualizar(codigo, departamentoDTO);
             CreateTempDataMessages();
 
+            ConfigureDataTitleForView("Atualizar informação de departamento");
+
             return !_messageModel.Messages.HasErrors() ?
-            RedirectToAction(nameof(Index)) :
+            RedirectToAction(nameof(MenuPrincipal)) :
             View(nameof(Atualizar), departamentoDTO);
         }
 
         [HttpPost]
         public async Task<IActionResult> Remover(string codigo)
-        {           
+        {
             BuildRoute();
             await _service.Remover(codigo);
 
             CreateTempDataMessages();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MenuPrincipal));
         }
 
         [HttpGet]
@@ -130,6 +115,12 @@ namespace Atron.WebViews.Controllers
             var departamento = await _service.ObterPorCodigo(codigoDepartamento);
 
             return Ok(departamento);
+        }
+
+        public override Task<string> ObterMensagemExclusao()
+        {
+            return Task.FromResult("Ao excluir esse departamento os cargos associados a ele serão excluídos e os usuários podem não ter acesso a alguns módulos." +
+                                    " Deseja prosseguir ?");
         }
     }
 }

@@ -1,0 +1,5 @@
+﻿<form asp-controller="@ViewBag.CurrentController" asp-action="MenuPrincipal" asp-route-filter="@ViewData["Filter"]" method="get">
+    <div class="mb-5 w-25">
+        <input type="text" class="form-control" name="filter" value="@ViewData["Filter"]" placeholder="Filtrar" />
+    </div>
+</form>

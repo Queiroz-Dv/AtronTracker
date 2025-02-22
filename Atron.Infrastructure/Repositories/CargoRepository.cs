@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class CargoRepository : ICargoRepository
+    public class CargoRepository : Repository<Cargo>, ICargoRepository
     {
         private AtronDbContext _context;
 
-        public CargoRepository(AtronDbContext context)
+        public CargoRepository(AtronDbContext context) : base(context)
         {
             _context = context;
         }
@@ -43,13 +43,13 @@ namespace Atron.Infrastructure.Repositories
         public async Task<Cargo> ObterCargoComDepartamentoPorIdAsync(int? id)
         {
             var cargos = await (from pst in _context.Cargos
-                                join dept in _context.Departamentos on pst.DepartmentoId equals dept.Id
+                                join dept in _context.Departamentos on pst.DepartamentoId equals dept.Id
                                 where dept.Id == id
                                 select new Cargo
                                 {
                                     Descricao = pst.Descricao,
                                     Departamento = dept,
-                                    DepartmentoId = dept.Id
+                                    DepartamentoId = dept.Id
                                 }).FirstOrDefaultAsync();
 
 
@@ -73,7 +73,7 @@ namespace Atron.Infrastructure.Repositories
         {
             var cargoBd = await ObterCargoPorCodigoAsync(cargo.Codigo);
             cargoBd.Descricao = cargo.Descricao;
-            cargoBd.DepartmentoId = cargo.DepartmentoId;
+            cargoBd.DepartamentoId = cargo.DepartamentoId;
             cargoBd.DepartamentoCodigo = cargo.DepartamentoCodigo;
 
             try
@@ -95,9 +95,20 @@ namespace Atron.Infrastructure.Repositories
             return await _context.Cargos.Include(dpt => dpt.Departamento).FirstOrDefaultAsync(crg => crg.Codigo == codigo);
         }
 
+        public async Task<Cargo> ObterCargoPorCodigoAsyncAsNoTracking(string codigo)
+        {
+            return await _context.Cargos.Include(dpt => dpt.Departamento).AsNoTracking().FirstOrDefaultAsync(crg => crg.Codigo == codigo);
+        }
+
+
         public bool CargoExiste(string codigo)
         {
             return _context.Cargos.Any(crg => crg.Codigo == codigo);
+        }
+
+        public async Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo)
+        {
+            return await _context.Cargos.Where(crg => crg.DepartamentoId == departamentoId && crg.DepartamentoCodigo == departamentoCodigo).ToListAsync();
         }
     }
 }

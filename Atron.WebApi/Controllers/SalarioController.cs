@@ -13,9 +13,8 @@ namespace Atron.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class SalarioController : ModuleController<Salario, ISalarioService>
+    public class SalarioController : ApiBaseConfigurationController<Salario, ISalarioService>
     {
-
         public SalarioController(ISalarioService service,
             MessageModel messageModel)
         : base(service, messageModel)
@@ -39,20 +38,10 @@ namespace Atron.WebApi.Controllers
             return Ok(salarios);
         }
 
-
-        [HttpGet]
-        [Route("ObterMeses")]
-        public async Task<ActionResult<IEnumerable<MesDTO>>> ObterMeses()
-        {
-            var meses = await _service.ObterMeses();
-
-            return Ok(meses);
-        }
-
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(string id, [FromBody] SalarioDTO salario)
+        public async Task<ActionResult> Put(int id, [FromBody] SalarioDTO salario)
         {
-            await _service.AtualizarServiceAsync(salario);
+            await _service.AtualizarServiceAsync(id, salario);
 
             return _messageModel.Messages.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());

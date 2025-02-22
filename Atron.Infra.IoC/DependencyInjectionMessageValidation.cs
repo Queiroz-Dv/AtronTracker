@@ -19,26 +19,26 @@ namespace Atron.Infra.IoC
             ConfigureUsuarioServices(services);
             ConfigurarTarefaServices(services);
             ConfigurarSalarioServices(services);
+            ConfigureModuloServices(services);
             return services;
         }
 
         private static void ConfigureLoginMessageValidation(IServiceCollection services)
         {
             services.AddScoped<IMessages, LoginMessageValidation>();
-            services.AddScoped<MessageModel, LoginMessageValidation>();
             services.AddScoped<IValidateModel<ApiLogin>, LoginMessageValidation>();
+            services.AddScoped<MessageModel, LoginMessageValidation>();
         }
 
         private static void ConfigureApiRegisterMessageValidation(IServiceCollection services)
         {
             services.AddScoped<IMessages, ApiRegisterMessageValidation>();
-            services.AddScoped<MessageModel, ApiRegisterMessageValidation>();
             services.AddScoped<IValidateModel<ApiRegister>, ApiRegisterMessageValidation>();
+            services.AddScoped<MessageModel, ApiRegisterMessageValidation>();
         }
 
         private static void ConfigurarSalarioServices(IServiceCollection services)
         {
-            //  services.AddScoped<IPaginationService<SalarioDTO>, PaginationService<SalarioDTO>>();
             services.AddScoped<IMessages, SalarioMessageValidation>();
             services.AddScoped<IValidateModel<Salario>, SalarioMessageValidation>();
             services.AddScoped<MessageModel, SalarioMessageValidation>();
@@ -47,32 +47,37 @@ namespace Atron.Infra.IoC
         private static void ConfigurarTarefaServices(IServiceCollection services)
         {
             services.AddScoped<IMessages, TarefaMessageValidation>();
-            services.AddScoped<MessageModel, TarefaMessageValidation>();
-            services.AddScoped<MessageModel, TarefaEstadoMessageValidation>();
-
             services.AddScoped<IValidateModel<Tarefa>, TarefaMessageValidation>();
-            services.AddScoped<IValidateModel<TarefaEstado>, TarefaEstadoMessageValidation>();
+            services.AddScoped<MessageModel, TarefaMessageValidation>();
+
         }
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {
             services.AddScoped<IMessages, DepartamentoMessageValidation>();
-            services.AddScoped<MessageModel, DepartamentoMessageValidation>();
             services.AddScoped<IValidateModel<Departamento>, DepartamentoMessageValidation>();
+            services.AddScoped<MessageModel, DepartamentoMessageValidation>();
         }
 
         private static void ConfgureCargoServices(IServiceCollection services)
         {
             services.AddScoped<IMessages, CargoMessageValidation>();
-            services.AddScoped<MessageModel, CargoMessageValidation>();
             services.AddScoped<IValidateModel<Cargo>, CargoMessageValidation>();
+            services.AddScoped<MessageModel, CargoMessageValidation>();
         }
 
         private static void ConfigureUsuarioServices(IServiceCollection services)
         {
             services.AddScoped<IMessages, UsuarioMessageValidation>();
-            services.AddScoped<MessageModel, UsuarioMessageValidation>();
             services.AddScoped<IValidateModel<Usuario>, UsuarioMessageValidation>();
+            services.AddScoped<MessageModel, UsuarioMessageValidation>();
+        }
+
+        private static void ConfigureModuloServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, ModuloMessageValidation>();
+            services.AddScoped<IValidateModel<Modulo>, ModuloMessageValidation>();
+            services.AddScoped<MessageModel, ModuloMessageValidation>();
         }
     }
 }

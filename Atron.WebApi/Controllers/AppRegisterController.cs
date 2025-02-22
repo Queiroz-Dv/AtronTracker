@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
-    public class AppRegisterController : ModuleController<ApiRegister, IRegisterUserService>
+    public class AppRegisterController : ApiBaseConfigurationController<ApiRegister, IRegisterUserService>
     {
         public AppRegisterController(
             IRegisterUserService service,
@@ -28,6 +27,24 @@ namespace Atron.WebApi.Controllers
             return _messageModel.Messages.HasErrors() ?
                 BadRequest(ObterNotificacoes()) :
                 Ok(ObterNotificacoes());
+        }
+
+
+        [HttpGet]
+        [Route("VerificarUsuarioPorCodigo/{codigo}")]
+        public async Task<ActionResult> VerificarUsuarioPorCodigo(string codigo)
+        {
+            var userExist = await _service.UserExists(codigo);
+
+            return userExist ? Ok(new RegisterDTO { Codigo = codigo }) : NotFound(null);
+        }
+
+        [HttpGet]
+        [Route("VerificarEmail/{email}")]
+        public async Task<ActionResult> VerificarEmail(string email)
+        {
+            var emailExist = await _service.EmailExists(email);
+            return emailExist ? Ok(new RegisterDTO { Email = email }) : NotFound(null);
         }
     }
 }

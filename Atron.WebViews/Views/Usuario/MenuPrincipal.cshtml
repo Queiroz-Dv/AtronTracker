@@ -1,0 +1,40 @@
+﻿@model UsuarioModel;
+
+<partial name="Partials/TitleLabel"></partial>
+<partial name="Partials/Buttons/BtnCadastrar"></partial>
+
+<div class="panel panel-default">
+    <partial name="Partials/Panels/FilterForm"></partial>
+    <fieldset>
+        <legend class="fw-semibold">Usuários</legend>
+        <table class="table table-dark table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Usuario)</th>
+                    <th>@Html.DisplayNameFor(model => model.Cargo)</th>
+                    <th colspan="2">@Html.DisplayNameFor(model => model.Departamento)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model.Entities)
+                {
+                    <tr>
+                        <td>@item.Codigo - @item.Nome @item.Sobrenome</td>
+
+                        <td>@(item.Cargo?.ObterCodigoComDescricao() ?? string.Empty)</td>
+                        <td>@(item.Departamento?.ObterCodigoComDescricao() ?? string.Empty)</td>
+
+                        <td class="text-end">
+                            <partial name="Partials/Buttons/BtnAtualizar" model="item.Codigo" />
+                            <partial name="Partials/Buttons/BtnExcluir" model="item.Codigo" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </fieldset>
+
+    <partial name="PagerPartial" model="Model.PageInfo" />
+</div>
+<partial name="Partials/ExcluirRegistro" for="Usuario"></partial>

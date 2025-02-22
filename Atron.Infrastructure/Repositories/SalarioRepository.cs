@@ -17,15 +17,13 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AtualizarSalarioRepositoryAsync(Salario salario)
+        public async Task AtualizarSalarioRepositoryAsync(int id, Salario salario)
         {
-            var entidade = await _context.Salarios.FirstOrDefaultAsync(slr => slr.Id == salario.Id);
+            var entidade = await _context.Salarios.FirstOrDefaultAsync(slr => slr.Id == id);
 
             entidade.SalarioMensal = salario.SalarioMensal;
-            entidade.Ano = salario.Ano;            
-            entidade.MesId = salario.MesId;
-            entidade.UsuarioId = salario.UsuarioId;
-            entidade.UsuarioCodigo = salario.UsuarioCodigo;
+            entidade.Ano = salario.Ano;
+            entidade.MesId = salario.MesId;           
 
             try
             {
@@ -62,18 +60,25 @@ namespace Atron.Infrastructure.Repositories
         {
             return _context.Salarios
                 .Include(slr => slr.Usuario)
-                //.ThenInclude(crg => crg.Cargo)
-               // .Include(dpt => dpt.Usuario.Departamento)
+                .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
+                .ThenInclude(crg => crg.Cargo)
+                .ThenInclude(dpt => dpt.Departamento)
                 .FirstOrDefaultAsync(sr => sr.Id == id);
+        }
+
+        public Task<Salario> ObterSalarioPorUsuario(int usuarioId, string usuarioCodigo)
+        {
+            return _context.Salarios.FirstOrDefaultAsync(slr => slr.UsuarioId == usuarioId && slr.UsuarioCodigo == usuarioCodigo);
         }
 
         public Task<List<Salario>> ObterSalariosRepository()
         {
             return _context.Salarios
                 .Include(slr => slr.Usuario)
-               // .ThenInclude(crg => crg.Cargo)
-               // .Include(dpt => dpt.Usuario.Departamento)
-                .Include(ms => ms.Mes).ToListAsync();
+                .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
+                .ThenInclude(crg => crg.Cargo)
+                .ThenInclude(dpt => dpt.Departamento)
+                .ToListAsync();
         }
     }
 }

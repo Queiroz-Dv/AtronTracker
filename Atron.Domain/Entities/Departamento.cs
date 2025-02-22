@@ -1,19 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Atron.Domain.Entities
 {
-    public sealed class Departamento : EntityBase
+    public sealed class Departamento
     {
-        public Departamento() { }
+        [Key]
+        public int Id { get; set; }
 
-        public Departamento(string codigo, string descricao)
-        {
-            Codigo = codigo.ToUpper();
-            Descricao = descricao.ToUpper();
-        }
-
-        public string Codigo { get; set; }
-        public string Descricao { get; set; }
+        [MaxLength(10)][NotNull] public string Codigo { get; set; }
+        [MaxLength(50)][NotNull] public string Descricao { get; set; }
 
         public List<Cargo> Cargos { get; set; }
         public List<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }

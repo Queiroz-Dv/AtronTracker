@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace Atron.Infra.IoC
 {
@@ -16,8 +18,8 @@ namespace Atron.Infra.IoC
                     Title = "Atron API",
                     Version = "v1",
                     Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
-                    Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }                    
-                    
+                    Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
+
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -46,9 +48,22 @@ namespace Atron.Infra.IoC
                     }
                 });
                 c.EnableAnnotations();
+
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
-            
+
             return services;
         }
     }
 }
+
+// Config em publicação
+//< Target Name = "PrepublishScript" BeforeTargets = "PrepareForPublish" >
+//    < ItemGroup >
+//        < DocFile Include = "bin\*\*\*.xml" />
+//    </ ItemGroup >
+//    < Copy SourceFiles = "@(DocFile)"
+//          DestinationFolder = "$(PublishDir)"
+//          SkipUnchangedFiles = "false" />
+//</ Target >

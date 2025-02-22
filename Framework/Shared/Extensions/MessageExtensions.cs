@@ -1,5 +1,4 @@
-﻿using Shared.Enums;
-using Shared.Models;
+﻿using Shared.Models;
 
 namespace Shared.Extensions
 {
@@ -7,20 +6,16 @@ namespace Shared.Extensions
     {
         public static bool HasErrors(this IList<Message> messages)
         {
-            return messages.Any(m => m.Level == MessageLevel.Error);
+            return messages.Any(m => m.Level == Level.Error);
         }
 
-        //TODO: Buscar uma forma de fazer a conversão para um formato JSON válido ao invés de um dynamic
-        public static IEnumerable<dynamic> ConvertMessageToJson(this IList<Message> messages)
+        public static IEnumerable<object> ConvertMessageToJson(this IList<Message> messages)
         {
-            var message = from ms in messages
-                          select new
-                          {
-                              ms.Description,
-                              Level = ms.Level.GetEnumDescription(),
-                          };
-
-            return message;
+            return messages.Select(ms => new
+            {
+                ms.Description,
+                ms.Level
+            });
         }
     }
 }

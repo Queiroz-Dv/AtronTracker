@@ -61,11 +61,11 @@ namespace Atron.Infrastructure.Migrations
                 columns: table => new
                 {
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
-                    UsuarioCodigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UsuarioCodigo = table.Column<string>(type: "nvarchar(10)", nullable: false),
                     CargoId = table.Column<int>(type: "int", nullable: false),
-                    CargoCodigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CargoCodigo = table.Column<string>(type: "nvarchar(10)", nullable: false),
                     DepartamentoId = table.Column<int>(type: "int", nullable: false),
-                    DepartamentoCodigo = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    DepartamentoCodigo = table.Column<string>(type: "nvarchar(10)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,7 +123,7 @@ namespace Atron.Infrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "CargoCodigo",
                 table: "Usuarios",
-                type: "nvarchar(450)",
+                type: "nvarchar(10)",
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
@@ -136,7 +136,7 @@ namespace Atron.Infrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "DepartamentoCodigo",
                 table: "Usuarios",
-                type: "nvarchar(450)",
+                type: "nvarchar(10)",
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
