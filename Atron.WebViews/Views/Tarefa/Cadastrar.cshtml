@@ -1,30 +1,32 @@
-﻿@using Atron.Application.DTO;
-@using Shared.DTO;
-@using Shared.Services;
-@using Newtonsoft.Json;
-@using Atron.WebViews.Models;
-@model TarefaDTO;
+﻿@model TarefaDTO;
 
-<h2 style="margin-bottom: 40px;">@ViewData["Title"]</h2>
-<div class="row">
-    <div class="col-2">
-        <label asp-for="UsuarioCodigo" style="font-size: larger;" class="form-label fw-bold">Usuários</label>
-    </div>
-    <div class="col" id="usuarioSelectContainer">
-        <select asp-for="UsuarioCodigo" id="usuarioCodigo"
-                class="form-control" asp-items="@ViewBag.Usuarios">
-            <option value="">Selecione um usuário</option>
-        </select>
-        <span asp-validation-for="UsuarioCodigo" class="text-danger"></span>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <partial name="Partials/TitleLabel"></partial>
+            <div class="mb-4">
+                <label asp-for="UsuarioCodigo" class="form-label">Usuários</label>
+                <select asp-for="UsuarioCodigo" id="usuarioCodigo"
+                        class="form-select" asp-items="@ViewBag.Usuarios">
+                    <option value="">Selecione um usuário</option>
+                </select>
+                <span asp-validation-for="UsuarioCodigo" class="text-danger"></span>
+            </div>
+
+
+            <div id="tarefaFormContainer">
+                <partial name="Partials/Tarefa/FormularioTarefa" model="new TarefaDTO()"> </partial>
+            </div>
+        </div>
     </div>
 </div>
 
-<br />
-<!-- Contêiner para exibir o formulário de tarefa -->
-<div id="tarefaFormContainer">
-    <partial name="Partials/Tarefa/FormularioTarefa" model="new TarefaDTO()"> </partial>
-</div>
 
 @section Scripts {
     <script type="module" src="/js/views/cadastrarTarefa.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#usuarioCodigo").select2();
+        });
+    </script>
 }

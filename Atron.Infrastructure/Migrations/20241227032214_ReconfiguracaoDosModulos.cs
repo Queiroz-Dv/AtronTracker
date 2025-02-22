@@ -15,7 +15,7 @@ namespace Atron.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Codigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Codigo = table.Column<string>(type: "nvarchar(10)", nullable: false),
                     Descricao = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -90,10 +90,10 @@ namespace Atron.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Codigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Codigo = table.Column<string>(type: "nvarchar(10)", nullable: false),
                     Descricao = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     DepartmentoId = table.Column<int>(type: "int", nullable: false),
-                    DepartamentoCodigo = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DepartamentoCodigo = table.Column<string>(type: "nvarchar(10)", nullable: true),
                     IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -112,14 +112,14 @@ namespace Atron.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Codigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Codigo = table.Column<string>(type: "nvarchar(10)", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Sobrenome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SalarioAtual = table.Column<int>(type: "int", nullable: false),
                     CargoId = table.Column<int>(type: "int", nullable: false),
-                    CargoCodigo = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CargoCodigo = table.Column<string>(type: "nvarchar(10)", nullable: true),
                     DepartamentoId = table.Column<int>(type: "int", nullable: false),
-                    DepartamentoCodigo = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DepartamentoCodigo = table.Column<string>(type: "nvarchar(10)", nullable: true),
                     DataNascimento = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IdSequencial = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -145,7 +145,7 @@ namespace Atron.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
-                    UsuarioCodigo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UsuarioCodigo = table.Column<string>(type: "nvarchar(10)", nullable: false),
                     SalarioMensal = table.Column<int>(type: "int", nullable: false),
                     Ano = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MesId = table.Column<int>(type: "int", nullable: false),
@@ -175,7 +175,7 @@ namespace Atron.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
-                    UsuarioCodigo = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UsuarioCodigo = table.Column<string>(type: "nvarchar(10)", nullable: true),
                     Titulo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Conteudo = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: true),
                     DataInicial = table.Column<DateTime>(type: "datetime2", nullable: false),

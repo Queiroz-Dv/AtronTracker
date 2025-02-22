@@ -2,6 +2,7 @@
 using Communication.Security;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Shared.Extensions;
 using Shared.Models;
 using System.Net.Http.Headers;
 using System.Text;
@@ -16,6 +17,7 @@ namespace Communication.Models
     {
         private readonly MessageModel _messageModel;
         private readonly HttpClient _httpClient;
+        public static Level LeveL;
 
         public string Url { get; set; }
         public string Modulo { get; set; }
@@ -40,7 +42,9 @@ namespace Communication.Models
 
         public async Task<string> GetAsync(string parameter)
         {
-            var response = await _httpClient.GetAsync($"{Url}{parameter}");
+            NormalizeUrl();
+
+            var response = await _httpClient.GetAsync($"{Url}/{parameter}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -54,10 +58,33 @@ namespace Communication.Models
             }
         }
 
+        private void NormalizeUrl()
+        {
+            Url = Url.TrimEnd('/');
+        }
+
         public async Task PostAsync(string content)
         {
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
-            await _httpClient.PostAsync(Url, httpContent);
+            var response = await _httpClient.PostAsync(Url, httpContent);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            FillMessageModel(responseContent);
+        }
+
+        private void FillMessageModel(string responseContent)
+        {
+            if (responseContent.Contains(Level.Success) ||
+                responseContent.Contains(Level.Message) ||
+                responseContent.Contains(Level.Warning) ||
+                responseContent.Contains(Level.Error))
+            {
+                var messages = JsonConvert.DeserializeObject<List<Message>>(responseContent);
+                if (messages != null)
+                {
+                    _messageModel.Messages.AddRange(messages);
+                }
+            }
         }
 
         public async Task PutAsync(string parameter, string content)
@@ -65,7 +92,11 @@ namespace Communication.Models
             var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
             try
             {
-                var response = await _httpClient.PutAsync($"{Url}{parameter}", httpContent);
+                NormalizeUrl();
+                var response = await _httpClient.PutAsync($"{Url}/{parameter}", httpContent);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                FillMessageModel(responseContent);
+
             }
             catch (HttpRequestException)
             {
@@ -75,12 +106,22 @@ namespace Communication.Models
 
         public async Task DeleteAsync(string codigo)
         {
-            var response = await _httpClient.DeleteAsync($"{Url}{codigo}");
+            NormalizeUrl();
+            var response = await _httpClient.DeleteAsync($"{Url}/{codigo}");
 
             if (response.IsSuccessStatusCode)
             {
                 _messageModel.AddRegisterRemovedSuccessMessage(Modulo);
             }
+        }
+
+        public async Task<DTO> GetAsync<DTO>(string parameter)
+        {
+            var response = await _httpClient.GetAsync($"{Url}/{parameter}");
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var jsonContent = JsonConvert.DeserializeObject<DTO>(responseContent);
+            return jsonContent;
         }
 
         public async Task<DTO> PostAsync<DTO>(string content)
@@ -89,9 +130,43 @@ namespace Communication.Models
             var response = await _httpClient.PostAsync(Url, httpContent);
 
             var responseContent = await response.Content.ReadAsStringAsync();
+            FillMessageModel(responseContent);
 
-            var jsonContent = JsonConvert.DeserializeObject<DTO>(responseContent);
-            return jsonContent;
+            return _messageModel.Messages.HasErrors() ?
+                await Task.FromResult<DTO>(default) :
+                JsonConvert.DeserializeObject<DTO>(responseContent);            
+        }
+
+        public async Task<string> GetAsync(int parameter)
+        {
+            var response = await _httpClient.GetAsync($"{Url}{parameter}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                FillMessageModel(responseContent);
+                return responseContent;
+            }
+            else
+            {
+                _messageModel.AddError("Não foi possível obter o registro.");
+                return null;
+            }
+        }
+
+        public async Task PutAsyncById(int parameter, string content)
+        {
+            var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
+            try
+            {
+                var response = await _httpClient.PutAsync($"{Url}{parameter}", httpContent);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                FillMessageModel(responseContent);
+            }
+            catch (HttpRequestException)
+            {
+                throw;
+            }
         }
     }
 }

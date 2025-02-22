@@ -10,7 +10,7 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppLoginController : ModuleController<ApiLogin, ILoginUserService>
+    public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginUserService>
     {
         public AppLoginController(
             MessageModel messageModel,
@@ -28,13 +28,18 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult<LoginDTO>> Logar([FromBody] LoginDTO loginDTO)
         {
             var result = await _service.Authenticate(loginDTO);
+            if (!result.Authenticated)
+            {
+                return Unauthorized(ObterNotificacoes());
+            }
+
             Response.Headers.Add("Authorization", $"Bearer {result.UserToken.Token}");
 
             return Ok(result);
         }
 
         [Route("Disconectar")]
-        [HttpPut]
+        [HttpGet]
         public async Task<ActionResult> Logout()
         {
             await _service.Logout();

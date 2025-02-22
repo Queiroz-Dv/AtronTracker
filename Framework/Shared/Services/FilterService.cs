@@ -16,7 +16,7 @@ namespace Shared.Services
                                                        .GetProperty(keyToSearch)?
                                                        .GetValue(item)?
                                                        .ToString()?
-                                                       .Contains(filter) ?? false)
+                                                       .Contains(filter.ToUpper()) ?? false)
                                                        .ToList()
                 : items.ToList();
         }

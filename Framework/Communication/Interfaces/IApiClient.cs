@@ -21,6 +21,9 @@ namespace Communication.Interfaces
 
         Task<string> GetAsync(string parameter);
 
+        Task<string> GetAsync(int parameter);
+        Task<DTO> GetAsync<DTO>(string parameter);
+
         /// <summary>
         /// Executa a criação de um registro
         /// </summary>        
@@ -35,5 +38,7 @@ namespace Communication.Interfaces
         /// <param name="parameter">Parâmetro que será utilizado como chave para atualizar</param>
         /// <param name="content">Conteúdo que será enviado para atualização</param>        
         Task PutAsync(string parameter, string content);
+
+        Task PutAsyncById(int parameter, string content);
     }
 }

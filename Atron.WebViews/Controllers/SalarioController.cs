@@ -1,186 +1,229 @@
-﻿//using Atron.Application.DTO;
-//using Atron.Domain.Entities;
-//using Atron.WebViews.Models;
-//using ExternalServices.Interfaces;
-//using ExternalServices.Interfaces.ApiRoutesInterfaces;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Mvc.Rendering;
-//using Microsoft.Extensions.Configuration;
-//using Microsoft.Extensions.Options;
-//using Shared.DTO.API;
-//using Shared.Extensions;
-//using Shared.Interfaces;
-//using Shared.Models;
-//using System.Linq;
-//using System.Threading.Tasks;
+﻿using Atron.Application.DTO;
+using Atron.Domain.Entities;
+using Atron.WebViews.Models;
+using Communication.Interfaces.Services;
+using ExternalServices.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Shared.Extensions;
+using Shared.Interfaces;
+using Shared.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-//namespace Atron.WebViews.Controllers
-//{
-//    public class SalarioController : MainController<SalarioDTO, Salario, ISalarioExternalService>
-//    {
-//        private readonly IUsuarioExternalService _usuarioService;
+namespace Atron.WebViews.Controllers
+{
+    [Authorize]
+    public class SalarioController : MainController<SalarioDTO, Salario>
+    {
+        private readonly IExternalService<SalarioDTO> _service;
+        private readonly IExternalService<UsuarioDTO> _usuarioService;
+        private static readonly List<MesDTO> Meses = new()
+        {
+                new() { Id = 1, Descricao = "Janeiro" },
+                new() { Id = 2, Descricao = "Fevereiro" },
+                new() { Id = 3, Descricao = "Março" },
+                new() { Id = 4, Descricao = "Abril" },
+                new() { Id = 5, Descricao = "Maio" },
+                new() { Id = 6, Descricao = "Junho" },
+                new() { Id = 7, Descricao = "Julho" },
+                new() { Id = 8, Descricao = "Agosto" },
+                new() { Id = 9, Descricao = "Setembro" },
+                new() { Id = 10, Descricao = "Outubro" },
+                new() { Id = 11, Descricao = "Novembro" },
+                new() { Id = 12, Descricao = "Dezembro" }
+        };
 
+        public SalarioController(IExternalService<SalarioDTO> service,
+                                 IPaginationService<SalarioDTO> paginationService,
+                                 IExternalService<UsuarioDTO> usuarioService,
+                                 IRouterBuilderService router,
+                                 MessageModel messageModel) :
+            base(messageModel, paginationService)
+        {
+            _service = service;
+            _usuarioService = usuarioService;
+            _router = router;
+            ApiControllerName = nameof(Salario);
+        }
 
-//        public SalarioController(IUrlTransfer urlFactory,
-//                                 IPaginationService<SalarioDTO> paginationService,
-//                                 ISalarioExternalService service,
-//                                 IApiRouteExternalService apiRouteExternalService,
-//                                 IConfiguration configuration,
-//                                 IOptions<RotaDeAcesso> appSettingsConfig,
-//                                 MessageModel<Salario> messageModel,
-//                                 IUsuarioExternalService usuarioService) :
-//            base(
-//                urlFactory,
-//                paginationService,
-//                service,
-//                apiRouteExternalService,
-//                configuration,
-//                appSettingsConfig,
-//                messageModel)
-//        {
-//            ApiController = nameof(Salario);
-//            _usuarioService = usuarioService;
-//        }
+        [HttpGet, HttpPost]
+        public async Task<IActionResult> MenuPrincipal(string filter = "", int itemPage = 1)
+        {
+            ConfigureDataTitleForView("Painel de salários");
 
+            BuildRoute();
+            var salarios = await _service.ObterTodos();
 
-//        [HttpGet, HttpPost]
-//        public async Task<IActionResult> Index(string filter = "", int itemPage = 1)
-//        {
-//            ConfigureDataTitleForView("Painel de salários");
+            BuildUsuarioRoute();
+            var usuarios = await _usuarioService.ObterTodos();
 
-//            BuildRoute(nameof(Salario));
-//            var salarios = await _service.ObterTodos();
+            salarios = salarios
+            .Join(usuarios, salario =>
+                            salario.UsuarioCodigo,
+                            usuario => usuario.Codigo,
+                            (salario, usuario) =>
+                            {
+                                salario.NomeUsuario = usuario.Nome;
+                                salario.CargoDescricao = usuario.Cargo.Descricao;
+                                salario.DepartamentoDescricao = usuario.Departamento.Descricao;
+                                return salario;
+                            })
+            .Join(Meses, salario =>
+                         salario.MesId,
+                         mes => mes.Id,
+                         (salario, mes) =>
+                         {
+                             salario.MesDescricao = mes.Descricao;
+                             return salario;
+                         }
+            ).ToList();
 
-//            Filter = filter;
-//            KeyToSearch = nameof(TarefaDTO.Titulo);
-//            ConfigurePaginationForView(salarios, itemPage, ApiController, filter);
+            ApiControllerName = nameof(Salario);
+            ConfigurePaginationForView(salarios, nameof(MenuPrincipal), itemPage, filter);
+            return View(GetModel<SalarioModel>());
+        }
 
-//            var model = new SalarioModel()
-//            {
-//                Salarios = GetEntitiesPaginated(),
-//                PageInfo = PageInfo
-//            };
+        private void BuildUsuarioRoute()
+        {
+            ApiControllerName = nameof(Usuario);
+            BuildRoute();
+        }
 
-//            return View(model);
-//        }
-//        private void BuildUsuarioRoute()
-//        {
-//            BuildRoute(nameof(Usuario));
-//        }
+        private async Task FetchUsuarioData()
+        {
+            BuildUsuarioRoute();
+            var usuarios = await _usuarioService.ObterTodos();
+            var usuariosFiltrados = usuarios.Where(usr => usr.Departamento is not null).Select(usr => new
+            {
+                usr.Codigo,
+                Nome = usr.NomeCompleto(),
+            }).ToList();
 
+            ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
+        }
 
-//        [HttpGet]
-//        public async Task<IActionResult> Cadastrar()
-//        {
-//            ConfigureDataTitleForView("Cadastro de salários");
-//            ConfigureCurrentPageAction(nameof(Cadastrar));
+        private void PreencherViewBagMeses()
+        {
+            ViewBag.Meses = new SelectList(Meses, nameof(MesDTO.Id), nameof(MesDTO.Descricao));
+        }
 
-//            //TODO: Criar um método de view bag de usuários
-//            BuildUsuarioRoute();
-//            var usuarios = await _usuarioService.ObterTodos();
-//            var usuariosFiltrados = usuarios.Select(usr => new
-//            {
-//                usr.Codigo,
-//                Nome = usr.NomeCompleto(),
-//            }).ToList();
+        [HttpGet]
+        public async Task<IActionResult> Cadastrar()
+        {
+            ConfigureDataTitleForView("Cadastro de salários");
+            ConfigureCurrentPageAction(nameof(Cadastrar));
 
-//            ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
+            PreencherViewBagMeses();
+            await FetchUsuarioData();
 
-//            BuildRoute(nameof(Salario), "ObterMeses");
-//            var meses = await _service.ObterMeses();
+            ApiControllerName = nameof(Salario);
+            return View();
+        }
 
-//            ViewBag.Meses = new SelectList(meses.ToList(), nameof(MesDTO.Id), nameof(MesDTO.Descricao));
-//            return View();
-//        }
+        [HttpPost]
+        public async Task<IActionResult> Cadastrar(SalarioDTO salarioDTO)
+        {
+            ConfigureCurrentPageAction(nameof(Cadastrar));
 
-//        [HttpPost]
-//        public async Task<IActionResult> Cadastrar(SalarioDTO salarioDTO)
-//        {
-//            ConfigureCurrentPageAction(nameof(Cadastrar));
+            if (ModelState.IsValid)
+            {
+                BuildRoute();
 
-//            if (ModelState.IsValid)
-//            {
-//                BuildRoute(nameof(Salario));
+                await _service.Criar(salarioDTO);
+                CreateTempDataMessages();
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+            }
 
-//                await _service.Criar(salarioDTO);
-//                CreateTempDataMessages();
-//                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
-//            }
+            ApiControllerName = nameof(Salario);
+            return View();
+        }
 
-//            _messageModel.AddError("Registro inválido para gravação. Tente novamente.");
-//            CreateTempDataMessages();
+        [HttpGet]
+        public async Task<IActionResult> Atualizar(string id)
+        {
+            ConfigureDataTitleForView("Atualização de salários");
+            ConfigureCurrentPageAction(nameof(Atualizar));
 
-//            return RedirectToAction(nameof(Cadastrar));
-//        }
+            BuildRoute();
+            var salario = await _service.ObterPorId(id);
 
+            BuildUsuarioRoute();
+            var usuario = await _usuarioService.ObterPorCodigo(salario.UsuarioCodigo);
 
-//        [HttpGet]
-//        public async Task<IActionResult> Atualizar(string id)
-//        {
-//            ConfigureDataTitleForView("Atualização de salários");
-//            ConfigureCurrentPageAction(nameof(Atualizar));
+            salario.CargoDescricao = usuario.Cargo.Descricao;
+            salario.DepartamentoDescricao = usuario.Departamento.Descricao;
+            salario.NomeUsuario = usuario.Nome;
+            PreencherViewBagMeses();
+            await FetchUsuarioData();
+            return View(salario);
+        }
 
-//            BuildRoute(nameof(Salario), "ObterMeses");
-//            var meses = await _service.ObterMeses();
+        [HttpPost]
+        public async Task<IActionResult> Atualizar(string id, SalarioDTO salarioDTO)
+        {
+            BuildRoute();
+            await _service.Atualizar(id, salarioDTO);
 
-//            ViewBag.Meses = new SelectList(meses.ToList(), nameof(MesDTO.Id), nameof(MesDTO.Descricao));
+            CreateTempDataMessages();
 
-//            BuildRoute(nameof(Salario), id);
-//            var salario = await _service.ObterPorId();
-//            return View(salario);
-//        }
+            if (!_messageModel.Messages.HasErrors())
+            {
+                return RedirectToAction(nameof(MenuPrincipal));
+            }
+            else
+            {
+                ConfigureCurrentPageAction(nameof(Atualizar));
+                return View(nameof(Atualizar), salarioDTO);
+            }
+        }
 
-//        [HttpPost]
-//        public async Task<IActionResult> Atualizar(string id, SalarioDTO salarioDTO)
-//        {
-//            BuildRoute(nameof(Salario), id);
-//            await _service.Atualizar(id, salarioDTO);
+        [HttpGet]
+        public async Task<IActionResult> CarregarFormularioSalario(string salarioId, string codigoUsuario, string actionPage)
+        {
+            BuildUsuarioRoute();
+            var usuario = await _usuarioService.ObterPorCodigo(codigoUsuario);
 
-//            CreateTempDataMessages();
+            ApiControllerName = nameof(Salario);
+            var salarioDTO = new SalarioDTO();
 
-//            if (!_messageModel.Messages.HasErrors())
-//            {
-//                return RedirectToAction(nameof(Index));
-//            }
-//            else
-//            {
-//                ConfigureCurrentPageAction(nameof(Atualizar));
-//                return View(nameof(Atualizar), salarioDTO);
-//            }
-//        }
+            if (!salarioId.Equals(0) && actionPage.Equals(nameof(Atualizar)))
+            {
+                BuildRoute();
 
+                salarioDTO = await _service.ObterPorId(salarioId);
 
-//        [HttpGet]
-//        public async Task<IActionResult> CarregarFormularioSalario(string codigoUsuario, string actionPage)
-//        {
-//            BuildRoute(nameof(Usuario), codigoUsuario);
-//            var usuario = await _usuarioService.ObterPorCodigo(codigoUsuario);
-//            var salarioDTO = new SalarioDTO
+                salarioDTO.UsuarioCodigo = usuario.Codigo;
+                salarioDTO.NomeUsuario = usuario.Nome;
+                salarioDTO.CargoDescricao = usuario.Cargo.Descricao;
+                salarioDTO.DepartamentoDescricao = usuario.Departamento.Descricao;
+            }
+            else
+            {
+                salarioDTO = new SalarioDTO
+                {
+                    UsuarioCodigo = usuario.Codigo,
+                    CargoDescricao = usuario.Cargo.Descricao,
+                    DepartamentoDescricao = usuario.Departamento.Descricao
+                };
+            }
 
-//            {
-//                UsuarioCodigo = usuario.Codigo,
-//                Usuario = new UsuarioDTO()
-//                {
-//                    Codigo = usuario.Codigo,
-//                    Cargo = new CargoDTO()
-//                    {
-//                        Descricao = usuario.Cargo.Descricao
-//                    },
-//                    Departamento = new DepartamentoDTO()
-//                    {
-//                        Descricao = usuario.Departamento.Descricao
-//                    }
-//                },
-//            };
+            PreencherViewBagMeses();
+            ConfigureCurrentPageAction(actionPage);
 
-//            BuildRoute(nameof(Salario), "ObterMeses");
-//            var meses = await _service.ObterMeses();
+            return PartialView("Partials/Salario/FormularioSalarioPartial", salarioDTO);
+        }
 
-//            ViewBag.Meses = new SelectList(meses.ToList(), nameof(MesDTO.Id), nameof(MesDTO.Descricao));
+        [HttpPost]
+        public async Task<IActionResult> Remover(string codigo)
+        {
+            BuildRoute();
+            await _service.Remover(codigo);
 
-//            ConfigureCurrentPageAction(actionPage);
-
-//            return PartialView("Partials/Salario/FormularioSalarioPartial", salarioDTO);
-//        }
-//    }
-//}
+            CreateTempDataMessages();
+            return RedirectToAction(nameof(MenuPrincipal));
+        }
+    }
+}

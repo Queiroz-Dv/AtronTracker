@@ -13,7 +13,7 @@ namespace Atron.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class TarefaController : ModuleController<Tarefa, ITarefaService>
+    public class TarefaController : ApiBaseConfigurationController<Tarefa, ITarefaService>
     {
         public TarefaController(ITarefaService service, MessageModel messageModel) :
             base(service, messageModel)
@@ -38,9 +38,9 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(string id, [FromBody] TarefaDTO tarefa)
+        public async Task<ActionResult> Put(int id, [FromBody] TarefaDTO tarefa)
         {
-            await _service.AtualizarAsync(tarefa);
+            await _service.AtualizarAsync(id, tarefa);
 
             return _messageModel.Messages.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());

@@ -28,7 +28,7 @@ namespace Shared.Services
             var totalItems = itensFiltrados.Count;
 
             CalculatePageRange(pageInfo);
-            Entities = PaginateEntities(itens, pageInfo);
+            Entities = PaginateEntities(itensFiltrados, pageInfo);
 
             var pageInfoDTO = new PageInfoDTO()
             {

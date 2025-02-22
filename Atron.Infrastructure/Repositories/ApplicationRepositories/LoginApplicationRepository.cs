@@ -24,7 +24,7 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
 
         public async Task Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();            
         }
     }
 }

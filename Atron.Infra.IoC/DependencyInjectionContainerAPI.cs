@@ -35,10 +35,7 @@ namespace Atron.Infra.IoC
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                     .AddEntityFrameworkStores<AtronDbContext>()
-                    .AddDefaultTokenProviders();
-
-            // Serviços utilitários 
-            services.AddAutoMapper(typeof(DomainToDtoMappingProfile));
+                    .AddDefaultTokenProviders();         
 
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
@@ -53,17 +50,11 @@ namespace Atron.Infra.IoC
             ConfigureUsuarioServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
-            ConfigureTarefaEstadoServices(services);
-            ConfigureSalarioRepositoryServices(services);
-            ConfigureMesRepositoryServices(services);
-            ConfigurePermissaoServices(services);
-            ConfigurePermissaoRepositoryServices(services);
-            ConfigurePermissaoEstadoServices(services);
+            ConfigureSalarioRepositoryServices(services);     
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
-
             ConfigureUserAuthenticationServices(services);
-
+            ConfigureModuloServices(services);
             return services;
         }
 
@@ -88,39 +79,13 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
         }
-
-        private static void ConfigurePermissaoEstadoServices(IServiceCollection services)
-        {
-            services.AddScoped<IPermissaoEstadoRepository, PermissaoEstadoRepository>();
-        }
-
-        private static void ConfigurePermissaoServices(IServiceCollection services)
-        {
-            services.AddScoped<IPermissaoRepository, PermissaoRepository>();
-            services.AddScoped<IPermissaoService, PermissaoService>();
-        }
-
-        private static void ConfigureMesRepositoryServices(IServiceCollection services)
-        {
-            services.AddScoped<IMesRepository, MesRepository>();
-        }
-
+        
         private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ISalarioRepository, SalarioRepository>();
             services.AddScoped<ISalarioService, SalarioService>();
         }
-
-        private static void ConfigureTarefaEstadoServices(IServiceCollection services)
-        {
-            services.AddScoped<ITarefaEstadoService, TarefaEstadoService>();
-            services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
-
-            //// Utilização dos repositories padronizados
-            services.AddScoped(typeof(IService<TarefaEstado>), typeof(Service<TarefaEstado>));
-            services.AddScoped(typeof(IRepository<TarefaEstado>), typeof(Repository<TarefaEstado>));
-        }
-
+        
         private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ITarefaRepository, TarefaRepository>();
@@ -131,6 +96,7 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)
@@ -145,6 +111,12 @@ namespace Atron.Infra.IoC
             services.AddScoped<IDepartamentoService, DepartamentoService>();
         }
 
+        private static void ConfigureModuloServices(IServiceCollection services)
+        {
+            services.AddScoped<IModuloRepository, ModuloRepository>();
+            services.AddScoped<IModuloService, ModuloService>();
+        }
+
         private static void ConfigureSalarioServices(IServiceCollection services)
         {
             services.AddScoped<IRepository<Salario>, Repository<Salario>>();
@@ -153,11 +125,6 @@ namespace Atron.Infra.IoC
         private static void ConfigureTarefaServices(IServiceCollection services)
         {
             services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
-        }
-
-        private static void ConfigurePermissaoRepositoryServices(IServiceCollection services)
-        {
-            services.AddScoped<IRepository<Permissao>, Repository<Permissao>>();
-        }
+        }        
     }
 }

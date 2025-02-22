@@ -1,15 +1,12 @@
-﻿@model LoginDTO
+﻿@model LoginDTO;
 
-<link href="~/css/auth.css" rel="stylesheet">
-<div class="login-container d-flex align-items-center justify-content-center vh-100">
-    <div class="card shadow-lg p-5">
-        <h2 class="text-center mb-4">Atron Tracker</h2>
+<div class="container d-flex align-items-center justify-content-center full-height">
+    <div class="card login-card">
+        <h2 class="text-center mb-2">Atron Tracker</h2>
         <form asp-controller="ApplicationLogin" asp-action="Login" method="post">
-            <input type="hidden" asp-for="ReturnUrl" />
-
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-            <div class="form-group mb-4">
+            <div class="form-group mb-2">
                 <div class="input-group">
                     <div class="input-group-prepend p-2">
                         <span class="input-group-text">
@@ -21,16 +18,16 @@
                 <span asp-validation-for="Codigo" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-5">
+            <div class="form-group mb-4">
                 <div class="input-group">
                     <div class="input-group-prepend p-2">
                         <span class="input-group-text">
                             <i class="fas fa-lock"></i>
                         </span>
                     </div>
-                    <input asp-for="Passsword" type="password" class="form-control" placeholder="Digite sua senha" />
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Digite sua senha" />
                 </div>
-                <span asp-validation-for="Passsword" class="text-danger"></span>
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="d-grid gap-2 text-center mb-2">
@@ -39,7 +36,9 @@
             </div>
         </form>
     </div>
+    <partial name="Partials/Panels/Footer"></partial>
 </div>
+
 
 @section Scripts {
     <script src="~/js/auth.js"></script>

@@ -1,9 +1,10 @@
 ﻿class CadastrarSalario {
-    constructor(usuarioSelectId, salarioFormContainerId, actionPage) {
-            this.usuarioSelect = document.getElementById(usuarioSelectId);
-            this.tarefaFormContainer = document.getElementById(salarioFormContainerId);
-            this.formAction = document.getElementById(actionPage);
-            this.init();        
+    constructor(salarioId, usuarioSelectId, salarioFormContainerId, actionPage) {
+        this.salarioIdentity = document.getElementById(salarioId);
+        this.usuarioSelect = document.getElementById(usuarioSelectId);
+        this.tarefaFormContainer = document.getElementById(salarioFormContainerId);
+        this.formAction = document.getElementById(actionPage);
+        this.init();
     }
 
     init() {
@@ -13,15 +14,19 @@
     async carregarFormulario() {
         const codigoUsuario = this.usuarioSelect.value;
         const actionPage = this.formAction.value;
+        let salarioId = 0;
+
+        if (this.salarioIdentity != null) {
+             salarioId = this.salarioIdentity.value;
+        }
 
         // Limpa o formulário caso nenhum usuário seja selecionado
         if (!codigoUsuario) {
-            this.tarefaFormContainer.innerHTML = "";
             return;
         }
 
-        try {
-            const response = await fetch(`/Salario/CarregarFormularioSalario?codigoUsuario=${codigoUsuario}&actionPage=${actionPage}`);
+        try {           
+            const response = await fetch(`/Salario/CarregarFormularioSalario?salarioId=${salarioId}&codigoUsuario=${codigoUsuario}&actionPage=${actionPage}`);
 
             if (response.ok) {
                 const html = await response.text();
@@ -37,5 +42,5 @@
 
 // Inicializa o script
 document.addEventListener('DOMContentLoaded', () => {
-    new CadastrarSalario('usuarioCodigo', 'salarioFormContainer', 'actionPage');
+    new CadastrarSalario('salarioId', 'usuarioCodigo', 'salarioFormContainer', 'actionPage');
 });

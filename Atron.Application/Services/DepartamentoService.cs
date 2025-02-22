@@ -3,6 +3,7 @@ using Atron.Application.Interfaces;
 using Atron.Application.Specifications.DepartamentoSpecifications;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
 using Shared.Interfaces.Mapper;
 using Shared.Interfaces.Validations;
@@ -25,13 +26,17 @@ namespace Atron.Application.Services
          *  em vez de uma implementação concreta (DepartamentoRepository).*/
         private readonly IApplicationMapService<DepartamentoDTO, Departamento> _map;
         private readonly IDepartamentoRepository _departamentoRepository;
+        private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
+        private readonly ICargoRepository _cargoRepository;
         private readonly IValidateModel<Departamento> _validateModel;
         private readonly MessageModel messageModel;
 
         public DepartamentoService(IApplicationMapService<DepartamentoDTO, Departamento> map,
                                    IDepartamentoRepository departamentoRepository,
                                    IValidateModel<Departamento> validateModel,
-                                   MessageModel messageModel)
+                                   MessageModel messageModel,
+                                   ICargoRepository cargoRepository,
+                                   IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         {
             /* A Injeção de Dependência via construtor é usada para fornecer 
              * a dependência ao DepartamentoService. 
@@ -43,13 +48,15 @@ namespace Atron.Application.Services
             _departamentoRepository = departamentoRepository;
             this.messageModel = messageModel;
             _validateModel = validateModel;
+            _cargoRepository = cargoRepository;
+            _relacionamentoRepository = relacionamentoRepository;
         }
 
         public async Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
             if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO))
             {
-                messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                messageModel.AddRegisterInvalidMessage(codigo);
                 return;
             }
 
@@ -59,7 +66,7 @@ namespace Atron.Application.Services
             if (!messageModel.Messages.HasErrors())
             {
                 await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
-                messageModel.AddUpdateMessage(nameof(Departamento));
+                messageModel.AddUpdateMessage(departamentoDTO.Codigo);
             }
         }
 
@@ -67,7 +74,7 @@ namespace Atron.Application.Services
         {
             if (departamentoDTO is null)
             {
-                messageModel.AddRegisterInvalidMessage(nameof(Departamento));
+                messageModel.AddRegisterInvalidMessage();
                 return;
             }
 
@@ -77,14 +84,14 @@ namespace Atron.Application.Services
 
             if (entity is not null)
             {
-                messageModel.AddRegisterExistMessage(nameof(Departamento));
+                messageModel.AddRegisterExistMessage(departamentoDTO.Codigo);
             }
 
             _validateModel.Validate(departamento);
             if (!messageModel.Messages.HasErrors())
             {
                 await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
-                messageModel.AddSuccessMessage(nameof(Departamento));
+                messageModel.AddSuccessMessage(departamentoDTO.Codigo);
             }
         }
 
@@ -98,7 +105,7 @@ namespace Atron.Application.Services
             }
             else
             {
-                messageModel.AddRegisterNotFoundMessage(nameof(Departamento));
+                messageModel.AddRegisterNotFoundMessage(departamento.Codigo);
                 return null;
             }
         }
@@ -121,12 +128,31 @@ namespace Atron.Application.Services
 
             if (departamento is not null)
             {
+                var relacionamentos = await _relacionamentoRepository.ObterPorDepartamento(departamento.Id, departamento.Codigo);
+                if (relacionamentos.Any())
+                {
+                    foreach (var item in relacionamentos)
+                    {
+                        await _relacionamentoRepository.RemoverRepositoryAsync(item);
+                    }
+                }
+
+                var cargos = await _cargoRepository.ObterCargosPorDepartamento(departamento.Id, departamento.Codigo);
+
+                if (cargos.Any())
+                {
+                    foreach (var item in cargos)
+                    {
+                        await _cargoRepository.RemoverRepositoryAsync(item);
+                    }
+                }
+
                 await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
-                messageModel.AddRegisterRemovedSuccessMessage(nameof(Departamento));
+                messageModel.AddRegisterRemovedSuccessMessage(codigo);
             }
             else
             {
-                messageModel.AddRegisterNotFoundMessage(nameof(Departamento));
+                messageModel.AddRegisterNotFoundMessage(codigo);
             }
         }
     }

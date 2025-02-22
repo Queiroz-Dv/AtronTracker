@@ -1,5 +1,4 @@
-﻿using Shared.Enums;
-using Shared.Interfaces;
+﻿using Shared.Interfaces;
 using Shared.Models;
 
 namespace Shared.Services
@@ -15,30 +14,30 @@ namespace Shared.Services
 
         public abstract void AddMessage(string message);
 
-        public abstract void AddRegisterNotFoundMessage(string moduleName);
-
-        public abstract void AddRegisterExistMessage(string moduleName);
-
-        public abstract void AddSuccessMessage(string moduleName);
-
-        public abstract void AddRegisterRemovedSuccessMessage(string moduleName);
-
-        public abstract void AddUpdateMessage(string moduleName);
-
-        public abstract void AddRegisterInvalidMessage(string moduleName);
-
         public abstract void AddError(string message);
 
         public abstract void AddWarning(string message);
+
+        public abstract void AddRegisterNotFoundMessage(string key = "");
+
+        public abstract void AddRegisterExistMessage(string key = "");
+
+        public abstract void AddSuccessMessage(string key = "");
+
+        public abstract void AddRegisterRemovedSuccessMessage(string key = "");
+
+        public abstract void AddUpdateMessage(string key = "");
+
+        public abstract void AddRegisterInvalidMessage(string key = "");
 
         /// <summary>
         /// Método de automação para inclusão de notificações
         /// </summary>
         /// <param name="description">Mensagem de notificação</param>
         /// <param name="level">Tipo de notificação</param>
-        public void AddNotification(string description, MessageLevel level)
+        public void AddNotification(string description, string level)
         {
-            Messages.Add(new Message() { Description = description, Level = level });
+            Messages.Add(new Message() { Description = description,  Level = level}); 
         }
     }
 }
