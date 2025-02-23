@@ -20,6 +20,7 @@ namespace Atron.Infra.IoC
             ConfigurarTarefaServices(services);
             ConfigurarSalarioServices(services);
             ConfigureModuloServices(services);
+            ConfigurePerfilDeAcessoServices(services);
             return services;
         }
 
@@ -78,6 +79,13 @@ namespace Atron.Infra.IoC
             services.AddScoped<IMessages, ModuloMessageValidation>();
             services.AddScoped<IValidateModel<Modulo>, ModuloMessageValidation>();
             services.AddScoped<MessageModel, ModuloMessageValidation>();
+        }
+
+        private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
+        {
+            services.AddScoped<IMessages, PerfilDeAcessoMessageValidation>();
+            services.AddScoped<IValidateModel<PerfilDeAcesso>, PerfilDeAcessoMessageValidation>();
+            services.AddScoped<MessageModel, PerfilDeAcessoMessageValidation>();
         }
     }
 }

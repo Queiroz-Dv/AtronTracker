@@ -16,9 +16,9 @@ namespace Atron.Infrastructure.EntitiesConfiguration
 
             builder.Property(pfa => pfa.Descricao).IsRequired().HasMaxLength(50);
 
-            builder.HasMany(pfa => pfa.Modulos)
-                   .WithOne(mod => mod.PerfilDeAcesso)
-                   .HasForeignKey(mod => new {mod.PerfilDeAcessoId, mod.PerfilDeAcessoCodigo }).HasConstraintName("FK_PERFILDEACESSO_ID");
+            builder.HasMany(pfa => pfa.PerfilDeAcessoModulos)
+                   .WithOne(pam => pam.PerfilDeAcesso)
+                   .HasForeignKey(pam => new { pam.PerfilDeAcessoId, pam.PerfilDeAcessoCodigo });
         }
     }
 }

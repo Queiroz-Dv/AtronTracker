@@ -55,6 +55,7 @@ namespace Atron.Infra.IoC
             ConfigureAuthenticationServices(services);
             ConfigureUserAuthenticationServices(services);
             ConfigureModuloServices(services);
+            ConfigurePerfilDeAcessoServices(services);
             return services;
         }
 
@@ -115,6 +116,12 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<IModuloRepository, ModuloRepository>();
             services.AddScoped<IModuloService, ModuloService>();
+        }
+
+        private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
+        {
+            services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
+            services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
         }
 
         private static void ConfigureSalarioServices(IServiceCollection services)

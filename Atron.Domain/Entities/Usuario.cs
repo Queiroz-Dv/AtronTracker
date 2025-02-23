@@ -16,7 +16,10 @@ namespace Atron.Domain.Entities
 
         public DateTime? DataNascimento { get; set; }
 
-        public List<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
-        public List<PerfilDeAcesso> PerfisDeAcesso { get; set; }
+        public ICollection<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
+
+        public ICollection<PerfilDeAcesso> PerfisDeAcesso { get; set; }
+
+        public ICollection<PerfilDeAcessoUsuario> PerfilDeAcessoUsuarios { get; set; }
     }
 }
