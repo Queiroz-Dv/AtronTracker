@@ -39,6 +39,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IExternalService<SalarioDTO>, ExternalService<SalarioDTO>>();
 
             services.AddScoped<IExternalService<ModuloDTO>, ExternalService<ModuloDTO>>();
+            services.AddScoped<IExternalService<PerfilDeAcessoDTO>, ExternalService<PerfilDeAcessoDTO>>();
 
             services = services.AddMessageValidationServices();
             services = services.AddCustomCookieConfiguration();
