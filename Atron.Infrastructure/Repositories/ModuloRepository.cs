@@ -55,17 +55,17 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Modulo> ObterPorCodigoRepository(string codigo)
         {
-            return await _context.Modulo.FirstOrDefaultAsync(mdl => mdl.Codigo == codigo);
+            return await _context.Modulos.FirstOrDefaultAsync(mdl => mdl.Codigo == codigo);
         }
 
         public async Task<Modulo> ObterPorIdRepository(int id)
         {
-            return await _context.Modulo.FirstOrDefaultAsync(mdl => mdl.Id == id);
+            return await _context.Modulos.FirstOrDefaultAsync(mdl => mdl.Id == id);
         }
 
         public async Task<IEnumerable<Modulo>> ObterTodosRepository()
         {
-            return await _context.Modulo.ToListAsync();
+            return await _context.Modulos.ToListAsync();
         }
 
         public async Task<bool> RemoverModuloRepository(Modulo modulo)
