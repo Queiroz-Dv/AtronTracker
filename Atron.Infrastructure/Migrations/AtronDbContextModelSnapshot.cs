@@ -92,17 +92,9 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("PerfilDeAcessoCodigo")
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<int>("PerfilDeAcessoId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id", "Codigo");
 
-                    b.HasIndex("PerfilDeAcessoId", "PerfilDeAcessoCodigo");
-
-                    b.ToTable("Modulo");
+                    b.ToTable("Modulos");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcesso", b =>
@@ -124,7 +116,49 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id", "Codigo");
 
-                    b.ToTable("PerfilDeAcesso");
+                    b.ToTable("PerfisDeAcesso");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcessoModulo", b =>
+                {
+                    b.Property<int>("PerfilDeAcessoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PerfilDeAcessoCodigo")
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("ModuloId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModuloCodigo")
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("PerfilDeAcessoId", "PerfilDeAcessoCodigo", "ModuloId", "ModuloCodigo");
+
+                    b.HasIndex("ModuloId", "ModuloCodigo");
+
+                    b.ToTable("PerfilDeAcessoModulos");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcessoUsuario", b =>
+                {
+                    b.Property<int>("PerfilDeAcessoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PerfilDeAcessoCodigo")
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UsuarioCodigo")
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("PerfilDeAcessoId", "PerfilDeAcessoCodigo", "UsuarioId", "UsuarioCodigo");
+
+                    b.HasIndex("UsuarioId", "UsuarioCodigo");
+
+                    b.ToTable("PerfilDeAcessoUsuarios");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Salario", b =>
@@ -149,7 +183,7 @@ namespace Atron.Infrastructure.Migrations
 
                     b.Property<string>("UsuarioCodigo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
@@ -189,7 +223,7 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("UsuarioCodigo")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
@@ -210,7 +244,8 @@ namespace Atron.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Codigo")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<DateTime?>("DataNascimento")
                         .HasColumnType("datetime2");
@@ -244,7 +279,7 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UsuarioCodigo")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("CargoId")
                         .HasColumnType("int");
@@ -265,27 +300,6 @@ namespace Atron.Infrastructure.Migrations
                     b.HasIndex("DepartamentoId", "DepartamentoCodigo");
 
                     b.ToTable("UsuarioCargoDepartamento", (string)null);
-                });
-
-            modelBuilder.Entity("PerfilDeAcessoUsuario", b =>
-                {
-                    b.Property<int>("PerfisDeAcessoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PerfisDeAcessoCodigo")
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<int>("UsuariosId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsuariosCodigo")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("PerfisDeAcessoId", "PerfisDeAcessoCodigo", "UsuariosId", "UsuariosCodigo");
-
-                    b.HasIndex("UsuariosId", "UsuariosCodigo");
-
-                    b.ToTable("PerfilDeAcessoUsuario");
                 });
 
             modelBuilder.Entity("Shared.Models.ApplicationModels.ApplicationRole", b =>
@@ -508,14 +522,42 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("Departamento");
                 });
 
-            modelBuilder.Entity("Atron.Domain.Entities.Modulo", b =>
+            modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcessoModulo", b =>
                 {
+                    b.HasOne("Atron.Domain.Entities.Modulo", "Modulo")
+                        .WithMany("PerfilDeAcessoModulos")
+                        .HasForeignKey("ModuloId", "ModuloCodigo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Atron.Domain.Entities.PerfilDeAcesso", "PerfilDeAcesso")
-                        .WithMany("Modulos")
+                        .WithMany("PerfilDeAcessoModulos")
                         .HasForeignKey("PerfilDeAcessoId", "PerfilDeAcessoCodigo")
-                        .HasConstraintName("FK_PERFILDEACESSO_ID");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Modulo");
 
                     b.Navigation("PerfilDeAcesso");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcessoUsuario", b =>
+                {
+                    b.HasOne("Atron.Domain.Entities.PerfilDeAcesso", "PerfilDeAcesso")
+                        .WithMany("PerfilDeAcessoUsuarios")
+                        .HasForeignKey("PerfilDeAcessoId", "PerfilDeAcessoCodigo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Atron.Domain.Entities.Usuario", "Usuario")
+                        .WithMany("PerfilDeAcessoUsuarios")
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PerfilDeAcesso");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Salario", b =>
@@ -563,21 +605,6 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("Departamento");
 
                     b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("PerfilDeAcessoUsuario", b =>
-                {
-                    b.HasOne("Atron.Domain.Entities.PerfilDeAcesso", null)
-                        .WithMany()
-                        .HasForeignKey("PerfisDeAcessoId", "PerfisDeAcessoCodigo")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Atron.Domain.Entities.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("UsuariosId", "UsuariosCodigo")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Shared.Models.ApplicationModels.ApplicationRoleClaim", b =>
@@ -643,13 +670,22 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("UsuarioCargoDepartamentos");
                 });
 
+            modelBuilder.Entity("Atron.Domain.Entities.Modulo", b =>
+                {
+                    b.Navigation("PerfilDeAcessoModulos");
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcesso", b =>
                 {
-                    b.Navigation("Modulos");
+                    b.Navigation("PerfilDeAcessoModulos");
+
+                    b.Navigation("PerfilDeAcessoUsuarios");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Usuario", b =>
                 {
+                    b.Navigation("PerfilDeAcessoUsuarios");
+
                     b.Navigation("Salario");
 
                     b.Navigation("Tarefas");

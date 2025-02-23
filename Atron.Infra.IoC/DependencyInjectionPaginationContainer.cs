@@ -25,6 +25,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IFilterService<LoginDTO>, FilterService<LoginDTO>>();
             services.AddScoped<IFilterService<RegisterDTO>, FilterService<RegisterDTO>>();
             services.AddScoped<IFilterService<ModuloDTO>, FilterService<ModuloDTO>>();
+            services.AddScoped<IFilterService<PerfilDeAcessoDTO>, FilterService<PerfilDeAcessoDTO>>();
         }
 
         private static void CreateDtoPaginationServices(IServiceCollection services)
@@ -37,6 +38,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IPaginationService<LoginDTO>, PaginationService<LoginDTO>>();
             services.AddScoped<IPaginationService<RegisterDTO>, PaginationService<RegisterDTO>>();
             services.AddScoped<IPaginationService<ModuloDTO>, PaginationService<ModuloDTO>>();
+            services.AddScoped<IPaginationService<PerfilDeAcessoDTO>, PaginationService<PerfilDeAcessoDTO>>();
         }
     }
 }

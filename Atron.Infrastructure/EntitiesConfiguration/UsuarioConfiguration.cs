@@ -18,8 +18,17 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.Property(usr => usr.DataNascimento);
             builder.Property(usr => usr.SalarioAtual);
 
-            builder.HasMany(pfa => pfa.PerfisDeAcesso)
-                   .WithMany(usr => usr.Usuarios);                  
+            builder.HasMany(usr => usr.PerfisDeAcesso)
+               .WithMany(pfa => pfa.Usuarios)
+               .UsingEntity<PerfilDeAcessoUsuario>(
+                   j => j.HasOne(pda => pda.PerfilDeAcesso)
+                         .WithMany(pfa => pfa.PerfilDeAcessoUsuarios)
+                         .HasForeignKey(pda => new { pda.PerfilDeAcessoId, pda.PerfilDeAcessoCodigo }),
+                   j => j.HasOne(pda => pda.Usuario)
+                         .WithMany(usr => usr.PerfilDeAcessoUsuarios)
+                         .HasForeignKey(pda => new { pda.UsuarioId, pda.UsuarioCodigo }),
+                   j => j.HasKey(pda => new { pda.PerfilDeAcessoId, pda.PerfilDeAcessoCodigo, pda.UsuarioId, pda.UsuarioCodigo })
+               );
         }
     }
 }

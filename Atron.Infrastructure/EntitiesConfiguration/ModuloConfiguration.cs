@@ -13,6 +13,10 @@ namespace Atron.Infrastructure.EntitiesConfiguration
 
             builder.Property(mod => mod.Codigo).IsRequired().HasMaxLength(10);
             builder.Property(mod => mod.Descricao).IsRequired().HasMaxLength(100);
+
+            builder.HasMany(mod => mod.PerfilDeAcessoModulos)
+                   .WithOne(pam => pam.Modulo)
+                   .HasForeignKey(pam => new { pam.ModuloId, pam.ModuloCodigo });
         }
     }
 }
