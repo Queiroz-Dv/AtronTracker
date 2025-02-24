@@ -34,10 +34,11 @@ namespace Atron.WebViews.Controllers
         public async Task<IActionResult> LogoutUser()
         {
             BuildRoute("Desconectar");
-            await _service.Logout();
-            Response.Cookies.Delete("AuthToken");
+            await _service.Logout(); // Aqui ele está deslogando da API
 
-            if (!TokenServiceStore.Token.IsNullOrEmpty())
+            Response.Cookies.Delete("AuthToken"); // Aqui ele está limpando o token do cookie
+
+            if (!TokenServiceStore.Token.IsNullOrEmpty()) // Aqui ele está limpando o token da sessão
             {
                 TokenServiceStore.Token = string.Empty;
             }

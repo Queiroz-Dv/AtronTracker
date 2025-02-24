@@ -28,8 +28,7 @@ namespace Atron.Infra.IoC
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-
-                    Description = "Definições de segurança JWT."
+                    Description = "Definições de segurança JWT."                    
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -49,6 +48,7 @@ namespace Atron.Infra.IoC
                 });
                 c.EnableAnnotations();
 
+                // Ativa o XML para as documentações no Swagger e Redocs
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });

@@ -1,0 +1,27 @@
+﻿<partial name="Partials/TitleLabel"></partial>
+
+<div class="container my-5">
+    <div class="row">        
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-user-lock icon-perfil-acesso display-1"></i>
+                    <h5 class="card-title mt-3">Perfil de Acesso</h5>
+                    <p class="card-text">Gerencie os perfis de acesso do sistema.</p>
+                    <a href="@Url.Action("MenuPrincipal", nameof(PerfilDeAcesso))" class="btn btn-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-id-card icon-perfil-usuario display-1"></i>
+                    <h5 class="card-title mt-3">Perfis de Usuários</h5>
+                    <p class="card-text">Gerencie o perfis de usuários</p>
+                    <a href="@Url.Action("MenuPrincipal", nameof(PerfilDeAcesso))" class="btn btn-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

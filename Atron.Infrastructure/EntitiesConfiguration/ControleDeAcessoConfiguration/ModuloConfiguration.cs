@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Atron.Infrastructure.EntitiesConfiguration
+namespace Atron.Infrastructure.EntitiesConfiguration.ControleDeAcessoConfiguration
 {
     public class ModuloConfiguration : IEntityTypeConfiguration<Modulo>
     {
@@ -17,6 +17,10 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.HasMany(mod => mod.PerfilDeAcessoModulos)
                    .WithOne(pam => pam.Modulo)
                    .HasForeignKey(pam => new { pam.ModuloId, pam.ModuloCodigo });
+
+            builder.HasMany(mod => mod.PropriedadeDeFluxoModulos)
+                   .WithOne(pfm => pfm.Modulo)
+                   .HasForeignKey(pfm => new { pfm.ModuloId, pfm.ModuloCodigo });
         }
     }
 }
