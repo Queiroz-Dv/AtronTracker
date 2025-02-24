@@ -292,8 +292,20 @@ button.accept-policy {
     color: #9b59b6; /* Roxo */
 }
 
-.icon-modulo {
+.icon-acesso {
     color: #ddcb38; /* Amarelo */
+}
+
+.icon-modulo{
+    color: #5dd889
+}
+
+.icon-perfil-acesso{
+    color: #51b5f7
+}
+
+.icon-perfil-usuario{
+    color: #9a38f1cc
 }
 
 /* ==========================================================================
