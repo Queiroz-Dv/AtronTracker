@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using Atron.Application.DTO.ControleDeAcessoDTO;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Atron.Application.DTO
@@ -19,5 +21,7 @@ namespace Atron.Application.DTO
         [Required(ErrorMessage = "O campo Descrição é obrigatório.")]
         [DisplayName("Descrição")]
         public string Descricao { get; set; }
+
+        public ICollection<PropriedadesDeAcessoDTO> Propriedades { get; set; }
     }
 }
