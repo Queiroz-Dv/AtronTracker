@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Atron.Domain.Entities;
 
 namespace Atron.Domain.Componentes
 {
@@ -6,8 +6,6 @@ namespace Atron.Domain.Componentes
     {
         public int Id { get; set; }
 
-        public string Codigo { get; set; }
-
-        public ICollection<PropriedadeDeFluxoModulo> PropriedadesDeFluxoModulo { get; set; }
+        public string Codigo { get; set; }       
     }
 }

@@ -14,11 +14,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration.ControleDeAcessoConfigurati
 
             builder.Property(pfa => pfa.Codigo).IsRequired().HasMaxLength(10);
 
-            builder.Property(pfa => pfa.Descricao).IsRequired().HasMaxLength(50);
-
-            builder.HasMany(pfa => pfa.PerfilDeAcessoModulos)
-                   .WithOne(pam => pam.PerfilDeAcesso)
-                   .HasForeignKey(pam => new { pam.PerfilDeAcessoId, pam.PerfilDeAcessoCodigo });
+            builder.Property(pfa => pfa.Descricao).IsRequired().HasMaxLength(50);           
         }
     }
 }
