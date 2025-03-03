@@ -1,5 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
+using Atron.WebViews.Models.ControleDeAcesso;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -25,15 +26,27 @@ namespace Atron.WebViews.Controllers.ControleDeAcesso
         {
             _service = service;
             _moduloService = moduloService;
+            _router = router;
             ApiControllerName = nameof(PerfilDeAcesso);
         }
 
         [HttpGet]
         public Task<IActionResult> GerenciamentoDeAcesso()
-        {
-            
+        {            
             ConfigureDataTitleForView("Gerenciamento de acesso");
             return Task.FromResult((IActionResult)View());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MenuPerfilDeAcesso(string filter = "", int itemPage = 1)
+        {
+            ConfigureDataTitleForView("Gerenciamento de perfis de acesso");
+
+            BuildRoute();
+            var perfis = await _service.ObterTodos();
+
+            ConfigurePaginationForView(perfis, nameof(MenuPerfilDeAcesso), itemPage, filter);
+            return View(GetModel<PerfilDeAcessoModel>());
         }
     }
 }

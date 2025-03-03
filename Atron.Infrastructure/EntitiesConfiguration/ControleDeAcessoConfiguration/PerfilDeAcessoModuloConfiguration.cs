@@ -19,5 +19,4 @@ namespace Atron.Infrastructure.EntitiesConfiguration.ControleDeAcessoConfigurati
                    .HasForeignKey(pam => new { pam.ModuloId, pam.ModuloCodigo });
         }
     }
-
 }

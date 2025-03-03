@@ -8,8 +8,9 @@ namespace Atron.Domain.Entities
         public string Codigo { get; set; }
         public string Descricao { get; set; }
 
-        public ICollection<Usuario> Usuarios { get; set; }
+        public Usuario Usuario { get; set; }
+
         public ICollection<PerfilDeAcessoModulo> PerfilDeAcessoModulos { get; set; } = new List<PerfilDeAcessoModulo>();
-        public ICollection<PerfilDeAcessoUsuario> PerfilDeAcessoUsuarios { get; set; } = new List<PerfilDeAcessoUsuario>();
+        public ICollection<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario { get; set; }
     }
 }
