@@ -1,6 +1,9 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
+<<<<<<< HEAD
 using Atron.WebViews.Models.ControleDeAcesso;
+=======
+>>>>>>> 9c5d71f27b0cbf2d0952b4c244329a3ccae73954
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -26,12 +29,16 @@ namespace Atron.WebViews.Controllers.ControleDeAcesso
         {
             _service = service;
             _moduloService = moduloService;
+<<<<<<< HEAD
             _router = router;
+=======
+>>>>>>> 9c5d71f27b0cbf2d0952b4c244329a3ccae73954
             ApiControllerName = nameof(PerfilDeAcesso);
         }
 
         [HttpGet]
         public Task<IActionResult> GerenciamentoDeAcesso()
+<<<<<<< HEAD
         {            
             ConfigureDataTitleForView("Gerenciamento de acesso");
             return Task.FromResult((IActionResult)View());
@@ -50,3 +57,12 @@ namespace Atron.WebViews.Controllers.ControleDeAcesso
         }
     }
 }
+=======
+        {
+            
+            ConfigureDataTitleForView("Gerenciamento de acesso");
+            return Task.FromResult((IActionResult)View());
+        }
+    }
+}
+>>>>>>> 9c5d71f27b0cbf2d0952b4c244329a3ccae73954
