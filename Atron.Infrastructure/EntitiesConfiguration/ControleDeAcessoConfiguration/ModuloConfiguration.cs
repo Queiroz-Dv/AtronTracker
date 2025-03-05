@@ -13,8 +13,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration.ControleDeAcessoConfigurati
 
             builder.Property(mod => mod.Codigo).IsRequired().HasMaxLength(10);
             builder.Property(mod => mod.Descricao).IsRequired().HasMaxLength(100);
-<<<<<<< HEAD
-=======
+
 
             builder.HasMany(mod => mod.PerfilDeAcessoModulos)
                    .WithOne(pam => pam.Modulo)
@@ -23,7 +22,6 @@ namespace Atron.Infrastructure.EntitiesConfiguration.ControleDeAcessoConfigurati
             builder.HasMany(mod => mod.PropriedadeDeFluxoModulos)
                    .WithOne(pfm => pfm.Modulo)
                    .HasForeignKey(pfm => new { pfm.ModuloId, pfm.ModuloCodigo });
->>>>>>> 9c5d71f27b0cbf2d0952b4c244329a3ccae73954
         }
     }
 }

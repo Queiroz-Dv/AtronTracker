@@ -77,12 +77,6 @@ namespace Atron.Application.Services
                     });
                 }
 
-<<<<<<< HEAD
-             
-=======
-              
-
->>>>>>> 9c5d71f27b0cbf2d0952b4c244329a3ccae73954
                 // Lembrar de validar o módulo de acordo com as regras de negócio
                 _validateModel.Validate(perfilDeAcesso);
 

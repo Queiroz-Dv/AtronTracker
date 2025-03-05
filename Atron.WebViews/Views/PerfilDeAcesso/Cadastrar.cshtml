@@ -1,0 +1,24 @@
+﻿@model PerfilDeAcessoDTO;
+
+<div class="d-flex justify-content-center align-items-center mid-height centered-container">
+    <form id="perfilDeAcessoForm" asp-action="Cadastrar" method="post" class="col-9">
+
+        <partial name="Partials/TitleLabel"></partial>
+
+        <div class="col-9 mb-4 d-flex">
+            <div class="col-6 pe-2">
+                <label asp-for="Codigo" class="form-label"></label>
+                <input asp-for="Codigo" class="form-control" placeholder="Ex: ADM, USR, GUEST" />
+                <span asp-validation-for="Codigo" class="text-danger"></span>
+            </div>
+            <div class="col-6 ps-2">
+                <label asp-for="Descricao" class="form-label"></label>
+                <input asp-for="Descricao" class="form-control" />
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+        </div>
+
+        <partial name="Partials/Panels/GridTable"></partial>
+        <partial name="Partials/Buttons/BtnSubmitCadastrar"></partial>
+    </form>
+</div>
