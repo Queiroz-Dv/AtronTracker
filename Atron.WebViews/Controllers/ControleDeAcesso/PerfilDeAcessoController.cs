@@ -1,15 +1,15 @@
 ﻿using Atron.Application.DTO;
+using Atron.Domain.Componentes;
 using Atron.Domain.Entities;
-<<<<<<< HEAD
 using Atron.WebViews.Models.ControleDeAcesso;
-=======
->>>>>>> 9c5d71f27b0cbf2d0952b4c244329a3ccae73954
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers.ControleDeAcesso
@@ -29,17 +29,16 @@ namespace Atron.WebViews.Controllers.ControleDeAcesso
         {
             _service = service;
             _moduloService = moduloService;
-<<<<<<< HEAD
+
             _router = router;
-=======
->>>>>>> 9c5d71f27b0cbf2d0952b4c244329a3ccae73954
+
             ApiControllerName = nameof(PerfilDeAcesso);
         }
 
         [HttpGet]
         public Task<IActionResult> GerenciamentoDeAcesso()
-<<<<<<< HEAD
-        {            
+
+        {
             ConfigureDataTitleForView("Gerenciamento de acesso");
             return Task.FromResult((IActionResult)View());
         }
@@ -55,14 +54,71 @@ namespace Atron.WebViews.Controllers.ControleDeAcesso
             ConfigurePaginationForView(perfis, nameof(MenuPerfilDeAcesso), itemPage, filter);
             return View(GetModel<PerfilDeAcessoModel>());
         }
-    }
-}
-=======
+
+        [HttpGet]
+        public async Task<IActionResult> Cadastrar()
         {
-            
-            ConfigureDataTitleForView("Gerenciamento de acesso");
-            return Task.FromResult((IActionResult)View());
+            ConfigureDataTitleForView("Cadastro de perfil de acesso");
+            BuildRoute("ObterModulos");
+            var modulos = await _moduloService.ObterTodos();
+            ViewBag.Modulos = modulos;
+            ConfigurarGridTableModulos(modulos);
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Cadastrar(PerfilDeAcessoDTO perfilDeAcessoDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                BuildRoute();
+                await _service.Criar(perfilDeAcessoDTO);
+
+                CreateTempDataMessages();
+                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+            }
+
+            return View();
+        }
+
+        private void ConfigurarGridTableModulos(List<ModuloDTO> modulos)
+        {
+            string legendTitle = "Módulos";
+            string[] entityColumns = { "Codigo", "Descricao" };
+            string[] childrenColumns = { "Codigo" };
+            IEnumerable<object> entitiesObjects = modulos;
+
+            IEnumerable<object> childrenObjects = new List<PropriedadesDeFluxo>()
+            {
+                new()
+                {   Id = 1,
+                    Codigo = "GRAVAR",
+                },
+                new()
+                {
+                    Id=2,
+                    Codigo = "EXCLUIR",
+                },
+                new()
+                {
+                    Id=3,
+                    Codigo = "ATUALIZAR",
+                },
+                new()
+                {
+                    Id=4,
+                    Codigo = "CONSULTAR",
+                },
+            };
+
+            ViewData["LegendTitle"] = legendTitle;
+            ViewData["EntityColumns"] = entityColumns;
+            ViewData["Entities"] = entitiesObjects;
+            ViewData["IsMultiSelect"] = true;
+            ViewData["HasChildren"] = true;
+            ViewData["IsChildrenMultiSelect"] = true;
+            ViewData["ChildrenColumns"] = childrenColumns;
+            ViewData["ChildrenEntities"] = childrenObjects;
         }
     }
 }
->>>>>>> 9c5d71f27b0cbf2d0952b4c244329a3ccae73954
