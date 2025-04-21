@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Shared.DTO.API;
 using Shared.Enums;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -22,12 +23,16 @@ namespace Shared.Extensions
             return configuration[EnumJwt.Audience.GetEnumDescription()];
         }
 
-        public static Claim[] GetClaims(string usuarioNome, string codigoDeUsuario, string email)
+        public static Claim[] GetClaims(DadosDoUsuario dadosDoUsuario)
         {
             var claims = new[] {
-                new Claim(ClaimTypes.Name, usuarioNome),                             // Nome do usuário
-                new Claim("Codigo", codigoDeUsuario),                               // Código do usuário
-                new Claim(ClaimTypes.Email, email),                                // E-mail do usuário
+                new Claim(ClaimTypes.Name, dadosDoUsuario.NomeDoUsuario),
+                new Claim(ClaimTypes.Email, dadosDoUsuario.Email),
+                new Claim(ClaimTypes.Expiration, dadosDoUsuario.Expiracao.ToString()),
+                new Claim(ClaimCode.CODIGO_USUARIO, dadosDoUsuario.CodigoDoUsuario),
+                new Claim(ClaimCode.CODIGO_CARGO, dadosDoUsuario.CodigoDoCargo.IsNullOrEmpty() ? "" : dadosDoUsuario.CodigoDoCargo),
+                new Claim(ClaimCode.CODIGO_DEPARTAMENTO, dadosDoUsuario.CodigoDoDepartamento.IsNullOrEmpty() ? "" : dadosDoUsuario.CodigoDoDepartamento),
+                // TODO: Reestruturar a criação dos GUIDs para não serem gerados aqui
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Identificador único do token
             };
 

@@ -66,9 +66,9 @@ namespace Atron.WebViews.Controllers
                             usuario => usuario.Codigo,
                             (salario, usuario) =>
                             {
-                                salario.NomeUsuario = usuario.Nome;
-                                salario.CargoDescricao = usuario.Cargo.Descricao;
-                                salario.DepartamentoDescricao = usuario.Departamento.Descricao;
+                                //salario.NomeUsuario = usuario.Nome;
+                                //salario.CargoDescricao = usuario.Cargo.Descricao;
+                                //salario.DepartamentoDescricao = usuario.Departamento.Descricao;
                                 return salario;
                             })
             .Join(Meses, salario =>
@@ -76,7 +76,7 @@ namespace Atron.WebViews.Controllers
                          mes => mes.Id,
                          (salario, mes) =>
                          {
-                             salario.MesDescricao = mes.Descricao;
+                           //  salario.MesDescricao = mes.Descricao;
                              return salario;
                          }
             ).ToList();
@@ -153,9 +153,9 @@ namespace Atron.WebViews.Controllers
             BuildUsuarioRoute();
             var usuario = await _usuarioService.ObterPorCodigo(salario.UsuarioCodigo);
 
-            salario.CargoDescricao = usuario.Cargo.Descricao;
-            salario.DepartamentoDescricao = usuario.Departamento.Descricao;
-            salario.NomeUsuario = usuario.Nome;
+            //salario.CargoDescricao = usuario.Cargo.Descricao;
+            //salario.DepartamentoDescricao = usuario.Departamento.Descricao;
+            //salario.NomeUsuario = usuario.Nome;
             PreencherViewBagMeses();
             await FetchUsuarioData();
             return View(salario);
@@ -196,17 +196,17 @@ namespace Atron.WebViews.Controllers
                 salarioDTO = await _service.ObterPorId(salarioId);
 
                 salarioDTO.UsuarioCodigo = usuario.Codigo;
-                salarioDTO.NomeUsuario = usuario.Nome;
-                salarioDTO.CargoDescricao = usuario.Cargo.Descricao;
-                salarioDTO.DepartamentoDescricao = usuario.Departamento.Descricao;
+                //salarioDTO.NomeUsuario = usuario.Nome;
+                //salarioDTO.CargoDescricao = usuario.Cargo.Descricao;
+                //salarioDTO.DepartamentoDescricao = usuario.Departamento.Descricao;
             }
             else
             {
                 salarioDTO = new SalarioDTO
                 {
                     UsuarioCodigo = usuario.Codigo,
-                    CargoDescricao = usuario.Cargo.Descricao,
-                    DepartamentoDescricao = usuario.Departamento.Descricao
+                    //CargoDescricao = usuario.Cargo.Descricao,
+                    //DepartamentoDescricao = usuario.Departamento.Descricao
                 };
             }
 

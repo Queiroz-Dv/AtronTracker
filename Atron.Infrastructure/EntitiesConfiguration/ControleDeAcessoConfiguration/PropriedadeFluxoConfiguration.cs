@@ -13,6 +13,14 @@ namespace Atron.Infrastructure.EntitiesConfiguration.ControleDeAcessoConfigurati
 
             builder.Property(pdf => pdf.Codigo).HasMaxLength(25);
 
+            builder.HasData
+                (
+                    new PropriedadesDeFluxo { Id = 1, Codigo = "GRAVAR" },
+                    new PropriedadesDeFluxo { Id = 2, Codigo = "CONSULTAR" },
+                    new PropriedadesDeFluxo { Id = 3, Codigo = "DELETAR" },
+                    new PropriedadesDeFluxo { Id = 4, Codigo = "ATUALIZAR" }
+                );
+
             // Mapeamento de 1:N
             builder.HasMany(pdf => pdf.PropriedadesDeFluxoModulo)
                    .WithOne(pdfm => pdfm.PropriedadesDeFluxo)

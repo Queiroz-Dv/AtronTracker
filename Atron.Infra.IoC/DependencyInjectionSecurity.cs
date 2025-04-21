@@ -21,6 +21,16 @@ namespace Atron.Infra.IoC
             var issueSigniKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
             services.AddScoped<IApplicationTokenService, ApplicationTokenService>();
+            
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                        .WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
 
             // informar o tipo de autenticacao JWTBearer    
             services.AddAuthentication(opt =>
