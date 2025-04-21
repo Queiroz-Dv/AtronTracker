@@ -1,0 +1,97 @@
+﻿@model GenericGridViewModel
+
+<fieldset>
+    <legend>@Model.LegendTitle</legend>
+    <table class="table table-dark table-striped table-hover">
+        <thead>
+            <tr>
+                @if (Model.IsMultiSelect)
+                {
+                    <th></th> <!-- Checkbox -->
+                }
+                @foreach (var column in Model.EntityColumns)
+                {
+                    <th>@column</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entity in Model.Entities)
+            {
+                var entityId = $"entity-{entity.Id}";
+                var entityCode = $"entity-{entity.Code}";
+
+                <tr data-bs-toggle="collapse" data-bs-target="#@entityCode" class="clickable">
+                    @if (Model.IsMultiSelect)
+                    {
+                        <td>
+                            <input class="form-check-input" type="checkbox" value="@entity.Code" />
+                        </td>
+                    }
+                    @foreach (var column in Model.EntityColumns)
+                    {
+                        <td>@entity.Values[column]</td>
+                    }
+                </tr>
+
+                @if (Model.HasChildren)
+                {
+                    <tr id="@entityCode" class="collapse">
+                        <td colspan="@Model.EntityColumns.First().Length + (Model.IsMultiSelect ? 1 : 0)">
+                            <table class="table table-dark table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        @if (Model.IsChildrenMultiSelect)
+                                        {
+                                            <th></th>
+                                        }
+                                        @foreach (var column in Model.ChildrenColumns)
+                                        {
+                                            <th>@column</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var child in entity.Children)
+                                    {
+                                        <tr>
+                                            @if (Model.IsChildrenMultiSelect)
+                                            {
+                                                <td>
+                                                    <input class="form-check-input" type="checkbox" value="@child.Code" />
+                                                </td>
+                                            }
+                                            @foreach (var column in Model.ChildrenColumns)
+                                            {
+                                                <td>@child.Values[column]</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+<script>
+    document.getElementById("perfilDeAcessoForm").addEventListener("submit", function () {
+        let selectedEntities = [];
+        let selectedChildren = [];
+
+        // Captura os checkboxes marcados
+        document.querySelectorAll(".entity-checkbox:checked").forEach(function (checkbox) {
+            selectedEntities.push(checkbox.value);
+        });
+
+        document.querySelectorAll(".child-checkbox:checked").forEach(function (checkbox) {
+            selectedChildren.push(checkbox.value);
+        });
+
+        // Atualiza os inputs hidden com os valores selecionados
+        document.getElementById("selectedEntities").value = selectedEntities.join(",");
+        document.getElementById("selectedChildren").value = selectedChildren.join(",");
+    });
+</script>

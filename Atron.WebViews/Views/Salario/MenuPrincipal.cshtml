@@ -21,9 +21,9 @@
             @foreach (var item in Model.Entities)
             {
                 <tr>
-                    <td>@item.NomeUsuario</td>
+                   @*  <td>@item.NomeUsuario</td>
                     <td>@item.CargoDescricao</td>
-                    <td>@item.DepartamentoDescricao</td>
+                    <td>@item.DepartamentoDescricao</td> *@
                     <td>@item.SalarioMensal</td>
                     <td class="text-end">
                         <partial name="Partials/Buttons/BtnAtualizarPorId" model="item.Id" />

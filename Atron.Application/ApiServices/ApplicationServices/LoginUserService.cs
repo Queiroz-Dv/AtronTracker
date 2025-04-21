@@ -3,8 +3,11 @@ using Atron.Application.DTO.ApiDTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Shared.DTO.API;
+using Shared.DTO.API.Request;
 using Shared.Interfaces;
 using Shared.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.ApplicationServices
@@ -28,12 +31,17 @@ namespace Atron.Application.ApiServices.ApplicationServices
             _messageModel = messageModel;
         }
 
-        public async Task<LoginDTO> Authenticate(LoginDTO loginDTO)
+        public async Task<LoginDTO> Authenticate(LoginRequestDTO loginRequest)
         {
+            var loginDTO = new LoginDTO()
+            {
+                Authenticated = false
+            };
+
             var login = new ApiLogin()
             {
-                UserName = loginDTO.Codigo,
-                Password = loginDTO.Password
+                UserName = loginRequest.CodigoDoUsuario,
+                Password = loginRequest.Senha
             };
 
             var result = await _loginApplication.AuthenticateUserLoginAsync(login);
@@ -43,10 +51,21 @@ namespace Atron.Application.ApiServices.ApplicationServices
             if (loginDTO.Authenticated)
             {
                 // Get user data
-                var user = await _usuarioService.ObterPorCodigoAsync(loginDTO.Codigo);
+                var user = await _usuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
+
+                // Dados adicionais para as claims do usuário
+                loginDTO.DadosDoUsuario = new DadosDoUsuario()
+                {
+                    NomeDoUsuario = user.Nome,
+                    CodigoDoUsuario = user.Codigo,
+                    Email = user.Email,
+                    CodigoDoCargo = user.CargoCodigo,
+                    CodigoDoDepartamento = user.DepartamentoCodigo,
+                    Expiracao = DateTime.Now.AddHours(24),
+                };
 
                 // Generate token
-                var userToken = _tokenService.GenerateToken(user.Nome, loginDTO.Codigo, user.Email);
+                var userToken = _tokenService.GenerateToken(loginDTO.DadosDoUsuario);
 
                 // Set token
                 loginDTO.UserToken = userToken;
@@ -62,6 +81,6 @@ namespace Atron.Application.ApiServices.ApplicationServices
         public async Task Logout()
         {
             await _loginApplication.Logout();
-        }
+        }      
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
 using Atron.Application.ApiServices.ApplicationServices;
 using Atron.Application.Interfaces;
-using Atron.Application.Mapping;
+using Newtonsoft.Json;
 using Atron.Application.Services;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Models.ApplicationModels;
+using System.Text.Json.Serialization;
 
 namespace Atron.Infra.IoC
 {
@@ -35,14 +36,16 @@ namespace Atron.Infra.IoC
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                     .AddEntityFrameworkStores<AtronDbContext>()
-                    .AddDefaultTokenProviders();         
+                    .AddDefaultTokenProviders();
 
+            // Evitar o looping infinito 
+            services.AddControllers()
+                    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));                 
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
             services = services.AddServiceMappings();
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);
-
             ConfigureTarefaServices(services);
             ConfigureSalarioServices(services);
             ConfigureDepartamentoServices(services);

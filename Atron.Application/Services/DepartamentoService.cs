@@ -105,7 +105,7 @@ namespace Atron.Application.Services
             }
             else
             {
-                messageModel.AddRegisterNotFoundMessage(departamento.Codigo);
+                messageModel.AddRegisterNotFoundMessage(codigo);
                 return null;
             }
         }

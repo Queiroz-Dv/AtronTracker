@@ -3,6 +3,7 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Shared.Services.Mapper;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Atron.Application.Mapping
 {
@@ -29,7 +30,7 @@ namespace Atron.Application.Mapping
                 DataNascimento = entity.DataNascimento
             };
 
-            if (entity.UsuarioCargoDepartamentos is not null)
+            if (entity.UsuarioCargoDepartamentos.Any())
             {
                 foreach (var item in entity.UsuarioCargoDepartamentos)
                 {

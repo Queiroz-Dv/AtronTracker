@@ -12,21 +12,22 @@ namespace Shared.Services
     public class ApplicationTokenService : IApplicationTokenService
     {
         private readonly IConfiguration _configuration;
+        
 
         public ApplicationTokenService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        public UserToken GenerateToken(string usuarioNome, string codigoDeUsuario, string email)
-        {
+        public UserToken GenerateToken(DadosDoUsuario dadosDoUsuario)
+        {           
             // Objeto de configuração do token
             var appSecurityToken = new ApplicationSecurityToken()
             {
                 SecretKey = _configuration.GetSecretKey(), // Chave secreta
                 Issuer = _configuration.GetIssuer(),      // Emissor
                 Audience = _configuration.GetAudience(),  // Audiência
-                Claims = JwtConfiguration.GetClaims(usuarioNome, codigoDeUsuario, email) // Claims
+                Claims = JwtConfiguration.GetClaims(dadosDoUsuario) // Claims
             };
 
             // Secret Key como array de bytes
@@ -38,15 +39,13 @@ namespace Shared.Services
             // Gerar a assinatura digital do token
             var userSigningCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
 
-            // Definir o tempo de expiração do token
-            var tokenExpiration = DateTime.Now.AddHours(1);
 
             // Gerar o token
             var token = new JwtSecurityToken(
                 issuer: appSecurityToken.Issuer,
                 audience: appSecurityToken.Audience,
                 claims: appSecurityToken.Claims,
-                expires: tokenExpiration,
+                expires: dadosDoUsuario.Expiracao,
                 signingCredentials: userSigningCredentials
             );
 
@@ -58,7 +57,7 @@ namespace Shared.Services
                 var userToken = new UserToken()
                 {
                     Token = tokenCreated,
-                    Expires = tokenExpiration
+                    Expires = dadosDoUsuario.Expiracao
                 };
 
                 return userToken;

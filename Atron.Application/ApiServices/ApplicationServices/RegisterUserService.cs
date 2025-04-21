@@ -75,6 +75,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
                     _validateUsuario.Validate(usuario);
 
+                    // Trocar validação por apenas código e email
                     var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Nome, usuario.Sobrenome, usuario.Email);
                     if (!usuarioSpec.IsSatisfiedBy(usuario))
                     {
