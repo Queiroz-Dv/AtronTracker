@@ -1,4 +1,5 @@
-﻿using Atron.Domain.Entities;
+﻿using Atron.Domain.Componentes;
+using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models.ApplicationModels;
@@ -36,6 +37,9 @@ namespace Atron.Infrastructure.Context
         public DbSet<PerfilDeAcessoUsuario> PerfilDeAcessoUsuarios { get; set; }
 
         public DbSet<PerfilDeAcessoModulo> PerfilDeAcessoModulos { get; set; }
+
+        public DbSet<PropriedadesDeFluxo> PropriedadesDeFluxo { get; set; }
+        public DbSet<PropriedadeDeFluxoModulo> PropriedadeDeFluxoModulo { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

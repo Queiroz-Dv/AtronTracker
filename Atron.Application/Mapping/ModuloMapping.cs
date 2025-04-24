@@ -1,4 +1,5 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.DTO.ControleDeAcessoDTO;
 using Atron.Domain.Entities;
 using Shared.Services.Mapper;
 
@@ -6,9 +7,12 @@ namespace Atron.Application.Mapping
 {
     public class ModuloMapping : ApplicationMapService<ModuloDTO, Modulo>
     {
+        //TODO: Ainda será necessário verificar se as propriedades devem seguir junto com os módulos
         public override ModuloDTO MapToDTO(Modulo entity)
         {
-            return new ModuloDTO { Codigo = entity.Codigo, Descricao = entity.Descricao };
+            var moduloDTO = new ModuloDTO { Codigo = entity.Codigo, Descricao = entity.Descricao };            
+
+            return moduloDTO;
         }
 
         public override Modulo MapToEntity(ModuloDTO dto)

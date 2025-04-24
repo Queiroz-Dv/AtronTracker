@@ -1,5 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Domain.Componentes;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Shared.Extensions;
@@ -17,6 +18,8 @@ namespace Atron.Application.Services
     {
         private readonly IApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository;
+        private readonly IPropriedadeDeFluxoRepository _propriedadeDeFluxoRepository;
+        private readonly IPropriedadeDeFluxoModuloRepository _propriedadeDeFluxoModuloRepository;
         private readonly IModuloRepository _moduloRepository;
         private readonly IValidateModel<PerfilDeAcesso> _validateModel;
         private readonly MessageModel _messageModel;
@@ -24,15 +27,19 @@ namespace Atron.Application.Services
         public PerfilDeAcessoService(
             IApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
             IPerfilDeAcessoRepository perfilDeAcessoRepository,
+            IPropriedadeDeFluxoRepository propriedadeDeFluxoRepository,
+            IPropriedadeDeFluxoModuloRepository propriedadeDeFluxoModuloRepository,
             IModuloRepository moduloRepository,
             IValidateModel<PerfilDeAcesso> validateModel,
             MessageModel messageModel)
         {
             _map = map;
             _perfilDeAcessoRepository = perfilDeAcessoRepository;
+            _propriedadeDeFluxoRepository = propriedadeDeFluxoRepository;
+            _moduloRepository = moduloRepository;
+            _propriedadeDeFluxoModuloRepository = propriedadeDeFluxoModuloRepository;
             _validateModel = validateModel;
             _messageModel = messageModel;
-            _moduloRepository = moduloRepository;
         }
 
         private void ChecarPerfil(PerfilDeAcessoDTO perfilDeAcessoDTO)
@@ -49,9 +56,57 @@ namespace Atron.Application.Services
         }
 
 
-        public Task<bool> AtualizarPerfilServiceAsync(PerfilDeAcessoDTO perfilDeAcessoDTO)
+        public async Task<bool> AtualizarPerfilServiceAsync(string codigo, PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
-            throw new NotImplementedException();
+            // TODO: Utilizar o speficiation no futuro pra verificar se os códigos está válidos
+            ChecarPerfil(perfilDeAcessoDTO);
+
+            if (!_messageModel.Messages.HasErrors())
+            {
+                var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoDTO);
+
+                await PreencherInformacoesDaEntidade(perfilDeAcessoDTO, perfilDeAcesso);
+
+                // Lembrar de validar o módulo de acordo com as regras de negócio
+                _validateModel.Validate(perfilDeAcesso);
+
+                if (!_messageModel.Messages.HasErrors())
+                {
+                    var prf = await _perfilDeAcessoRepository.AtualizarPerfilRepositoryAsync(codigo, perfilDeAcesso);
+                    if (prf)
+                    {
+                        _messageModel.AddMessage($"Perfil de acesso {perfilDeAcesso.Codigo} atualizado com sucesso.");
+
+                        return prf;
+                    }
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+        private async Task PreencherInformacoesDaEntidade(PerfilDeAcessoDTO perfilDeAcessoDTO, PerfilDeAcesso perfilDeAcesso)
+        {
+            // Aqui preciso obter o id de cada módulo para relacionar ao perfil e as propriedades
+            foreach (var moduloDTO in perfilDeAcessoDTO.Modulos)
+            {
+                // Cria o objeto global do foreach
+                var perfilDeAcessoModulo = new PerfilDeAcessoModulo();
+
+                // Obtém o módulo por código para preencher o id
+                var modulo = await _moduloRepository.ObterPorCodigoRepository(moduloDTO.Codigo);
+
+                // Preenche a entidade principal
+                perfilDeAcessoModulo.PerfilDeAcessoId = perfilDeAcesso.Id;
+                perfilDeAcessoModulo.PerfilDeAcessoCodigo = perfilDeAcesso.Codigo;
+                perfilDeAcessoModulo.ModuloId = modulo.Id;
+                perfilDeAcessoModulo.ModuloCodigo = modulo.Codigo;
+
+                // Inclui a entidade totalmente preenchida na lista
+                perfilDeAcesso.PerfilDeAcessoModulos.Add(perfilDeAcessoModulo);
+            }
         }
 
         // Para criar um perfil eu preciso pelo menos ter um módulo relacionado a ele
@@ -63,19 +118,8 @@ namespace Atron.Application.Services
             {
                 var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoDTO);
 
-                // Aqui preciso obter o id de cada módulo para relacionar ao perfil
-                foreach (var moduloDTO in perfilDeAcessoDTO.Modulos)
-                {
-                    var modulo = await _moduloRepository.ObterPorCodigoRepository(moduloDTO.Codigo);
 
-                    perfilDeAcesso.PerfilDeAcessoModulos.Add(new PerfilDeAcessoModulo()
-                    {
-                        PerfilDeAcessoId = perfilDeAcesso.Id,
-                        PerfilDeAcessoCodigo = perfilDeAcesso.Codigo,                      
-                        ModuloId = modulo.Id,
-                        ModuloCodigo = modulo.Codigo
-                    });
-                }
+                await PreencherInformacoesDaEntidade(perfilDeAcessoDTO, perfilDeAcesso);
 
                 // Lembrar de validar o módulo de acordo com as regras de negócio
                 _validateModel.Validate(perfilDeAcesso);
@@ -84,8 +128,10 @@ namespace Atron.Application.Services
                 {
                     var prf = await _perfilDeAcessoRepository.CriarPerfilRepositoryAsync(perfilDeAcesso);
                     if (prf)
-                    {
+                    {                     
                         _messageModel.AddMessage($"Perfil de acesso {perfilDeAcesso.Codigo} criado com sucesso.");
+
+                        return prf;
                     }
                 }
 
@@ -95,14 +141,29 @@ namespace Atron.Application.Services
             return false;
         }
 
-        public Task<bool> DeletarPerfilServiceAsync(string codigo)
+        public async Task<bool> DeletarPerfilServiceAsync(string codigo)
         {
-            throw new NotImplementedException();
+            var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
+            if (perfil is null)
+            {
+                _messageModel.AddRegisterNotFoundMessage("Perfil de acesso");
+            }
+            else
+            {
+                var result  = await _perfilDeAcessoRepository.DeletarPerfilRepositoryAsync(perfil);
+                _messageModel.AddMessage("Perfil removido com sucesso");
+
+                return result;
+            }
+
+            return false;
         }
 
-        public Task<PerfilDeAcessoDTO> ObterPerfilPorCodigoServiceAsync(string codigo)
+        public async Task<PerfilDeAcessoDTO> ObterPerfilPorCodigoServiceAsync(string codigo)
         {
-            throw new NotImplementedException();
+            var entidade = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
+            return entidade is null ? null :  _map.MapToDTO(entidade);
+
         }
 
         public Task<PerfilDeAcessoDTO> ObterPerfilPorIdServiceAsync(int id)

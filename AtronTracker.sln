@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.Infra.IoC", "Atron.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.Application", "Atron.Application\Atron.Application.csproj", "{1F8C93F7-FBC6-4280-BCAE-7CC321F4204A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Atron.WebViews", "Atron.WebViews\Atron.WebViews.csproj", "{79B33563-3EAB-48F9-9CBC-16D2189F9192}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Framework\Shared\Shared.csproj", "{86FAF893-A440-49B0-8E91-555A62217E7A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication", "Framework\Communication\Communication.csproj", "{F225BED3-3977-4B0C-B1F1-8AB85229F924}"
@@ -45,10 +43,6 @@ Global
 		{1F8C93F7-FBC6-4280-BCAE-7CC321F4204A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F8C93F7-FBC6-4280-BCAE-7CC321F4204A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F8C93F7-FBC6-4280-BCAE-7CC321F4204A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{79B33563-3EAB-48F9-9CBC-16D2189F9192}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{79B33563-3EAB-48F9-9CBC-16D2189F9192}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{79B33563-3EAB-48F9-9CBC-16D2189F9192}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{79B33563-3EAB-48F9-9CBC-16D2189F9192}.Release|Any CPU.Build.0 = Release|Any CPU
 		{86FAF893-A440-49B0-8E91-555A62217E7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{86FAF893-A440-49B0-8E91-555A62217E7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86FAF893-A440-49B0-8E91-555A62217E7A}.Release|Any CPU.ActiveCfg = Release|Any CPU

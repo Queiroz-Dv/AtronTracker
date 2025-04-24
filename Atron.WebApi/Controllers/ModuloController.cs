@@ -1,5 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
+using Atron.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
@@ -41,13 +42,13 @@ namespace Atron.WebApi.Controllers
         /// <param name="codigo">Código do módulo.</param>
         /// <returns>Dados do módulo.</returns>
         [HttpGet("{codigo}")]
-        public async Task<ActionResult<DepartamentoDTO>> Get(string codigo)
+        public async Task<ActionResult<ModuloDTO>> Get(string codigo)
         {
             var modulo = await _service.ObterPorCodigoService(codigo);
 
             return modulo is null ?
                 NotFound(ObterNotificacoes()) :
                 Ok(modulo);
-        }
+        }       
     }
 }
