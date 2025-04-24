@@ -2,8 +2,8 @@
 using Atron.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Extensions;
 using Shared.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
@@ -13,20 +13,24 @@ namespace Atron.WebApi.Controllers
     [Authorize]
     public class PerfilDeAcessoController : ApiBaseConfigurationController<PerfilDeAcessoDTO, IPerfilDeAcessoService>
     {
-        private readonly IModuloService _moduloService;
-
-        public PerfilDeAcessoController( 
-            IModuloService moduloService,
+        public PerfilDeAcessoController(
             IPerfilDeAcessoService service,
             MessageModel messageModel) : base(service, messageModel)
         {
-            _moduloService = moduloService;
         }
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
             return !await _service.CriarPerfilServiceAsync(perfilDeAcessoDTO) ?
+                     BadRequest(ObterNotificacoes()) :
+                     Ok(ObterNotificacoes());
+        }
+
+        [HttpPut("{codigo}")]
+        public async Task<ActionResult> Put(string codigo, [FromBody] PerfilDeAcessoDTO perfilDeAcessoDTO)
+        {
+            return !await _service.AtualizarPerfilServiceAsync(codigo, perfilDeAcessoDTO) ?
                      BadRequest(ObterNotificacoes()) :
                      Ok(ObterNotificacoes());
         }
@@ -38,12 +42,22 @@ namespace Atron.WebApi.Controllers
             return Ok(perfis);
         }
 
-        [HttpGet]
-        [Route("ObterModulos")]
-        public async Task<ActionResult> ObterModulos()
+        [HttpGet("{codigo}")]
+        public async Task<ActionResult> Get(string codigo)
         {
-            var modulos = await _moduloService.ObterTodosService();
-            return Ok(modulos);
+
+            var perfil = await _service.ObterPerfilPorCodigoServiceAsync(codigo);
+            return Ok(perfil);
+        }
+
+        [HttpDelete("{codigo}")]
+        public async Task<ActionResult> Delete(string codigo)
+        {
+            await _service.DeletarPerfilServiceAsync(codigo);
+
+            return _messageModel.Messages.HasErrors() ?
+                    BadRequest(ObterNotificacoes()) :
+                    Ok(ObterNotificacoes());
         }
     }
 }

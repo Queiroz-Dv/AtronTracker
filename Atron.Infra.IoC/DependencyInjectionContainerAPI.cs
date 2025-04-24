@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Models.ApplicationModels;
 using System.Text.Json.Serialization;
+using System;
 
 namespace Atron.Infra.IoC
 {
@@ -39,8 +40,8 @@ namespace Atron.Infra.IoC
                     .AddDefaultTokenProviders();
 
             // Evitar o looping infinito 
-            services.AddControllers()
-                    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));                 
+            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
             services = services.AddServiceMappings();
@@ -53,13 +54,25 @@ namespace Atron.Infra.IoC
             ConfigureUsuarioServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
-            ConfigureSalarioRepositoryServices(services);     
+            ConfigureSalarioRepositoryServices(services);
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigureUserAuthenticationServices(services);
             ConfigureModuloServices(services);
+            ConfigurePropriedadesDeFluxoServices(services);
+            ConfigurePropriedadesDeFluxoModuloServices(services);
             ConfigurePerfilDeAcessoServices(services);
             return services;
+        }
+
+        private static void ConfigurePropriedadesDeFluxoModuloServices(IServiceCollection services)
+        {
+            services.AddScoped<IPropriedadeDeFluxoModuloRepository, PropriedadeDeFluxoModuloRepository>();
+        }
+
+        private static void ConfigurePropriedadesDeFluxoServices(IServiceCollection services)
+        {
+            services.AddScoped<IPropriedadeDeFluxoRepository, PropriedadeDeFluxoRepository>();
         }
 
         private static void ConfigureUsuarioCargoDepartamentoServices(IServiceCollection services)
@@ -83,13 +96,13 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
         }
-        
+
         private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ISalarioRepository, SalarioRepository>();
             services.AddScoped<ISalarioService, SalarioService>();
         }
-        
+
         private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ITarefaRepository, TarefaRepository>();
@@ -135,6 +148,6 @@ namespace Atron.Infra.IoC
         private static void ConfigureTarefaServices(IServiceCollection services)
         {
             services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
-        }        
+        }
     }
 }

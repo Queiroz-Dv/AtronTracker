@@ -9,38 +9,29 @@ namespace Atron.Application.Mapping
     {
         public override PerfilDeAcessoDTO MapToDTO(PerfilDeAcesso entity)
         {
-            return new PerfilDeAcessoDTO()
+            var dto = new PerfilDeAcessoDTO() { Id = entity.Id, Codigo = entity.Codigo, Descricao = entity.Descricao, };
+            dto.Modulos = new List<ModuloDTO>();
+            foreach (var item in entity.PerfilDeAcessoModulos)
             {
-                Id = entity.Id,
-                Codigo = entity.Codigo,
-                Descricao = entity.Descricao
+                var moduloDto = new ModuloDTO
+                {
+                    Codigo = item.Modulo.Codigo,
+                    Descricao = item.Modulo.Descricao
+                };
+                
+                dto.Modulos.Add(moduloDto);
+            }
 
-                // Verificar como mapear as coleções de Modulo e Usuario
-            };
+            return dto;
         }
 
         public override PerfilDeAcesso MapToEntity(PerfilDeAcessoDTO dto)
         {
             return new PerfilDeAcesso()
-            {                
+            {
                 Codigo = dto.Codigo,
                 Descricao = dto.Descricao
             };
-
-            //foreach (var moduloDTO in dto.Modulos)
-            //{
-            //    if (moduloDTO is not null)
-            //    {
-            //        perfilDeAcesso.PerfilDeAcessoModulos.Add(new PerfilDeAcessoModulo()
-            //        {
-            //            Modulo = new Modulo()
-            //            {
-            //                Codigo = moduloDTO.Codigo,
-            //                Descricao = moduloDTO.Descricao
-            //            }
-            //        });
-            //    }
-            //}            
         }
     }
 }
