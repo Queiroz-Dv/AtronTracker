@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Atron.Infrastructure.EntitiesConfiguration
+namespace Atron.Infrastructure.EntitiesConfiguration.ControleDeAcessoConfiguration
 {
     public class PerfilDeAcessoUsuarioConfiguration : IEntityTypeConfiguration<PerfilDeAcessoUsuario>
     {
@@ -17,12 +17,12 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             });
 
             builder.HasOne(perf => perf.Usuario)
-                   .WithMany(usr => usr.PerfilDeAcessoUsuarios)
+                   .WithMany(usr => usr.PerfisDeAcessoUsuario)
                    .HasForeignKey(perf => new { perf.UsuarioId, perf.UsuarioCodigo })
                    .HasPrincipalKey(usr => new { usr.Id, usr.Codigo });
 
             builder.HasOne(perf => perf.PerfilDeAcesso)
-                     .WithMany(pfa => pfa.PerfilDeAcessoUsuarios)
+                     .WithMany(pfa => pfa.PerfisDeAcessoUsuario)
                      .HasForeignKey(perf => new { perf.PerfilDeAcessoId, perf.PerfilDeAcessoCodigo })
                      .HasPrincipalKey(pfa => new { pfa.Id, pfa.Codigo });
         }

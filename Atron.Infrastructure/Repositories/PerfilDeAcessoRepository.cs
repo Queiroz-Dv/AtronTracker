@@ -17,9 +17,24 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public Task<bool> AtualizarPerfilRepositoryAsync(PerfilDeAcesso perfilDeAcesso)
+        public async Task<bool> AtualizarPerfilRepositoryAsync(string codigo, PerfilDeAcesso perfilDeAcesso)
         {
-            throw new NotImplementedException();
+            var perfilBd = await ObterPerfilPorCodigoRepositoryAsync(codigo);
+            perfilBd.Codigo = perfilDeAcesso.Codigo;
+            perfilBd.Descricao = perfilDeAcesso.Descricao;
+            perfilBd.PerfilDeAcessoModulos = perfilDeAcesso.PerfilDeAcessoModulos;
+
+            try
+            {
+                _context.PerfisDeAcesso.Update(perfilBd);
+                var result  = await _context.SaveChangesAsync();
+                return result > 0;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<bool> CriarPerfilRepositoryAsync(PerfilDeAcesso perfilDeAcesso)
@@ -36,14 +51,21 @@ namespace Atron.Infrastructure.Repositories
             }
         }
 
-        public Task<bool> DeletarPerfilRepositoryAsync(string codigo)
+        public async Task<bool> DeletarPerfilRepositoryAsync(PerfilDeAcesso perfil)
         {
-            throw new NotImplementedException();
+            _context.Remove(perfil);
+            var result  =await _context.SaveChangesAsync();
+            return result > 0;
         }
 
-        public Task<PerfilDeAcesso> ObterPerfilPorCodigoRepositoryAsync(string codigo)
+        public async Task<PerfilDeAcesso> ObterPerfilPorCodigoRepositoryAsync(string codigo)
         {
-            throw new NotImplementedException();
+            return await _context.PerfisDeAcesso
+               .Include(pam => pam.PerfilDeAcessoModulos) // Relacionamento com módulos
+               .ThenInclude(mdl => mdl.Modulo) // Dentro do relacionamento vai trazer os módulos
+               .Include(pda=> pda.PerfisDeAcessoUsuario) // Relacionamento com usuários
+               .ThenInclude(usr => usr.Usuario)
+               .FirstOrDefaultAsync(pf => pf.Codigo == codigo);
         }
 
         public Task<PerfilDeAcesso> ObterPerfilPorIdRepositoryAsync(int id)
@@ -53,7 +75,10 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<ICollection<PerfilDeAcesso>> ObterTodosPerfisRepositoryAsync()
         {
-            return await _context.PerfisDeAcesso.ToListAsync();
+            return await _context.PerfisDeAcesso
+                .Include(pam => pam.PerfilDeAcessoModulos)
+                .ThenInclude(mdl => mdl.Modulo)                
+                .ToListAsync();
         }
     }
 }

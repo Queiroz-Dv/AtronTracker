@@ -1,7 +1,10 @@
-﻿namespace Atron.Domain.Entities
+﻿using Atron.Domain.Componentes;
+using System.Collections.Generic;
+
+namespace Atron.Domain.Entities
 {
     public class PerfilDeAcessoModulo
-    {
+    {       
         public int PerfilDeAcessoId { get; set; }
         public string PerfilDeAcessoCodigo { get; set; }
 

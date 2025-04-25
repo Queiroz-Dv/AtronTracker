@@ -22,6 +22,66 @@ namespace Atron.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("Atron.Domain.Componentes.PropriedadeDeFluxoModulo", b =>
+                {
+                    b.Property<int>("ModuloId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModuloCodigo")
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("PropriedadeDeFluxoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PropriedadeDeFluxoCodigo")
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("ModuloId", "ModuloCodigo", "PropriedadeDeFluxoId", "PropriedadeDeFluxoCodigo");
+
+                    b.HasIndex("PropriedadeDeFluxoId", "PropriedadeDeFluxoCodigo");
+
+                    b.ToTable("PropriedadeDeFluxoModulo");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Componentes.PropriedadesDeFluxo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Codigo")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("Id", "Codigo");
+
+                    b.ToTable("PropriedadesDeFluxo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Codigo = "GRAVAR"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Codigo = "CONSULTAR"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Codigo = "DELETAR"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Codigo = "ATUALIZAR"
+                        });
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.Cargo", b =>
                 {
                     b.Property<int>("Id")
@@ -95,6 +155,44 @@ namespace Atron.Infrastructure.Migrations
                     b.HasKey("Id", "Codigo");
 
                     b.ToTable("Modulos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Codigo = "DPT",
+                            Descricao = "Departamentos"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Codigo = "CRG",
+                            Descricao = "Cargos"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Codigo = "USR",
+                            Descricao = "Usuários"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Codigo = "TAR",
+                            Descricao = "Tarefas"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Codigo = "SAL",
+                            Descricao = "Salários"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Codigo = "PAC",
+                            Descricao = "Políticas e Acessos"
+                        });
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcesso", b =>
@@ -114,7 +212,15 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("UsuarioCodigo")
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id", "Codigo");
+
+                    b.HasIndex("UsuarioId", "UsuarioCodigo");
 
                     b.ToTable("PerfisDeAcesso");
                 });
@@ -513,6 +619,25 @@ namespace Atron.Infrastructure.Migrations
                     b.ToTable("AppUserToken", (string)null);
                 });
 
+            modelBuilder.Entity("Atron.Domain.Componentes.PropriedadeDeFluxoModulo", b =>
+                {
+                    b.HasOne("Atron.Domain.Entities.Modulo", "Modulo")
+                        .WithMany("PropriedadeDeFluxoModulos")
+                        .HasForeignKey("ModuloId", "ModuloCodigo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Atron.Domain.Componentes.PropriedadesDeFluxo", "PropriedadesDeFluxo")
+                        .WithMany("PropriedadesDeFluxoModulo")
+                        .HasForeignKey("PropriedadeDeFluxoId", "PropriedadeDeFluxoCodigo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Modulo");
+
+                    b.Navigation("PropriedadesDeFluxo");
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.Cargo", b =>
                 {
                     b.HasOne("Atron.Domain.Entities.Departamento", "Departamento")
@@ -520,6 +645,15 @@ namespace Atron.Infrastructure.Migrations
                         .HasForeignKey("DepartamentoId", "DepartamentoCodigo");
 
                     b.Navigation("Departamento");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcesso", b =>
+                {
+                    b.HasOne("Atron.Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcessoModulo", b =>
@@ -544,13 +678,13 @@ namespace Atron.Infrastructure.Migrations
             modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcessoUsuario", b =>
                 {
                     b.HasOne("Atron.Domain.Entities.PerfilDeAcesso", "PerfilDeAcesso")
-                        .WithMany("PerfilDeAcessoUsuarios")
+                        .WithMany("PerfisDeAcessoUsuario")
                         .HasForeignKey("PerfilDeAcessoId", "PerfilDeAcessoCodigo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Atron.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("PerfilDeAcessoUsuarios")
+                        .WithMany("PerfisDeAcessoUsuario")
                         .HasForeignKey("UsuarioId", "UsuarioCodigo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -658,6 +792,11 @@ namespace Atron.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Atron.Domain.Componentes.PropriedadesDeFluxo", b =>
+                {
+                    b.Navigation("PropriedadesDeFluxoModulo");
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.Cargo", b =>
                 {
                     b.Navigation("UsuarioCargoDepartamentos");
@@ -673,18 +812,20 @@ namespace Atron.Infrastructure.Migrations
             modelBuilder.Entity("Atron.Domain.Entities.Modulo", b =>
                 {
                     b.Navigation("PerfilDeAcessoModulos");
+
+                    b.Navigation("PropriedadeDeFluxoModulos");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcesso", b =>
                 {
                     b.Navigation("PerfilDeAcessoModulos");
 
-                    b.Navigation("PerfilDeAcessoUsuarios");
+                    b.Navigation("PerfisDeAcessoUsuario");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Usuario", b =>
                 {
-                    b.Navigation("PerfilDeAcessoUsuarios");
+                    b.Navigation("PerfisDeAcessoUsuario");
 
                     b.Navigation("Salario");
 

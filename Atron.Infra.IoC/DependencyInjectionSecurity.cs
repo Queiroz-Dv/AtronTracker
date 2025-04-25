@@ -21,6 +21,16 @@ namespace Atron.Infra.IoC
             var issueSigniKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
             services.AddScoped<IApplicationTokenService, ApplicationTokenService>();
+            
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                        .WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
 
             // informar o tipo de autenticacao JWTBearer    
             services.AddAuthentication(opt =>
@@ -38,14 +48,9 @@ namespace Atron.Infra.IoC
                         // Personaliza a resposta quando o token é inválido ou ausente
                         context.HandleResponse();
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        context.Response.ContentType = "application/json; charset=utf-8";
-                        var result = JsonSerializer.Serialize(new
-                        {
-                            status = 401,
-                            message = "Token inválido ou ausente."
-                        });
+                        context.Response.ContentType = "application/json; charset=utf-8";                       
                         context.Response.Headers["Location"] = "ApplicationLogin/Login"; // Redireciona para a página de Login                        
-                        return context.Response.WriteAsync(result);
+                        return Task.CompletedTask;
                     },
 
                     OnForbidden = context =>
@@ -74,7 +79,7 @@ namespace Atron.Infra.IoC
                         return context.Response.WriteAsync(result);
                     }
                 };                
-
+                
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
