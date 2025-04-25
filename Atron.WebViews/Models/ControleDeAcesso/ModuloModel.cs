@@ -12,5 +12,4 @@ namespace Atron.WebViews.Models.ControleDeAcesso
 
         public ModuloDTO Modulo { get; set; }
     }
-
 }

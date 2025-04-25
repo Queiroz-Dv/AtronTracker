@@ -14,7 +14,7 @@
                 <th>@Html.DisplayNameFor(model => model.Usuario.Cargo)</th>
                 <th>@Html.DisplayNameFor(model => model.Usuario.Departamento)</th>
                 <th>@Html.DisplayNameFor(model => model.Tarefa.Titulo)</th>
-                <th>@Html.DisplayNameFor(model => model.Tarefa.EstadoDaTarefaDescricao)</th>
+            @*     <th>@Html.DisplayNameFor(model => model.Tarefa.EstadoDaTarefaDescricao)</th> *@
                 <th>@Html.DisplayNameFor(model => model.Tarefa.DataInicial)</th>
                 <th colspan="2">@Html.DisplayNameFor(model => model.Tarefa.DataFinal)</th>
             </tr>
@@ -24,11 +24,11 @@
             @foreach (var item in Model.Entities)
             {
                 <tr>
-                    <td>@item.NomeUsuario</td>
+                   @*  <td>@item.NomeUsuario</td>
                     <td>@item.CargoDescricao</td>
-                    <td>@item.DepartamentoDescricao</td>
+                    <td>@item.DepartamentoDescricao</td> *@
                     <td>@item.Titulo</td>
-                    <td>@item.EstadoDaTarefaDescricao</td>
+                   @*  <td>@item.EstadoDaTarefaDescricao</td> *@
                     <td>@item.DataInicial.ToShortDateString()</td>
                     <td>@item.DataFinal.ToShortDateString()</td>
 

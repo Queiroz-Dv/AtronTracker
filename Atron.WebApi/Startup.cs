@@ -72,6 +72,7 @@ namespace Atron.WebApi
             createDefaultUserRole.CreateDefaultRoles();
             createDefaultUserRole.CreateDefaultUsers();
 
+            app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

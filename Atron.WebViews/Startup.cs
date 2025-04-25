@@ -80,7 +80,7 @@ namespace Atron.WebViews
                 // Chama o próximo middleware na pipeline
                 await next();
             });
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();

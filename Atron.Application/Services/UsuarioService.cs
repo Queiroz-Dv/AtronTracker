@@ -166,7 +166,7 @@ namespace Atron.Application.Services
         public async Task<List<UsuarioDTO>> ObterTodosAsync()
         {
             var usuarios = await _usuarioRepository.ObterUsuariosAsync();
-            return _map.MapToListDTO(usuarios.ToList());
+            return _map.MapToListDTO(usuarios.OrderByDescending(c => c.Codigo).ToList());
         }
 
         public async Task RemoverAsync(string codigo)

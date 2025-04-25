@@ -20,11 +20,12 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Tarefa> AtualizarTarefaAsync(int id, Tarefa tarefa)
         {
-            var tarefaBD = await ObterTarefaPorId(id);
+            var tarefaBD = await ObterTarefaPorId(id);            
             AtualizarEntidadeParaPersistencia(tarefa, tarefaBD);
+
             try
             {
-                _context.Tarefas.Update(tarefa);
+                _context.Tarefas.Update(tarefaBD);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

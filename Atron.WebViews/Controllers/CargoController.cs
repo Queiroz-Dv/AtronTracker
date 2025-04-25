@@ -66,6 +66,7 @@ namespace Atron.WebViews.Controllers
             {
                 _messageModel.AddError("Para criar um cargo é necessário ter um departamento.");
                 CreateTempDataMessages();
+                return;
             }
 
             var departamentosFiltrados = departamentos.Select(dpt =>

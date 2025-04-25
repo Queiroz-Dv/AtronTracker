@@ -64,19 +64,19 @@ namespace Atron.WebViews.Controllers
                 usuario => usuario.Codigo,
                 (tarefa, usuario) =>
                 {
-                    tarefa.NomeUsuario = usuario.Nome;
-                    tarefa.CargoDescricao = usuario.Cargo.Descricao;
-                    tarefa.DepartamentoDescricao = usuario.Departamento.Descricao;
+                    //tarefa.NomeUsuario = usuario.Nome;
+                    //tarefa.CargoDescricao = usuario.Cargo.Descricao;
+                    //tarefa.DepartamentoDescricao = usuario.Departamento.Descricao;
                     return tarefa;
                 }
-            ).Join(TarefaEstados, tarefa =>
-                tarefa.EstadoDaTarefaId,
-                tarefaEstado => tarefaEstado.Id.ToString(),
-                (tarefa, tarefaEstado) =>
-                {
-                    tarefa.EstadoDaTarefaDescricao = tarefaEstado.Descricao;
-                    return tarefa;
-                }
+            //).Join(TarefaEstados, tarefa =>
+            //  //  tarefa.EstadoDaTarefaId,
+            //    tarefaEstado => tarefaEstado.Id.ToString(),
+            //    (tarefa, tarefaEstado) =>
+            //    {
+            //      //  tarefa.EstadoDaTarefaDescricao = tarefaEstado.Descricao;
+            //        return tarefa;
+            //    }
             ).ToList();
 
             ApiControllerName = nameof(Tarefa);
@@ -162,18 +162,18 @@ namespace Atron.WebViews.Controllers
                 // Se for update 
                 tarefaDTO = await _service.ObterPorId(tarefaId);
 
-                tarefaDTO.UsuarioCodigo = usuario.Codigo;
-                tarefaDTO.CargoDescricao = usuario.Cargo.Descricao;
-                tarefaDTO.DepartamentoDescricao = usuario.Departamento.Descricao;
+                //tarefaDTO.UsuarioCodigo = usuario.Codigo;
+                //tarefaDTO.CargoDescricao = usuario.Cargo.Descricao;
+                //tarefaDTO.DepartamentoDescricao = usuario.Departamento.Descricao;
             }
             else
             {
                 // Se for cadastro
                 tarefaDTO = new TarefaDTO
                 {
-                    UsuarioCodigo = usuario.Codigo,
-                    CargoDescricao = usuario.Cargo.Descricao,
-                    DepartamentoDescricao = usuario.Departamento.Descricao,
+                    //UsuarioCodigo = usuario.Codigo,
+                    //CargoDescricao = usuario.Cargo.Descricao,
+                    //DepartamentoDescricao = usuario.Departamento.Descricao,
                 };
             }
 
@@ -194,8 +194,8 @@ namespace Atron.WebViews.Controllers
             BuildUsuarioRoute();
             var usuario = await _usuarioService.ObterPorCodigo(tarefa.UsuarioCodigo);
 
-            tarefa.CargoDescricao = usuario.Cargo.Descricao;
-            tarefa.DepartamentoDescricao = usuario.Departamento.Descricao;
+            //tarefa.CargoDescricao = usuario.Cargo.Descricao;
+            //tarefa.DepartamentoDescricao = usuario.Departamento.Descricao;
 
             await CarregarCamposComplementares();
             return View(tarefa);
