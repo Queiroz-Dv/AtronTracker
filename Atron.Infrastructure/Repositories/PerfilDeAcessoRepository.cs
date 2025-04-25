@@ -61,8 +61,11 @@ namespace Atron.Infrastructure.Repositories
         public async Task<PerfilDeAcesso> ObterPerfilPorCodigoRepositoryAsync(string codigo)
         {
             return await _context.PerfisDeAcesso
-               .Include(pam => pam.PerfilDeAcessoModulos)
-               .ThenInclude(mdl => mdl.Modulo).FirstOrDefaultAsync(pf => pf.Codigo == codigo);
+               .Include(pam => pam.PerfilDeAcessoModulos) // Relacionamento com módulos
+               .ThenInclude(mdl => mdl.Modulo) // Dentro do relacionamento vai trazer os módulos
+               .Include(pda=> pda.PerfisDeAcessoUsuario) // Relacionamento com usuários
+               .ThenInclude(usr => usr.Usuario)
+               .FirstOrDefaultAsync(pf => pf.Codigo == codigo);
         }
 
         public Task<PerfilDeAcesso> ObterPerfilPorIdRepositoryAsync(int id)

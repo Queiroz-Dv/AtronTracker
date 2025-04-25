@@ -45,7 +45,6 @@ namespace Atron.WebApi.Controllers
         [HttpGet("{codigo}")]
         public async Task<ActionResult> Get(string codigo)
         {
-
             var perfil = await _service.ObterPerfilPorCodigoServiceAsync(codigo);
             return Ok(perfil);
         }
@@ -58,6 +57,23 @@ namespace Atron.WebApi.Controllers
             return _messageModel.Messages.HasErrors() ?
                     BadRequest(ObterNotificacoes()) :
                     Ok(ObterNotificacoes());
+        }
+
+        [HttpPost]
+        [Route("RelacionamentoPerfilUsuario")]
+        public async Task<ActionResult> RelacionamentoPerfilUsuario(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuario)
+        {
+            return !await _service.RelacionarPerfilDeAcessoUsuarioServiceAsync(perfilDeAcessoUsuario) ?
+                      BadRequest(ObterNotificacoes()) :
+                      Ok(ObterNotificacoes());
+        }
+
+        [HttpGet]
+        [Route("ObterRelacionamentoPerfilUsuario/{codigo}")]
+        public async Task<ActionResult> ObterRelacionamentosPerfilUsuario([FromRoute]string codigo)
+        {
+            var perfil = await _service.ObterRelacionamentoDePerfilUsuarioPorCodigoServiceAsync(codigo);
+            return Ok(perfil);
         }
     }
 }
