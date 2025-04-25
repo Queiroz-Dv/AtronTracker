@@ -62,7 +62,13 @@ namespace Atron.Infra.IoC
             ConfigurePropriedadesDeFluxoServices(services);
             ConfigurePropriedadesDeFluxoModuloServices(services);
             ConfigurePerfilDeAcessoServices(services);
+            ConfigurePerfilDeAcessoUsuarioServices(services);
             return services;
+        }
+
+        private static void ConfigurePerfilDeAcessoUsuarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IPerfilDeAcessoUsuarioRepository, PerfilDeAcessoUsuarioRepository>();
         }
 
         private static void ConfigurePropriedadesDeFluxoModuloServices(IServiceCollection services)
