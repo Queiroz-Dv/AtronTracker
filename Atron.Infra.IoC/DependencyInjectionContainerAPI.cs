@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Models.ApplicationModels;
 using System.Text.Json.Serialization;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Atron.Infra.IoC
 {
@@ -47,6 +48,8 @@ namespace Atron.Infra.IoC
             services = services.AddServiceMappings();
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);
+            ConfigureModuloServices(services);
+            services = services.AddModuleAuthorizationPolicies(services.BuildServiceProvider());            
             ConfigureTarefaServices(services);
             ConfigureSalarioServices(services);
             ConfigureDepartamentoServices(services);
@@ -58,7 +61,6 @@ namespace Atron.Infra.IoC
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigureUserAuthenticationServices(services);
-            ConfigureModuloServices(services);
             ConfigurePropriedadesDeFluxoServices(services);
             ConfigurePropriedadesDeFluxoModuloServices(services);
             ConfigurePerfilDeAcessoServices(services);

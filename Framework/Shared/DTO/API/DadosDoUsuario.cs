@@ -8,5 +8,8 @@
         public string? CodigoDoDepartamento { get; set; }
         public string? CodigoDoCargo { get; set; }
         public DateTime Expiracao { get; set; }
+        
+        public ICollection<string> CodigosPerfis { get; set; }
+        public ICollection<string> ModulosCodigo { get; set; }
     }
 }

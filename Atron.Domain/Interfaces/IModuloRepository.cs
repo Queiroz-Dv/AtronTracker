@@ -8,9 +8,6 @@ namespace Atron.Domain.Interfaces
     {
         Task<IEnumerable<Modulo>> ObterTodosRepository();
         Task<Modulo> ObterPorIdRepository(int id);
-        Task<Modulo> ObterPorCodigoRepository(string codigo);
-        Task<bool> CriarModuloRepository(Modulo modulo);
-        Task<Modulo> Atualizar(Modulo modulo);
-        Task<bool> RemoverModuloRepository(Modulo modulo);
+        Task<Modulo> ObterPorCodigoRepository(string codigo);                       
     }
 }

@@ -1,11 +1,14 @@
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Infra.IoC;
 using Atron.WebApi.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Threading.Tasks;
 
 namespace Atron.WebApi
 {
@@ -36,7 +39,8 @@ namespace Atron.WebApi
         {
             // Aqui registramos os serviços da API
             services.AddInfrastructureAPI(Configuration);         // Adiciona a injeção de dependência da camada de infraestrutura
-
+            services.AddSingleton<IAuthorizationPolicyProvider, DynamicModuloPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, ModuloHandler>();
             // Indica que usaremos as controllers para comunicação com os endpoints
             services.AddControllers();
             services.AddHttpClient();
@@ -71,7 +75,7 @@ namespace Atron.WebApi
 
             createDefaultUserRole.CreateDefaultRoles();
             createDefaultUserRole.CreateDefaultUsers();
-
+            
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
