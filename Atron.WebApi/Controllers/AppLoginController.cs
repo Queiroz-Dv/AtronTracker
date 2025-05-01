@@ -11,7 +11,6 @@ using Shared.Models;
 using System;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
@@ -51,7 +50,7 @@ namespace Atron.WebApi.Controllers
             return Ok(result);
         }
 
-        [Route("Disconectar")]
+        [Route("Desconectar")]
         [HttpGet]
         public async Task<ActionResult> Logout()
         {
@@ -84,7 +83,7 @@ namespace Atron.WebApi.Controllers
                     return Unauthorized();
                 }
                 else
-                {                    
+                {
                     return Ok(new DadosDoUsuario()
                     {
                         CodigoDoCargo = codigoDoCargo,

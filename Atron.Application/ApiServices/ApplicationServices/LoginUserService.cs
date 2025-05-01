@@ -8,6 +8,7 @@ using Shared.DTO.API.Request;
 using Shared.Interfaces;
 using Shared.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.ApplicationServices
@@ -17,17 +18,20 @@ namespace Atron.Application.ApiServices.ApplicationServices
         private readonly IApplicationTokenService _tokenService;
         private readonly ILoginApplicationRepository _loginApplication;
         private readonly IUsuarioService _usuarioService;
+        private readonly IPerfilDeAcessoService _perfilDeAcessoService;
         private readonly MessageModel _messageModel;
 
         public LoginUserService(
             ILoginApplicationRepository loginApplication,
             IApplicationTokenService tokenService,
             IUsuarioService usuarioService,
+            IPerfilDeAcessoService perfilDeAcessoService,
             MessageModel messageModel)
         {
             _loginApplication = loginApplication;
             _tokenService = tokenService;
             _usuarioService = usuarioService;
+            _perfilDeAcessoService = perfilDeAcessoService;
             _messageModel = messageModel;
         }
 
@@ -62,7 +66,25 @@ namespace Atron.Application.ApiServices.ApplicationServices
                     CodigoDoCargo = user.CargoCodigo,
                     CodigoDoDepartamento = user.DepartamentoCodigo,
                     Expiracao = DateTime.Now.AddHours(24),
+                    CodigosPerfis = new List<string>(),
+                    ModulosCodigo = new List<string>(),
                 };
+
+                var perfisAssociados = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(user.Codigo);
+
+                foreach (var perf in perfisAssociados)
+                {
+                    loginDTO.DadosDoUsuario.CodigosPerfis.Add(perf.Codigo);
+
+                    foreach (var mod in perf.Modulos)
+                    {
+                        // Check if the module code is not already in the ModulosCodigo collection
+                        if (!loginDTO.DadosDoUsuario.ModulosCodigo.Contains(mod.Codigo))
+                        {
+                            loginDTO.DadosDoUsuario.ModulosCodigo.Add(mod.Codigo);
+                        }
+                    }
+                }
 
                 // Generate token
                 var userToken = _tokenService.GenerateToken(loginDTO.DadosDoUsuario);
@@ -81,6 +103,6 @@ namespace Atron.Application.ApiServices.ApplicationServices
         public async Task Logout()
         {
             await _loginApplication.Logout();
-        }      
+        }
     }
 }

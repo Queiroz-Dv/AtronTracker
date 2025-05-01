@@ -4,6 +4,7 @@ using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
@@ -71,6 +72,17 @@ namespace Atron.Infrastructure.Repositories
         public Task<PerfilDeAcesso> ObterPerfilPorIdRepositoryAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<PerfilDeAcesso>> ObterPerfisPorCodigoDeUsuarioRepositoryAsync(string usuarioCodigo)
+        {
+            return await _context.PerfisDeAcesso
+                .Include(pam => pam.PerfilDeAcessoModulos)
+                    .ThenInclude(pam => pam.Modulo)
+                .Include(pda => pda.PerfisDeAcessoUsuario)
+                    .ThenInclude(pau => pau.Usuario)
+                .Where(p => p.PerfisDeAcessoUsuario.Any(u => u.Usuario.Codigo == usuarioCodigo))
+                .ToListAsync();
         }
 
         public async Task<ICollection<PerfilDeAcesso>> ObterTodosPerfisRepositoryAsync()

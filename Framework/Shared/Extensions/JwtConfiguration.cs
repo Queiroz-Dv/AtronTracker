@@ -25,7 +25,7 @@ namespace Shared.Extensions
 
         public static Claim[] GetClaims(DadosDoUsuario dadosDoUsuario)
         {
-            var claims = new[] {
+            var claims = new List<Claim> {
                 new Claim(ClaimTypes.Name, dadosDoUsuario.NomeDoUsuario),
                 new Claim(ClaimTypes.Email, dadosDoUsuario.Email),
                 new Claim(ClaimTypes.Expiration, dadosDoUsuario.Expiracao.ToString()),
@@ -36,7 +36,22 @@ namespace Shared.Extensions
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Identificador único do token
             };
 
-            return claims;
+            CreateAcessControlClaims(dadosDoUsuario, claims);
+
+            return claims.ToArray();
+        }
+
+        private static void CreateAcessControlClaims(DadosDoUsuario dadosDoUsuario, List<Claim> claims)
+        {
+            foreach (var perf in dadosDoUsuario.CodigosPerfis)
+            {
+                claims.Add(new Claim("perfil", perf));
+            }
+
+            foreach (var mod in dadosDoUsuario.ModulosCodigo)
+            {
+                claims.Add(new Claim("modulo", mod));
+            }
         }
     }
 }

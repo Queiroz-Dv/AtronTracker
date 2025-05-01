@@ -61,9 +61,17 @@ namespace Atron.WebApi.Controllers
 
         [HttpPost]
         [Route("RelacionamentoPerfilUsuario")]
-        public async Task<ActionResult> RelacionamentoPerfilUsuario(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuario)
+        public async Task<ActionResult> RelacionamentoPerfilUsuario(PerfilUsuarioRequest request)
         {
-            return !await _service.RelacionarPerfilDeAcessoUsuarioServiceAsync(perfilDeAcessoUsuario) ?
+            var dto = new PerfilDeAcessoUsuarioDTO();
+            dto.PerfilDeAcesso.Codigo = request.CodigoPerfil;
+            foreach (var usr in request.Usuarios)
+            {
+                dto.Usuarios.Add(new UsuarioDTO() { Codigo = usr.Codigo });
+            }
+
+
+            return !await _service.RelacionarPerfilDeAcessoUsuarioServiceAsync(dto) ?
                       BadRequest(ObterNotificacoes()) :
                       Ok(ObterNotificacoes());
         }
@@ -75,5 +83,16 @@ namespace Atron.WebApi.Controllers
             var perfil = await _service.ObterRelacionamentoDePerfilUsuarioPorCodigoServiceAsync(codigo);
             return Ok(perfil);
         }
+    }
+
+    public class UsuarioRequest
+    {
+        public string Codigo { get; set; }
+    }
+
+    public class PerfilUsuarioRequest
+    {
+        public string CodigoPerfil { get; set; }
+        public UsuarioRequest[] Usuarios { get; set; }
     }
 }
