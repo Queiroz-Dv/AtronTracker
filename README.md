@@ -7,19 +7,20 @@
 <h1>Projeto Atron Tracker</h1>
 
 <p>Esse protótipo tem como objetivo exemplificar todo o desenvolvimento e ciclo de um software. 
-O projeto apresentado segue os padrões da Arquitetura Limpa com 
+O projeto apresentado segue a base de alguns de  padrões da Arquitetura Limpa com 
 aplicação parcial do Domain-Driven Design (DDD) e MVC. 
+
 As bases desse projeto foram desenvolvidas para desktop; no entanto, 
 devido aos conhecimentos adquiridos após exercer minha função na área e dos estudos realizados, 
 estou constanemente refatorando e melhorando o sistema.</p>
 <br>
 <div>
   <h2>Tecnologias Utilizadas</h2>
-  <p>Para o projeto Web Api utilizei o Swagger para documentação além do Redoc para um layout mais apresentável.
-    No projeto anterior utilizei o AutoMapper para lidar com os mapeamentos do DTO para entidade, no entanto, decidi montar meu próprio mapeador.</p>
-
+  <p>Para o projeto Web Api utilizei o <strong>Swagger para documentação</strong> além do Redoc para um layout mais apresentável.
+  No projeto anterior utilizei o AutoMapper para lidar com os mapeamentos do DTO para entidade, no entanto, decidi montar meu próprio mapeador.</p>
   <p>O ORM utilizado é o Entity Framework Core, e está desacoplado das outras camadas podendo ser alterado por outro ORM de preferência.</p>
-  <p>O projeto de web view está habilitado para a utilização de Razor Pages, no entanto, ainda espero alterar para o Angular futuramente.</p>
+  <p>O projeto de web view pode ser utilizado parcialmente com Razor Pages, no entanto, decidi migrar para o Angular.</p>
+  <p>Caso queira ver o projeto em Angular, clique nesse link: <a href="https://github.com/Queiroz-Dv/AtronTracker-WebView">Atron Tracker Web View</a></p>
   <p>O banco de dados utilizado é o SQL Server, assim como o ORM também pode ser alterado facilmente pois está desacoplado.</p>
 </div>
 <div>
@@ -46,7 +47,7 @@ estou constanemente refatorando e melhorando o sistema.</p>
        </li>
       <br>
       <li>
-          <b>Web View</b>
+          <b>Web View (Razor Pages)</b>
            <p><img src="images/AtronWebView.png" alt="Módulo Atron Web View"></p>
             <p> O projeto da View é onde ocorre os processos mais variados para a apresentação e o envio dos dados para a API.
             É nesse projeto que se concentra a comunicação com a API, 
@@ -71,20 +72,20 @@ estou constanemente refatorando e melhorando o sistema.</p>
     <p>Decidi modelar e montar a estrutura interna dos processos e fluxos do sistema por conta própria, 
       apesar de ter outras abordagens para utilizar. 
       No entanto, para desafiar-me, centralizei tudo nessa pasta a fim de organizar 
-      as bibliotecas do fluxo do sistema.</p>    
+      as bibliotecas do fluxo interno do sistema.</p>    
     <ul>
       <li>
         <p><strong><a title="Communication Doc" href="/Framework/Communication/README.md">Communication:</a></strong>
         <p><img src="images/AtronCommunication.png" alt="Módulo Communication" /></p>
-        Gerencia a comunicação com as rotas da API e do token de acesso entre os endpoints, além de abstrair uma parte da segurança para a API.</p>         
+        A biblioteca Communication gerencia a comunicação com as rotas da API e do token de acesso entre os endpoints, além de abstrair uma parte da segurança para a API.</p>         
       </li> 
       <br>     
       <li>
         <p><strong><a title="External Services Doc" href="/Framework/ExternalServices/README.md">External Services:</a></strong><br><img src="images/AtronExternalServices.png" alt="Módulo External Services" /><br>
-        <p>Esse módulo é responsável por abstrair a comunicação com o projeto de Web API, em outras palavras,
-            é ele quem faz o processamento de envio e recebimento dos dados da view para a API.</p>        
+        <p>Essa biblioteca é responsável por abstrair a comunicação com o projeto de Web API, em outras palavras,
+            é ele quem faz a interceptação de envio e recebimento dos dados da view para a API.</p>        
         <p> É um módulo especificamente separado para lidar com as requisições HTTP, 
-            incluindo funcionalidades para as págians de Login e de Registro.
+            incluindo funcionalidades para as págians de Login e de Registro ed usuário.
         </p>
       </li>          
       <li>

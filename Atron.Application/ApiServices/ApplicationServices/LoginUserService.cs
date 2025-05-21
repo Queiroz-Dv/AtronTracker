@@ -45,7 +45,8 @@ namespace Atron.Application.ApiServices.ApplicationServices
             var login = new ApiLogin()
             {
                 UserName = loginRequest.CodigoDoUsuario,
-                Password = loginRequest.Senha
+                Password = loginRequest.Senha,
+                Remember = loginRequest.Lembrar
             };
 
             var result = await _loginApplication.AuthenticateUserLoginAsync(login);
@@ -103,6 +104,13 @@ namespace Atron.Application.ApiServices.ApplicationServices
         public async Task Logout()
         {
             await _loginApplication.Logout();
+        }
+
+        public async Task<bool> TrocarSenha(LoginRequestDTO dto)
+        {
+            var login = new ApiLogin { UserName = dto.CodigoDoUsuario, Password = dto.Senha };
+
+            return await _loginApplication.ConfigPasswordAsync(dto.CodigoDoUsuario, login);
         }
     }
 }

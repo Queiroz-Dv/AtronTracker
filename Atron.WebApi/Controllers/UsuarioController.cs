@@ -13,7 +13,7 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Policy = "Modulo:USR")]
     public class UsuarioController : ApiBaseConfigurationController<Usuario, IUsuarioService>
     {
         public UsuarioController(

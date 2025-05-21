@@ -1,7 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces;
 using Atron.Domain.Entities;
-using Atron.WebApi.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
@@ -14,7 +13,7 @@ namespace Atron.WebApi.Controllers
     /// <summary>  
     /// Controlador para gerenciar entidades de Departamento.  
     /// </summary>  
-    [Authorize(Policy = PoliciesDefinition.DPT)]
+    [Authorize(Policy = "Modulo:DPT")] // Configura a policy para o módulo de Departamento
     [ApiController]
     [Route("api/[controller]")]
     public class DepartamentoController : ApiBaseConfigurationController<Departamento, IDepartamentoService>

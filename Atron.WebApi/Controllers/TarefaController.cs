@@ -12,7 +12,7 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Policy = "Modulo:TAR")]
     public class TarefaController : ApiBaseConfigurationController<Tarefa, ITarefaService>
     {
         public TarefaController(ITarefaService service, MessageModel messageModel) :

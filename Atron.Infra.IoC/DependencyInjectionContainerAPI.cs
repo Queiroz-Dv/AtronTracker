@@ -18,6 +18,8 @@ using Shared.Models.ApplicationModels;
 using System.Text.Json.Serialization;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using Shared.Interfaces;
+using Shared.Services;
 
 namespace Atron.Infra.IoC
 {
@@ -43,13 +45,15 @@ namespace Atron.Infra.IoC
             // Evitar o looping infinito 
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
             services = services.AddServiceMappings();
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);
             ConfigureModuloServices(services);
-            services = services.AddModuleAuthorizationPolicies(services.BuildServiceProvider());            
+            services = services.AddModuleAuthorizationPolicies(services.BuildServiceProvider());
+            services.AddSingleton<ILoggerManager, LoggerManager>();
             ConfigureTarefaServices(services);
             ConfigureSalarioServices(services);
             ConfigureDepartamentoServices(services);
