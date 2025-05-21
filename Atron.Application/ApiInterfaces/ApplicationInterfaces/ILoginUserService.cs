@@ -12,5 +12,6 @@ namespace Atron.Application.ApiInterfaces.ApplicationInterfaces
         Task<LoginDTO> Authenticate(LoginRequestDTO login);
 
         Task Logout();
+        Task<bool> TrocarSenha(LoginRequestDTO dto);
     }
 }

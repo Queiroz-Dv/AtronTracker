@@ -10,7 +10,7 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize("Modulo:PERF")]    
     public class PerfilDeAcessoController : ApiBaseConfigurationController<PerfilDeAcessoDTO, IPerfilDeAcessoService>
     {
         public PerfilDeAcessoController(

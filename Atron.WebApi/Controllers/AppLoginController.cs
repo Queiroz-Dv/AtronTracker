@@ -20,6 +20,7 @@ namespace Atron.WebApi.Controllers
     public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginUserService>
     {
         private readonly IUsuarioService _usuarioService;
+
         public AppLoginController(
             IUsuarioService usuarioService,
             MessageModel messageModel,
@@ -28,6 +29,15 @@ namespace Atron.WebApi.Controllers
         {
             _usuarioService = usuarioService;
         }
+
+
+        [HttpPost]
+        public async Task<ActionResult> TrocarSenha([FromBody] LoginRequestDTO dto)
+        {
+            var result = await _service.TrocarSenha(dto);
+            return Ok(result);
+        }
+
 
         /// <summary>
         /// Endpoint para logar um usuário no sistema
@@ -100,5 +110,5 @@ namespace Atron.WebApi.Controllers
                 return Unauthorized();
             }
         }
-    }
+    }  
 }

@@ -7,6 +7,8 @@ namespace Atron.Domain.Interfaces.ApplicationInterfaces
     {
         Task<bool> AuthenticateUserLoginAsync(ApiLogin login);
 
+        Task<bool> ConfigPasswordAsync(string codigoDoUsuario, ApiLogin apiLogin);
+
         Task Logout();
     }
 }
