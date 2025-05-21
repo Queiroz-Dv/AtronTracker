@@ -4,38 +4,26 @@ A estrutura do projeto segue um padrão de camadas, com o objetivo de promover a
 
 A camada Shared contém elementos comuns a diversas partes do sistema.
 
- **`DTO`:**
-  * Descrição dos Data Transfer Objects (DTOs) utilizados para transportar dados entre as camadas.
-    * **PageInfoDTO:** Contém informações sobre a paginação.
-    * **ResultResponseDTO:** Representa uma resposta genérica do sistema.
-        * **`API`:**
-            * **AppSettingsConfigShared.cs:** Configurações da aplicação compartilhadas.
-            * **RotaDeAcesso.cs:** Definição das rotas de acesso.
-            * **RotasFixasConfig.cs:** Configurações de rotas fixas.
+## Estrutura de Pastas:
+
+ * **`DTO`:** Descrição dos Data Transfer Objects (DTOs) utilizados para transportar dados entre as camadas.
+
 <br>
             
-**`Enums`:**
-  * **ResultResponseLevelEnum:** Define os níveis de resposta (sucesso, falha, etc.).
+* **`Enums`:** Enumeradores utilizados de forma global
   
 <br>
 
-**`Extensions`:**
-  * **EnumExtensions.cs:** Extensões para a classe Enum.
-  * **HttpResponseMessageExtensions.cs:** Extensões para a classe HttpResponseMessage.
+* **`Extensions`:** Classes de extensão para reutilização de código e centralização de funcionalidades
 
  <br>
 
-**`Interfaces`:**
-  * **IPaginationService:** Define o contrato para o serviço de paginação.
-  * **IResultResponseService:** Define o contrato para o serviço de resposta.
+* **`Interfaces`:** Defini os contratos que serão utilizados de forma abstraída
 
 <br>
 
-**`Models`:**
-  * **ResultResponseModel:** Representa o modelo de dados para a resposta do sistema.
+* **`Models`:** Modelos de objeto que serão utilizados nos processos internos
 
 <br>
 
-**`Services`:**
-  * **PaginationService:** Implementação do serviço de paginação.
-  * **ResultResponseService:** Implementação do serviço de resposta.
+* **`Services`:** Serviços que realizam as operações básicas do sistema como filtragem, mapeamento de objetos, notificações entre outros.
