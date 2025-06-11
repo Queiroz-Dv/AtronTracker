@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NLog;
-using System.IO;
 
 namespace Atron.WebApi
 {
@@ -45,7 +43,7 @@ namespace Atron.WebApi
             // 🔐 Registra os serviços necessários para a política dinâmica de autorização baseada em "módulo"
             services.AddSingleton<IAuthorizationPolicyProvider, DynamicModuloPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, ModuloHandler>();
-            
+
             // 🚀 Adiciona o suporte a Controllers (necessário para Web APIs)
             services.AddControllers();
 
@@ -78,12 +76,6 @@ namespace Atron.WebApi
                 app.UseHsts(); // HTTP Strict Transport Security
             }
 
-
-            // Replace the obsolete method call with the updated one
-            LogManager.Setup().LoadConfigurationFromFile(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
-
-            
-
             // 🧾 Adiciona o Swagger para documentação da API
             AddSwagger(app);
 
@@ -94,7 +86,7 @@ namespace Atron.WebApi
                 c.DocumentTitle = "Atron WebApi Doc"; // Título da aba
                 c.SpecUrl = "/swagger/v1/swagger.json"; // Localização do JSON de especificação
                 c.ExpandResponses("200,201"); // Expande respostas 200 e 201 por padrão
-            });         
+            });
 
             // Cada método desse é um Middileware
 
@@ -119,14 +111,12 @@ namespace Atron.WebApi
 
             // 🔓 Ativa a autorização (necessário para aplicar `[Authorize]` nas rotas)
             app.UseAuthorization();
-            
+
             // ♾️ Configura o ASP.NET Core para respeitar cabeçalhos X-Forwarded-* enviados por proxies reversos, como Nginx
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.All
             });
-
-            
 
             // 🚀 Mapeia os endpoints das controllers para o pipeline de requisições
             app.UseEndpoints(endpoints =>

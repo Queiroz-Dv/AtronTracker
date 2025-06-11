@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace Shared.DTO.API
+﻿namespace Shared.DTO.API
 {
     public static class ClaimCode
     {
@@ -16,5 +14,6 @@ namespace Shared.DTO.API
         public const string NOME_UNIDADE = "NomeUnidade";
         public const string CODIGO_EMPRESA = "CodigoEmpresa";
         public const string NOME_EMPRESA = "NomeEmpresa";
+        public const string EXPIRACAO_REFRESH_TOKEN = "ExpiracaoRefreshToken";
     }
 }

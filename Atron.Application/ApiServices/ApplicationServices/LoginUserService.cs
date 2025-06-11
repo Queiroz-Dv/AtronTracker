@@ -1,14 +1,17 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
 using Atron.Application.DTO.ApiDTO;
 using Atron.Application.Interfaces;
+using Atron.Application.Interfaces.Handlers;
 using Atron.Domain.ApiEntities;
+using Atron.Domain.Entities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Shared.DTO.API;
 using Shared.DTO.API.Request;
+using Shared.Extensions;
 using Shared.Interfaces;
+using Shared.Interfaces.Handlers;
+using Shared.Interfaces.Validations;
 using Shared.Models;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.ApplicationServices
@@ -16,89 +19,101 @@ namespace Atron.Application.ApiServices.ApplicationServices
     public class LoginUserService : ILoginUserService
     {
         private readonly IApplicationTokenService _tokenService;
+        private readonly ITokenHandlerService _tokenHandler;
+        private readonly IUsuarioHandler _usuarioHandler;
         private readonly ILoginApplicationRepository _loginApplication;
         private readonly IUsuarioService _usuarioService;
-        private readonly IPerfilDeAcessoService _perfilDeAcessoService;
+        private readonly IValidateModel<InfoToken> _valideInfoToken;
         private readonly MessageModel _messageModel;
+
+        const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
 
         public LoginUserService(
             ILoginApplicationRepository loginApplication,
-            IApplicationTokenService tokenService,
             IUsuarioService usuarioService,
-            IPerfilDeAcessoService perfilDeAcessoService,
+            IUsuarioHandler usuarioHandler,
+            IApplicationTokenService tokenService,
+            ITokenHandlerService tokenHandler,
+            IValidateModel<InfoToken> valideInfoToken,
             MessageModel messageModel)
         {
             _loginApplication = loginApplication;
             _tokenService = tokenService;
             _usuarioService = usuarioService;
-            _perfilDeAcessoService = perfilDeAcessoService;
             _messageModel = messageModel;
+            _valideInfoToken = valideInfoToken;
+            _tokenHandler = tokenHandler;
+            _usuarioHandler = usuarioHandler;
         }
 
         public async Task<LoginDTO> Authenticate(LoginRequestDTO loginRequest)
         {
-            var loginDTO = new LoginDTO()
+            var usuario = await _usuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
+
+            var loginDTO = await _usuarioHandler.PreencherInformacoesDeUsuarioParaLoginAsync(usuario);
+
+            loginDTO.UserToken = await _tokenService.GerarToken(loginDTO.DadosDoUsuario);
+
+            var result = await _loginApplication.AutenticarUsuarioAsync(new UsuarioIdentity()
             {
-                Authenticated = false
-            };
+                Codigo = loginDTO.DadosDoUsuario.CodigoDoUsuario,
+                Token = loginDTO.UserToken.Token,
+                RefreshToken = loginDTO.UserToken.RefreshToken,
+                RefreshTokenExpireTime = loginDTO.UserToken.RefreshTokenExpireTime,
+                Senha = loginRequest.Senha
+            });
 
-            var login = new ApiLogin()
+            if (!result)
             {
-                UserName = loginRequest.CodigoDoUsuario,
-                Password = loginRequest.Senha,
-                Remember = loginRequest.Lembrar
-            };
-
-            var result = await _loginApplication.AuthenticateUserLoginAsync(login);
-
-            loginDTO.Authenticated = result;
-
-            if (loginDTO.Authenticated)
-            {
-                // Get user data
-                var user = await _usuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
-
-                // Dados adicionais para as claims do usuário
-                loginDTO.DadosDoUsuario = new DadosDoUsuario()
-                {
-                    NomeDoUsuario = user.Nome,
-                    CodigoDoUsuario = user.Codigo,
-                    Email = user.Email,
-                    CodigoDoCargo = user.CargoCodigo,
-                    CodigoDoDepartamento = user.DepartamentoCodigo,
-                    Expiracao = DateTime.Now.AddHours(24),
-                    CodigosPerfis = new List<string>(),
-                    ModulosCodigo = new List<string>(),
-                };
-
-                var perfisAssociados = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(user.Codigo);
-
-                foreach (var perf in perfisAssociados)
-                {
-                    loginDTO.DadosDoUsuario.CodigosPerfis.Add(perf.Codigo);
-
-                    foreach (var mod in perf.Modulos)
-                    {
-                        // Check if the module code is not already in the ModulosCodigo collection
-                        if (!loginDTO.DadosDoUsuario.ModulosCodigo.Contains(mod.Codigo))
-                        {
-                            loginDTO.DadosDoUsuario.ModulosCodigo.Add(mod.Codigo);
-                        }
-                    }
-                }
-
-                // Generate token
-                var userToken = _tokenService.GenerateToken(loginDTO.DadosDoUsuario);
-
-                // Set token
-                loginDTO.UserToken = userToken;
-            }
-            else
-            {
-                _messageModel.AddError("Usuário ou senha inválidos");
+                _messageModel.AddError(ERRO_AUTENTICACAO);
+                return null;
             }
 
             return loginDTO;
+        }
+
+        public async Task<InfoToken> RefreshAcesso(InfoToken infoToken)
+        {
+            _valideInfoToken.Validate(infoToken);
+
+            if (_messageModel.Messages.HasErrors()) return null;
+
+            var codigoUsuario = _tokenHandler.ObterCodigoUsuarioPorClaim(infoToken.Token);
+
+            var tokenDoUsuarioEstaExpirado = await _usuarioService.TokenDeUsuarioExpiradoServiceAsync(codigoUsuario, infoToken.RefreshToken);
+
+            if (tokenDoUsuarioEstaExpirado)
+            {
+                _messageModel.AddError("Token expirado ou inválido.");
+                return null;
+            }
+
+            var usuario = await _usuarioService.ObterPorCodigoAsync(codigoUsuario);
+
+            var loginDTO = await _usuarioHandler.PreencherInformacoesDeUsuarioParaLoginAsync(usuario);
+
+            if (loginDTO != null)
+            {
+                var novoToken = await _tokenService.GerarToken(loginDTO.DadosDoUsuario);
+
+                var result = await _loginApplication.AutenticarUsuarioAsync(new UsuarioIdentity()
+                {
+                    Codigo = loginDTO.DadosDoUsuario.CodigoDoUsuario,
+                    Token = novoToken.Token,
+                    RefreshToken = novoToken.RefreshToken,
+                    RefreshTokenExpireTime = novoToken.RefreshTokenExpireTime
+                });
+
+                if (!result)
+                {
+                    _messageModel.AddError(ERRO_AUTENTICACAO);
+                    return null;
+                }
+
+                return novoToken;
+            }
+
+            return null;
         }
 
         public async Task Logout()
