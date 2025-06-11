@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Models;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Shared.Services
@@ -12,15 +14,16 @@ namespace Shared.Services
     public class ApplicationTokenService : IApplicationTokenService
     {
         private readonly IConfiguration _configuration;
-        
+        private readonly ILoginApplicationRepository _loginRepository;
 
-        public ApplicationTokenService(IConfiguration configuration)
+        public ApplicationTokenService(IConfiguration configuration, ILoginApplicationRepository loginRepository)
         {
             _configuration = configuration;
+            _loginRepository = loginRepository;
         }
 
-        public UserToken GenerateToken(DadosDoUsuario dadosDoUsuario)
-        {           
+        public async Task<InfoToken> GerarToken(DadosDoUsuario dadosDoUsuario)
+        {
             // Objeto de configuração do token
             var appSecurityToken = new ApplicationSecurityToken()
             {
@@ -39,13 +42,12 @@ namespace Shared.Services
             // Gerar a assinatura digital do token
             var userSigningCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
 
-
             // Gerar o token
             var token = new JwtSecurityToken(
                 issuer: appSecurityToken.Issuer,
                 audience: appSecurityToken.Audience,
                 claims: appSecurityToken.Claims,
-                expires: dadosDoUsuario.Expiracao,
+                expires: dadosDoUsuario.DadosDoToken.ExpiracaoDoToken,
                 signingCredentials: userSigningCredentials
             );
 
@@ -53,20 +55,39 @@ namespace Shared.Services
             {
                 var tokenCreated = new JwtSecurityTokenHandler().WriteToken(token);
 
-                // Retornar o token
-                var userToken = new UserToken()
+                // Retornar o token e o refresh token
+                var userToken = new InfoToken()
                 {
                     Token = tokenCreated,
-                    Expires = dadosDoUsuario.Expiracao
+                    Expires = dadosDoUsuario.DadosDoToken.ExpiracaoDoToken,
+                    RefreshToken = await CriarRefreshToken(),
+                    RefreshTokenExpireTime = dadosDoUsuario.DadosDoToken.ExpiracaoDoRefreshToken
                 };
 
                 return userToken;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw ex;
+                throw;
             }
+        }
+
+        public Task<string> ObterChaveSecreta()
+        {
+            return Task.FromResult(_configuration.GetSecretKey());
+        }
+
+        private async Task<string> CriarRefreshToken()
+        {
+            string token;
+            do
+            {
+                var bytes = RandomNumberGenerator.GetBytes(64);
+                token = Convert.ToBase64String(bytes);
+            }
+            while (await _loginRepository.ObterRefreshTokenDoUsuario(token));
+
+            return token;
         }
     }
 }

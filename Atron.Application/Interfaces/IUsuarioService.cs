@@ -15,5 +15,7 @@ namespace Atron.Application.Interfaces
         Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO);
 
         Task RemoverAsync(string codigo);
+
+        Task<bool> TokenDeUsuarioExpiradoServiceAsync(string codigoUsuario, string refreshToken);
     }
 }

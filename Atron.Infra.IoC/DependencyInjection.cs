@@ -1,5 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.DTO.ApiDTO;
+using Atron.Application.Interfaces.Handlers;
+using Atron.Application.Services.Handlers;
 using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using Communication.Models;
@@ -8,6 +10,10 @@ using ExternalServices.Interfaces;
 using ExternalServices.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Interfaces;
+using Shared.Interfaces.Handlers;
+using Shared.Services;
+using Shared.Services.Handlers;
 
 namespace Atron.Infra.IoC
 {

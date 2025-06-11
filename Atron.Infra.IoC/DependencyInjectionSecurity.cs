@@ -19,8 +19,6 @@ namespace Atron.Infra.IoC
         {
             var secretKey = configuration.GetSecretKey();
             var issueSigniKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
-            services.AddScoped<IApplicationTokenService, ApplicationTokenService>();
             
             services.AddCors(options =>
             {
@@ -49,7 +47,7 @@ namespace Atron.Infra.IoC
                         context.HandleResponse();
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Response.ContentType = "application/json; charset=utf-8";                       
-                        context.Response.Headers["Location"] = "ApplicationLogin/Login"; // Redireciona para a página de Login                        
+                        //context.Response.Headers["Location"] = "ApplicationLogin/Login"; // Redireciona para a página de Login                        
                         return Task.CompletedTask;
                     },
 
@@ -78,8 +76,11 @@ namespace Atron.Infra.IoC
                         });
                         return context.Response.WriteAsync(result);
                     }
-                };                
-                
+                };
+
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,

@@ -1,8 +1,9 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
 using Atron.Application.ApiServices.ApplicationServices;
 using Atron.Application.Interfaces;
-using Newtonsoft.Json;
+using Atron.Application.Interfaces.Handlers;
 using Atron.Application.Services;
+using Atron.Application.Services.Handlers;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
@@ -14,12 +15,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Models.ApplicationModels;
-using System.Text.Json.Serialization;
-using System;
-using Microsoft.AspNetCore.Authorization;
+using Shared.Interfaces.Handlers;
 using Shared.Interfaces;
+using Shared.Models.ApplicationModels;
+using Shared.Services.Handlers;
 using Shared.Services;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
 
 namespace Atron.Infra.IoC
 {
@@ -46,6 +48,19 @@ namespace Atron.Infra.IoC
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 
+            services.AddScoped<IApplicationTokenService, ApplicationTokenService>();
+            services.AddScoped<ICookieHandlerService, CookieHandlerService>();
+            services.AddScoped<IUsuarioHandler, UsuarioHandler>();
+            services.AddScoped<ITokenHandlerService, TokenHandlerService>();
+
+
+            // Replace the following line:  
+            // services.AddScoped<IResponseCookies, ResponseCookies>();  
+
+            // With this line:  
+            services.AddScoped<IResponseCookies>(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
+            
+
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
             services = services.AddServiceMappings();
@@ -53,7 +68,6 @@ namespace Atron.Infra.IoC
             services = services.AddInfrastructureSecurity(configuration);
             ConfigureModuloServices(services);
             services = services.AddModuleAuthorizationPolicies(services.BuildServiceProvider());
-            services.AddSingleton<ILoggerManager, LoggerManager>();
             ConfigureTarefaServices(services);
             ConfigureSalarioServices(services);
             ConfigureDepartamentoServices(services);
