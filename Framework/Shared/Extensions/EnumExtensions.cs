@@ -13,7 +13,7 @@ namespace Shared.Extensions
         /// </summary>
         /// <param name="value">Enum que será processado</param>
         /// <returns>O valor da descrição do enumerado</returns>
-        public static string GetEnumDescription(this Enum value)
+        public static string GetDescription(this Enum value)
         {
             FieldInfo? fi = value.GetType().GetField(value.ToString());
 

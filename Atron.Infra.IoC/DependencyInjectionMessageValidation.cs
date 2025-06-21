@@ -2,6 +2,7 @@
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.DTO.API;
 using Shared.Interfaces;
 using Shared.Interfaces.Validations;
 using Shared.Models;
@@ -29,6 +30,10 @@ namespace Atron.Infra.IoC
             services.AddScoped<IMessages, LoginMessageValidation>();
             services.AddScoped<IValidateModel<ApiLogin>, LoginMessageValidation>();
             services.AddScoped<MessageModel, LoginMessageValidation>();
+
+            services.AddScoped<IMessages, InfoTokenMessageValidation>();
+            services.AddScoped<IValidateModel<InfoToken>, InfoTokenMessageValidation>();
+            services.AddScoped<MessageModel, InfoTokenMessageValidation>();
         }
 
         private static void ConfigureApiRegisterMessageValidation(IServiceCollection services)

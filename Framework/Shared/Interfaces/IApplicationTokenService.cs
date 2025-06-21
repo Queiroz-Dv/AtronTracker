@@ -4,6 +4,8 @@ namespace Shared.Interfaces
 {
     public interface IApplicationTokenService
     {
-        UserToken GenerateToken(DadosDoUsuario dadosDoUsuario);
+        Task<InfoToken> GerarToken(DadosDoUsuario dadosDoUsuario);
+
+        Task<string> ObterChaveSecreta();
     }
 }

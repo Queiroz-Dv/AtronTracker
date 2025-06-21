@@ -12,5 +12,7 @@ namespace Atron.Domain.Interfaces
         Task<bool> CriarPerfilRepositoryAsync(PerfilDeAcesso perfilDeAcesso);
         Task<bool> AtualizarPerfilRepositoryAsync(string codigo, PerfilDeAcesso perfilDeAcesso);
         Task<bool> DeletarPerfilRepositoryAsync(PerfilDeAcesso perfil);
+
+        Task<List<PerfilDeAcesso>> ObterPerfisPorCodigoDeUsuarioRepositoryAsync(string usuarioCodigo);
     }
 }

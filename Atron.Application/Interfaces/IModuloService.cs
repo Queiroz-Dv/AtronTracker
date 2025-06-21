@@ -7,10 +7,8 @@ namespace Atron.Application.Interfaces
     public interface IModuloService
     {
         Task<IEnumerable<ModuloDTO>> ObterTodosService();
-        Task<ModuloDTO> ObterPorIdService(int id);
-        Task CriarModuloServiceAsync(ModuloDTO moduloDTO);
-        Task<ModuloDTO> AtualizarModuloServiceAsync(string codigo, ModuloDTO moduloDTO);
-        Task<bool> RemoverModuloServiceAsync(string codigo);
+        List<string> ObterTodosOsCodigos();
+        Task<ModuloDTO> ObterPorIdService(int id);        
         Task<ModuloDTO> ObterPorCodigoService(string codigo);
     }
 }

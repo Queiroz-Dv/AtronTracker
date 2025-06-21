@@ -9,6 +9,7 @@ using Shared.Extensions;
 using Shared.Interfaces.Mapper;
 using Shared.Interfaces.Validations;
 using Shared.Models;
+using Shared.Models.ApplicationModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace Atron.Application.Services
     public class UsuarioService : IUsuarioService
     {
         // Sempre usar o repository pra acessar a camada de dados
-        private readonly IApplicationMapService<UsuarioDTO, Usuario> _map;
+        private readonly IApplicationMapService<UsuarioDTO, UsuarioIdentity> _map;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
         private readonly IRegisterApplicationRepository _registerApplicationRepository;
@@ -29,16 +30,16 @@ namespace Atron.Application.Services
         private readonly IValidateModel<Usuario> _validateModel;
         private readonly MessageModel _messageModel;
 
-        public UsuarioService(IApplicationMapService<UsuarioDTO, Usuario> map,
+        public UsuarioService(IApplicationMapService<UsuarioDTO, UsuarioIdentity> map,
                               IUsuarioRepository repository,
                               IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
                               IRegisterApplicationRepository registerApplicationRepository,
                               IDepartamentoRepository departamentoRepository,
                               ICargoRepository cargoRepository,
-                              IValidateModel<Usuario> validateModel,
-                              MessageModel messageModel,
                               ITarefaRepository tarefaRepository,
-                              ISalarioRepository salarioRepository)
+                              ISalarioRepository salarioRepository,
+                              IValidateModel<Usuario> validateModel,
+                              MessageModel messageModel)
         {
             _map = map;
             _usuarioRepository = repository;
@@ -162,10 +163,10 @@ namespace Atron.Application.Services
 
             return usuario is null ? null : _map.MapToDTO(usuario);
         }
-
+        
         public async Task<List<UsuarioDTO>> ObterTodosAsync()
         {
-            var usuarios = await _usuarioRepository.ObterUsuariosAsync();
+            var usuarios = await _usuarioRepository.ObterTodosUsuariosDoIdentity();
             return _map.MapToListDTO(usuarios.OrderByDescending(c => c.Codigo).ToList());
         }
 
@@ -214,6 +215,11 @@ namespace Atron.Application.Services
 
                 _messageModel.AddRegisterRemovedSuccessMessage(nameof(Usuario));
             }
+        }
+
+        public async Task<bool> TokenDeUsuarioExpiradoServiceAsync(string codigoUsuario, string refreshToken)
+        {
+            return await _usuarioRepository.TokenDeUsuarioExpiradoRepositoryAsync(codigoUsuario, refreshToken);
         }
     }
 }

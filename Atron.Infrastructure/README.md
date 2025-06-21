@@ -2,11 +2,10 @@
 
 O projeto `Atron.Infrastructure` é a camada de infraestrutura da aplicação, seguindo uma abordagem de arquitetura limpa ou design orientado a domínio (DDD). Ele contém o contexto do banco de dados, configurações de entidades, repositórios e componentes relacionados à API.
 
-## Componentes Principais
+## Estrutura de Pastas
 
-### Contexto
-
-- **AtronDbContext.cs**: Esta é a principal classe de contexto de banco de dados para o Entity Framework Core, representando a sessão com o banco de dados e permitindo operações de banco de dados.
+### Context
+Pasta que define os contextos que serão utilizados para a comunicação com o banco de dados.
 
 ### Configurações de Entidades
 
@@ -15,11 +14,6 @@ Localizadas na pasta `EntitiesConfiguration`, essas classes definem como as enti
 ### Repositórios
 
 A pasta `Repositories` contém implementações das interfaces de repositório, definidas na camada de domínio.
-
-### Componentes Relacionados à API
-
-- **ApiEntitiesConfiguration/ApiRouteConfiguration.cs**: Configuração para rotas da API.
-- **ApiRepositories/ApiRouteRepository.cs**: Implementação do repositório para rotas da API.
 
 ### Migrações
 

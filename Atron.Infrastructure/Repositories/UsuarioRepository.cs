@@ -58,9 +58,9 @@ namespace Atron.Infrastructure.Repositories
                 var result = await _context.SaveChangesAsync();
                 return result > 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -72,15 +72,31 @@ namespace Atron.Infrastructure.Repositories
                 var result = await _context.SaveChangesAsync();
                 return result > 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
-        public async Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo)
+        public async Task<UsuarioIdentity> ObterUsuarioPorCodigoAsync(string codigo)
         {
-            return await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).FirstOrDefaultAsync(usr => usr.Codigo == codigo);
+            var applicationUser = await _context.Users.FirstOrDefaultAsync(usr => usr.UserName == codigo);
+            var usuario = await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).FirstOrDefaultAsync(usr => usr.Codigo == codigo);
+
+            var usuarioIdentity = new UsuarioIdentity
+            {
+                Codigo = usuario.Codigo,
+                Nome = usuario.Nome,
+                Sobrenome = usuario.Sobrenome,
+                Email = usuario.Email,
+                SalarioAtual = usuario.SalarioAtual,
+                DataNascimento = usuario.DataNascimento,
+                UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
+                RefreshToken = applicationUser.RefreshToken,
+                RefreshTokenExpireTime = applicationUser.RefreshTokenExpireTime
+            };
+
+            return usuarioIdentity;
         }
 
         public async Task<Usuario> ObterUsuarioPorIdAsync(int? id)
@@ -102,6 +118,50 @@ namespace Atron.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
                 return new Usuario();
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool UsuarioExiste(string codigo)
+        {
+            return _context.Usuarios.Any(usr => usr.Codigo == codigo);
+        }
+
+        public async Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()
+        {
+            try
+            {
+                var applicationUsers = await _context.Users.ToListAsync();
+                var usuarios = await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).ToListAsync();
+
+                var usuariosIdentity = new List<UsuarioIdentity>();
+
+                foreach (var user in applicationUsers)
+                {
+                    var usuario = usuarios.FirstOrDefault(cdg => cdg.Codigo == user.UserName);
+
+                    if (usuario is not null)
+                    {
+                        var usuarioIdentity = new UsuarioIdentity
+                        {
+                            Codigo = usuario.Codigo,
+                            Nome = usuario.Nome,
+                            Sobrenome = usuario.Sobrenome,
+                            Email = usuario.Email,
+                            Salario = usuario.Salario,
+                            DataNascimento = usuario.DataNascimento,
+                            UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,                            
+                        };
+
+                        usuariosIdentity.Add(usuarioIdentity);
+                    }
+                }
+
+                return usuariosIdentity;
+            }
             catch (Exception ex)
             {
 
@@ -109,9 +169,9 @@ namespace Atron.Infrastructure.Repositories
             }
         }
 
-        public bool UsuarioExiste(string codigo)
+        public async Task<bool> TokenDeUsuarioExpiradoRepositoryAsync(string codigoUsuario, string refreshToken)
         {
-            return _context.Usuarios.Any(usr => usr.Codigo == codigo);
+            return await _context.Users.AnyAsync(usr => usr.UserName == codigoUsuario && usr.RefreshToken == refreshToken && usr.RefreshTokenExpireTime <= DateTime.Now);
         }
     }
 }

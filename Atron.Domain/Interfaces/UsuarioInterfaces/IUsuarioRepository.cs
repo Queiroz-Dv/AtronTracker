@@ -9,14 +9,21 @@ namespace Atron.Domain.Interfaces.UsuarioInterfaces
         Task<IEnumerable<Usuario>> ObterUsuariosAsync();
 
         Task<Usuario> ObterUsuarioPorIdAsync(int? id);
-        Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo);
+
+        Task<UsuarioIdentity> ObterUsuarioPorCodigoAsync(string codigo);
 
         Task<bool> CriarUsuarioAsync(Usuario usuario);
 
         Task<bool> AtualizarUsuarioAsync(string codigo, Usuario usuario);
 
         Task<Usuario> RemoverUsuarioAsync(Usuario usuario);
+
         bool UsuarioExiste(string codigo);
+
         Task<bool> AtualizarSalario(int usuarioId, int quantidadeTotal);
+
+        Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity();
+
+        Task<bool> TokenDeUsuarioExpiradoRepositoryAsync(string codigoUsuario, string refreshToken);
     }
 }

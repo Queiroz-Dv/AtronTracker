@@ -1,13 +1,14 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
+using Shared.DTO.API;
 using Shared.Services.Mapper;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Atron.Application.Mapping
 {
-    public class UsuarioMapping : ApplicationMapService<UsuarioDTO, Usuario>
+    public class UsuarioMapping : ApplicationMapService<UsuarioDTO, UsuarioIdentity>
     {
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly ICargoRepository _cargoRepository;
@@ -18,7 +19,7 @@ namespace Atron.Application.Mapping
             _cargoRepository = cargoRepository;
         }
 
-        public override UsuarioDTO MapToDTO(Usuario entity)
+        public override UsuarioDTO MapToDTO(UsuarioIdentity entity)
         {
             var usuario = new UsuarioDTO
             {
@@ -28,6 +29,13 @@ namespace Atron.Application.Mapping
                 Email = entity.Email,
                 Salario = entity.SalarioAtual,
                 DataNascimento = entity.DataNascimento
+            };
+
+            usuario.UserInfoToken = new InfoToken()
+            {
+                Token = entity.Token,
+                RefreshToken = entity.RefreshToken,
+                RefreshTokenExpireTime = entity.RefreshTokenExpireTime,
             };
 
             if (entity.UsuarioCargoDepartamentos.Any())
@@ -60,10 +68,10 @@ namespace Atron.Application.Mapping
             return usuario;
         }
 
-        public override Usuario MapToEntity(UsuarioDTO dto)
+        public override UsuarioIdentity MapToEntity(UsuarioDTO dto)
         {
             // 1. Mapear o DTO para a entidade
-            return new Usuario()
+            return new UsuarioIdentity()
             {
                 Codigo = dto.Codigo.ToUpper(),
                 Nome = dto.Nome,

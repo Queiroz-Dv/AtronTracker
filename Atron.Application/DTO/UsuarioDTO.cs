@@ -1,4 +1,5 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
+﻿using Shared.DTO.API;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -35,13 +36,10 @@ namespace Atron.Application.DTO
         [DataType(DataType.Password)]
         public string Senha { get; set; }
 
+        public InfoToken UserInfoToken { get; set; }
+
         public DepartamentoDTO Departamento { get; set; }
 
-        public CargoDTO Cargo { get; set; }
-
-        public string NomeCompleto()
-        {
-            return $"{Nome} {Sobrenome}";
-        }
+        public CargoDTO Cargo { get; set; }         
     }
 }

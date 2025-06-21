@@ -15,7 +15,7 @@ namespace Atron.WebApi.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Policy = "Modulo:CRG")]
     public class CargoController : ApiBaseConfigurationController<Cargo, ICargoService>
     {
         /// <summary>
