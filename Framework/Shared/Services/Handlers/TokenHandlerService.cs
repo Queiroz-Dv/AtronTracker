@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Shared.DTO.API;
 using Shared.Interfaces;
+using Shared.Interfaces.Caching;
 using Shared.Interfaces.Handlers;
 using Shared.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,7 +15,10 @@ namespace Shared.Services.Handlers
         private readonly IApplicationTokenService _tokenService;
         private readonly MessageModel _messageModel;
 
-        public TokenHandlerService(IApplicationTokenService tokenService, MessageModel messageModel)
+        public TokenHandlerService(
+            IApplicationTokenService tokenService,
+            ICacheService cacheService,
+            MessageModel messageModel)
         {
             _tokenService = tokenService;
             _messageModel = messageModel;
@@ -22,7 +26,7 @@ namespace Shared.Services.Handlers
 
         public string ObterCodigoUsuarioPorClaim(string token)
         {
-            var codigoUsuario = ParseToken(token).Claims.FirstOrDefault(c => c.Type == ClaimCode.CODIGO_USUARIO)?.Value; 
+            var codigoUsuario = ParseToken(token).Claims.FirstOrDefault(c => c.Type == ClaimCode.CODIGO_USUARIO)?.Value;
 
             if (codigoUsuario is null)
             {
@@ -53,7 +57,7 @@ namespace Shared.Services.Handlers
             }
             catch (Exception ex)
             {
-                _messageModel.AddError(ex.Message);
+                _messageModel.AddWarning(ex.Message);
                 return null;
             }
         }

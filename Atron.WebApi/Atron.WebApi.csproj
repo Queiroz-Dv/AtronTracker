@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Atron.Infra.IoC\Atron.Infra.IoC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Response\" />
+  </ItemGroup>
+
 </Project>

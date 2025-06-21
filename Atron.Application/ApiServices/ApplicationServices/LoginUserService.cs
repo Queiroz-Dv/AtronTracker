@@ -9,9 +9,11 @@ using Shared.DTO.API;
 using Shared.DTO.API.Request;
 using Shared.Extensions;
 using Shared.Interfaces;
+using Shared.Interfaces.Caching;
 using Shared.Interfaces.Handlers;
 using Shared.Interfaces.Validations;
 using Shared.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.ApplicationServices
@@ -24,6 +26,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
         private readonly ILoginApplicationRepository _loginApplication;
         private readonly IUsuarioService _usuarioService;
         private readonly IValidateModel<InfoToken> _valideInfoToken;
+        private readonly ICacheService _cacheService;
         private readonly MessageModel _messageModel;
 
         const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
@@ -35,7 +38,8 @@ namespace Atron.Application.ApiServices.ApplicationServices
             IApplicationTokenService tokenService,
             ITokenHandlerService tokenHandler,
             IValidateModel<InfoToken> valideInfoToken,
-            MessageModel messageModel)
+            MessageModel messageModel,
+            ICacheService cacheService)
         {
             _loginApplication = loginApplication;
             _tokenService = tokenService;
@@ -44,6 +48,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
             _valideInfoToken = valideInfoToken;
             _tokenHandler = tokenHandler;
             _usuarioHandler = usuarioHandler;
+            _cacheService = cacheService;
         }
 
         public async Task<LoginDTO> Authenticate(LoginRequestDTO loginRequest)
@@ -69,7 +74,27 @@ namespace Atron.Application.ApiServices.ApplicationServices
                 return null;
             }
 
+            GravarCacheDeAcessoTokenInfo(loginRequest.CodigoDoUsuario, loginDTO.DadosDoUsuario, loginDTO.UserToken);
+
             return loginDTO;
+        }
+
+        private void GravarCacheDeAcessoTokenInfo(string codigoUsuario, DadosDoUsuario dadosDoUsuario, InfoToken infoToken)
+        {
+            var acessoCacheInfo = new CacheInfo<DadosDoUsuario>(ECacheKeysInfo.Acesso,codigoUsuario)
+            {
+                EntityInfo = dadosDoUsuario,
+                ExpireTime = infoToken.Expires
+            };
+
+            var tokenUsuarioInfo = new CacheInfo<InfoToken>(ECacheKeysInfo.TokenInfo,codigoUsuario)
+            {
+                EntityInfo = infoToken,
+                ExpireTime = infoToken.Expires
+            };
+
+            _cacheService.GravarCache(acessoCacheInfo);
+            _cacheService.GravarCache(tokenUsuarioInfo);
         }
 
         public async Task<InfoToken> RefreshAcesso(InfoToken infoToken)
@@ -80,9 +105,9 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
             var codigoUsuario = _tokenHandler.ObterCodigoUsuarioPorClaim(infoToken.Token);
 
-            var tokenDoUsuarioEstaExpirado = await _usuarioService.TokenDeUsuarioExpiradoServiceAsync(codigoUsuario, infoToken.RefreshToken);
+            var refreshTokenDoUsuarioEstaExpirado = await _usuarioService.TokenDeUsuarioExpiradoServiceAsync(codigoUsuario, infoToken.RefreshToken);
 
-            if (tokenDoUsuarioEstaExpirado)
+            if (refreshTokenDoUsuarioEstaExpirado)
             {
                 _messageModel.AddError("Token expirado ou inválido.");
                 return null;
@@ -94,14 +119,14 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
             if (loginDTO != null)
             {
-                var novoToken = await _tokenService.GerarToken(loginDTO.DadosDoUsuario);
+                var novoInfoToken = await _tokenService.GerarToken(loginDTO.DadosDoUsuario);
 
                 var result = await _loginApplication.AutenticarUsuarioAsync(new UsuarioIdentity()
                 {
                     Codigo = loginDTO.DadosDoUsuario.CodigoDoUsuario,
-                    Token = novoToken.Token,
-                    RefreshToken = novoToken.RefreshToken,
-                    RefreshTokenExpireTime = novoToken.RefreshTokenExpireTime
+                    Token = novoInfoToken.Token,
+                    RefreshToken = novoInfoToken.RefreshToken,
+                    RefreshTokenExpireTime = novoInfoToken.RefreshTokenExpireTime
                 });
 
                 if (!result)
@@ -110,7 +135,8 @@ namespace Atron.Application.ApiServices.ApplicationServices
                     return null;
                 }
 
-                return novoToken;
+                GravarCacheDeAcessoTokenInfo(codigoUsuario, loginDTO.DadosDoUsuario, novoInfoToken);
+                return novoInfoToken;
             }
 
             return null;

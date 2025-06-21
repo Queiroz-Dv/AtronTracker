@@ -38,22 +38,7 @@ namespace Shared.Extensions
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Identificador único do token
             };
 
-            CreateAcessControlClaims(dadosDoUsuario, claims);
-
             return claims.ToArray();
-        }
-
-        private static void CreateAcessControlClaims(DadosDoUsuario dadosDoUsuario, List<Claim> claims)
-        {
-            foreach (var perf in dadosDoUsuario.CodigosPerfis)
-            {
-                claims.Add(new Claim("perfil", perf));
-            }
-
-            foreach (var mod in dadosDoUsuario.ModulosCodigo)
-            {
-                claims.Add(new Claim("modulo", mod));
-            }
-        }
+        }    
     }
 }

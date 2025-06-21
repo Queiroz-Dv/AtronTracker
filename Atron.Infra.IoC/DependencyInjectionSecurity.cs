@@ -19,7 +19,7 @@ namespace Atron.Infra.IoC
         {
             var secretKey = configuration.GetSecretKey();
             var issueSigniKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -40,17 +40,7 @@ namespace Atron.Infra.IoC
             .AddJwtBearer(options =>
             {
                 options.Events = new JwtBearerEvents
-                {                   
-                    OnChallenge = context =>
-                    {
-                        // Personaliza a resposta quando o token é inválido ou ausente
-                        context.HandleResponse();
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        context.Response.ContentType = "application/json; charset=utf-8";                       
-                        //context.Response.Headers["Location"] = "ApplicationLogin/Login"; // Redireciona para a página de Login                        
-                        return Task.CompletedTask;
-                    },
-
+                {
                     OnForbidden = context =>
                     {
                         // Personaliza a resposta quando o usuário está autenticado, mas não tem permissão para acessar o recurso
@@ -64,18 +54,16 @@ namespace Atron.Infra.IoC
                         return context.Response.WriteAsync(result);
                     },
 
-                    OnAuthenticationFailed = context =>
+                    OnAuthenticationFailed = async context =>
                     {
-                        // Personaliza a resposta quando ocorre uma falha na autenticação, como erro ao validar o token
-                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        context.Response.ContentType = "application/json; charset=utf-8";
-                        var result = JsonSerializer.Serialize(new
-                        {
-                            status = 500,
-                            message = "Erro interno na autenticação. Verifique o token enviado."
-                        });
-                        return context.Response.WriteAsync(result);
-                    }
+                        // Optional: log, mas não escreva no response aqui
+                        context.NoResult(); // Cancela a resposta padrão
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+                        await context.Response.WriteAsync(
+                            JsonSerializer.Serialize(new { status = 401, message = "Token inválido ou ausente." })
+                        );
+                    },
                 };
 
                 options.RequireHttpsMetadata = false;
