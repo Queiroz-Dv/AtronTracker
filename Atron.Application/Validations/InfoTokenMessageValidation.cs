@@ -7,7 +7,7 @@ using System;
 
 namespace Atron.Application.Validations
 {
-    public class UserInfoTokenMessageValidation : MessageModel, IMessages, IValidateModel<InfoToken>
+    public class InfoTokenMessageValidation : MessageModel, IMessages, IValidateModel<InfoToken>
     {
         public void Validate(InfoToken entity)
         {

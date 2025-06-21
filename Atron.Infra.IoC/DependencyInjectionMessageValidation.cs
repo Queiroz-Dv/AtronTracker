@@ -31,9 +31,9 @@ namespace Atron.Infra.IoC
             services.AddScoped<IValidateModel<ApiLogin>, LoginMessageValidation>();
             services.AddScoped<MessageModel, LoginMessageValidation>();
 
-            services.AddScoped<IMessages, UserInfoTokenMessageValidation>();
-            services.AddScoped<IValidateModel<InfoToken>, UserInfoTokenMessageValidation>();
-            services.AddScoped<MessageModel, UserInfoTokenMessageValidation>();
+            services.AddScoped<IMessages, InfoTokenMessageValidation>();
+            services.AddScoped<IValidateModel<InfoToken>, InfoTokenMessageValidation>();
+            services.AddScoped<MessageModel, InfoTokenMessageValidation>();
         }
 
         private static void ConfigureApiRegisterMessageValidation(IServiceCollection services)

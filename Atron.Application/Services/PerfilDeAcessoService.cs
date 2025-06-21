@@ -286,6 +286,6 @@ namespace Atron.Application.Services
             var perfis = await _perfilDeAcessoRepository.ObterPerfisPorCodigoDeUsuarioRepositoryAsync(usuarioCodigo);
 
             return perfis != null ? _map.MapToListDTO(perfis) : null;
-        }
+        }       
     }
 }

@@ -8,6 +8,6 @@ namespace Shared.Enums
         AcesssToken,
 
         [Description("RefreshToken")]
-        RefreshToken
+        RefreshToken,
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Atron.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -15,11 +16,13 @@ namespace Atron.Infra.IoC
 
                 services.AddAuthorization(options =>
                 {
-                    foreach (var code in moduleCodes)
-                    {
-                        options.AddPolicy($"Modulo:{code}", policy =>
-                            policy.RequireClaim("modulo", code));
-                    }
+                    //foreach (var code in moduleCodes)
+                    //{
+                    //    options.AddPolicy($"Modulo:{code}", new AuthorizationPolicyBuilder()
+                    //        .RequireAuthenticatedUser()
+                    //        .Requirements.Add(new ModuloAuthorizationRequirement(code))
+                    //        .Build());
+                    //}
                 });
             }
             return services;

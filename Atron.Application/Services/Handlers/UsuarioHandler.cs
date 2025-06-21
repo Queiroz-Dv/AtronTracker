@@ -4,6 +4,7 @@ using Atron.Application.Interfaces;
 using Atron.Application.Interfaces.Handlers;
 using Shared.DTO.API;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Services.Handlers
@@ -21,7 +22,6 @@ namespace Atron.Application.Services.Handlers
         {
             var loginDTO = new LoginDTO
             {
-                // Dados adicionais para as claims do usuário
                 DadosDoUsuario = new DadosDoUsuario()
                 {
                     NomeDoUsuario = usuarioDTO.Nome,
@@ -29,12 +29,7 @@ namespace Atron.Application.Services.Handlers
                     Email = usuarioDTO.Email,
                     CodigoDoCargo = usuarioDTO.CargoCodigo,
                     CodigoDoDepartamento = usuarioDTO.DepartamentoCodigo,
-                    ExpiracaoDeAcesso = DateTime.Now.AddMinutes(5),
-                    DadosDoToken = new DadosDoToken
-                    {
-                        ExpiracaoDoToken = DateTime.Now.AddMinutes(5),
-                        ExpiracaoDoRefreshToken = DateTime.Now.AddDays(7)
-                    },
+                    DadosDoToken = new DadosDoToken(DateTime.Now.AddMinutes(1), DateTime.Now.AddDays(7))
                 }
             };
 
@@ -44,20 +39,23 @@ namespace Atron.Application.Services.Handlers
             foreach (var perf in perfisAssociados)
             {
                 // Adiciona o código de cada perfil na lista do usuário
-                loginDTO.DadosDoUsuario.CodigosPerfis.Add(perf.Codigo);
+                var perfilComModulo = new PerfilComModulos { CodigoPerfil = perf.Codigo };
 
                 foreach (var mod in perf.Modulos)
-                {
-                    // Verifica se o código do módulo não existe dentro da lista do usuário
-                    if (!loginDTO.DadosDoUsuario.ModulosCodigo.Contains(mod.Codigo))
+                {                    
+                    // Verifica se o código do módulo não existe dentro da lista do usuário                    
+                    if (!loginDTO.DadosDoUsuario.PerfisDeAcesso.Any(x => x.Modulos.Any(m => m.Codigo == mod.Codigo)))
                     {
                         // Adiciona o código do módulo na lista do usuário
-                        loginDTO.DadosDoUsuario.ModulosCodigo.Add(mod.Codigo);
+                        perfilComModulo.Modulos.Add(new DadosDoModulo(mod.Codigo, mod.Descricao));
                     }
                 }
+
+                // Adiciona o perfil com os módulos na lista de perfis de acesso do usuário
+                loginDTO.DadosDoUsuario.PerfisDeAcesso.Add(perfilComModulo);
             }
 
             return loginDTO;
         }
-    }
+    }    
 }

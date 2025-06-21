@@ -22,6 +22,8 @@ using Shared.Services.Handlers;
 using Shared.Services;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
+using Shared.Interfaces.Caching;
+using Shared.Services.Caching;
 
 namespace Atron.Infra.IoC
 {
@@ -52,14 +54,15 @@ namespace Atron.Infra.IoC
             services.AddScoped<ICookieHandlerService, CookieHandlerService>();
             services.AddScoped<IUsuarioHandler, UsuarioHandler>();
             services.AddScoped<ITokenHandlerService, TokenHandlerService>();
-
+            services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<ICacheHandlerService, CacheHandlerService>();
 
             // Replace the following line:  
             // services.AddScoped<IResponseCookies, ResponseCookies>();  
 
             // With this line:  
             services.AddScoped<IResponseCookies>(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
-            
+
 
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
@@ -67,7 +70,7 @@ namespace Atron.Infra.IoC
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);
             ConfigureModuloServices(services);
-            services = services.AddModuleAuthorizationPolicies(services.BuildServiceProvider());
+            //services = services.AddModuleAuthorizationPolicies(services.BuildServiceProvider());
             ConfigureTarefaServices(services);
             ConfigureSalarioServices(services);
             ConfigureDepartamentoServices(services);

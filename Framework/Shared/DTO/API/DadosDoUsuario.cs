@@ -1,32 +1,31 @@
 ﻿namespace Shared.DTO.API
 {
-    public class DadosDoUsuario
+    public class DadosDoUsuario        
+    {    
+        public string NomeDoUsuario { get; set; } = string.Empty;
+
+        public string CodigoDoUsuario { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+
+        public string CodigoDoDepartamento { get; set; } = string.Empty;
+
+        public string CodigoDoCargo { get; set; } = string.Empty;
+
+        public List<PerfilComModulos> PerfisDeAcesso { get; set; } = new();
+
+        public DadosDoToken DadosDoToken { get; init; }
+    }
+    
+    public class PerfilComModulos
     {
-        public DadosDoUsuario()
-        {
-            CodigosPerfis = new List<string>();
-            ModulosCodigo = new List<string>();
-        }
+        public string CodigoPerfil { get; set; } = string.Empty;
 
-        public string NomeDoUsuario { get; set; } = "";
-        public string CodigoDoUsuario { get; set; } = "";
-        public string Email { get; set; } = "";
-        public string? CodigoDoDepartamento { get; set; }
-        public string? CodigoDoCargo { get; set; }
-
-        public DadosDoToken DadosDoToken { get; set; }
-
-        public DateTime ExpiracaoDeAcesso { get; set; }
-        
-        public ICollection<string> CodigosPerfis { get; set; }
-        public ICollection<string> ModulosCodigo { get; set; }
+        public List<DadosDoModulo> Modulos { get; set; } = new();
     }
 
+    public record DadosDoModulo(string Codigo, string Descricao);
 
-    public class DadosDoToken
-    {
-        public DateTime ExpiracaoDoToken { get; set; }
+    public record DadosDoToken(DateTime ExpiracaoDoToken, DateTime ExpiracaoDoRefreshToken);
 
-        public DateTime ExpiracaoDoRefreshToken { get; set; }
-    }
 }

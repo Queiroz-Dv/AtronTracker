@@ -132,31 +132,41 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()
         {
-            var applicationUsers = await  _context.Users.ToListAsync();
-            var usuarios = await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).ToListAsync();
-
-            var usuariosIdentity = new List<UsuarioIdentity>();
-
-            foreach (var user in applicationUsers)
+            try
             {
-                var usuario = usuarios.FirstOrDefault(cdg => cdg.Codigo == user.UserName);
+                var applicationUsers = await _context.Users.ToListAsync();
+                var usuarios = await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).ToListAsync();
 
-                var usuarioIdentity = new UsuarioIdentity
-                {                    
-                    Codigo = usuario.Codigo,
-                    Nome = usuario.Nome,
-                    Sobrenome = usuario.Sobrenome,
-                    Email = usuario.Email,
-                    Salario = usuario.Salario,
-                    DataNascimento = usuario.DataNascimento,
-                    UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
-                    Token = user.Token,
-                    RefreshToken = user.RefreshToken,
-                    RefreshTokenExpireTime = user.RefreshTokenExpireTime
-                };
+                var usuariosIdentity = new List<UsuarioIdentity>();
+
+                foreach (var user in applicationUsers)
+                {
+                    var usuario = usuarios.FirstOrDefault(cdg => cdg.Codigo == user.UserName);
+
+                    if (usuario is not null)
+                    {
+                        var usuarioIdentity = new UsuarioIdentity
+                        {
+                            Codigo = usuario.Codigo,
+                            Nome = usuario.Nome,
+                            Sobrenome = usuario.Sobrenome,
+                            Email = usuario.Email,
+                            Salario = usuario.Salario,
+                            DataNascimento = usuario.DataNascimento,
+                            UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,                            
+                        };
+
+                        usuariosIdentity.Add(usuarioIdentity);
+                    }
+                }
+
+                return usuariosIdentity;
             }
+            catch (Exception ex)
+            {
 
-            return usuariosIdentity;
+                throw ex;
+            }
         }
 
         public async Task<bool> TokenDeUsuarioExpiradoRepositoryAsync(string codigoUsuario, string refreshToken)

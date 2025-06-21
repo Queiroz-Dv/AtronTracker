@@ -5,7 +5,7 @@ namespace Shared.Interfaces.Handlers
 {
     public interface ICookieHandlerService
     {
-        InfoToken ExtrairTokensDoCookie(HttpRequest request);
+        InfoToken ExtrairInfoTokensDoCookie(HttpRequest request);
 
         void CriarCookiesDoToken(InfoToken userInfo);
     }

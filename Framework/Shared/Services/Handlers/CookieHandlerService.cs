@@ -11,8 +11,10 @@ namespace Shared.Services.Handlers
     {
         private readonly IResponseCookies _cookies;
         private readonly ITokenHandlerService _tokenHandler;
-             
-        public CookieHandlerService(IResponseCookies responseCookies, ITokenHandlerService tokenHandler)
+
+        public CookieHandlerService(
+            IResponseCookies responseCookies,
+            ITokenHandlerService tokenHandler)
         {
             _cookies = responseCookies;
             _tokenHandler = tokenHandler;
@@ -37,15 +39,12 @@ namespace Shared.Services.Handlers
             });
         }
 
-        public InfoToken ExtrairTokensDoCookie(HttpRequest request)
+        public InfoToken ExtrairInfoTokensDoCookie(HttpRequest request)
         {
             var accessToken = request.Cookies[ETokenInfo.AcesssToken.GetDescription()];
             var refreshToken = request.Cookies[ETokenInfo.RefreshToken.GetDescription()];
 
-            if (accessToken.IsNullOrEmpty())
-            {
-                return null;
-            }
+            if (accessToken != null) { return null; }
 
             var claimPrincipal = _tokenHandler.ObterClaimPrincipal(accessToken);
 

@@ -37,13 +37,14 @@ namespace Atron.WebApi
         /// <param name="services">Contêiner de serviços.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMemoryCache();
+
             // 🧱 Registra os serviços da camada de infraestrutura (ex: DbContext, Repositórios, JWT, AutoMapper, etc)
             services.AddInfrastructureAPI(Configuration);
 
             // 🔐 Registra os serviços necessários para a política dinâmica de autorização baseada em "módulo"
             services.AddSingleton<IAuthorizationPolicyProvider, DynamicModuloPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, ModuloHandler>();
-
             // 🚀 Adiciona o suporte a Controllers (necessário para Web APIs)
             services.AddControllers();
 
