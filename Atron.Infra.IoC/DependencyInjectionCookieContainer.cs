@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Atron.Infra.IoC
 {
@@ -12,25 +11,24 @@ namespace Atron.Infra.IoC
             services.ConfigureApplicationCookie(options =>
             {
                 options.AccessDeniedPath = "/";
+                options.LoginPath = "/";
+                options.LogoutPath = "/";             
+
                 options.Cookie = new CookieBuilder
                 {
-                    Name = "AuthToken",
+                    Name = "AuthCookie",
                     HttpOnly = true,
                     SecurePolicy = CookieSecurePolicy.Always,
                     SameSite = SameSiteMode.Strict,
                     IsEssential = true,
-                    MaxAge = TimeSpan.FromDays(31)
                 };
-                options.LoginPath = "/";
-                options.LogoutPath = "/";             
-                options.ExpireTimeSpan = TimeSpan.FromDays(31);
+
             });
 
             // Configuração da sessão
             services.AddSession(options =>
             {
-                options.Cookie.Name = "AuthToken";                            // Nome do cookie
-                options.IdleTimeout = TimeSpan.FromDays(31);                 // Tempo de expiração
+                options.Cookie.Name = "AuthSession";                            // Nome do cookie
                 options.Cookie.HttpOnly = true;                             // Impede acesso via JavaScript
                 options.Cookie.IsEssential = true;                         // Necessário para funcionamento essencial
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;  // HTTPS obrigatório

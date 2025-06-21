@@ -57,13 +57,3 @@ namespace Atron.Infra.IoC
         }
     }
 }
-
-// Config em publicação
-//< Target Name = "PrepublishScript" BeforeTargets = "PrepareForPublish" >
-//    < ItemGroup >
-//        < DocFile Include = "bin\*\*\*.xml" />
-//    </ ItemGroup >
-//    < Copy SourceFiles = "@(DocFile)"
-//          DestinationFolder = "$(PublishDir)"
-//          SkipUnchangedFiles = "false" />
-//</ Target >

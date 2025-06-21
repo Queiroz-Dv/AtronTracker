@@ -26,8 +26,21 @@ namespace Atron.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-
                 throw ex;
+            }
+        }
+
+        public async Task DeletarRelacionamento(PerfilDeAcessoUsuario relacionamento)
+        {
+            try
+            {
+                _context.PerfilDeAcessoUsuarios.Remove(relacionamento);
+                await _context.SaveChangesAsync();
+                return; // Fixed: Added a valid return statement for the void method
+            }
+            catch (Exception ex)
+            {
+                throw; // No changes needed here
             }
         }
 
@@ -36,7 +49,8 @@ namespace Atron.Infrastructure.Repositories
             return await _context.PerfilDeAcessoUsuarios
                                  .Include(p => p.PerfilDeAcesso)
                                  .ThenInclude(m => m.PerfilDeAcessoModulos)
-                                 .Include(p => p.Usuario).FirstOrDefaultAsync(pda => pda.PerfilDeAcessoCodigo == codigo);
+                                 .Include(p => p.Usuario)
+                                 .FirstOrDefaultAsync(pda => pda.PerfilDeAcessoCodigo == codigo);
         }
     }
 }

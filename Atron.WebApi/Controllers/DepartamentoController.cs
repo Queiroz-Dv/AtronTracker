@@ -10,28 +10,28 @@ using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
 {
-    /// <summary>
-    /// Controlador para gerenciar entidades de Departamento.
-    /// </summary>
-    [Authorize]
+    /// <summary>  
+    /// Controlador para gerenciar entidades de Departamento.  
+    /// </summary>  
+    [Authorize(Policy = "Modulo:DPT")] // Configura a policy para o módulo de Departamento
     [ApiController]
     [Route("api/[controller]")]
     public class DepartamentoController : ApiBaseConfigurationController<Departamento, IDepartamentoService>
     {
-        /// <summary>
-        /// Inicializa uma nova instância da classe <see cref="DepartamentoController"/>.
-        /// </summary>
-        /// <param name="departamentoService">O serviço para gerenciar departamentos.</param>
-        /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>
+        /// <summary>  
+        /// Inicializa uma nova instância da classe <see cref="DepartamentoController"/>.  
+        /// </summary>  
+        /// <param name="departamentoService">O serviço para gerenciar departamentos.</param>  
+        /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>  
         public DepartamentoController(IDepartamentoService departamentoService, MessageModel messageModel)
             : base(departamentoService, messageModel)
         { }
 
-        /// <summary>
-        /// Cria um novo departamento.
-        /// </summary>
-        /// <param name="departamento">Dados do departamento a ser criado.</param>
-        /// <returns>Resultado da operação.</returns>
+        /// <summary>  
+        /// Cria um novo departamento.  
+        /// </summary>  
+        /// <param name="departamento">Dados do departamento a ser criado.</param>  
+        /// <returns>Resultado da operação.</returns>  
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
         {
@@ -42,10 +42,10 @@ namespace Atron.WebApi.Controllers
                    Ok(ObterNotificacoes());
         }
 
-        /// <summary>
-        /// Obtém todos os departamentos.
-        /// </summary>
-        /// <returns>Lista de departamentos.</returns>
+        /// <summary>  
+        /// Obtém todos os departamentos.  
+        /// </summary>  
+        /// <returns>Lista de departamentos.</returns>  
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DepartamentoDTO>>> Get()
         {
@@ -53,12 +53,12 @@ namespace Atron.WebApi.Controllers
             return Ok(departamentos);
         }
 
-        /// <summary>
-        /// Atualiza um departamento existente.
-        /// </summary>
-        /// <param name="codigo">Código do departamento a ser atualizado.</param>
-        /// <param name="departamento">Dados atualizados do departamento.</param>
-        /// <returns>Resultado da operação.</returns>
+        /// <summary>  
+        /// Atualiza um departamento existente.  
+        /// </summary>  
+        /// <param name="codigo">Código do departamento a ser atualizado.</param>  
+        /// <param name="departamento">Dados atualizados do departamento.</param>  
+        /// <returns>Resultado da operação.</returns>  
         [HttpPut("{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] DepartamentoDTO departamento)
         {
@@ -69,11 +69,11 @@ namespace Atron.WebApi.Controllers
                    Ok(ObterNotificacoes());
         }
 
-        /// <summary>
-        /// Remove um departamento existente.
-        /// </summary>
-        /// <param name="codigo">Código do departamento a ser removido.</param>
-        /// <returns>Resultado da operação.</returns>
+        /// <summary>  
+        /// Remove um departamento existente.  
+        /// </summary>  
+        /// <param name="codigo">Código do departamento a ser removido.</param>  
+        /// <returns>Resultado da operação.</returns>  
         [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
         {
@@ -84,11 +84,11 @@ namespace Atron.WebApi.Controllers
                 Ok(ObterNotificacoes());
         }
 
-        /// <summary>
-        /// Obtém um departamento pelo código.
-        /// </summary>
-        /// <param name="codigo">Código do departamento.</param>
-        /// <returns>Dados do departamento.</returns>
+        /// <summary>  
+        /// Obtém um departamento pelo código.  
+        /// </summary>  
+        /// <param name="codigo">Código do departamento.</param>  
+        /// <returns>Dados do departamento.</returns>  
         [HttpGet("{codigo}")]
         public async Task<ActionResult<DepartamentoDTO>> Get(string codigo)
         {

@@ -175,15 +175,29 @@ namespace Atron.Application.Services
             return _map.MapToListDTO(entities.ToList());
         }
 
-        public async Task<bool> RelacionarPerfilDeAcessoUsuarioServiceAsync(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuarioDTO)
+        public async Task<bool> RelacionarPerfilDeAcessoUsuarioServiceAsync(PerfilDeAcessoUsuarioDTO dto)
         {
-            ChecarPerfilDeAcessoUsuario(perfilDeAcessoUsuarioDTO);
+            ChecarPerfilDeAcessoUsuario(dto);
 
             if (!_messageModel.Messages.HasErrors())
             {
-                var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoUsuarioDTO.PerfilDeAcesso);
+                // Preciso remover antes pois não terei o Update diretamente, basta remover os registros e refazer a gravação
+                var perfilRelacionado = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(dto.PerfilDeAcesso.Codigo);
+
+                if (perfilRelacionado != null)
+                {
+                    if (perfilRelacionado.PerfisDeAcessoUsuario.Any())
+                    {
+                        foreach (var item in perfilRelacionado.PerfisDeAcessoUsuario)
+                        {
+                            await _perfilDeAcessoUsuarioRepository.DeletarRelacionamento(item);
+                        }
+                    }
+                }
+
+                var perfilDeAcesso = _map.MapToEntity(dto.PerfilDeAcesso);
                 perfilDeAcesso.PerfisDeAcessoUsuario = new List<PerfilDeAcessoUsuario>();
-                foreach (var usuarioDTO in perfilDeAcessoUsuarioDTO.Usuarios)
+                foreach (var usuarioDTO in dto.Usuarios)
                 {
                     var perfilDeAcessoUsuario = new PerfilDeAcessoUsuario();
 
@@ -197,6 +211,7 @@ namespace Atron.Application.Services
 
                     perfilDeAcesso.PerfisDeAcessoUsuario.Add(perfilDeAcessoUsuario);
                 }
+
 
                 // Só pra testar a gravação a partir desse ponto
                 int salvos = 0;
@@ -240,7 +255,7 @@ namespace Atron.Application.Services
             var perfilDeAcessoDTO = _map.MapToDTO(perfilDeAcesso);
 
 
-            var dto = new PerfilDeAcessoUsuarioDTO();            
+            var dto = new PerfilDeAcessoUsuarioDTO();
 
             dto.PerfilDeAcesso.Codigo = perfilDeAcessoDTO.Codigo;
             dto.PerfilDeAcesso.Descricao = perfilDeAcessoDTO.Descricao;
@@ -265,5 +280,12 @@ namespace Atron.Application.Services
             return dto;
 
         }
+
+        public async Task<List<PerfilDeAcessoDTO>> ObterPerfisPorCodigoUsuarioServiceAsync(string usuarioCodigo)
+        {
+            var perfis = await _perfilDeAcessoRepository.ObterPerfisPorCodigoDeUsuarioRepositoryAsync(usuarioCodigo);
+
+            return perfis != null ? _map.MapToListDTO(perfis) : null;
+        }       
     }
 }
