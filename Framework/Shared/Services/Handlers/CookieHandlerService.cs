@@ -10,11 +10,11 @@ namespace Shared.Services.Handlers
     public class CookieHandlerService : ICookieHandlerService
     {
         private readonly IResponseCookies _cookies;
-        private readonly ITokenHandlerService _tokenHandler;
+        private readonly ITokenBuilderService _tokenHandler;
 
         public CookieHandlerService(
             IResponseCookies responseCookies,
-            ITokenHandlerService tokenHandler)
+            ITokenBuilderService tokenHandler)
         {
             _cookies = responseCookies;
             _tokenHandler = tokenHandler;
@@ -27,7 +27,7 @@ namespace Shared.Services.Handlers
                 HttpOnly = true,
                 SameSite = SameSiteMode.Strict,
                 Secure = true,
-                Expires = userInfo.Expires
+                Expires = new DateTime(15)
             });
 
             _cookies.Append(ETokenInfo.RefreshToken.GetDescription(), userInfo.RefreshToken, new CookieOptions

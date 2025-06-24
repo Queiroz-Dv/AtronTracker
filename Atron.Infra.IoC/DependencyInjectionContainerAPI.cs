@@ -24,6 +24,8 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using Shared.Interfaces.Caching;
 using Shared.Services.Caching;
+using Shared.Interfaces.Factory;
+using Shared.Services.Factory;
 
 namespace Atron.Infra.IoC
 {
@@ -50,10 +52,12 @@ namespace Atron.Infra.IoC
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 
-            services.AddScoped<IApplicationTokenService, ApplicationTokenService>();
+            services.AddScoped<ITokenApplicationService, TokenApplicationService>();
+            services.AddScoped<ITokenFactory, TokenFactory>();
+            services.AddScoped<ITokenBuilderService, TokenBuilderService>();
+
             services.AddScoped<ICookieHandlerService, CookieHandlerService>();
             services.AddScoped<IUsuarioHandler, UsuarioHandler>();
-            services.AddScoped<ITokenHandlerService, TokenHandlerService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<ICacheHandlerService, CacheHandlerService>();
 
