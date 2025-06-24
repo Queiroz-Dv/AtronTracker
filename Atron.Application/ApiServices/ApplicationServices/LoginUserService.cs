@@ -13,15 +13,14 @@ using Shared.Interfaces.Caching;
 using Shared.Interfaces.Handlers;
 using Shared.Interfaces.Validations;
 using Shared.Models;
-using System;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.ApplicationServices
 {
     public class LoginUserService : ILoginUserService
     {
-        private readonly IApplicationTokenService _tokenService;
-        private readonly ITokenHandlerService _tokenHandler;
+        private readonly ITokenApplicationService _tokenService;
+        private readonly ITokenBuilderService _tokenHandler;
         private readonly IUsuarioHandler _usuarioHandler;
         private readonly ILoginApplicationRepository _loginApplication;
         private readonly IUsuarioService _usuarioService;
@@ -35,8 +34,8 @@ namespace Atron.Application.ApiServices.ApplicationServices
             ILoginApplicationRepository loginApplication,
             IUsuarioService usuarioService,
             IUsuarioHandler usuarioHandler,
-            IApplicationTokenService tokenService,
-            ITokenHandlerService tokenHandler,
+            ITokenApplicationService tokenService,
+            ITokenBuilderService tokenHandler,
             IValidateModel<InfoToken> valideInfoToken,
             MessageModel messageModel,
             ICacheService cacheService)
@@ -57,7 +56,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
             var loginDTO = await _usuarioHandler.PreencherInformacoesDeUsuarioParaLoginAsync(usuario);
 
-            loginDTO.UserToken = await _tokenService.GerarToken(loginDTO.DadosDoUsuario);
+            loginDTO.UserToken = await _tokenService.CriarTokenParaUsuario(loginDTO.DadosDoUsuario);
 
             var result = await _loginApplication.AutenticarUsuarioAsync(new UsuarioIdentity()
             {
@@ -81,13 +80,13 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
         private void GravarCacheDeAcessoTokenInfo(string codigoUsuario, DadosDoUsuario dadosDoUsuario, InfoToken infoToken)
         {
-            var acessoCacheInfo = new CacheInfo<DadosDoUsuario>(ECacheKeysInfo.Acesso,codigoUsuario)
+            var acessoCacheInfo = new CacheInfo<DadosDoUsuario>(ECacheKeysInfo.Acesso, codigoUsuario)
             {
                 EntityInfo = dadosDoUsuario,
                 ExpireTime = infoToken.Expires
             };
 
-            var tokenUsuarioInfo = new CacheInfo<InfoToken>(ECacheKeysInfo.TokenInfo,codigoUsuario)
+            var tokenUsuarioInfo = new CacheInfo<InfoToken>(ECacheKeysInfo.TokenInfo, codigoUsuario)
             {
                 EntityInfo = infoToken,
                 ExpireTime = infoToken.Expires
@@ -119,7 +118,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
             if (loginDTO != null)
             {
-                var novoInfoToken = await _tokenService.GerarToken(loginDTO.DadosDoUsuario);
+                var novoInfoToken = await _tokenService.CriarTokenParaUsuario(loginDTO.DadosDoUsuario);
 
                 var result = await _loginApplication.AutenticarUsuarioAsync(new UsuarioIdentity()
                 {
