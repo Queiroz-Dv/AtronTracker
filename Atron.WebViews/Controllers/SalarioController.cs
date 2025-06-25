@@ -99,7 +99,7 @@ namespace Atron.WebViews.Controllers
             var usuariosFiltrados = usuarios.Where(usr => usr.Departamento is not null).Select(usr => new
             {
                 usr.Codigo,
-                Nome = usr.NomeCompleto(),
+                Nome = usr.Nome + " " + usr.Sobrenome,
             }).ToList();
 
             ViewBag.Usuarios = new SelectList(usuariosFiltrados, nameof(Usuario.Codigo), nameof(Usuario.Nome));
