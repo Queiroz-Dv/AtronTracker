@@ -49,7 +49,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<bool> AtualizarUsuarioAsync(string codigo, Usuario usuario)
         {
-            var usuarioBd = await ObterUsuarioPorCodigoAsync(codigo);
+            var usuarioBd = await _context.Usuarios.FirstOrDefaultAsync(usr => usr.Codigo == codigo);
             AtualizarEntidadeParaPersistencia(usuario, usuarioBd);
 
             try

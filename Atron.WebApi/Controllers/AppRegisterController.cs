@@ -25,8 +25,8 @@ namespace Atron.WebApi.Controllers
             await _service.RegisterUser(registerDTO);
 
             return _messageModel.Messages.HasErrors() ?
-                BadRequest(ObterNotificacoes()) :
-                Ok(ObterNotificacoes());
+                BadRequest(new { registrado = false }) :
+                Ok(new { registrado = true });
         }
 
 

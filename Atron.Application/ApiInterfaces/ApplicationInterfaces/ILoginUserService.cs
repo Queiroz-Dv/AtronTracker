@@ -12,7 +12,7 @@ namespace Atron.Application.ApiInterfaces.ApplicationInterfaces
     {
         Task<LoginDTO> Authenticate(LoginRequestDTO login);
 
-        Task Logout();
+        Task Logout(string usuarioCodigo);
 
         Task<InfoToken> RefreshAcesso(InfoToken infoToken);
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Atron.Domain.Entities
 {
@@ -15,13 +14,6 @@ namespace Atron.Domain.Entities
         [MaxLength(50), Required]
         public string Descricao { get; set; }
 
-        public int CategoriaId { get; set; }
-
-        [MaxLength(25), Required] public string CategoriaCodigo { get; set; }
-
-        [ForeignKey(nameof(CategoriaCodigo))]
-        public Categoria Categoria { get; set; }
-
         [Required]
         public int QuantidadeEmEstoque { get; set; }
 
@@ -32,5 +24,7 @@ namespace Atron.Domain.Entities
         public Venda Venda { get; set; }
 
         public List<Venda> Vendas { get; set; }
+
+        public List<ProdutoCategoria> Categorias { get; set; } = new List<ProdutoCategoria>();
     }
 }

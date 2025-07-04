@@ -24,10 +24,6 @@ namespace Atron.Infrastructure.EntitiesConfiguration
                    .IsRequired()
                    .HasMaxLength(50);
 
-            builder.Property(p => p.CategoriaCodigo)
-                   .IsRequired()
-                   .HasMaxLength(25);
-
             builder.Property(p => p.Removido)
                    .IsRequired()
                    .HasDefaultValue(false);
@@ -37,14 +33,6 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.Property(p => p.QuantidadeEmEstoque)
                    .IsRequired()
                    .HasDefaultValue(0);
-
-
-            // RELACIONAMENTO: Produto → Categoria por CategoriaCodigo
-            builder.HasOne(p => p.Categoria)
-                   .WithMany(c => c.Produtos)
-                   .HasPrincipalKey(c => c.Codigo) // Categoria.Codigo é a referência
-                   .HasForeignKey(p => p.CategoriaCodigo) // Produto.CategoriaCodigo é a FK
-                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

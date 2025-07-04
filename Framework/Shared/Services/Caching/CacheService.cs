@@ -40,5 +40,15 @@ namespace Shared.Services.Caching
                 _memoryCache.Remove(chave);
             }
         }
+
+        public void RemoverCache(ECacheKeysInfo chave, string codigoDaEntidade)
+        {
+            var cacheKey = $"{chave.GetDescription()}:{codigoDaEntidade}";
+
+            if (_memoryCache.TryGetValue(cacheKey, out _))
+            {
+                _memoryCache.Remove(cacheKey);
+            }
+        }
     }
 }

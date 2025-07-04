@@ -13,6 +13,8 @@ namespace Atron.Domain.Interfaces.ApplicationInterfaces
 
         Task<bool> ObterRefreshTokenDoUsuario(string refreshToken);
 
+        void RemoverInfoTokenDeUsuario(string codigoUsuario);
+
         Task Logout();
     }
 }

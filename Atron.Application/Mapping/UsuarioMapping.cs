@@ -34,7 +34,7 @@ namespace Atron.Application.Mapping
             usuario.UserInfoToken = new InfoToken()
             {
                 Token = entity.Token,
-                RefreshToken = entity.RefreshToken,
+                InfoRefreshToken = entity.RefreshToken,
                 RefreshTokenExpireTime = entity.RefreshTokenExpireTime,
             };
 

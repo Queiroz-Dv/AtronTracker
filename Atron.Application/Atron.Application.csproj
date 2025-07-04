@@ -4,21 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="DTO\Request\**" />
-    <Compile Remove="DTO\Response\**" />
-    <Compile Remove="Enums\**" />
-    <Compile Remove="ValueObjects\**" />
-    <EmbeddedResource Remove="DTO\Request\**" />
-    <EmbeddedResource Remove="DTO\Response\**" />
-    <EmbeddedResource Remove="Enums\**" />
-    <EmbeddedResource Remove="ValueObjects\**" />
-    <None Remove="DTO\Request\**" />
-    <None Remove="DTO\Response\**" />
-    <None Remove="Enums\**" />
-    <None Remove="ValueObjects\**" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.2" />

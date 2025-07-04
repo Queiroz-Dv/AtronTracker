@@ -19,7 +19,7 @@ namespace Atron.Domain.Entities
 
         public DateTime? RemovidoEm { get; set; }
 
-        public List<Produto> Produtos { get; set; }
+        public List<ProdutoCategoria> Produtos { get; set; } = new List<ProdutoCategoria>();
 
         public List<Venda> Vendas { get; set; }
     }
