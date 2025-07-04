@@ -31,7 +31,7 @@ namespace Shared.Services.Handlers
                 return new InfoToken
                 {
                     Token = infoTokenCache.Token,
-                    RefreshToken = infoTokenCache.RefreshToken,
+                    InfoRefreshToken = infoTokenCache.InfoRefreshToken,
                     Expires = infoTokenCache.Expires,
                     RefreshTokenExpireTime = infoTokenCache.RefreshTokenExpireTime
                 };

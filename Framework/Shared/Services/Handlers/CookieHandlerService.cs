@@ -30,7 +30,7 @@ namespace Shared.Services.Handlers
                 Expires = new DateTime(15)
             });
 
-            _cookies.Append(ETokenInfo.RefreshToken.GetDescription(), userInfo.RefreshToken, new CookieOptions
+            _cookies.Append(ETokenInfo.RefreshToken.GetDescription(), userInfo.InfoRefreshToken, new CookieOptions
             {
                 HttpOnly = true,
                 SameSite = SameSiteMode.Strict,
@@ -62,7 +62,7 @@ namespace Shared.Services.Handlers
             return new InfoToken()
             {
                 Token = accessToken,
-                RefreshToken = refreshToken,
+                InfoRefreshToken = refreshToken,
                 Expires = accessTokenExpires,
                 RefreshTokenExpireTime = refreshTokenExpires,
             };

@@ -24,6 +24,6 @@ namespace Atron.WebApi.Controllers
         {
             // Passar para um método de extensão
             return _messageModel.Messages.ConvertMessageToJson();
-        }
+        }        
     }
 }

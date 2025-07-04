@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Extensions;
 using Shared.Models.ApplicationModels;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories.ApplicationRepositories
@@ -80,6 +81,18 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
         public async Task<bool> ObterRefreshTokenDoUsuario(string refreshToken)
         {
             return await _context.Users.AnyAsync(rf => rf.RefreshToken == refreshToken);
+        }
+
+        public void RemoverInfoTokenDeUsuario(string codigoUsuario)
+        {
+            var usuario = _context.Users.FirstOrDefault(u => u.UserName == codigoUsuario);
+            if (usuario != null)
+            {
+                usuario.RefreshToken = null;
+                usuario.RefreshTokenExpireTime = default;
+                _context.Users.Update(usuario);
+                _context.SaveChanges();
+            }
         }
     }
 }

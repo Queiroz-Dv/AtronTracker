@@ -8,10 +8,10 @@ namespace Atron.WebApi.Helpers
     public class DynamicModuloPolicyProvider : DefaultAuthorizationPolicyProvider
     {
         const string Prefixo = "Modulo:";
-        private readonly AuthorizationOptions _options;
+        //private readonly AuthorizationOptions _options;
         public DynamicModuloPolicyProvider(IOptions<AuthorizationOptions> options) : base(options)
         {
-            _options = options.Value;
+           // _options = options.Value;
         }
 
         public override Task<AuthorizationPolicy> GetPolicyAsync(string name)

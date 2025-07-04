@@ -10,7 +10,6 @@ using Shared.DTO.API.Request;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Interfaces.Caching;
-using Shared.Interfaces.Handlers;
 using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Threading.Tasks;
@@ -20,7 +19,6 @@ namespace Atron.Application.ApiServices.ApplicationServices
     public class LoginUserService : ILoginUserService
     {
         private readonly ITokenApplicationService _tokenService;
-        private readonly ITokenBuilderService _tokenHandler;
         private readonly IUsuarioHandler _usuarioHandler;
         private readonly ILoginApplicationRepository _loginApplication;
         private readonly IUsuarioService _usuarioService;
@@ -35,7 +33,6 @@ namespace Atron.Application.ApiServices.ApplicationServices
             IUsuarioService usuarioService,
             IUsuarioHandler usuarioHandler,
             ITokenApplicationService tokenService,
-            ITokenBuilderService tokenHandler,
             IValidateModel<InfoToken> valideInfoToken,
             MessageModel messageModel,
             ICacheService cacheService)
@@ -45,7 +42,6 @@ namespace Atron.Application.ApiServices.ApplicationServices
             _usuarioService = usuarioService;
             _messageModel = messageModel;
             _valideInfoToken = valideInfoToken;
-            _tokenHandler = tokenHandler;
             _usuarioHandler = usuarioHandler;
             _cacheService = cacheService;
         }
@@ -56,18 +52,16 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
             var loginDTO = await _usuarioHandler.PreencherInformacoesDeUsuarioParaLoginAsync(usuario);
 
-            loginDTO.UserToken = await _tokenService.CriarTokenParaUsuario(loginDTO.DadosDoUsuario);
-
-            var result = await _loginApplication.AutenticarUsuarioAsync(new UsuarioIdentity()
+            var usuarioAutenticado = await _loginApplication.AutenticarUsuarioAsync(new UsuarioIdentity()
             {
                 Codigo = loginDTO.DadosDoUsuario.CodigoDoUsuario,
                 Token = loginDTO.UserToken.Token,
-                RefreshToken = loginDTO.UserToken.RefreshToken,
-                RefreshTokenExpireTime = loginDTO.UserToken.RefreshTokenExpireTime,
+                RefreshToken = loginDTO.UserToken.InfoRefreshToken.Token,
+                RefreshTokenExpireTime = loginDTO.UserToken.InfoRefreshToken.RefreshTokenExpireTime,
                 Senha = loginRequest.Senha
             });
 
-            if (!result)
+            if (!usuarioAutenticado)
             {
                 _messageModel.AddError(ERRO_AUTENTICACAO);
                 return null;
@@ -104,7 +98,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
             var codigoUsuario = _tokenHandler.ObterCodigoUsuarioPorClaim(infoToken.Token);
 
-            var refreshTokenDoUsuarioEstaExpirado = await _usuarioService.TokenDeUsuarioExpiradoServiceAsync(codigoUsuario, infoToken.RefreshToken);
+            var refreshTokenDoUsuarioEstaExpirado = await _usuarioService.TokenDeUsuarioExpiradoServiceAsync(codigoUsuario, infoToken.InfoRefreshToken);
 
             if (refreshTokenDoUsuarioEstaExpirado)
             {
@@ -124,7 +118,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                 {
                     Codigo = loginDTO.DadosDoUsuario.CodigoDoUsuario,
                     Token = novoInfoToken.Token,
-                    RefreshToken = novoInfoToken.RefreshToken,
+                    RefreshToken = novoInfoToken.InfoRefreshToken,
                     RefreshTokenExpireTime = novoInfoToken.RefreshTokenExpireTime
                 });
 
@@ -141,8 +135,11 @@ namespace Atron.Application.ApiServices.ApplicationServices
             return null;
         }
 
-        public async Task Logout()
+        public async Task Logout(string usuarioCodigo)
         {
+            _cacheService.RemoverCache(ECacheKeysInfo.Acesso, usuarioCodigo);
+            _cacheService.RemoverCache(ECacheKeysInfo.TokenInfo, usuarioCodigo);
+            _loginApplication.RemoverInfoTokenDeUsuario(usuarioCodigo);
             await _loginApplication.Logout();
         }
 

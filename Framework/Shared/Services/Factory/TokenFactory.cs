@@ -33,7 +33,7 @@ namespace Shared.Services.Factory
             {
                 Token = jwtToken,
                 Expires = usuario.DadosDoToken.ExpiracaoDoToken,
-                RefreshToken = refreshToken,
+                InfoRefreshToken = refreshToken,
                 RefreshTokenExpireTime = usuario.DadosDoToken.ExpiracaoDoRefreshToken
             };
         }

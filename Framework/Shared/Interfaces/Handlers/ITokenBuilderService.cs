@@ -11,6 +11,5 @@ namespace Shared.Interfaces.Handlers
         string CriarJwtToken(string secretKey, string audience, string issuer, IEnumerable<Claim> claims, DateTime expiration);
 
         Task<string> GerarRefreshTokenAsync();
-
     }
 }
