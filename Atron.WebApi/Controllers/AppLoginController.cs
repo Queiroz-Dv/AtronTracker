@@ -1,12 +1,13 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
 using Atron.Application.DTO.ApiDTO;
+using Atron.Application.Interfaces.Contexts;
 using Atron.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Shared.DTO.API;
 using Shared.DTO.API.Request;
 using Shared.Extensions;
-using Shared.Interfaces.Handlers;
+using Shared.Interfaces.Factory;
+using Shared.Interfaces.Services;
 using Shared.Models;
 using System.Threading.Tasks;
 
@@ -19,18 +20,15 @@ namespace Atron.WebApi.Controllers
     [ApiController]
     public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginUserService>
     {
-        private readonly ICookieHandlerService _cookieHandler;
-        private readonly ICacheHandlerService _cacheHandler;
+        private readonly IControleDeSessaoContext _controleDeSessaoContext;
 
         public AppLoginController(
             MessageModel messageModel,
             ILoginUserService loginUserService,
-            ICookieHandlerService cookieHandler,
-            ICacheHandlerService cacheHandler)
+            IControleDeSessaoContext controleDeSessaoContext)
             : base(loginUserService, messageModel)
         {
-            _cookieHandler = cookieHandler;
-            _cacheHandler = cacheHandler;
+            _controleDeSessaoContext = controleDeSessaoContext;
         }
 
         /// <summary>
@@ -41,16 +39,11 @@ namespace Atron.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<LoginDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
-            var dto = await _service.Authenticate(loginDTO);
-
-            if (dto != null)
-            {
-                _cookieHandler.CriarCookiesDoToken(dto.UserToken);
-            }      
-            
+            var dto = await _service.Autenticar(loginDTO);
+      
             return _messageModel.Messages.HasErrors() ?
              BadRequest(ObterNotificacoes()) :
-             Ok(new InfoToken(dto.UserToken.Token, dto.UserToken.Expires));
+             Ok(dto);
         }
 
         /// <summary>
@@ -59,11 +52,13 @@ namespace Atron.WebApi.Controllers
         [HttpGet("RefreshToken")]
         public async Task<IActionResult> Refresh()
         {
-            var cookie = _cookieHandler.ExtrairInfoTokensDoCookie(Request);
+            //var cookie = _cookieService.ObterDadosDoTokenPorRequest(Request);
+
+            var cookie = _controleDeSessaoContext.CookieService.ObterTokenRefreshTokenPorRequest(Request);
 
             if (cookie is null)
             {
-                cookie = _cacheHandler.ObterInfoTokensDoCachePorRequest(Request);
+                cookie = _controleDeSessaoContext.CacheUsuarioService.ObterDadosDoTokenPorCodigoUsuario(HttpContext.Request.ExtrairCodigoUsuarioDoRequest());
             }
 
             var novoToken = await _service.RefreshAcesso(cookie);
@@ -73,7 +68,7 @@ namespace Atron.WebApi.Controllers
             var token = novoToken.Token;
             var expires = novoToken.Expires;
 
-            _cookieHandler.CriarCookiesDoToken(novoToken);
+            _cookieService.CriarCookiesDoToken(novoToken);
 
             return _messageModel.Messages.HasErrors() ?
               BadRequest(ObterNotificacoes()) :

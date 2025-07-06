@@ -1,15 +1,11 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.DTO.ApiDTO;
-using Atron.Application.Interfaces;
-using Atron.Application.Interfaces.Handlers;
-using Atron.Domain.ApiEntities;
+using Atron.Application.Interfaces.Contexts;
 using Atron.Domain.Entities;
-using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Shared.DTO.API;
 using Shared.DTO.API.Request;
 using Shared.Extensions;
-using Shared.Interfaces;
 using Shared.Interfaces.Caching;
+using Shared.Interfaces.Services;
 using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Threading.Tasks;
@@ -18,46 +14,54 @@ namespace Atron.Application.ApiServices.ApplicationServices
 {
     public class LoginUserService : ILoginUserService
     {
-        private readonly ITokenApplicationService _tokenService;
-        private readonly IUsuarioHandler _usuarioHandler;
-        private readonly ILoginApplicationRepository _loginApplication;
-        private readonly IUsuarioService _usuarioService;
-        private readonly IValidateModel<InfoToken> _valideInfoToken;
+        private readonly ILoginContext _loginContext;
         private readonly ICacheService _cacheService;
+        private readonly ICookieService _cookieService;
+        private readonly IValidateModel<DadosDoTokenDTO> _validateToken;
         private readonly MessageModel _messageModel;
 
         const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
 
         public LoginUserService(
-            ILoginApplicationRepository loginApplication,
-            IUsuarioService usuarioService,
-            IUsuarioHandler usuarioHandler,
-            ITokenApplicationService tokenService,
-            IValidateModel<InfoToken> valideInfoToken,
-            MessageModel messageModel,
-            ICacheService cacheService)
+            ILoginContext loginContext,
+            ICacheService cacheService,
+            ICookieService cookieService,
+            IValidateModel<DadosDoTokenDTO> validateToken,
+            MessageModel messageModel)
         {
-            _loginApplication = loginApplication;
-            _tokenService = tokenService;
-            _usuarioService = usuarioService;
-            _messageModel = messageModel;
-            _valideInfoToken = valideInfoToken;
-            _usuarioHandler = usuarioHandler;
+            _cookieService = cookieService;
             _cacheService = cacheService;
+            _loginContext = loginContext;
+            _validateToken = validateToken;
+            _messageModel = messageModel;
         }
 
-        public async Task<LoginDTO> Authenticate(LoginRequestDTO loginRequest)
+        public async Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO loginRequest)
         {
-            var usuario = await _usuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
+            var dadosService = _loginContext.UsuarioContext.DadosComplementaresDoUsuarioService;
+            var tokenService = _loginContext.AuthManagerContext.TokenService;
+            var usuarioService = _loginContext.UsuarioContext.UsuarioService;
+            var loginRepository = _loginContext.LoginRepository;
+            var usuarioCacheService = _loginContext.UsuarioContext.CacheUsuarioService;
 
-            var loginDTO = await _usuarioHandler.PreencherInformacoesDeUsuarioParaLoginAsync(usuario);
+            var usuario = await usuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
 
-            var usuarioAutenticado = await _loginApplication.AutenticarUsuarioAsync(new UsuarioIdentity()
+            if (usuario == null)
             {
-                Codigo = loginDTO.DadosDoUsuario.CodigoDoUsuario,
-                Token = loginDTO.UserToken.Token,
-                RefreshToken = loginDTO.UserToken.InfoRefreshToken.Token,
-                RefreshTokenExpireTime = loginDTO.UserToken.InfoRefreshToken.RefreshTokenExpireTime,
+                _messageModel.AddError("Usuário não encontrado.");
+                return null;
+            }
+
+            var dadosComplementares = await dadosService.ObterInformacoesComplementaresDoUsuario(usuario);
+
+            var dadosDoToken = await tokenService.ObterTokenComRefreshToken(dadosComplementares);
+
+            var usuarioAutenticado = await loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity()
+            {
+                Codigo = dadosComplementares.DadosDoUsuario.CodigoDoUsuario,
+                Token = dadosDoToken.TokenDTO.Token,
+                RefreshToken = dadosDoToken.RefrehTokenDTO.Token,
+                RefreshTokenExpireTime = dadosDoToken.RefrehTokenDTO.Expires,
                 Senha = loginRequest.Senha
             });
 
@@ -67,38 +71,27 @@ namespace Atron.Application.ApiServices.ApplicationServices
                 return null;
             }
 
-            GravarCacheDeAcessoTokenInfo(loginRequest.CodigoDoUsuario, loginDTO.DadosDoUsuario, loginDTO.UserToken);
-
-            return loginDTO;
+            usuarioCacheService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDoToken);
+            _cookieService.CriarCookiesDoToken(dadosDoToken);
+            return new DadosDoTokenDTO(dadosDoToken.TokenDTO.Token, dadosDoToken.TokenDTO.Expires);
         }
 
-        private void GravarCacheDeAcessoTokenInfo(string codigoUsuario, DadosDoUsuario dadosDoUsuario, InfoToken infoToken)
+        public async Task<DadosDoTokenDTO> RefreshAcesso(DadosDoTokenDTO dadosDoToken)
         {
-            var acessoCacheInfo = new CacheInfo<DadosDoUsuario>(ECacheKeysInfo.Acesso, codigoUsuario)
-            {
-                EntityInfo = dadosDoUsuario,
-                ExpireTime = infoToken.Expires
-            };
+            var dadosService = _loginContext.UsuarioContext.DadosComplementaresDoUsuarioService;
+            var tokenService = _loginContext.AuthManagerContext.TokenService;
+            var usuarioService = _loginContext.UsuarioContext.UsuarioService;
+            var usuarioCacheService = _loginContext.UsuarioContext.CacheUsuarioService;
+            var authRepository = _loginContext.AuthManagerContext.AppUserRepository;
+            var loginRepository = _loginContext.LoginRepository;
 
-            var tokenUsuarioInfo = new CacheInfo<InfoToken>(ECacheKeysInfo.TokenInfo, codigoUsuario)
-            {
-                EntityInfo = infoToken,
-                ExpireTime = infoToken.Expires
-            };
-
-            _cacheService.GravarCache(acessoCacheInfo);
-            _cacheService.GravarCache(tokenUsuarioInfo);
-        }
-
-        public async Task<InfoToken> RefreshAcesso(InfoToken infoToken)
-        {
-            _valideInfoToken.Validate(infoToken);
+            _validateToken.Validate(dadosDoToken);
 
             if (_messageModel.Messages.HasErrors()) return null;
 
-            var codigoUsuario = _tokenHandler.ObterCodigoUsuarioPorClaim(infoToken.Token);
+            var codigoUsuario = await tokenService.ObterCodigoUsuarioPorClaim(dadosDoToken.Token);
 
-            var refreshTokenDoUsuarioEstaExpirado = await _usuarioService.TokenDeUsuarioExpiradoServiceAsync(codigoUsuario, infoToken.InfoRefreshToken);
+            var refreshTokenDoUsuarioEstaExpirado = await authRepository.RefreshTokenExpirado(codigoUsuario);
 
             if (refreshTokenDoUsuarioEstaExpirado)
             {
@@ -106,20 +99,25 @@ namespace Atron.Application.ApiServices.ApplicationServices
                 return null;
             }
 
-            var usuario = await _usuarioService.ObterPorCodigoAsync(codigoUsuario);
+            var usuario = await usuarioService.ObterPorCodigoAsync(codigoUsuario);
 
-            var loginDTO = await _usuarioHandler.PreencherInformacoesDeUsuarioParaLoginAsync(usuario);
-
-            if (loginDTO != null)
+            if (usuario == null)
             {
-                var novoInfoToken = await _tokenService.CriarTokenParaUsuario(loginDTO.DadosDoUsuario);
+                return null;
+            }
 
-                var result = await _loginApplication.AutenticarUsuarioAsync(new UsuarioIdentity()
+            var dadosComplementares = await dadosService.ObterInformacoesComplementaresDoUsuario(usuario);
+
+            if (dadosComplementares != null)
+            {
+                var dadosDeToken = await tokenService.ObterTokenComRefreshToken(dadosComplementares);
+
+                var result = await loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity()
                 {
-                    Codigo = loginDTO.DadosDoUsuario.CodigoDoUsuario,
-                    Token = novoInfoToken.Token,
-                    RefreshToken = novoInfoToken.InfoRefreshToken,
-                    RefreshTokenExpireTime = novoInfoToken.RefreshTokenExpireTime
+                    Codigo = dadosComplementares.DadosDoUsuario.CodigoDoUsuario,
+                    Token = dadosDeToken.TokenDTO.Token,
+                    RefreshToken = dadosDeToken.RefrehTokenDTO.Token,
+                    RefreshTokenExpireTime = dadosDeToken.RefrehTokenDTO.Expires,
                 });
 
                 if (!result)
@@ -128,26 +126,26 @@ namespace Atron.Application.ApiServices.ApplicationServices
                     return null;
                 }
 
-                GravarCacheDeAcessoTokenInfo(codigoUsuario, loginDTO.DadosDoUsuario, novoInfoToken);
-                return novoInfoToken;
+                usuarioCacheService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDeToken);
+                return new DadosDoTokenDTO(dadosDeToken.TokenDTO.Token, dadosDeToken.TokenDTO.Expires);
             }
 
             return null;
         }
 
         public async Task Logout(string usuarioCodigo)
-        {
+        {  
+            var  appUserRepository = _loginContext.AuthManagerContext.AppUserRepository;
+
             _cacheService.RemoverCache(ECacheKeysInfo.Acesso, usuarioCodigo);
             _cacheService.RemoverCache(ECacheKeysInfo.TokenInfo, usuarioCodigo);
-            _loginApplication.RemoverInfoTokenDeUsuario(usuarioCodigo);
-            await _loginApplication.Logout();
+            await appUserRepository.RedefinirRefreshToken(usuarioCodigo);
+            await _loginContext.LoginRepository.Logout();
         }
 
         public async Task<bool> TrocarSenha(LoginRequestDTO dto)
         {
-            var login = new ApiLogin { UserName = dto.CodigoDoUsuario, Password = dto.Senha };
-
-            return await _loginApplication.ConfigPasswordAsync(dto.CodigoDoUsuario, login);
+            return await _loginContext.LoginRepository.AtualizarSenhaUsuario(dto.CodigoDoUsuario, dto.Senha);
         }
     }
 }

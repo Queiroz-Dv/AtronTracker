@@ -18,6 +18,8 @@ namespace Atron.Infrastructure.Context
     {
         public AtronDbContext(DbContextOptions<AtronDbContext> options) : base(options) { }
 
+        public DbSet<ApplicationUser> AppUsers { get; set; }
+
         public DbSet<Departamento> Departamentos { get; set; }
 
         public DbSet<Cargo> Cargos { get; set; }

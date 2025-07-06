@@ -23,7 +23,5 @@ namespace Atron.Domain.Interfaces.UsuarioInterfaces
         Task<bool> AtualizarSalario(int usuarioId, int quantidadeTotal);
 
         Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity();
-
-        Task<bool> TokenDeUsuarioExpiradoRepositoryAsync(string codigoUsuario, string refreshToken);
     }
 }

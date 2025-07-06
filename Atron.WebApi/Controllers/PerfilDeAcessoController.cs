@@ -1,5 +1,5 @@
 ﻿using Atron.Application.DTO;
-using Atron.Application.Interfaces;
+using Atron.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;

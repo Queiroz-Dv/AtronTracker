@@ -167,11 +167,6 @@ namespace Atron.Infrastructure.Repositories
 
                 throw ex;
             }
-        }
-
-        public async Task<bool> TokenDeUsuarioExpiradoRepositoryAsync(string codigoUsuario, string refreshToken)
-        {
-            return await _context.Users.AnyAsync(usr => usr.UserName == codigoUsuario && usr.RefreshToken == refreshToken && usr.RefreshTokenExpireTime <= DateTime.Now);
-        }
+        }   
     }
 }

@@ -36,7 +36,7 @@ namespace Atron.Application.DTO
         [DataType(DataType.Password)]
         public string Senha { get; set; }
 
-        public InfoToken UserInfoToken { get; set; }
+        public DadosDoTokenDTO UserInfoToken { get; set; }
 
         public DepartamentoDTO Departamento { get; set; }
 

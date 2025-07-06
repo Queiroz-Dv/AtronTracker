@@ -1,4 +1,4 @@
-﻿using Atron.Application.Interfaces;
+﻿using Atron.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using System;

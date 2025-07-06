@@ -1,42 +1,38 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Shared.DTO.API;
 using Shared.Extensions;
+using Shared.Interfaces.Contexts;
 using Shared.Interfaces.Factory;
-using Shared.Interfaces.Handlers;
+using System.Security.Claims;
 
 namespace Shared.Services.Factory
 {
-    public class TokenFactory : ITokenFactory
+    public class TokenFactory : TokenBuilder, ITokenFactory
     {
-        private readonly IConfiguration _configuration;
-        private readonly ITokenBuilderService _tokenHandlerService;
+        public TokenFactory(IConfiguration configuration,
+            IAuthManagerContext authManager) : base(configuration, authManager) { }
 
-        public TokenFactory(IConfiguration configuration, ITokenBuilderService tokenHandlerService)
+        public async Task<DadosDeTokenComRefreshToken> ObterDadosDoTokenAsync(DadosComplementaresDoUsuarioDTO dadosComplementaresDoUsuarioDTO)
         {
-            _configuration = configuration;
-            _tokenHandlerService = tokenHandlerService;
-        }
+            var tempoDoToken = dadosComplementaresDoUsuarioDTO.DadosDoToken.ExpiracaoDoToken;
+            var tempoDoRefreshToken = dadosComplementaresDoUsuarioDTO.DadosDoToken.ExpiracaoDoRefreshToken;
 
-        public async Task<InfoToken> CriarTokenAsync(DadosDoUsuario usuario)
-        {
-            var secretKey = _configuration.GetSecretKey();
-            var audience = _configuration.GetAudience();
-            var issuer = _configuration.GetIssuer();
+            var dadosDoUsuario = dadosComplementaresDoUsuarioDTO.DadosDoUsuario;
 
-            var claims = JwtConfiguration.GetClaims(usuario);
+            var claims = JwtConfiguration.GetClaims(dadosDoUsuario);
+            var token = CriarJwtToken(claims, tempoDoToken);
+            var refreshToken = await CriarRefreshToken();
 
-            var jwtToken = _tokenHandlerService.CriarJwtToken(secretKey, audience, issuer, claims, usuario.DadosDoToken.ExpiracaoDoToken);
-
-            var refreshToken = await _tokenHandlerService.GerarRefreshTokenAsync();
-
-            return new InfoToken
+            return new DadosDeTokenComRefreshToken
             {
-                Token = jwtToken,
-                Expires = usuario.DadosDoToken.ExpiracaoDoToken,
-                InfoRefreshToken = refreshToken,
-                RefreshTokenExpireTime = usuario.DadosDoToken.ExpiracaoDoRefreshToken
+                TokenDTO = new DadosDoTokenDTO(token, tempoDoToken),
+                RefrehTokenDTO = new DadosDoRefrehTokenDTO(refreshToken, tempoDoRefreshToken)
             };
         }
-    }
 
+        public ClaimsPrincipal ObterClaimPrincipal(string token)
+        {
+            return CriarClaimPrincipal(token);
+        }
+    }
 }

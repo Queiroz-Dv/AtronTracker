@@ -1,5 +1,4 @@
-﻿using Atron.Application.DTO.ApiDTO;
-using Shared.DTO.API;
+﻿using Shared.DTO.API;
 using Shared.DTO.API.Request;
 using System.Threading.Tasks;
 
@@ -10,11 +9,11 @@ namespace Atron.Application.ApiInterfaces.ApplicationInterfaces
     /// </summary>
     public interface ILoginUserService
     {
-        Task<LoginDTO> Authenticate(LoginRequestDTO login);
+        Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO login);
 
         Task Logout(string usuarioCodigo);
 
-        Task<InfoToken> RefreshAcesso(InfoToken infoToken);
+        Task<DadosDoTokenDTO> RefreshAcesso(DadosDoTokenDTO infoToken);
 
         Task<bool> TrocarSenha(LoginRequestDTO dto);
     }

@@ -1,9 +1,12 @@
 ﻿using Shared.DTO.API;
+using System.Security.Claims;
 
 namespace Shared.Interfaces.Factory
 {
     public interface ITokenFactory
     {
-        Task<InfoToken> CriarTokenAsync(DadosDoUsuario usuario);
+        Task<DadosDeTokenComRefreshToken> ObterDadosDoTokenAsync(DadosComplementaresDoUsuarioDTO usuario);
+
+        ClaimsPrincipal ObterClaimPrincipal(string token);
     }
 }
