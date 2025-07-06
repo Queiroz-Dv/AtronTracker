@@ -6,8 +6,8 @@ namespace Atron.Application.DTO.ApiDTO
     public class LoginDTO
     {
         [ValidateNever]
-        public InfoToken UserToken { get; set; }
+        public DadosDoTokenDTO UserToken { get; set; }
 
-        public DadosDoUsuario DadosDoUsuario { get; set; }
+        public DadosComplementaresDoUsuarioDTO DadosDoUsuario { get; set; }
     }
 }

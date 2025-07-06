@@ -7,9 +7,9 @@ using System;
 
 namespace Atron.Application.Validations
 {
-    public class InfoTokenMessageValidation : MessageModel, IMessages, IValidateModel<InfoToken>
+    public class InfoTokenMessageValidation : MessageModel, IMessages, IValidateModel<DadosDoTokenDTO>
     {
-        public void Validate(InfoToken entity)
+        public void Validate(DadosDoTokenDTO entity)
         {
             if (entity is null)
             {

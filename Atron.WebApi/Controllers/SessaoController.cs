@@ -1,4 +1,4 @@
-﻿using Atron.Application.Interfaces;
+﻿using Atron.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +44,7 @@ namespace Atron.WebApi.Controllers
             }
 
             // Tenta obter do cache
-            var dadosCache = _cacheService.ObterCache<DadosDoUsuario>(new CacheInfo<DadosDoUsuario>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription);
+            var dadosCache = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription);
 
             var jsonDeRetorno = new
             {
@@ -54,11 +54,11 @@ namespace Atron.WebApi.Controllers
                 codigoDoCargo = dadosCache?.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
                 codigoDoDepartamento = dadosCache?.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,
 
-                perfisDeAcesso = dadosCache?.PerfisDeAcesso ??
-                    _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo).Result.Select(p => new PerfilComModulos
+                perfisDeAcesso = dadosCache?.DadosDoPerfil ??
+                    _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo).Result.Select(p => new PerfilModulosDTO
                     {
                         CodigoPerfil = p.Codigo,
-                        Modulos = p.Modulos.Select(x => new DadosDoModulo(x.Codigo, x.Descricao)).ToList()
+                        Modulos = p.Modulos.Select(x => new DadosDoModuloDTO(x.Codigo, x.Descricao)).ToList()
                     }).ToList()
             };
 
@@ -70,19 +70,19 @@ namespace Atron.WebApi.Controllers
 
             // Se não havia cache (talvez expirado), busca os dados novamente
             var perfisModulos = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo);
-            var dto = new DadosDoUsuario
+            var dto = new DadosComplementaresDoUsuarioDTO
             {
                 CodigoDoUsuario = usuarioCodigo,
                 NomeDoUsuario = user.FindFirst(ClaimTypes.Name)?.Value,
-                PerfisDeAcesso = perfisModulos.Select(p => new PerfilComModulos
+                DadosDoPerfil = perfisModulos.Select(p => new PerfilModulosDTO
                 {
                     CodigoPerfil = p.Codigo,
-                    Modulos = p.Modulos.Select(x => new DadosDoModulo(x.Codigo, x.Descricao)).ToList()
+                    Modulos = p.Modulos.Select(x => new DadosDoModuloDTO(x.Codigo, x.Descricao)).ToList()
                 }).ToList(),
             };
 
             // Regrava cache para próxima vez            
-            _cacheService.GravarCache(new CacheInfo<DadosDoUsuario>(ECacheKeysInfo.Acesso, usuarioCodigo));
+            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo));
 
             return Ok(jsonDeRetorno);
         }

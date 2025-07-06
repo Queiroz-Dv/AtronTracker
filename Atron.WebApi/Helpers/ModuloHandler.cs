@@ -1,5 +1,5 @@
-﻿using Atron.Application.Interfaces;
-using Atron.Application.Interfaces.Handlers;
+﻿using Atron.Application.Interfaces.Handlers;
+using Atron.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -19,16 +19,16 @@ namespace Atron.WebApi.Helpers
     {
         private readonly ICacheService _cacheService;
         private readonly IUsuarioService _usuarioService;
-        private readonly IUsuarioHandler _usuarioHandler;
+        //private readonly IUsuarioHandler _usuarioHandler;
 
         public ModuloHandler(
             ICacheService cacheService,
-            IUsuarioService usuarioService,
-            IUsuarioHandler usuarioHandler)
+            IUsuarioService usuarioService)
+            //IUsuarioHandler usuarioHandler)
         {
             _cacheService = cacheService;
             _usuarioService = usuarioService;
-            _usuarioHandler = usuarioHandler;
+            //_usuarioHandler = usuarioHandler;
         }
 
         protected override async Task HandleRequirementAsync(
@@ -50,23 +50,23 @@ namespace Atron.WebApi.Helpers
             }
 
             // Attempt to retrieve from cache: List<PerfilComModulos>  
-            var dados = _cacheService.ObterCache<DadosDoUsuario>(new CacheInfo<DadosDoUsuario>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription)
+            var dados = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription)
             ?? await RecarregarSessaoNoCacheAsync(usuarioCodigo);
 
             // 4. Verifique o módulo
-            if (dados.PerfisDeAcesso.Any(p => p.Modulos.Any(m => m.Codigo == requirement.Codigo)))
+            if (dados.DadosDoPerfil.Any(p => p.Modulos.Any(m => m.Codigo == requirement.Codigo)))
             {
                 context.Succeed(requirement);
             }         
         }
 
         // Método auxiliar
-        private async Task<DadosDoUsuario> RecarregarSessaoNoCacheAsync(string userId)
+        private async Task<DadosComplementaresDoUsuarioDTO> RecarregarSessaoNoCacheAsync(string userId)
         {
             var userDto = await _usuarioService.ObterPorCodigoAsync(userId);
             var loginDto = await _usuarioHandler.PreencherInformacoesDeUsuarioParaLoginAsync(userDto);
             //_cacheService.GravarCache($"acesso:{userId}", loginDto.DadosDoUsuario);
-            _cacheService.GravarCache(new CacheInfo<DadosDoUsuario>(ECacheKeysInfo.Acesso, userId));
+            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, userId));
             return loginDto.DadosDoUsuario;
         }
     }

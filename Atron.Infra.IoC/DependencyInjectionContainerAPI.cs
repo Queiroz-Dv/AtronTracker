@@ -1,8 +1,6 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
 using Atron.Application.ApiServices.ApplicationServices;
-using Atron.Application.Interfaces;
 using Atron.Application.Interfaces.Handlers;
-using Atron.Application.Services;
 using Atron.Application.Services.Handlers;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
@@ -15,8 +13,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Interfaces.Handlers;
-using Shared.Interfaces;
 using Shared.Models.ApplicationModels;
 using Shared.Services.Handlers;
 using Shared.Services;
@@ -26,6 +22,9 @@ using Shared.Interfaces.Caching;
 using Shared.Services.Caching;
 using Shared.Interfaces.Factory;
 using Shared.Services.Factory;
+using Shared.Interfaces.Services;
+using Atron.Application.Interfaces.Services;
+using Atron.Application.Services.EntitiesServices;
 
 namespace Atron.Infra.IoC
 {
@@ -52,11 +51,11 @@ namespace Atron.Infra.IoC
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 
-            services.AddScoped<ITokenApplicationService, TokenApplicationService>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenFactory, TokenFactory>();
-            services.AddScoped<ITokenBuilderService, TokenBuilderService>();
+            services.AddScoped<ITokenBuilderService, TokenBuilder>();
 
-            services.AddScoped<ICookieHandlerService, CookieHandlerService>();
+            services.AddScoped<ICookieFactory, CookieFactory>();
             services.AddScoped<IUsuarioHandler, UsuarioHandler>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<ICacheHandlerService, CacheHandlerService>();
@@ -115,7 +114,7 @@ namespace Atron.Infra.IoC
 
         private static void ConfigureUserAuthenticationServices(IServiceCollection services)
         {
-            services.AddScoped<ILoginApplicationRepository, LoginApplicationRepository>();
+            services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IRegisterApplicationRepository, RegisterApplicationRepository>();
         }
 
