@@ -64,7 +64,7 @@ namespace Atron.Application.Services.EntitiesServices
 
             _validateModel.Validate(entidade);
 
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 if (!usuarioDTO.DepartamentoCodigo.IsNullOrEmpty())
                 {
@@ -129,7 +129,7 @@ namespace Atron.Application.Services.EntitiesServices
             }
 
             _validateModel.Validate(entidade);
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 var usr = await _usuarioRepository.CriarUsuarioAsync(entidade);
 

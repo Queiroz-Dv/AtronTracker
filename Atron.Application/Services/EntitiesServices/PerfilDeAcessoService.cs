@@ -63,7 +63,7 @@ namespace Atron.Application.Services.EntitiesServices
             // TODO: Utilizar o speficiation no futuro pra verificar se os códigos está válidos
             ChecarPerfilModulo(perfilDeAcessoDTO);
 
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoDTO);
 
@@ -72,7 +72,7 @@ namespace Atron.Application.Services.EntitiesServices
                 // Lembrar de validar o módulo de acordo com as regras de negócio
                 _validateModel.Validate(perfilDeAcesso);
 
-                if (!_messageModel.Messages.HasErrors())
+                if (!_messageModel.Notificacoes.HasErrors())
                 {
                     var prf = await _perfilDeAcessoRepository.AtualizarPerfilRepositoryAsync(codigo, perfilDeAcesso);
                     if (prf)
@@ -116,7 +116,7 @@ namespace Atron.Application.Services.EntitiesServices
         {
             ChecarPerfilModulo(perfilDeAcessoDTO);
 
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoDTO);
 
@@ -125,7 +125,7 @@ namespace Atron.Application.Services.EntitiesServices
                 // Lembrar de validar o módulo de acordo com as regras de negócio
                 _validateModel.Validate(perfilDeAcesso);
 
-                if (!_messageModel.Messages.HasErrors())
+                if (!_messageModel.Notificacoes.HasErrors())
                 {
                     var prf = await _perfilDeAcessoRepository.CriarPerfilRepositoryAsync(perfilDeAcesso);
                     if (prf)
@@ -179,7 +179,7 @@ namespace Atron.Application.Services.EntitiesServices
         {
             ChecarPerfilDeAcessoUsuario(dto);
 
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 // Preciso remover antes pois não terei o Update diretamente, basta remover os registros e refazer a gravação
                 var perfilRelacionado = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(dto.PerfilDeAcesso.Codigo);

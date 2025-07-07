@@ -47,7 +47,7 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult> Post([FromBody] CargoDTO cargo)
         {
             await _service.CriarAsync(cargo);
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                BadRequest(ObterNotificacoes()) :
                Ok(ObterNotificacoes());
         }
@@ -63,7 +63,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.AtualizarAsync(codigo, cargo);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                BadRequest(ObterNotificacoes()) :
                Ok(ObterNotificacoes());
         }
@@ -78,7 +78,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.RemoverAsync(codigo);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
             BadRequest(ObterNotificacoes()) :
             Ok(ObterNotificacoes());
         }

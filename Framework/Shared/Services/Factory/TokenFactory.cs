@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Shared.DTO.API;
 using Shared.Extensions;
-using Shared.Interfaces.Contexts;
+using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Factory;
 using System.Security.Claims;
 
@@ -10,7 +10,7 @@ namespace Shared.Services.Factory
     public class TokenFactory : TokenBuilder, ITokenFactory
     {
         public TokenFactory(IConfiguration configuration,
-            IAuthManagerContext authManager) : base(configuration, authManager) { }
+            IServiceAccessor serviceAccessor) : base(configuration, serviceAccessor) { }
 
         public async Task<DadosDeTokenComRefreshToken> ObterDadosDoTokenAsync(DadosComplementaresDoUsuarioDTO dadosComplementaresDoUsuarioDTO)
         {

@@ -1,6 +1,4 @@
-﻿using Atron.Domain.Interfaces.ApplicationInterfaces;
-using Microsoft.AspNetCore.Identity;
-using Shared.Interfaces.Services;
+﻿using Microsoft.AspNetCore.Identity;
 using Shared.Models.ApplicationModels;
 
 namespace Shared.Interfaces.Contexts
@@ -13,9 +11,5 @@ namespace Shared.Interfaces.Contexts
         SignInManager<ApplicationUser> SignInManager { get; }
 
         UserManager<ApplicationUser> UserManager { get; }
-
-        ITokenService TokenService { get; }
-
-        IAppUserRepository AppUserRepository { get; }
     }
 }

@@ -1,22 +1,22 @@
-﻿using Atron.Domain.Interfaces.ApplicationInterfaces;
+﻿using Atron.Domain.Interfaces.Identity;
 using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Atron.Infrastructure.Repositories.ApplicationRepositories
+namespace Atron.Infrastructure.Repositories.Identity
 {
-    public class AppUserRepository : IAppUserRepository
+    public class UserIdentityRepository : IUserIdentityRepository
     {
         private AtronDbContext _context;
 
-        public AppUserRepository(AtronDbContext context)
+        public UserIdentityRepository(AtronDbContext context)
         {
             _context = context;
         }
 
-        public async Task<bool> AtualizarRefreshTokenUsuario(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime)
+        public async Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime)
         {
             var user = await _context.AppUsers
                 .FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
@@ -33,12 +33,12 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
             return false;
         }
 
-        public async Task<bool> RefreshTokenExiste(string refreshToken)
+        public async Task<bool> RefreshTokenExisteRepositoryAsync(string refreshToken)
         {
             return await _context.AppUsers.AnyAsync(u => u.RefreshToken == refreshToken);                
         }
 
-        public Task<string> ObterRefreshTokenPorCodigoUsuario(string codigoUsuario)
+        public Task<string> ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(string codigoUsuario)
         {
             return _context.AppUsers
                 .Where(u => u.UserName == codigoUsuario)
@@ -46,7 +46,7 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task RedefinirRefreshToken(string codigoUsuario)
+        public async Task RedefinirRefreshTokenRepositoryAsync(string codigoUsuario)
         {
             var user = await _context.AppUsers
                 .FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
@@ -61,7 +61,7 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
             }
         }
 
-        public Task<bool> RefreshTokenExpirado(string codigoUsuario)
+        public Task<bool> RefreshTokenExpiradoRepositoryAsync(string codigoUsuario)
         {
             return _context.AppUsers
                 .Where(u => u.UserName == codigoUsuario)

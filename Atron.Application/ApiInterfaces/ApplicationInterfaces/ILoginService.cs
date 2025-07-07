@@ -7,7 +7,7 @@ namespace Atron.Application.ApiInterfaces.ApplicationInterfaces
     /// <summary>
     /// Classe de autenticação para os usuários
     /// </summary>
-    public interface ILoginUserService
+    public interface ILoginService
     {
         Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO login);
 

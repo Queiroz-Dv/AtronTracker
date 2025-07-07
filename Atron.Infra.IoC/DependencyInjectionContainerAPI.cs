@@ -1,7 +1,7 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.ApiServices.ApplicationServices;
-using Atron.Application.Interfaces.Handlers;
-using Atron.Application.Services.Handlers;
+using Atron.Application.ApiServices.AuthServices;
+using Atron.Application.Interfaces.Services;
+using Atron.Application.Services.EntitiesServices;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
@@ -9,22 +9,13 @@ using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Repositories;
 using Atron.Infrastructure.Repositories.ApplicationRepositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Models.ApplicationModels;
-using Shared.Services.Handlers;
-using Shared.Services;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http;
-using Shared.Interfaces.Caching;
-using Shared.Services.Caching;
-using Shared.Interfaces.Factory;
-using Shared.Services.Factory;
-using Shared.Interfaces.Services;
-using Atron.Application.Interfaces.Services;
-using Atron.Application.Services.EntitiesServices;
 
 namespace Atron.Infra.IoC
 {
@@ -49,22 +40,9 @@ namespace Atron.Infra.IoC
 
             // Evitar o looping infinito 
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
-
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<ITokenFactory, TokenFactory>();
-            services.AddScoped<ITokenBuilderService, TokenBuilder>();
-
-            services.AddScoped<ICookieFactory, CookieFactory>();
-            services.AddScoped<IUsuarioHandler, UsuarioHandler>();
-            services.AddScoped<ICacheService, CacheService>();
-            services.AddScoped<ICacheHandlerService, CacheHandlerService>();
-
-            // Replace the following line:  
-            // services.AddScoped<IResponseCookies, ResponseCookies>();  
-
+            
             // With this line:  
-            services.AddScoped<IResponseCookies>(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
+            services.AddScoped(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
 
 
             // Registra os repositories e services da API
@@ -89,6 +67,8 @@ namespace Atron.Infra.IoC
             ConfigurePropriedadesDeFluxoModuloServices(services);
             ConfigurePerfilDeAcessoServices(services);
             ConfigurePerfilDeAcessoUsuarioServices(services);
+
+            services = services.AddContexts();
             return services;
         }
 
@@ -120,7 +100,7 @@ namespace Atron.Infra.IoC
 
         private static void ConfigureAuthenticationServices(IServiceCollection services)
         {
-            services.AddScoped<ILoginUserService, LoginUserService>();
+            services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IRegisterUserService, RegisterUserService>();
         }
 

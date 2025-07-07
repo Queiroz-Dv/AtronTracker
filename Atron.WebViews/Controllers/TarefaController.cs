@@ -137,7 +137,7 @@ namespace Atron.WebViews.Controllers
 
                 await _service.Criar(tarefaDTO);
                 CreateTempDataMessages();
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+                return !_messageModel.Notificacoes.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
             await CarregarCamposComplementares();
@@ -209,7 +209,7 @@ namespace Atron.WebViews.Controllers
             await _service.AtualizarPorId(id, tarefaDTO);
 
             CreateTempDataMessages();
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 return RedirectToAction(nameof(MenuPrincipal));
             }

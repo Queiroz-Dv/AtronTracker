@@ -134,7 +134,7 @@ namespace Atron.WebViews.Controllers
 
                 await _service.Criar(salarioDTO);
                 CreateTempDataMessages();
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+                return !_messageModel.Notificacoes.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
             ApiControllerName = nameof(Salario);
@@ -169,7 +169,7 @@ namespace Atron.WebViews.Controllers
 
             CreateTempDataMessages();
 
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 return RedirectToAction(nameof(MenuPrincipal));
             }

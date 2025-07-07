@@ -10,7 +10,7 @@ using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Threading.Tasks;
 
-namespace Atron.Application.ApiServices.ApplicationServices
+namespace Atron.Application.ApiServices.AuthServices
 {
     public class RegisterUserService : IRegisterUserService
     {
@@ -51,7 +51,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
 
             _validateModel.Validate(register);
 
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 var userExists = await _registerApp.UserExists(register);
                 if (userExists)
@@ -82,7 +82,7 @@ namespace Atron.Application.ApiServices.ApplicationServices
                         usuarioSpec.Errors.ForEach(error => _messageModel.AddError(error));                       
                     }
 
-                    if (!_messageModel.Messages.HasErrors())
+                    if (!_messageModel.Notificacoes.HasErrors())
                     {
                         var usuarioGravado = await _usuarioRepository.CriarUsuarioAsync(usuario);
                         if (usuarioGravado)

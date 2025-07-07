@@ -21,12 +21,12 @@ namespace Atron.Application.Validations
                 AddError($"Token não preenchido para processamento");
             }
 
-            if (entity.InfoRefreshToken.IsNullOrEmpty())
-            {
-                AddError("Refresh token não preenchido para processamento.");
-            }
+            //if (entity.InfoRefreshToken.IsNullOrEmpty())
+            //{
+            //    AddError("Refresh token não preenchido para processamento.");
+            //}
 
-            if (entity.RefreshTokenExpireTime <= DateTime.Now)
+            if (entity.Expires <= DateTime.Now)
             {
                 AddError("Refresh token inválido ou expirado.");
             }

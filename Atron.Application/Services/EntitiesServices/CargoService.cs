@@ -68,7 +68,7 @@ namespace Atron.Application.Services.EntitiesServices
             }
 
             _validateModel.Validate(cargo);
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 await _cargoRepository.CriarCargoAsync(cargo);
                 _messageModel.AddSuccessMessage(cargo.Codigo);
@@ -93,7 +93,7 @@ namespace Atron.Application.Services.EntitiesServices
             }
 
             _validateModel.Validate(cargo);
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 await _cargoRepository.AtualizarCargoAsync(cargo);
                 _messageModel.AddUpdateMessage(cargo.Codigo);

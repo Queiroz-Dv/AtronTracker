@@ -77,7 +77,7 @@ namespace Atron.WebViews.Controllers
         /// </summary>
         public void CreateTempDataMessages()
         {
-            SetTempData("Notifications", JsonSerializer.Serialize(_messageModel.Messages));
+            SetTempData("Notifications", JsonSerializer.Serialize(_messageModel.Notificacoes));
         }
 
         /// <summary>

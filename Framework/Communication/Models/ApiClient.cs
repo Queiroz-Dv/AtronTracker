@@ -82,7 +82,7 @@ namespace Communication.Models
                 var messages = JsonConvert.DeserializeObject<List<Message>>(responseContent);
                 if (messages != null)
                 {
-                    _messageModel.Messages.AddRange(messages);
+                    _messageModel.Notificacoes.AddRange(messages);
                 }
             }
         }
@@ -132,7 +132,7 @@ namespace Communication.Models
             var responseContent = await response.Content.ReadAsStringAsync();
             FillMessageModel(responseContent);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                 await Task.FromResult<DTO>(default) :
                 JsonConvert.DeserializeObject<DTO>(responseContent);            
         }

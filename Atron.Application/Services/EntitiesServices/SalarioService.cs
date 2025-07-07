@@ -43,7 +43,7 @@ namespace Atron.Application.Services.EntitiesServices
 
             _validateModel.Validate(entidade);
 
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 await AtualizarSalarioUsuario(entidade, usuario);
                 await _salarioRepository.AtualizarSalarioRepositoryAsync(id, entidade);
@@ -67,7 +67,7 @@ namespace Atron.Application.Services.EntitiesServices
             var usuario = await _usuarioRepository.ObterPorCodigoRepositoryAsync(salarioDTO.UsuarioCodigo);
 
             _validateModel.Validate(entidade);
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 await AtualizarSalarioUsuario(entidade, usuario);
                 await _salarioRepository.CriarSalarioAsync(entidade);

@@ -1,9 +1,8 @@
-﻿using Atron.Domain.Interfaces.ApplicationInterfaces;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Shared.Interfaces.Contexts;
 using Shared.Models.ApplicationModels;
 
-namespace Shared.Services.Facades
+namespace Shared.Services.Contexts
 {
     /// <summary>
     /// Facade concreto para gerenciar autenticação e usuários.
@@ -11,11 +10,9 @@ namespace Shared.Services.Facades
     public class AuthManagerContext : IAuthManagerContext
     {
         public AuthManagerContext(
-            IAppUserRepository appUserRepository,
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager)
         {
-            AppUserRepository = appUserRepository;
             SignInManager = signInManager;
             UserManager = userManager;
         }
@@ -23,7 +20,5 @@ namespace Shared.Services.Facades
         public SignInManager<ApplicationUser> SignInManager { get; set; }
 
         public UserManager<ApplicationUser> UserManager { get; set; }
-
-        public IAppUserRepository AppUserRepository { get; }
     }
 }

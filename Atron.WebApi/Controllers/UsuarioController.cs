@@ -27,7 +27,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.CriarAsync(usuario);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                      BadRequest(ObterNotificacoes()) :
                      Ok(ObterNotificacoes());
         }
@@ -45,7 +45,7 @@ namespace Atron.WebApi.Controllers
             // Verificar o código que é enviado
             await _service.AtualizarAsync(codigo, usuario);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                 BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
         }
 
@@ -54,7 +54,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.RemoverAsync(codigo);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                 BadRequest(ObterNotificacoes()) :
                 Ok(ObterNotificacoes());
         }

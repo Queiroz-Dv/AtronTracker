@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTO.API;
 using Shared.Extensions;
+using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Caching;
 using Shared.Models;
 using System.Linq;
@@ -19,11 +20,13 @@ namespace Atron.WebApi.Controllers
     {
         private readonly ICacheService _cacheService;
         private readonly IPerfilDeAcessoService _perfilDeAcessoService;
+        private readonly IServiceAccessor _serviceAccessor;
 
-        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService)
+        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService, IServiceAccessor serviceAccessor)
         {
             _cacheService = cacheService;
             _perfilDeAcessoService = perfilDeAcessoService;
+            _serviceAccessor = serviceAccessor;
         }
 
         [HttpGet("Info")]
@@ -49,13 +52,13 @@ namespace Atron.WebApi.Controllers
             var jsonDeRetorno = new
             {
                 codigoDoUsuario = usuarioCodigo,
-                nomeDoUsuario = dadosCache?.NomeDoUsuario ?? user.FindFirst(ClaimTypes.Name)?.Value,
-                emailDoUsuario = dadosCache?.Email ?? user.FindFirst(ClaimTypes.Email)?.Value,
-                codigoDoCargo = dadosCache?.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
-                codigoDoDepartamento = dadosCache?.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,
+                nomeDoUsuario = dadosCache?.DadosDoUsuario.NomeDoUsuario ?? user.FindFirst(ClaimTypes.Name)?.Value,
+                emailDoUsuario = dadosCache?.DadosDoUsuario.Email ?? user.FindFirst(ClaimTypes.Email)?.Value,
+                codigoDoCargo = dadosCache?.DadosDoUsuario.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
+                codigoDoDepartamento = dadosCache?.DadosDoUsuario.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,
 
                 perfisDeAcesso = dadosCache?.DadosDoPerfil ??
-                    _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo).Result.Select(p => new PerfilModulosDTO
+                    _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo).Result.Select(p => new DadosDoPerfilDTO
                     {
                         CodigoPerfil = p.Codigo,
                         Modulos = p.Modulos.Select(x => new DadosDoModuloDTO(x.Codigo, x.Descricao)).ToList()
@@ -72,9 +75,8 @@ namespace Atron.WebApi.Controllers
             var perfisModulos = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo);
             var dto = new DadosComplementaresDoUsuarioDTO
             {
-                CodigoDoUsuario = usuarioCodigo,
-                NomeDoUsuario = user.FindFirst(ClaimTypes.Name)?.Value,
-                DadosDoPerfil = perfisModulos.Select(p => new PerfilModulosDTO
+                DadosDoUsuario = new DadosDoUsuarioDTO() { CodigoDoUsuario = usuarioCodigo, NomeDoUsuario = user.FindFirst(ClaimTypes.Name)?.Value },
+                DadosDoPerfil = perfisModulos.Select(p => new DadosDoPerfilDTO
                 {
                     CodigoPerfil = p.Codigo,
                     Modulos = p.Modulos.Select(x => new DadosDoModuloDTO(x.Codigo, x.Descricao)).ToList()

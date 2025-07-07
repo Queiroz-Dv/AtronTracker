@@ -1,5 +1,4 @@
 ﻿using Atron.Application.Interfaces.Contexts;
-using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Shared.Interfaces.Contexts;
 
 namespace Atron.Application.Services.Contexts
@@ -9,15 +8,15 @@ namespace Atron.Application.Services.Contexts
         public LoginContext(
          IUsuarioContext usuarioContext,
          IAuthManagerContext authManagerContext,
-         ILoginRepository loginRepository)
+         IControleDeSessaoContext controleDeSessaoContext)
         {
             UsuarioContext = usuarioContext;
             AuthManagerContext = authManagerContext;
-            LoginRepository = loginRepository;
+            ControleDeSessaoContext = controleDeSessaoContext;
         }
 
         public IUsuarioContext UsuarioContext { get; }
         public IAuthManagerContext AuthManagerContext { get; }
-        public ILoginRepository LoginRepository { get; }
+        public IControleDeSessaoContext ControleDeSessaoContext { get; }
     }
 }

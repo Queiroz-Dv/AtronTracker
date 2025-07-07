@@ -63,7 +63,7 @@ namespace Atron.Application.Services.EntitiesServices
             var departamento = _map.MapToEntity(departamentoDTO);
             _validateModel.Validate(departamento);
 
-            if (!messageModel.Messages.HasErrors())
+            if (!messageModel.Notificacoes.HasErrors())
             {
                 await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
                 messageModel.AddUpdateMessage(departamentoDTO.Codigo);
@@ -88,7 +88,7 @@ namespace Atron.Application.Services.EntitiesServices
             }
 
             _validateModel.Validate(departamento);
-            if (!messageModel.Messages.HasErrors())
+            if (!messageModel.Notificacoes.HasErrors())
             {
                 await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
                 messageModel.AddSuccessMessage(departamentoDTO.Codigo);
