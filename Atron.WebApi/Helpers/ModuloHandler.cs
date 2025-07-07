@@ -1,10 +1,9 @@
-﻿using Atron.Application.Interfaces.Handlers;
-using Atron.Application.Interfaces.Services;
+﻿using Atron.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Shared.DTO.API;
 using Shared.Extensions;
+using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Caching;
 using Shared.Models;
 using System.Linq;
@@ -19,12 +18,13 @@ namespace Atron.WebApi.Helpers
     {
         private readonly ICacheService _cacheService;
         private readonly IUsuarioService _usuarioService;
+        private readonly IServiceAccessor _serviceAccessor;
         //private readonly IUsuarioHandler _usuarioHandler;
 
         public ModuloHandler(
             ICacheService cacheService,
             IUsuarioService usuarioService)
-            //IUsuarioHandler usuarioHandler)
+        //IUsuarioHandler usuarioHandler)
         {
             _cacheService = cacheService;
             _usuarioService = usuarioService;
@@ -32,7 +32,7 @@ namespace Atron.WebApi.Helpers
         }
 
         protected override async Task HandleRequirementAsync(
-            AuthorizationHandlerContext context, 
+            AuthorizationHandlerContext context,
             ModuloRequirement requirement)
         {
             // Extract the userId from the claim  
@@ -57,17 +57,17 @@ namespace Atron.WebApi.Helpers
             if (dados.DadosDoPerfil.Any(p => p.Modulos.Any(m => m.Codigo == requirement.Codigo)))
             {
                 context.Succeed(requirement);
-            }         
+            }
         }
 
         // Método auxiliar
         private async Task<DadosComplementaresDoUsuarioDTO> RecarregarSessaoNoCacheAsync(string userId)
         {
+            var dadosComplementaresService = _serviceAccessor.ObterService<IDadosComplementaresDoUsuarioService>();
             var userDto = await _usuarioService.ObterPorCodigoAsync(userId);
-            var loginDto = await _usuarioHandler.PreencherInformacoesDeUsuarioParaLoginAsync(userDto);
-            //_cacheService.GravarCache($"acesso:{userId}", loginDto.DadosDoUsuario);
+            var dadosDto = await dadosComplementaresService.ObterInformacoesComplementaresDoUsuario(userDto);            
             _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, userId));
-            return loginDto.DadosDoUsuario;
+            return dadosDto;
         }
     }
 }

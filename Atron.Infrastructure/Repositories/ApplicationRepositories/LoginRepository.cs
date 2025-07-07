@@ -1,5 +1,6 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Atron.Domain.Interfaces.Identity;
 using Shared.Extensions;
 using Shared.Interfaces.Contexts;
 using System.Threading.Tasks;
@@ -9,10 +10,12 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
     public class LoginRepository : ILoginRepository
     {
         private readonly IAuthManagerContext _authManager;
+        private readonly IUserIdentityRepository _userIdentityRepo;
 
-        public LoginRepository(IAuthManagerContext authManager)
+        public LoginRepository(IUserIdentityRepository userIdentityRepo, IAuthManagerContext authManagerContext)
         {
-            _authManager = authManager;
+            _userIdentityRepo = userIdentityRepo;
+            _authManager = authManagerContext;
         }
 
         public async Task<bool> AutenticarUsuarioAsync(UsuarioIdentity usuarioIdentity)
@@ -20,7 +23,7 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
             var usuario = await _authManager.UserManager.FindByNameAsync(usuarioIdentity.Codigo);
             if (usuario != null)
             {
-                var refreshTokenAtualizado = await _authManager.AppUserRepository.AtualizarRefreshTokenUsuario(
+                var refreshTokenAtualizado = await _userIdentityRepo.AtualizarRefreshTokenUsuarioRepositoryAsync(
                     usuario.UserName,
                     usuarioIdentity.RefreshToken,
                     usuarioIdentity.RefreshTokenExpireTime);

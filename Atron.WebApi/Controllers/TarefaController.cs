@@ -32,7 +32,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.CriarAsync(tarefa);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                    BadRequest(ObterNotificacoes()) :
                    Ok(ObterNotificacoes());
         }
@@ -42,7 +42,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.AtualizarAsync(id, tarefa);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
         }
 
@@ -51,7 +51,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.ExcluirAsync(id);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                     BadRequest(ObterNotificacoes()) :
                     Ok(ObterNotificacoes());
         }

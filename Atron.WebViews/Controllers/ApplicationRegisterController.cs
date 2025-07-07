@@ -41,7 +41,7 @@ namespace Atron.WebViews.Controllers
                 await _service.Registrar(registerDTO);
                 CreateTempDataMessages();
 
-                return !_messageModel.Messages.HasErrors() ?
+                return !_messageModel.Notificacoes.HasErrors() ?
                         RedirectToAction("Login", "ApplicationLogin") :
                         View(registerDTO);
             }

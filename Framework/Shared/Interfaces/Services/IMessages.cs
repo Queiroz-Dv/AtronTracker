@@ -4,6 +4,6 @@ namespace Shared.Interfaces
 {
     public interface IMessages
     {
-        public List<Message> Messages { get; }
+        public List<Message> Notificacoes { get; }
     }
 }

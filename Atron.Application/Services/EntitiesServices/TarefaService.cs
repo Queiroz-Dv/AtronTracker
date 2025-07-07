@@ -35,7 +35,7 @@ namespace Atron.Application.Services.EntitiesServices
             var tarefa = _map.MapToEntity(tarefaDTO);
             _validateModel.Validate(tarefa);
 
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 await _tarefaRepository.CriarTarefaAsync(tarefa);
                 _messageModel.AddMessage("Tarefa gravada com sucesso.");
@@ -59,7 +59,7 @@ namespace Atron.Application.Services.EntitiesServices
             var tarefa = _map.MapToEntity(tarefaDTO);
             _validateModel.Validate(tarefa);
 
-            if (!_messageModel.Messages.HasErrors())
+            if (!_messageModel.Notificacoes.HasErrors())
             {
                 await _tarefaRepository.AtualizarTarefaAsync(id, tarefa);
                 _messageModel.AddMessage("Tarefa atualizada com sucesso");

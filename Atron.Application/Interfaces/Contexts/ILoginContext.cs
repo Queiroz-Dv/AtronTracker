@@ -9,6 +9,6 @@ namespace Atron.Application.Interfaces.Contexts
 
         IAuthManagerContext AuthManagerContext { get; }
 
-        ILoginRepository LoginRepository { get; }
+        IControleDeSessaoContext ControleDeSessaoContext { get; }        
     }
 }

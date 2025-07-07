@@ -23,7 +23,7 @@ namespace Atron.WebApi.Controllers
         protected virtual IEnumerable<dynamic> ObterNotificacoes()
         {
             // Passar para um método de extensão
-            return _messageModel.Messages.ConvertMessageToJson();
+            return _messageModel.Notificacoes.ConvertMessageToJson();
         }        
     }
 }

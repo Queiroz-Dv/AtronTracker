@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Atron.Domain.Interfaces.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Extensions;
-using Shared.Interfaces.Contexts;
+using Shared.Interfaces.Accessor;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -11,13 +12,14 @@ namespace Shared.Services.Factory
 {
     public class TokenBuilder
     {
-        private readonly IConfiguration _configuration;
-        private readonly IAuthManagerContext _authManager;
+        private readonly IConfiguration _configuration;        
+        private readonly IServiceAccessor _serviceAccessor;
 
-        public TokenBuilder(IConfiguration configuration, IAuthManagerContext authManager)
+        public TokenBuilder(IConfiguration configuration, 
+                            IServiceAccessor serviceAccessor)
         {
             _configuration = configuration;
-            _authManager = authManager;
+            _serviceAccessor = serviceAccessor;
         }
 
         protected string CriarJwtToken(IEnumerable<Claim> claims, DateTime expiration)
@@ -55,7 +57,8 @@ namespace Shared.Services.Factory
             var refreshToken = Convert.ToBase64String(randomNumber);
 
             // Opcional: Validar no banco se já existe um igual (chance quase zero, mas por segurança)
-            var refreshTokenExiste = await _authManager.AppUserRepository.RefreshTokenExiste(refreshToken);
+            var userIdentityRepo = _serviceAccessor.ObterService<IUserIdentityRepository>();
+            var refreshTokenExiste = await userIdentityRepo.RefreshTokenExisteRepositoryAsync(refreshToken);
 
             if (refreshTokenExiste)
             {

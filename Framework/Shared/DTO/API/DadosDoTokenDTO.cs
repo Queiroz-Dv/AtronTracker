@@ -17,10 +17,15 @@ namespace Shared.DTO.API
     }
 
     /// <summary>
-    /// InfoToken representa as informações do token de acesso e, opcionalmente, do token de atualização.
+    /// Classe representa as informações do token de acesso e, opcionalmente, do token de atualização.
     /// </summary>
     public class DadosDoTokenDTO : TokenBaseDTO
     {
+        /// <summary>
+        /// Classe representa as informações do token de acesso e, opcionalmente, do token de atualização.
+        /// </summary>
+        /// <param name="token">Token de acesso que é autenticado</param>
+        /// <param name="expires">Tempo de vida do token</param>
         public DadosDoTokenDTO(string token, DateTime expires)
         {
             Token = token;
@@ -33,8 +38,16 @@ namespace Shared.DTO.API
         }
     }
 
+    /// <summary>
+    /// Classe representa as informações do token de acesso e, opcionalmente, do token de atualização.
+    /// </summary>
     public class DadosDoRefrehTokenDTO : TokenBaseDTO
     {
+        /// <summary>
+        /// Classe representa as informações do token de acesso e, opcionalmente, do token de atualização.
+        /// </summary>
+        /// <param name="token">Token de acesso que é autenticado</param>
+        /// <param name="expires">Tempo de vida do token</param>
         public DadosDoRefrehTokenDTO(string token, DateTime expires)
         {
             Token = token;
