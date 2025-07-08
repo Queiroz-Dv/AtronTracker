@@ -4,6 +4,7 @@ using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
+using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,8 +16,8 @@ namespace Atron.WebApi.Controllers
     [Authorize(Policy = "Modulo:TAR")]
     public class TarefaController : ApiBaseConfigurationController<Tarefa, ITarefaService>
     {
-        public TarefaController(ITarefaService service, MessageModel messageModel) :
-            base(service, messageModel)
+        public TarefaController(ITarefaService service, IServiceAccessor serviceAccessor, MessageModel messageModel) :
+            base(service, serviceAccessor, messageModel)
         { }
 
         [HttpGet]

@@ -4,7 +4,7 @@
 
 namespace Atron.Infrastructure.Migrations
 {
-    public partial class AlterandoMapeamentoProdutoCategoria : Migration
+    public partial class MapeamentoProdutoCategoria : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

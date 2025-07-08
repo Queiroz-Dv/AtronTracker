@@ -3,6 +3,7 @@ using Atron.Application.DTO.ApiDTO;
 using Atron.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
+using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Threading.Tasks;
 
@@ -11,18 +12,19 @@ namespace Atron.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class AppRegisterController : ApiBaseConfigurationController<ApiRegister, IRegisterUserService>
-    {
+    {        
         public AppRegisterController(
+            IServiceAccessor serviceAccessor,
             IRegisterUserService service,
             MessageModel messageModel) :
-            base(service, messageModel)
+            base(service, serviceAccessor, messageModel)
         { }
 
         [HttpPost]
         [Route("Registrar")]
-        public async Task<ActionResult> Registrar([FromBody] RegisterDTO registerDTO)
+        public async Task<ActionResult<bool>> Registrar([FromBody] RegisterDTO registerDTO)
         {
-            await _service.RegisterUser(registerDTO);
+           var registrado =  await _service.RegisterUser(registerDTO);
 
             return _messageModel.Notificacoes.HasErrors() ?
                 BadRequest(new { registrado = false }) :

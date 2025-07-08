@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.Extensions;
+using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,8 +19,9 @@ namespace Atron.WebApi.Controllers
     {
         public UsuarioController(
             IUsuarioService usuarioService,
+            IServiceAccessor serviceAccessor,
             MessageModel messageModel) :
-            base(usuarioService, messageModel)
+            base(usuarioService, serviceAccessor, messageModel)
         { }
 
         [HttpPost]
