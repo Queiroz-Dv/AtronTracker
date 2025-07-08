@@ -124,7 +124,7 @@ namespace Atron.WebApi
         /// </summary>
         /// <param name="app">Application builder.</param>
         private static void AddSwagger(IApplicationBuilder app)
-        {
+        {            
             app.UseSwagger(); // Gera o JSON com a especificação da API
             app.UseSwaggerUI(c =>
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron WebApi Doc v1")); // Interface Swagger UI
