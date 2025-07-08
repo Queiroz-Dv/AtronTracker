@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Atron.Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    [Migration("20250629162338_AlterandoMapeamentoProdutoCategoria")]
-    partial class AlterandoMapeamentoProdutoCategoria
+    [Migration("20250708135521_MapeamentoProdutoCategoria")]
+    partial class MapeamentoProdutoCategoria
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

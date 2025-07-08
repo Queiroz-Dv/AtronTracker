@@ -3,6 +3,7 @@ using Atron.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
+using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Threading.Tasks;
 
@@ -15,7 +16,8 @@ namespace Atron.WebApi.Controllers
     {
         public PerfilDeAcessoController(
             IPerfilDeAcessoService service,
-            MessageModel messageModel) : base(service, messageModel)
+            IServiceAccessor serviceAccessor,
+            MessageModel messageModel) : base(service, serviceAccessor, messageModel)
         {
         }
 

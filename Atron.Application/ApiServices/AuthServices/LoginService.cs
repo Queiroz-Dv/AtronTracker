@@ -7,7 +7,6 @@ using Shared.DTO.API.Request;
 using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Caching;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Threading.Tasks;
 
@@ -15,18 +14,11 @@ namespace Atron.Application.ApiServices.AuthServices
 {
     public class LoginService : LoginBaseService, ILoginService
     {
-        //private readonly IValidateModel<DadosDoTokenDTO> _validateToken;
-        //private readonly MessageModel _messageModel;
-
         const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
 
         public LoginService(
             IServiceAccessor serviceAccessor,
-            ILoginRepository loginRepository) : base(serviceAccessor, loginRepository)
-        {
-            //_validateToken = validateToken;
-            //_messageModel = messageModel;
-        }
+            ILoginRepository loginRepository) : base(serviceAccessor, loginRepository) { }
 
         public async Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO loginRequest)
         {

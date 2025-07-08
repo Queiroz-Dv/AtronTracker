@@ -3,6 +3,7 @@ using Atron.Application.Interfaces.Services;
 using Atron.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,8 +22,9 @@ namespace Atron.WebApi.Controllers
         /// Inicializa uma nova instância da classe <see cref="ModuloController"/>.
         /// </summary>
         /// <param name="service">O serviço para gerenciar módulos.</param>
+        /// <param name="serviceAccessor">O serviço de acesso para inicializar qualquer serviço necessário</param>
         /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>
-        public ModuloController(IModuloService service, MessageModel messageModel) : base(service, messageModel)
+        public ModuloController(IModuloService service,  IServiceAccessor serviceAccessor ,MessageModel messageModel) : base(service, serviceAccessor, messageModel)
         { }
 
         /// <summary>

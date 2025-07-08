@@ -22,15 +22,15 @@ namespace Atron.WebApi.Controllers
     [ApiController]
     public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginService>
     {
-        private readonly IServiceAccessor serviceAccessor;
+      //  private readonly IServiceAccessor serviceAccessor;
 
         public AppLoginController(
             MessageModel messageModel,
             ILoginService loginUserService,
             IServiceAccessor serviceAccessor)
-            : base(loginUserService, messageModel)
+            : base(loginUserService, serviceAccessor ,messageModel)
         {
-            this.serviceAccessor = serviceAccessor;
+            //this.serviceAccessor = serviceAccessor;
         }
 
         /// <summary>
@@ -54,8 +54,8 @@ namespace Atron.WebApi.Controllers
         [HttpGet("RefreshToken")]
         public async Task<IActionResult> Refresh()
         {
-            var cookieService = serviceAccessor.ObterService<ICookieService>();
-            var cacheUsuarioService = serviceAccessor.ObterService<ICacheUsuarioService>();
+            var cookieService = ObterService<ICookieService>();
+            var cacheUsuarioService = ObterService<ICacheUsuarioService>();
 
             var dadosDeToken = cookieService.ObterTokenRefreshTokenPorRequest(Request);
 
