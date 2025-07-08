@@ -61,7 +61,7 @@ namespace Atron.WebViews.Controllers
 
                 CreateTempDataMessages();
 
-                return !_messageModel.Messages.HasErrors() ?
+                return !_messageModel.Notificacoes.HasErrors() ?
                     RedirectToAction(nameof(Cadastrar)) :
                     View(nameof(Cadastrar), departamento);
             }
@@ -75,7 +75,7 @@ namespace Atron.WebViews.Controllers
             BuildRoute();
             var departamentoDTO = await _service.ObterPorCodigo(codigo);
 
-            if (departamentoDTO is null || _messageModel.Messages.HasErrors())
+            if (departamentoDTO is null || _messageModel.Notificacoes.HasErrors())
             {
                 CreateTempDataMessages();
                 return RedirectToAction(nameof(MenuPrincipal));
@@ -94,7 +94,7 @@ namespace Atron.WebViews.Controllers
 
             ConfigureDataTitleForView("Atualizar informação de departamento");
 
-            return !_messageModel.Messages.HasErrors() ?
+            return !_messageModel.Notificacoes.HasErrors() ?
             RedirectToAction(nameof(MenuPrincipal)) :
             View(nameof(Atualizar), departamentoDTO);
         }

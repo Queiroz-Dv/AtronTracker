@@ -49,7 +49,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<bool> AtualizarUsuarioAsync(string codigo, Usuario usuario)
         {
-            var usuarioBd = await ObterUsuarioPorCodigoAsync(codigo);
+            var usuarioBd = await _context.Usuarios.FirstOrDefaultAsync(usr => usr.Codigo == codigo);
             AtualizarEntidadeParaPersistencia(usuario, usuarioBd);
 
             try
@@ -167,11 +167,6 @@ namespace Atron.Infrastructure.Repositories
 
                 throw ex;
             }
-        }
-
-        public async Task<bool> TokenDeUsuarioExpiradoRepositoryAsync(string codigoUsuario, string refreshToken)
-        {
-            return await _context.Users.AnyAsync(usr => usr.UserName == codigoUsuario && usr.RefreshToken == refreshToken && usr.RefreshTokenExpireTime <= DateTime.Now);
-        }
+        }   
     }
 }

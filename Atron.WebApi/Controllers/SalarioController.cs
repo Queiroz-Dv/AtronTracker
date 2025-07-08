@@ -1,9 +1,10 @@
 ﻿using Atron.Application.DTO;
-using Atron.Application.Interfaces;
+using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
+using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,8 +17,9 @@ namespace Atron.WebApi.Controllers
     public class SalarioController : ApiBaseConfigurationController<Salario, ISalarioService>
     {
         public SalarioController(ISalarioService service,
+             IServiceAccessor serviceAccessor,
             MessageModel messageModel)
-        : base(service, messageModel)
+        : base(service, serviceAccessor, messageModel)
         { }
 
         [HttpPost]
@@ -25,7 +27,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.CriarAsync(salario);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                    BadRequest(ObterNotificacoes()) :
                    Ok(ObterNotificacoes());
         }
@@ -43,7 +45,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.AtualizarServiceAsync(id, salario);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
         }
 
@@ -52,7 +54,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.ExcluirAsync(id);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                     BadRequest(ObterNotificacoes()) :
                     Ok(ObterNotificacoes());
         }

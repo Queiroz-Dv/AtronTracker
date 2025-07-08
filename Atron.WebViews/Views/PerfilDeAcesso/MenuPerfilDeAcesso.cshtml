@@ -20,7 +20,7 @@
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.PerfilDeAcesso.Codigo)</th>
                     <th>@Html.DisplayNameFor(model => model.PerfilDeAcesso.Descricao)</th>
-                    <th>@Html.DisplayNameFor(model => model.PerfilDeAcesso.Modulo)</th>
+                 
                 </tr>
             </thead>
             <tbody>
@@ -29,7 +29,7 @@
                     <tr>
                         <td>@item.Codigo - @item.Descricao</td>
                         <td>@item.Descricao</td>
-                        <td>@item.Modulo.Codigo</td>
+                      
                         <td class="text-end">
                             <partial name="Partials/Buttons/BtnAtualizar" model="item.Codigo" />
                             <partial name="Partials/Buttons/BtnExcluir" model="item.Codigo" />

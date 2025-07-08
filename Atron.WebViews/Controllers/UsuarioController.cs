@@ -95,7 +95,7 @@ namespace Atron.WebViews.Controllers
                 await _service.Criar(model);
 
                 CreateTempDataMessages();
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+                return !_messageModel.Notificacoes.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
             return View();
@@ -162,7 +162,7 @@ namespace Atron.WebViews.Controllers
             await _service.Atualizar(codigo, usuario);
             CreateTempDataMessages();
 
-            return !_messageModel.Messages.HasErrors() ?
+            return !_messageModel.Notificacoes.HasErrors() ?
             RedirectToAction(nameof(MenuPrincipal)) :
             View(nameof(Atualizar), usuario);
         }

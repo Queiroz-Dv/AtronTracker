@@ -7,9 +7,9 @@ using System;
 
 namespace Atron.Application.Validations
 {
-    public class InfoTokenMessageValidation : MessageModel, IMessages, IValidateModel<InfoToken>
+    public class InfoTokenMessageValidation : MessageModel, IMessages, IValidateModel<DadosDoTokenDTO>
     {
-        public void Validate(InfoToken entity)
+        public void Validate(DadosDoTokenDTO entity)
         {
             if (entity is null)
             {
@@ -21,12 +21,12 @@ namespace Atron.Application.Validations
                 AddError($"Token não preenchido para processamento");
             }
 
-            if (entity.RefreshToken.IsNullOrEmpty())
-            {
-                AddError("Refresh token não preenchido para processamento.");
-            }
+            //if (entity.InfoRefreshToken.IsNullOrEmpty())
+            //{
+            //    AddError("Refresh token não preenchido para processamento.");
+            //}
 
-            if (entity.RefreshTokenExpireTime <= DateTime.Now)
+            if (entity.Expires <= DateTime.Now)
             {
                 AddError("Refresh token inválido ou expirado.");
             }

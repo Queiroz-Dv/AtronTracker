@@ -17,4 +17,8 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Atron.Domain\Atron.Domain.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="DTO\Request\" />
+	</ItemGroup>
 </Project>

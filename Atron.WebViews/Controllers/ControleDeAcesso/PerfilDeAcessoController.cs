@@ -133,7 +133,7 @@ namespace Atron.WebViews.Controllers.ControleDeAcesso
                 await _service.Criar(perfilDeAcessoDTO);
 
                 CreateTempDataMessages();
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+                return !_messageModel.Notificacoes.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
             return View();

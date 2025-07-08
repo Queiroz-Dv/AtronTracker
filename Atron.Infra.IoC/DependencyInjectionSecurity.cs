@@ -4,12 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Extensions;
-using Shared.Interfaces;
-using Shared.Services;
 using System;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Atron.Infra.IoC
 {

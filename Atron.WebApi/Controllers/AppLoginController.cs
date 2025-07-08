@@ -1,39 +1,36 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
 using Atron.Application.DTO.ApiDTO;
+using Atron.Application.Interfaces.Contexts;
+using Atron.Application.Interfaces.Services;
 using Atron.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Shared.DTO.API;
 using Shared.DTO.API.Request;
 using Shared.Extensions;
-using Shared.Interfaces.Handlers;
+using Shared.Interfaces.Accessor;
+using Shared.Interfaces.Services;
 using Shared.Models;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
 {
+    /// <summary>
+    /// Controller para gerenciar o login de usuários na aplicação.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginUserService>
+    public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginService>
     {
-        private readonly ICookieHandlerService _cookieHandler;
-        private readonly ICacheHandlerService _cacheHandler;
+      //  private readonly IServiceAccessor serviceAccessor;
 
         public AppLoginController(
             MessageModel messageModel,
-            ILoginUserService loginUserService,
-            ICookieHandlerService cookieHandler,
-            ICacheHandlerService cacheHandler)
-            : base(loginUserService, messageModel)
+            ILoginService loginUserService,
+            IServiceAccessor serviceAccessor)
+            : base(loginUserService, serviceAccessor ,messageModel)
         {
-            _cookieHandler = cookieHandler;
-            _cacheHandler = cacheHandler;
-        }
-
-        [HttpPost("TrocarSenha")]
-        public async Task<ActionResult> TrocarSenha([FromBody] LoginRequestDTO dto)
-        {
-            var result = await _service.TrocarSenha(dto);
-            return Ok(result);
+            //this.serviceAccessor = serviceAccessor;
         }
 
         /// <summary>
@@ -41,22 +38,14 @@ namespace Atron.WebApi.Controllers
         /// </summary>
         /// <param name="loginDTO">DTO que será autenticado </param>
         /// <returns>O resultado do processamento</returns>
-        [HttpPost("Logar")]
-        public async Task<ActionResult<LoginDTO>> Logar([FromBody] LoginRequestDTO loginDTO)
+        [HttpPost]
+        public async Task<ActionResult<DadosDoTokenDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
-            var dto = await _service.Authenticate(loginDTO);
+            var dto = await _service.Autenticar(loginDTO);
 
-            if (dto != null)
-            {
-                _cookieHandler.CriarCookiesDoToken(dto.UserToken);
-            }
-
-            var tokenJson = new { token = dto.UserToken.Token, expires = dto.UserToken.Expires };
-
-
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
              BadRequest(ObterNotificacoes()) :
-             Ok(tokenJson);
+             Ok(dto);
         }
 
         /// <summary>
@@ -65,25 +54,22 @@ namespace Atron.WebApi.Controllers
         [HttpGet("RefreshToken")]
         public async Task<IActionResult> Refresh()
         {
-            var cookie = _cookieHandler.ExtrairInfoTokensDoCookie(Request);
+            var cookieService = ObterService<ICookieService>();
+            var cacheUsuarioService = ObterService<ICacheUsuarioService>();
 
-            if (cookie is null)
+            var dadosDeToken = cookieService.ObterTokenRefreshTokenPorRequest(Request);
+
+            if (dadosDeToken is null)
             {
-                cookie = _cacheHandler.ObterInfoTokensDoCachePorRequest(Request);
+                dadosDeToken = cacheUsuarioService.ObterDadosDoTokenPorCodigoUsuario(HttpContext.Request.ExtrairCodigoUsuarioDoRequest());
             }
 
-            var novoToken = await _service.RefreshAcesso(cookie);
-
+            var novoToken = await _service.RefreshAcesso(dadosDeToken.TokenDTO);
             if (novoToken is null) return Unauthorized();
 
-            var token = novoToken.Token;
-            var expires = novoToken.Expires;
-
-            _cookieHandler.CriarCookiesDoToken(novoToken);
-
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
               BadRequest(ObterNotificacoes()) :
-              Ok(new { token, expires });
+              Ok(dadosDeToken);
         }
 
         /// <summary>
@@ -92,49 +78,22 @@ namespace Atron.WebApi.Controllers
         [HttpGet("Desconectar")]
         public async Task<IActionResult> Logout()
         {
-            await _service.Logout();
+            var usuarioCodigo = HttpContext.Request.Headers.ExtrairCodigoUsuarioDoRequest();
+
+            await _service.Logout(usuarioCodigo);
             return Ok();
         }
 
-        //[Authorize]
-        //[HttpGet("SessionInfo")]
-        //public ActionResult<DadosDoUsuario> ObterSessionInfo()
-        //{
-        //    var identity = HttpContext.User;
-
-        //    if (identity?.Claims != null || identity.Claims.Any())
-        //    {
-        //        var nomeDoUsuario = identity.FindFirst(ClaimTypes.Name)?.Value;
-        //        var emailDoUsuario = identity.FindFirst(ClaimTypes.Email)?.Value;
-        //        var codigoDoUsuario = identity.FindFirst(ClaimCode.CODIGO_USUARIO)?.Value;
-        //        var codigoDoCargo = identity.FindFirst(ClaimCode.CODIGO_CARGO)?.Value;
-        //        var codigoDoDepartamento = identity.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value;
-
-        //        if (codigoDoUsuario.IsNullOrEmpty() ||
-        //            nomeDoUsuario.IsNullOrEmpty() ||
-        //            codigoDoCargo.IsNullOrEmpty() ||
-        //            codigoDoDepartamento.IsNullOrEmpty() ||
-        //            emailDoUsuario.IsNullOrEmpty())
-        //        {
-        //            return Unauthorized();
-        //        }
-        //        else
-        //        {
-        //            var dadosDoCache = _cacheService.ObterCache<DadosDoUsuario>($"acesso:{codigoDoUsuario}");
-        //            var dados = new DadosDoUsuario()
-        //            {
-        //                CodigoDoUsuario = codigoDoUsuario,
-        //                NomeDoUsuario = nomeDoUsuario,
-        //                PerfisDeAcesso = dadosDoCache.PerfisDeAcesso
-        //            };
-
-        //            return Ok(dados);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return Unauthorized();
-        //    }
-        //}
+        /// <summary>
+        /// Endpoint de trocar a senha do usuário autenticado no sistema
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("TrocarSenha")]
+        public async Task<ActionResult> TrocarSenha([FromBody] LoginRequestDTO dto)
+        {
+            var result = await _service.TrocarSenha(dto);
+            return Ok(result);
+        }
     }
 }
