@@ -33,17 +33,29 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
 
         public async Task<bool> UpdateUserAccountAsync(ApiRegister register)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(reg => reg.UserName == register.UserName);
-            if (user is not null)
+            var user = await _userManager.FindByNameAsync(register.UserName);
+
+            if (user is null)
+                return false;
+
+
+            user.Email = register.Email;
+            user.UserName = register.UserName;
+
+            // Atualiza a senha apenas se foi informada uma nova
+            if (!string.IsNullOrWhiteSpace(register.Password))
             {
-                user.Email = register.Email;
-
-                var result = await _userManager.UpdateAsync(user);
-
-                return result.Succeeded;
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var passwordResult = await _userManager.ResetPasswordAsync(user, token, register.Password);
+                if (!passwordResult.Succeeded)
+                    return false;
             }
 
-            return false;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            return result.Succeeded;
+
         }
 
         private static ApplicationUser CreateUser(ApiRegister register)

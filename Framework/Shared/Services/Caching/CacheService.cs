@@ -18,7 +18,7 @@ namespace Shared.Services.Caching
         {
             _memoryCache.Set(cacheInfo.KeyDescription, cacheInfo.EntityInfo, TimeSpan.FromMinutes(30));
         }
-
+        
         public T ObterCache<T>(string cacheKey)
         {
             try
@@ -38,6 +38,16 @@ namespace Shared.Services.Caching
             if (_memoryCache.TryGetValue(chave.GetDescription(), out _))
             {
                 _memoryCache.Remove(chave);
+            }
+        }
+
+        public void RemoverCache(ECacheKeysInfo chave, string codigoDaEntidade)
+        {
+            var cacheKey = $"{chave.GetDescription()}:{codigoDaEntidade}";
+
+            if (_memoryCache.TryGetValue(cacheKey, out _))
+            {
+                _memoryCache.Remove(cacheKey);
             }
         }
     }

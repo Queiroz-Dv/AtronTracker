@@ -7,10 +7,10 @@ namespace Shared.Services
     {
         protected MessageService()
         {
-            Messages = new List<Message>();
+            Notificacoes = new List<Message>();
         }
 
-        public List<Message> Messages { get; }
+        public List<Message> Notificacoes { get; }
 
         public abstract void AddMessage(string message);
 
@@ -37,7 +37,7 @@ namespace Shared.Services
         /// <param name="level">Tipo de notificação</param>
         public void AddNotification(string description, string level)
         {
-            Messages.Add(new Message() { Description = description,  Level = level}); 
+            Notificacoes.Add(new Message() { Description = description,  Level = level}); 
         }
     }
 }

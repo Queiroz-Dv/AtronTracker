@@ -3,6 +3,7 @@ using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Shared.DTO.API;
 using Shared.Services.Mapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,14 +29,12 @@ namespace Atron.Application.Mapping
                 Sobrenome = entity.Sobrenome,
                 Email = entity.Email,
                 Salario = entity.SalarioAtual,
-                DataNascimento = entity.DataNascimento
-            };
-
-            usuario.UserInfoToken = new InfoToken()
-            {
-                Token = entity.Token,
-                RefreshToken = entity.RefreshToken,
-                RefreshTokenExpireTime = entity.RefreshTokenExpireTime,
+                DataNascimento = entity.DataNascimento,
+                DadosDoToken = new DadosDeTokenComRefreshToken()
+                {
+                    TokenDTO = new DadosDoTokenDTO(entity.Token, DateTime.Now),
+                    RefrehTokenDTO = new DadosDoRefrehTokenDTO(entity.RefreshToken, entity.RefreshTokenExpireTime)
+                }
             };
 
             if (entity.UsuarioCargoDepartamentos.Any())

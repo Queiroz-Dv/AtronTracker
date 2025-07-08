@@ -82,6 +82,49 @@ namespace Atron.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Atron.Domain.Entities.Auditoria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AlteradoPor")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("CriadoPor")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<DateTime?>("DataAlteracao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<bool?>("Inativo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("ModuloCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime?>("RemovidoEm")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Auditorias");
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.Cargo", b =>
                 {
                     b.Property<int>("Id")
@@ -113,6 +156,87 @@ namespace Atron.Infrastructure.Migrations
                     b.ToTable("Cargos");
                 });
 
+            modelBuilder.Entity("Atron.Domain.Entities.Categoria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Removido")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("RemovidoEm")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("Codigo");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Categoria_Codigo");
+
+                    b.ToTable("Categorias");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Cliente", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CNPJ")
+                        .HasMaxLength(14)
+                        .HasColumnType("nvarchar(14)");
+
+                    b.Property<string>("CPF")
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clientes", (string)null);
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.Departamento", b =>
                 {
                     b.Property<int>("Id")
@@ -133,6 +257,29 @@ namespace Atron.Infrastructure.Migrations
                     b.HasKey("Id", "Codigo");
 
                     b.ToTable("Departamentos");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Historico", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AuditoriaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuditoriaId");
+
+                    b.ToTable("Historicos");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Modulo", b =>
@@ -265,6 +412,78 @@ namespace Atron.Infrastructure.Migrations
                     b.HasIndex("UsuarioId", "UsuarioCodigo");
 
                     b.ToTable("PerfilDeAcessoUsuarios");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Produto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("QuantidadeEmEstoque")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<bool>("Removido")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("RemovidoEm")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("VendaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("Codigo");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Produto_Codigo");
+
+                    b.HasIndex("VendaId");
+
+                    b.ToTable("Produtos");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.ProdutoCategoria", b =>
+                {
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CategoriaCodigo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("ProdutoCodigo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("ProdutoId", "CategoriaId");
+
+                    b.HasIndex("CategoriaId");
+
+                    b.ToTable("ProdutoCategoria", (string)null);
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Salario", b =>
@@ -406,6 +625,63 @@ namespace Atron.Infrastructure.Migrations
                     b.HasIndex("DepartamentoId", "DepartamentoCodigo");
 
                     b.ToTable("UsuarioCargoDepartamento", (string)null);
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Venda", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CategoriaCodigo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClienteCodigo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DataVenda")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("PrecoDoProduto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProdutoCodigo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantidadeDeProdutoVendido")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Removido")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("RemovidoEm")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoriaId", "CategoriaCodigo");
+
+                    b.HasIndex("ClienteId", "ClienteCodigo");
+
+                    b.HasIndex("ProdutoId", "ProdutoCodigo");
+
+                    b.ToTable("Vendas", (string)null);
                 });
 
             modelBuilder.Entity("Shared.Models.ApplicationModels.ApplicationRole", b =>
@@ -654,6 +930,55 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("Departamento");
                 });
 
+            modelBuilder.Entity("Atron.Domain.Entities.Cliente", b =>
+                {
+                    b.OwnsOne("Atron.Domain.Entities.Endereco", "Endereco", b1 =>
+                        {
+                            b1.Property<int>("ClienteId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("CEP")
+                                .HasMaxLength(9)
+                                .HasColumnType("nvarchar(9)");
+
+                            b1.Property<string>("Cidade")
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)");
+
+                            b1.Property<string>("Logradouro")
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)");
+
+                            b1.Property<string>("Numero")
+                                .HasMaxLength(10)
+                                .HasColumnType("nvarchar(10)");
+
+                            b1.Property<string>("UF")
+                                .HasMaxLength(2)
+                                .HasColumnType("nvarchar(2)");
+
+                            b1.HasKey("ClienteId");
+
+                            b1.ToTable("Clientes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ClienteId");
+                        });
+
+                    b.Navigation("Endereco");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Historico", b =>
+                {
+                    b.HasOne("Atron.Domain.Entities.Auditoria", "Auditoria")
+                        .WithMany("Historicos")
+                        .HasForeignKey("AuditoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auditoria");
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.PerfilDeAcesso", b =>
                 {
                     b.HasOne("Atron.Domain.Entities.Usuario", "Usuario")
@@ -701,6 +1026,34 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Atron.Domain.Entities.Produto", b =>
+                {
+                    b.HasOne("Atron.Domain.Entities.Venda", "Venda")
+                        .WithMany("Produtos")
+                        .HasForeignKey("VendaId");
+
+                    b.Navigation("Venda");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.ProdutoCategoria", b =>
+                {
+                    b.HasOne("Atron.Domain.Entities.Categoria", "Categoria")
+                        .WithMany("Produtos")
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Atron.Domain.Entities.Produto", "Produto")
+                        .WithMany("Categorias")
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
+
+                    b.Navigation("Produto");
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.Salario", b =>
                 {
                     b.HasOne("Atron.Domain.Entities.Usuario", "Usuario")
@@ -746,6 +1099,36 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("Departamento");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Venda", b =>
+                {
+                    b.HasOne("Atron.Domain.Entities.Categoria", "Categoria")
+                        .WithMany("Vendas")
+                        .HasForeignKey("CategoriaId", "CategoriaCodigo")
+                        .HasPrincipalKey("Id", "Codigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Atron.Domain.Entities.Cliente", "Cliente")
+                        .WithMany("Vendas")
+                        .HasForeignKey("ClienteId", "ClienteCodigo")
+                        .HasPrincipalKey("Id", "Codigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Atron.Domain.Entities.Produto", "Produto")
+                        .WithMany("Vendas")
+                        .HasForeignKey("ProdutoId", "ProdutoCodigo")
+                        .HasPrincipalKey("Id", "Codigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
+
+                    b.Navigation("Cliente");
+
+                    b.Navigation("Produto");
                 });
 
             modelBuilder.Entity("Shared.Models.ApplicationModels.ApplicationRoleClaim", b =>
@@ -804,9 +1187,26 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("PropriedadesDeFluxoModulo");
                 });
 
+            modelBuilder.Entity("Atron.Domain.Entities.Auditoria", b =>
+                {
+                    b.Navigation("Historicos");
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.Cargo", b =>
                 {
                     b.Navigation("UsuarioCargoDepartamentos");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Categoria", b =>
+                {
+                    b.Navigation("Produtos");
+
+                    b.Navigation("Vendas");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Cliente", b =>
+                {
+                    b.Navigation("Vendas");
                 });
 
             modelBuilder.Entity("Atron.Domain.Entities.Departamento", b =>
@@ -830,6 +1230,13 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("PerfisDeAcessoUsuario");
                 });
 
+            modelBuilder.Entity("Atron.Domain.Entities.Produto", b =>
+                {
+                    b.Navigation("Categorias");
+
+                    b.Navigation("Vendas");
+                });
+
             modelBuilder.Entity("Atron.Domain.Entities.Usuario", b =>
                 {
                     b.Navigation("PerfisDeAcessoUsuario");
@@ -839,6 +1246,11 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("Tarefas");
 
                     b.Navigation("UsuarioCargoDepartamentos");
+                });
+
+            modelBuilder.Entity("Atron.Domain.Entities.Venda", b =>
+                {
+                    b.Navigation("Produtos");
                 });
 #pragma warning restore 612, 618
         }

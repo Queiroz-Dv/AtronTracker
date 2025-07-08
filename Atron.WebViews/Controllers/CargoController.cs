@@ -53,7 +53,7 @@ namespace Atron.WebViews.Controllers
             ConfigureDataTitleForView("Cadastro de cargos");
 
             await FetchDepartamentosData();
-            return _messageModel.Messages.HasErrors() ? RedirectToAction(nameof(MenuPrincipal)) : View();
+            return _messageModel.Notificacoes.HasErrors() ? RedirectToAction(nameof(MenuPrincipal)) : View();
         }
 
         private async Task FetchDepartamentosData()
@@ -91,7 +91,7 @@ namespace Atron.WebViews.Controllers
                 await _service.Criar(model);
 
                 CreateTempDataMessages();
-                return !_messageModel.Messages.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
+                return !_messageModel.Notificacoes.HasErrors() ? RedirectToAction(nameof(Cadastrar)) : View();
             }
 
             CreateTempDataMessages();

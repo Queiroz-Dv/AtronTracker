@@ -32,7 +32,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<MessageModel, LoginMessageValidation>();
 
             services.AddScoped<IMessages, InfoTokenMessageValidation>();
-            services.AddScoped<IValidateModel<InfoToken>, InfoTokenMessageValidation>();
+            services.AddScoped<IValidateModel<DadosDoTokenDTO>, InfoTokenMessageValidation>();
             services.AddScoped<MessageModel, InfoTokenMessageValidation>();
         }
 

@@ -1,10 +1,11 @@
 ﻿using Atron.Application.DTO;
-using Atron.Application.Interfaces;
+using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.Extensions;
+using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,8 +19,9 @@ namespace Atron.WebApi.Controllers
     {
         public UsuarioController(
             IUsuarioService usuarioService,
+            IServiceAccessor serviceAccessor,
             MessageModel messageModel) :
-            base(usuarioService, messageModel)
+            base(usuarioService, serviceAccessor, messageModel)
         { }
 
         [HttpPost]
@@ -27,7 +29,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.CriarAsync(usuario);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                      BadRequest(ObterNotificacoes()) :
                      Ok(ObterNotificacoes());
         }
@@ -45,7 +47,7 @@ namespace Atron.WebApi.Controllers
             // Verificar o código que é enviado
             await _service.AtualizarAsync(codigo, usuario);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                 BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
         }
 
@@ -54,7 +56,7 @@ namespace Atron.WebApi.Controllers
         {
             await _service.RemoverAsync(codigo);
 
-            return _messageModel.Messages.HasErrors() ?
+            return _messageModel.Notificacoes.HasErrors() ?
                 BadRequest(ObterNotificacoes()) :
                 Ok(ObterNotificacoes());
         }
