@@ -67,16 +67,9 @@ namespace Atron.WebApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICreateDefaultUserRoleRepository createDefaultUserRole)
         {
             // 🐞 Ambiente de desenvolvimento: mostra tela de erro detalhada
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                // 🔐 Ambiente de produção: força HTTPS via cabeçalho HSTS
-                app.UseHsts(); // HTTP Strict Transport Security
-            }
 
+            // 🔐 Ambiente de produção: força HTTPS via cabeçalho HSTS
+            app.UseHsts(); // HTTP Strict Transport Security
             // 🧾 Adiciona o Swagger para documentação da API
             AddSwagger(app);
 
