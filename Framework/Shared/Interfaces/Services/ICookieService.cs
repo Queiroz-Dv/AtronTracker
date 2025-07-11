@@ -7,6 +7,8 @@ namespace Shared.Interfaces.Services
     {
         DadosDeTokenComRefreshToken ObterTokenRefreshTokenPorRequest(HttpRequest httpRequest);
 
-        void CriarCookiesDoToken(DadosDeTokenComRefreshToken tokenComRefreshToken);
+        void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario);
+
+        void RemoverCookie(string chave);
     }
 }

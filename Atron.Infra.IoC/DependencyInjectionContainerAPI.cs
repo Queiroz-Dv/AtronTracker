@@ -46,7 +46,7 @@ namespace Atron.Infra.IoC
 
 
             // Registra os repositories e services da API
-            services = services.AddDependencyInjectionApiDoc();
+            //services = services.AddDependencyInjectionApiDoc();
             services = services.AddServiceMappings();
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);

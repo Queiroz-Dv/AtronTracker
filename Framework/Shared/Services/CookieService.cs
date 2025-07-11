@@ -14,14 +14,19 @@ namespace Shared.Services
             _cookieFactory = cookieFactory;
         }
 
-        public void CriarCookiesDoToken(DadosDeTokenComRefreshToken tokenComRefreshToken)
+        public void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario)
         {
-            _cookieFactory.CriarCookiesDoToken(tokenComRefreshToken);
+            _cookieFactory.CriarCookieDoToken(dadosDoToken, codigoUsuario);
         }
 
         public DadosDeTokenComRefreshToken ObterTokenRefreshTokenPorRequest(HttpRequest httpRequest)
         {
             return _cookieFactory.ObterDadosDoTokenPorRequest(httpRequest);
+        }
+
+        public void RemoverCookie(string chave)
+        {
+            _cookieFactory.RemoverCookie(chave);
         }
     }
 }

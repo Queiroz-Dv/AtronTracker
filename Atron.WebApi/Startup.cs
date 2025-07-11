@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace Atron.WebApi
 {
@@ -41,6 +45,51 @@ namespace Atron.WebApi
 
             // 🧱 Registra os serviços da camada de infraestrutura (ex: DbContext, Repositórios, JWT, AutoMapper, etc)
             services.AddInfrastructureAPI(Configuration);
+            //services. // Informa que usaremos o Swagger para documentação e testes
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Atron API",
+                    Version = "v1",
+                    Description = "Uma API desenvolvida por E. Queiroz para estudos e testes",
+                    Contact = new OpenApiContact() { Name = "Eduardo Queiroz", Email = "queiroz.dv@outlook.com" }
+
+                });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Definições de segurança JWT."                    
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+
+                        Array.Empty<string>()
+                    }
+                });
+
+                // 📚 Adiciona o Swagger para documentação da API + filtro customizado para respostas
+                c.OperationFilter<SwaggerResponseFilter>();
+                c.EnableAnnotations();
+
+                // Ativa o XML para as documentações no Swagger e Redocs
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
 
             // 🔐 Registra os serviços necessários para a política dinâmica de autorização baseada em "módulo"
             services.AddSingleton<IAuthorizationPolicyProvider, DynamicModuloPolicyProvider>();
@@ -54,8 +103,7 @@ namespace Atron.WebApi
             // 📎 Permite acessar o HttpContext em qualquer ponto via injeção de dependência
             services.AddHttpContextAccessor();
 
-            // 📚 Adiciona o Swagger para documentação da API + filtro customizado para respostas
-            services.AddSwaggerGen(c => c.OperationFilter<SwaggerResponseFilter>());
+            //services.AddSwaggerGen(c => c.OperationFilter<SwaggerResponseFilter>());
         }
 
         /// <summary>

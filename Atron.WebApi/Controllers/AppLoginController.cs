@@ -22,13 +22,13 @@ namespace Atron.WebApi.Controllers
     [ApiController]
     public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginService>
     {
-      //  private readonly IServiceAccessor serviceAccessor;
+        //  private readonly IServiceAccessor serviceAccessor;
 
         public AppLoginController(
             MessageModel messageModel,
             ILoginService loginUserService,
             IServiceAccessor serviceAccessor)
-            : base(loginUserService, serviceAccessor ,messageModel)
+            : base(loginUserService, serviceAccessor, messageModel)
         {
             //this.serviceAccessor = serviceAccessor;
         }
@@ -38,7 +38,7 @@ namespace Atron.WebApi.Controllers
         /// </summary>
         /// <param name="loginDTO">DTO que será autenticado </param>
         /// <returns>O resultado do processamento</returns>
-        [HttpPost]
+        [HttpPost("Logar")]
         public async Task<ActionResult<DadosDoTokenDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
             var dto = await _service.Autenticar(loginDTO);
@@ -76,12 +76,12 @@ namespace Atron.WebApi.Controllers
         /// Endpoint para desconectar o usuário do sistema
         /// </summary>
         [HttpGet("Desconectar")]
-        public async Task<IActionResult> Logout()
+        public async Task<ActionResult<bool>> Logout()
         {
             var usuarioCodigo = HttpContext.Request.Headers.ExtrairCodigoUsuarioDoRequest();
 
-            await _service.Logout(usuarioCodigo);
-            return Ok();
+            var deslogado = await _service.Logout(usuarioCodigo);
+            return deslogado ? Ok(deslogado) : BadRequest(deslogado);
         }
 
         /// <summary>

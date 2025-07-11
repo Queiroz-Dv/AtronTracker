@@ -29,7 +29,7 @@ namespace Atron.Domain.Interfaces.Identity
         /// </summary>
         /// <param name="codigoUsuario"></param>
         /// <returns></returns>
-        Task RedefinirRefreshTokenRepositoryAsync(string codigoUsuario);
+        Task<bool> RedefinirRefreshTokenRepositoryAsync(string codigoUsuario);
 
         /// <summary>
         /// Atualiza o refresh token do usuário com o código fornecido.

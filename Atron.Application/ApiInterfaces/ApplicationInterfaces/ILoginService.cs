@@ -11,7 +11,7 @@ namespace Atron.Application.ApiInterfaces.ApplicationInterfaces
     {
         Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO login);
 
-        Task Logout(string usuarioCodigo);
+        Task<bool> Logout(string usuarioCodigo);
 
         Task<DadosDoTokenDTO> RefreshAcesso(DadosDoTokenDTO infoToken);
 

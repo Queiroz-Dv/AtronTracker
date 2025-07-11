@@ -17,13 +17,10 @@ namespace Shared.Services.Factory
             _tokenService = tokenService;
         }
 
-        public void CriarCookiesDoToken(DadosDeTokenComRefreshToken tokenComRefreshToken)
+        public void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario)
         {
-            MontarCookie(ETokenInfo.AcesssToken.GetDescription(), tokenComRefreshToken.TokenDTO.Token);
-
-            MontarCookie(ETokenInfo.RefreshToken.GetDescription(),
-                tokenComRefreshToken.RefrehTokenDTO.Token,
-                tokenComRefreshToken.RefrehTokenDTO.Expires);           
+            var chaveDoCookie = $"{codigoUsuario}{ETokenInfo.AcesssToken.GetDescription()}".ToUpper() ;
+            MontarCookie(chaveDoCookie, dadosDoToken.Token);       
         }
 
         public DadosDeTokenComRefreshToken ObterDadosDoTokenPorRequest(HttpRequest request)
@@ -51,6 +48,11 @@ namespace Shared.Services.Factory
                 TokenDTO = new DadosDoTokenDTO(accessToken, accessTokenExpires),
                 RefrehTokenDTO = new DadosDoRefrehTokenDTO(refreshToken, refreshTokenExpires)
             };
+        }
+
+        void ICookieFactory.RemoverCookie(string chave)
+        {
+            RemoverCookie(chave.ToUpper());
         }
     }
 }

@@ -32,12 +32,14 @@ namespace Atron.Application.Services.Identity
             return codigoUsuario.IsNullOrEmpty() ? string.Empty : await _repository.ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(codigoUsuario);         
         }
 
-        public async Task RedefinirRefreshTokenServiceAsync(string codigoUsuario)
+        public async Task<bool> RedefinirRefreshTokenServiceAsync(string codigoUsuario)
         {
             if (!codigoUsuario.IsNullOrEmpty())
             {
-                await _repository.RedefinirRefreshTokenRepositoryAsync(codigoUsuario);
+                return await _repository.RedefinirRefreshTokenRepositoryAsync(codigoUsuario);
             }
+
+            return false;
         }
 
         public async Task<bool> RefreshTokenExisteServiceAsync(string refreshToken)

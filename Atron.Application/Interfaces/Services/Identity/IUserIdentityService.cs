@@ -26,7 +26,7 @@ namespace Atron.Application.Interfaces.Services.Identity
         /// </summary>
         /// <param name="codigoUsuario"></param>
         /// <returns></returns>
-        Task RedefinirRefreshTokenServiceAsync(string codigoUsuario);
+        Task<bool> RedefinirRefreshTokenServiceAsync(string codigoUsuario);
 
         /// <summary>
         /// Atualiza o refresh token do usuário com o código fornecido.

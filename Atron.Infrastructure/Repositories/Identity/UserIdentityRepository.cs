@@ -46,7 +46,7 @@ namespace Atron.Infrastructure.Repositories.Identity
                 .FirstOrDefaultAsync();
         }
 
-        public async Task RedefinirRefreshTokenRepositoryAsync(string codigoUsuario)
+        public async Task<bool> RedefinirRefreshTokenRepositoryAsync(string codigoUsuario)
         {
             var user = await _context.AppUsers
                 .FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
@@ -57,8 +57,11 @@ namespace Atron.Infrastructure.Repositories.Identity
                 user.RefreshTokenExpireTime = DateTime.MinValue;
 
                 _context.AppUsers.Update(user);
-                await _context.SaveChangesAsync();
+                var redefinido = await _context.SaveChangesAsync();
+                return redefinido > 0;
             }
+
+            return false;
         }
 
         public Task<bool> RefreshTokenExpiradoRepositoryAsync(string codigoUsuario)

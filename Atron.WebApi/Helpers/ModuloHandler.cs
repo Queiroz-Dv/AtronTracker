@@ -54,9 +54,23 @@ namespace Atron.WebApi.Helpers
             ?? await RecarregarSessaoNoCacheAsync(usuarioCodigo);
 
             // 4. Verifique o módulo
-            if (dados.DadosDoPerfil.Any(p => p.Modulos.Any(m => m.Codigo == requirement.Codigo)))
+            var perfis = dados?.DadosDoPerfil;
+            var modulosDosPerfis = perfis?.SelectMany(p => p.Modulos).ToList();
+
+            if (modulosDosPerfis is null || modulosDosPerfis.Count == 0)
+            {
+                // Não tem perfis ou módulos — deixa o pipeline de authorization resolver (403)
+                return;
+            }
+
+            if(modulosDosPerfis.Any(md => md.Codigo == requirement.Codigo))
             {
                 context.Succeed(requirement);
+            }
+            else
+            {
+                // Não tem o módulo requerido — deixa o pipeline de authorization resolver (403)
+                return;
             }
         }
 

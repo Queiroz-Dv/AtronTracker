@@ -17,11 +17,13 @@ namespace Atron.Infra.IoC
             var secretKey = configuration.GetSecretKey();
             var issueSigniKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
+            var frontend = configuration["FrontEnd"];
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
                     builder => builder
-                        .WithOrigins("http://localhost:4200")
+                        .WithOrigins(frontend)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
