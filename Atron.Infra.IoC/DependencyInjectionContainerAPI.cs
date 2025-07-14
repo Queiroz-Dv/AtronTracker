@@ -68,7 +68,12 @@ namespace Atron.Infra.IoC
 
             services = services.AddContexts();
             services.AddScoped<ILiteDbContext, AtronLiteDbContext>();
-            services.AddScoped<ILiteTransactions, AtronLiteDbContext>();
+            services.AddScoped<ILiteUnitOfWork>(provider =>
+            {
+                var ctx = provider.GetRequiredService<ILiteDbContext>();
+                return new LiteUnitOfWork(((AtronLiteDbContext)ctx)._db);
+            });
+
             return services;
         }
 

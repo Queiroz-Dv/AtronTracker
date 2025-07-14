@@ -2,7 +2,6 @@
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -64,22 +63,6 @@ namespace Atron.Infrastructure.Repositories
         {
             _context.Remove(entity);
             await _context.SaveChangesAsync();
-        }
-
-        protected void RunInTransaction(Action operation)
-        {
-            _liteContext.BeginTransaction();
-
-            try
-            {
-                operation();
-                _liteContext.Commit();
-            }
-            catch 
-            {
-                _liteContext.Rollback();
-                throw;
-            }
         }
     }
 }

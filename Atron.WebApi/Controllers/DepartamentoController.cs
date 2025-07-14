@@ -14,7 +14,7 @@ namespace Atron.WebApi.Controllers
     /// <summary>  
     /// Controlador para gerenciar entidades de Departamento.  
     /// </summary>  
-    [Authorize(Policy = "Modulo:DPT")] // Configura a policy para o módulo de Departamento
+  //  [Authorize(Policy = "Modulo:DPT")] // Configura a policy para o módulo de Departamento
     [ApiController]
     [Route("api/[controller]")]
     public class DepartamentoController : ApiBaseConfigurationController<Departamento, IDepartamentoService>

@@ -83,9 +83,8 @@ namespace Atron.Application.Services.EntitiesServices
             var entity = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamento.Codigo);
 
             if (entity is not null)
-            {
                 messageModel.AddRegisterExistMessage(departamentoDTO.Codigo);
-            }
+
 
             _validateModel.Validate(departamento);
             if (!messageModel.Notificacoes.HasErrors())
@@ -147,7 +146,14 @@ namespace Atron.Application.Services.EntitiesServices
                     }
                 }
 
-                await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
+                var removido  = await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
+
+                if (!removido)
+                {
+                    messageModel.AddRegisterNotFoundMessage(codigo);
+                    return;
+                }
+
                 messageModel.AddRegisterRemovedSuccessMessage(codigo);
             }
             else

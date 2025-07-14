@@ -9,9 +9,7 @@ namespace Atron.Domain.Entities
     {
         [Key] public int Id { get; set; }
         [MaxLength(10)] public string Codigo { get; set; }
-        [MaxLength(50)] public string Descricao { get; set; }
-
-        [NotMapped] public int DepartamentoId_Antigo { get; set; }
+        [MaxLength(50)] public string Descricao { get; set; }     
 
         [ForeignKey(nameof(DepartamentoId))]
         [NotNull] public int DepartamentoId { get; set; }

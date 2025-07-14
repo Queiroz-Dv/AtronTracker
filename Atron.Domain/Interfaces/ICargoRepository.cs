@@ -15,9 +15,9 @@ namespace Atron.Domain.Interfaces
 
         Task<Cargo> CriarCargoAsync(Cargo cargo);
 
-        Task<Cargo> AtualizarCargoAsync(Cargo cargo);
+        Task<bool> AtualizarCargoAsync(Cargo cargo);
 
-        Task<Cargo> RemoverCargoAsync(Cargo cargo);
+        Task<bool> RemoverCargoAsync(Cargo cargo);
 
         bool CargoExiste(string codigo);
         Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo);

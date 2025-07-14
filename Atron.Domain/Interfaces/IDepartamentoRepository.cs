@@ -48,7 +48,7 @@ namespace Atron.Domain.Interfaces
         /// Exclui um departamento existente de forma assíncrona
         /// </summary>
         /// <param name="departamento">Entidade que será removida</param>
-        Task<Departamento> RemoverDepartmentoRepositoryAsync(Departamento departamento);
+        Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento);
 
         bool DepartamentoExiste(string codigo);
     }

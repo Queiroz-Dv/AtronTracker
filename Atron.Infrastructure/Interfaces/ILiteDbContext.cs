@@ -1,10 +1,9 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Infrastructure.Context;
-using System;
 
 namespace Atron.Infrastructure.Interfaces
 {
-    public interface ILiteDbContext : ILiteTransactions, IDisposable
+    public interface ILiteDbContext 
     {
         IDataSet<Departamento> Departamentos { get; }
 

@@ -2,7 +2,6 @@
 using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,35 +10,51 @@ namespace Atron.Infrastructure.Repositories
 {
     public class DepartamentoRepository : Repository<Departamento>, IDepartamentoRepository
     {
-        public DepartamentoRepository(AtronDbContext context, ILiteDbContext liteContext)
-            : base(context, liteContext) { }
+        public readonly ILiteUnitOfWork _uow;
+
+        public DepartamentoRepository(AtronDbContext context, ILiteDbContext liteContext, ILiteUnitOfWork liteUnitOfWork)
+            : base(context, liteContext)
+        {
+            _uow = liteUnitOfWork;
+        }
 
         public async Task<Departamento> AtualizarDepartamentoRepositoryAsync(Departamento departamento)
         {
-            var entidade = await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == departamento.Codigo);
-            RunInTransaction(async () =>
+            _uow.BeginTransaction();
+            try
             {
+                var entidade = await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == departamento.Codigo);
+
                 if (entidade is not null)
                 {
                     entidade.Descricao = departamento.Descricao;
                     await _liteContext.Departamentos.UpdateAsync(entidade);
+                    _uow.Commit();
                 }
-            });
+            }
+            catch
+            {
+                _uow.Rollback();
+                throw;
+            }
 
             return departamento;
         }
 
         public async Task<Departamento> CriarDepartamentoRepositoryAsync(Departamento departamento)
         {
-            int id = 0;
-            RunInTransaction(async () =>
+            _uow.BeginTransaction();
+            try
             {
-                var resultado = await _liteContext.Departamentos.InsertAsync(departamento);
-                id = resultado.AsInt32;
-            });
+                await _liteContext.Departamentos.InsertAsync(departamento);
+                _uow.Commit();
+            }
+            catch
+            {
+                _uow.Rollback();
+            }
 
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
-            return departamentos.FirstOrDefault(dpt => dpt.Codigo == departamento.Codigo);
+            return await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == departamento.Codigo);
         }
 
         public bool DepartamentoExiste(string codigo)
@@ -49,21 +64,17 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
         {
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
-            return departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
+            return await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == codigo);
         }
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo)
         {
-            return await _context.Departamentos
-                .AsNoTracking()
-                .FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
-            //return await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == codigo);
+            return await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == codigo);
         }
 
         public async Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
         {
-            return await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Id == id);
+            return await _liteContext.Departamentos.FindByIdAsync(id);
         }
 
         public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
@@ -72,16 +83,26 @@ namespace Atron.Infrastructure.Repositories
             return departamentos.OrderBy(x => x.Codigo).ToList();
         }
 
-        public async Task<Departamento> RemoverDepartmentoRepositoryAsync(Departamento departamento)
+        public async Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento)
         {
-            int id = 0;
-            RunInTransaction(async () =>
+            _uow.BeginTransaction();
+            try
             {
                 var departamentoExistente = await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == departamento.Codigo);
-                var resultado = await _liteContext.Departamentos.DeleteAsync(departamentoExistente.Id);
-            });
+                var deletado = await _liteContext.Departamentos.DeleteAsync(departamentoExistente.Id);
+                if (deletado)
+                {
+                    _uow.Commit();
+                    return true;
+                }
+            }
+            catch
+            {
+                _uow.Rollback();
+                throw;
+            }
 
-            return await ObterDepartamentoPorIdRepositoryAsync(id);
+            return false;
         }
     }
 }
