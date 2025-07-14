@@ -1,45 +1,47 @@
 ﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
+using Atron.Application.ApiServices.AuthServices.Bases;
 using Atron.Application.DTO.ApiDTO;
 using Atron.Application.Specifications.UsuarioSpecifications;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Atron.Domain.Interfaces.Identity;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
+using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.AuthServices
 {
-    public class RegisterUserService : IRegisterUserService
+    public class RegisterUserService : ServiceBase, IRegisterUserService
     {
-        private readonly IRegisterApplicationRepository _registerApp;
+        private readonly IUserIdentityRepository _identityRepository;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IValidateModel<ApiRegister> _validateModel;
         private readonly IValidateModel<Usuario> _validateUsuario;
         private readonly MessageModel _messageModel;
 
         public RegisterUserService(
-            IRegisterApplicationRepository registerApp,
+            IServiceAccessor accessor,
             IUsuarioRepository usuarioRepository,
             IValidateModel<ApiRegister> validateModel,
             IValidateModel<Usuario> validateUsuario,
-            MessageModel messageModel)
+            MessageModel messageModel) : base(accessor)
         {
-            _registerApp = registerApp;
             _usuarioRepository = usuarioRepository;
             _messageModel = messageModel;
             _validateModel = validateModel;
             _validateUsuario = validateUsuario;
         }
 
-        public async Task<bool> EmailExists(string email)
-        {
-            return await _registerApp.UserExistsByEmail(email);            
-        }
+        //public async Task<bool> EmailExiste(string email)
+        //{
+        //    return await _registerApp.UserExistsByEmail(email);            
+        //}
 
-        public async Task<RegisterDTO> RegisterUser(RegisterDTO registerDTO)
+        public async Task<UsuarioRegistroDTO> RegisterUser(UsuarioRegistroDTO registerDTO)
         {
             var register = new ApiRegister()
             {
@@ -49,18 +51,18 @@ namespace Atron.Application.ApiServices.AuthServices
                 ConfirmPassword = registerDTO.ConfirmaSenha
             };
 
-            _validateModel.Validate(register);
+            GetValidator<ApiRegister>().Validate(register);
 
-            if (!_messageModel.Notificacoes.HasErrors())
+            if (!Messages.Notificacoes.HasErrors())
             {
-                var userExists = await _registerApp.UserExists(register);
-                if (userExists)
+                var contaExiste = await _identityRepository.ContaExisteRepositoryAsync(register.UserName, register.Email); //await _registerApp.UserExists(register);
+                if (contaExiste)
                 {
                     _messageModel.AddError("Usuário já cadastrado.");
                     return null;
                 }
 
-                var result = await _registerApp.RegisterUserAccountAsync(register);
+                var result = await _identityRepository.RegistrarContaDeUsuarioRepositoryAsync(register.UserName, register.Email, register.Password);
 
                 if (result)
                 {
@@ -76,10 +78,10 @@ namespace Atron.Application.ApiServices.AuthServices
                     _validateUsuario.Validate(usuario);
 
                     // Trocar validação por apenas código e email
-                    var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Nome, usuario.Sobrenome, usuario.Email);
+                    var usuarioSpec = new UsuarioSpecification(usuario.Codigo,usuario.Email);
                     if (!usuarioSpec.IsSatisfiedBy(usuario))
                     {
-                        usuarioSpec.Errors.ForEach(error => _messageModel.AddError(error));                       
+                        usuarioSpec.Errors.ForEach(error => _messageModel.AddError(error));
                     }
 
                     if (!_messageModel.Notificacoes.HasErrors())
@@ -96,9 +98,9 @@ namespace Atron.Application.ApiServices.AuthServices
             return registerDTO;
         }
 
-        public async Task<bool> UserExists(string code)
-        {
-            return await _registerApp.UserExistsByUserCode(code);            
-        }
+        //public async Task<bool> UserExists(string code)
+        //{
+        //    return await _registerApp.UserExistsByUserCode(code);
+        //}
     }
 }

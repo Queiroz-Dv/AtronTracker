@@ -23,7 +23,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IFilterService<UsuarioDTO>, FilterService<UsuarioDTO>>();
             services.AddScoped<IFilterService<TarefaDTO>, FilterService<TarefaDTO>>();
             services.AddScoped<IFilterService<LoginDTO>, FilterService<LoginDTO>>();
-            services.AddScoped<IFilterService<RegisterDTO>, FilterService<RegisterDTO>>();
+            services.AddScoped<IFilterService<UsuarioRegistroDTO>, FilterService<UsuarioRegistroDTO>>();
             services.AddScoped<IFilterService<ModuloDTO>, FilterService<ModuloDTO>>();
             services.AddScoped<IFilterService<PerfilDeAcessoDTO>, FilterService<PerfilDeAcessoDTO>>();
         }
@@ -36,7 +36,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IPaginationService<SalarioDTO>, PaginationService<SalarioDTO>>();
             services.AddScoped<IPaginationService<TarefaDTO>, PaginationService<TarefaDTO>>();
             services.AddScoped<IPaginationService<LoginDTO>, PaginationService<LoginDTO>>();
-            services.AddScoped<IPaginationService<RegisterDTO>, PaginationService<RegisterDTO>>();
+            services.AddScoped<IPaginationService<UsuarioRegistroDTO>, PaginationService<UsuarioRegistroDTO>>();
             services.AddScoped<IPaginationService<ModuloDTO>, PaginationService<ModuloDTO>>();
             services.AddScoped<IPaginationService<PerfilDeAcessoDTO>, PaginationService<PerfilDeAcessoDTO>>();
         }

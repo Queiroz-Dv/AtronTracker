@@ -2,10 +2,10 @@
 
 namespace ExternalServices.Interfaces
 {
-    public interface IRegisterExternalService : IExternalService<RegisterDTO>
+    public interface IRegisterExternalService : IExternalService<UsuarioRegistroDTO>
     {
         Task<bool> EmailExiste(string email);
-        Task Registrar(RegisterDTO registerDTO);
+        Task Registrar(UsuarioRegistroDTO registerDTO);
         Task<bool> UsuarioExiste(string codigo);
     }
 }

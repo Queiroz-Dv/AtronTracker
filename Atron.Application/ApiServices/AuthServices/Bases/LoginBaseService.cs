@@ -18,61 +18,25 @@ namespace Atron.Application.ApiServices.AuthServices.Bases
             _loginRepository = loginRepository;
         }
 
-        protected ICookieService CookieService
-        {
-            get
-            {
-                return ObterService<ILoginContext>().ControleDeSessaoContext.CookieService;
-            }
-        }
+        protected ICookieService CookieService => ObterService<ILoginContext>().ControleDeSessaoContext.CookieService;
 
-        protected ITokenService TokenService
-        {
-            get
-            {
-                return ObterService<ILoginContext>()
+        protected ITokenService TokenService => ObterService<ILoginContext>()
                                        .ControleDeSessaoContext
                                        .TokenService;
-            }
-        }
 
-        protected IUsuarioService UsuarioService
-        {
-            get
-            {
-                return ObterService<ILoginContext>()
+        protected IUsuarioService UsuarioService => ObterService<ILoginContext>()
                     .UsuarioContext
                     .UsuarioService;
-            }
-        }
 
-        protected ICacheUsuarioService CacheUsuarioService
-        {
-            get
-            {
-                return ObterService<ILoginContext>()
+        protected ICacheUsuarioService CacheUsuarioService => ObterService<ILoginContext>()
                     .UsuarioContext
                     .CacheUsuarioService;
-            }
-        }
 
-        protected IDadosComplementaresDoUsuarioService DadosComplementaresDoUsuarioService
-        {
-            get
-            {
-                return ObterService<IUsuarioContext>()
+        protected IDadosComplementaresDoUsuarioService DadosComplementaresDoUsuarioService => ObterService<IUsuarioContext>()
                     .DadosComplementaresDoUsuarioService;
-            }
-        }
 
-        protected IUserIdentityService UserIdentityService
-        {
-            get
-            {
-                return ObterService<ILoginContext>()
+        protected IUserIdentityService UserIdentityService => ObterService<ILoginContext>()
                     .ControleDeSessaoContext
                     .UserIdentityService;
-            }
-        }
     }
 }

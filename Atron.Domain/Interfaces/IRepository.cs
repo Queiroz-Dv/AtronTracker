@@ -14,6 +14,7 @@ namespace Atron.Domain.Interfaces
         Task CriarRepositoryAsync(TEntity entity);
 
         Task AtualizarRepositoryAsync(TEntity entity);
+
         Task AtualizarRepositoryAsync(int id, TEntity entity);
 
         Task RemoverRepositoryAsync(TEntity entity);

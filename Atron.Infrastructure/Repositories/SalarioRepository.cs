@@ -1,6 +1,7 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,11 @@ namespace Atron.Infrastructure.Repositories
 {
     public class SalarioRepository : Repository<Salario>, ISalarioRepository
     {
-        private AtronDbContext _context;
+        //private AtronDbContext _context;
 
-        public SalarioRepository(AtronDbContext context) : base(context)
+        public SalarioRepository(AtronDbContext context, ILiteDbContext liteDbContext) : base(context, liteDbContext)
         {
-            _context = context;
+            //_context = context;
         }
 
         public async Task AtualizarSalarioRepositoryAsync(int id, Salario salario)

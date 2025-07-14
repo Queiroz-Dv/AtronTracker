@@ -39,7 +39,7 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task AtualizarServiceAsync(int id, SalarioDTO salarioDTO)
         {
             var entidade = _map.MapToEntity(salarioDTO);
-            var usuario = await _usuarioRepository.ObterPorCodigoRepositoryAsync(entidade.UsuarioCodigo);
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.UsuarioCodigo);
 
             _validateModel.Validate(entidade);
 
@@ -64,7 +64,7 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task CriarAsync(SalarioDTO salarioDTO)
         {
             var entidade = _map.MapToEntity(salarioDTO);
-            var usuario = await _usuarioRepository.ObterPorCodigoRepositoryAsync(salarioDTO.UsuarioCodigo);
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(salarioDTO.UsuarioCodigo);
 
             _validateModel.Validate(entidade);
             if (!_messageModel.Notificacoes.HasErrors())

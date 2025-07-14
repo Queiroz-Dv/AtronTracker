@@ -22,7 +22,7 @@ namespace Atron.WebApi.Controllers
 
         [HttpPost]
         [Route("Registrar")]
-        public async Task<ActionResult<bool>> Registrar([FromBody] RegisterDTO registerDTO)
+        public async Task<ActionResult<bool>> Registrar([FromBody] UsuarioRegistroDTO registerDTO)
         {
            var registrado =  await _service.RegisterUser(registerDTO);
 
@@ -32,21 +32,21 @@ namespace Atron.WebApi.Controllers
         }
 
 
-        [HttpGet]
-        [Route("VerificarUsuarioPorCodigo/{codigo}")]
-        public async Task<ActionResult> VerificarUsuarioPorCodigo(string codigo)
-        {
-            var userExist = await _service.UserExists(codigo);
+        //[HttpGet]
+        //[Route("VerificarUsuarioPorCodigo/{codigo}")]
+        //public async Task<ActionResult> VerificarUsuarioPorCodigo(string codigo)
+        //{
+        //    var userExist = await _service.UserExists(codigo);
 
-            return userExist ? Ok(new RegisterDTO { Codigo = codigo }) : NotFound(null);
-        }
+        //    return userExist ? Ok(new UsuarioRegistroDTO { Codigo = codigo }) : NotFound(null);
+        //}
 
-        [HttpGet]
-        [Route("VerificarEmail/{email}")]
-        public async Task<ActionResult> VerificarEmail(string email)
-        {
-            var emailExist = await _service.EmailExists(email);
-            return emailExist ? Ok(new RegisterDTO { Email = email }) : NotFound(null);
-        }
+        //[HttpGet]
+        //[Route("VerificarEmail/{email}")]
+        //public async Task<ActionResult> VerificarEmail(string email)
+        //{
+        //    var emailExist = await _service.EmailExists(email);
+        //    return emailExist ? Ok(new UsuarioRegistroDTO { Email = email }) : NotFound(null);
+        //}
     }
 }

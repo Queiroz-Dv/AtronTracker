@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class UsuarioRepository : Repository<Usuario>, IUsuarioRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
         private AtronDbContext _context;
 
-        public UsuarioRepository(AtronDbContext context) : base(context)
+        public UsuarioRepository(AtronDbContext context) //: base(context, liteDbContext)
         {
             _context = context;
         }

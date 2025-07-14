@@ -25,8 +25,12 @@ namespace Atron.WebApi.Controllers
         /// <param name="departamentoService">O serviço para gerenciar departamentos.</param>
         /// <param name="serviceAccessor">O serviço de acesso para inicializar qualquer serviço necessário</param>
         /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>  
-        public DepartamentoController(IDepartamentoService departamentoService, IServiceAccessor serviceAccessor ,MessageModel messageModel)
-            : base(departamentoService, serviceAccessor ,messageModel)
+        public DepartamentoController(IDepartamentoService departamentoService,
+                                      IServiceAccessor serviceAccessor,
+                                      MessageModel messageModel)
+            : base(departamentoService,
+                   serviceAccessor,
+                   messageModel)
         { }
 
         /// <summary>  

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atron.Application.DTO.ApiDTO;
+using System;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Interfaces.Services.Identity
@@ -36,5 +37,13 @@ namespace Atron.Application.Interfaces.Services.Identity
         /// <param name="refreshTokenExpireTime"> Refresh token expire time a ser atualizado para o usuário. </param>
         /// <returns> Retorna true se o refresh token foi atualizado com sucesso, caso contrário, retorna false. </returns>
         Task<bool> AtualizarRefreshTokenUsuarioServiceAsync(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime);
+
+        Task<bool> AtualizarUserIdentityServiceAsync(UsuarioRegistroDTO usuarioRegistro);
+
+        Task<bool> RegistrarContaDeUsuarioServiceAsync(UsuarioRegistroDTO usuarioRegistroDTO);
+
+        Task<bool> DeletarContaUserServiceAsync(string codigoUsuario);
+
+        Task<bool> ContaExisteServiceAsync(string codigoUsuario, string email);
     }
 }

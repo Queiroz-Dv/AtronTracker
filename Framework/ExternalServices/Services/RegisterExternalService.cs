@@ -7,7 +7,7 @@ using Shared.Models;
 
 namespace ExternalServices.Services
 {
-    public class RegisterExternalService : ExternalService<RegisterDTO>, IRegisterExternalService
+    public class RegisterExternalService : ExternalService<UsuarioRegistroDTO>, IRegisterExternalService
     {
         private readonly IApiClient _apiClient;
 
@@ -21,11 +21,11 @@ namespace ExternalServices.Services
 
         public async Task<bool> EmailExiste(string email)
         {
-            var dto = await _apiClient.GetAsync<RegisterDTO>(email);
+            var dto = await _apiClient.GetAsync<UsuarioRegistroDTO>(email);
             return dto is not null;
         }
 
-        public async Task Registrar(RegisterDTO registerDTO)
+        public async Task Registrar(UsuarioRegistroDTO registerDTO)
         {
             var json = JsonConvert.SerializeObject(registerDTO);
             await _apiClient.PostAsync(json);

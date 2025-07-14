@@ -1,6 +1,7 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ namespace Atron.Infrastructure.Repositories
 {
     public class UsuarioCargoDepartamentoRepository : Repository<UsuarioCargoDepartamento>, IUsuarioCargoDepartamentoRepository
     {
-        private readonly AtronDbContext _context;
+        //private readonly AtronDbContext _context;
 
-        public UsuarioCargoDepartamentoRepository(AtronDbContext context) : base(context)
+        public UsuarioCargoDepartamentoRepository(AtronDbContext context, ILiteDbContext liteDbContext) : base(context, liteDbContext)
         {
-            _context = context;
+           // _context = context;
         }
 
         public async Task<UsuarioCargoDepartamento> ObterPorChaveDoUsuario(int usuarioId, string usuarioCodigo)

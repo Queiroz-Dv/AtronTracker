@@ -39,5 +39,13 @@ namespace Atron.Domain.Interfaces.Identity
         /// <param name="refreshTokenExpireTime"> Refresh token expire time a ser atualizado para o usuário. </param>
         /// <returns> Retorna true se o refresh token foi atualizado com sucesso, caso contrário, retorna false. </returns>
         Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime);
+
+        Task<bool> AtualizarUserIdentityRepositoryAsync(string codigoUsuario, string email, string senha);
+
+        Task<bool> RegistrarContaDeUsuarioRepositoryAsync(string codigoUsuario, string email, string senha);
+
+        Task<bool> DeletarContaUserRepositoryAsync(string codigoUsuario);
+
+        Task<bool> ContaExisteRepositoryAsync(string codigoUsuario, string email);
     }
 }

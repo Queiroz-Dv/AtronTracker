@@ -7,6 +7,7 @@ using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Interfaces;
 using Atron.Infrastructure.Repositories;
 using Atron.Infrastructure.Repositories.ApplicationRepositories;
 using Microsoft.AspNetCore.Http;
@@ -50,10 +51,7 @@ namespace Atron.Infra.IoC
             services = services.AddServiceMappings();
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);
-            ConfigureModuloServices(services);
-            //services = services.AddModuleAuthorizationPolicies(services.BuildServiceProvider());
-            ConfigureTarefaServices(services);
-            ConfigureSalarioServices(services);
+            ConfigureModuloServices(services);            
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
             ConfigureUsuarioServices(services);
@@ -69,6 +67,8 @@ namespace Atron.Infra.IoC
             ConfigurePerfilDeAcessoUsuarioServices(services);
 
             services = services.AddContexts();
+            services.AddScoped<ILiteDbContext, AtronLiteDbContext>();
+            services.AddScoped<ILiteTransactions, AtronLiteDbContext>();
             return services;
         }
 
@@ -111,6 +111,7 @@ namespace Atron.Infra.IoC
 
         private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
         {
+            services.AddScoped<IRepository<Salario>, Repository<Salario>>();           
             services.AddScoped<ISalarioRepository, SalarioRepository>();
             services.AddScoped<ISalarioService, SalarioService>();
         }
@@ -118,14 +119,15 @@ namespace Atron.Infra.IoC
         private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ITarefaRepository, TarefaRepository>();
+            services.AddScoped(typeof(IRepository<Tarefa>), typeof(Repository<Tarefa>));
             services.AddScoped<ITarefaService, TarefaService>();
         }
 
         private static void ConfigureUsuarioServices(IServiceCollection services)
         {
-            services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
+            services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();       
+            services.AddScoped<IUsuarioService, UsuarioService>();
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)
@@ -150,16 +152,6 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
             services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
-        }
-
-        private static void ConfigureSalarioServices(IServiceCollection services)
-        {
-            services.AddScoped<IRepository<Salario>, Repository<Salario>>();
-        }
-
-        private static void ConfigureTarefaServices(IServiceCollection services)
-        {
-            services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
-        }
+        }                
     }
 }

@@ -31,7 +31,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IRegisterExternalService, RegisterExternalService>();
 
             // Configuração dos serviços genéricos 
-            services.AddScoped<IExternalService<RegisterDTO>, ExternalService<RegisterDTO>>();
+            services.AddScoped<IExternalService<UsuarioRegistroDTO>, ExternalService<UsuarioRegistroDTO>>();
             services.AddScoped<IExternalService<DepartamentoDTO>, ExternalService<DepartamentoDTO>>();
             services.AddScoped<IExternalService<CargoDTO>, ExternalService<CargoDTO>>();
             services.AddScoped<IExternalService<UsuarioDTO>, ExternalService<UsuarioDTO>>();

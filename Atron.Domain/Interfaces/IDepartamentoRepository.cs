@@ -7,7 +7,7 @@ namespace Atron.Domain.Interfaces
     /// <summary>
     /// Repository do módulo de departamento
     /// </summary>
-    public interface IDepartamentoRepository
+    public interface IDepartamentoRepository : IRepository<Departamento>
     {
         /// <summary>
         /// Obtém todos os departamerntos de forma assíncrona

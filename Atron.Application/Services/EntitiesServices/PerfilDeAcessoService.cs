@@ -201,7 +201,7 @@ namespace Atron.Application.Services.EntitiesServices
                 {
                     var perfilDeAcessoUsuario = new PerfilDeAcessoUsuario();
 
-                    var usuarioRepo = await _usuarioRepository.ObterPorCodigoRepositoryAsync(usuarioDTO.Codigo);
+                    var usuarioRepo = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioDTO.Codigo);
                     perfilDeAcessoUsuario.UsuarioId = usuarioRepo.Id;
                     perfilDeAcessoUsuario.UsuarioCodigo = usuarioRepo.Codigo;
 

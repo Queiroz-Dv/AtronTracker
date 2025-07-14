@@ -29,7 +29,6 @@ namespace Atron.Application.ApiServices.AuthServices
         public async Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO loginRequest)
         {
             var usuario = await UsuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
-
             if (usuario == null)
             {
                 Messages.AddError("Usuário não encontrado.");

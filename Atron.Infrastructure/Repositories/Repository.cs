@@ -1,25 +1,29 @@
 ﻿using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        private readonly AtronDbContext _context;
+        public readonly AtronDbContext _context;
+        public readonly ILiteDbContext _liteContext;
+
         private readonly DbSet<TEntity> _dbSet;
 
-        public Repository(AtronDbContext context)
+        public Repository(AtronDbContext context, ILiteDbContext liteContext)
         {
             _context = context;
             _dbSet = _context.Set<TEntity>();
+            _liteContext = liteContext;
         }
 
         public async Task AtualizarRepositoryAsync(TEntity entity)
-        {            
+        {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
@@ -60,6 +64,22 @@ namespace Atron.Infrastructure.Repositories
         {
             _context.Remove(entity);
             await _context.SaveChangesAsync();
+        }
+
+        protected void RunInTransaction(Action operation)
+        {
+            _liteContext.BeginTransaction();
+
+            try
+            {
+                operation();
+                _liteContext.Commit();
+            }
+            catch 
+            {
+                _liteContext.Rollback();
+                throw;
+            }
         }
     }
 }

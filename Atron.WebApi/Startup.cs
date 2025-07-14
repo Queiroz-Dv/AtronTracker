@@ -1,5 +1,6 @@
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Infra.IoC;
+using Atron.Infrastructure.Models;
 using Atron.WebApi.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -42,7 +43,6 @@ namespace Atron.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-
             // 🧱 Registra os serviços da camada de infraestrutura (ex: DbContext, Repositórios, JWT, AutoMapper, etc)
             services.AddInfrastructureAPI(Configuration);
             //services. // Informa que usaremos o Swagger para documentação e testes
@@ -103,7 +103,7 @@ namespace Atron.WebApi
             // 📎 Permite acessar o HttpContext em qualquer ponto via injeção de dependência
             services.AddHttpContextAccessor();
 
-            //services.AddSwaggerGen(c => c.OperationFilter<SwaggerResponseFilter>());
+            services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));
         }
 
         /// <summary>

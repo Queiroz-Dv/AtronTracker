@@ -2,7 +2,7 @@
 
 namespace Atron.Application.DTO.ApiDTO
 {
-    public class RegisterDTO
+    public class UsuarioRegistroDTO
     {
         public int Id { get; set; }
 

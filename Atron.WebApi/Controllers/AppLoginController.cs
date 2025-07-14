@@ -22,16 +22,12 @@ namespace Atron.WebApi.Controllers
     [ApiController]
     public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginService>
     {
-        //  private readonly IServiceAccessor serviceAccessor;
-
         public AppLoginController(
             MessageModel messageModel,
             ILoginService loginUserService,
             IServiceAccessor serviceAccessor)
             : base(loginUserService, serviceAccessor, messageModel)
-        {
-            //this.serviceAccessor = serviceAccessor;
-        }
+        { }
 
         /// <summary>
         /// Endpoint para logar um usuário no sistema

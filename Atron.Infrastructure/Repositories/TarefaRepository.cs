@@ -1,6 +1,7 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ namespace Atron.Infrastructure.Repositories
 {
     public class TarefaRepository : Repository<Tarefa>, ITarefaRepository
     {
-        private readonly AtronDbContext _context;
+        //private readonly AtronDbContext _context;
 
-        public TarefaRepository(AtronDbContext context) : base(context)
+        public TarefaRepository(AtronDbContext context, ILiteDbContext liteDbContext) : base(context, liteDbContext)
         {
-            _context = context;
+            //_context = context;
         }
 
         public async Task<Tarefa> AtualizarTarefaAsync(int id, Tarefa tarefa)
