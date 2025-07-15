@@ -2,31 +2,30 @@
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
     public class UsuarioCargoDepartamentoRepository : Repository<UsuarioCargoDepartamento>, IUsuarioCargoDepartamentoRepository
     {
-        //private readonly AtronDbContext _context;
+        public readonly ILiteUnitOfWork _uow;
 
-        public UsuarioCargoDepartamentoRepository(AtronDbContext context, ILiteDbContext liteDbContext) : base(context, liteDbContext)
+        public UsuarioCargoDepartamentoRepository(AtronDbContext context,
+                                                  ILiteDbContext liteDbContext,
+                                                  ILiteUnitOfWork uow) : base(context, liteDbContext)
         {
-           // _context = context;
+            _uow = uow;
         }
 
         public async Task<UsuarioCargoDepartamento> ObterPorChaveDoUsuario(int usuarioId, string usuarioCodigo)
         {
-            return await _context.UsuarioCargoDepartamentos.FirstOrDefaultAsync(rel => rel.UsuarioId == usuarioId && rel.UsuarioCodigo == usuarioCodigo);
+            return await _liteContext.UsuarioCargoDepartamentos.FindOneAsync(rel => rel.UsuarioId == usuarioId && rel.UsuarioCodigo == usuarioCodigo);
         }
 
         public async Task<bool> GravarAssociacaoUsuarioCargoDepartamento(Usuario usuario, Cargo cargo, Departamento departamento)
         {
-            var usuarioBd = await _context.Usuarios.FirstAsync(usr => usr.Codigo == usuario.Codigo);
+            var usuarioBd = await _liteContext.Usuarios.FindOneAsync(usr => usr.Codigo == usuario.Codigo);
 
             var associacao = new UsuarioCargoDepartamento()
             {
@@ -40,22 +39,24 @@ namespace Atron.Infrastructure.Repositories
                 CargoCodigo = cargo.Codigo
             };
 
+            _uow.BeginTransaction();
             try
             {
-                await _context.UsuarioCargoDepartamentos.AddAsync(associacao);
-                await _context.SaveChangesAsync();
 
-                return true;
+                int resultado = await _liteContext.UsuarioCargoDepartamentos.InsertAsync(associacao);
+                _uow.Commit();
+                return resultado > 0;
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                _uow.Rollback();
+                throw;
             }
         }
 
         public async Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorDepartamento(int id, string codigo)
         {
-            return await _context.UsuarioCargoDepartamentos.Where(rel => rel.DepartamentoId == id && rel.DepartamentoCodigo == codigo).ToListAsync();
+            return await _liteContext.UsuarioCargoDepartamentos.FindAllAsync(rel => rel.DepartamentoId == id && rel.DepartamentoCodigo == codigo);
         }
     }
 }

@@ -31,6 +31,9 @@ namespace Atron.Infrastructure.Context
         /// Retorna uma tarefa que representa a operação assíncrona, contendo a entidade encontrada ou null se não existir.
         /// </returns>
         Task<T> FindOneAsync(Expression<Func<T, bool>> predicate);
+
+        Task<IList<T>> FindAllAsync(Expression<Func<T, bool>> predicate);
+
         /// <summary>
         /// Método para buscar um registro pelo seu identificador.
         /// </summary>
@@ -98,6 +101,12 @@ namespace Atron.Infrastructure.Context
             return Task.FromResult(exists);
         }
         
+        public Task<IList<T>> FindAllAsync(Expression<Func<T, bool>> predicate)
+        {
+            var results = _collection.Find(predicate).ToList();
+            return Task.FromResult((IList<T>)results);
+        }
+
         public Task<T> FindByIdAsync(BsonValue id) => Task.FromResult(_collection.FindById(id));
         public Task<IEnumerable<T>> FindAllAsync() => Task.FromResult(_collection.FindAll().AsEnumerable());
         public Task<BsonValue> InsertAsync(T entity) => Task.FromResult(_collection.Insert(entity));
