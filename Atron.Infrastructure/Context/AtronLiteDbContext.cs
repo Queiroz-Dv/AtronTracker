@@ -3,6 +3,7 @@ using Atron.Infrastructure.Interfaces;
 using Atron.Infrastructure.Models;
 using LiteDB;
 using Microsoft.Extensions.Options;
+using Shared.Models.ApplicationModels;
 using System.IO;
 
 namespace Atron.Infrastructure.Context
@@ -27,7 +28,14 @@ namespace Atron.Infrastructure.Context
         public LiteDatabase _db;
 
         public IDataSet<Departamento> Departamentos { get; }
+
         public IDataSet<Cargo> Cargos { get; }
+
+        public IDataSet<Usuario> Usuarios { get; }
+
+        public IDataSet<ApplicationUser> Users { get; }
+
+        public IDataSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; }
 
         public LiteDataSetContext(IOptions<LiteDbOptions> options)
         {
@@ -42,6 +50,9 @@ namespace Atron.Infrastructure.Context
 
             Departamentos = new LiteDbSet<Departamento>(_db, "Departamentos");
             Cargos = new LiteDbSet<Cargo>(_db, "Cargos");
+            Usuarios = new LiteDbSet<Usuario>(_db, "Usuarios");
+            Users = new LiteDbSet<ApplicationUser>(_db, "AppUsers");
+            UsuarioCargoDepartamentos = new LiteDbSet<UsuarioCargoDepartamento>(_db, "UsuarioCargoDepartamentos");
         }
     }
 

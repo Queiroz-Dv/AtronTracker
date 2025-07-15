@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces.UsuarioInterfaces
 {
-    public interface IUsuarioRepository
+    public interface IUsuarioRepository : IRepository<Usuario>
     {
         Task<IEnumerable<Usuario>> ObterUsuariosAsync();
 
@@ -16,7 +16,7 @@ namespace Atron.Domain.Interfaces.UsuarioInterfaces
 
         Task<bool> AtualizarUsuarioAsync(string codigo, Usuario usuario);
 
-        Task<Usuario> RemoverUsuarioAsync(Usuario usuario);
+        Task<bool> RemoverUsuarioAsync(Usuario usuario);
 
         bool UsuarioExiste(string codigo);
 
