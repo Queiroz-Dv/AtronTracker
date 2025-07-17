@@ -12,7 +12,7 @@ namespace Atron.Application.DTO.ApiDTO
 
         public string Sobrenome { get; set; }
 
-        public DateTime? DataNascimento { get; set; }
+        public DateOnly? DataNascimento { get; set; }
 
         public string Email { get; set; }
 

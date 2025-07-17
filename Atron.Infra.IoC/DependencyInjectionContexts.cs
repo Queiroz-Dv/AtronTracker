@@ -4,7 +4,10 @@ using Atron.Application.Interfaces.Services.Identity;
 using Atron.Application.Services.Contexts;
 using Atron.Application.Services.EntitiesServices;
 using Atron.Application.Services.Identity;
+using Atron.Domain.Entities;
+using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.Identity;
+using Atron.Infrastructure.Repositories;
 using Atron.Infrastructure.Repositories.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Interfaces.Accessor;
@@ -42,6 +45,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<IAuthManagerContext, AuthManagerContext>();
             services.AddScoped<IUserIdentityService, UserIdentityService>();
             services.AddScoped<IUserIdentityRepository, UserIdentityRepository>();
+            services.AddScoped<IRepository<UsuarioIdentity>, Repository<UsuarioIdentity>>();
             return services;
         }
     }

@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 
 namespace Atron.Application.Validations
 {
-    public class ApiRegisterMessageValidation : MessageModel, IMessages, IValidateModel<ApiRegister>
+    public class ApiRegisterMessageValidation : MessageModel, IMessages, IValidateModel<UsuarioRegistro>
     {
-        public void Validate(ApiRegister entity)
+        public void Validate(UsuarioRegistro entity)
         {
             var senha = entity.Password;
 

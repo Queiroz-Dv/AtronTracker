@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Atron.WebApi
 {
-#pragma warning disable CS1591
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
@@ -36,5 +35,4 @@ namespace Atron.WebApi
                     webBuilder.UseStartup<Startup>();
                 });
     }
-#pragma warning restore CS1591
 }

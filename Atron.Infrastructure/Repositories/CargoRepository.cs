@@ -11,7 +11,7 @@ namespace Atron.Infrastructure.Repositories
 {
     public class CargoRepository : Repository<Cargo>, ICargoRepository
     {
-        public readonly ILiteUnitOfWork _uow;
+        private readonly ILiteUnitOfWork _uow;
 
         public CargoRepository(AtronDbContext context,
                                ILiteDbContext liteDbContext,

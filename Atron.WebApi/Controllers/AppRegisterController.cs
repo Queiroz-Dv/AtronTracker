@@ -11,8 +11,8 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppRegisterController : ApiBaseConfigurationController<ApiRegister, IRegisterUserService>
-    {        
+    public class AppRegisterController : ApiBaseConfigurationController<UsuarioRegistro, IRegisterUserService>
+    {
         public AppRegisterController(
             IServiceAccessor serviceAccessor,
             IRegisterUserService service,
@@ -20,11 +20,10 @@ namespace Atron.WebApi.Controllers
             base(service, serviceAccessor, messageModel)
         { }
 
-        [HttpPost]
-        [Route("Registrar")]
+        [HttpPost("Registrar")]
         public async Task<ActionResult<bool>> Registrar([FromBody] UsuarioRegistroDTO registerDTO)
         {
-           var registrado =  await _service.RegisterUser(registerDTO);
+            var registrado = await _service.RegisterUser(registerDTO);
 
             return _messageModel.Notificacoes.HasErrors() ?
                 BadRequest(new { registrado = false }) :

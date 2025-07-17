@@ -4,29 +4,29 @@ using Atron.Application.DTO.ApiDTO;
 using Atron.Application.Specifications.UsuarioSpecifications;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
-using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.Identity;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Validations;
 using Shared.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.AuthServices
 {
     public class RegisterUserService : ServiceBase, IRegisterUserService
     {
-        private readonly IUserIdentityRepository _identityRepository;
+        //private  IUserIdentityRepository _identityRepository;
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IValidateModel<ApiRegister> _validateModel;
+        private readonly IValidateModel<UsuarioRegistro> _validateModel;
         private readonly IValidateModel<Usuario> _validateUsuario;
         private readonly MessageModel _messageModel;
 
         public RegisterUserService(
             IServiceAccessor accessor,
             IUsuarioRepository usuarioRepository,
-            IValidateModel<ApiRegister> validateModel,
+            IValidateModel<UsuarioRegistro> validateModel,
             IValidateModel<Usuario> validateUsuario,
             MessageModel messageModel) : base(accessor)
         {
@@ -36,14 +36,11 @@ namespace Atron.Application.ApiServices.AuthServices
             _validateUsuario = validateUsuario;
         }
 
-        //public async Task<bool> EmailExiste(string email)
-        //{
-        //    return await _registerApp.UserExistsByEmail(email);            
-        //}
-
         public async Task<UsuarioRegistroDTO> RegisterUser(UsuarioRegistroDTO registerDTO)
         {
-            var register = new ApiRegister()
+            var _identityRepository = ObterService<IUserIdentityRepository>();
+
+            var register = new UsuarioRegistro()
             {
                 UserName = registerDTO.Codigo.ToUpper(),
                 Email = registerDTO.Email,
@@ -51,11 +48,12 @@ namespace Atron.Application.ApiServices.AuthServices
                 ConfirmPassword = registerDTO.ConfirmaSenha
             };
 
-            GetValidator<ApiRegister>().Validate(register);
+            GetValidator<UsuarioRegistro>().Validate(register);
 
             if (!Messages.Notificacoes.HasErrors())
             {
-                var contaExiste = await _identityRepository.ContaExisteRepositoryAsync(register.UserName, register.Email); //await _registerApp.UserExists(register);
+                var contaExiste = await _identityRepository.ContaExisteRepositoryAsync(register.UserName, register.Email);
+
                 if (contaExiste)
                 {
                     _messageModel.AddError("Usuário já cadastrado.");
@@ -71,14 +69,15 @@ namespace Atron.Application.ApiServices.AuthServices
                         Codigo = registerDTO.Codigo.ToUpper(),
                         Nome = registerDTO.Nome,
                         Sobrenome = registerDTO.Sobrenome,
-                        DataNascimento = registerDTO.DataNascimento,
+                        // Fixing the CS0029 error by converting 'DateOnly?' to 'DateTime?'
+                        DataNascimento = registerDTO.DataNascimento?.ToDateTime(TimeOnly.MinValue),
                         Email = registerDTO.Email
                     };
 
                     _validateUsuario.Validate(usuario);
 
                     // Trocar validação por apenas código e email
-                    var usuarioSpec = new UsuarioSpecification(usuario.Codigo,usuario.Email);
+                    var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Email);
                     if (!usuarioSpec.IsSatisfiedBy(usuario))
                     {
                         usuarioSpec.Errors.ForEach(error => _messageModel.AddError(error));
@@ -97,10 +96,5 @@ namespace Atron.Application.ApiServices.AuthServices
 
             return registerDTO;
         }
-
-        //public async Task<bool> UserExists(string code)
-        //{
-        //    return await _registerApp.UserExistsByUserCode(code);
-        //}
     }
 }

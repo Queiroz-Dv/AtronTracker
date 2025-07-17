@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces.ApplicationInterfaces
 {
-    public interface IRegisterApplicationRepository
+    public interface IRegisterApplicationRepository : IRepository<UsuarioRegistro>
     {
-        Task<bool> UpdateUserAccountAsync(ApiRegister register);
-        Task<bool> RegisterUserAccountAsync(ApiRegister register);
-        Task<bool> UserExists(ApiRegister register);
+        Task<bool> UpdateUserAccountAsync(UsuarioRegistro register);
+        Task<bool> RegisterUserAccountAsync(UsuarioRegistro register);
+        Task<bool> UserExists(UsuarioRegistro register);
         Task DeleteAccountUserAsync(string userName);
         Task<bool> UserExistsByUserCode(string code);
         Task<bool> UserExistsByEmail(string email);

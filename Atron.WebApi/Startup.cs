@@ -110,14 +110,14 @@ namespace Atron.WebApi
         /// Método chamado na inicialização da aplicação para configurar o pipeline de requisições HTTP.
         /// </summary>
         /// <param name="app">Builder da aplicação.</param>
-        /// <param name="env">Ambiente de hospedagem (dev, prod, etc).</param>
-        /// <param name="createDefaultUserRole">Serviço que cria usuários e roles padrões na base de dados.</param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICreateDefaultUserRoleRepository createDefaultUserRole)
+        /// <param name="env">Ambiente de hospedagem (dev, prod, etc).</param> 
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // 🐞 Ambiente de desenvolvimento: mostra tela de erro detalhada
 
             // 🔐 Ambiente de produção: força HTTPS via cabeçalho HSTS
             app.UseHsts(); // HTTP Strict Transport Security
+
             // 🧾 Adiciona o Swagger para documentação da API
             AddSwagger(app);
 
@@ -140,10 +140,6 @@ namespace Atron.WebApi
 
             // 🧭 Habilita o roteamento de requisições (fundamental para MapControllers)
             app.UseRouting();
-
-            // 🧠 Cria roles e usuários padrões se ainda não existirem
-            createDefaultUserRole.CreateDefaultRoles();
-            createDefaultUserRole.CreateDefaultUsers();
 
             // 🌍 Habilita a política de CORS para permitir requisições de outras origens (frontend, mobile, etc)
             app.UseCors("CorsPolicy");

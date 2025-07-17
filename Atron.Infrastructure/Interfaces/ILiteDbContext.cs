@@ -14,6 +14,8 @@ namespace Atron.Infrastructure.Interfaces
 
         IDataSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; }
 
-        IDataSet<ApplicationUser> Users { get; }
+        IDataSet<ApplicationUser> Users { get;  }
+
+        IDataSet<ApplicationRole> Roles { get;  }
     }
 }

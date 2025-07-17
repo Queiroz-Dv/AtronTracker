@@ -39,7 +39,7 @@ namespace Atron.Infra.IoC
         private static void ConfigureApiRegisterMessageValidation(IServiceCollection services)
         {
             services.AddScoped<IMessages, ApiRegisterMessageValidation>();
-            services.AddScoped<IValidateModel<ApiRegister>, ApiRegisterMessageValidation>();
+            services.AddScoped<IValidateModel<UsuarioRegistro>, ApiRegisterMessageValidation>();
             services.AddScoped<MessageModel, ApiRegisterMessageValidation>();
         }
 

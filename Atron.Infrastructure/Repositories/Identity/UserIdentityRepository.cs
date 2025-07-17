@@ -1,5 +1,7 @@
-﻿using Atron.Domain.Interfaces.Identity;
+﻿using Atron.Domain.Entities;
+using Atron.Domain.Interfaces.Identity;
 using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
@@ -11,29 +13,48 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories.Identity
 {
-    public class UserIdentityRepository : IUserIdentityRepository
+    public class UserIdentityRepository : Repository<UsuarioIdentity>, IUserIdentityRepository
     {
-        private AtronDbContext _context;
+        private AtronDbContext atronDbContext;
+
+        private readonly ILiteUnitOfWork _uow;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserIdentityRepository(AtronDbContext context, UserManager<ApplicationUser> userManager)
+        public UserIdentityRepository(AtronDbContext context,
+                                      UserManager<ApplicationUser> userManager,
+                                      ILiteDbContext liteDbContext,
+                                      ILiteUnitOfWork uow) : base(context, liteDbContext)
         {
-            _context = context;
+            atronDbContext = context;
             _userManager = userManager;
+            _uow = uow;
         }
 
         public async Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime)
         {
-            var user = await _context.AppUsers
-                .FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
+            var user = await _liteContext.Users.FindOneAsync(u => u.UserName == codigoUsuario);
 
             if (user != null)
             {
                 user.RefreshToken = refreshToken;
                 user.RefreshTokenExpireTime = refreshTokenExpireTime;
-                _context.AppUsers.Update(user);
-                var gravado = await _context.SaveChangesAsync();
-                return gravado > 0;
+
+                _uow.BeginTransaction();
+                try
+                {
+                    var atualizado = await _liteContext.Users.UpdateAsync(user);
+
+                    if (atualizado)
+                    {
+                        _uow.Commit();
+                        return atualizado;
+                    }
+                }
+                catch
+                {
+                    _uow.Rollback();
+                    throw;
+                }
             }
 
             return false;
@@ -41,46 +62,56 @@ namespace Atron.Infrastructure.Repositories.Identity
 
         public async Task<bool> RefreshTokenExisteRepositoryAsync(string refreshToken)
         {
-            return await _context.AppUsers.AnyAsync(u => u.RefreshToken == refreshToken);
+            return await _liteContext.Users.AnyAsync(u => u.RefreshToken == refreshToken);
         }
 
-        public Task<string> ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(string codigoUsuario)
+        public async Task<string> ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(string codigoUsuario)
         {
-            return _context.AppUsers
-                .Where(u => u.UserName == codigoUsuario)
-                .Select(u => u.RefreshToken)
-                .FirstOrDefaultAsync();
+            var usuario = await _liteContext.Users.FindOneAsync(u => u.UserName == codigoUsuario);
+            return usuario?.RefreshToken;
         }
 
         public async Task<bool> RedefinirRefreshTokenRepositoryAsync(string codigoUsuario)
         {
-            var user = await _context.AppUsers
-                .FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
+            var user = await _liteContext.Users.FindOneAsync(u => u.UserName == codigoUsuario);
 
             if (user != null)
             {
                 user.RefreshToken = null;
                 user.RefreshTokenExpireTime = DateTime.MinValue;
 
-                _context.AppUsers.Update(user);
-                var redefinido = await _context.SaveChangesAsync();
-                return redefinido > 0;
+                _uow.BeginTransaction();
+                try
+                {
+                    var atualizado = await _liteContext.Users.UpdateAsync(user);
+
+                    if (atualizado)
+                    {
+                        _uow.Commit();
+                        return atualizado;
+                    }
+
+                    return atualizado;
+                }
+                catch
+                {
+                    _uow.Rollback();
+                    throw;
+                }
             }
 
             return false;
         }
 
-        public Task<bool> RefreshTokenExpiradoRepositoryAsync(string codigoUsuario)
+        public async Task<bool> RefreshTokenExpiradoRepositoryAsync(string codigoUsuario)
         {
-            return _context.AppUsers
-                .Where(u => u.UserName == codigoUsuario)
-                .Select(u => u.RefreshTokenExpireTime < DateTime.UtcNow)
-                .FirstOrDefaultAsync();
+            var usuario = await _liteContext.Users.FindOneAsync(u => u.UserName == codigoUsuario);
+            return usuario.RefreshTokenExpireTime < DateTime.UtcNow;
         }
 
         public async Task<bool> AtualizarUserIdentityRepositoryAsync(string codigoUsuario, string email, string senha)
         {
-            var user = await _context.AppUsers.FirstOrDefaultAsync(x => x.UserName == codigoUsuario);
+            var user = await atronDbContext.AppUsers.FirstOrDefaultAsync(x => x.UserName == codigoUsuario);
 
             if (user is null)
                 return false;
@@ -98,13 +129,28 @@ namespace Atron.Infrastructure.Repositories.Identity
                     return false;
             }
 
-            var result = await _userManager.UpdateAsync(user);
+            _uow.BeginTransaction();
+            try
+            {
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    _uow.Commit();
+                }
 
-            return result.Succeeded;
+                return result.Succeeded;
+
+            }
+            catch
+            {
+                _uow.Rollback();
+                throw;
+            }
         }
 
         public async Task<bool> RegistrarContaDeUsuarioRepositoryAsync(string codigoUsuario, string email, string senha)
         {
+            _uow.BeginTransaction();
             try
             {
                 var applicationUser = new ApplicationUser
@@ -116,10 +162,21 @@ namespace Atron.Infrastructure.Repositories.Identity
                 };
 
                 var result = await _userManager.CreateAsync(applicationUser, senha);
-                return result.Succeeded;
+
+                if (result.Succeeded)
+                {
+                    _uow.Commit();
+                    return result.Succeeded;
+                }
+                else
+                {
+                    _uow.Rollback();
+                    return false;
+                }
             }
-            catch (Exception ex)
+            catch
             {
+                _uow.Rollback();
                 return false;
             }
         }
@@ -138,8 +195,9 @@ namespace Atron.Infrastructure.Repositories.Identity
 
         public async Task<bool> ContaExisteRepositoryAsync(string codigoUsuario, string email)
         {
-            var usuarioxistePorNome = await _userManager.Users.AnyAsync(reg => reg.UserName == codigoUsuario);
-            var usuarioxistePorEmail = await _userManager.Users.AnyAsync(reg => reg.Email == email);
+
+            var usuarioxistePorNome = await _liteContext.Users.AnyAsync(reg => reg.UserName == codigoUsuario);
+            var usuarioxistePorEmail = await _liteContext.Users.AnyAsync(reg => reg.Email == email);
 
             // Retorna true se existir pelo nome ou pelo email
             return usuarioxistePorNome || usuarioxistePorEmail;

@@ -8,14 +8,18 @@ using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
+using Atron.Infrastructure.Models;
 using Atron.Infrastructure.Repositories;
 using Atron.Infrastructure.Repositories.ApplicationRepositories;
+using LiteDB;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Shared.Models.ApplicationModels;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace Atron.Infra.IoC
@@ -35,23 +39,22 @@ namespace Atron.Infra.IoC
             // Define o asembly de onde as migrações devem ser mantidas 
             m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
-                    .AddEntityFrameworkStores<AtronDbContext>()
-                    .AddDefaultTokenProviders();
+            //services.AddIdentity<ApplicationUser, ApplicationRole>()
+            //        .AddEntityFrameworkStores<AtronDbContext>()
+            //        .AddDefaultTokenProviders();
 
             // Evitar o looping infinito 
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-            
+
             // With this line:  
             services.AddScoped(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
 
 
             // Registra os repositories e services da API
-            //services = services.AddDependencyInjectionApiDoc();
             services = services.AddServiceMappings();
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);
-            ConfigureModuloServices(services);            
+            ConfigureModuloServices(services);
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
             ConfigureUsuarioServices(services);
@@ -67,12 +70,32 @@ namespace Atron.Infra.IoC
             ConfigurePerfilDeAcessoUsuarioServices(services);
 
             services = services.AddContexts();
+
+            services.AddSingleton(provider =>
+            {
+                var options = provider.GetRequiredService<IOptions<LiteDbOptions>>().Value;
+                var basePath = Path.GetFullPath(options.DatabasePath);
+
+                var conn = string.IsNullOrEmpty(options.Password)
+                   ? basePath
+                   : $"Filename={basePath};Password={options.Password};";
+
+                return new LiteDatabase(conn);
+            });
+
             services.AddScoped<ILiteDbContext, AtronLiteDbContext>();
             services.AddScoped<ILiteUnitOfWork>(provider =>
             {
                 var ctx = provider.GetRequiredService<ILiteDbContext>();
                 return new LiteUnitOfWork(((AtronLiteDbContext)ctx)._db);
             });
+
+
+            services.AddScoped<LiteDataSetContext, AtronLiteDbContext>();
+
+            services.AddScoped<IUserStore<ApplicationUser>, AtronLiteDbContext>();
+            services.AddScoped<IRoleStore<ApplicationRole>, AtronLiteDbContext>();
+            services.AddIdentity<ApplicationUser, ApplicationRole>().AddDefaultTokenProviders();
 
             return services;
         }
@@ -111,12 +134,12 @@ namespace Atron.Infra.IoC
 
         private static void ConfigureDefaultUserRoleServices(IServiceCollection services)
         {
-            services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
+            //services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
         }
 
         private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
         {
-            services.AddScoped<IRepository<Salario>, Repository<Salario>>();           
+            services.AddScoped<IRepository<Salario>, Repository<Salario>>();
             services.AddScoped<ISalarioRepository, SalarioRepository>();
             services.AddScoped<ISalarioService, SalarioService>();
         }
@@ -131,7 +154,7 @@ namespace Atron.Infra.IoC
         private static void ConfigureUsuarioServices(IServiceCollection services)
         {
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();       
+            services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
             services.AddScoped<IUsuarioService, UsuarioService>();
         }
 
@@ -157,6 +180,6 @@ namespace Atron.Infra.IoC
         {
             services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
             services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
-        }                
+        }
     }
 }

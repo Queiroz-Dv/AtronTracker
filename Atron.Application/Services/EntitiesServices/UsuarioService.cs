@@ -87,7 +87,7 @@ namespace Atron.Application.Services.EntitiesServices
 
                 if (resultRepo)
                 {
-                    var register = new ApiRegister(entidade.Codigo, entidade.Email, usuarioDTO.Senha, usuarioDTO.Senha);
+                    var register = new UsuarioRegistro(entidade.Codigo, entidade.Email, usuarioDTO.Senha, usuarioDTO.Senha);
 
                     var registerResult = await _registerApplicationRepository.UpdateUserAccountAsync(register);
 
@@ -135,7 +135,7 @@ namespace Atron.Application.Services.EntitiesServices
 
                 if (usr)
                 {
-                    var register = new ApiRegister()
+                    var register = new UsuarioRegistro()
                     {
                         UserName = entidade.Codigo,
                         Email = entidade.Email,

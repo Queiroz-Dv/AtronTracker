@@ -1,10 +1,10 @@
 ﻿namespace Atron.Domain.ApiEntities
 {
-    public class ApiRegister
+    public class UsuarioRegistro
     {
-        public ApiRegister() { }
+        public UsuarioRegistro() { }
 
-        public ApiRegister(string userName, string email, string password, string confirmPassword)
+        public UsuarioRegistro(string userName, string email, string password, string confirmPassword)
         {
             UserName = userName;
             Email = email;

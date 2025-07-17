@@ -1,5 +1,7 @@
 ﻿using Atron.Domain.ApiEntities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models.ApplicationModels;
@@ -8,37 +10,58 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories.ApplicationRepositories
 {
-    public class RegisterApplicationRepository : IRegisterApplicationRepository
+    public class RegisterApplicationRepository : Repository<UsuarioRegistro>, IRegisterApplicationRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILiteUnitOfWork _uow;
 
-        public RegisterApplicationRepository(UserManager<ApplicationUser> userManager)
+        public RegisterApplicationRepository(AtronDbContext context,
+                                             UserManager<ApplicationUser> userManager,
+                                             ILiteDbContext liteDbContext,
+                                             ILiteUnitOfWork uow) : base(context, liteDbContext)
         {
             _userManager = userManager;
+            _uow = uow;
         }
 
-        public async Task<bool> RegisterUserAccountAsync(ApiRegister register)
+        public async Task<bool> RegisterUserAccountAsync(UsuarioRegistro register)
         {
+            _uow.BeginTransaction();
             try
             {
-                ApplicationUser applicationUser = CreateUser(register);
+                ApplicationUser applicationUser = new()
+                {
+                    UserName = register.UserName,
+                    Email = register.Email
+                };
+
                 var result = await _userManager.CreateAsync(applicationUser, register.Password);
-                return result.Succeeded;
+                if (result.Succeeded)
+                {
+                    _uow.Commit();
+                    return result.Succeeded;
+                }
+                else
+                {
+                    _uow.Rollback();
+                    return false;
+                }
             }
-            catch (Exception ex)
+            catch
             {
+                _uow.Rollback();
                 return false;
             }
         }
 
-        public async Task<bool> UpdateUserAccountAsync(ApiRegister register)
+        public async Task<bool> UpdateUserAccountAsync(UsuarioRegistro register)
         {
             var user = await _userManager.FindByNameAsync(register.UserName);
 
             if (user is null)
                 return false;
 
-
+            // Informações principais do usuário do identity
             user.Email = register.Email;
             user.UserName = register.UserName;
 
@@ -51,29 +74,56 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
                     return false;
             }
 
-
-            var result = await _userManager.UpdateAsync(user);
-
-            return result.Succeeded;
-
-        }
-
-        private static ApplicationUser CreateUser(ApiRegister register)
-        {
-            return new ApplicationUser()
+            _uow.BeginTransaction();
+            try
             {
-                UserName = register.UserName,
-                Email = register.Email
-            };
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    _uow.Commit();
+                    return result.Succeeded;
+                }
+                else
+                {
+                    _uow.Rollback();
+                    return false;
+                }
+            }
+            catch
+            {
+                _uow.Rollback();
+                return false;
+            }
         }
 
         public async Task DeleteAccountUserAsync(string userName)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(reg => reg.UserName == userName);
-            await _userManager.DeleteAsync(user);
+
+            _uow.BeginTransaction();
+            try
+            {
+                var result  = await _userManager.DeleteAsync(user);
+
+                if (result.Succeeded)
+                {
+                    _uow.Commit();
+                }
+                else
+                {
+                    _uow.Rollback();
+                }   
+
+            }
+            catch
+            {
+                _uow.Rollback();
+                throw;
+            }
         }
 
-        public async Task<bool> UserExists(ApiRegister register)
+        public async Task<bool> UserExists(UsuarioRegistro register)
         {
             var userExistsByName = await _userManager.Users.AnyAsync(reg => reg.UserName == register.UserName);
             var userExistsByEmail = await _userManager.Users.AnyAsync(reg => reg.Email == register.Email);
