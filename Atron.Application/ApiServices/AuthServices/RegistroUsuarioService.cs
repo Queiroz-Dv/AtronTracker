@@ -8,51 +8,43 @@ using Atron.Domain.Interfaces.Identity;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
 using Shared.Interfaces.Accessor;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 using System;
 using System.Threading.Tasks;
 
 namespace Atron.Application.ApiServices.AuthServices
 {
-    public class RegisterUserService : ServiceBase, IRegisterUserService
+    public class RegistroUsuarioService : ServiceBase, IRegistroUsuarioService
     {
-        //private  IUserIdentityRepository _identityRepository;
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IValidateModel<UsuarioRegistro> _validateModel;
-        private readonly IValidateModel<Usuario> _validateUsuario;
         private readonly MessageModel _messageModel;
 
-        public RegisterUserService(
+        public RegistroUsuarioService(
             IServiceAccessor accessor,
             IUsuarioRepository usuarioRepository,
-            IValidateModel<UsuarioRegistro> validateModel,
-            IValidateModel<Usuario> validateUsuario,
             MessageModel messageModel) : base(accessor)
         {
             _usuarioRepository = usuarioRepository;
             _messageModel = messageModel;
-            _validateModel = validateModel;
-            _validateUsuario = validateUsuario;
         }
 
-        public async Task<UsuarioRegistroDTO> RegisterUser(UsuarioRegistroDTO registerDTO)
+        public async Task<UsuarioRegistroDTO> RegistrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO)
         {
-            var _identityRepository = ObterService<IUserIdentityRepository>();
+            var _usuarioIdentityRepository = ObterService<IUsuarioIdentityRepository>();
 
-            var register = new UsuarioRegistro()
+            var usuarioRegistro = new UsuarioRegistro()
             {
-                UserName = registerDTO.Codigo.ToUpper(),
-                Email = registerDTO.Email,
-                Password = registerDTO.Senha,
-                ConfirmPassword = registerDTO.ConfirmaSenha
+                UserName = usuarioRegistroDTO.Codigo.ToUpper(),
+                Email = usuarioRegistroDTO.Email,
+                Password = usuarioRegistroDTO.Senha,
+                ConfirmPassword = usuarioRegistroDTO.ConfirmaSenha
             };
 
-            GetValidator<UsuarioRegistro>().Validate(register);
+            GetValidator<UsuarioRegistro>().Validate(usuarioRegistro);
 
             if (!Messages.Notificacoes.HasErrors())
             {
-                var contaExiste = await _identityRepository.ContaExisteRepositoryAsync(register.UserName, register.Email);
+                var contaExiste = await _usuarioIdentityRepository.ContaExisteRepositoryAsync(usuarioRegistro.UserName, usuarioRegistro.Email);
 
                 if (contaExiste)
                 {
@@ -60,27 +52,37 @@ namespace Atron.Application.ApiServices.AuthServices
                     return null;
                 }
 
-                var result = await _identityRepository.RegistrarContaDeUsuarioRepositoryAsync(register.UserName, register.Email, register.Password);
+                bool registrado; 
 
-                if (result)
+                try
+                {
+                     registrado = await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(usuarioRegistro.UserName, usuarioRegistro.Email, usuarioRegistro.Password);
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+
+                if (registrado)
                 {
                     var usuario = new Usuario()
                     {
-                        Codigo = registerDTO.Codigo.ToUpper(),
-                        Nome = registerDTO.Nome,
-                        Sobrenome = registerDTO.Sobrenome,
+                        Codigo = usuarioRegistroDTO.Codigo.ToUpper(),
+                        Nome = usuarioRegistroDTO.Nome,
+                        Sobrenome = usuarioRegistroDTO.Sobrenome,
                         // Fixing the CS0029 error by converting 'DateOnly?' to 'DateTime?'
-                        DataNascimento = registerDTO.DataNascimento?.ToDateTime(TimeOnly.MinValue),
-                        Email = registerDTO.Email
+                        DataNascimento = usuarioRegistroDTO.DataNascimento?.ToDateTime(TimeOnly.MinValue),
+                        Email = usuarioRegistroDTO.Email
                     };
 
-                    _validateUsuario.Validate(usuario);
+                    GetValidator<Usuario>().Validate(usuario);
 
                     // Trocar validação por apenas código e email
                     var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Email);
                     if (!usuarioSpec.IsSatisfiedBy(usuario))
                     {
-                        usuarioSpec.Errors.ForEach(error => _messageModel.AddError(error));
+                        usuarioSpec.Errors.ForEach(_messageModel.AddError);
                     }
 
                     if (!_messageModel.Notificacoes.HasErrors())
@@ -94,7 +96,7 @@ namespace Atron.Application.ApiServices.AuthServices
                 }
             }
 
-            return registerDTO;
+            return usuarioRegistroDTO;
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Atron.Domain.Customs;
+using System.Collections.Generic;
 
 namespace Atron.Domain.Entities
 {
+    [ModuloInfo("PRF", "Perfil de Acesso")]
     public class PerfilDeAcesso
     {
         public int Id { get; set; }

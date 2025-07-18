@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Atron.Domain.Customs;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Atron.Domain.Entities
 {
+    [ModuloInfo("USR", nameof(Usuario))]
     public class Usuario : EntityBase
     {
         public Usuario()

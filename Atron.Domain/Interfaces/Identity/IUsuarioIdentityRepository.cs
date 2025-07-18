@@ -7,7 +7,7 @@ namespace Atron.Domain.Interfaces.Identity
     /// <summary>
     /// Interface para o repositório de usuários da aplicação.
     /// </summary>
-    public interface IUserIdentityRepository : IRepository<UsuarioIdentity>
+    public interface IUsuarioIdentityRepository : IRepository<UsuarioIdentity>
     {
         /// <summary>
         /// Recupera o refresh token associado ao código do usuário.

@@ -1,9 +1,9 @@
 ﻿using Atron.Domain.Entities;
-using Shared.Models.ApplicationModels;
+using Atron.Infrastructure.Interfaces;
 
 namespace Atron.Infrastructure.Context
 {
-    public abstract class LiteDataSetContext 
+    public abstract class LiteDataSetContext : ILiteDbContext
     {
         public IDataSet<Departamento> Departamentos { get; set; }
 
@@ -13,8 +13,10 @@ namespace Atron.Infrastructure.Context
 
         public IDataSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
 
-        public IDataSet<ApplicationUser> Users { get; set; }
+        public IDataSet<UsuarioIdentity> UsuarioIdentity { get; set; }
 
-        public IDataSet<ApplicationRole> Roles { get; set; }
+        public IDataSet<Modulo> Modulos { get; set; }
+
+        public IDataSet<PerfilDeAcesso> PerfisDeAcesso { get; set; }
     }
 }

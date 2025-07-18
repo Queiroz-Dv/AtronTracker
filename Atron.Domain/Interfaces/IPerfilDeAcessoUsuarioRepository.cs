@@ -1,10 +1,9 @@
 ﻿using Atron.Domain.Entities;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces
 {
-    public interface IPerfilDeAcessoUsuarioRepository
+    public interface IPerfilDeAcessoUsuarioRepository : IRepository<PerfilDeAcessoUsuario>
     {
         Task<bool> CriarPerfilRepositoryAsync(PerfilDeAcessoUsuario perfilDeAcesso);
         Task<PerfilDeAcessoUsuario> ObterPerfilDeAcessoPorCodigoRepositoryAsync(string codigo);

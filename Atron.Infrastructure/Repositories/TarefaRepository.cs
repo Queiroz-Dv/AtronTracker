@@ -3,6 +3,7 @@ using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Shared.Interfaces.Accessor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,27 +13,27 @@ namespace Atron.Infrastructure.Repositories
 {
     public class TarefaRepository : Repository<Tarefa>, ITarefaRepository
     {
+        public TarefaRepository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
+        {
+        }
+
         //private readonly AtronDbContext _context;
 
-        public TarefaRepository(AtronDbContext context, ILiteDbContext liteDbContext) : base(context, liteDbContext)
-        {
-            //_context = context;
-        }
 
         public async Task<Tarefa> AtualizarTarefaAsync(int id, Tarefa tarefa)
         {
             var tarefaBD = await ObterTarefaPorId(id);            
             AtualizarEntidadeParaPersistencia(tarefa, tarefaBD);
 
-            try
-            {
-                _context.Tarefas.Update(tarefaBD);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            //try
+            //{
+            //    _context.Tarefas.Update(tarefaBD);
+            //    await _context.SaveChangesAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw ex;
+            //}
 
             return new Tarefa();
         }
@@ -50,46 +51,47 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Tarefa> CriarTarefaAsync(Tarefa tarefa)
         {
-            try
-            {
-                await _context.Tarefas.AddAsync(tarefa);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
+            //try
+            //{
+            //    await _context.Tarefas.AddAsync(tarefa);
+            //    await _context.SaveChangesAsync();
+            //}
+            //catch (Exception ex)
+            //{
 
-                throw ex;
-            }
+            //    throw ex;
+            //}
 
             return tarefa;
         }
 
         public async Task<Tarefa> ObterTarefaPorId(int id)
         {
-            return await _context.Tarefas
-                                 .Include(usr => usr.Usuario)
-                                 .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
-                                 .ThenInclude(crg => crg.Cargo)
-                                 .ThenInclude(dpt => dpt.Departamento)
-                                 .FirstOrDefaultAsync(trf => trf.Id == id);
-
+            //return await _context.Tarefas
+            //                     .Include(usr => usr.Usuario)
+            //                     .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
+            //                     .ThenInclude(crg => crg.Cargo)
+            //                     .ThenInclude(dpt => dpt.Departamento)
+            //                     .FirstOrDefaultAsync(trf => trf.Id == id);
+            throw new NotImplementedException();
         }
 
         public async Task<List<Tarefa>> ObterTodasTarefas()
         {
-            var entidades = await _context.Tarefas
-                .Include(usr => usr.Usuario) // Obtém o usuário associado a tarefa
-                .ThenInclude(rel => rel.UsuarioCargoDepartamentos) // Obtém os relacionamentos associados ao usuário
-                .ThenInclude(crg => crg.Cargo) // Obtém o cargo associado relacionamento do usuário
-                .ThenInclude(dpt => dpt.Departamento) // Obtém o departamento associado ao relacionamento de cargo
-                .ToListAsync();
-            return entidades;
+            //var entidades = await _context.Tarefas
+            //    .Include(usr => usr.Usuario) // Obtém o usuário associado a tarefa
+            //    .ThenInclude(rel => rel.UsuarioCargoDepartamentos) // Obtém os relacionamentos associados ao usuário
+            //    .ThenInclude(crg => crg.Cargo) // Obtém o cargo associado relacionamento do usuário
+            //    .ThenInclude(dpt => dpt.Departamento) // Obtém o departamento associado ao relacionamento de cargo
+            //    .ToListAsync();
+            //return entidades;
+            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<Tarefa>> ObterTodasTarefasPorUsuario(int usuarioId, string usuarioCodigo)
         {
-            return await _context.Tarefas.Where(trf => trf.UsuarioId == usuarioId && trf.UsuarioCodigo == usuarioCodigo).ToListAsync();
-                                 
+            //return await _context.Tarefas.Where(trf => trf.UsuarioId == usuarioId && trf.UsuarioCodigo == usuarioCodigo).ToListAsync();
+            throw new NotImplementedException();
         }
     }
 }

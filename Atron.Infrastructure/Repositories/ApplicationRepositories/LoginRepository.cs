@@ -2,36 +2,34 @@
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.Identity;
 using Shared.Extensions;
-using Shared.Interfaces.Contexts;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories.ApplicationRepositories
 {
     public class LoginRepository : ILoginRepository
     {
-        private readonly IAuthManagerContext _authManager;
-        private readonly IUserIdentityRepository _userIdentityRepo;
 
-        public LoginRepository(IUserIdentityRepository userIdentityRepo, IAuthManagerContext authManagerContext)
+        private readonly IUsuarioIdentityRepository _userIdentityRepo;
+
+        public LoginRepository(IUsuarioIdentityRepository userIdentityRepo)
         {
             _userIdentityRepo = userIdentityRepo;
-            _authManager = authManagerContext;
         }
 
         public async Task<bool> AutenticarUsuarioAsync(UsuarioIdentity usuarioIdentity)
         {
-            var usuario = await _authManager.UserManager.FindByNameAsync(usuarioIdentity.Codigo);
+            var usuario = await _userIdentityRepo.ObterPorCodigoRepositoryAsync(usuarioIdentity.Codigo);
             if (usuario != null)
             {
                 var refreshTokenAtualizado = await _userIdentityRepo.AtualizarRefreshTokenUsuarioRepositoryAsync(
-                    usuario.UserName,
+                    usuario.Codigo,
                     usuarioIdentity.RefreshToken,
                     usuarioIdentity.RefreshTokenExpireTime);
 
                 if (refreshTokenAtualizado && !usuarioIdentity.Senha.IsNullOrEmpty())
                 {
-                    var signInResult = await _authManager.SignInManager.PasswordSignInAsync(usuarioIdentity.Codigo, usuarioIdentity.Senha, true, false);
-                    return signInResult.Succeeded;
+                    //var signInResult = await _authManager.SignInManager.PasswordSignInAsync(usuarioIdentity.Codigo, usuarioIdentity.Senha, true, false);
+                    //return signInResult.Succeeded;
                 }
 
                 return refreshTokenAtualizado;
@@ -42,17 +40,17 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
 
         public async Task<bool> AtualizarSenhaUsuario(string codigoDoUsuario, string senha)
         {
-            var usr = await _authManager.UserManager.FindByNameAsync(codigoDoUsuario);
+            var usr = await _userIdentityRepo.ObterPorCodigoRepositoryAsync(codigoDoUsuario);
 
             if (usr != null)
             {
-                var result = await _authManager.UserManager.RemovePasswordAsync(usr);
+                //usr = 
 
-                if (result.Succeeded)
-                {
-                    result = await _authManager.UserManager.AddPasswordAsync(usr, senha);
-                    return result.Succeeded;
-                }
+                //if (result.Succeeded)
+                //{
+                //    result = await _authManager.UserManager.AddPasswordAsync(usr, senha);
+                //    return result.Succeeded;
+                //}
             }
 
             return false;
@@ -60,7 +58,7 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
 
         public async Task Logout()
         {
-            await _authManager.SignInManager.SignOutAsync();
+            //await _authManager.SignInManager.SignOutAsync();
         }
     }
 }

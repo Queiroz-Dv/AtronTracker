@@ -41,7 +41,7 @@ namespace Atron.Application.Mapping
             {
                 foreach (var item in entity.UsuarioCargoDepartamentos)
                 {
-                    var cargoBdTask = _cargoRepository.ObterCargoPorCodigoAsyncAsNoTracking(item.CargoCodigo);
+                    var cargoBdTask = _cargoRepository.ObterCargoPorCodigoAsync(item.CargoCodigo);
                     cargoBdTask.Wait();
                     var cargoBd = cargoBdTask.Result;
 

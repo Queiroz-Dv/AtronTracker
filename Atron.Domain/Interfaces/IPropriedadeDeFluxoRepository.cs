@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces
 {
-    public interface IPropriedadeDeFluxoRepository
+    public interface IPropriedadeDeFluxoRepository : IRepository<PropriedadesDeFluxo>
     {
         Task<IEnumerable<PropriedadesDeFluxo>> ObterTodasPropriedades();
         Task<PropriedadesDeFluxo> ObterPropriedadePorId(int id);

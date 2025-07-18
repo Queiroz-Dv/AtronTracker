@@ -1,4 +1,3 @@
-using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Infra.IoC;
 using Atron.Infrastructure.Models;
 using Atron.WebApi.Helpers;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
@@ -63,7 +61,7 @@ namespace Atron.WebApi
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Definições de segurança JWT."                    
+                    Description = "Definições de segurança JWT."
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -168,7 +166,7 @@ namespace Atron.WebApi
         /// </summary>
         /// <param name="app">Application builder.</param>
         private static void AddSwagger(IApplicationBuilder app)
-        {            
+        {
             app.UseSwagger(); // Gera o JSON com a especificação da API
             app.UseSwaggerUI(c =>
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron WebApi Doc v1")); // Interface Swagger UI

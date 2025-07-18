@@ -2,67 +2,119 @@
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Shared.Interfaces.Accessor;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+
+    public class Repository<TEntity> : RepositoryBase, IRepository<TEntity> where TEntity : class
     {
-        public readonly AtronDbContext _context;
-        public readonly ILiteDbContext _liteContext;
+        private readonly IDataSet<TEntity> _dbSet;
 
-        private readonly DbSet<TEntity> _dbSet;
+        public Repository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor) { }
 
-        public Repository(AtronDbContext context, ILiteDbContext liteContext)
+        public async Task<bool> AtualizarRepositoryAsync(TEntity entity)
         {
-            _context = context;
-            _dbSet = _context.Set<TEntity>();
-            _liteContext = liteContext;
+            BeginTransaction();
+            try
+            {
+                var atualizado = await _dbSet.UpdateAsync(entity);
+                CommitOrRollback(atualizado);
+                return atualizado;
+            }
+            catch (Exception ex)
+            {
+                CommitOrRollback(false);
+                // Não para a execução, mas registra o erro
+                MessageModel.AddError($"Erro ao atualizar entidade: {ex.Message}");
+                return false;
+            }
+
         }
 
-        public async Task AtualizarRepositoryAsync(TEntity entity)
+        public async Task<bool> AtualizarRepositoryAsync(int id, TEntity entity)
         {
-            _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task AtualizarRepositoryAsync(int id, TEntity entity)
-        {
-            TEntity entityBd = await _dbSet.FindAsync(id);
+            TEntity entityBd = await _dbSet.FindByIdAsync(id);
             entityBd = entity;
-            _dbSet.Update(entityBd);
-            await _context.SaveChangesAsync();
+
+            BeginTransaction();
+            try
+            {
+                var atualizado = await _dbSet.UpdateAsync(entity);
+                CommitOrRollback(atualizado);
+                return atualizado;
+            }
+            catch (Exception ex)
+            {
+                CommitOrRollback(false);
+                // Não para a execução, mas registra o erro
+                MessageModel.AddError($"Erro ao atualizar entidade: {ex.Message}");
+                return false;
+            }
+
         }
 
-        public async Task CriarRepositoryAsync(TEntity entity)
+        public async Task<bool> CriarRepositoryAsync(TEntity entity)
         {
-            await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            BeginTransaction();
+            try
+            {
+                var criado = await _dbSet.InsertAsync(entity);
+                CommitOrRollback(criado != null);
+                return criado > 0;
+            }
+            catch (Exception ex)
+            {
+                CommitOrRollback(false);
+                // Não para a execução, mas registra o erro
+                MessageModel.AddError($"Erro ao criar entidade: {ex.Message}");
+                return false;
+                throw;
+            }
+
         }
 
         public async Task<TEntity> ObterPorCodigoRepositoryAsync(string codigo)
         {
-            var entidade = await _dbSet.SingleOrDefaultAsync(e => EF.Property<string>(e, "Codigo") == codigo);
+            var entidade = await _dbSet.FindOneAsync(e => EF.Property<string>(e, "Codigo") == codigo);
             return entidade;
         }
 
         public async Task<TEntity> ObterPorIdRepositoryAsync(int id)
         {
-            var entidade = await _dbSet.FindAsync(id);
+            var entidade = await _dbSet.FindByIdAsync(id);
             return entidade;
         }
 
         public async Task<IEnumerable<TEntity>> ObterTodosRepositoryAsync()
         {
-            var entidades = await _dbSet.AsNoTracking().ToListAsync();
+            var entidades = await _dbSet.FindAllAsync();
             return entidades;
         }
 
-        public async Task RemoverRepositoryAsync(TEntity entity)
+        public async Task<bool> RemoverRepositoryAsync(int id)
         {
-            _context.Remove(entity);
-            await _context.SaveChangesAsync();
+            BeginTransaction();
+            try
+            {
+                var removido = await _dbSet.DeleteAsync(id);
+                CommitOrRollback(removido);
+                return removido;
+            }
+            catch (Exception ex)
+            {
+                CommitOrRollback(false);
+                MessageModel.AddError($"Erro ao remover entidade: {ex.Message}");
+                return false;
+            }
+        }
+
+        public Task RemoverRepositoryAsync(TEntity entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

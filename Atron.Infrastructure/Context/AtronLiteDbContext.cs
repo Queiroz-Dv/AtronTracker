@@ -1,19 +1,14 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Infrastructure.Interfaces;
-using Atron.Infrastructure.Models;
 using LiteDB;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
+using Shared.Extensions;
 using Shared.Models.ApplicationModels;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Atron.Infrastructure.Context
 {
-    public class AtronLiteDbContext : LiteDataSetContext, ILiteDbContext, IUserStore<ApplicationUser>,
-    IUserPasswordStore<ApplicationUser>, IRoleStore<ApplicationRole>
+    public class AtronLiteDbContext : LiteDataSetContext
     {
         public LiteDatabase _db;
 
@@ -24,9 +19,10 @@ namespace Atron.Infrastructure.Context
             Departamentos = new LiteDbSet<Departamento>(_db, "Departamentos");
             Cargos = new LiteDbSet<Cargo>(_db, "Cargos");
             Usuarios = new LiteDbSet<Usuario>(_db, "Usuarios");
-            Users = new LiteDbSet<ApplicationUser>(_db, "AppUsers");
-            Roles = new LiteDbSet<ApplicationRole>(_db, "AppRoles");
+            UsuarioIdentity = new LiteDbSet<UsuarioIdentity>(_db, "AppUsers");
             UsuarioCargoDepartamentos = new LiteDbSet<UsuarioCargoDepartamento>(_db, "UsuarioCargoDepartamentos");
+            Modulos = new LiteDbSet<Modulo>(_db, "Modulos");
+            PerfisDeAcesso = new LiteDbSet<PerfilDeAcesso>(_db, "PerfisDeAcesso");
 
             EnsureIndexes();
         }
@@ -35,8 +31,39 @@ namespace Atron.Infrastructure.Context
         {
             EnsureDepartamentoIndex();
             EnsureCargoIndex();
-            EnsudereIdentityIndexes();
+            EnsudereUsuarioIdentityIndexes();
             EnsureUsuarioIndexes();
+            EnsureModuloIndexes();
+        }
+
+        private void EnsureModuloIndexes()
+        {
+            var modulos = GetCollection<Modulo>("Modulos");
+            modulos.EnsureIndex(m => m.Codigo, unique: true);
+
+            var tipos = new[]
+                         {
+                            typeof(Departamento),
+                            typeof(Cargo),
+                            typeof(Usuario),
+                            typeof(Salario),
+                            typeof(Tarefa),
+                            typeof(PerfilDeAcesso),
+                            typeof(PerfilDeAcessoUsuario)
+                        };
+
+            var modulosInit = tipos
+                .Select(t => t.ObterInfoModulo())
+                .Where(info => info.HasValue)
+                .Select(info => new Modulo
+                {
+                    Codigo = info.Value.Codigo,
+                    Descricao = info.Value.Descricao
+                })
+                .ToList();
+
+            modulos.InsertBulk(modulosInit);
+
         }
 
         private void EnsureUsuarioIndexes()
@@ -46,11 +73,13 @@ namespace Atron.Infrastructure.Context
             usuarios.EnsureIndex(u => u.Email, unique: true);
         }
 
-        private void EnsudereIdentityIndexes()
+        private void EnsudereUsuarioIdentityIndexes()
         {
-            var identityUsers = GetCollection<ApplicationUser>("AppUsers");
-            identityUsers.EnsureIndex(u => u.NormalizedUserName, unique: true);
-            identityUsers.EnsureIndex(u => u.NormalizedEmail, unique: true);
+            var identityUsers = GetCollection<UsuarioIdentity>("AppUsers");
+            identityUsers.EnsureIndex(u => u.Codigo, unique: true);
+            identityUsers.EnsureIndex(u => u.EmailNormalizado, unique: true);
+            identityUsers.EnsureIndex(u => u.Email);
+            identityUsers.EnsureIndex(u => u.RefreshToken);
         }
 
         private void EnsureCargoIndex()
@@ -68,127 +97,6 @@ namespace Atron.Infrastructure.Context
         public ILiteCollection<T> GetCollection<T>(string name) where T : class
         {
             return _db.GetCollection<T>(name);
-        }
-
-        public Task<IdentityResult> CreateAsync(ApplicationUser user, CancellationToken ct)
-        {
-            Users.InsertAsync(user);
-            return Task.FromResult(IdentityResult.Success);
-        }
-
-        public Task<IdentityResult> UpdateAsync(ApplicationUser user, CancellationToken ct)
-        {
-            Users.UpdateAsync(user);
-            return Task.FromResult(IdentityResult.Success);
-        }
-
-        public Task<IdentityResult> DeleteAsync(ApplicationUser user, CancellationToken ct)
-        {
-            Users.DeleteAsync(user.Id);
-            return Task.FromResult(IdentityResult.Success);
-        }
-
-        public async Task<ApplicationUser> FindByIdAsync(string id, CancellationToken ct)
-        {
-            return await Users.FindByIdAsync(id);
-        }
-
-        public async Task<ApplicationUser> FindByNameAsync(string normalizedUserName, CancellationToken ct)
-        {
-            return await Users.FindOneAsync(u => u.NormalizedUserName == normalizedUserName);
-        }
-
-
-        // -- PasswordStore --
-
-        public Task SetPasswordHashAsync(ApplicationUser user, string hash, CancellationToken ct)
-        {
-            user.PasswordHash = hash;
-            var atualizado = Users.UpdateAsync(user).Result;
-            return atualizado
-                ? Task.CompletedTask
-                : Task.FromException(new InvalidOperationException("Erro ao atualizar o usuário com a nova senha."));
-        }
-
-        public Task<string> GetPasswordHashAsync(ApplicationUser user, CancellationToken ct)
-            => Task.FromResult(user.PasswordHash);
-
-        public Task<bool> HasPasswordAsync(ApplicationUser user, CancellationToken ct)
-            => Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
-
-        // -- outros métodos obrigatórios (sem-op ou throw) --
-
-        public void Dispose() { /* nada a liberar aqui */ }
-
-        public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken ct)
-            => Task.FromResult(user.Id.ToString());
-
-        public Task<string> GetUserNameAsync(ApplicationUser user, CancellationToken ct)
-            => Task.FromResult(user.UserName);
-
-        public Task SetUserNameAsync(ApplicationUser user, string name, CancellationToken ct)
-        {
-            user.UserName = name;
-            return Task.CompletedTask;
-        }
-
-        public Task<string> GetNormalizedUserNameAsync(ApplicationUser user, CancellationToken ct)
-            => Task.FromResult(user.NormalizedUserName);
-
-        public Task SetNormalizedUserNameAsync(ApplicationUser user, string normalized, CancellationToken ct)
-        {
-            user.NormalizedUserName = normalized;
-            return Task.CompletedTask;
-        }
-
-        public Task<IdentityResult> CreateAsync(ApplicationRole role, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IdentityResult> DeleteAsync(ApplicationRole role, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> GetNormalizedRoleNameAsync(ApplicationRole role, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> GetRoleIdAsync(ApplicationRole role, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> GetRoleNameAsync(ApplicationRole role, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SetNormalizedRoleNameAsync(ApplicationRole role, string normalizedName, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SetRoleNameAsync(ApplicationRole role, string roleName, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IdentityResult> UpdateAsync(ApplicationRole role, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ApplicationRole> IRoleStore<ApplicationRole>.FindByIdAsync(string roleId, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ApplicationRole> IRoleStore<ApplicationRole>.FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+        }     
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces
 {
-    public interface IPerfilDeAcessoRepository
+    public interface IPerfilDeAcessoRepository : IRepository<PerfilDeAcesso>
     {
         Task<ICollection<PerfilDeAcesso>> ObterTodosPerfisRepositoryAsync();
         Task<PerfilDeAcesso> ObterPerfilPorIdRepositoryAsync(int id);

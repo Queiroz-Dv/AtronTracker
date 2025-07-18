@@ -2,7 +2,7 @@
 using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using Shared.Interfaces.Accessor;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,36 +11,22 @@ namespace Atron.Infrastructure.Repositories
 {
     public class CargoRepository : Repository<Cargo>, ICargoRepository
     {
-        private readonly ILiteUnitOfWork _uow;
+        private IDataSet<Cargo> Cargos => _facade.LiteDbContext.Cargos;
+        private IDataSet<Departamento> Departamentos => _facade.LiteDbContext.Departamentos;
 
-        public CargoRepository(AtronDbContext context,
-                               ILiteDbContext liteDbContext,
-                               ILiteUnitOfWork liteUnitOfWork) : base(context, liteDbContext)
+        public CargoRepository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor)
+            : base(liteFacade, serviceAccessor)
+        { }
+
+        public async Task<bool> CriarCargoAsync(Cargo cargo)
         {
-            _uow = liteUnitOfWork;
-        }
-
-        public async Task<Cargo> CriarCargoAsync(Cargo cargo)
-        {
-            _uow.BeginTransaction();
-            try
-            {
-                await _liteContext.Cargos.InsertAsync(cargo);
-                _uow.Commit();
-            }
-            catch
-            {
-                _uow.Rollback();
-                throw;
-            }
-
-            return await _liteContext.Cargos.FindOneAsync(crg => crg.Codigo == cargo.Codigo);
+            return await Cargos.InsertAsync(cargo);
         }
 
         public async Task<Cargo> ObterCargoPorIdAsync(int? id)
         {
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
-            var cargo = await _liteContext.Cargos.FindByIdAsync(id);
+            var departamentos = await Departamentos.FindAllAsync();
+            var cargo = await Cargos.FindByIdAsync(id);
 
             var departamento = (from dpt in departamentos.ToList()
                                 where dpt.Id == cargo.DepartamentoId
@@ -58,8 +44,8 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Cargo> ObterCargoComDepartamentoPorIdAsync(int? id)
         {
-            var cargosDb = await _liteContext.Cargos.FindAllAsync();
-            var departamentosDb = await _liteContext.Departamentos.FindAllAsync();
+            var cargosDb = await Cargos.FindAllAsync();
+            var departamentosDb = await Departamentos.FindAllAsync();
 
             var cargos = (from pst in cargosDb.ToList()
                           join dept in departamentosDb.ToList() on pst.DepartamentoId equals dept.Id
@@ -75,8 +61,8 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<IEnumerable<Cargo>> ObterCargosAsync()
         {
-            var cargos = await _liteContext.Cargos.FindAllAsync();
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
+            var cargos = await Cargos.FindAllAsync();
+            var departamentos = await Departamentos.FindAllAsync();
 
             cargos = (from crg in cargos.ToList()
                       join dpt in departamentos.ToList() on crg.DepartamentoId equals dpt.Id
@@ -93,17 +79,9 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<bool> RemoverCargoAsync(Cargo cargo)
         {
-            _uow.BeginTransaction();
-            try
-            {
-                var cargoBd = await _liteContext.Cargos.FindOneAsync(crg => crg.Codigo == cargo.Codigo);
-                return await _liteContext.Cargos.DeleteAsync(cargo.Id);
-            }
-            catch
-            {
-                _uow.Rollback();
-                throw;
-            }
+            var cargoBd = await Cargos.FindOneAsync(crg => crg.Codigo == cargo.Codigo);
+            return await Cargos.DeleteAsync(cargo.Id);
+
         }
 
         public async Task<bool> AtualizarCargoAsync(Cargo cargo)
@@ -113,24 +91,13 @@ namespace Atron.Infrastructure.Repositories
             cargoBd.DepartamentoId = cargo.DepartamentoId;
             cargoBd.DepartamentoCodigo = cargo.DepartamentoCodigo;
 
-            _uow.BeginTransaction();
-            try
-            {
-                var atualizado = await _liteContext.Cargos.UpdateAsync(cargoBd);
-                _uow.Commit();
-                return atualizado;
-            }
-            catch
-            {
-                _uow.Rollback();
-                throw;
-            }
+            return await Cargos.UpdateAsync(cargoBd);
         }
 
         public async Task<Cargo> ObterCargoPorCodigoAsync(string codigo)
         {
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
-            var cargo = await _liteContext.Cargos.FindOneAsync(crg => crg.Codigo == codigo);
+            var departamentos = await Departamentos.FindAllAsync();
+            var cargo = await Cargos.FindOneAsync(crg => crg.Codigo == codigo);
 
             var departamento = (from dpt in departamentos.ToList()
                                 where dpt.Id == cargo.DepartamentoId
@@ -143,20 +110,15 @@ namespace Atron.Infrastructure.Repositories
             return cargo;
         }
 
-        public async Task<Cargo> ObterCargoPorCodigoAsyncAsNoTracking(string codigo)
-        {
-            return await _context.Cargos.Include(dpt => dpt.Departamento).AsNoTracking().FirstOrDefaultAsync(crg => crg.Codigo == codigo);
-        }
-
         public bool CargoExiste(string codigo)
         {
-            return _liteContext.Cargos.AnyAsync(crg => crg.Codigo == codigo).Result;
+            return Cargos.AnyAsync(crg => crg.Codigo == codigo).Result;
         }
 
         public async Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo)
         {
-            var cargos = await _liteContext.Cargos.FindAllAsync();
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
+            var cargos = await Cargos.FindAllAsync();
+            var departamentos = await Departamentos.FindAllAsync();
 
             cargos = (from crg in cargos.ToList()
                       join dpt in departamentos.ToList() on crg.DepartamentoId equals dpt.Id

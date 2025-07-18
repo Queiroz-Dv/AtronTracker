@@ -9,16 +9,15 @@ using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.Identity;
 using Atron.Infrastructure.Repositories;
 using Atron.Infrastructure.Repositories.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Caching;
-using Shared.Interfaces.Contexts;
 using Shared.Interfaces.Factory;
 using Shared.Interfaces.Services;
 using Shared.Services;
 using Shared.Services.Accessor;
 using Shared.Services.Caching;
-using Shared.Services.Contexts;
 using Shared.Services.Factory;
 
 namespace Atron.Infra.IoC
@@ -42,10 +41,10 @@ namespace Atron.Infra.IoC
             services.AddScoped<ICacheUsuarioService, CacheUsuarioService>();
             services.AddScoped<IDadosComplementaresDoUsuarioService, DadosComplementaresDoUsuarioService>();
 
-            services.AddScoped<IAuthManagerContext, AuthManagerContext>();
             services.AddScoped<IUserIdentityService, UserIdentityService>();
-            services.AddScoped<IUserIdentityRepository, UserIdentityRepository>();
+            services.AddScoped<IUsuarioIdentityRepository, UsuarioIdentityRepository>();
             services.AddScoped<IRepository<UsuarioIdentity>, Repository<UsuarioIdentity>>();
+            services.AddScoped<IPasswordHasher<UsuarioIdentity>, PasswordHasher<UsuarioIdentity>>();
             return services;
         }
     }

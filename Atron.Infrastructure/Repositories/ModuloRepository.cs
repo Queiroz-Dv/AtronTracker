@@ -1,78 +1,33 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
-using Microsoft.EntityFrameworkCore;
-using System;
+using Atron.Infrastructure.Interfaces;
+using Shared.Interfaces.Accessor;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class ModuloRepository : IModuloRepository
+    public class ModuloRepository : Repository<Modulo>, IModuloRepository
     {
-        private AtronDbContext _context;
+        private IDataSet<Modulo> Modulos => _facade.LiteDbContext.Modulos;
 
-        public ModuloRepository(AtronDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<bool> CriarModuloRepository(Modulo modulo)
-        {
-            try
-            {
-                await _context.AddAsync(modulo);
-
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async Task<Modulo> Atualizar(Modulo modulo)
-        {
-            try
-            {
-                var entidade = await ObterPorCodigoRepository(modulo.Codigo);
-                if (entidade is not null)
-                {
-                    entidade.Descricao = modulo.Descricao;
-                    await _context.SaveChangesAsync();
-                    return entidade;
-                }
-            }
-            catch (Exception ex)
-            {
-                var message = ex.ToString();
-                throw;
-            }
-
-            return modulo;
-        }
+        public ModuloRepository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
+        { }
 
         public async Task<Modulo> ObterPorCodigoRepository(string codigo)
         {
-            return await _context.Modulos.FirstOrDefaultAsync(mdl => mdl.Codigo == codigo);
+            return await Modulos.FindOneAsync(mdl => mdl.Codigo == codigo);
         }
 
         public async Task<Modulo> ObterPorIdRepository(int id)
         {
-            return await _context.Modulos.FirstOrDefaultAsync(mdl => mdl.Id == id);
+            return await Modulos.FindByIdAsync(id);
         }
 
         public async Task<IEnumerable<Modulo>> ObterTodosRepository()
         {
-            return await _context.Modulos.ToListAsync();
-        }
-
-        public async Task<bool> RemoverModuloRepository(Modulo modulo)
-        {
-            _context.Remove(modulo);
-            var result = await _context.SaveChangesAsync();
-            return result > 0;
+            return await Modulos.FindAllAsync();
         }
     }
 }

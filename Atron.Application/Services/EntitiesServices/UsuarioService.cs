@@ -4,6 +4,7 @@ using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
+using Atron.Domain.Interfaces.Identity;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
 using Shared.Interfaces.Mapper;
@@ -21,35 +22,35 @@ namespace Atron.Application.Services.EntitiesServices
         private readonly IApplicationMapService<UsuarioDTO, UsuarioIdentity> _map;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
-        private readonly IRegisterApplicationRepository _registerApplicationRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly ICargoRepository _cargoRepository;
         private readonly ITarefaRepository _tarefaRepository;
         private readonly ISalarioRepository _salarioRepository;
+        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
         private readonly IValidateModel<Usuario> _validateModel;
         private readonly MessageModel _messageModel;
 
         public UsuarioService(IApplicationMapService<UsuarioDTO, UsuarioIdentity> map,
                               IUsuarioRepository repository,
                               IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
-                              IRegisterApplicationRepository registerApplicationRepository,
                               IDepartamentoRepository departamentoRepository,
                               ICargoRepository cargoRepository,
                               ITarefaRepository tarefaRepository,
                               ISalarioRepository salarioRepository,
                               IValidateModel<Usuario> validateModel,
-                              MessageModel messageModel)
+                              MessageModel messageModel,
+                              IUsuarioIdentityRepository usuarioIdentityRepository)
         {
             _map = map;
             _usuarioRepository = repository;
             _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
-            _registerApplicationRepository = registerApplicationRepository;
             _departamentoRepository = departamentoRepository;
             _cargoRepository = cargoRepository;
             _validateModel = validateModel;
             _messageModel = messageModel;
             _tarefaRepository = tarefaRepository;
             _salarioRepository = salarioRepository;
+            _usuarioIdentityRepository = usuarioIdentityRepository;
         }
 
         public async Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO)
@@ -69,7 +70,7 @@ namespace Atron.Application.Services.EntitiesServices
                 if (!usuarioDTO.DepartamentoCodigo.IsNullOrEmpty())
                 {
                     var departamentoBd = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(usuarioDTO.DepartamentoCodigo);
-                    var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsyncAsNoTracking(usuarioDTO.CargoCodigo);
+                    var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
 
                     entidade.UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>()
                     {
@@ -89,12 +90,12 @@ namespace Atron.Application.Services.EntitiesServices
                 {
                     var register = new UsuarioRegistro(entidade.Codigo, entidade.Email, usuarioDTO.Senha, usuarioDTO.Senha);
 
-                    var registerResult = await _registerApplicationRepository.UpdateUserAccountAsync(register);
+                    //var registerResult = await _usuarioIdentityRepository.AtualizarRepositoryAsync(register);
 
-                    if (registerResult)
-                    {
-                        _messageModel.AddUpdateMessage(usuarioDTO.Nome);
-                    }
+                    //if (registerResult)
+                    //{
+                    //    _messageModel.AddUpdateMessage(usuarioDTO.Nome);
+                    //}
                 }
             }
         }
@@ -112,7 +113,7 @@ namespace Atron.Application.Services.EntitiesServices
             if (!usuarioDTO.DepartamentoCodigo.IsNullOrEmpty())
             {
                 var departamentoBd = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(usuarioDTO.DepartamentoCodigo);
-                var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsyncAsNoTracking(usuarioDTO.CargoCodigo);
+                var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
 
                 // A associação de cargo e departamento ao usuário será gravada
                 // automaticamente informando o código do cargo e do departamento
@@ -143,13 +144,13 @@ namespace Atron.Application.Services.EntitiesServices
                         ConfirmPassword = usuarioDTO.Senha
                     };
 
-                    var registerOk = await _registerApplicationRepository.RegisterUserAccountAsync(register);
+                    //var registerOk = await _registerApplicationRepository.RegisterUserAccountAsync(register);
 
-                    if (registerOk)
-                    {
-                        _messageModel.AddSuccessMessage(nameof(Usuario));
-                        _messageModel.AddMessage($"Usuário de acesso da aplicação: {usuarioDTO.Nome} cadastrado com sucesso");
-                    }
+                    //if (registerOk)
+                    //{
+                    //    _messageModel.AddSuccessMessage(nameof(Usuario));
+                    //    _messageModel.AddMessage($"Usuário de acesso da aplicação: {usuarioDTO.Nome} cadastrado com sucesso");
+                    //}
                 }
             }
 
@@ -207,7 +208,7 @@ namespace Atron.Application.Services.EntitiesServices
                 }
 
                 // Como o usuário já existe será removido do cadastro da aplicação
-                await _registerApplicationRepository.DeleteAccountUserAsync(codigo);
+               // await _registerApplicationRepository.DeleteAccountUserAsync(codigo);
 
                 // Remove o usuário por completo
                 await _usuarioRepository.RemoverUsuarioAsync(usuario);

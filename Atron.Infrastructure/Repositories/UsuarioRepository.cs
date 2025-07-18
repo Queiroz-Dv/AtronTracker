@@ -2,48 +2,41 @@
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
-using System;
+using Shared.Interfaces.Accessor;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class UsuarioRepository : Repository<Usuario>, IUsuarioRepository
+    public abstract class UsuarioBaseRepository : Repository<Usuario>
     {
-        public readonly ILiteUnitOfWork _uow;
+        protected IDataSet<UsuarioIdentity> Users => _facade.LiteDbContext.UsuarioIdentity;
+        protected IDataSet<Usuario> Usuarios => _facade.LiteDbContext.Usuarios;
+        protected IDataSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos => _facade.LiteDbContext.UsuarioCargoDepartamentos;
 
-        public UsuarioRepository(AtronDbContext context,
-                                 ILiteDbContext liteDbContext,
-                                 ILiteUnitOfWork liteUnitOfWork) : base(context, liteDbContext)
-        {
-            _uow = liteUnitOfWork;
-        }
+        public UsuarioBaseRepository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
+        { }
+    }
+
+    public class UsuarioRepository : UsuarioBaseRepository, IUsuarioRepository
+    {
+        public UsuarioRepository(ILiteFacade liteFacade,
+            IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
+        { }
 
         public async Task<bool> AtualizarSalario(int usuarioId, int quantidadeTotal)
         {
-            _uow.BeginTransaction();
-            try
-            {
-                var usuario = await _liteContext.Usuarios.FindByIdAsync(usuarioId);
-
+            var usuario = await Usuarios.FindByIdAsync(usuarioId);
+            if (usuario != null)
                 usuario.SalarioAtual = quantidadeTotal;
 
-                var resultado = await _liteContext.Usuarios.UpdateAsync(usuario);
-
-                _uow.Commit();
-                return resultado;
-            }
-            catch
-            {
-                _uow.Rollback();
-                throw;
-            }
+            return await Usuarios.UpdateAsync(usuario);
         }
 
         public async Task<bool> AtualizarUsuarioAsync(string codigo, Usuario usuario)
         {
-            var usuarioBd = await _liteContext.Usuarios.FindOneAsync(usr => usr.Codigo == codigo);
+            var usuarioBd = await Usuarios.FindOneAsync(usr => usr.Codigo == codigo);
             usuarioBd.Nome = usuario.Nome;
             usuarioBd.Sobrenome = usuario.Sobrenome;
             usuarioBd.DataNascimento = usuario.DataNascimento;
@@ -51,41 +44,20 @@ namespace Atron.Infrastructure.Repositories
             usuarioBd.Email = usuario.Email;
             usuarioBd.UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos;
 
-            _uow.BeginTransaction();
-            try
-            {
-                var atualizado = await _liteContext.Usuarios.UpdateAsync(usuarioBd);
-                _uow.Commit();
-                return atualizado;
-            }
-            catch
-            {
-                _uow.Rollback();
-                throw;
-            }
+            return await Usuarios.UpdateAsync(usuarioBd);
         }
 
         public async Task<bool> CriarUsuarioAsync(Usuario usuario)
         {
-            _uow.BeginTransaction();
-            try
-            {
-                int resultado = await _liteContext.Usuarios.InsertAsync(usuario);
-                _uow.Commit();
-                return resultado > 0;
-            }
-            catch
-            {
-                _uow.Rollback();
-                throw;
-            }
+                var gravado = await Usuarios.InsertAsync(usuario);
+            return gravado > 0;
         }
 
         public async Task<UsuarioIdentity> ObterUsuarioPorCodigoAsync(string codigo)
         {
-            var relacionamentos = await _liteContext.UsuarioCargoDepartamentos.FindAllAsync();
-            var applicationUser = await _liteContext.Users.FindOneAsync(usr => usr.UserName == codigo);
-            var usuario = await _liteContext.Usuarios.FindOneAsync(usr => usr.Codigo == codigo);
+            var relacionamentos = await UsuarioCargoDepartamentos.FindAllAsync();
+            var applicationUser = await Users.FindOneAsync(usr => usr.Codigo == codigo);
+            var usuario = await Usuarios.FindOneAsync(usr => usr.Codigo == codigo);
 
             foreach (var item in relacionamentos)
             {
@@ -113,13 +85,13 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Usuario> ObterUsuarioPorIdAsync(int? id)
         {
-            return await _liteContext.Usuarios.FindByIdAsync(id);
+            return await Usuarios.FindByIdAsync(id);
         }
 
         public async Task<IEnumerable<Usuario>> ObterUsuariosAsync()
         {
-            var relacionamentos = await _liteContext.UsuarioCargoDepartamentos.FindAllAsync();
-            var usuarios = await _liteContext.Usuarios.FindAllAsync();
+            var relacionamentos = await UsuarioCargoDepartamentos.FindAllAsync();
+            var usuarios = await Usuarios.FindAllAsync();
 
             // Monta lista de usuários com seus relacionamentos
             var usuariosComRelacionamentos = usuarios.Select(usr =>
@@ -135,69 +107,53 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<bool> RemoverUsuarioAsync(Usuario usuario)
         {
-            _uow.BeginTransaction();
-            try
-            {
-                var usuarioBd = await _liteContext.Usuarios.FindOneAsync(usr => usr.Codigo == usuario.Codigo);
-                return await _liteContext.Usuarios.DeleteAsync(usuarioBd.Id);
-            }
-            catch
-            {
-                _uow.Rollback();
-                throw;
-            }
+            var usuarioBd = await Usuarios.FindOneAsync(usr => usr.Codigo == usuario.Codigo);
+            return await Usuarios.DeleteAsync(usuarioBd.Id);
         }
 
         public bool UsuarioExiste(string codigo)
         {
-            return _liteContext.Usuarios.AnyAsync(usr => usr.Codigo == codigo).Result;
+            return Usuarios.AnyAsync(usr => usr.Codigo == codigo).Result;
         }
 
         public async Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()
         {
-            try
+            var applicationUsers = (await Users.FindAllAsync()).ToList();
+            var relacionamentos = (await UsuarioCargoDepartamentos.FindAllAsync()).ToList();
+            var usuarios = (await Usuarios.FindAllAsync()).ToList();
+
+            var usuariosIdentity = new List<UsuarioIdentity>();
+
+            foreach (var user in applicationUsers)
             {
-                var applicationUsers = (await _liteContext.Users.FindAllAsync()).ToList();
-                var relacionamentos = (await _liteContext.UsuarioCargoDepartamentos.FindAllAsync()).ToList();
-                var usuarios = (await _liteContext.Usuarios.FindAllAsync()).ToList();
+                var usuario = usuarios.FirstOrDefault(cdg => cdg.Codigo == user.Codigo);
 
-                var usuariosIdentity = new List<UsuarioIdentity>();
-
-                foreach (var user in applicationUsers)
+                if (usuario is not null)
                 {
-                    var usuario = usuarios.FirstOrDefault(cdg => cdg.Codigo == user.UserName);
+                    // Preenche os relacionamentos do usuário
+                    usuario.UsuarioCargoDepartamentos = relacionamentos
+                        .Where(rel => rel.UsuarioCodigo == usuario.Codigo)
+                        .ToList();
 
-                    if (usuario is not null)
+                    var usuarioIdentity = new UsuarioIdentity
                     {
-                        // Preenche os relacionamentos do usuário
-                        usuario.UsuarioCargoDepartamentos = relacionamentos
-                            .Where(rel => rel.UsuarioCodigo == usuario.Codigo)
-                            .ToList();
+                        Codigo = usuario.Codigo,
+                        Nome = usuario.Nome,
+                        Sobrenome = usuario.Sobrenome,
+                        Email = usuario.Email,
+                        Salario = usuario.Salario,
+                        SalarioAtual = usuario.SalarioAtual,
+                        DataNascimento = usuario.DataNascimento,
+                        UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
+                        RefreshToken = user.RefreshToken,
+                        RefreshTokenExpireTime = user.RefreshTokenExpireTime
+                    };
 
-                        var usuarioIdentity = new UsuarioIdentity
-                        {
-                            Codigo = usuario.Codigo,
-                            Nome = usuario.Nome,
-                            Sobrenome = usuario.Sobrenome,
-                            Email = usuario.Email,
-                            Salario = usuario.Salario,
-                            SalarioAtual = usuario.SalarioAtual,
-                            DataNascimento = usuario.DataNascimento,
-                            UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
-                            RefreshToken = user.RefreshToken,
-                            RefreshTokenExpireTime = user.RefreshTokenExpireTime
-                        };
-
-                        usuariosIdentity.Add(usuarioIdentity);
-                    }
+                    usuariosIdentity.Add(usuarioIdentity);
                 }
+            }
 
-                return usuariosIdentity;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return usuariosIdentity;
         }
     }
 }
