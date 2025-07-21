@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Modulo:USR")]
+    [Route("api/[controller]")]
+    //[Authorize(Policy = "Modulo:USR")]
     public class UsuarioController : ApiBaseConfigurationController<Usuario, IUsuarioService>
     {
         public UsuarioController(

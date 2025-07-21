@@ -12,12 +12,12 @@ namespace Shared.Models
 
         public override void AdicionarMensagem(string description)
         {
-            AddNotification(description, Level.Message);
+            AddNotification(description, Level.Mensagem);
         }
 
         public override void MensagemRegistroSalvo(string key)
         {
-            AdicionarMensagem($"Registro {key} salvo com sucesso.");
+            AddNotification($"Registro {key} salvo com sucesso.", Level.Sucesso);
         }
 
         public override void MensagemRegistroAtualizado(string key)
@@ -47,7 +47,7 @@ namespace Shared.Models
 
         public override void AdicionarAviso(string description)
         {
-            AddNotification(description, Level.Warning);
+            AddNotification(description, Level.Aviso);
         }
     }
 }

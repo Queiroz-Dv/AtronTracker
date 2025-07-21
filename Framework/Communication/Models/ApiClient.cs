@@ -74,9 +74,9 @@ namespace Communication.Models
 
         private void FillMessageModel(string responseContent)
         {
-            if (responseContent.Contains(Level.Success) ||
-                responseContent.Contains(Level.Message) ||
-                responseContent.Contains(Level.Warning) ||
+            if (responseContent.Contains(Level.Sucesso) ||
+                responseContent.Contains(Level.Mensagem) ||
+                responseContent.Contains(Level.Aviso) ||
                 responseContent.Contains(Level.Error))
             {
                 var messages = JsonConvert.DeserializeObject<List<Message>>(responseContent);

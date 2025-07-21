@@ -28,7 +28,7 @@ namespace Atron.Application.ApiServices.AuthServices
             _messageModel = messageModel;
         }
 
-        public async Task<UsuarioRegistroDTO> RegistrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO)
+        public async Task RegistrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO)
         {
             var _usuarioIdentityRepository = ObterService<IUsuarioIdentityRepository>();
 

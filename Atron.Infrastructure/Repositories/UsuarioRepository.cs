@@ -1,6 +1,5 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
-using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
 using Shared.Interfaces.Accessor;
 using System.Collections.Generic;
@@ -9,17 +8,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public abstract class UsuarioBaseRepository : Repository<Usuario>
-    {
-        protected IDataSet<UsuarioIdentity> Users => _facade.LiteDbContext.UsuarioIdentity;
-        protected IDataSet<Usuario> Usuarios => _facade.LiteDbContext.Usuarios;
-        protected IDataSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos => _facade.LiteDbContext.UsuarioCargoDepartamentos;
-
-        public UsuarioBaseRepository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
-        { }
-    }
-
-    public class UsuarioRepository : UsuarioBaseRepository, IUsuarioRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
         public UsuarioRepository(ILiteFacade liteFacade,
             IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
@@ -49,7 +38,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<bool> CriarUsuarioAsync(Usuario usuario)
         {
-                var gravado = await Usuarios.InsertAsync(usuario);
+            var gravado = await Usuarios.InsertAsync(usuario);
             return gravado > 0;
         }
 

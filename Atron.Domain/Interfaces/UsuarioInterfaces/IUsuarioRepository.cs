@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces.UsuarioInterfaces
 {
-    public interface IUsuarioRepository : IRepository<Usuario>
+    public interface IUsuarioRepository
     {
         Task<IEnumerable<Usuario>> ObterUsuariosAsync();
 

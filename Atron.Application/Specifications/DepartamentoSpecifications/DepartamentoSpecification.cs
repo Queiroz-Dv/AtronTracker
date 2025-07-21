@@ -8,12 +8,12 @@ namespace Atron.Application.Specifications.DepartamentoSpecifications
 
         public DepartamentoSpecification(string codigo)
         {
-            _codigo = codigo;
+            _codigo = codigo.ToUpper();
         }
 
         public bool IsSatisfiedBy(DepartamentoDTO entity)
         {
-            return entity.Codigo.ToUpper().Equals(_codigo.ToUpper());
+            return entity.Codigo.ToUpper().Equals(_codigo);
         }
     }
 }

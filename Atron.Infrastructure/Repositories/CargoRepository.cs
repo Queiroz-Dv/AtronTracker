@@ -140,14 +140,22 @@ namespace Atron.Infrastructure.Repositories
             var departamentos = await context.Departamentos.FindAllAsync();
             var cargo = await context.Cargos.FindOneAsync(crg => crg.Codigo == codigo);
 
-            var departamento = (from dpt in departamentos.ToList()
-                                where dpt.Id == cargo.DepartamentoId
-                                select new Departamento()
-                                {
-                                    Id = dpt.Id,
-                                    Codigo = dpt.Codigo,
-                                    Descricao = dpt.Descricao
-                                }).FirstOrDefault();
+            if (cargo is not null)
+            {
+                var departamento = (from dpt in departamentos.ToList()
+                                    where dpt.Id == cargo.DepartamentoId
+                                    select new Departamento()
+                                    {
+                                        Id = dpt.Id,
+                                        Codigo = dpt.Codigo,
+                                        Descricao = dpt.Descricao
+                                    }).FirstOrDefault();
+
+                cargo.DepartamentoId = departamento.Id;
+                cargo.DepartamentoCodigo = departamento.Codigo;
+                cargo.Departamento = departamento;
+            }
+
             return cargo;
         }
 

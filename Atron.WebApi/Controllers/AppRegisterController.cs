@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AppRegisterController : ApiBaseConfigurationController<UsuarioRegistro, IRegistroUsuarioService>
     {
         public AppRegisterController(
@@ -21,31 +21,13 @@ namespace Atron.WebApi.Controllers
         { }
 
         [HttpPost("Registrar")]
-        public async Task<ActionResult<bool>> Registrar([FromBody] UsuarioRegistroDTO registerDTO)
+        public async Task<ActionResult> Registrar([FromBody] UsuarioRegistroDTO registerDTO)
         {
-            var registrado = await _service.RegistrarUsuario(registerDTO);
+            await _service.RegistrarUsuario(registerDTO);
 
             return _messageModel.Notificacoes.HasErrors() ?
-                BadRequest(new { registrado = false }) :
-                Ok(new { registrado = true });
-        }
-
-
-        //[HttpGet]
-        //[Route("VerificarUsuarioPorCodigo/{codigo}")]
-        //public async Task<ActionResult> VerificarUsuarioPorCodigo(string codigo)
-        //{
-        //    var userExist = await _service.UserExists(codigo);
-
-        //    return userExist ? Ok(new UsuarioRegistroDTO { Codigo = codigo }) : NotFound(null);
-        //}
-
-        //[HttpGet]
-        //[Route("VerificarEmail/{email}")]
-        //public async Task<ActionResult> VerificarEmail(string email)
-        //{
-        //    var emailExist = await _service.EmailExists(email);
-        //    return emailExist ? Ok(new UsuarioRegistroDTO { Email = email }) : NotFound(null);
-        //}
+                BadRequest(ObterNotificacoes()) :
+                Ok(ObterNotificacoes());
+        }       
     }
 }
