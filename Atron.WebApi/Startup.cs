@@ -1,12 +1,16 @@
 using Atron.Infra.IoC;
+using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Interfaces;
 using Atron.Infrastructure.Models;
 using Atron.WebApi.Helpers;
+using LiteDB;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
@@ -101,7 +105,14 @@ namespace Atron.WebApi
             // 📎 Permite acessar o HttpContext em qualquer ponto via injeção de dependência
             services.AddHttpContextAccessor();
 
-            services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));
+            services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));            
+            services.AddSingleton<LiteDbConnectionStringProvider>();
+            services.AddSingleton(provider =>
+            {
+                var connectionStringProvider = provider.GetRequiredService<LiteDbConnectionStringProvider>();
+                return new LiteDatabase(connectionStringProvider.ConnectionString);
+            });
+            services.AddScoped<AtronLiteDbContext>();
         }
 
         /// <summary>
@@ -159,6 +170,13 @@ namespace Atron.WebApi
             {
                 endpoints.MapControllers(); // Roteia para as controllers decoradas com [ApiController]
             });
+
+            // Criação de escopo para garantir índices do banco de dados
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AtronLiteDbContext>();
+                context.EnsureIndexes(); // Aqui é o local correto para garantir os índices
+            }
         }
 
         /// <summary>

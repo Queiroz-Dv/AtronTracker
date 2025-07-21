@@ -48,7 +48,7 @@ namespace Atron.Application.ApiServices.AuthServices
 
                 if (contaExiste)
                 {
-                    _messageModel.AddError("Usuário já cadastrado.");
+                    _messageModel.AdicionarErro("Usuário já cadastrado.");
                     return null;
                 }
 
@@ -82,7 +82,7 @@ namespace Atron.Application.ApiServices.AuthServices
                     var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Email);
                     if (!usuarioSpec.IsSatisfiedBy(usuario))
                     {
-                        usuarioSpec.Errors.ForEach(_messageModel.AddError);
+                        usuarioSpec.Errors.ForEach(_messageModel.AdicionarErro);
                     }
 
                     if (!_messageModel.Notificacoes.HasErrors())
@@ -90,7 +90,7 @@ namespace Atron.Application.ApiServices.AuthServices
                         var usuarioGravado = await _usuarioRepository.CriarUsuarioAsync(usuario);
                         if (usuarioGravado)
                         {
-                            _messageModel.AddMessage($"Usuário: {usuario.Codigo} - {usuario.Nome} registrado e cadastrado com sucesso.");
+                            _messageModel.AdicionarMensagem($"Usuário: {usuario.Codigo} - {usuario.Nome} registrado e cadastrado com sucesso.");
                         }
                     }
                 }

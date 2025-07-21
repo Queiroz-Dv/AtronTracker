@@ -15,6 +15,6 @@ namespace Atron.Infrastructure.Context
         public void BeginTransaction() => _database.BeginTrans();
         public void Commit() => _database.Commit();
         public void Rollback() => _database.Rollback();
-        public void Dispose() => _database?.Dispose();
+        public void Dispose() { }
     }
 }

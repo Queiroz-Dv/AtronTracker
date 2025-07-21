@@ -6,15 +6,15 @@ namespace Shared.Extensions
     {
         public static bool HasErrors(this IList<Message> messages)
         {
-            return messages.Any(m => m.Level == Level.Error);
+            return messages.Any(m => m.Nivel == Level.Error);
         }
 
         public static IEnumerable<object> ConvertMessageToJson(this IList<Message> messages)
         {
             return messages.Select(ms => new
             {
-                ms.Description,
-                ms.Level
+                ms.Descricao,
+                ms.Nivel
             });
         }
     }

@@ -1,17 +1,12 @@
 ﻿using Atron.Domain.Entities;
-using Atron.Infrastructure.Interfaces;
 using LiteDB;
 using Shared.Extensions;
-using Shared.Models.ApplicationModels;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Atron.Infrastructure.Context
 {
     public class AtronLiteDbContext : LiteDataSetContext
-    {
-        public LiteDatabase _db;
-
+    {        
         public AtronLiteDbContext(LiteDatabase db)
         {
             _db = db;
@@ -23,8 +18,6 @@ namespace Atron.Infrastructure.Context
             UsuarioCargoDepartamentos = new LiteDbSet<UsuarioCargoDepartamento>(_db, "UsuarioCargoDepartamentos");
             Modulos = new LiteDbSet<Modulo>(_db, "Modulos");
             PerfisDeAcesso = new LiteDbSet<PerfilDeAcesso>(_db, "PerfisDeAcesso");
-
-            EnsureIndexes();
         }
 
         public void EnsureIndexes()
@@ -62,8 +55,15 @@ namespace Atron.Infrastructure.Context
                 })
                 .ToList();
 
-            modulos.InsertBulk(modulosInit);
+            var modulosBd = modulos.FindAll().ToList();
 
+            foreach (var modulo in modulosInit)
+            {
+                if (!modulosBd.Any(m => m.Codigo == modulo.Codigo))
+                {
+                    modulos.Insert(modulo);
+                }
+            }
         }
 
         private void EnsureUsuarioIndexes()
@@ -97,6 +97,6 @@ namespace Atron.Infrastructure.Context
         public ILiteCollection<T> GetCollection<T>(string name) where T : class
         {
             return _db.GetCollection<T>(name);
-        }     
+        }
     }
 }

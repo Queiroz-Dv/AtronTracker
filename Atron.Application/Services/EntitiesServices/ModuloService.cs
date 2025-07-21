@@ -1,9 +1,7 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces.Services;
-using Atron.Application.Specifications.SecuritySpecifications;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Shared.Extensions;
 using Shared.Interfaces.Mapper;
 using Shared.Interfaces.Validations;
 using Shared.Models;
@@ -30,16 +28,7 @@ namespace Atron.Application.Services.EntitiesServices
             _moduloRepository = moduloRepository;
             _validateModel = validateModel;
             this.messageModel = messageModel;
-        }        
-
-        private void VerificarModulo(ModuloDTO moduloDTO)
-        {
-            if (moduloDTO is null)
-            {
-                messageModel.AddRegisterInvalidMessage();
-                return;
-            }
-        }        
+        }
 
         public async Task<ModuloDTO> ObterPorIdService(int id)
         {
@@ -51,7 +40,7 @@ namespace Atron.Application.Services.EntitiesServices
         {
             var entities = await _moduloRepository.ObterTodosRepository();
             return _map.MapToListDTO(entities.ToList());
-        }       
+        }
 
         public async Task<ModuloDTO> ObterPorCodigoService(string codigo)
         {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces
 {
-    public interface ICargoRepository : IRepository<Cargo>
+    public interface ICargoRepository
     {
         Task<IEnumerable<Cargo>> ObterCargosAsync();
 
@@ -18,7 +18,7 @@ namespace Atron.Domain.Interfaces
 
         Task<bool> RemoverCargoAsync(Cargo cargo);
 
-        bool CargoExiste(string codigo);
+        Task<bool> CargoExiste(string codigo);
 
         Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo);
     }

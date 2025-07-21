@@ -53,7 +53,7 @@ namespace Communication.Models
             }
             else
             {
-                _messageModel.AddError("Não foi possível obter o registro.");
+                _messageModel.AdicionarErro("Não foi possível obter o registro.");
                 return null;
             }
         }
@@ -111,7 +111,7 @@ namespace Communication.Models
 
             if (response.IsSuccessStatusCode)
             {
-                _messageModel.AddRegisterRemovedSuccessMessage(Modulo);
+                _messageModel.MensagemRegistroRemovido(Modulo);
             }
         }
 
@@ -149,7 +149,7 @@ namespace Communication.Models
             }
             else
             {
-                _messageModel.AddError("Não foi possível obter o registro.");
+                _messageModel.AdicionarErro("Não foi possível obter o registro.");
                 return null;
             }
         }

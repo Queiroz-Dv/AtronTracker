@@ -1,10 +1,13 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Infrastructure.Context;
+using LiteDB;
 
 namespace Atron.Infrastructure.Interfaces
 {
     public interface ILiteDbContext
     {
+        LiteDatabase _db { get; }
+
         IDataSet<Departamento> Departamentos { get; }
 
         IDataSet<Cargo> Cargos { get; }

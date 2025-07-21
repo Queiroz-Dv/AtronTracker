@@ -1,7 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
 using Shared.Interfaces.Accessor;
@@ -14,7 +13,7 @@ namespace Atron.WebApi.Controllers
     /// <summary>  
     /// Controlador para gerenciar entidades de Departamento.  
     /// </summary>  
-  //  [Authorize(Policy = "Modulo:DPT")] // Configura a policy para o módulo de Departamento
+    //  [Authorize(Policy = "Modulo:DPT")] // Configura a policy para o módulo de Departamento
     [ApiController]
     [Route("api/[controller]")]
     public class DepartamentoController : ApiBaseConfigurationController<Departamento, IDepartamentoService>
@@ -82,8 +81,8 @@ namespace Atron.WebApi.Controllers
         /// <returns>Resultado da operação.</returns>  
         [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
-        {
-            await _service.RemoverAsync(codigo);
+        {            
+            await _service.RemoverAsync(codigo.ToUpper());
 
             return _messageModel.Notificacoes.HasErrors() ?
                 BadRequest(ObterNotificacoes()) :

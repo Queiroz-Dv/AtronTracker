@@ -13,12 +13,12 @@ namespace Atron.Application.Validations
         {
             if (entity is null)
             {
-                AddError("Informações do token inválidas para processamento.");
+                AdicionarErro("Informações do token inválidas para processamento.");
             }
 
             if (entity.Token.IsNullOrEmpty())
             {
-                AddError($"Token não preenchido para processamento");
+                AdicionarErro($"Token não preenchido para processamento");
             }
 
             //if (entity.InfoRefreshToken.IsNullOrEmpty())
@@ -28,7 +28,7 @@ namespace Atron.Application.Validations
 
             if (entity.Expires <= DateTime.Now)
             {
-                AddError("Refresh token inválido ou expirado.");
+                AdicionarErro("Refresh token inválido ou expirado.");
             }
         }
     }

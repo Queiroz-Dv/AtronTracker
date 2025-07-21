@@ -78,7 +78,7 @@ namespace Atron.WebApi.Controllers
         [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
         {
-            await _service.RemoverAsync(codigo);
+            await _service.RemoverAsync(codigo.ToUpper());
 
             return _messageModel.Notificacoes.HasErrors() ?
             BadRequest(ObterNotificacoes()) :

@@ -7,7 +7,7 @@ namespace Atron.Domain.Interfaces
     /// <summary>
     /// Repository do módulo de departamento
     /// </summary>
-    public interface IDepartamentoRepository : IRepository<Departamento>
+    public interface IDepartamentoRepository
     {
         /// <summary>
         /// Obtém todos os departamerntos de forma assíncrona
@@ -50,6 +50,6 @@ namespace Atron.Domain.Interfaces
         /// <param name="departamento">Entidade que será removida</param>
         Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento);
 
-        bool DepartamentoExiste(string codigo);
+        Task<bool> DepartamentoExiste(string codigo);
     }
 }

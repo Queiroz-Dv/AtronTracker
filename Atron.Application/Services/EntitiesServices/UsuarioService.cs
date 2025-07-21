@@ -57,7 +57,7 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (usuarioDTO is null)
             {
-                _messageModel.AddRegisterInvalidMessage(nameof(Usuario));
+                _messageModel.MensagemRegistroInvalido(nameof(Usuario));
                 return;
             }
 
@@ -104,7 +104,7 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (usuarioDTO is null)
             {
-                _messageModel.AddRegisterInvalidMessage(nameof(Usuario));
+                _messageModel.MensagemRegistroInvalido(nameof(Usuario));
                 return usuarioDTO;
             }
 
@@ -176,7 +176,7 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (usuario == null)
             {
-                _messageModel.AddRegisterNotFoundMessage(nameof(Usuario));
+                _messageModel.MensagemRegistroNaoEncontrado(nameof(Usuario));
             }
             else
             {
@@ -213,7 +213,7 @@ namespace Atron.Application.Services.EntitiesServices
                 // Remove o usuário por completo
                 await _usuarioRepository.RemoverUsuarioAsync(usuario);
 
-                _messageModel.AddRegisterRemovedSuccessMessage(nameof(Usuario));
+                _messageModel.MensagemRegistroRemovido(nameof(Usuario));
             }
         }      
     }

@@ -1,6 +1,7 @@
 ﻿using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
+using LiteDB;
 using Microsoft.EntityFrameworkCore;
 using Shared.Interfaces.Accessor;
 using System;
@@ -9,12 +10,16 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-
     public class Repository<TEntity> : RepositoryBase, IRepository<TEntity> where TEntity : class
     {
-        private readonly IDataSet<TEntity> _dbSet;
+        protected readonly IDataSet<TEntity> _dbSet;
+        
+        public string CollectionName { get; set; }
 
-        public Repository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor) { }
+        public Repository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
+        {
+            _dbSet = new LiteDbSet<TEntity>(_facade.LiteDbContext._db, CollectionName);
+        }
 
         public async Task<bool> AtualizarRepositoryAsync(TEntity entity)
         {
@@ -29,7 +34,7 @@ namespace Atron.Infrastructure.Repositories
             {
                 CommitOrRollback(false);
                 // Não para a execução, mas registra o erro
-                MessageModel.AddError($"Erro ao atualizar entidade: {ex.Message}");
+                MessageModel.AdicionarErro($"Erro ao atualizar entidade: {ex.Message}");
                 return false;
             }
 
@@ -51,7 +56,7 @@ namespace Atron.Infrastructure.Repositories
             {
                 CommitOrRollback(false);
                 // Não para a execução, mas registra o erro
-                MessageModel.AddError($"Erro ao atualizar entidade: {ex.Message}");
+                MessageModel.AdicionarErro($"Erro ao atualizar entidade: {ex.Message}");
                 return false;
             }
 
@@ -70,7 +75,7 @@ namespace Atron.Infrastructure.Repositories
             {
                 CommitOrRollback(false);
                 // Não para a execução, mas registra o erro
-                MessageModel.AddError($"Erro ao criar entidade: {ex.Message}");
+                MessageModel.AdicionarErro($"Erro ao criar entidade: {ex.Message}");
                 return false;
                 throw;
             }
@@ -107,7 +112,7 @@ namespace Atron.Infrastructure.Repositories
             catch (Exception ex)
             {
                 CommitOrRollback(false);
-                MessageModel.AddError($"Erro ao remover entidade: {ex.Message}");
+                MessageModel.AdicionarErro($"Erro ao remover entidade: {ex.Message}");
                 return false;
             }
         }

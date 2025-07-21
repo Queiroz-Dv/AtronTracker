@@ -31,7 +31,7 @@ namespace Atron.Application.ApiServices.AuthServices
             var usuario = await UsuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
             if (usuario == null)
             {
-                Messages.AddError("Usuário não encontrado.");
+                Messages.AdicionarErro("Usuário não encontrado.");
                 return null;
             }
 
@@ -50,7 +50,7 @@ namespace Atron.Application.ApiServices.AuthServices
 
             if (!usuarioAutenticado)
             {
-                Messages.AddError(ERRO_AUTENTICACAO);
+                Messages.AdicionarErro(ERRO_AUTENTICACAO);
                 return null;
             }
 
@@ -75,7 +75,7 @@ namespace Atron.Application.ApiServices.AuthServices
 
             if (refreshTokenDoUsuarioEstaExpirado)
             {
-                Messages.AddError("Token expirado ou inválido.");
+                Messages.AdicionarErro("Token expirado ou inválido.");
                 return null;
             }
 
@@ -99,7 +99,7 @@ namespace Atron.Application.ApiServices.AuthServices
 
                 if (!result)
                 {
-                    Messages.AddError(ERRO_AUTENTICACAO);
+                    Messages.AdicionarErro(ERRO_AUTENTICACAO);
                     return null;
                 }
 

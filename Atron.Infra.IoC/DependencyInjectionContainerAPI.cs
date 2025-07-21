@@ -9,18 +9,11 @@ using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
-using Atron.Infrastructure.Models;
 using Atron.Infrastructure.Repositories;
 using Atron.Infrastructure.Repositories.ApplicationRepositories;
-using LiteDB;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Shared.Models.ApplicationModels;
-using System.IO;
 using System.Text.Json.Serialization;
 
 namespace Atron.Infra.IoC
@@ -34,11 +27,11 @@ namespace Atron.Infra.IoC
             // O método Transiente indica que sempre será criado um novo serviço cada vez que for necessário
 
             // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo 
-          //  services.AddDbContext<AtronDbContext>(options =>
+            //  services.AddDbContext<AtronDbContext>(options =>
             // Define o provedor e a string de conexão
-        //    options.UseSqlServer(configuration.GetConnectionString("AtronConnection"),
+            //    options.UseSqlServer(configuration.GetConnectionString("AtronConnection"),
             // Define o asembly de onde as migrações devem ser mantidas 
-         //   m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
+            //   m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
 
             //services.AddIdentity<ApplicationUser, ApplicationRole>()
             //        .AddEntityFrameworkStores<AtronDbContext>()
@@ -70,17 +63,7 @@ namespace Atron.Infra.IoC
 
             services = services.AddContexts();
 
-            services.AddSingleton(provider =>
-            {
-                var options = provider.GetRequiredService<IOptions<LiteDbOptions>>().Value;
-                var basePath = Path.GetFullPath(options.DatabasePath);
-
-                var conn = string.IsNullOrEmpty(options.Password)
-                   ? basePath
-                   : $"Filename={basePath};Password={options.Password};";
-
-                return new LiteDatabase(conn);
-            });
+            services.AddSingleton<LiteDbConnectionStringProvider>();
 
             services.AddScoped<ILiteDbContext, AtronLiteDbContext>();
             services.AddScoped<ILiteUnitOfWork>(provider =>
@@ -89,7 +72,7 @@ namespace Atron.Infra.IoC
                 return new LiteUnitOfWork(((AtronLiteDbContext)ctx)._db);
             });
 
-            services.AddScoped<LiteDataSetContext, AtronLiteDbContext>();         
+            services.AddScoped<LiteDataSetContext, AtronLiteDbContext>();
             services.AddScoped<ILiteFacade, LiteFacade>();
             return services;
         }
@@ -123,7 +106,7 @@ namespace Atron.Infra.IoC
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
-        } 
+        }
 
         private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
         {

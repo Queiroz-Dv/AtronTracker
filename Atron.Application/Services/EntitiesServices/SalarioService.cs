@@ -47,7 +47,7 @@ namespace Atron.Application.Services.EntitiesServices
             {
                 await AtualizarSalarioUsuario(entidade, usuario);
                 await _salarioRepository.AtualizarSalarioRepositoryAsync(id, entidade);
-                _messageModel.AddMessage($"Salário do usuário {usuario.Nome} atualizado com sucesso");
+                _messageModel.AdicionarMensagem($"Salário do usuário {usuario.Nome} atualizado com sucesso");
                 return;
             }
         }
@@ -71,7 +71,7 @@ namespace Atron.Application.Services.EntitiesServices
             {
                 await AtualizarSalarioUsuario(entidade, usuario);
                 await _salarioRepository.CriarSalarioAsync(entidade);
-                _messageModel.AddMessage($"Informação de salário criado para o usuário {usuario.Nome}");
+                _messageModel.AdicionarMensagem($"Informação de salário criado para o usuário {usuario.Nome}");
             }
         }
 
@@ -82,7 +82,7 @@ namespace Atron.Application.Services.EntitiesServices
             if (salario is not null)
             {
                 await _salarioRepository.RemoverRepositoryAsync(salario);
-                _messageModel.AddRegisterRemovedSuccessMessage($"Informação de salário removida.");
+                _messageModel.MensagemRegistroRemovido($"Informação de salário removida.");
             }
         }        
 

@@ -38,7 +38,7 @@ namespace Atron.Application.Services.EntitiesServices
             if (!_messageModel.Notificacoes.HasErrors())
             {
                 await _tarefaRepository.CriarTarefaAsync(tarefa);
-                _messageModel.AddMessage("Tarefa gravada com sucesso.");
+                _messageModel.AdicionarMensagem("Tarefa gravada com sucesso.");
             }
         }
 
@@ -52,7 +52,7 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (tarefaDTO is null)
             {
-                _messageModel.AddRegisterInvalidMessage();
+                _messageModel.MensagemRegistroInvalido();
                 return;
             }
 
@@ -62,7 +62,7 @@ namespace Atron.Application.Services.EntitiesServices
             if (!_messageModel.Notificacoes.HasErrors())
             {
                 await _tarefaRepository.AtualizarTarefaAsync(id, tarefa);
-                _messageModel.AddMessage("Tarefa atualizada com sucesso");
+                _messageModel.AdicionarMensagem("Tarefa atualizada com sucesso");
                 return;
             }
         }
@@ -73,12 +73,12 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (tarefa is null)
             {
-                _messageModel.AddRegisterNotFoundMessage(nameof(Tarefa));
+                _messageModel.MensagemRegistroNaoEncontrado(nameof(Tarefa));
             }
             else
             {
                 await _tarefaRepository.RemoverRepositoryAsync(tarefa);
-                _messageModel.AddMessage("Tarefa removida com sucesso");
+                _messageModel.AdicionarMensagem("Tarefa removida com sucesso");
             }
         }
 
@@ -88,7 +88,7 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (tarefaRepository is null)
             {
-                _messageModel.AddRegisterNotFoundMessage();
+                _messageModel.MensagemRegistroNaoEncontrado();
                 return null;
             }
 

@@ -48,12 +48,12 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (perfilDeAcessoDTO is null)
             {
-                _messageModel.AddError("O perfil de acesso está inválido para gravação.");
+                _messageModel.AdicionarErro("O perfil de acesso está inválido para gravação.");
             }
 
             if (!perfilDeAcessoDTO.Modulos.Any())
             {
-                _messageModel.AddError("Não contém nenhum módulo para relacionar ao perfil criado.");
+                _messageModel.AdicionarErro("Não contém nenhum módulo para relacionar ao perfil criado.");
             }
         }
 
@@ -77,7 +77,7 @@ namespace Atron.Application.Services.EntitiesServices
                     var prf = await _perfilDeAcessoRepository.AtualizarPerfilRepositoryAsync(codigo, perfilDeAcesso);
                     if (prf)
                     {
-                        _messageModel.AddMessage($"Perfil de acesso {perfilDeAcesso.Codigo} atualizado com sucesso.");
+                        _messageModel.AdicionarMensagem($"Perfil de acesso {perfilDeAcesso.Codigo} atualizado com sucesso.");
 
                         return prf;
                     }
@@ -130,7 +130,7 @@ namespace Atron.Application.Services.EntitiesServices
                     var prf = await _perfilDeAcessoRepository.CriarPerfilRepositoryAsync(perfilDeAcesso);
                     if (prf)
                     {
-                        _messageModel.AddMessage($"Perfil de acesso {perfilDeAcesso.Codigo} criado com sucesso.");
+                        _messageModel.AdicionarMensagem($"Perfil de acesso {perfilDeAcesso.Codigo} criado com sucesso.");
 
                         return prf;
                     }
@@ -145,12 +145,12 @@ namespace Atron.Application.Services.EntitiesServices
             var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
             if (perfil is null)
             {
-                _messageModel.AddRegisterNotFoundMessage("Perfil de acesso");
+                _messageModel.MensagemRegistroNaoEncontrado("Perfil de acesso");
             }
             else
             {
                 var result = await _perfilDeAcessoRepository.DeletarPerfilRepositoryAsync(perfil);
-                _messageModel.AddMessage("Perfil removido com sucesso");
+                _messageModel.AdicionarMensagem("Perfil removido com sucesso");
 
                 return result;
             }
@@ -234,12 +234,12 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (perfilDeAcessoUsuario.PerfilDeAcesso is null)
             {
-                _messageModel.AddError("O perfil de acesso está inválido para gravação.");
+                _messageModel.AdicionarErro("O perfil de acesso está inválido para gravação.");
             }
 
             if (!perfilDeAcessoUsuario.Usuarios.Any())
             {
-                _messageModel.AddError("Não contém nenhum usuário para relacionar ao perfil criado.");
+                _messageModel.AdicionarErro("Não contém nenhum usuário para relacionar ao perfil criado.");
             }
         }
 

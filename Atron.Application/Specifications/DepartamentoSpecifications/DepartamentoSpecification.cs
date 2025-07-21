@@ -1,5 +1,4 @@
 ﻿using Atron.Application.DTO;
-using System.Collections.Generic;
 
 namespace Atron.Application.Specifications.DepartamentoSpecifications
 {
@@ -12,11 +11,9 @@ namespace Atron.Application.Specifications.DepartamentoSpecifications
             _codigo = codigo;
         }
 
-        public List<string> Errors => throw new System.NotImplementedException();
-
         public bool IsSatisfiedBy(DepartamentoDTO entity)
         {
-            return entity.Codigo.Equals(_codigo);
+            return entity.Codigo.ToUpper().Equals(_codigo.ToUpper());
         }
     }
 }

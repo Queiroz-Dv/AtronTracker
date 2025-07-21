@@ -13,32 +13,32 @@ namespace Atron.Application.Validations
             if (string.IsNullOrEmpty(entity.Descricao) ||
                  string.IsNullOrEmpty(entity.Codigo))
             {
-                AddError("O código ou a descrição não estão preenchidos.");
+                AdicionarErro("O código ou a descrição não estão preenchidos.");
             }
 
             if (entity.Codigo.Length > 10)
             {
-                AddError("O código informado é muito longo.");
+                AdicionarErro("O código informado é muito longo.");
             }
 
             if (entity.Codigo.Length < 3)
             {
-                AddError("O código informado é muito pequeno.");
+                AdicionarErro("O código informado é muito pequeno.");
             }
 
             if (entity.Descricao.Length < 3)
             {
-                AddError("A descricao é muito pequena.");
+                AdicionarErro("A descricao é muito pequena.");
             }
 
             if (entity.Descricao.Length > 50)
             {
-                AddError("A descricao é muito longa.");
+                AdicionarErro("A descricao é muito longa.");
             }
 
             if (!entity.PerfilDeAcessoModulos.Any())
             {
-                AddError("Não contém nenhum módulo para relacionar ao perfil criado.");
+                AdicionarErro("Não contém nenhum módulo para relacionar ao perfil criado.");
             }           
         }
     }
