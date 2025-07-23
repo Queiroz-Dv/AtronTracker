@@ -7,12 +7,7 @@ namespace Atron.Domain.Entities
 {
     [ModuloInfo("USR", nameof(Usuario))]
     public class Usuario : EntityBase
-    {
-        public Usuario()
-        {
-             UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>();
-        }
-
+    {        
         public string Codigo { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }

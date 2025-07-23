@@ -1,6 +1,5 @@
-﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.DTO.ApiDTO;
-using Atron.Application.Interfaces.Contexts;
+﻿using Atron.Application.DTO.ApiDTO;
+using Atron.Application.Interfaces.ApplicationInterfaces;
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +19,9 @@ namespace Atron.WebApi.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginService>
+    public class AcessoController : ApiBaseConfigurationController<ApiLogin, ILoginService>
     {
-        public AppLoginController(
+        public AcessoController(
             MessageModel messageModel,
             ILoginService loginUserService,
             IServiceAccessor serviceAccessor)
@@ -34,7 +33,7 @@ namespace Atron.WebApi.Controllers
         /// </summary>
         /// <param name="loginDTO">DTO que será autenticado </param>
         /// <returns>O resultado do processamento</returns>
-        [HttpPost("Logar")]
+        [HttpPost(nameof(Login))]
         public async Task<ActionResult<DadosDoTokenDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
             var dto = await _service.Autenticar(loginDTO);
@@ -85,11 +84,22 @@ namespace Atron.WebApi.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        [HttpPost("TrocarSenha")]
-        public async Task<ActionResult> TrocarSenha([FromBody] LoginRequestDTO dto)
+        [HttpPost(nameof(TrocarSenha))]
+        public async Task<ActionResult<bool>> TrocarSenha([FromBody] LoginRequestDTO dto)
         {
             var result = await _service.TrocarSenha(dto);
             return Ok(result);
+        }
+
+        [HttpPost("Registrar")]
+        public async Task<ActionResult> Post([FromBody] UsuarioRegistroDTO registerDTO)
+        {
+            var _registroUsuarioService = ObterService<IRegistroUsuarioService>();
+            await _registroUsuarioService.RegistrarUsuario(registerDTO);
+
+            return _messageModel.Notificacoes.HasErrors() ?
+                BadRequest(ObterNotificacoes()) :
+                Ok(ObterNotificacoes());
         }
     }
 }

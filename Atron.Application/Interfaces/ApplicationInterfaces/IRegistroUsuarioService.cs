@@ -1,7 +1,7 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using System.Threading.Tasks;
 
-namespace Atron.Application.ApiInterfaces.ApplicationInterfaces
+namespace Atron.Application.Interfaces.ApplicationInterfaces
 {
     public interface IRegistroUsuarioService
     {

@@ -1,6 +1,5 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Infrastructure.Interfaces;
-using LiteDB;
 
 namespace Atron.Infrastructure.Context
 {
@@ -20,6 +19,8 @@ namespace Atron.Infrastructure.Context
 
         public IDataSet<PerfilDeAcesso> PerfisDeAcesso { get; set; }
 
-        public LiteDatabase _db { get; set; }
+        public IDataSet<PerfilDeAcessoModulo> PerfisDeAcessoModulo { get; set; }
+
+        public IDataSet<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario {  get; set; }
     }
 }

@@ -2,6 +2,8 @@
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Interfaces;
 using Shared.Interfaces.Accessor;
+using Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,43 +12,88 @@ namespace Atron.Infrastructure.Repositories
 {
     public class UsuarioRepository : IUsuarioRepository
     {
-        public UsuarioRepository(ILiteFacade liteFacade,
-            IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
-        { }
+        private ILiteDbContext context;
+        private ILiteUnitOfWork unitOfWork;
+        private IServiceAccessor serviceAccessor;
+
+        public UsuarioRepository(ILiteDbContext context,
+                                 ILiteUnitOfWork unitOfWork,
+                                 IServiceAccessor serviceAccessor)
+        {
+            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.serviceAccessor = serviceAccessor;
+        }
 
         public async Task<bool> AtualizarSalario(int usuarioId, int quantidadeTotal)
         {
-            var usuario = await Usuarios.FindByIdAsync(usuarioId);
-            if (usuario != null)
-                usuario.SalarioAtual = quantidadeTotal;
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var usuario = await context.Usuarios.FindByIdAsync(usuarioId);
+                if (usuario != null)
+                    usuario.SalarioAtual = quantidadeTotal;
 
-            return await Usuarios.UpdateAsync(usuario);
+                var atualizado = await context.Usuarios.UpdateAsync(usuario);
+                unitOfWork.Commit();
+                return atualizado;
+
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
         }
 
         public async Task<bool> AtualizarUsuarioAsync(string codigo, Usuario usuario)
         {
-            var usuarioBd = await Usuarios.FindOneAsync(usr => usr.Codigo == codigo);
-            usuarioBd.Nome = usuario.Nome;
-            usuarioBd.Sobrenome = usuario.Sobrenome;
-            usuarioBd.DataNascimento = usuario.DataNascimento;
-            usuarioBd.SalarioAtual = usuario.SalarioAtual;
-            usuarioBd.Email = usuario.Email;
-            usuarioBd.UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos;
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var usuarioBd = await context.Usuarios.FindOneAsync(usr => usr.Codigo == codigo);
+                usuarioBd.Nome = usuario.Nome;
+                usuarioBd.Sobrenome = usuario.Sobrenome;
+                usuarioBd.DataNascimento = usuario.DataNascimento;
+                usuarioBd.SalarioAtual = usuario.SalarioAtual;
+                usuarioBd.Email = usuario.Email;
+                usuarioBd.UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos;
 
-            return await Usuarios.UpdateAsync(usuarioBd);
+                var atualizado = await context.Usuarios.UpdateAsync(usuarioBd);
+                unitOfWork.Commit();
+                return atualizado;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
         }
 
         public async Task<bool> CriarUsuarioAsync(Usuario usuario)
         {
-            var gravado = await Usuarios.InsertAsync(usuario);
-            return gravado > 0;
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var gravado = await context.Usuarios.InsertAsync(usuario);
+                unitOfWork.Commit();
+                return gravado > 0;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
         }
 
         public async Task<UsuarioIdentity> ObterUsuarioPorCodigoAsync(string codigo)
         {
-            var relacionamentos = await UsuarioCargoDepartamentos.FindAllAsync();
-            var applicationUser = await Users.FindOneAsync(usr => usr.Codigo == codigo);
-            var usuario = await Usuarios.FindOneAsync(usr => usr.Codigo == codigo);
+            var relacionamentos = await context.UsuarioCargoDepartamentos.FindAllAsync();
+            var applicationUser = await context.UsuarioIdentity.FindOneAsync(usr => usr.Codigo == codigo);
+            var usuario = await context.Usuarios.FindOneAsync(usr => usr.Codigo == codigo);
 
             foreach (var item in relacionamentos)
             {
@@ -58,6 +105,7 @@ namespace Atron.Infrastructure.Repositories
 
             var usuarioIdentity = new UsuarioIdentity
             {
+                Id = usuario.Id,
                 Codigo = usuario.Codigo,
                 Nome = usuario.Nome,
                 Sobrenome = usuario.Sobrenome,
@@ -74,13 +122,13 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Usuario> ObterUsuarioPorIdAsync(int? id)
         {
-            return await Usuarios.FindByIdAsync(id);
+            return await context.Usuarios.FindByIdAsync(id);
         }
 
         public async Task<IEnumerable<Usuario>> ObterUsuariosAsync()
         {
-            var relacionamentos = await UsuarioCargoDepartamentos.FindAllAsync();
-            var usuarios = await Usuarios.FindAllAsync();
+            var relacionamentos = await context.UsuarioCargoDepartamentos.FindAllAsync();
+            var usuarios = await context.Usuarios.FindAllAsync();
 
             // Monta lista de usuários com seus relacionamentos
             var usuariosComRelacionamentos = usuarios.Select(usr =>
@@ -96,20 +144,32 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<bool> RemoverUsuarioAsync(Usuario usuario)
         {
-            var usuarioBd = await Usuarios.FindOneAsync(usr => usr.Codigo == usuario.Codigo);
-            return await Usuarios.DeleteAsync(usuarioBd.Id);
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var usuarioBd = await context.Usuarios.FindOneAsync(usr => usr.Codigo == usuario.Codigo);
+                var deletado = await context.Usuarios.DeleteAsync(usuarioBd.Id);
+                unitOfWork.Commit();
+                return deletado;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
         }
 
-        public bool UsuarioExiste(string codigo)
+        public async Task<bool> UsuarioExiste(string codigo)
         {
-            return Usuarios.AnyAsync(usr => usr.Codigo == codigo).Result;
+            return await context.Usuarios.AnyAsync(usr => usr.Codigo == codigo);
         }
 
         public async Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()
         {
-            var applicationUsers = (await Users.FindAllAsync()).ToList();
-            var relacionamentos = (await UsuarioCargoDepartamentos.FindAllAsync()).ToList();
-            var usuarios = (await Usuarios.FindAllAsync()).ToList();
+            var applicationUsers = (await context.UsuarioIdentity.FindAllAsync()).ToList();
+            var relacionamentos = (await context.UsuarioCargoDepartamentos.FindAllAsync()).ToList();
+            var usuarios = (await context.Usuarios.FindAllAsync()).ToList();
 
             var usuariosIdentity = new List<UsuarioIdentity>();
 

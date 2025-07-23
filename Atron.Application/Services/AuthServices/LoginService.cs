@@ -1,6 +1,6 @@
-﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.ApiServices.AuthServices.Bases;
+﻿using Atron.Application.Interfaces.ApplicationInterfaces;
 using Atron.Application.Interfaces.Services.Identity;
+using Atron.Application.Services.AuthServices.Bases;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Shared.DTO.API;
@@ -14,7 +14,7 @@ using Shared.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace Atron.Application.ApiServices.AuthServices
+namespace Atron.Application.Services.AuthServices
 {
     public class LoginService : LoginBaseService, ILoginService
     {

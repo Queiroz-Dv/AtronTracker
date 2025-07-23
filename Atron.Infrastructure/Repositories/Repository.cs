@@ -18,7 +18,6 @@ namespace Atron.Infrastructure.Repositories
 
         public Repository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
         {
-            _dbSet = new LiteDbSet<TEntity>(_facade.LiteDbContext._db, CollectionName);
         }
 
         public async Task<bool> AtualizarRepositoryAsync(TEntity entity)

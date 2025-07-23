@@ -7,7 +7,7 @@ namespace Atron.Domain.Interfaces.Identity
     /// <summary>
     /// Interface para o repositório de usuários da aplicação.
     /// </summary>
-    public interface IUsuarioIdentityRepository : IRepository<UsuarioIdentity>
+    public interface IUsuarioIdentityRepository
     {
         /// <summary>
         /// Recupera o refresh token associado ao código do usuário.
@@ -15,6 +15,8 @@ namespace Atron.Domain.Interfaces.Identity
         /// <param name="codigoUsuario"> Código do usuário para o qual o refresh token será recuperado. </param>
         /// <returns> Retorna o refresh token associado ao código do usuário. </returns>
         Task<string> ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(string codigoUsuario);
+
+        Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario);
 
         /// <summary>
         /// Obtém o refresh token associado ao token de refresh fornecido.

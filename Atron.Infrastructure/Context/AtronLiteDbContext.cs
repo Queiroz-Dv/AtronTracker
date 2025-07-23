@@ -1,12 +1,15 @@
 ﻿using Atron.Domain.Entities;
 using LiteDB;
 using Shared.Extensions;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Atron.Infrastructure.Context
 {
     public class AtronLiteDbContext : LiteDataSetContext
-    {        
+    {
+        public readonly LiteDatabase _db;
+
         public AtronLiteDbContext(LiteDatabase db)
         {
             _db = db;
@@ -18,6 +21,8 @@ namespace Atron.Infrastructure.Context
             UsuarioCargoDepartamentos = new LiteDbSet<UsuarioCargoDepartamento>(_db, "UsuarioCargoDepartamentos");
             Modulos = new LiteDbSet<Modulo>(_db, "Modulos");
             PerfisDeAcesso = new LiteDbSet<PerfilDeAcesso>(_db, "PerfisDeAcesso");
+            PerfisDeAcessoModulo = new LiteDbSet<PerfilDeAcessoModulo>(_db, "PerfisDeAcessoModulo");
+            PerfisDeAcessoUsuario = new LiteDbSet<PerfilDeAcessoUsuario>(_db, "PerfisDeAcessoUsuario");
         }
 
         public void EnsureIndexes()
@@ -27,6 +32,29 @@ namespace Atron.Infrastructure.Context
             EnsudereUsuarioIdentityIndexes();
             EnsureUsuarioIndexes();
             EnsureModuloIndexes();
+            EnsurePerfilDeAcessoIndexes();  
+        }
+        
+        private void EnsurePerfilDeAcessoIndexes()
+        {
+            var perfis = GetCollection<PerfilDeAcesso>("PerfisDeAcesso");
+            perfis.EnsureIndex(p => p.Codigo, unique: true);
+
+            var perfisInit = new List<PerfilDeAcesso>()
+            {
+                new PerfilDeAcesso(){ Codigo = "PRF-CMM", Descricao = "Perfil Comum"},
+                new PerfilDeAcesso(){ Codigo = "PRF-ADMIN", Descricao = "Perfil Geral"}
+            };
+
+            var perfisBd = perfis.FindAll().ToList();
+
+            foreach (var perfil in perfisInit)
+            {
+                if (!perfisBd.Any(p => p.Codigo == perfil.Codigo))
+                {
+                    perfis.Insert(perfil);
+                }
+            }
         }
 
         private void EnsureModuloIndexes()

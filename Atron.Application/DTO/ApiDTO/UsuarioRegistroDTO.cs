@@ -1,18 +1,22 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace Atron.Application.DTO.ApiDTO
 {
     public class UsuarioRegistroDTO
     {
-        public int Id { get; set; }
-
+        [DisplayName("Código")]
         public string Codigo { get; set; }
 
         public string Nome { get; set; }
 
         public string Sobrenome { get; set; }
 
+        [DisplayName("Data de nascimento")]
         public DateOnly? DataNascimento { get; set; }
+
+        [DisplayName("Códigod de perfil de acesso")]
+        public string? CodigoPerfilDeAcesso { get; set; }
 
         public string Email { get; set; }
 

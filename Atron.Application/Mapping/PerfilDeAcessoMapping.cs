@@ -11,15 +11,19 @@ namespace Atron.Application.Mapping
         {
             var dto = new PerfilDeAcessoDTO() { Id = entity.Id, Codigo = entity.Codigo, Descricao = entity.Descricao, };
             dto.Modulos = new List<ModuloDTO>();
-            foreach (var item in entity.PerfilDeAcessoModulos)
+
+            if (entity.PerfilDeAcessoModulos != null)
             {
-                var moduloDto = new ModuloDTO
+                foreach (var item in entity.PerfilDeAcessoModulos)
                 {
-                    Codigo = item.Modulo.Codigo,
-                    Descricao = item.Modulo.Descricao
-                };
-                
-                dto.Modulos.Add(moduloDto);
+                    var moduloDto = new ModuloDTO
+                    {
+                        Codigo = item.Modulo.Codigo,
+                        Descricao = item.Modulo.Descricao
+                    };
+
+                    dto.Modulos.Add(moduloDto);
+                }
             }
 
             return dto;

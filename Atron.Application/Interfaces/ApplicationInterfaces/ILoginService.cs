@@ -2,7 +2,7 @@
 using Shared.DTO.API.Request;
 using System.Threading.Tasks;
 
-namespace Atron.Application.ApiInterfaces.ApplicationInterfaces
+namespace Atron.Application.Interfaces.ApplicationInterfaces
 {
     /// <summary>
     /// Classe de autenticação para os usuários

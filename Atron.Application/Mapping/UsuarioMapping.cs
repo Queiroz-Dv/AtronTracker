@@ -4,8 +4,6 @@ using Atron.Domain.Interfaces;
 using Shared.DTO.API;
 using Shared.Services.Mapper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Atron.Application.Mapping
 {
@@ -37,7 +35,7 @@ namespace Atron.Application.Mapping
                 }
             };
 
-            if (entity.UsuarioCargoDepartamentos.Any())
+            if (entity.UsuarioCargoDepartamentos != null)
             {
                 foreach (var item in entity.UsuarioCargoDepartamentos)
                 {
@@ -56,7 +54,7 @@ namespace Atron.Application.Mapping
                     };
 
                     usuario.Departamento = new DepartamentoDTO(departamentoBd.Codigo, departamentoBd.Descricao);
-                        
+
                     usuario.CargoCodigo = cargoBd.Codigo;
                     usuario.DepartamentoCodigo = departamentoBd.Codigo;
                 }

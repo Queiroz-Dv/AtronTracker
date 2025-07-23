@@ -1,6 +1,6 @@
-﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.ApiServices.AuthServices;
+﻿using Atron.Application.Interfaces.ApplicationInterfaces;
 using Atron.Application.Interfaces.Services;
+using Atron.Application.Services.AuthServices;
 using Atron.Application.Services.EntitiesServices;
 using Atron.Domain.Componentes;
 using Atron.Domain.Entities;

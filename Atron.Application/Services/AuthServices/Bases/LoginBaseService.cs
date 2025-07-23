@@ -5,7 +5,7 @@ using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Services;
 
-namespace Atron.Application.ApiServices.AuthServices.Bases
+namespace Atron.Application.Services.AuthServices.Bases
 {
     public abstract class LoginBaseService : ServiceBase
     {

@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Atron.Domain.Entities
 {
     public class UsuarioIdentity : Usuario
     {
-        public UsuarioIdentity()
-        {
-            UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>();
-            PerfisDeAcessoUsuario = new List<PerfilDeAcessoUsuario>();
-        }
-
         // Campos de Identidade
         public string NomeDeUsuario { get; set; }
         public string NomeDeUsuarioNormalizado { get; set; }
@@ -35,6 +28,6 @@ namespace Atron.Domain.Entities
         public DateTime RefreshTokenExpireTime { get; set; }
 
         public string Senha { get; set; }
-        public string Token { get; set; }        
+        public string Token { get; set; }
     }
 }

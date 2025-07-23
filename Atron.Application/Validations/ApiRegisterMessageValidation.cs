@@ -11,19 +11,19 @@ namespace Atron.Application.Validations
     {
         public void Validate(UsuarioRegistro entity)
         {
-            var senha = entity.Password;
+            var senha = entity.Senha;
 
-            if (entity.UserName.IsNullOrEmpty())
+            if (entity.CodigoDeAcesso.IsNullOrEmpty())
             {
                 AdicionarErro("Nome de usuário vazio ou não informado.");
             }
 
-            if (entity.Password.IsNullOrEmpty())
+            if (entity.Senha.IsNullOrEmpty())
             {
                 AdicionarErro("Senha vazia ou não informada.");
             }
 
-            if (entity.Password.Length < 9)
+            if (entity.Senha.Length < 9)
             {
                 AdicionarErro("A senha deve conter mais de 8 caracteres");
             }
@@ -43,12 +43,12 @@ namespace Atron.Application.Validations
                 AdicionarErro("Endereço de e-mail vazio ou não informado.");
             }
 
-            if (!entity.Password.Equals(entity.ConfirmPassword))
+            if (!entity.Senha.Equals(entity.ConfirmarSenha))
             {
                 AdicionarErro("As senhas não são iguais");
             }
 
-            if (entity.UserName.Length > 50)
+            if (entity.CodigoDeAcesso.Length > 50)
             {
                 AdicionarErro("Quantidade de caracteres para o nome de usuário excedido. Tamanho máximo de 50 caracteres.");
             }

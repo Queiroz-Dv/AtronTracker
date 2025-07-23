@@ -138,10 +138,10 @@ namespace Atron.Application.Services.EntitiesServices
                 {
                     var register = new UsuarioRegistro()
                     {
-                        UserName = entidade.Codigo,
+                        CodigoDeAcesso = entidade.Codigo,
                         Email = entidade.Email,
-                        Password = usuarioDTO.Senha,
-                        ConfirmPassword = usuarioDTO.Senha
+                        Senha = usuarioDTO.Senha,
+                        ConfirmarSenha = usuarioDTO.Senha
                     };
 
                     //var registerOk = await _registerApplicationRepository.RegisterUserAccountAsync(register);

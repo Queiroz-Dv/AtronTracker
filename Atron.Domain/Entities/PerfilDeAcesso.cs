@@ -12,7 +12,7 @@ namespace Atron.Domain.Entities
 
         public Usuario Usuario { get; set; }
 
-        public ICollection<PerfilDeAcessoModulo> PerfilDeAcessoModulos { get; set; } = new List<PerfilDeAcessoModulo>();
+        public ICollection<PerfilDeAcessoModulo> PerfilDeAcessoModulos { get; set; }
         public ICollection<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario { get; set; }
     }
 }
