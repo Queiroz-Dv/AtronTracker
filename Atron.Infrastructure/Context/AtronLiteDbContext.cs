@@ -23,6 +23,7 @@ namespace Atron.Infrastructure.Context
             PerfisDeAcesso = new LiteDbSet<PerfilDeAcesso>(_db, "PerfisDeAcesso");
             PerfisDeAcessoModulo = new LiteDbSet<PerfilDeAcessoModulo>(_db, "PerfisDeAcessoModulo");
             PerfisDeAcessoUsuario = new LiteDbSet<PerfilDeAcessoUsuario>(_db, "PerfisDeAcessoUsuario");
+            Tarefas = new LiteDbSet<Tarefa>(_db, "Tarefas");
         }
 
         public void EnsureIndexes()

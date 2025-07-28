@@ -11,9 +11,12 @@ using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
 using Atron.Infrastructure.Repositories;
 using Atron.Infrastructure.Repositories.ApplicationRepositories;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace Atron.Infra.IoC
@@ -74,6 +77,10 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<LiteDataSetContext, AtronLiteDbContext>();
             services.AddScoped<ILiteFacade, LiteFacade>();
+            services.AddDataProtection()
+                .SetApplicationName("Atron")
+                .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
+                .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
             return services;
         }
 

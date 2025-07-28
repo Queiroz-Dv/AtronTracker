@@ -1,4 +1,5 @@
 ﻿using Atron.Application.Interfaces.ApplicationInterfaces;
+using Atron.Application.Interfaces.Services;
 using Atron.Application.Interfaces.Services.Identity;
 using Atron.Application.Services.AuthServices.Bases;
 using Atron.Domain.Entities;
@@ -16,15 +17,17 @@ using System.Threading.Tasks;
 
 namespace Atron.Application.Services.AuthServices
 {
-    public class LoginService : LoginBaseService, ILoginService
+    public class LoginService : ServiceBase, ILoginService
     {
         const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
+        private readonly ILoginRepository _loginRepository;
+
         private DadosDoTokenDTO CriarToken(string token, DateTime expires) => new(token, expires);
 
-        public LoginService(
-            IServiceAccessor serviceAccessor,
-            ILoginRepository loginRepository) : base(serviceAccessor, loginRepository) { }
-
+        public LoginService(IServiceAccessor serviceAccessor, ILoginRepository loginRepository) : base(serviceAccessor)
+        {
+            _loginRepository = loginRepository;
+        }
 
         public async Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO loginRequest)
         {
@@ -89,7 +92,7 @@ namespace Atron.Application.Services.AuthServices
             {
                 var dadosDeToken = await TokenService.ObterTokenComRefreshToken(dadosComplementares);
 
-                var result = await _loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity()
+                var autenticado = await _loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity()
                 {
                     Codigo = dadosComplementares.DadosDoUsuario.CodigoDoUsuario,
                     Token = dadosDeToken.TokenDTO.Token,
@@ -97,7 +100,7 @@ namespace Atron.Application.Services.AuthServices
                     RefreshTokenExpireTime = dadosDeToken.RefrehTokenDTO.Expires,
                 });
 
-                if (!result)
+                if (!autenticado)
                 {
                     Messages.AdicionarErro(ERRO_AUTENTICACAO);
                     return null;
@@ -115,9 +118,9 @@ namespace Atron.Application.Services.AuthServices
 
         public async Task<bool> Logout(string usuarioCodigo)
         {
-            var cacheService = _serviceAccessor.ObterService<ICacheService>();
-            var identityService = _serviceAccessor.ObterService<IUserIdentityService>();
-            var cookieService = _serviceAccessor.ObterService<ICookieService>();
+            var cacheService = ObterService<ICacheService>();
+            var identityService = ObterService<IUserIdentityService>();
+            var cookieService = ObterService<ICookieService>();
 
             cacheService.RemoverCache(ECacheKeysInfo.Acesso, usuarioCodigo);
             cacheService.RemoverCache(ECacheKeysInfo.TokenInfo, usuarioCodigo);
@@ -141,5 +144,14 @@ namespace Atron.Application.Services.AuthServices
         {
             return await _loginRepository.AtualizarSenhaUsuario(dto.CodigoDoUsuario, dto.Senha);
         }
+
+        #region Services
+        private IUsuarioService UsuarioService => ObterService<IUsuarioService>();
+        private IDadosComplementaresDoUsuarioService DadosComplementaresDoUsuarioService => ObterService<IDadosComplementaresDoUsuarioService>();
+        private ITokenService TokenService => ObterService<ITokenService>();
+        private ICacheUsuarioService CacheUsuarioService => ObterService<ICacheUsuarioService>();
+        private ICookieService CookieService => ObterService<ICookieService>();
+        private IUserIdentityService UserIdentityService => ObterService<IUserIdentityService>();
+        #endregion
     }
 }

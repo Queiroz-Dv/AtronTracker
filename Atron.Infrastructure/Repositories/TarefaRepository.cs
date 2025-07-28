@@ -4,6 +4,7 @@ using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Shared.Interfaces.Accessor;
+using Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,35 +12,26 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class TarefaRepository : Repository<Tarefa>, ITarefaRepository
+    public class TarefaRepository : ITarefaRepository
     {
-        public TarefaRepository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
+        private ILiteDbContext context;
+        private ILiteUnitOfWork unitOfWork;
+        private IServiceAccessor serviceAccessor;
+
+        public TarefaRepository(ILiteDbContext context,
+                                ILiteUnitOfWork unitOfWork,
+                                IServiceAccessor serviceAccessor)
         {
+            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.serviceAccessor = serviceAccessor;
         }
 
-        //private readonly AtronDbContext _context;
-
-
-        public async Task<Tarefa> AtualizarTarefaAsync(int id, Tarefa tarefa)
+        public async Task<bool> AtualizarTarefaAsync(int id, Tarefa tarefa)
         {
-            var tarefaBD = await ObterTarefaPorId(id);            
-            AtualizarEntidadeParaPersistencia(tarefa, tarefaBD);
+            var tarefaBD = await ObterTarefaPorId(id);
 
-            //try
-            //{
-            //    _context.Tarefas.Update(tarefaBD);
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw ex;
-            //}
-
-            return new Tarefa();
-        }
-
-        private static void AtualizarEntidadeParaPersistencia(Tarefa tarefa, Tarefa tarefaBD)
-        {
+            unitOfWork.BeginTransaction();
             tarefaBD.UsuarioId = tarefa.UsuarioId;
             tarefaBD.UsuarioCodigo = tarefa.UsuarioCodigo;
             tarefaBD.Titulo = tarefa.Titulo;
@@ -47,8 +39,21 @@ namespace Atron.Infrastructure.Repositories
             tarefaBD.DataInicial = tarefa.DataInicial;
             tarefaBD.DataFinal = tarefa.DataFinal;
             tarefaBD.TarefaEstadoId = tarefa.TarefaEstadoId;
-        }
 
+            try
+            {
+                var atualizado = await context.Tarefas.UpdateAsync(tarefaBD);
+                unitOfWork.Commit();
+                return atualizado;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }          
+        }
+        
         public async Task<Tarefa> CriarTarefaAsync(Tarefa tarefa)
         {
             //try

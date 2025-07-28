@@ -3,6 +3,7 @@ using Atron.Application.DTO.Request;
 using Atron.Application.DTO.Response;
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
 using Shared.Interfaces.Accessor;
@@ -17,7 +18,7 @@ namespace Atron.WebApi.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Policy = "Modulo:CRG")]
+    [Authorize(Policy = "Modulo:CRG")]
     public class CargoController : ApiBaseConfigurationController<Cargo, ICargoService>
     {
         /// <summary>

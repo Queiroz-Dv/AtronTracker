@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces
 {
-    public interface ITarefaRepository : IRepository<Tarefa>
+    public interface ITarefaRepository 
     {
         Task<Tarefa> ObterTarefaPorId(int id);
 

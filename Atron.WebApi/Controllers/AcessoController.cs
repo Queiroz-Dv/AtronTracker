@@ -1,6 +1,5 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using Atron.Application.Interfaces.ApplicationInterfaces;
-using Atron.Application.Interfaces.Services;
 using Atron.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -50,16 +49,10 @@ namespace Atron.WebApi.Controllers
         public async Task<IActionResult> Refresh()
         {
             var cookieService = ObterService<ICookieService>();
-            var cacheUsuarioService = ObterService<ICacheUsuarioService>();
-
-            var dadosDeToken = cookieService.ObterTokenRefreshTokenPorRequest(Request);
-
-            if (dadosDeToken is null)
-            {
-                dadosDeToken = cacheUsuarioService.ObterDadosDoTokenPorCodigoUsuario(HttpContext.Request.ExtrairCodigoUsuarioDoRequest());
-            }
-
-            var novoToken = await _service.RefreshAcesso(dadosDeToken.TokenDTO);
+          
+            var dadosDeToken = await cookieService.ObterTokenRefreshTokenPorRequest(Request);
+            
+            var novoToken = await _service.RefreshAcesso(dadosDeToken);
             if (novoToken is null) return Unauthorized();
 
             return _messageModel.Notificacoes.HasErrors() ?

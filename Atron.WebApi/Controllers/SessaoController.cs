@@ -6,6 +6,7 @@ using Shared.DTO.API;
 using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Caching;
+using Shared.Interfaces.Services;
 using Shared.Models;
 using System.Linq;
 using System.Security.Claims;
@@ -19,14 +20,14 @@ namespace Atron.WebApi.Controllers
     public class SessaoController : ControllerBase
     {
         private readonly ICacheService _cacheService;
+        private readonly ICookieService cookieService;
         private readonly IPerfilDeAcessoService _perfilDeAcessoService;
-        private readonly IServiceAccessor _serviceAccessor;
 
-        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService, IServiceAccessor serviceAccessor)
+        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService, ICookieService cookieService)
         {
             _cacheService = cacheService;
             _perfilDeAcessoService = perfilDeAcessoService;
-            _serviceAccessor = serviceAccessor;
+            this.cookieService = cookieService;
         }
 
         [HttpGet("Info")]
@@ -48,6 +49,7 @@ namespace Atron.WebApi.Controllers
 
             // Tenta obter do cache
             var dadosCache = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription);
+
 
             var jsonDeRetorno = new
             {
