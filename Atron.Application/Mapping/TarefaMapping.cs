@@ -1,24 +1,21 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Shared.Extensions;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Services.Mapper;
-using System;
 using System.Linq;
 
 namespace Atron.Application.Mapping
 {
     public class TarefaMapping : ApplicationMapService<TarefaDTO, Tarefa>
     {
-        private readonly IRepository<Usuario> _usuarioRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly ICargoRepository _cargoRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly ITarefaRepository _tarefaRepository;
 
-        public TarefaMapping(IRepository<Usuario> usuarioRepository, IDepartamentoRepository departamentoRepository, ICargoRepository cargoRepository)
+        public TarefaMapping(IUsuarioRepository usuarioRepository, ITarefaRepository tarefaRepository)
         {
             _usuarioRepository = usuarioRepository;
-            _departamentoRepository = departamentoRepository;
-            _cargoRepository = cargoRepository;
+            _tarefaRepository = tarefaRepository;
         }
 
         public override TarefaDTO MapToDTO(Tarefa entity)
@@ -39,7 +36,7 @@ namespace Atron.Application.Mapping
                 }
             };
 
-            if (entity.Usuario.UsuarioCargoDepartamentos.Any())
+            if (entity.Usuario.UsuarioCargoDepartamentos != null)
             {
                 foreach (var item in entity.Usuario.UsuarioCargoDepartamentos)
                 {
@@ -49,9 +46,12 @@ namespace Atron.Application.Mapping
                 }
             }
 
-            if (!entity.TarefaEstadoId.ToString().IsNullOrEmpty())
+            if (entity.TarefaEstadoId != 0)
             {
-                dto.EstadoDaTarefa = new TarefaEstadoDTO() { Id =  entity.TarefaEstadoId, Descricao = TarefaEstadoDTO.TarefasEstados().FirstOrDefault(trf => trf.Id == entity.TarefaEstadoId).Descricao };                    
+                var tarefaEstadoDescricaoTask = _tarefaRepository.ObterDescricaoTarefaEstado(entity.TarefaEstadoId);
+                tarefaEstadoDescricaoTask.Wait();
+                var tarefaEstadoDescricao = tarefaEstadoDescricaoTask.Result;
+                dto.EstadoDaTarefa = new TarefaEstado() { Id = entity.TarefaEstadoId, Descricao = tarefaEstadoDescricao };
             }
 
             return dto;
@@ -59,7 +59,7 @@ namespace Atron.Application.Mapping
 
         public override Tarefa MapToEntity(TarefaDTO dto)
         {
-            var usuarioBdTask = _usuarioRepository.ObterPorCodigoRepositoryAsync(dto.UsuarioCodigo);
+            var usuarioBdTask = _usuarioRepository.ObterUsuarioPorCodigoAsync(dto.UsuarioCodigo);
             usuarioBdTask.Wait();
             var usuario = usuarioBdTask.Result;
 
@@ -71,7 +71,7 @@ namespace Atron.Application.Mapping
                 Conteudo = dto.Conteudo,
                 DataInicial = dto.DataInicial,
                 DataFinal = dto.DataFinal,
-                TarefaEstadoId = Convert.ToInt16(dto.EstadoDaTarefa.Id)
+                TarefaEstadoId = dto.EstadoDaTarefa?.Id ?? 0,
             };
         }
     }

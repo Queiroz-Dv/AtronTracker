@@ -1,6 +1,7 @@
 ﻿using Atron.Domain.Entities;
 using LiteDB;
 using Shared.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,6 +25,7 @@ namespace Atron.Infrastructure.Context
             PerfisDeAcessoModulo = new LiteDbSet<PerfilDeAcessoModulo>(_db, "PerfisDeAcessoModulo");
             PerfisDeAcessoUsuario = new LiteDbSet<PerfilDeAcessoUsuario>(_db, "PerfisDeAcessoUsuario");
             Tarefas = new LiteDbSet<Tarefa>(_db, "Tarefas");
+            TarefasEstados = new LiteDbSet<TarefaEstado>(_db, "TarefasEstados");
         }
 
         public void EnsureIndexes()
@@ -33,9 +35,34 @@ namespace Atron.Infrastructure.Context
             EnsudereUsuarioIdentityIndexes();
             EnsureUsuarioIndexes();
             EnsureModuloIndexes();
-            EnsurePerfilDeAcessoIndexes();  
+            EnsurePerfilDeAcessoIndexes();
+
+            InicializarTarefasEstados();
         }
-        
+
+        private void InicializarTarefasEstados()
+        {
+            var tarefasEstados = GetCollection<TarefaEstado>("TarefasEstados");
+            var estadosInit = new List<TarefaEstado>()
+            {
+                new TarefaEstado() { Descricao = "Pendente" },
+                new TarefaEstado() { Descricao = "Em Andamento" },
+                new TarefaEstado() { Descricao = "Concluída" },
+                new TarefaEstado() { Descricao = "Aguardando Aprovação" },
+                new TarefaEstado() { Descricao = "Cancelada" }
+            };
+
+            var estadosBd = tarefasEstados.FindAll().ToList();
+
+            foreach (var estado in estadosInit)
+            {
+                if (!estadosBd.Any(e => e.Descricao == estado.Descricao))
+                {
+                    tarefasEstados.Insert(estado);
+                }
+            }
+        }
+
         private void EnsurePerfilDeAcessoIndexes()
         {
             var perfis = GetCollection<PerfilDeAcesso>("PerfisDeAcesso");

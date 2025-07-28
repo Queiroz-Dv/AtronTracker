@@ -1,4 +1,7 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.DTO.Request;
+using Atron.Application.DTO.Response;
+using Atron.Application.Extensions;
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +16,7 @@ namespace Atron.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Modulo:TAR")]
+    [Authorize(Policy = "Modulo:TRF")]
     public class TarefaController : ApiBaseConfigurationController<Tarefa, ITarefaService>
     {
         public TarefaController(ITarefaService service,
@@ -23,17 +26,23 @@ namespace Atron.WebApi.Controllers
         { }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TarefaDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<TarefaResponse>>> Get()
         {
             var tarefas = await _service.ObterTodosAsync();
+            var tarefasResponse = new List<TarefaResponse>();
 
-            return Ok(tarefas);
+            foreach (var tarefa in tarefas)
+            {                
+                tarefasResponse.Add(tarefa.MontarResponse());
+            }
+
+            return Ok(tarefasResponse);
         }
-
+        
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] TarefaDTO tarefa)
+        public async Task<ActionResult> Post([FromBody] TarefaRequest tarefa)
         {
-            await _service.CriarAsync(tarefa);
+            await _service.CriarAsync(tarefa.MontarDTO());
 
             return _messageModel.Notificacoes.HasErrors() ?
                    BadRequest(ObterNotificacoes()) :
@@ -41,9 +50,9 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] TarefaDTO tarefa)
+        public async Task<ActionResult> Put(int id, [FromBody] TarefaRequest tarefaRequest)
         {
-            await _service.AtualizarAsync(id, tarefa);
+            await _service.AtualizarAsync(id, tarefaRequest.MontarDTO());
 
             return _messageModel.Notificacoes.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());

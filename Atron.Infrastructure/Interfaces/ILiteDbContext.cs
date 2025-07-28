@@ -24,5 +24,7 @@ namespace Atron.Infrastructure.Interfaces
         IDataSet<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario { get; }
 
         IDataSet<Tarefa> Tarefas { get; }
+
+        IDataSet<TarefaEstado> TarefasEstados { get; }
     }
 }

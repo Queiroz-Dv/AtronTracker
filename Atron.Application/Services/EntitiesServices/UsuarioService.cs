@@ -187,7 +187,7 @@ namespace Atron.Application.Services.EntitiesServices
                 {
                     foreach (var item in tarefasDoUsuario)
                     {
-                        await _tarefaRepository.RemoverRepositoryAsync(item);
+                        await _tarefaRepository.ExcluirTarefaAsync(item.Id);
                     }
                 }
 

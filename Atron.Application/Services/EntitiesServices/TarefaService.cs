@@ -37,15 +37,18 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                await _tarefaRepository.CriarTarefaAsync(tarefa);
-                _messageModel.AdicionarMensagem("Tarefa gravada com sucesso.");
+                var gravado = await _tarefaRepository.CriarTarefaAsync(tarefa);
+                if (gravado)
+                {
+                    _messageModel.AdicionarMensagem("Tarefa gravada com sucesso.");
+                }
             }
         }
 
         public async Task<List<TarefaDTO>> ObterTodosAsync()
         {
             var tarefas = await _tarefaRepository.ObterTodasTarefas();
-            return _map.MapToListDTO(tarefas);            
+            return _map.MapToListDTO(tarefas);
         }
 
         public async Task AtualizarAsync(int id, TarefaDTO tarefaDTO)
@@ -61,24 +64,30 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                await _tarefaRepository.AtualizarTarefaAsync(id, tarefa);
-                _messageModel.AdicionarMensagem("Tarefa atualizada com sucesso");
-                return;
+                var atualizado = await _tarefaRepository.AtualizarTarefaAsync(id, tarefa);
+                {
+                    _messageModel.AdicionarMensagem("Tarefa atualizada com sucesso");
+                    return;
+                }
             }
         }
 
         public async Task ExcluirAsync(string id)
         {
-            var tarefa = await _tarefaRepository.ObterPorIdRepositoryAsync(Convert.ToInt32(id));
+            var tarefa = await _tarefaRepository.ObterTarefaPorId(Convert.ToInt32(id));
 
             if (tarefa is null)
             {
-                _messageModel.MensagemRegistroNaoEncontrado(nameof(Tarefa));
+                _messageModel.MensagemRegistroNaoEncontrado();
             }
             else
             {
-                await _tarefaRepository.RemoverRepositoryAsync(tarefa);
-                _messageModel.AdicionarMensagem("Tarefa removida com sucesso");
+                var deletado = await _tarefaRepository.ExcluirTarefaAsync(tarefa.Id);
+                if (deletado)
+                {
+                    _messageModel.AdicionarMensagem("Tarefa removida com sucesso");
+                    return;
+                }
             }
         }
 
@@ -92,7 +101,7 @@ namespace Atron.Application.Services.EntitiesServices
                 return null;
             }
 
-            return _map.MapToDTO(tarefaRepository);            
+            return _map.MapToDTO(tarefaRepository);
         }
     }
 }

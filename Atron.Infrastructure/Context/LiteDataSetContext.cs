@@ -24,5 +24,7 @@ namespace Atron.Infrastructure.Context
         public IDataSet<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario {  get; set; }
 
         public IDataSet<Tarefa> Tarefas { get; set; }
+
+        public IDataSet<TarefaEstado> TarefasEstados { get; set; }
     }
 }

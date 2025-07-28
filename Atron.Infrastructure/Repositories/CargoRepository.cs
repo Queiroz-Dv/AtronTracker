@@ -110,7 +110,6 @@ namespace Atron.Infrastructure.Repositories
                 serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
                 return false;
             }
-
         }
 
         public async Task<bool> AtualizarCargoAsync(Cargo cargo)
