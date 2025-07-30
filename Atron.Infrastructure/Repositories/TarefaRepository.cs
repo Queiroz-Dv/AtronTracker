@@ -70,11 +70,11 @@ namespace Atron.Infrastructure.Repositories
                 unitOfWork.Rollback();
                 serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
                 return false;
-            }           
+            }
         }
 
         public async Task<Tarefa> ObterTarefaPorId(int id)
-        {            
+        {
             var tarefa = await context.Tarefas.FindByIdAsync(id);
             tarefa.Usuario = await usuarioRepository.ObterUsuarioPorCodigoAsync(tarefa.UsuarioCodigo);
             return tarefa;
@@ -84,13 +84,11 @@ namespace Atron.Infrastructure.Repositories
         {
             var usuarios = await usuarioRepository.ObterUsuariosAsync();
             var tarefas = await context.Tarefas.FindAllAsync();
-            var tarefasComUsuarios = tarefas.Select(tarefa =>
+            return tarefas.Select(tarefa =>
             {
                 tarefa.Usuario = usuarios.FirstOrDefault(usr => usr.Codigo == tarefa.UsuarioCodigo);
                 return tarefa;
             }).ToList();
-
-            return tarefasComUsuarios;
         }
 
         public async Task<IEnumerable<Tarefa>> ObterTodasTarefasPorUsuario(int usuarioId, string usuarioCodigo)

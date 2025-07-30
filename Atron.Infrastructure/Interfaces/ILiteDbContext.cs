@@ -26,5 +26,9 @@ namespace Atron.Infrastructure.Interfaces
         IDataSet<Tarefa> Tarefas { get; }
 
         IDataSet<TarefaEstado> TarefasEstados { get; }
+
+        IDataSet<Salario> Salarios { get; }
+
+        IDataSet<Mes> Meses { get; }
     }
 }

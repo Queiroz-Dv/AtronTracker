@@ -1,90 +1,163 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Atron.Infrastructure.Context;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Shared.Interfaces.Accessor;
+using Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class SalarioRepository : Repository<Salario>, ISalarioRepository
+    public class SalarioRepository : ISalarioRepository
     {
-        public SalarioRepository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
+        private ILiteDbContext context;
+        private ILiteUnitOfWork unitOfWork;
+        private IServiceAccessor serviceAccessor;
+        private readonly IUsuarioRepository usuarioRepository;
+
+        public SalarioRepository(ILiteDbContext context,
+                                 ILiteUnitOfWork unitOfWork,
+                                 IServiceAccessor serviceAccessor,
+                                 IUsuarioRepository usuarioRepository)
         {
+            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.serviceAccessor = serviceAccessor;
+            this.usuarioRepository = usuarioRepository;
         }
 
-        public async Task AtualizarSalarioRepositoryAsync(int id, Salario salario)
+        public async Task<bool> AtualizarSalarioRepositoryAsync(int id, Salario salario)
         {
-            //var entidade = await _context.Salarios.FirstOrDefaultAsync(slr => slr.Id == id);
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var salarioBd = await context.Salarios.FindByIdAsync(id);
 
-            //entidade.SalarioMensal = salario.SalarioMensal;
-            //entidade.Ano = salario.Ano;
-            //entidade.MesId = salario.MesId;           
+                salarioBd.UsuarioId = salario.UsuarioId;
+                salarioBd.UsuarioCodigo = salario.UsuarioCodigo;
+                salarioBd.SalarioMensal = salario.SalarioMensal;
+                salarioBd.Ano = salario.Ano;
+                salarioBd.MesId = salario.MesId;
+                var atualizado = await context.Salarios.UpdateAsync(salarioBd);
+                unitOfWork.Commit();
+                return atualizado;
 
-            //try
-            //{
-            //    _context.Salarios.Update(entidade);
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (Exception ex)
-            //{
-
-            //    throw ex;
-            //}
-            throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
         }
 
-        public async Task CriarSalarioAsync(Salario entidade)
+        public async Task<bool> CriarSalarioAsync(Salario entidade)
         {
-            //try
-            //{
-            //    await _context.Salarios.AddAsync(entidade);
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (Exception ex)
-            //{
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var criado = await context.Salarios.InsertAsync(entidade);
+                unitOfWork.Commit();
+                return criado > 0;
 
-            //    throw ex;
-            //}
-            throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
         }
 
         public async Task<Salario> ObterSalarioPorCodigoUsuario(string codigoUsuario)
         {
-            //return await _context.Salarios.FirstOrDefaultAsync(slr => slr.UsuarioCodigo == codigoUsuario);
-            throw new NotImplementedException();
+            return await context.Salarios.FindOneAsync(slr => slr.UsuarioCodigo == codigoUsuario);
         }
 
-        public Task<Salario> ObterSalarioPorIdAsync(int id)
+        public async Task<Salario> ObterSalarioPorIdAsync(int id)
         {
-            //return _context.Salarios
-            //    .Include(slr => slr.Usuario)
-            //    .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
-            //    .ThenInclude(crg => crg.Cargo)
-            //    .ThenInclude(dpt => dpt.Departamento)
-            //    .FirstOrDefaultAsync(sr => sr.Id == id);
-            throw new NotImplementedException();
+            var salario = await context.Salarios.FindByIdAsync(id);
+            var usuario = await usuarioRepository.ObterUsuarioPorCodigoAsync(salario.UsuarioCodigo);
+
+            return new Salario
+            {
+                Id = salario.Id,
+                UsuarioId = salario.UsuarioId,
+                UsuarioCodigo = salario.UsuarioCodigo,
+                SalarioMensal = salario.SalarioMensal,
+                Ano = salario.Ano,
+                MesId = salario.MesId,
+                Usuario = usuario
+            };
         }
 
-        public Task<Salario> ObterSalarioPorUsuario(int usuarioId, string usuarioCodigo)
+        public async Task<Salario> ObterSalarioPorUsuario(int usuarioId, string usuarioCodigo)
         {
-            //return _context.Salarios.FirstOrDefaultAsync(slr => slr.UsuarioId == usuarioId && slr.UsuarioCodigo == usuarioCodigo);
-            throw new NotImplementedException();
+            var salario = await context.Salarios.FindOneAsync(slr => slr.UsuarioId == usuarioId && slr.UsuarioCodigo == usuarioCodigo);
+            var usuario = await usuarioRepository.ObterUsuarioPorCodigoAsync(salario.UsuarioCodigo);
+
+            return new Salario
+            {
+                Id = salario.Id,
+                UsuarioId = salario.UsuarioId,
+                UsuarioCodigo = salario.UsuarioCodigo,
+                SalarioMensal = salario.SalarioMensal,
+                Ano = salario.Ano,
+                MesId = salario.MesId,
+                Usuario = usuario
+            };
         }
 
-        public Task<List<Salario>> ObterSalariosRepository()
+        public async Task<List<Salario>> ObterSalariosRepository()
         {
-            //return _context.Salarios
-            //    .Include(slr => slr.Usuario)
-            //    .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
-            //    .ThenInclude(crg => crg.Cargo)
-            //    .ThenInclude(dpt => dpt.Departamento)
-            //    .ToListAsync();
+            var salarios = await context.Salarios.FindAllAsync();
+            var usuarios = await usuarioRepository.ObterTodosUsuariosDoIdentity();
 
-            throw new NotImplementedException();
+            var salariosComUsuarios = salarios.Select(salario => new Salario
+            {
+                Id = salario.Id,
+                UsuarioId = salario.UsuarioId,
+                UsuarioCodigo = salario.UsuarioCodigo,
+                SalarioMensal = salario.SalarioMensal,
+                Ano = salario.Ano,
+                MesId = salario.MesId,
+                Usuario = usuarios.FirstOrDefault(u => u.Codigo == salario.UsuarioCodigo)
+            }).ToList();
+
+            return salariosComUsuarios;
+        }
+
+        public async Task<bool> RemoverInformacaoDeSalarioPorId(int id)
+        {
+            try
+            {
+                var salario = await context.Salarios.FindByIdAsync(id);
+                if (salario != null)
+                {
+                    unitOfWork.BeginTransaction();
+                    var removido = await context.Salarios.DeleteAsync(salario.Id);
+                    unitOfWork.Commit();
+                    return removido;
+                }
+
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro("Salário não encontrado.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
+        }
+
+        public async Task<string> ObterDescricaoDoMes(int mesId)
+        {
+            var mes = await context.Meses.FindByIdAsync(mesId);
+            return mes?.Descricao;
         }
     }
 }

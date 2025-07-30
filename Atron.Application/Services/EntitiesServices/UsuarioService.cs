@@ -196,7 +196,7 @@ namespace Atron.Application.Services.EntitiesServices
 
                 if (salarioDoUsuario is not null)
                 {
-                    await _salarioRepository.RemoverRepositoryAsync(salarioDoUsuario);
+                    await _salarioRepository.RemoverInformacaoDeSalarioPorId(salarioDoUsuario.Id);
                 }
 
                 // O relacionamento será apenas um por usuário

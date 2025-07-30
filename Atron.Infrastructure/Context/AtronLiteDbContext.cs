@@ -1,7 +1,6 @@
 ﻿using Atron.Domain.Entities;
 using LiteDB;
 using Shared.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,6 +25,8 @@ namespace Atron.Infrastructure.Context
             PerfisDeAcessoUsuario = new LiteDbSet<PerfilDeAcessoUsuario>(_db, "PerfisDeAcessoUsuario");
             Tarefas = new LiteDbSet<Tarefa>(_db, "Tarefas");
             TarefasEstados = new LiteDbSet<TarefaEstado>(_db, "TarefasEstados");
+            Salarios = new LiteDbSet<Salario>(_db, "Salarios");
+            Meses = new LiteDbSet<Mes>(_db, "Meses");
         }
 
         public void EnsureIndexes()
@@ -38,6 +39,36 @@ namespace Atron.Infrastructure.Context
             EnsurePerfilDeAcessoIndexes();
 
             InicializarTarefasEstados();
+            InicializarMeses();
+        }
+
+        private void InicializarMeses()
+        {
+            var meses = GetCollection<Mes>("Meses");
+            var mesesInit = new List<Mes>()
+            {
+                new Mes() { Id = 1, Descricao = "Janeiro" },
+                new Mes() { Id = 2, Descricao = "Fevereiro" },
+                new Mes() { Id = 3, Descricao = "Março" },
+                new Mes() { Id = 4, Descricao = "Abril" },
+                new Mes() { Id = 5, Descricao = "Maio" },
+                new Mes() { Id = 6, Descricao = "Junho" },
+                new Mes() { Id = 7, Descricao = "Julho" },
+                new Mes() { Id = 8, Descricao = "Agosto" },
+                new Mes() { Id = 9, Descricao = "Setembro" },
+                new Mes() { Id = 10, Descricao = "Outubro" },
+                new Mes() { Id = 11, Descricao = "Novembro" },
+                new Mes() { Id = 12, Descricao = "Dezembro" }
+            };
+
+            var mesesBd = meses.FindAll().ToList();
+            foreach (var mes in mesesInit)
+            {
+                if (!mesesBd.Any(m => m.Id == mes.Id))
+                {
+                    meses.Insert(mes);
+                }
+            }
         }
 
         private void InicializarTarefasEstados()

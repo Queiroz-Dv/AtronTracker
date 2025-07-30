@@ -4,15 +4,22 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces
 {
-    public interface ISalarioRepository : IRepository<Salario>
+    public interface ISalarioRepository 
     {
-        Task CriarSalarioAsync(Salario entidade);
+        Task<bool> CriarSalarioAsync(Salario entidade);
+
         Task<Salario> ObterSalarioPorCodigoUsuario(string codigoUsuario);
 
-        Task AtualizarSalarioRepositoryAsync(int id, Salario salario);
+        Task<bool> AtualizarSalarioRepositoryAsync(int id, Salario salario);
+
         Task<Salario> ObterSalarioPorIdAsync(int id);
 
         Task<List<Salario>> ObterSalariosRepository();
+
         Task<Salario> ObterSalarioPorUsuario(int id, string codigo);
+
+        Task<bool> RemoverInformacaoDeSalarioPorId(int id);
+
+        Task<string> ObterDescricaoDoMes(int mesId);
     }
 }

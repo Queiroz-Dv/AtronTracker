@@ -1,18 +1,20 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Shared.Services.Mapper;
-using System.Linq;
 
 namespace Atron.Application.Mapping
 {
     public class SalarioMapping : ApplicationMapService<SalarioDTO, Salario>
     {
-        private readonly IRepository<Usuario> _usuarioRepository;
+        private readonly IUsuarioService usuarioService;
+        private readonly ISalarioRepository salarioRepository;
 
-        public SalarioMapping(IRepository<Usuario> usuarioRepository)
+        public SalarioMapping(IUsuarioService usuarioService, ISalarioRepository salarioRepository)
         {
-            _usuarioRepository = usuarioRepository;
+            this.usuarioService = usuarioService;
+            this.salarioRepository = salarioRepository;
         }
 
         public override SalarioDTO MapToDTO(Salario entity)
@@ -23,48 +25,30 @@ namespace Atron.Application.Mapping
                 UsuarioCodigo = entity.UsuarioCodigo,
                 SalarioMensal = entity.SalarioMensal,
                 Ano = entity.Ano,
-                MesId = entity.MesId,
-
-                Mes = new MesDTO()
-                {
-                    Id = entity.MesId,
-                    Descricao = MesDTO.Meses().FirstOrDefault(ms => ms.Id == entity.MesId).Descricao
-                }
+                MesId = entity.MesId
             };
 
-            if(entity.Usuario != null)
+            var mesTask = salarioRepository.ObterDescricaoDoMes(entity.MesId);
+            mesTask.Wait();
+            dto.Mes = new Mes()
             {
-                dto.Usuario = new UsuarioDTO()
-                {
-                    Codigo = entity.UsuarioCodigo,
-                    Nome = entity.Usuario.Nome,
-                    Sobrenome = entity.Usuario.Sobrenome,
-                };
+                Id = entity.MesId,
+                Descricao = mesTask.Result
+            };
 
-
-                if (entity.Usuario.UsuarioCargoDepartamentos.Any())
-                {
-                    var relacionamento = entity.Usuario.UsuarioCargoDepartamentos.First();
-
-                    dto.Usuario.Cargo = new CargoDTO()
-                    {
-                        Codigo = relacionamento.Cargo.Codigo,
-                        Descricao = relacionamento.Cargo.Descricao
-                    };
-
-                    dto.Usuario.Departamento = new DepartamentoDTO()
-                    {
-                        Codigo = relacionamento.Departamento.Codigo,
-                        Descricao = relacionamento.Departamento.Descricao
-                    };
-                }                    
+            var usuarioTask = usuarioService.ObterPorCodigoAsync(entity.UsuarioCodigo);
+            usuarioTask.Wait();
+            var usuario = usuarioTask.Result;
+            if (usuario != null)
+            {
+                dto.Usuario = usuario;
             }
             return dto;
         }
 
         public override Salario MapToEntity(SalarioDTO dto)
         {
-            var usuarioBdTask = _usuarioRepository.ObterPorCodigoRepositoryAsync(dto.UsuarioCodigo);
+            var usuarioBdTask = usuarioService.ObterPorCodigoAsync(dto.UsuarioCodigo);
             usuarioBdTask.Wait();
             var usuario = usuarioBdTask.Result;
 

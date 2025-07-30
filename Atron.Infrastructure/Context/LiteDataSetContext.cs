@@ -26,5 +26,9 @@ namespace Atron.Infrastructure.Context
         public IDataSet<Tarefa> Tarefas { get; set; }
 
         public IDataSet<TarefaEstado> TarefasEstados { get; set; }
+
+        public IDataSet<Salario> Salarios { get; set; }
+
+        public IDataSet<Mes> Meses { get; set; }
     }
 }

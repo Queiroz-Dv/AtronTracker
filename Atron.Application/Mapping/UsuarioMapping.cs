@@ -22,6 +22,7 @@ namespace Atron.Application.Mapping
         {
             var usuario = new UsuarioDTO
             {
+                Id = entity.Id,
                 Codigo = entity.Codigo,
                 Nome = entity.Nome,
                 Sobrenome = entity.Sobrenome,

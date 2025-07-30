@@ -1,5 +1,4 @@
 ﻿using Atron.Domain.Customs;
-using System.ComponentModel;
 
 namespace Atron.Domain.Entities
 {

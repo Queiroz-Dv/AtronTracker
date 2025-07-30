@@ -1,4 +1,6 @@
-﻿namespace Atron.Application.DTO
+﻿using Atron.Domain.Entities;
+
+namespace Atron.Application.DTO
 {
     public class SalarioDTO
     {
@@ -16,6 +18,6 @@
 
         public UsuarioDTO Usuario { get; set; }
 
-        public MesDTO Mes { get; set; }
+        public Mes Mes { get; set; }
     }
 }

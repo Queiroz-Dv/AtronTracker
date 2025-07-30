@@ -10,6 +10,7 @@ using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
@@ -29,14 +30,7 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<TarefaResponse>>> Get()
         {
             var tarefas = await _service.ObterTodosAsync();
-            var tarefasResponse = new List<TarefaResponse>();
-
-            foreach (var tarefa in tarefas)
-            {                
-                tarefasResponse.Add(tarefa.MontarResponse());
-            }
-
-            return Ok(tarefasResponse);
+            return Ok(tarefas.Select(t => t.MontarResponse()).ToList());
         }
         
         [HttpPost]
@@ -69,13 +63,13 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TarefaDTO>> Get(int id)
+        public async Task<ActionResult<TarefaResponse>> Get(int id)
         {
             var tarefa = await _service.ObterPorId(id);
 
             return tarefa is null ?
             NotFound(ObterNotificacoes()) :
-            Ok(tarefa);
+            Ok(tarefa.MontarResponse());
         }
     }
 }
