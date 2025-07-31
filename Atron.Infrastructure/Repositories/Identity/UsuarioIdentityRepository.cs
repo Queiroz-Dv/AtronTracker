@@ -142,6 +142,7 @@ namespace Atron.Infrastructure.Repositories.Identity
                 var applicationUser = new UsuarioIdentity
                 {
                     Email = email,
+                    EmailNormalizado = email,
                     Codigo = codigoUsuario,
                     SenhaHash = senhaHashed
                 };

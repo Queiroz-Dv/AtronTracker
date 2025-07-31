@@ -39,12 +39,22 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task AtualizarServiceAsync(int id, SalarioDTO salarioDTO)
         {
             var entidade = _map.MapToEntity(salarioDTO);
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.UsuarioCodigo);
+            var usuarioIdentity = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.UsuarioCodigo);
 
             _validateModel.Validate(entidade);
 
             if (!_messageModel.Notificacoes.HasErrors())
             {
+                var usuario = new Usuario()
+                {
+                    Codigo = usuarioIdentity.Codigo,
+                    Nome = usuarioIdentity.Nome,
+                    Sobrenome = usuarioIdentity.Sobrenome,
+                    DataNascimento = usuarioIdentity.DataNascimento,
+                    Email = usuarioIdentity.Email,
+                    Salario = usuarioIdentity.SalarioAtual,
+                };
+
                 await AtualizarSalarioUsuario(entidade, usuario);
                 var atualizado = await _salarioRepository.AtualizarSalarioRepositoryAsync(id, entidade);
                 if (atualizado)
@@ -58,7 +68,7 @@ namespace Atron.Application.Services.EntitiesServices
         // Sempre que salário atual for maior do que o cadastrado em usuário ele será atualizado
         private async Task AtualizarSalarioUsuario(Salario entidade, Usuario usuario)
         {
-            if (entidade.SalarioMensal > usuario.SalarioAtual || usuario.SalarioAtual == null)
+            if (entidade.SalarioMensal > usuario.Salario || usuario.Salario == null)
             {
                 await _usuarioRepository.AtualizarSalario(entidade.UsuarioId, entidade.SalarioMensal);
             }
@@ -67,11 +77,21 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task CriarAsync(SalarioDTO salarioDTO)
         {
             var entidade = _map.MapToEntity(salarioDTO);
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(salarioDTO.UsuarioCodigo);
+            var usuarioIdentity = await _usuarioRepository.ObterUsuarioPorCodigoAsync(salarioDTO.UsuarioCodigo);
 
             _validateModel.Validate(entidade);
             if (!_messageModel.Notificacoes.HasErrors())
             {
+                var usuario = new Usuario()
+                {
+                    Codigo = usuarioIdentity.Codigo,
+                    Nome = usuarioIdentity.Nome,
+                    Sobrenome = usuarioIdentity.Sobrenome,
+                    DataNascimento = usuarioIdentity.DataNascimento,
+                    Email = usuarioIdentity.Email,
+                    Salario = usuarioIdentity.SalarioAtual,
+                };
+
                 // Sempre que tivermos um salário informado maior do que o já cadastrado, atualizamos o salário do usuário
                 // Para evitar redundância de dados
                 var salarioInformado = await _salarioRepository.ObterSalarioPorCodigoUsuario(entidade.UsuarioCodigo);

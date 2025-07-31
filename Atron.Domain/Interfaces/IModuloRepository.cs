@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces
 {
-    public interface IModuloRepository : IRepository<Modulo>
+    public interface IModuloRepository
     {
         Task<IEnumerable<Modulo>> ObterTodosRepository();
         Task<Modulo> ObterPorIdRepository(int id);

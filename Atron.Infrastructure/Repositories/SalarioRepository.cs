@@ -80,7 +80,17 @@ namespace Atron.Infrastructure.Repositories
         public async Task<Salario> ObterSalarioPorIdAsync(int id)
         {
             var salario = await context.Salarios.FindByIdAsync(id);
-            var usuario = await usuarioRepository.ObterUsuarioPorCodigoAsync(salario.UsuarioCodigo);
+            var usuarioIdentity = await usuarioRepository.ObterUsuarioPorCodigoAsync(salario.UsuarioCodigo);
+
+            var usuario = new Usuario()
+            {
+                Codigo = usuarioIdentity.Codigo,
+                Nome = usuarioIdentity.Nome,
+                Sobrenome = usuarioIdentity.Sobrenome,
+                DataNascimento = usuarioIdentity.DataNascimento,
+                Email = usuarioIdentity.Email,
+                Salario = usuarioIdentity.SalarioAtual,
+            };
 
             return new Salario
             {
@@ -97,7 +107,17 @@ namespace Atron.Infrastructure.Repositories
         public async Task<Salario> ObterSalarioPorUsuario(int usuarioId, string usuarioCodigo)
         {
             var salario = await context.Salarios.FindOneAsync(slr => slr.UsuarioId == usuarioId && slr.UsuarioCodigo == usuarioCodigo);
-            var usuario = await usuarioRepository.ObterUsuarioPorCodigoAsync(salario.UsuarioCodigo);
+            var usuarioIdentity = await usuarioRepository.ObterUsuarioPorCodigoAsync(salario.UsuarioCodigo);
+           
+            var usuario = new Usuario()
+            {
+                Codigo = usuarioIdentity.Codigo,
+                Nome = usuarioIdentity.Nome,
+                Sobrenome = usuarioIdentity.Sobrenome,
+                DataNascimento = usuarioIdentity.DataNascimento,
+                Email = usuarioIdentity.Email,
+                Salario = usuarioIdentity.SalarioAtual,
+            };
 
             return new Salario
             {
@@ -114,7 +134,17 @@ namespace Atron.Infrastructure.Repositories
         public async Task<List<Salario>> ObterSalariosRepository()
         {
             var salarios = await context.Salarios.FindAllAsync();
-            var usuarios = await usuarioRepository.ObterTodosUsuariosDoIdentity();
+            var usuariosIdentity = await usuarioRepository.ObterTodosUsuariosDoIdentity();
+
+            var usuarios = usuariosIdentity.Select(u => new Usuario
+            {
+                Codigo = u.Codigo,
+                Nome = u.Nome,
+                Sobrenome = u.Sobrenome,
+                DataNascimento = u.DataNascimento,
+                Email = u.Email,
+                Salario = u.SalarioAtual
+            }).ToList();
 
             var salariosComUsuarios = salarios.Select(salario => new Salario
             {

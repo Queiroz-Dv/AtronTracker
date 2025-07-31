@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTO.API;
 using Shared.Extensions;
-using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Caching;
 using Shared.Interfaces.Services;
 using Shared.Models;
@@ -49,7 +48,18 @@ namespace Atron.WebApi.Controllers
 
             // Tenta obter do cache
             var dadosCache = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription);
+            var perfisDeAcesso = dadosCache?.DadosDoPerfil;
 
+            // Se não encontrou no cache, busca de forma assíncrona
+            if (perfisDeAcesso is null)
+            {
+                var perfis = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo);
+                perfisDeAcesso = perfis.Select(p => new DadosDoPerfilDTO
+                {
+                    CodigoPerfil = p.Codigo,
+                    Modulos = p.Modulos.Select(x => new DadosDoModuloDTO(x.Codigo, x.Descricao)).ToList()
+                }).ToList();
+            }
 
             var jsonDeRetorno = new
             {
@@ -58,35 +68,30 @@ namespace Atron.WebApi.Controllers
                 emailDoUsuario = dadosCache?.DadosDoUsuario.Email ?? user.FindFirst(ClaimTypes.Email)?.Value,
                 codigoDoCargo = dadosCache?.DadosDoUsuario.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
                 codigoDoDepartamento = dadosCache?.DadosDoUsuario.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,
-
-                perfisDeAcesso = dadosCache?.DadosDoPerfil ??
-                    _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo).Result.Select(p => new DadosDoPerfilDTO
-                    {
-                        CodigoPerfil = p.Codigo,
-                        Modulos = p.Modulos.Select(x => new DadosDoModuloDTO(x.Codigo, x.Descricao)).ToList()
-                    }).ToList()
+                perfisDeAcesso
             };
 
-            if (dadosCache is not null)
+            // Se não havia cache (talvez expirado), busca os dados novamente e regrava
+            if (dadosCache is null)
             {
-                // Retorna apenas o que o Front precisa
-                return Ok(jsonDeRetorno);
+                // Nós já buscamos os dados, agora vamos montar o DTO para o cache
+                var dtoParaCache = new DadosComplementaresDoUsuarioDTO
+                {
+                    // Certifique-se de preencher todos os dados necessários aqui
+                    DadosDoUsuario = new DadosDoUsuarioDTO()
+                    {
+                        CodigoDoUsuario = usuarioCodigo,
+                        NomeDoUsuario = user.FindFirst(ClaimTypes.Name)?.Value,
+                        Email = user.FindFirst(ClaimTypes.Email)?.Value,
+                        //... outros campos
+                    },
+                    DadosDoPerfil = perfisDeAcesso
+                };
+
+                // Regrava cache para próxima vez
+                _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo) { EntityInfo = dadosCache }); // Passando o DTO para gravar
             }
 
-            // Se não havia cache (talvez expirado), busca os dados novamente
-            var perfisModulos = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo);
-            var dto = new DadosComplementaresDoUsuarioDTO
-            {
-                DadosDoUsuario = new DadosDoUsuarioDTO() { CodigoDoUsuario = usuarioCodigo, NomeDoUsuario = user.FindFirst(ClaimTypes.Name)?.Value },
-                DadosDoPerfil = perfisModulos.Select(p => new DadosDoPerfilDTO
-                {
-                    CodigoPerfil = p.Codigo,
-                    Modulos = p.Modulos.Select(x => new DadosDoModuloDTO(x.Codigo, x.Descricao)).ToList()
-                }).ToList(),
-            };
-
-            // Regrava cache para próxima vez            
-            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo));
 
             return Ok(jsonDeRetorno);
         }

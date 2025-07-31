@@ -183,7 +183,7 @@ namespace Atron.Application.Services.EntitiesServices
             {
                 // Preciso remover antes pois não terei o Update diretamente, basta remover os registros e refazer a gravação
                 var perfilRelacionado = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(dto.PerfilDeAcesso.Codigo);
-
+        
                 if (perfilRelacionado != null)
                 {
                     if (perfilRelacionado.PerfisDeAcessoUsuario.Any())

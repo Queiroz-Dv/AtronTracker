@@ -43,7 +43,6 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IUserIdentityService, UserIdentityService>();
             services.AddScoped<IUsuarioIdentityRepository, UsuarioIdentityRepository>();
-            services.AddScoped<IRepository<UsuarioIdentity>, Repository<UsuarioIdentity>>();
             services.AddScoped<IPasswordHasher<UsuarioIdentity>, PasswordHasher<UsuarioIdentity>>();
             return services;
         }

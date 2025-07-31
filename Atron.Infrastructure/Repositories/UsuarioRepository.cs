@@ -32,7 +32,7 @@ namespace Atron.Infrastructure.Repositories
                 unitOfWork.BeginTransaction();
                 var usuario = await context.Usuarios.FindByIdAsync(usuarioId);
                 if (usuario != null)
-                    usuario.SalarioAtual = quantidadeTotal;
+                    usuario.Salario = quantidadeTotal;
 
                 var atualizado = await context.Usuarios.UpdateAsync(usuario);
                 unitOfWork.Commit();
@@ -56,7 +56,7 @@ namespace Atron.Infrastructure.Repositories
                 usuarioBd.Nome = usuario.Nome;
                 usuarioBd.Sobrenome = usuario.Sobrenome;
                 usuarioBd.DataNascimento = usuario.DataNascimento;
-                usuarioBd.SalarioAtual = usuario.SalarioAtual;
+                usuarioBd.Salario = usuario.Salario;
                 usuarioBd.Email = usuario.Email;
                 usuarioBd.UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos;
 
@@ -97,8 +97,13 @@ namespace Atron.Infrastructure.Repositories
 
             foreach (var item in relacionamentos)
             {
-                if (item.Usuario.Codigo == usuario.Codigo)
+                if (item.UsuarioCodigo == usuario.Codigo)
                 {
+                    if(usuario.UsuarioCargoDepartamentos == null)
+                    {
+                        usuario.UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>();
+                    }
+
                     usuario.UsuarioCargoDepartamentos.Add(item);
                 }
             }
@@ -110,7 +115,7 @@ namespace Atron.Infrastructure.Repositories
                 Nome = usuario.Nome,
                 Sobrenome = usuario.Sobrenome,
                 Email = usuario.Email,
-                SalarioAtual = usuario.SalarioAtual,
+                SalarioAtual = usuario.Salario,
                 DataNascimento = usuario.DataNascimento,
                 UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
                 RefreshToken = applicationUser.RefreshToken,
@@ -190,10 +195,8 @@ namespace Atron.Infrastructure.Repositories
                         Nome = usuario.Nome,
                         Sobrenome = usuario.Sobrenome,
                         Email = usuario.Email,
-                        Salario = usuario.Salario,
-                        SalarioAtual = usuario.SalarioAtual,
+                        SalarioAtual = usuario.Salario,
                         DataNascimento = usuario.DataNascimento,
-                        UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
                         RefreshToken = user.RefreshToken,
                         RefreshTokenExpireTime = user.RefreshTokenExpireTime
                     };

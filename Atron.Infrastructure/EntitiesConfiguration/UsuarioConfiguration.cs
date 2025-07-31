@@ -16,7 +16,7 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.Property(usr => usr.Sobrenome).IsRequired().HasMaxLength(50);
             builder.Property(usr => usr.Email).IsRequired().HasMaxLength(50);
             builder.Property(usr => usr.DataNascimento);
-            builder.Property(usr => usr.SalarioAtual);         
+            builder.Property(usr => usr.Salario);         
         }
     }
 }

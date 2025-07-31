@@ -164,7 +164,6 @@ namespace Atron.Infrastructure.Context
         {
             var identityUsers = GetCollection<UsuarioIdentity>("AppUsers");
             identityUsers.EnsureIndex(u => u.Codigo, unique: true);
-            identityUsers.EnsureIndex(u => u.EmailNormalizado, unique: true);
             identityUsers.EnsureIndex(u => u.Email);
             identityUsers.EnsureIndex(u => u.RefreshToken);
         }

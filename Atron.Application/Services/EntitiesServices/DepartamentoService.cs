@@ -133,7 +133,7 @@ namespace Atron.Application.Services.EntitiesServices
                 {
                     foreach (var item in relacionamentos)
                     {
-                        await _relacionamentoRepository.RemoverRepositoryAsync(item);
+                        await _relacionamentoRepository.RemoverRelacionamentoPorDepartamentoRepository(item);
                     }
                 }
 

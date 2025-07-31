@@ -108,12 +108,6 @@ namespace Atron.Infrastructure.Repositories
                 }).ToList();
 
             return perfil;
-            //return await _context.PerfisDeAcesso
-            //   .Include(pam => pam.PerfilDeAcessoModulos) // Relacionamento com módulos
-            //   .ThenInclude(mdl => mdl.Modulo) // Dentro do relacionamento vai trazer os módulos
-            //   .Include(pda => pda.PerfisDeAcessoUsuario) // Relacionamento com usuários
-            //   .ThenInclude(usr => usr.Usuario)
-            //   .FirstOrDefaultAsync(pf => pf.Codigo == codigo);
         }
 
         public Task<PerfilDeAcesso> ObterPerfilPorIdRepositoryAsync(int id)
@@ -129,7 +123,7 @@ namespace Atron.Infrastructure.Repositories
                 var perfisDeAcessoUsuario = (await context.PerfisDeAcessoUsuario.FindAllAsync()).ToList();
                 var perfisDeAcessoModulo = (await context.PerfisDeAcessoModulo.FindAllAsync()).ToList();
                 var perfis = (await context.PerfisDeAcesso.FindAllAsync()).ToList();
-                
+
                 foreach (var perfil in perfis)
                 {
                     perfil.PerfilDeAcessoModulos = new List<PerfilDeAcessoModulo>();
@@ -147,7 +141,7 @@ namespace Atron.Infrastructure.Repositories
 
                     perfil.PerfisDeAcessoUsuario = perfisDeAcessoUsuario.Where(p => p.PerfilDeAcessoCodigo == perfil.Codigo && p.UsuarioCodigo == usuarioCodigo)
                         .Select(p => new PerfilDeAcessoUsuario
-                        {                            
+                        {
                             UsuarioId = p.UsuarioId,
                             UsuarioCodigo = p.UsuarioCodigo,
                             PerfilDeAcessoId = p.PerfilDeAcessoId,
@@ -167,29 +161,39 @@ namespace Atron.Infrastructure.Repositories
         public async Task<ICollection<PerfilDeAcesso>> ObterTodosPerfisRepositoryAsync()
         {
             var perfis = await context.PerfisDeAcesso.FindAllAsync();
-            var modulos = await context.Modulos.FindAllAsync();
             var perfisDeAcessoUsuario = await context.PerfisDeAcessoUsuario.FindAllAsync();
-            foreach (var perfil in perfis)
-            {
-                perfil.PerfilDeAcessoModulos = perfil.PerfilDeAcessoModulos
-                    .Select(pam => new PerfilDeAcessoModulo
-                    {
-                        Modulo = modulos.FirstOrDefault(m => m.Id == pam.ModuloId),
-                        ModuloId = pam.ModuloId,
-                        PerfilDeAcessoId = pam.PerfilDeAcessoId,
-                        ModuloCodigo = pam.ModuloCodigo,
-                    }).ToList();
-                perfil.PerfisDeAcessoUsuario = perfil.PerfisDeAcessoUsuario.Except(perfisDeAcessoUsuario)
-                    .Select(p => new PerfilDeAcessoUsuario
-                    {
-                        Usuario = perfisDeAcessoUsuario.FirstOrDefault(u => u.UsuarioId == p.UsuarioId)?.Usuario,
-                        UsuarioId = p.UsuarioId,
-                        UsuarioCodigo = p.UsuarioCodigo,
-                        PerfilDeAcessoId = p.PerfilDeAcessoId,
-                        PerfilDeAcessoCodigo = p.PerfilDeAcessoCodigo
-                    }).ToList();
-            }
-            return perfis.ToList();
+            var perfilsDeAcessoModulo = await context.PerfisDeAcessoModulo.FindAllAsync();
+
+
+            var perfisList = perfis.GroupJoin(perfisDeAcessoUsuario,
+                                              perfil => perfil.Codigo,
+                                              usuario => usuario.PerfilDeAcessoCodigo,
+                                              (perfil, usuarios) =>
+                                              {
+                                                  perfil.PerfisDeAcessoUsuario = usuarios
+                                                      .Select(u => new PerfilDeAcessoUsuario
+                                                      {
+                                                          UsuarioId = u.UsuarioId,
+                                                          UsuarioCodigo = u.UsuarioCodigo,
+                                                          PerfilDeAcessoId = perfil.Id,
+                                                          PerfilDeAcessoCodigo = perfil.Codigo
+                                                      }).ToList();
+
+                                                  perfil.PerfilDeAcessoModulos = perfilsDeAcessoModulo
+                                                      .Where(pam => pam.PerfilDeAcessoCodigo == perfil.Codigo)
+                                                      .Select(pam => new PerfilDeAcessoModulo
+                                                      {
+                                                          ModuloCodigo = pam.ModuloCodigo,
+                                                          ModuloId = pam.ModuloId,
+                                                          Modulo = pam.Modulo,
+                                                          PerfilDeAcessoId = pam.PerfilDeAcessoId,
+                                                          PerfilDeAcessoCodigo = pam.PerfilDeAcessoCodigo
+                                                      }).ToList();
+
+                                                  return perfil;
+                                              }).ToList();
+
+            return perfisList;
         }
     }
 }

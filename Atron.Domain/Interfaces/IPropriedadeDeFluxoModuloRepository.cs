@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces
 {
-    public interface IPropriedadeDeFluxoModuloRepository : IRepository<PropriedadeDeFluxoModulo>
+    public interface IPropriedadeDeFluxoModuloRepository 
     {
         Task<List<PropriedadeDeFluxoModulo>> ObterRelacionamentosTodosAsync();
         Task<bool> GravarAsync(PropriedadeDeFluxoModulo entidade);

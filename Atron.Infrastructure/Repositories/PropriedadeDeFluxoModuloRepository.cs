@@ -1,18 +1,13 @@
 ﻿using Atron.Domain.Componentes;
 using Atron.Domain.Interfaces;
-using Atron.Infrastructure.Interfaces;
-using Shared.Interfaces.Accessor;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class PropriedadeDeFluxoModuloRepository : Repository<PropriedadeDeFluxoModulo>, IPropriedadeDeFluxoModuloRepository
+    public class PropriedadeDeFluxoModuloRepository : IPropriedadeDeFluxoModuloRepository
     {
-        public PropriedadeDeFluxoModuloRepository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
-        {
-        }
 
         public async Task<bool> GravarAsync(PropriedadeDeFluxoModulo entidade)
         {

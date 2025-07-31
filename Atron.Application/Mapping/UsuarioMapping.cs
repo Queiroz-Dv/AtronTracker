@@ -4,6 +4,7 @@ using Atron.Domain.Interfaces;
 using Shared.DTO.API;
 using Shared.Services.Mapper;
 using System;
+using System.Collections.Generic;
 
 namespace Atron.Application.Mapping
 {
@@ -11,11 +12,13 @@ namespace Atron.Application.Mapping
     {
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly ICargoRepository _cargoRepository;
+        private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository;
 
-        public UsuarioMapping(IDepartamentoRepository departamentoRepository, ICargoRepository cargoRepository)
+        public UsuarioMapping(IDepartamentoRepository departamentoRepository, ICargoRepository cargoRepository, IPerfilDeAcessoRepository perfilDeAcessoRepository)
         {
             _departamentoRepository = departamentoRepository;
             _cargoRepository = cargoRepository;
+            _perfilDeAcessoRepository = perfilDeAcessoRepository;
         }
 
         public override UsuarioDTO MapToDTO(UsuarioIdentity entity)
@@ -61,6 +64,25 @@ namespace Atron.Application.Mapping
                 }
 
                 return usuario;
+            }
+
+
+            if(entity.PerfisDeAcessoUsuario != null)
+            {
+                usuario.PerfisDeAcesso = new List<PerfilDeAcessoDTO>();
+
+                foreach (var item in entity.PerfisDeAcessoUsuario)
+                {
+                    var perfilDeAcessoTask = _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(item.PerfilDeAcessoCodigo);
+                    perfilDeAcessoTask.Wait();
+                    var perfilDeAcesso = perfilDeAcessoTask.Result;
+
+                    usuario.PerfisDeAcesso.Add(new PerfilDeAcessoDTO
+                    {
+                        Codigo = perfilDeAcesso.Codigo,
+                        Descricao = perfilDeAcesso.Descricao
+                    });
+                }
             }
 
             return usuario;

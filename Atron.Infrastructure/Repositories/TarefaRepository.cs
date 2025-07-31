@@ -76,7 +76,17 @@ namespace Atron.Infrastructure.Repositories
         public async Task<Tarefa> ObterTarefaPorId(int id)
         {
             var tarefa = await context.Tarefas.FindByIdAsync(id);
-            tarefa.Usuario = await usuarioRepository.ObterUsuarioPorCodigoAsync(tarefa.UsuarioCodigo);
+            var usuarioIdentity = await usuarioRepository.ObterUsuarioPorCodigoAsync(tarefa.UsuarioCodigo);
+            var usuario = new Usuario()
+            {
+                Codigo = usuarioIdentity.Codigo,
+                Nome = usuarioIdentity.Nome,
+                Sobrenome = usuarioIdentity.Sobrenome,
+                DataNascimento = usuarioIdentity.DataNascimento,
+                Email = usuarioIdentity.Email,
+                Salario = usuarioIdentity.SalarioAtual,
+            };
+            tarefa.Usuario = usuario;
             return tarefa;
         }
 

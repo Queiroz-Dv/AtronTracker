@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class PropriedadeDeFluxoRepository : Repository<PropriedadesDeFluxo>, IPropriedadeDeFluxoRepository
-    {
-        public PropriedadeDeFluxoRepository(ILiteFacade liteFacade, IServiceAccessor serviceAccessor) : base(liteFacade, serviceAccessor)
-        {
-        }
+    public class PropriedadeDeFluxoRepository :  IPropriedadeDeFluxoRepository
+    {       
 
         public async Task<PropriedadesDeFluxo> ObterPropriedadePorCodigo(string codigo)
         {
