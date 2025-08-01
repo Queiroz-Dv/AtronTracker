@@ -1,6 +1,8 @@
-﻿namespace Atron.Domain.Entities
-{
+﻿using Atron.Domain.Customs;
 
+namespace Atron.Domain.Entities
+{
+    [ModuloInfo("SAL", nameof(Salario))]
     public class Salario : EntityBase
     {
         public int UsuarioId { get; set; }

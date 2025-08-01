@@ -14,10 +14,10 @@ namespace Atron.Infrastructure.EntitiesConfiguration
             builder.Property(slr => slr.Ano).HasMaxLength(4).IsRequired();
             builder.Property(slr => slr.MesId).HasMaxLength(12).IsRequired();    
 
-            builder.HasOne(slr => slr.Usuario)
-                   .WithOne(usr => usr.Salario)
-                   .HasForeignKey<Salario>(slr => new { slr.UsuarioId, slr.UsuarioCodigo})
-                   .IsRequired();        
+            //builder.HasOne(slr => slr.Usuario)
+            //       .WithOne(usr => usr.Salario)
+            //       .HasForeignKey<Salario>(slr => new { slr.UsuarioId, slr.UsuarioCodigo})
+            //       .IsRequired();        
         }
     }
 }

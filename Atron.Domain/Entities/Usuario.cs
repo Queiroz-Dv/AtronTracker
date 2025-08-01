@@ -1,23 +1,19 @@
-﻿using System;
+﻿using Atron.Domain.Customs;
+using System;
 using System.Collections.Generic;
 
 namespace Atron.Domain.Entities
 {
+    [ModuloInfo("USR", nameof(Usuario))]
     public class Usuario : EntityBase
-    {
-        public Usuario()
-        {
-             UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>();
-        }
-
+    {        
         public string Codigo { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
-        public int? SalarioAtual { get; set; }
+        public int? Salario { get; set; }
         public string Email { get; set; }
 
         public List<Tarefa> Tarefas { get; set; }
-        public Salario Salario { get; set; }
 
         public DateTime? DataNascimento { get; set; }
 

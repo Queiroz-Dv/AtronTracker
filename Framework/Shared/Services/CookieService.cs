@@ -19,9 +19,9 @@ namespace Shared.Services
             _cookieFactory.CriarCookieDoToken(dadosDoToken, codigoUsuario);
         }
 
-        public DadosDeTokenComRefreshToken ObterTokenRefreshTokenPorRequest(HttpRequest httpRequest)
+        public async Task<DadosDoTokenDTO> ObterTokenRefreshTokenPorRequest(HttpRequest httpRequest)
         {
-            return _cookieFactory.ObterDadosDoTokenPorRequest(httpRequest);
+            return await _cookieFactory.ObterDadosDoTokenPorRequest(httpRequest);
         }
 
         public void RemoverCookie(string chave)

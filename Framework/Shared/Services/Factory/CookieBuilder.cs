@@ -20,7 +20,7 @@ namespace Shared.Services.Factory
                     HttpOnly = true,
                     SameSite = SameSiteMode.Strict,
                     Secure = true,
-                    Expires = DateTime.UtcNow.AddMinutes(15) // Ajuste a expiração conforme necessário
+                    Expires = DateTime.UtcNow.AddDays(31) // Expandi para 31 por padrão o token de acesso difere desse tempo
                 });
             }
             catch (Exception)

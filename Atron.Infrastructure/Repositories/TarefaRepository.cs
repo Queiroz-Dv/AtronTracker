@@ -1,8 +1,9 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Atron.Infrastructure.Context;
+using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using Shared.Interfaces.Accessor;
+using Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,86 +11,123 @@ using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class TarefaRepository : Repository<Tarefa>, ITarefaRepository
+    public class TarefaRepository : ITarefaRepository
     {
-        //private readonly AtronDbContext _context;
+        private ILiteDbContext context;
+        private ILiteUnitOfWork unitOfWork;
+        private IServiceAccessor serviceAccessor;
+        private readonly IUsuarioRepository usuarioRepository;
 
-        public TarefaRepository(AtronDbContext context, ILiteDbContext liteDbContext) : base(context, liteDbContext)
+        public TarefaRepository(ILiteDbContext context,
+                                ILiteUnitOfWork unitOfWork,
+                                IServiceAccessor serviceAccessor,
+                                IUsuarioRepository usuarioRepository)
         {
-            //_context = context;
+            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.serviceAccessor = serviceAccessor;
+            this.usuarioRepository = usuarioRepository;
         }
 
-        public async Task<Tarefa> AtualizarTarefaAsync(int id, Tarefa tarefa)
-        {
-            var tarefaBD = await ObterTarefaPorId(id);            
-            AtualizarEntidadeParaPersistencia(tarefa, tarefaBD);
-
-            try
-            {
-                _context.Tarefas.Update(tarefaBD);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return new Tarefa();
-        }
-
-        private static void AtualizarEntidadeParaPersistencia(Tarefa tarefa, Tarefa tarefaBD)
-        {
-            tarefaBD.UsuarioId = tarefa.UsuarioId;
-            tarefaBD.UsuarioCodigo = tarefa.UsuarioCodigo;
-            tarefaBD.Titulo = tarefa.Titulo;
-            tarefaBD.Conteudo = tarefa.Conteudo;
-            tarefaBD.DataInicial = tarefa.DataInicial;
-            tarefaBD.DataFinal = tarefa.DataFinal;
-            tarefaBD.TarefaEstadoId = tarefa.TarefaEstadoId;
-        }
-
-        public async Task<Tarefa> CriarTarefaAsync(Tarefa tarefa)
+        public async Task<bool> AtualizarTarefaAsync(int id, Tarefa tarefa)
         {
             try
             {
-                await _context.Tarefas.AddAsync(tarefa);
-                await _context.SaveChangesAsync();
+                unitOfWork.BeginTransaction();
+                var tarefaBD = await context.Tarefas.FindByIdAsync(id);
+
+                tarefaBD.UsuarioId = tarefa.UsuarioId;
+                tarefaBD.UsuarioCodigo = tarefa.UsuarioCodigo;
+                tarefaBD.Titulo = tarefa.Titulo;
+                tarefaBD.Conteudo = tarefa.Conteudo;
+                tarefaBD.DataInicial = tarefa.DataInicial;
+                tarefaBD.DataFinal = tarefa.DataFinal;
+                tarefaBD.TarefaEstadoId = tarefa.TarefaEstadoId;
+
+                var atualizado = await context.Tarefas.UpdateAsync(tarefaBD);
+                unitOfWork.Commit();
+                return atualizado;
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
             }
+        }
 
-            return tarefa;
+        public async Task<bool> CriarTarefaAsync(Tarefa tarefa)
+        {
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var gravado = await context.Tarefas.InsertAsync(tarefa);
+                unitOfWork.Commit();
+                return gravado > 0;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
         }
 
         public async Task<Tarefa> ObterTarefaPorId(int id)
         {
-            return await _context.Tarefas
-                                 .Include(usr => usr.Usuario)
-                                 .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
-                                 .ThenInclude(crg => crg.Cargo)
-                                 .ThenInclude(dpt => dpt.Departamento)
-                                 .FirstOrDefaultAsync(trf => trf.Id == id);
-
+            var tarefa = await context.Tarefas.FindByIdAsync(id);
+            var usuarioIdentity = await usuarioRepository.ObterUsuarioPorCodigoAsync(tarefa.UsuarioCodigo);
+            var usuario = new Usuario()
+            {
+                Codigo = usuarioIdentity.Codigo,
+                Nome = usuarioIdentity.Nome,
+                Sobrenome = usuarioIdentity.Sobrenome,
+                DataNascimento = usuarioIdentity.DataNascimento,
+                Email = usuarioIdentity.Email,
+                Salario = usuarioIdentity.SalarioAtual,
+            };
+            tarefa.Usuario = usuario;
+            return tarefa;
         }
 
         public async Task<List<Tarefa>> ObterTodasTarefas()
         {
-            var entidades = await _context.Tarefas
-                .Include(usr => usr.Usuario) // Obtém o usuário associado a tarefa
-                .ThenInclude(rel => rel.UsuarioCargoDepartamentos) // Obtém os relacionamentos associados ao usuário
-                .ThenInclude(crg => crg.Cargo) // Obtém o cargo associado relacionamento do usuário
-                .ThenInclude(dpt => dpt.Departamento) // Obtém o departamento associado ao relacionamento de cargo
-                .ToListAsync();
-            return entidades;
+            var usuarios = await usuarioRepository.ObterUsuariosAsync();
+            var tarefas = await context.Tarefas.FindAllAsync();
+            return tarefas.Select(tarefa =>
+            {
+                tarefa.Usuario = usuarios.FirstOrDefault(usr => usr.Codigo == tarefa.UsuarioCodigo);
+                return tarefa;
+            }).ToList();
         }
 
         public async Task<IEnumerable<Tarefa>> ObterTodasTarefasPorUsuario(int usuarioId, string usuarioCodigo)
         {
-            return await _context.Tarefas.Where(trf => trf.UsuarioId == usuarioId && trf.UsuarioCodigo == usuarioCodigo).ToListAsync();
-                                 
+            var tarefa = await context.Tarefas.FindAllAsync();
+            return tarefa.Where(t => t.UsuarioId == usuarioId && t.UsuarioCodigo == usuarioCodigo).ToList();
+        }
+
+        public async Task<bool> ExcluirTarefaAsync(int id)
+        {
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var deletado = await context.Tarefas.DeleteAsync(id);
+                unitOfWork.Commit();
+                return deletado;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
+        }
+
+        public async Task<string> ObterDescricaoTarefaEstado(int tarefaEstadoId)
+        {
+            var tarefaEstado = await context.TarefasEstados.FindByIdAsync(tarefaEstadoId);
+            return tarefaEstado?.Descricao ?? string.Empty;
         }
     }
 }

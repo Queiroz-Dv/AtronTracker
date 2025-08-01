@@ -56,10 +56,10 @@ namespace Atron.Infrastructure.Context
 
         public DbSet<Historico> Historicos { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AtronDbContext).Assembly);
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
+        //    modelBuilder.ApplyConfigurationsFromAssembly(typeof(AtronDbContext).Assembly);
+        //}
     }
 }

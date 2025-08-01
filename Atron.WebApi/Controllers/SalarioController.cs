@@ -1,4 +1,7 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.DTO.Request;
+using Atron.Application.DTO.Response;
+using Atron.Application.Extensions;
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +10,7 @@ using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
@@ -17,15 +21,15 @@ namespace Atron.WebApi.Controllers
     public class SalarioController : ApiBaseConfigurationController<Salario, ISalarioService>
     {
         public SalarioController(ISalarioService service,
-             IServiceAccessor serviceAccessor,
-            MessageModel messageModel)
+                                 IServiceAccessor serviceAccessor,
+                                 MessageModel messageModel)
         : base(service, serviceAccessor, messageModel)
         { }
-
+        
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] SalarioDTO salario)
+        public async Task<ActionResult> Post([FromBody] SalarioRequest salario)
         {
-            await _service.CriarAsync(salario);
+            await _service.CriarAsync(salario.MontarDTO());
 
             return _messageModel.Notificacoes.HasErrors() ?
                    BadRequest(ObterNotificacoes()) :
@@ -33,17 +37,16 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SalarioDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<SalarioResponse>>> Get()
         {
             var salarios = await _service.ObterTodosAsync();
-
-            return Ok(salarios);
+            return Ok(salarios.Select(s => s.MontarResponse()).ToList());
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] SalarioDTO salario)
+        public async Task<ActionResult> Put(int id, [FromBody] SalarioRequest salario)
         {
-            await _service.AtualizarServiceAsync(id, salario);
+            await _service.AtualizarServiceAsync(id, salario.MontarDTO());
 
             return _messageModel.Notificacoes.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
@@ -52,7 +55,7 @@ namespace Atron.WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            await _service.ExcluirAsync(id);
+            await _service.ExcluirAsync(id.ToInt());
 
             return _messageModel.Notificacoes.HasErrors() ?
                     BadRequest(ObterNotificacoes()) :
@@ -66,7 +69,7 @@ namespace Atron.WebApi.Controllers
 
             return salario is null ?
             NotFound(ObterNotificacoes()) :
-            Ok(salario);
+            Ok(salario.MontarResponse());
         }
     }
 }

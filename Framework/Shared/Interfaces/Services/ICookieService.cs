@@ -5,7 +5,7 @@ namespace Shared.Interfaces.Services
 {
     public interface ICookieService
     {
-        DadosDeTokenComRefreshToken ObterTokenRefreshTokenPorRequest(HttpRequest httpRequest);
+        Task<DadosDoTokenDTO> ObterTokenRefreshTokenPorRequest(HttpRequest httpRequest);
 
         void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario);
 

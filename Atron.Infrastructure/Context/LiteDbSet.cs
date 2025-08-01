@@ -11,7 +11,7 @@ namespace Atron.Infrastructure.Context
     /// Interface para definir operações básicas de acesso a dados em um conjunto de dados genérico.
     /// </summary>
     /// <typeparam name="T"> Entidade que representa o tipo de dados no conjunto. Deve ser uma classe. </typeparam>
-    public interface IDataSet<T> where T : class
+    public interface IDataSet<T>
     {
         /// <summary>
         /// Método para verificar se existe algum registro que atenda a um determinado critério.
@@ -80,7 +80,7 @@ namespace Atron.Infrastructure.Context
     /// Conjunto de dados genérico para operações de acesso a dados usando LiteDB.
     /// </summary>
     /// <typeparam name="T"> Entidade que representa o tipo de dados no conjunto. Deve ser uma classe. </typeparam>
-    public class LiteDbSet<T> : IDataSet<T> where T : class
+    public class LiteDbSet<T> : IDataSet<T>
     {
         private readonly ILiteCollection<T> _collection;
 

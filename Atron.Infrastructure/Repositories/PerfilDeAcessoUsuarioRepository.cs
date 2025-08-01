@@ -1,7 +1,8 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Atron.Infrastructure.Context;
-using Microsoft.EntityFrameworkCore;
+using Atron.Infrastructure.Interfaces;
+using Shared.Interfaces.Accessor;
+using Shared.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -9,24 +10,41 @@ namespace Atron.Infrastructure.Repositories
 {
     public class PerfilDeAcessoUsuarioRepository : IPerfilDeAcessoUsuarioRepository
     {
-        private readonly AtronDbContext _context;
+        private ILiteDbContext context;
+        private ILiteUnitOfWork unitOfWork;
+        private IServiceAccessor serviceAccessor;
 
-        public PerfilDeAcessoUsuarioRepository(AtronDbContext context)
+        public PerfilDeAcessoUsuarioRepository(ILiteDbContext context,
+                                               ILiteUnitOfWork unitOfWork,
+                                               IServiceAccessor serviceAccessor)
         {
-            _context = context;
+            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.serviceAccessor = serviceAccessor;
         }
 
         public async Task<bool> CriarPerfilRepositoryAsync(PerfilDeAcessoUsuario perfilDeAcesso)
         {
             try
             {
-                await _context.PerfilDeAcessoUsuarios.AddAsync(perfilDeAcesso);
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
+                unitOfWork.BeginTransaction();
+                var gravado = await context.PerfisDeAcessoUsuario.InsertAsync(perfilDeAcesso);
+                if (gravado > 0)
+                {
+                    unitOfWork.Commit();
+                    return true;
+                }
+                else
+                {
+                    unitOfWork.Rollback();
+                    return false;
+                }
             }
             catch (Exception ex)
             {
-                throw ex;
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
             }
         }
 
@@ -34,23 +52,33 @@ namespace Atron.Infrastructure.Repositories
         {
             try
             {
-                _context.PerfilDeAcessoUsuarios.Remove(relacionamento);
-                await _context.SaveChangesAsync();
-                return; // Fixed: Added a valid return statement for the void method
+                unitOfWork.BeginTransaction();
+                var perfilDeAcesso = await context.PerfisDeAcessoUsuario.FindOneAsync(prf =>
+                prf.PerfilDeAcessoCodigo == relacionamento.PerfilDeAcessoCodigo &&
+                prf.PerfilDeAcessoId == relacionamento.PerfilDeAcessoId &&
+                prf.UsuarioCodigo == relacionamento.UsuarioCodigo &&
+                prf.UsuarioId == relacionamento.UsuarioId);
+
+                if (perfilDeAcesso != null)
+                {
+                    await context.PerfisDeAcessoUsuario.DeleteAsync(perfilDeAcesso.Id);
+                    unitOfWork.Commit();
+                    return;
+                }
+
             }
             catch (Exception ex)
             {
-                throw; // No changes needed here
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return;
             }
         }
 
         public async Task<PerfilDeAcessoUsuario> ObterPerfilDeAcessoPorCodigoRepositoryAsync(string codigo)
         {
-            return await _context.PerfilDeAcessoUsuarios
-                                 .Include(p => p.PerfilDeAcesso)
-                                 .ThenInclude(m => m.PerfilDeAcessoModulos)
-                                 .Include(p => p.Usuario)
-                                 .FirstOrDefaultAsync(pda => pda.PerfilDeAcessoCodigo == codigo);
+            var perfilDeAcesso = await context.PerfisDeAcessoUsuario.FindOneAsync(pda => pda.PerfilDeAcessoCodigo == codigo);
+            return perfilDeAcesso;
         }
     }
 }

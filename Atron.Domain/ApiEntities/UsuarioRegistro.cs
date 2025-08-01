@@ -4,17 +4,17 @@
     {
         public UsuarioRegistro() { }
 
-        public UsuarioRegistro(string userName, string email, string password, string confirmPassword)
+        public UsuarioRegistro(string codigoDeAcesso, string email, string senha, string confirmarSenha)
         {
-            UserName = userName;
+            CodigoDeAcesso = codigoDeAcesso;
             Email = email;
-            Password = password;
-            ConfirmPassword = confirmPassword;
+            Senha = senha;
+            ConfirmarSenha = confirmarSenha;
         }
 
-        public string UserName { get; set; }
+        public string CodigoDeAcesso { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
+        public string Senha { get; set; }
+        public string ConfirmarSenha { get; set; }
     }
 }

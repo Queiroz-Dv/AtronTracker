@@ -23,12 +23,13 @@ namespace Atron.WebApi.Helpers
 
         public ModuloHandler(
             ICacheService cacheService,
-            IUsuarioService usuarioService)
+            IUsuarioService usuarioService,
+            IServiceAccessor serviceAccessor)
         //IUsuarioHandler usuarioHandler)
         {
             _cacheService = cacheService;
             _usuarioService = usuarioService;
-            //_usuarioHandler = usuarioHandler;
+            _serviceAccessor = serviceAccessor;
         }
 
         protected override async Task HandleRequirementAsync(

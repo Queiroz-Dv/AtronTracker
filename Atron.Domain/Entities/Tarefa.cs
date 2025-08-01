@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Atron.Domain.Customs;
+using System;
 
 namespace Atron.Domain.Entities
 {
+    [ModuloInfo("TRF", nameof(Tarefa))]
     public class Tarefa : EntityBase
     {
         public int UsuarioId { get; set; }

@@ -1,108 +1,120 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
+using Shared.Interfaces.Accessor;
+using Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class DepartamentoRepository : Repository<Departamento>, IDepartamentoRepository
+    public class DepartamentoRepository : IDepartamentoRepository
     {
-        public readonly ILiteUnitOfWork _uow;
+        private ILiteDbContext context;
+        private ILiteUnitOfWork unitOfWork;
+        private IServiceAccessor serviceAccessor;
 
-        public DepartamentoRepository(AtronDbContext context, ILiteDbContext liteContext, ILiteUnitOfWork liteUnitOfWork)
-            : base(context, liteContext)
+        public DepartamentoRepository(ILiteDbContext context, ILiteUnitOfWork unitOfWork, IServiceAccessor serviceAccessor)
         {
-            _uow = liteUnitOfWork;
+            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.serviceAccessor = serviceAccessor;
         }
 
-        public async Task<Departamento> AtualizarDepartamentoRepositoryAsync(Departamento departamento)
+        public async Task<bool> AtualizarDepartamentoRepositoryAsync(Departamento departamento)
         {
-            _uow.BeginTransaction();
             try
             {
-                var entidade = await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == departamento.Codigo);
+                unitOfWork.BeginTransaction();
+                var entidade = await context.Departamentos.FindOneAsync(dpt => dpt.Codigo == departamento.Codigo);
 
-                if (entidade is not null)
-                {
-                    entidade.Descricao = departamento.Descricao;
-                    await _liteContext.Departamentos.UpdateAsync(entidade);
-                    _uow.Commit();
-                }
+                entidade.Descricao = departamento.Descricao;
+                var atualizado = await context.Departamentos.UpdateAsync(entidade);
+
+                unitOfWork.Commit();
+                return atualizado;
             }
-            catch
+            catch (Exception ex)
             {
-                _uow.Rollback();
-                throw;
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
             }
-
-            return departamento;
         }
 
-        public async Task<Departamento> CriarDepartamentoRepositoryAsync(Departamento departamento)
+        public async Task<bool> CriarDepartamentoRepositoryAsync(Departamento departamento)
         {
-            _uow.BeginTransaction();
             try
             {
-                await _liteContext.Departamentos.InsertAsync(departamento);
-                _uow.Commit();
+                unitOfWork.BeginTransaction();
+                var gravado = await context.Departamentos.InsertAsync(departamento);
+                unitOfWork.Commit();
+                return gravado > 0;
             }
-            catch
+            catch (Exception ex)
             {
-                _uow.Rollback();
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
             }
-
-            return await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == departamento.Codigo);
         }
 
-        public bool DepartamentoExiste(string codigo)
+        public async Task<bool> DepartamentoExiste(string codigo)
         {
-            return _liteContext.Departamentos.AnyAsync(dpt => dpt.Codigo == codigo).Result;
+            return await context.Departamentos.AnyAsync(dpt => dpt.Codigo == codigo);
         }
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
         {
-            return await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == codigo);
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var departamento = await context.Departamentos.FindOneAsync(dpt => dpt.Codigo == codigo);
+                unitOfWork.Commit();
+                return departamento;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return null;
+            }
         }
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo)
         {
-            return await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == codigo);
+            return await context.Departamentos.FindOneAsync(dpt => dpt.Codigo == codigo);
         }
 
         public async Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
         {
-            return await _liteContext.Departamentos.FindByIdAsync(id);
+            return await context.Departamentos.FindByIdAsync(id);
         }
 
         public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
         {
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
+            var departamentos = await context.Departamentos.FindAllAsync();
             return departamentos.OrderBy(x => x.Codigo).ToList();
         }
 
         public async Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento)
         {
-            _uow.BeginTransaction();
             try
             {
-                var departamentoExistente = await _liteContext.Departamentos.FindOneAsync(dpt => dpt.Codigo == departamento.Codigo);
-                var deletado = await _liteContext.Departamentos.DeleteAsync(departamentoExistente.Id);
-                if (deletado)
-                {
-                    _uow.Commit();
-                    return true;
-                }
+                unitOfWork.BeginTransaction();
+                var departamentoExistente = await context.Departamentos.FindOneAsync(dpt => dpt.Codigo == departamento.Codigo);
+                var deletado = await context.Departamentos.DeleteAsync(departamentoExistente.Id);
+                unitOfWork.Commit();
+                return deletado;
             }
-            catch
+            catch (Exception ex)
             {
-                _uow.Rollback();
-                throw;
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
             }
-
-            return false;
         }
     }
 }

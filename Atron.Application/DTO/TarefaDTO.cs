@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atron.Domain.Entities;
+using System;
 
 namespace Atron.Application.DTO
 {
@@ -18,6 +19,6 @@ namespace Atron.Application.DTO
 
         public UsuarioDTO Usuario { get; set; }
 
-        public TarefaEstadoDTO EstadoDaTarefa { get; set; }
+        public TarefaEstado EstadoDaTarefa { get; set; }
     }
 }

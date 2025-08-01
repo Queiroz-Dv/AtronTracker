@@ -9,36 +9,20 @@ namespace Atron.Application.Validations
     {
         public void Validate(Cargo entity)
         {
-            if (string.IsNullOrEmpty(entity.Descricao) ||
-                string.IsNullOrEmpty(entity.Codigo))
-            {
-                AddError("O código ou a descrição não estão preenchidos.");
-            }
+            if (string.IsNullOrWhiteSpace(entity.Codigo) || string.IsNullOrWhiteSpace(entity.Descricao))
+                AdicionarErro("O código ou a descrição não estão preenchidos.");
 
-            if (entity.Codigo.Length > 10)
-            {
-                AddError("O código informado é muito longo.");
-            }
+            if (entity.Codigo?.Length is < 3 or > 10)
+                AdicionarErro("O código deve ter entre 3 e 10 caracteres.");
 
-            if (entity.Codigo.Length < 3)
-            {
-                AddError("O código informado é muito pequeno.");
-            }
+            if (entity.Descricao?.Length is < 3)
+                AdicionarErro("A descrição é muito pequena.");
 
-            if (entity.Descricao.Length < 3)
-            {
-                AddError("A descricao é muito pequena.");
-            }
+            if (entity.Descricao?.Length is > 50)
+                AdicionarErro("A descrição é muito longa.");
 
-            if (entity.Descricao.Length > 50)
-            {
-                AddError("A descricao é muito longa.");
-            }
-
-            if (string.IsNullOrEmpty(entity.DepartamentoCodigo))
-            {
-                AddError("Código do departamento obrigatório.");
-            }
+            if (string.IsNullOrWhiteSpace(entity.DepartamentoCodigo))
+                AdicionarErro("Código do departamento obrigatório.");
         }
     }
 }

@@ -9,9 +9,9 @@ namespace Atron.Application.Services.Identity
 {
     public class UserIdentityService : IUserIdentityService
     {
-        private readonly IUserIdentityRepository _repository;
+        private readonly IUsuarioIdentityRepository _repository;
 
-        public UserIdentityService(IUserIdentityRepository repository)
+        public UserIdentityService(IUsuarioIdentityRepository repository)
         {
             _repository = repository;
         }

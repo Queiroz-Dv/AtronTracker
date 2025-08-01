@@ -1,10 +1,9 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Infrastructure.Context;
-using Shared.Models.ApplicationModels;
 
 namespace Atron.Infrastructure.Interfaces
 {
-    public interface ILiteDbContext 
+    public interface ILiteDbContext
     {
         IDataSet<Departamento> Departamentos { get; }
 
@@ -12,10 +11,24 @@ namespace Atron.Infrastructure.Interfaces
 
         IDataSet<Usuario> Usuarios { get; }
 
+        IDataSet<UsuarioIdentity> UsuarioIdentity { get; }
+
         IDataSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; }
 
-        IDataSet<ApplicationUser> Users { get;  }
+        IDataSet<Modulo> Modulos { get; }
 
-        IDataSet<ApplicationRole> Roles { get;  }
+        IDataSet<PerfilDeAcesso> PerfisDeAcesso { get; }
+
+        IDataSet<PerfilDeAcessoModulo> PerfisDeAcessoModulo { get; }
+
+        IDataSet<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario { get; }
+
+        IDataSet<Tarefa> Tarefas { get; }
+
+        IDataSet<TarefaEstado> TarefasEstados { get; }
+
+        IDataSet<Salario> Salarios { get; }
+
+        IDataSet<Mes> Meses { get; }
     }
 }

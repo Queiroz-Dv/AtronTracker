@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Atron.Domain.Customs;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Atron.Domain.Entities
 {
+    [ModuloInfo("DPT", nameof(Departamento))]
     public sealed class Departamento
     {
         [Key]

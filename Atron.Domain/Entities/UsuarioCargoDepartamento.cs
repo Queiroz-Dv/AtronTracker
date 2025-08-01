@@ -1,6 +1,6 @@
 ﻿namespace Atron.Domain.Entities
 {
-    public class UsuarioCargoDepartamento
+    public class UsuarioCargoDepartamento : EntityBase
     {
         public int UsuarioId { get; set; }
 

@@ -16,7 +16,7 @@ namespace Atron.Application.Services.EntitiesServices
 {
     public class PerfilDeAcessoService : IPerfilDeAcessoService
     {
-        private readonly IApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map;
+        private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository;
         private readonly IPerfilDeAcessoUsuarioRepository _perfilDeAcessoUsuarioRepository;
         private readonly IUsuarioRepository _usuarioRepository;
@@ -27,7 +27,7 @@ namespace Atron.Application.Services.EntitiesServices
         public PerfilDeAcessoService(
             IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
             IUsuarioRepository usuarioRepository,
-            IApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
+            IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
             IPerfilDeAcessoRepository perfilDeAcessoRepository,
             IPropriedadeDeFluxoRepository propriedadeDeFluxoRepository,
             IPropriedadeDeFluxoModuloRepository propriedadeDeFluxoModuloRepository,
@@ -48,12 +48,12 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (perfilDeAcessoDTO is null)
             {
-                _messageModel.AddError("O perfil de acesso está inválido para gravação.");
+                _messageModel.AdicionarErro("O perfil de acesso está inválido para gravação.");
             }
 
             if (!perfilDeAcessoDTO.Modulos.Any())
             {
-                _messageModel.AddError("Não contém nenhum módulo para relacionar ao perfil criado.");
+                _messageModel.AdicionarErro("Não contém nenhum módulo para relacionar ao perfil criado.");
             }
         }
 
@@ -65,7 +65,7 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoDTO);
+                var perfilDeAcesso = await _map.MapToEntityAsync(perfilDeAcessoDTO);
 
                 await PreencherInformacoesDaEntidade(perfilDeAcessoDTO, perfilDeAcesso);
 
@@ -77,7 +77,7 @@ namespace Atron.Application.Services.EntitiesServices
                     var prf = await _perfilDeAcessoRepository.AtualizarPerfilRepositoryAsync(codigo, perfilDeAcesso);
                     if (prf)
                     {
-                        _messageModel.AddMessage($"Perfil de acesso {perfilDeAcesso.Codigo} atualizado com sucesso.");
+                        _messageModel.AdicionarMensagem($"Perfil de acesso {perfilDeAcesso.Codigo} atualizado com sucesso.");
 
                         return prf;
                     }
@@ -118,7 +118,7 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoDTO);
+                var perfilDeAcesso = await _map.MapToEntityAsync(perfilDeAcessoDTO);
 
                 await PreencherInformacoesDaEntidade(perfilDeAcessoDTO, perfilDeAcesso);
 
@@ -130,7 +130,7 @@ namespace Atron.Application.Services.EntitiesServices
                     var prf = await _perfilDeAcessoRepository.CriarPerfilRepositoryAsync(perfilDeAcesso);
                     if (prf)
                     {
-                        _messageModel.AddMessage($"Perfil de acesso {perfilDeAcesso.Codigo} criado com sucesso.");
+                        _messageModel.AdicionarMensagem($"Perfil de acesso {perfilDeAcesso.Codigo} criado com sucesso.");
 
                         return prf;
                     }
@@ -145,12 +145,12 @@ namespace Atron.Application.Services.EntitiesServices
             var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
             if (perfil is null)
             {
-                _messageModel.AddRegisterNotFoundMessage("Perfil de acesso");
+                _messageModel.MensagemRegistroNaoEncontrado("Perfil de acesso");
             }
             else
             {
                 var result = await _perfilDeAcessoRepository.DeletarPerfilRepositoryAsync(perfil);
-                _messageModel.AddMessage("Perfil removido com sucesso");
+                _messageModel.AdicionarMensagem("Perfil removido com sucesso");
 
                 return result;
             }
@@ -161,7 +161,7 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task<PerfilDeAcessoDTO> ObterPerfilPorCodigoServiceAsync(string codigo)
         {
             var entidade = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
-            return entidade is null ? null : _map.MapToDTO(entidade);
+            return entidade is null ? null : await _map.MapToDTOAsync(entidade);
         }
 
         public Task<PerfilDeAcessoDTO> ObterPerfilPorIdServiceAsync(int id)
@@ -172,7 +172,7 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task<ICollection<PerfilDeAcessoDTO>> ObterTodosPerfisServiceAsync()
         {
             var entities = await _perfilDeAcessoRepository.ObterTodosPerfisRepositoryAsync();
-            return _map.MapToListDTO(entities.ToList());
+            return await _map.MapToListDTOAsync(entities.ToList());
         }
 
         public async Task<bool> RelacionarPerfilDeAcessoUsuarioServiceAsync(PerfilDeAcessoUsuarioDTO dto)
@@ -183,7 +183,7 @@ namespace Atron.Application.Services.EntitiesServices
             {
                 // Preciso remover antes pois não terei o Update diretamente, basta remover os registros e refazer a gravação
                 var perfilRelacionado = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(dto.PerfilDeAcesso.Codigo);
-
+        
                 if (perfilRelacionado != null)
                 {
                     if (perfilRelacionado.PerfisDeAcessoUsuario.Any())
@@ -195,7 +195,7 @@ namespace Atron.Application.Services.EntitiesServices
                     }
                 }
 
-                var perfilDeAcesso = _map.MapToEntity(dto.PerfilDeAcesso);
+                var perfilDeAcesso = await  _map.MapToEntityAsync(dto.PerfilDeAcesso);
                 perfilDeAcesso.PerfisDeAcessoUsuario = new List<PerfilDeAcessoUsuario>();
                 foreach (var usuarioDTO in dto.Usuarios)
                 {
@@ -234,12 +234,12 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (perfilDeAcessoUsuario.PerfilDeAcesso is null)
             {
-                _messageModel.AddError("O perfil de acesso está inválido para gravação.");
+                _messageModel.AdicionarErro("O perfil de acesso está inválido para gravação.");
             }
 
             if (!perfilDeAcessoUsuario.Usuarios.Any())
             {
-                _messageModel.AddError("Não contém nenhum usuário para relacionar ao perfil criado.");
+                _messageModel.AdicionarErro("Não contém nenhum usuário para relacionar ao perfil criado.");
             }
         }
 
@@ -252,8 +252,7 @@ namespace Atron.Application.Services.EntitiesServices
 
             var perfilDeAcesso = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
 
-            var perfilDeAcessoDTO = _map.MapToDTO(perfilDeAcesso);
-
+            var perfilDeAcessoDTO = await _map.MapToDTOAsync(perfilDeAcesso);
 
             var dto = new PerfilDeAcessoUsuarioDTO();
 
@@ -285,7 +284,7 @@ namespace Atron.Application.Services.EntitiesServices
         {
             var perfis = await _perfilDeAcessoRepository.ObterPerfisPorCodigoDeUsuarioRepositoryAsync(usuarioCodigo);
 
-            return perfis != null ? _map.MapToListDTO(perfis) : null;
+            return perfis != null ? await _map.MapToListDTOAsync(perfis) : null;
         }       
     }
 }

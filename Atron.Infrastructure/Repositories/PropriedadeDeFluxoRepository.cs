@@ -1,34 +1,32 @@
 ﻿using Atron.Domain.Componentes;
 using Atron.Domain.Interfaces;
-using Atron.Infrastructure.Context;
-using Microsoft.EntityFrameworkCore;
+using Atron.Infrastructure.Interfaces;
+using Shared.Interfaces.Accessor;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class PropriedadeDeFluxoRepository : IPropriedadeDeFluxoRepository
-    {
-        private readonly AtronDbContext _context;
-
-        public PropriedadeDeFluxoRepository(AtronDbContext context)
-        {
-            _context = context;
-        }
+    public class PropriedadeDeFluxoRepository :  IPropriedadeDeFluxoRepository
+    {       
 
         public async Task<PropriedadesDeFluxo> ObterPropriedadePorCodigo(string codigo)
         {
-            return await _context.PropriedadesDeFluxo.FirstOrDefaultAsync(pdf => pdf.Codigo == codigo);
+            //return await _context.PropriedadesDeFluxo.FirstOrDefaultAsync(pdf => pdf.Codigo == codigo);
+            throw new NotImplementedException();
         }
 
         public async Task<PropriedadesDeFluxo> ObterPropriedadePorId(int id)
         {
-            return await _context.PropriedadesDeFluxo.FirstOrDefaultAsync(pdf => pdf.Id == id);
+            //return await _context.PropriedadesDeFluxo.FirstOrDefaultAsync(pdf => pdf.Id == id);
+            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<PropriedadesDeFluxo>> ObterTodasPropriedades()
         {
-            return await _context.PropriedadesDeFluxo.ToListAsync();
+            //return await _context.PropriedadesDeFluxo.ToListAsync();
+            throw new NotImplementedException();
         }
     }
 }

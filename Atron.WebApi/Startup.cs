@@ -1,14 +1,16 @@
-using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Infra.IoC;
+using Atron.Infrastructure.Context;
+using Atron.Infrastructure.Interfaces;
 using Atron.Infrastructure.Models;
 using Atron.WebApi.Helpers;
+using LiteDB;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
@@ -63,7 +65,7 @@ namespace Atron.WebApi
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Definições de segurança JWT."                    
+                    Description = "Definições de segurança JWT."
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -103,7 +105,14 @@ namespace Atron.WebApi
             // 📎 Permite acessar o HttpContext em qualquer ponto via injeção de dependência
             services.AddHttpContextAccessor();
 
-            services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));
+            services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));            
+            services.AddSingleton<LiteDbConnectionStringProvider>();
+            services.AddSingleton(provider =>
+            {
+                var connectionStringProvider = provider.GetRequiredService<LiteDbConnectionStringProvider>();
+                return new LiteDatabase(connectionStringProvider.ConnectionString);
+            });
+            services.AddScoped<AtronLiteDbContext>();
         }
 
         /// <summary>
@@ -161,6 +170,13 @@ namespace Atron.WebApi
             {
                 endpoints.MapControllers(); // Roteia para as controllers decoradas com [ApiController]
             });
+
+            // Criação de escopo para garantir índices do banco de dados
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AtronLiteDbContext>();
+                context.EnsureIndexes(); // Aqui é o local correto para garantir os índices
+            }
         }
 
         /// <summary>
@@ -168,7 +184,7 @@ namespace Atron.WebApi
         /// </summary>
         /// <param name="app">Application builder.</param>
         private static void AddSwagger(IApplicationBuilder app)
-        {            
+        {
             app.UseSwagger(); // Gera o JSON com a especificação da API
             app.UseSwaggerUI(c =>
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron WebApi Doc v1")); // Interface Swagger UI

@@ -1,46 +1,49 @@
 ﻿using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using Shared.Interfaces.Accessor;
+using Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
 {
-    public class CargoRepository : Repository<Cargo>, ICargoRepository
+    public class CargoRepository : ICargoRepository
     {
-        private readonly ILiteUnitOfWork _uow;
+        private ILiteDbContext context;
+        private ILiteUnitOfWork unitOfWork;
+        private IServiceAccessor serviceAccessor;
 
-        public CargoRepository(AtronDbContext context,
-                               ILiteDbContext liteDbContext,
-                               ILiteUnitOfWork liteUnitOfWork) : base(context, liteDbContext)
+        public CargoRepository(ILiteDbContext context, ILiteUnitOfWork unitOfWork, IServiceAccessor serviceAccessor)
         {
-            _uow = liteUnitOfWork;
+            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.serviceAccessor = serviceAccessor;
         }
 
-        public async Task<Cargo> CriarCargoAsync(Cargo cargo)
+        public async Task<bool> CriarCargoAsync(Cargo cargo)
         {
-            _uow.BeginTransaction();
             try
             {
-                await _liteContext.Cargos.InsertAsync(cargo);
-                _uow.Commit();
+                unitOfWork.BeginTransaction();
+                var gravado = await context.Cargos.InsertAsync(cargo);
+                unitOfWork.Commit();
+                return gravado > 0;
             }
-            catch
+            catch (Exception ex)
             {
-                _uow.Rollback();
-                throw;
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
             }
-
-            return await _liteContext.Cargos.FindOneAsync(crg => crg.Codigo == cargo.Codigo);
         }
 
         public async Task<Cargo> ObterCargoPorIdAsync(int? id)
         {
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
-            var cargo = await _liteContext.Cargos.FindByIdAsync(id);
+            var departamentos = await context.Departamentos.FindAllAsync();
+            var cargo = await context.Cargos.FindByIdAsync(id);
 
             var departamento = (from dpt in departamentos.ToList()
                                 where dpt.Id == cargo.DepartamentoId
@@ -58,8 +61,8 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Cargo> ObterCargoComDepartamentoPorIdAsync(int? id)
         {
-            var cargosDb = await _liteContext.Cargos.FindAllAsync();
-            var departamentosDb = await _liteContext.Departamentos.FindAllAsync();
+            var cargosDb = await context.Cargos.FindAllAsync();
+            var departamentosDb = await context.Departamentos.FindAllAsync();
 
             var cargos = (from pst in cargosDb.ToList()
                           join dept in departamentosDb.ToList() on pst.DepartamentoId equals dept.Id
@@ -75,8 +78,8 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<IEnumerable<Cargo>> ObterCargosAsync()
         {
-            var cargos = await _liteContext.Cargos.FindAllAsync();
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
+            var cargos = await context.Cargos.FindAllAsync();
+            var departamentos = await context.Departamentos.FindAllAsync();
 
             cargos = (from crg in cargos.ToList()
                       join dpt in departamentos.ToList() on crg.DepartamentoId equals dpt.Id
@@ -93,70 +96,77 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<bool> RemoverCargoAsync(Cargo cargo)
         {
-            _uow.BeginTransaction();
             try
             {
-                var cargoBd = await _liteContext.Cargos.FindOneAsync(crg => crg.Codigo == cargo.Codigo);
-                return await _liteContext.Cargos.DeleteAsync(cargo.Id);
+                unitOfWork.BeginTransaction();
+                var cargoBd = await context.Cargos.FindOneAsync(crg => crg.Codigo == cargo.Codigo);
+                var deletado = await context.Cargos.DeleteAsync(cargo.Id);
+                unitOfWork.Commit();
+                return deletado;
             }
-            catch
+            catch (Exception ex)
             {
-                _uow.Rollback();
-                throw;
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
             }
         }
 
         public async Task<bool> AtualizarCargoAsync(Cargo cargo)
         {
-            var cargoBd = await ObterCargoPorCodigoAsync(cargo.Codigo);
-            cargoBd.Descricao = cargo.Descricao;
-            cargoBd.DepartamentoId = cargo.DepartamentoId;
-            cargoBd.DepartamentoCodigo = cargo.DepartamentoCodigo;
-
-            _uow.BeginTransaction();
             try
             {
-                var atualizado = await _liteContext.Cargos.UpdateAsync(cargoBd);
-                _uow.Commit();
+                unitOfWork.BeginTransaction();
+                var cargoBd = await ObterCargoPorCodigoAsync(cargo.Codigo);
+                cargoBd.Descricao = cargo.Descricao;
+                cargoBd.DepartamentoId = cargo.DepartamentoId;
+                cargoBd.DepartamentoCodigo = cargo.DepartamentoCodigo;
+
+                var atualizado = await context.Cargos.UpdateAsync(cargoBd);
+                unitOfWork.Commit();
                 return atualizado;
             }
-            catch
+            catch (Exception ex)
             {
-                _uow.Rollback();
-                throw;
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
             }
         }
 
         public async Task<Cargo> ObterCargoPorCodigoAsync(string codigo)
         {
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
-            var cargo = await _liteContext.Cargos.FindOneAsync(crg => crg.Codigo == codigo);
+            var departamentos = await context.Departamentos.FindAllAsync();
+            var cargo = await context.Cargos.FindOneAsync(crg => crg.Codigo == codigo);
 
-            var departamento = (from dpt in departamentos.ToList()
-                                where dpt.Id == cargo.DepartamentoId
-                                select new Departamento()
-                                {
-                                    Id = dpt.Id,
-                                    Codigo = dpt.Codigo,
-                                    Descricao = dpt.Descricao
-                                }).FirstOrDefault();
+            if (cargo is not null)
+            {
+                var departamento = (from dpt in departamentos.ToList()
+                                    where dpt.Id == cargo.DepartamentoId
+                                    select new Departamento()
+                                    {
+                                        Id = dpt.Id,
+                                        Codigo = dpt.Codigo,
+                                        Descricao = dpt.Descricao
+                                    }).FirstOrDefault();
+
+                cargo.DepartamentoId = departamento.Id;
+                cargo.DepartamentoCodigo = departamento.Codigo;
+                cargo.Departamento = departamento;
+            }
+
             return cargo;
         }
 
-        public async Task<Cargo> ObterCargoPorCodigoAsyncAsNoTracking(string codigo)
+        public async Task<bool> CargoExiste(string codigo)
         {
-            return await _context.Cargos.Include(dpt => dpt.Departamento).AsNoTracking().FirstOrDefaultAsync(crg => crg.Codigo == codigo);
-        }
-
-        public bool CargoExiste(string codigo)
-        {
-            return _liteContext.Cargos.AnyAsync(crg => crg.Codigo == codigo).Result;
+            return await context.Cargos.AnyAsync(crg => crg.Codigo == codigo);
         }
 
         public async Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo)
         {
-            var cargos = await _liteContext.Cargos.FindAllAsync();
-            var departamentos = await _liteContext.Departamentos.FindAllAsync();
+            var cargos = await context.Cargos.FindAllAsync();
+            var departamentos = await context.Departamentos.FindAllAsync();
 
             cargos = (from crg in cargos.ToList()
                       join dpt in departamentos.ToList() on crg.DepartamentoId equals dpt.Id
