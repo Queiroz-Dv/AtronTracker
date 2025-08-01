@@ -10,6 +10,8 @@ namespace Atron.Domain.Interfaces.UsuarioInterfaces
 
         public Task<bool> GravarAssociacaoUsuarioCargoDepartamento(Usuario usuario, Cargo cargo, Departamento departamento);
 
+        public Task<bool> AtualizarAssociacaoUsuarioCargoDepartamento(Usuario usuario, Cargo cargo, Departamento departamento);
+
         Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorDepartamento(int id, string codigo);
 
         Task<bool> RemoverRelacionamentoPorDepartamentoRepository(UsuarioCargoDepartamento item);

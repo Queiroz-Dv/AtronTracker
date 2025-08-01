@@ -84,30 +84,8 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<PerfilDeAcesso> ObterPerfilPorCodigoRepositoryAsync(string codigo)
         {
-            var modulos = await context.Modulos.FindAllAsync();
-            var perfisDeAcessoUsuario = await context.PerfisDeAcessoUsuario.FindAllAsync();
-            var perfil = await context.PerfisDeAcesso.FindOneAsync(pf => pf.Codigo == codigo);
-
-            perfil.PerfilDeAcessoModulos = perfil.PerfilDeAcessoModulos
-                .Select(pam => new PerfilDeAcessoModulo
-                {
-                    Modulo = modulos.FirstOrDefault(m => m.Id == pam.ModuloId),
-                    ModuloId = pam.ModuloId,
-                    PerfilDeAcessoId = pam.PerfilDeAcessoId,
-                    ModuloCodigo = pam.ModuloCodigo,
-                }).ToList();
-
-            perfil.PerfisDeAcessoUsuario = perfil.PerfisDeAcessoUsuario.Except(perfisDeAcessoUsuario)
-                .Select(p => new PerfilDeAcessoUsuario
-                {
-                    Usuario = perfisDeAcessoUsuario.FirstOrDefault(u => u.UsuarioId == p.UsuarioId)?.Usuario,
-                    UsuarioId = p.UsuarioId,
-                    UsuarioCodigo = p.UsuarioCodigo,
-                    PerfilDeAcessoId = p.PerfilDeAcessoId,
-                    PerfilDeAcessoCodigo = p.PerfilDeAcessoCodigo
-                }).ToList();
-
-            return perfil;
+            var perfis = await ObterTodosPerfisRepositoryAsync();            
+            return perfis.FirstOrDefault(prf => prf.Codigo == codigo);
         }
 
         public Task<PerfilDeAcesso> ObterPerfilPorIdRepositoryAsync(int id)

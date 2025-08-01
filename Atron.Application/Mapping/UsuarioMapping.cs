@@ -5,10 +5,11 @@ using Shared.DTO.API;
 using Shared.Services.Mapper;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Atron.Application.Mapping
 {
-    public class UsuarioMapping : ApplicationMapService<UsuarioDTO, UsuarioIdentity>
+    public class UsuarioMapping : AsyncApplicationMapService<UsuarioDTO, UsuarioIdentity>
     {
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly ICargoRepository _cargoRepository;
@@ -21,7 +22,7 @@ namespace Atron.Application.Mapping
             _perfilDeAcessoRepository = perfilDeAcessoRepository;
         }
 
-        public override UsuarioDTO MapToDTO(UsuarioIdentity entity)
+        public override async Task<UsuarioDTO> MapToDTOAsync(UsuarioIdentity entity)
         {
             var usuario = new UsuarioDTO
             {
@@ -43,29 +44,16 @@ namespace Atron.Application.Mapping
             {
                 foreach (var item in entity.UsuarioCargoDepartamentos)
                 {
-                    var cargoBdTask = _cargoRepository.ObterCargoPorCodigoAsync(item.CargoCodigo);
-                    cargoBdTask.Wait();
-                    var cargoBd = cargoBdTask.Result;
+                    var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(item.CargoCodigo);
+                    var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(item.DepartamentoCodigo);
 
-                    var departamentoBdTask = _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(item.DepartamentoCodigo);
-                    departamentoBdTask.Wait();
-                    var departamentoBd = departamentoBdTask.Result;
+                    usuario.CargoCodigo = cargo.Codigo;
+                    usuario.Cargo = new CargoDTO(cargo.Codigo, cargo.Descricao);
 
-                    usuario.Cargo = new CargoDTO
-                    {
-                        Codigo = cargoBd.Codigo,
-                        Descricao = cargoBd.Descricao
-                    };
-
-                    usuario.Departamento = new DepartamentoDTO(departamentoBd.Codigo, departamentoBd.Descricao);
-
-                    usuario.CargoCodigo = cargoBd.Codigo;
-                    usuario.DepartamentoCodigo = departamentoBd.Codigo;
+                    usuario.DepartamentoCodigo = departamento.Codigo;
+                    usuario.Departamento = new DepartamentoDTO(departamento.Codigo, departamento.Descricao);
                 }
-
-                return usuario;
             }
-
 
             if(entity.PerfisDeAcessoUsuario != null)
             {
@@ -73,10 +61,8 @@ namespace Atron.Application.Mapping
 
                 foreach (var item in entity.PerfisDeAcessoUsuario)
                 {
-                    var perfilDeAcessoTask = _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(item.PerfilDeAcessoCodigo);
-                    perfilDeAcessoTask.Wait();
-                    var perfilDeAcesso = perfilDeAcessoTask.Result;
-
+                    var perfilDeAcesso= await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(item.PerfilDeAcessoCodigo);
+                 
                     usuario.PerfisDeAcesso.Add(new PerfilDeAcessoDTO
                     {
                         Codigo = perfilDeAcesso.Codigo,
@@ -88,10 +74,9 @@ namespace Atron.Application.Mapping
             return usuario;
         }
 
-        public override UsuarioIdentity MapToEntity(UsuarioDTO dto)
-        {
-            // 1. Mapear o DTO para a entidade
-            return new UsuarioIdentity()
+        public override Task<UsuarioIdentity> MapToEntityAsync(UsuarioDTO dto)
+        {            
+            return Task.FromResult(new UsuarioIdentity()
             {
                 Codigo = dto.Codigo.ToUpper(),
                 Nome = dto.Nome,
@@ -99,7 +84,7 @@ namespace Atron.Application.Mapping
                 Email = dto.Email,
                 DataNascimento = dto.DataNascimento,
                 SalarioAtual = dto.Salario
-            };
+            });
         }
     }
 }

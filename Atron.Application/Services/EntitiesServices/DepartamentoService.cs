@@ -25,14 +25,14 @@ namespace Atron.Application.Services.EntitiesServices
          *  O serviço depende de uma abstração (IDepartamentoRepository) 
          *  em vez de uma implementação concreta (DepartamentoRepository).
          */
-        private readonly IApplicationMapService<DepartamentoDTO, Departamento> _map;
+        private readonly IAsyncApplicationMapService<DepartamentoDTO, Departamento> _map;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
         private readonly ICargoRepository _cargoRepository;
         private readonly IValidateModel<Departamento> _validateModel;
         private readonly MessageModel messageModel;
 
-        public DepartamentoService(IApplicationMapService<DepartamentoDTO, Departamento> map,
+        public DepartamentoService(IAsyncApplicationMapService<DepartamentoDTO, Departamento> map,
                                    IDepartamentoRepository departamentoRepository,
                                    IValidateModel<Departamento> validateModel,
                                    MessageModel messageModel,
@@ -61,7 +61,7 @@ namespace Atron.Application.Services.EntitiesServices
                 return;
             }
 
-            var departamento = _map.MapToEntity(departamentoDTO);
+            var departamento = await _map.MapToEntityAsync(departamentoDTO);
             _validateModel.Validate(departamento);
 
             if (!messageModel.Notificacoes.HasErrors())
@@ -79,7 +79,7 @@ namespace Atron.Application.Services.EntitiesServices
                 return;
             }
 
-            var departamento = _map.MapToEntity(departamentoDTO);
+            var departamento = await _map.MapToEntityAsync(departamentoDTO);
 
             var entity = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamento.Codigo);
 
@@ -101,7 +101,7 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (departamento is not null)
             {
-                return _map.MapToDTO(departamento);
+                return await _map.MapToDTOAsync(departamento);
             }
             else
             {
@@ -113,13 +113,13 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task<DepartamentoDTO> ObterPorIdAsync(int? departamentoId)
         {
             var entity = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);
-            return _map.MapToDTO(entity);
+            return await _map.MapToDTOAsync(entity);
         }
 
         public async Task<IEnumerable<DepartamentoDTO>> ObterTodosAsync()
         {
             var entities = await _departamentoRepository.ObterDepartmentosAsync();
-            return _map.MapToListDTO(entities.ToList());
+            return await _map.MapToListDTOAsync(entities.ToList());
         }
 
         public async Task RemoverAsync(string codigo)

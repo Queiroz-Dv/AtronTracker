@@ -16,13 +16,13 @@ namespace Atron.Application.Services.EntitiesServices
 {
     public class SalarioService : ISalarioService
     {
-        private readonly IApplicationMapService<SalarioDTO, Salario> _map;
+        private readonly IAsyncApplicationMapService<SalarioDTO, Salario> _map;
         private readonly ISalarioRepository _salarioRepository;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IValidateModel<Salario> _validateModel;
         private readonly MessageModel _messageModel;
 
-        public SalarioService(IApplicationMapService<SalarioDTO, Salario> map,
+        public SalarioService(IAsyncApplicationMapService<SalarioDTO, Salario> map,
                               ISalarioRepository salarioRepository,
                               IUsuarioRepository usuarioRepository,
                               IValidateModel<Salario> validateModel,
@@ -38,7 +38,7 @@ namespace Atron.Application.Services.EntitiesServices
 
         public async Task AtualizarServiceAsync(int id, SalarioDTO salarioDTO)
         {
-            var entidade = _map.MapToEntity(salarioDTO);
+            var entidade = await _map.MapToEntityAsync(salarioDTO);
             var usuarioIdentity = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.UsuarioCodigo);
 
             _validateModel.Validate(entidade);
@@ -76,7 +76,7 @@ namespace Atron.Application.Services.EntitiesServices
 
         public async Task CriarAsync(SalarioDTO salarioDTO)
         {
-            var entidade = _map.MapToEntity(salarioDTO);
+            var entidade = await _map.MapToEntityAsync(salarioDTO);
             var usuarioIdentity = await _usuarioRepository.ObterUsuarioPorCodigoAsync(salarioDTO.UsuarioCodigo);
 
             _validateModel.Validate(entidade);
@@ -132,13 +132,13 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task<SalarioDTO> ObterPorId(int id)
         {
             var entidade = await _salarioRepository.ObterSalarioPorIdAsync(id);
-            return _map.MapToDTO(entidade);
+            return await _map.MapToDTOAsync(entidade);
         }
 
         public async Task<List<SalarioDTO>> ObterTodosAsync()
         {
             var salariosRepository = await _salarioRepository.ObterSalariosRepository();
-            return _map.MapToListDTO(salariosRepository.ToList());
+            return await _map.MapToListDTOAsync(salariosRepository.ToList());
         }
 
         public async Task<string> ObterDescricaoDoMes(int mesId)

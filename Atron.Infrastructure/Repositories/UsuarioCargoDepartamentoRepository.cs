@@ -98,5 +98,33 @@ namespace Atron.Infrastructure.Repositories
                 return false;
             }
         }
+
+        public async Task<bool> AtualizarAssociacaoUsuarioCargoDepartamento(Usuario usuario, Cargo cargo, Departamento departamento)
+        {
+            var associacaoBd = await context .UsuarioCargoDepartamentos.FindOneAsync(rel => rel.UsuarioCodigo == usuario.Codigo &&
+                                                                        rel.DepartamentoCodigo == departamento.Codigo &&
+                                                                        rel.CargoCodigo == cargo.Codigo);
+
+            associacaoBd.UsuarioId = usuario.Id;
+            associacaoBd.UsuarioCodigo = usuario.Codigo;
+            associacaoBd.CargoId = cargo.Id;
+            associacaoBd.CargoCodigo = cargo.Codigo;
+            associacaoBd.DepartamentoId = departamento.Id;
+            associacaoBd.DepartamentoCodigo = departamento.Codigo;
+
+            try
+            {
+                unitOfWork.BeginTransaction();
+                var atualizado = await context.UsuarioCargoDepartamentos.UpdateAsync(associacaoBd);
+                unitOfWork.Commit();
+                return atualizado;
+            }
+            catch (Exception ex)
+            {
+                unitOfWork.Rollback();
+                serviceAccessor.ObterService<MessageModel>().AdicionarErro(ex.Message);
+                return false;
+            }
+        }
     }
 }

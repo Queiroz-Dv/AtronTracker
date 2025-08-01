@@ -9,14 +9,14 @@ namespace Atron.Infra.IoC
     public static class DependencyInjectionMappingContainer
     {
         public static IServiceCollection AddServiceMappings(this IServiceCollection services)
-        {
-            services.AddScoped<IApplicationMapService<DepartamentoDTO, Departamento>, DepartamentoMapping>();
-            services.AddScoped<IApplicationMapService<CargoDTO, Cargo>, CargoMapping>();
-            services.AddScoped<IApplicationMapService<UsuarioDTO, UsuarioIdentity>, UsuarioMapping>();
-            services.AddScoped<IApplicationMapService<TarefaDTO, Tarefa>, TarefaMapping>();
-            services.AddScoped<IApplicationMapService<SalarioDTO, Salario>, SalarioMapping>();
-            services.AddScoped<IApplicationMapService<ModuloDTO, Modulo>, ModuloMapping>();
-            services.AddScoped<IApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso>, PerfilDeAcessoMapping>();    
+        {              
+            services.AddScoped<IAsyncApplicationMapService<DepartamentoDTO, Departamento>, DepartamentoMapping>();
+            services.AddScoped<IAsyncApplicationMapService<CargoDTO, Cargo>, CargoMapping>();
+            services.AddScoped<IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity>, UsuarioMapping>();
+            services.AddScoped<IAsyncApplicationMapService<TarefaDTO, Tarefa>, TarefaMapping>();
+            services.AddScoped<IAsyncApplicationMapService<SalarioDTO, Salario>, SalarioMapping>();
+            services.AddScoped<IAsyncApplicationMapService<ModuloDTO, Modulo>, ModuloMapping>();
+            services.AddScoped<IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso>, PerfilDeAcessoMapping>();
             return services;
         }
     }

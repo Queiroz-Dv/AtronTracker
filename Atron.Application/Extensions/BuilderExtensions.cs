@@ -111,12 +111,13 @@ namespace Atron.Application.Extensions
                 CargoDescricao = usuario.Cargo?.Descricao,
                 DepartamentoCodigo = usuario.DepartamentoCodigo,
                 DepartamentoDescricao = usuario.Departamento?.Descricao,
-                PerfisDeAcesso = usuario.PerfisDeAcesso.Select(p => new PerfilDeAcessoDTO
+                PerfisDeAcesso = usuario.PerfisDeAcesso?.Select(p => new PerfilDeAcessoDTO
                 {
                     Codigo = p.Codigo,
                     Descricao = p.Descricao
                 }).ToList(),
                 Email = usuario.Email,
+                
             };
         }
         #endregion

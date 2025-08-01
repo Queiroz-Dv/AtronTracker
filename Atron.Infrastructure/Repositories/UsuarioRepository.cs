@@ -171,39 +171,47 @@ namespace Atron.Infrastructure.Repositories
         }
 
         public async Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()
-        {
+        {    
             var applicationUsers = (await context.UsuarioIdentity.FindAllAsync()).ToList();
-            var relacionamentos = (await context.UsuarioCargoDepartamentos.FindAllAsync()).ToList();
             var usuarios = (await context.Usuarios.FindAllAsync()).ToList();
-
-            var usuariosIdentity = new List<UsuarioIdentity>();
-
-            foreach (var user in applicationUsers)
+            var relacionamentos = (await context.UsuarioCargoDepartamentos.FindAllAsync()).ToList();
+            var perfisDeAcessoUsuario = (await context.PerfisDeAcessoUsuario.FindAllAsync()).ToList();
+            
+            var usuariosIdentity = applicationUsers.Select(identityUser =>
             {
-                var usuario = usuarios.FirstOrDefault(cdg => cdg.Codigo == user.Codigo);
-
-                if (usuario is not null)
+                var usuarioPrincipal = usuarios.FirstOrDefault(u => u.Codigo == identityUser.Codigo);
+            
+                if (usuarioPrincipal == null)
                 {
-                    // Preenche os relacionamentos do usuário
-                    usuario.UsuarioCargoDepartamentos = relacionamentos
-                        .Where(rel => rel.UsuarioCodigo == usuario.Codigo)
-                        .ToList();
-
-                    var usuarioIdentity = new UsuarioIdentity
-                    {
-                        Codigo = usuario.Codigo,
-                        Nome = usuario.Nome,
-                        Sobrenome = usuario.Sobrenome,
-                        Email = usuario.Email,
-                        SalarioAtual = usuario.Salario,
-                        DataNascimento = usuario.DataNascimento,
-                        RefreshToken = user.RefreshToken,
-                        RefreshTokenExpireTime = user.RefreshTokenExpireTime
-                    };
-
-                    usuariosIdentity.Add(usuarioIdentity);
+                    return null; 
                 }
-            }
+     
+                return new UsuarioIdentity
+                {
+                    // Dados da tabela de autenticação (UsuarioIdentity)
+                    Id = identityUser.Id,
+                    Codigo = identityUser.Codigo,
+                    RefreshToken = identityUser.RefreshToken,
+                    RefreshTokenExpireTime = identityUser.RefreshTokenExpireTime,
+
+                    // Dados da tabela de negócio (Usuario)
+                    Nome = usuarioPrincipal.Nome,
+                    Sobrenome = usuarioPrincipal.Sobrenome,
+                    Email = usuarioPrincipal.Email,
+                    SalarioAtual = usuarioPrincipal.Salario,
+                    DataNascimento = usuarioPrincipal.DataNascimento,
+                    
+                    UsuarioCargoDepartamentos = relacionamentos
+                        .Where(r => r.UsuarioCodigo == identityUser.Codigo)
+                        .ToList(),
+                   
+                    PerfisDeAcessoUsuario = perfisDeAcessoUsuario
+                        .Where(p => p.UsuarioCodigo == identityUser.Codigo)
+                        .ToList()
+                };
+            }).Where(u => u != null)
+            .ToList();
+
 
             return usuariosIdentity;
         }

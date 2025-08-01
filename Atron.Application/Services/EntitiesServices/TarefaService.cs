@@ -14,12 +14,12 @@ namespace Atron.Application.Services.EntitiesServices
 {
     public class TarefaService : ITarefaService
     {
-        private readonly IApplicationMapService<TarefaDTO, Tarefa> _map;
+        private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _map;
         private readonly ITarefaRepository _tarefaRepository;
         private readonly IValidateModel<Tarefa> _validateModel;
         private readonly MessageModel _messageModel;
 
-        public TarefaService(IApplicationMapService<TarefaDTO, Tarefa> map,
+        public TarefaService(IAsyncApplicationMapService<TarefaDTO, Tarefa> map,
                              ITarefaRepository tarefaRepository,
                              MessageModel messageModel,
                              IValidateModel<Tarefa> validateModel)
@@ -32,7 +32,7 @@ namespace Atron.Application.Services.EntitiesServices
 
         public async Task CriarAsync(TarefaDTO tarefaDTO)
         {
-            var tarefa = _map.MapToEntity(tarefaDTO);
+            var tarefa = await _map.MapToEntityAsync(tarefaDTO);
             _validateModel.Validate(tarefa);
 
             if (!_messageModel.Notificacoes.HasErrors())
@@ -48,7 +48,7 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task<List<TarefaDTO>> ObterTodosAsync()
         {
             var tarefas = await _tarefaRepository.ObterTodasTarefas();
-            return _map.MapToListDTO(tarefas);
+            return await _map.MapToListDTOAsync(tarefas);
         }
 
         public async Task AtualizarAsync(int id, TarefaDTO tarefaDTO)
@@ -59,7 +59,7 @@ namespace Atron.Application.Services.EntitiesServices
                 return;
             }
 
-            var tarefa = _map.MapToEntity(tarefaDTO);
+            var tarefa = await _map.MapToEntityAsync(tarefaDTO);
             _validateModel.Validate(tarefa);
 
             if (!_messageModel.Notificacoes.HasErrors())
@@ -101,7 +101,7 @@ namespace Atron.Application.Services.EntitiesServices
                 return null;
             }
 
-            return _map.MapToDTO(tarefaRepository);
+            return await _map.MapToDTOAsync(tarefaRepository);
         }
     }
 }

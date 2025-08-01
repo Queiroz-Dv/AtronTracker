@@ -1,6 +1,5 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.DTO.ApiDTO;
-using Atron.Application.Interfaces.ApplicationInterfaces;
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.ApiEntities;
 using Atron.Domain.Entities;
@@ -20,8 +19,8 @@ namespace Atron.Application.Services.EntitiesServices
     public class UsuarioService : IUsuarioService
     {
         // Sempre usar o repository pra acessar a camada de dados
-        private readonly IApplicationMapService<UsuarioDTO, UsuarioIdentity> _map;
-        private readonly IUsuarioRepository _usuarioRepository;        
+        private readonly IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> _map;
+        private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly ICargoRepository _cargoRepository;
@@ -31,7 +30,7 @@ namespace Atron.Application.Services.EntitiesServices
         private readonly IValidateModel<Usuario> _validateModel;
         private readonly MessageModel _messageModel;
 
-        public UsuarioService(IApplicationMapService<UsuarioDTO, UsuarioIdentity> map,
+        public UsuarioService(IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> map,
                               IUsuarioRepository repository,
                               IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
                               IDepartamentoRepository departamentoRepository,
@@ -51,7 +50,7 @@ namespace Atron.Application.Services.EntitiesServices
             _messageModel = messageModel;
             _tarefaRepository = tarefaRepository;
             _salarioRepository = salarioRepository;
-            _usuarioIdentityRepository = usuarioIdentityRepository;            
+            _usuarioIdentityRepository = usuarioIdentityRepository;
         }
 
         public async Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO)
@@ -62,7 +61,7 @@ namespace Atron.Application.Services.EntitiesServices
                 return;
             }
 
-            var usuarioIdentity = _map.MapToEntity(usuarioDTO);
+            var usuarioIdentity = await _map.MapToEntityAsync(usuarioDTO);
 
             var entidade = new Usuario()
             {
@@ -71,42 +70,29 @@ namespace Atron.Application.Services.EntitiesServices
                 Sobrenome = usuarioDTO.Sobrenome,
                 DataNascimento = usuarioDTO.DataNascimento,
                 Email = usuarioDTO.Email,
-                Salario = usuarioDTO.Salario,                
+                Salario = usuarioDTO.Salario,
             };
 
             _validateModel.Validate(entidade);
 
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                if (!usuarioDTO.DepartamentoCodigo.IsNullOrEmpty())
+                var atualizado = await _usuarioRepository.AtualizarUsuarioAsync(codigo, entidade);
+
+                if (atualizado)
                 {
+                    var usuarioRegistroAtualizado = await _usuarioIdentityRepository.AtualizarUserIdentityRepositoryAsync(entidade.Codigo, entidade.Email, usuarioDTO.Senha);
+
+                    var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
                     var departamentoBd = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(usuarioDTO.DepartamentoCodigo);
                     var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
 
-                    entidade.UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>()
+                    var relacionamentoAtualizado = await _usuarioCargoDepartamentoRepository.AtualizarAssociacaoUsuarioCargoDepartamento(entidade, cargoBd, departamentoBd);
+
+                    if (usuarioRegistroAtualizado && relacionamentoAtualizado)
                     {
-                      new()
-                      {
-                         CargoId = cargoBd.Id,
-                         CargoCodigo = cargoBd.Codigo,
-                         DepartamentoId = departamentoBd.Id,
-                         DepartamentoCodigo = departamentoBd.Codigo
-                      }
-                    };
-                }
-
-                var resultRepo = await _usuarioRepository.AtualizarUsuarioAsync(codigo, entidade);
-
-                if (resultRepo)
-                {
-                    var register = new UsuarioRegistro(entidade.Codigo, entidade.Email, usuarioDTO.Senha, usuarioDTO.Senha);
-
-                    //var registerResult = await _usuarioIdentityRepository.AtualizarRepositoryAsync(register);
-
-                    //if (registerResult)
-                    //{
-                    //    _messageModel.AddUpdateMessage(usuarioDTO.Nome);
-                    //}
+                        _messageModel.AdicionarMensagem($"Informações do usuário: {usuarioDTO.Nome} atualizadas com sucesso.");
+                    }
                 }
             }
         }
@@ -119,7 +105,7 @@ namespace Atron.Application.Services.EntitiesServices
                 return usuarioDTO;
             }
 
-            var usuarioIdentity = _map.MapToEntity(usuarioDTO);
+            var usuarioIdentity = await _map.MapToEntityAsync(usuarioDTO);
 
             var entidade = new Usuario()
             {
@@ -134,9 +120,16 @@ namespace Atron.Application.Services.EntitiesServices
             _validateModel.Validate(entidade);
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                var usr = await _usuarioRepository.CriarUsuarioAsync(entidade);
+                var usuarioExiste = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.Codigo);
+                if (usuarioExiste != null)
+                {
+                    _messageModel.AdicionarErro("Código de usuário informado já existe. Tente outro novamente.");
+                    return null;
+                }
 
-                if (usr)
+                var usuarioCriado = await _usuarioRepository.CriarUsuarioAsync(entidade);
+
+                if (usuarioCriado)
                 {
                     var usuarioRegistro = new UsuarioRegistroDTO()
                     {
@@ -147,34 +140,22 @@ namespace Atron.Application.Services.EntitiesServices
                         ConfirmaSenha = usuarioDTO.Senha
                     };
 
-                    await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(usuarioRegistro.Codigo,
+                    var contaRegistrada = await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(usuarioRegistro.Codigo,
                                                                                        usuarioRegistro.Email,
                                                                                        usuarioRegistro.Senha);
 
-                    if (!_messageModel.Notificacoes.HasErrors())
-                    {
-                        _messageModel.AdicionarMensagem($"Usuário de acesso da aplicação: {usuarioDTO.Nome} cadastrado com sucesso");
-                    }
 
                     if (!usuarioDTO.DepartamentoCodigo.IsNullOrEmpty())
                     {
                         var departamentoBd = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(usuarioDTO.DepartamentoCodigo);
                         var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
 
-                        // A associação de cargo e departamento ao usuário será gravada
-                        // automaticamente informando o código do cargo e do departamento
-                        entidade.UsuarioCargoDepartamentos = new List<UsuarioCargoDepartamento>()
-                        {
-                            new()
-                            {
-                                CargoId = cargoBd.Id,
-                                CargoCodigo = cargoBd.Codigo,
-                                DepartamentoId = departamentoBd.Id,
-                                DepartamentoCodigo = departamentoBd.Codigo
-                            }
-                        };
-
                         await _usuarioCargoDepartamentoRepository.GravarAssociacaoUsuarioCargoDepartamento(entidade, cargoBd, departamentoBd);
+                    }
+
+                    if (!_messageModel.Notificacoes.HasErrors())
+                    {
+                        _messageModel.AdicionarMensagem($"Usuário de acesso da aplicação: {usuarioDTO.Nome} cadastrado com sucesso");
                     }
                 }
             }
@@ -186,13 +167,13 @@ namespace Atron.Application.Services.EntitiesServices
         {
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
 
-            return usuario is null ? null : _map.MapToDTO(usuario);
+            return usuario is null ? null : await _map.MapToDTOAsync(usuario);
         }
 
         public async Task<List<UsuarioDTO>> ObterTodosAsync()
         {
             var usuarios = await _usuarioRepository.ObterTodosUsuariosDoIdentity();
-            return _map.MapToListDTO(usuarios.OrderByDescending(c => c.Codigo).ToList());
+            return await _map.MapToListDTOAsync(usuarios.OrderByDescending(c => c.Codigo).ToList());
         }
 
         public async Task RemoverAsync(string codigo)

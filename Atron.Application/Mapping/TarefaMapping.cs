@@ -2,13 +2,12 @@
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
-using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Shared.Services.Mapper;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace Atron.Application.Mapping
 {
-    public class TarefaMapping : ApplicationMapService<TarefaDTO, Tarefa>
+    public class TarefaMapping : AsyncApplicationMapService<TarefaDTO, Tarefa>
     {
         private readonly IUsuarioService usuarioService;
         private readonly ITarefaRepository _tarefaRepository;
@@ -19,7 +18,7 @@ namespace Atron.Application.Mapping
             _tarefaRepository = tarefaRepository;
         }
 
-        public override TarefaDTO MapToDTO(Tarefa entity)
+        public override async  Task<TarefaDTO>  MapToDTOAsync(Tarefa entity)
         {
             var dto = new TarefaDTO
             {
@@ -31,9 +30,8 @@ namespace Atron.Application.Mapping
                 UsuarioCodigo = entity.UsuarioCodigo,              
             };
 
-            var usuarioTask = usuarioService.ObterPorCodigoAsync(entity.UsuarioCodigo);
-            usuarioTask.Wait();
-            var usuario = usuarioTask.Result;
+            var usuario = await usuarioService.ObterPorCodigoAsync(entity.UsuarioCodigo);
+
             if (usuario != null)
             {
                 dto.Usuario = usuario;
@@ -41,21 +39,17 @@ namespace Atron.Application.Mapping
                     
             if (entity.TarefaEstadoId != 0)
             {
-                var tarefaEstadoDescricaoTask = _tarefaRepository.ObterDescricaoTarefaEstado(entity.TarefaEstadoId);
-                tarefaEstadoDescricaoTask.Wait();
-                var tarefaEstadoDescricao = tarefaEstadoDescricaoTask.Result;
+                var tarefaEstadoDescricao = await _tarefaRepository.ObterDescricaoTarefaEstado(entity.TarefaEstadoId);               
                 dto.EstadoDaTarefa = new TarefaEstado() { Id = entity.TarefaEstadoId, Descricao = tarefaEstadoDescricao };
             }
 
             return dto;
         }
 
-        public override Tarefa MapToEntity(TarefaDTO dto)
+        public override async Task<Tarefa> MapToEntityAsync(TarefaDTO dto)
         {
-            var usuarioBdTask = usuarioService.ObterPorCodigoAsync(dto.UsuarioCodigo);
-            usuarioBdTask.Wait();
-            var usuario = usuarioBdTask.Result;
-
+            var usuario = await usuarioService.ObterPorCodigoAsync(dto.UsuarioCodigo);
+          
             return new Tarefa
             {
                 UsuarioId = usuario.Id,

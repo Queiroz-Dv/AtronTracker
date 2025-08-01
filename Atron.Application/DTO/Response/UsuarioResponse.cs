@@ -20,10 +20,6 @@ namespace Atron.Application.DTO.Response
         public string DepartamentoCodigo { get; set; }
         public string? DepartamentoDescricao { get; set; }
 
-        // Perfil de Acesso
-        public string PerfilDeAcessoCodigo { get; set; }
-        public string? PerfilDeAcessoDescricao { get; set; }
-
         public List<PerfilDeAcessoDTO> PerfisDeAcesso { get; set; }
     }
 }

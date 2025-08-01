@@ -13,13 +13,13 @@ namespace Atron.Application.Services.EntitiesServices
 {
     public class ModuloService : IModuloService
     {
-        private readonly IApplicationMapService<ModuloDTO, Modulo> _map;
+        private readonly IAsyncApplicationMapService<ModuloDTO, Modulo> _map;
         private readonly IModuloRepository _moduloRepository;
         private readonly IValidateModel<Modulo> _validateModel;
         private readonly MessageModel messageModel;
 
         public ModuloService(
-            IApplicationMapService<ModuloDTO, Modulo> map,
+            IAsyncApplicationMapService<ModuloDTO, Modulo> map,
             IModuloRepository moduloRepository,
             IValidateModel<Modulo> validateModel,
             MessageModel messageModel)
@@ -33,24 +33,23 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task<ModuloDTO> ObterPorIdService(int id)
         {
             var entity = await _moduloRepository.ObterPorIdRepository(id);
-            return _map.MapToDTO(entity);
+            return await _map.MapToDTOAsync(entity);
         }
 
         public async Task<IEnumerable<ModuloDTO>> ObterTodosService()
         {
             var entities = await _moduloRepository.ObterTodosRepository();
-            return _map.MapToListDTO(entities.ToList());
+            return await _map.MapToListDTOAsync(entities.ToList());
         }
 
         public async Task<ModuloDTO> ObterPorCodigoService(string codigo)
         {
             var entity = await _moduloRepository.ObterPorCodigoRepository(codigo);
-            return _map.MapToDTO(entity);
+            return await _map.MapToDTOAsync(entity);
         }
 
         public List<string> ObterTodosOsCodigos()
-        {
-            // Removed unnecessary assignment to 'modulos' as it was not used.
+        {            
             return _moduloRepository.ObterTodosRepository().Result.Select(m => m.Codigo).ToList();
         }
     }

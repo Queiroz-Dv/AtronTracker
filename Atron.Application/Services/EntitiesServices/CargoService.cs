@@ -19,11 +19,11 @@ namespace Atron.Application.Services.EntitiesServices
     {
         private ICargoRepository _cargoRepository;
         private IDepartamentoRepository _departamentoRepository;
-        private IApplicationMapService<CargoDTO, Cargo> _map;
+        private IAsyncApplicationMapService<CargoDTO, Cargo> _map;
         private readonly IValidateModel<Cargo> _validateModel;
         private readonly MessageModel _messageModel;
 
-        public CargoService(IApplicationMapService<CargoDTO, Cargo> map,
+        public CargoService(IAsyncApplicationMapService<CargoDTO, Cargo> map,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
                             IValidateModel<Cargo> validateModel,
@@ -40,12 +40,12 @@ namespace Atron.Application.Services.EntitiesServices
         {
             var cargos = await _cargoRepository.ObterCargosAsync();
 
-            return _map.MapToListDTO([.. cargos]);
+            return await _map.MapToListDTOAsync([.. cargos]);
         }
 
         public async Task<Cargo?> MontarObjetoValidado(CargoDTO cargoDTO, bool atualizando = false)
         {
-            var cargo = _map.MapToEntity(cargoDTO);
+            var cargo = await _map.MapToEntityAsync(cargoDTO);
 
             var departamento = await _departamentoRepository
                 .ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
@@ -130,7 +130,7 @@ namespace Atron.Application.Services.EntitiesServices
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
             if (cargo is not null)
             {
-                return _map.MapToDTO(cargo);
+                return await _map.MapToDTOAsync(cargo);
             }
             else
             {
