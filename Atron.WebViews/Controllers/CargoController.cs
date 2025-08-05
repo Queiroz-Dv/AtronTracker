@@ -64,7 +64,7 @@ namespace Atron.WebViews.Controllers
 
             if (!departamentos.Any())
             {
-                _messageModel.AddError("Para criar um cargo é necessário ter um departamento.");
+                _messageModel.AdicionarErro("Para criar um cargo é necessário ter um departamento.");
                 CreateTempDataMessages();
                 return;
             }
@@ -105,7 +105,7 @@ namespace Atron.WebViews.Controllers
             ConfigureDataTitleForView("Atualizar informação de cargo");
             if (codigo is null)
             {
-                _messageModel.AddError("O código informado não foi encontrado");
+                _messageModel.AdicionarErro("O código informado não foi encontrado");
                 CreateTempDataMessages();
                 return View(nameof(MenuPrincipal));
             }
@@ -130,7 +130,7 @@ namespace Atron.WebViews.Controllers
                 return RedirectToAction(nameof(MenuPrincipal));
             }
 
-            _messageModel.AddError("Registro inválido tente novamente");
+            _messageModel.AdicionarErro("Registro inválido tente novamente");
             CreateTempDataMessages();
             return RedirectToAction(nameof(MenuPrincipal));
         }

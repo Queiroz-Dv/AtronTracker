@@ -3,7 +3,7 @@ using Shared.Interfaces.Validations;
 using Shared.Models;
 using System;
 
-namespace Atron.Application.ApiServices.AuthServices.Bases
+namespace Atron.Application.Services.AuthServices.Bases
 {
     public abstract class ServiceBase
     {

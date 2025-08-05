@@ -23,15 +23,16 @@ namespace Atron.Application.Services.EntitiesServices
          *  Em vez de o DepartamentoService controlar a criação do DepartamentoRepository, 
          *  essa responsabilidade é delegada ao contêiner de IoC. 
          *  O serviço depende de uma abstração (IDepartamentoRepository) 
-         *  em vez de uma implementação concreta (DepartamentoRepository).*/
-        private readonly IApplicationMapService<DepartamentoDTO, Departamento> _map;
+         *  em vez de uma implementação concreta (DepartamentoRepository).
+         */
+        private readonly IAsyncApplicationMapService<DepartamentoDTO, Departamento> _map;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
         private readonly ICargoRepository _cargoRepository;
         private readonly IValidateModel<Departamento> _validateModel;
         private readonly MessageModel messageModel;
 
-        public DepartamentoService(IApplicationMapService<DepartamentoDTO, Departamento> map,
+        public DepartamentoService(IAsyncApplicationMapService<DepartamentoDTO, Departamento> map,
                                    IDepartamentoRepository departamentoRepository,
                                    IValidateModel<Departamento> validateModel,
                                    MessageModel messageModel,
@@ -56,17 +57,17 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO))
             {
-                messageModel.AddRegisterInvalidMessage(codigo);
+                messageModel.MensagemRegistroInvalido(codigo);
                 return;
             }
 
-            var departamento = _map.MapToEntity(departamentoDTO);
+            var departamento = await _map.MapToEntityAsync(departamentoDTO);
             _validateModel.Validate(departamento);
 
             if (!messageModel.Notificacoes.HasErrors())
             {
                 await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
-                messageModel.AddUpdateMessage(departamentoDTO.Codigo);
+                messageModel.MensagemRegistroAtualizado(departamentoDTO.Codigo);
             }
         }
 
@@ -74,24 +75,23 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (departamentoDTO is null)
             {
-                messageModel.AddRegisterInvalidMessage();
+                messageModel.MensagemRegistroInvalido();
                 return;
             }
 
-            var departamento = _map.MapToEntity(departamentoDTO);
+            var departamento = await _map.MapToEntityAsync(departamentoDTO);
 
             var entity = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamento.Codigo);
 
             if (entity is not null)
-            {
-                messageModel.AddRegisterExistMessage(departamentoDTO.Codigo);
-            }
+                messageModel.MensagemRegistroNaoExiste(departamentoDTO.Codigo);
+
 
             _validateModel.Validate(departamento);
             if (!messageModel.Notificacoes.HasErrors())
             {
                 await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
-                messageModel.AddSuccessMessage(departamentoDTO.Codigo);
+                messageModel.MensagemRegistroSalvo(departamentoDTO.Codigo);
             }
         }
 
@@ -101,11 +101,11 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (departamento is not null)
             {
-                return _map.MapToDTO(departamento);
+                return await _map.MapToDTOAsync(departamento);
             }
             else
             {
-                messageModel.AddRegisterNotFoundMessage(codigo);
+                messageModel.MensagemRegistroNaoEncontrado(codigo);
                 return null;
             }
         }
@@ -113,13 +113,13 @@ namespace Atron.Application.Services.EntitiesServices
         public async Task<DepartamentoDTO> ObterPorIdAsync(int? departamentoId)
         {
             var entity = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);
-            return _map.MapToDTO(entity);
+            return await _map.MapToDTOAsync(entity);
         }
 
         public async Task<IEnumerable<DepartamentoDTO>> ObterTodosAsync()
         {
             var entities = await _departamentoRepository.ObterDepartmentosAsync();
-            return _map.MapToListDTO(entities.ToList());
+            return await _map.MapToListDTOAsync(entities.ToList());
         }
 
         public async Task RemoverAsync(string codigo)
@@ -143,16 +143,23 @@ namespace Atron.Application.Services.EntitiesServices
                 {
                     foreach (var item in cargos)
                     {
-                        await _cargoRepository.RemoverRepositoryAsync(item);
+                        await _cargoRepository.RemoverCargoAsync(item);
                     }
                 }
 
-                await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
-                messageModel.AddRegisterRemovedSuccessMessage(codigo);
+                var removido  = await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
+
+                if (!removido)
+                {
+                    messageModel.MensagemRegistroNaoEncontrado(codigo);
+                    return;
+                }
+
+                messageModel.MensagemRegistroRemovido(codigo);
             }
             else
             {
-                messageModel.AddRegisterNotFoundMessage(codigo);
+                messageModel.MensagemRegistroNaoEncontrado(codigo);
             }
         }
     }

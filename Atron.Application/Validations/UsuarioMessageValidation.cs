@@ -14,52 +14,52 @@ namespace Atron.Application.Validations
         {
             if (entity.Codigo.IsNullOrEmpty())
             {
-                AddError("O campo código não está preenchido.");
+                AdicionarErro("O campo código não está preenchido.");
             }
 
             if (entity.Codigo.Length > 10)
             {
-                AddError("O código informado é muito longo.");
+                AdicionarErro("O código informado é muito longo.");
             }
 
             if (entity.Codigo.Length < 3)
             {
-                AddError("O código informado é muito pequeno.");
+                AdicionarErro("O código informado é muito pequeno.");
             }
 
             if (entity.Nome.IsNullOrEmpty())
             {
-                AddError("Nome de usuário é obrigatório.");
+                AdicionarErro("Nome de usuário é obrigatório.");
             }
 
             if (entity.Nome.Length < 3)
             {
-                AddError("O nome é muito pequeno.");
+                AdicionarErro("O nome é muito pequeno.");
             }
 
             if (entity.Nome.Length > 25)
             {
-                AddError("O nome é muito longo.");
+                AdicionarErro("O nome é muito longo.");
             }
 
             if (entity.Sobrenome.IsNullOrEmpty())
             {
-                AddError("Nome de usuário é obrigatório.");
+                AdicionarErro("Nome de usuário é obrigatório.");
             }
 
             if (entity.Sobrenome.Length < 3)
             {
-                AddError("O nome é muito pequeno.");
+                AdicionarErro("O nome é muito pequeno.");
             }
 
             if (entity.Sobrenome.Length > 50)
             {
-                AddError("O sobrenome é muito longo.");
+                AdicionarErro("O sobrenome é muito longo.");
             }
 
             if (entity.DataNascimento == DateTime.Now)
             {
-                AddError("Data de nascimento inválida.");
+                AdicionarErro("Data de nascimento inválida.");
             }           
         }
     }

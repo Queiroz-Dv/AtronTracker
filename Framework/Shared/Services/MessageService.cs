@@ -3,7 +3,22 @@ using Shared.Models;
 
 namespace Shared.Services
 {
-    public abstract class MessageService : IMessageService
+    public abstract class MensagemRegistro
+    {
+        public abstract void MensagemRegistroNaoEncontrado(string key = "");
+
+        public abstract void MensagemRegistroNaoExiste(string key = "");
+
+        public abstract void MensagemRegistroSalvo(string key = "");
+
+        public abstract void MensagemRegistroRemovido(string key = "");
+
+        public abstract void MensagemRegistroAtualizado(string key = "");
+
+        public abstract void MensagemRegistroInvalido(string key = "");
+    }
+
+    public abstract class MessageService : MensagemRegistro, IMessageService
     {
         protected MessageService()
         {
@@ -12,32 +27,20 @@ namespace Shared.Services
 
         public List<Message> Notificacoes { get; }
 
-        public abstract void AddMessage(string message);
+        public abstract void AdicionarMensagem(string message);
 
-        public abstract void AddError(string message);
+        public abstract void AdicionarErro(string message);
 
-        public abstract void AddWarning(string message);
-
-        public abstract void AddRegisterNotFoundMessage(string key = "");
-
-        public abstract void AddRegisterExistMessage(string key = "");
-
-        public abstract void AddSuccessMessage(string key = "");
-
-        public abstract void AddRegisterRemovedSuccessMessage(string key = "");
-
-        public abstract void AddUpdateMessage(string key = "");
-
-        public abstract void AddRegisterInvalidMessage(string key = "");
-
+        public abstract void AdicionarAviso(string message);
+        
         /// <summary>
         /// Método de automação para inclusão de notificações
         /// </summary>
-        /// <param name="description">Mensagem de notificação</param>
-        /// <param name="level">Tipo de notificação</param>
-        public void AddNotification(string description, string level)
+        /// <param name="descricao">Mensagem de notificação</param>
+        /// <param name="nivel">Tipo de notificação</param>
+        public void AddNotification(string descricao, string nivel)
         {
-            Notificacoes.Add(new Message() { Description = description,  Level = level}); 
+            Notificacoes.Add(new Message() { Descricao = descricao,  Nivel = nivel}); 
         }
     }
 }

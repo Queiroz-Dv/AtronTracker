@@ -57,7 +57,7 @@ namespace Shared.Services.Factory
             var refreshToken = Convert.ToBase64String(randomNumber);
 
             // Opcional: Validar no banco se já existe um igual (chance quase zero, mas por segurança)
-            var userIdentityRepo = _serviceAccessor.ObterService<IUserIdentityRepository>();
+            var userIdentityRepo = _serviceAccessor.ObterService<IUsuarioIdentityRepository>();
             var refreshTokenExiste = await userIdentityRepo.RefreshTokenExisteRepositoryAsync(refreshToken);
 
             if (refreshTokenExiste)

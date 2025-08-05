@@ -27,8 +27,7 @@ namespace Atron.Application.Services.EntitiesServices
                     CodigoDoUsuario = usuarioDTO.Codigo,
                     Email = usuarioDTO.Email,
                     CodigoDoCargo = usuarioDTO.CargoCodigo,
-                    CodigoDoDepartamento = usuarioDTO.DepartamentoCodigo,
-                    //DadosDoToken = new DadosDoToken(DateTime.Now.AddMinutes(15), DateTime.Now.AddDays(7))                    
+                    CodigoDoDepartamento = usuarioDTO.DepartamentoCodigo,                    
                 },
 
                 DadosDoPerfil = new List<DadosDoPerfilDTO>(),

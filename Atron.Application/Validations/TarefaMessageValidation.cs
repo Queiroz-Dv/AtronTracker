@@ -11,32 +11,32 @@ namespace Atron.Application.Validations
         {
             if (entity.UsuarioId <= 0)
             {
-                AddError("Identificador de usuário é inválido.");
+                AdicionarErro("Identificador de usuário é inválido.");
             }
 
             if (entity.UsuarioCodigo.Length < 3)
             {
-                AddError("O código de usuário informado é inválido. Quantidade de caracteres menor que 3 digítos, tente novamente.");
+                AdicionarErro("O código de usuário informado é inválido. Quantidade de caracteres menor que 3 digítos, tente novamente.");
             }
 
             if (entity.UsuarioCodigo.Length > 10)
             {
-                AddError("O código de usuário informado é inválido. Quantidade de caracteres maior que 10 digítos, tente novamente.");
+                AdicionarErro("O código de usuário informado é inválido. Quantidade de caracteres maior que 10 digítos, tente novamente.");
             }
 
             if (entity.Titulo.Length > 50)
             {
-                AddError("O título da tarefa informada é inválido. Quantidade de caracteres maior que 50 digítos, tente novamente.");
+                AdicionarErro("O título da tarefa informada é inválido. Quantidade de caracteres maior que 50 digítos, tente novamente.");
             }
 
             if (entity.Conteudo.Length > 2500)
             {
-                AddError("O título da tarefa informada é inválido. Quantidade de caracteres maior que 50 digítos, tente novamente.");
+                AdicionarErro("O título da tarefa informada é inválido. Quantidade de caracteres maior que 50 digítos, tente novamente.");
             }
 
             if (entity.DataInicial > entity.DataFinal)
             {
-                AddError("Data inicial da tarefa é maior que a data final. Tente novamente.");
+                AdicionarErro("Data inicial da tarefa é maior que a data final. Tente novamente.");
             }
         }
     }

@@ -20,11 +20,11 @@ namespace Atron.Application.Services.EntitiesServices
     {
         private ICargoRepository _cargoRepository;
         private IDepartamentoRepository _departamentoRepository;
-        private IApplicationMapService<CargoDTO, Cargo> _map;
+        private IAsyncApplicationMapService<CargoDTO, Cargo> _map;
         private readonly IValidateModel<Cargo> _validateModel;
         private readonly MessageModel _messageModel;
 
-        public CargoService(IApplicationMapService<CargoDTO, Cargo> map,
+        public CargoService(IAsyncApplicationMapService<CargoDTO, Cargo> map,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
                             IValidateModel<Cargo> validateModel,
@@ -41,37 +41,54 @@ namespace Atron.Application.Services.EntitiesServices
         {
             var cargos = await _cargoRepository.ObterCargosAsync();
 
-            return _map.MapToListDTO(cargos.ToList());
+            return await _map.MapToListDTOAsync(cargos.ToList());
+        }
+
+        public async Task<Cargo?> MontarObjetoValidado(CargoDTO cargoDTO, bool atualizando = false)
+        {
+            var cargo = await _map.MapToEntityAsync(cargoDTO);
+
+            var departamento = await _departamentoRepository
+                .ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
+            if (departamento is null)
+                _messageModel.MensagemRegistroNaoExiste(nameof(departamento));
+
+            if (!atualizando)
+            {
+                var entity = await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
+                if (entity is not null)
+                    _messageModel.AdicionarErro("Código de cargo já existente.");
+            }
+
+            if (departamento is not null)
+            {
+                cargo.DepartamentoId = departamento.Id;
+                cargo.DepartamentoCodigo = departamento.Codigo;
+            }
+
+            // Validações finais da entidade
+            _validateModel.Validate(cargo);
+
+            return _messageModel.Notificacoes.HasErrors() ? null : cargo;
         }
 
         public async Task CriarAsync(CargoDTO cargoDTO)
         {
             if (cargoDTO is null)
             {
-                _messageModel.AddRegisterInvalidMessage();
+                _messageModel.MensagemRegistroInvalido();
                 return;
             }
 
-            var cargo = _map.MapToEntity(cargoDTO);
-            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
-            var entity = await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
+            var cargo = await MontarObjetoValidado(cargoDTO);
 
-            if (entity is not null && entity.DepartamentoCodigo == cargoDTO.DepartamentoCodigo)
-            {
-                _messageModel.AddRegisterExistMessage(cargoDTO.Codigo);
-                return;
-            }
-
-            if (departamento is not null)
-            {
-                cargo.DepartamentoId = departamento.Id;
-            }
-
-            _validateModel.Validate(cargo);
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                await _cargoRepository.CriarCargoAsync(cargo);
-                _messageModel.AddSuccessMessage(cargo.Codigo);
+                var criado = await _cargoRepository.CriarCargoAsync(cargo);
+                if (criado)
+                {
+                    _messageModel.MensagemRegistroSalvo(cargo.Codigo);
+                }
             }
         }
 
@@ -79,24 +96,19 @@ namespace Atron.Application.Services.EntitiesServices
         {
             if (!new CargoSpecification(codigo, cargoDTO.DepartamentoCodigo).IsSatisfiedBy(cargoDTO))
             {
-                _messageModel.AddRegisterInvalidMessage();
+                _messageModel.MensagemRegistroInvalido();
                 return;
             }
 
-            var cargo = _map.MapToEntity(cargoDTO);
-            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
+            var cargo = await MontarObjetoValidado(cargoDTO, true);
 
-            if (departamento is not null)
-            {                
-                cargo.DepartamentoId = departamento.Id;
-                cargo.DepartamentoCodigo = departamento.Codigo;
-            }
-
-            _validateModel.Validate(cargo);
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                await _cargoRepository.AtualizarCargoAsync(cargo);
-                _messageModel.AddUpdateMessage(cargo.Codigo);
+                var atualizado = await _cargoRepository.AtualizarCargoAsync(cargo);
+                if (atualizado)
+                {
+                    _messageModel.MensagemRegistroAtualizado(cargo.Codigo);
+                }
             }
         }
 
@@ -106,11 +118,11 @@ namespace Atron.Application.Services.EntitiesServices
             if (cargo is not null)
             {
                 await _cargoRepository.RemoverCargoAsync(cargo);
-                _messageModel.AddRegisterRemovedSuccessMessage(cargo.Codigo);
+                _messageModel.MensagemRegistroRemovido(cargo.Codigo);
             }
             else
             {
-                _messageModel.AddRegisterNotFoundMessage(codigo);
+                _messageModel.MensagemRegistroNaoEncontrado(codigo);
             }
         }
 
@@ -119,11 +131,11 @@ namespace Atron.Application.Services.EntitiesServices
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
             if (cargo is not null)
             {
-                return _map.MapToDTO(cargo);
+                return await _map.MapToDTOAsync(cargo);
             }
             else
             {
-                _messageModel.AddRegisterNotFoundMessage(codigo);
+                _messageModel.MensagemRegistroNaoEncontrado(codigo);
                 return null;
             }
         }

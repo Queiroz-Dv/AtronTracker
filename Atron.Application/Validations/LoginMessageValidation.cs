@@ -12,13 +12,13 @@ namespace Atron.Application.Validations
         {
             if (entity.UserName.IsNullOrEmpty())
             {
-                AddError("E-mail vazio");
+                AdicionarErro("E-mail vazio");
             }
 
 
             if (entity.Password.IsNullOrEmpty())
             {
-                AddError("Senha vazia.");
+                AdicionarErro("Senha vazia.");
             }
         }
     }

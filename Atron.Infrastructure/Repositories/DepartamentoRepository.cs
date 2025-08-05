@@ -18,7 +18,7 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Departamento> AtualizarDepartamentoRepositoryAsync(Departamento departamento)
+        public async Task<bool> AtualizarDepartamentoRepositoryAsync(Departamento departamento)
         {
             var entidade = await _context.Departamentos.FirstOrDefaultAsync(dpt => dpt.Codigo == departamento.Codigo);
 
@@ -27,8 +27,8 @@ namespace Atron.Infrastructure.Repositories
                 if (entidade is not null)
                 {
                     entidade.Descricao = departamento.Descricao;
-                    await _context.SaveChangesAsync();
-                    return entidade;
+                    var atualizado = await _context.SaveChangesAsync();
+                    return atualizado > 0;
                 }
             }
             catch (Exception ex)
@@ -37,29 +37,24 @@ namespace Atron.Infrastructure.Repositories
                 throw;
             }
 
-            return departamento;
+            return false;
         }
 
-        public async Task<Departamento> CriarDepartamentoRepositoryAsync(Departamento departamento)
+        public async Task<bool> CriarDepartamentoRepositoryAsync(Departamento departamento)
         {
             try
             {
                 await _context.AddAsync(departamento);
 
-                await _context.SaveChangesAsync();
-                return departamento;
+                var gravado  = await _context.SaveChangesAsync();
+                return gravado > 0;
             }
             catch (Exception ex)
             {
 
                 throw ex;
             }
-        }
-
-        public bool DepartamentoExiste(string codigo)
-        {
-            return _context.Departamentos.Any(dpt => dpt.Codigo == codigo);
-        }
+        }    
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
         {
@@ -82,11 +77,11 @@ namespace Atron.Infrastructure.Repositories
             return await _context.Departamentos.OrderByDescending(order => order.Codigo).ToListAsync();
         }
 
-        public async Task<Departamento> RemoverDepartmentoRepositoryAsync(Departamento departamento)
+        public async Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento)
         {
             _context.Remove(departamento);
-            await _context.SaveChangesAsync();
-            return departamento;
+            var removido  = await _context.SaveChangesAsync();
+            return removido > 0;
         }
     }
 }

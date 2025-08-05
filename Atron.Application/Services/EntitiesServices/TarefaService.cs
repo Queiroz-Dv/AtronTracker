@@ -14,12 +14,12 @@ namespace Atron.Application.Services.EntitiesServices
 {
     public class TarefaService : ITarefaService
     {
-        private readonly IApplicationMapService<TarefaDTO, Tarefa> _map;
+        private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _map;
         private readonly ITarefaRepository _tarefaRepository;
         private readonly IValidateModel<Tarefa> _validateModel;
         private readonly MessageModel _messageModel;
 
-        public TarefaService(IApplicationMapService<TarefaDTO, Tarefa> map,
+        public TarefaService(IAsyncApplicationMapService<TarefaDTO, Tarefa> map,
                              ITarefaRepository tarefaRepository,
                              MessageModel messageModel,
                              IValidateModel<Tarefa> validateModel)
@@ -32,53 +32,62 @@ namespace Atron.Application.Services.EntitiesServices
 
         public async Task CriarAsync(TarefaDTO tarefaDTO)
         {
-            var tarefa = _map.MapToEntity(tarefaDTO);
+            var tarefa = await _map.MapToEntityAsync(tarefaDTO);
             _validateModel.Validate(tarefa);
 
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                await _tarefaRepository.CriarTarefaAsync(tarefa);
-                _messageModel.AddMessage("Tarefa gravada com sucesso.");
+                var gravado = await _tarefaRepository.CriarTarefaAsync(tarefa);
+                if (gravado)
+                {
+                    _messageModel.AdicionarMensagem("Tarefa gravada com sucesso.");
+                }
             }
         }
 
         public async Task<List<TarefaDTO>> ObterTodosAsync()
         {
             var tarefas = await _tarefaRepository.ObterTodasTarefas();
-            return _map.MapToListDTO(tarefas);            
+            return await _map.MapToListDTOAsync(tarefas);
         }
 
         public async Task AtualizarAsync(int id, TarefaDTO tarefaDTO)
         {
             if (tarefaDTO is null)
             {
-                _messageModel.AddRegisterInvalidMessage();
+                _messageModel.MensagemRegistroInvalido();
                 return;
             }
 
-            var tarefa = _map.MapToEntity(tarefaDTO);
+            var tarefa = await _map.MapToEntityAsync(tarefaDTO);
             _validateModel.Validate(tarefa);
 
             if (!_messageModel.Notificacoes.HasErrors())
             {
-                await _tarefaRepository.AtualizarTarefaAsync(id, tarefa);
-                _messageModel.AddMessage("Tarefa atualizada com sucesso");
-                return;
+                var atualizado = await _tarefaRepository.AtualizarTarefaAsync(id, tarefa);
+                {
+                    _messageModel.AdicionarMensagem("Tarefa atualizada com sucesso");
+                    return;
+                }
             }
         }
 
         public async Task ExcluirAsync(string id)
         {
-            var tarefa = await _tarefaRepository.ObterPorIdRepositoryAsync(Convert.ToInt32(id));
+            var tarefa = await _tarefaRepository.ObterTarefaPorId(Convert.ToInt32(id));
 
             if (tarefa is null)
             {
-                _messageModel.AddRegisterNotFoundMessage(nameof(Tarefa));
+                _messageModel.MensagemRegistroNaoEncontrado();
             }
             else
             {
-                await _tarefaRepository.RemoverRepositoryAsync(tarefa);
-                _messageModel.AddMessage("Tarefa removida com sucesso");
+                var deletado = await _tarefaRepository.RemoverRepositoryAsync(tarefa);
+                if (deletado)
+                {
+                    _messageModel.AdicionarMensagem("Tarefa removida com sucesso");
+                    return;
+                }
             }
         }
 
@@ -88,11 +97,11 @@ namespace Atron.Application.Services.EntitiesServices
 
             if (tarefaRepository is null)
             {
-                _messageModel.AddRegisterNotFoundMessage();
+                _messageModel.MensagemRegistroNaoEncontrado();
                 return null;
             }
 
-            return _map.MapToDTO(tarefaRepository);            
+            return await _map.MapToDTOAsync(tarefaRepository);
         }
     }
 }

@@ -9,5 +9,8 @@ namespace Shared.Enums
 
         [Description("RefreshToken")]
         RefreshToken,
+
+        [Description("AccessTokenExpires")]
+        AccessTokenExpires,
     }
 }

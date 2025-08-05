@@ -13,6 +13,13 @@ namespace Atron.Application.DTO
             Descricao = descricao.ToUpper();
         }
 
+        public CargoDTO(string codigo, string descricao, string departamentoCodigo = null)
+        {
+            Codigo = codigo.ToUpper();
+            Descricao = descricao.ToUpper();
+            DepartamentoCodigo = departamentoCodigo.ToUpper();
+        }
+
         public int Id { get; set; }
 
         [MaxLength(10, ErrorMessage = "O tamanho máximo do código é de até 10 caracteres.")]

@@ -1,7 +1,5 @@
-﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.DTO.ApiDTO;
-using Atron.Application.Interfaces.Contexts;
-using Atron.Application.Interfaces.Services;
+﻿using Atron.Application.DTO.ApiDTO;
+using Atron.Application.Interfaces.ApplicationInterfaces;
 using Atron.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -20,25 +18,22 @@ namespace Atron.WebApi.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class AppLoginController : ApiBaseConfigurationController<ApiLogin, ILoginService>
+    public class AcessoController : ApiBaseConfigurationController<ApiLogin, ILoginService>
     {
-      //  private readonly IServiceAccessor serviceAccessor;
+        public AcessoController(
+             MessageModel messageModel,
+             ILoginService loginUserService,
+             IServiceAccessor serviceAccessor)
+             : base(loginUserService, serviceAccessor, messageModel)
+        { }
 
-        public AppLoginController(
-            MessageModel messageModel,
-            ILoginService loginUserService,
-            IServiceAccessor serviceAccessor)
-            : base(loginUserService, serviceAccessor ,messageModel)
-        {
-            //this.serviceAccessor = serviceAccessor;
-        }
 
         /// <summary>
         /// Endpoint para logar um usuário no sistema
         /// </summary>
         /// <param name="loginDTO">DTO que será autenticado </param>
         /// <returns>O resultado do processamento</returns>
-        [HttpPost]
+        [HttpPost(nameof(Login))]
         public async Task<ActionResult<DadosDoTokenDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
             var dto = await _service.Autenticar(loginDTO);
@@ -55,16 +50,10 @@ namespace Atron.WebApi.Controllers
         public async Task<IActionResult> Refresh()
         {
             var cookieService = ObterService<ICookieService>();
-            var cacheUsuarioService = ObterService<ICacheUsuarioService>();
 
-            var dadosDeToken = cookieService.ObterTokenRefreshTokenPorRequest(Request);
+            var dadosDeToken = await cookieService.ObterTokenRefreshTokenPorRequest(Request);
 
-            if (dadosDeToken is null)
-            {
-                dadosDeToken = cacheUsuarioService.ObterDadosDoTokenPorCodigoUsuario(HttpContext.Request.ExtrairCodigoUsuarioDoRequest());
-            }
-
-            var novoToken = await _service.RefreshAcesso(dadosDeToken.TokenDTO);
+            var novoToken = await _service.RefreshAcesso(dadosDeToken);
             if (novoToken is null) return Unauthorized();
 
             return _messageModel.Notificacoes.HasErrors() ?
@@ -76,12 +65,12 @@ namespace Atron.WebApi.Controllers
         /// Endpoint para desconectar o usuário do sistema
         /// </summary>
         [HttpGet("Desconectar")]
-        public async Task<IActionResult> Logout()
+        public async Task<ActionResult<bool>> Logout()
         {
             var usuarioCodigo = HttpContext.Request.Headers.ExtrairCodigoUsuarioDoRequest();
 
-            await _service.Logout(usuarioCodigo);
-            return Ok();
+            var deslogado = await _service.Logout(usuarioCodigo);
+            return deslogado ? Ok(deslogado) : BadRequest(deslogado);
         }
 
         /// <summary>
@@ -89,11 +78,22 @@ namespace Atron.WebApi.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        [HttpPost("TrocarSenha")]
-        public async Task<ActionResult> TrocarSenha([FromBody] LoginRequestDTO dto)
+        [HttpPost(nameof(TrocarSenha))]
+        public async Task<ActionResult<bool>> TrocarSenha([FromBody] LoginRequestDTO dto)
         {
             var result = await _service.TrocarSenha(dto);
             return Ok(result);
+        }
+
+        [HttpPost("Registrar")]
+        public async Task<ActionResult> Post([FromBody] UsuarioRegistroDTO registerDTO)
+        {
+            var _registroUsuarioService = ObterService<IRegistroUsuarioService>();
+            await _registroUsuarioService.RegistrarUsuario(registerDTO);
+
+            return _messageModel.Notificacoes.HasErrors() ?
+                BadRequest(ObterNotificacoes()) :
+                Ok(ObterNotificacoes());
         }
     }
 }

@@ -2,7 +2,7 @@
 using Shared.DTO.API.Request;
 using System.Threading.Tasks;
 
-namespace Atron.Application.ApiInterfaces.ApplicationInterfaces
+namespace Atron.Application.Interfaces.ApplicationInterfaces
 {
     /// <summary>
     /// Classe de autenticação para os usuários
@@ -11,7 +11,7 @@ namespace Atron.Application.ApiInterfaces.ApplicationInterfaces
     {
         Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO login);
 
-        Task Logout(string usuarioCodigo);
+        Task<bool> Logout(string usuarioCodigo);
 
         Task<DadosDoTokenDTO> RefreshAcesso(DadosDoTokenDTO infoToken);
 

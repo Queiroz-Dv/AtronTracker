@@ -35,21 +35,19 @@ namespace Atron.Domain.Interfaces
         /// Cria um departamento
         /// </summary>
         /// <param name="departamento">Entidade que será criada</param>
-        Task<Departamento> CriarDepartamentoRepositoryAsync(Departamento departamento);
+        Task<bool> CriarDepartamentoRepositoryAsync(Departamento departamento);
 
         /// <summary>
         /// Atualiza um departamento existente de forma assíncrona
         /// </summary>
         /// <param name="departamento">Entidade que será atualizada</param>
         /// <returns></returns>
-        Task<Departamento> AtualizarDepartamentoRepositoryAsync(Departamento departamento);
+        Task<bool> AtualizarDepartamentoRepositoryAsync(Departamento departamento);
 
         /// <summary>
         /// Exclui um departamento existente de forma assíncrona
         /// </summary>
         /// <param name="departamento">Entidade que será removida</param>
-        Task<Departamento> RemoverDepartmentoRepositoryAsync(Departamento departamento);
-
-        bool DepartamentoExiste(string codigo);
+        Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento);        
     }
 }
