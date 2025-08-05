@@ -11,20 +11,27 @@ namespace Shared.Services.Factory
             _cookies = cookies;
         }
 
-        protected  void MontarCookie(string descricaoCookie, string dado)
+        protected void MontarCookie(string chaveDoCookie, string dado)
         {
-            _cookies.Append(descricaoCookie, dado, new CookieOptions
+            try
             {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Strict,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddMinutes(15) // Ajuste a expiração conforme necessário
-            });
+                _cookies.Append(chaveDoCookie, dado, new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Strict,
+                    Secure = true,
+                    Expires = DateTime.UtcNow.AddDays(31) // Expandi para 31 por padrão o token de acesso difere desse tempo
+                });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        protected void MontarCookie(string descricaoCookie, string dado, DateTime expiracao)
+        protected void MontarCookie(string chaveDoCookie, string dado, DateTime expiracao)
         {
-            _cookies.Append(descricaoCookie, dado, new CookieOptions
+            _cookies.Append(chaveDoCookie, dado, new CookieOptions
             {
                 HttpOnly = true,
                 SameSite = SameSiteMode.Strict,
@@ -33,9 +40,9 @@ namespace Shared.Services.Factory
             });
         }
 
-        protected void RemoverCookie(string descricaoCookie)
+        protected void RemoverCookie(string chaveDoCookie)
         {
-            _cookies.Delete(descricaoCookie, new CookieOptions
+            _cookies.Delete(chaveDoCookie, new CookieOptions
             {
                 HttpOnly = true,
                 SameSite = SameSiteMode.Strict,

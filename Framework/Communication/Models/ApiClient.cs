@@ -53,7 +53,7 @@ namespace Communication.Models
             }
             else
             {
-                _messageModel.AddError("Não foi possível obter o registro.");
+                _messageModel.AdicionarErro("Não foi possível obter o registro.");
                 return null;
             }
         }
@@ -74,9 +74,9 @@ namespace Communication.Models
 
         private void FillMessageModel(string responseContent)
         {
-            if (responseContent.Contains(Level.Success) ||
-                responseContent.Contains(Level.Message) ||
-                responseContent.Contains(Level.Warning) ||
+            if (responseContent.Contains(Level.Sucesso) ||
+                responseContent.Contains(Level.Mensagem) ||
+                responseContent.Contains(Level.Aviso) ||
                 responseContent.Contains(Level.Error))
             {
                 var messages = JsonConvert.DeserializeObject<List<Message>>(responseContent);
@@ -111,7 +111,7 @@ namespace Communication.Models
 
             if (response.IsSuccessStatusCode)
             {
-                _messageModel.AddRegisterRemovedSuccessMessage(Modulo);
+                _messageModel.MensagemRegistroRemovido(Modulo);
             }
         }
 
@@ -149,7 +149,7 @@ namespace Communication.Models
             }
             else
             {
-                _messageModel.AddError("Não foi possível obter o registro.");
+                _messageModel.AdicionarErro("Não foi possível obter o registro.");
                 return null;
             }
         }

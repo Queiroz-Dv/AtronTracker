@@ -18,7 +18,7 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Tarefa> AtualizarTarefaAsync(int id, Tarefa tarefa)
+        public async Task<bool> AtualizarTarefaAsync(int id, Tarefa tarefa)
         {
             var tarefaBD = await ObterTarefaPorId(id);            
             AtualizarEntidadeParaPersistencia(tarefa, tarefaBD);
@@ -26,14 +26,13 @@ namespace Atron.Infrastructure.Repositories
             try
             {
                 _context.Tarefas.Update(tarefaBD);
-                await _context.SaveChangesAsync();
+                var atualizado  = await _context.SaveChangesAsync();
+                return atualizado > 0;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
-            return new Tarefa();
         }
 
         private static void AtualizarEntidadeParaPersistencia(Tarefa tarefa, Tarefa tarefaBD)
@@ -47,20 +46,19 @@ namespace Atron.Infrastructure.Repositories
             tarefaBD.TarefaEstadoId = tarefa.TarefaEstadoId;
         }
 
-        public async Task<Tarefa> CriarTarefaAsync(Tarefa tarefa)
+        public async Task<bool> CriarTarefaAsync(Tarefa tarefa)
         {
             try
             {
                 await _context.Tarefas.AddAsync(tarefa);
-                await _context.SaveChangesAsync();
+                var gravado = await _context.SaveChangesAsync();
+                return gravado > 0;
             }
             catch (Exception ex)
             {
 
                 throw ex;
-            }
-
-            return tarefa;
+            }            
         }
 
         public async Task<Tarefa> ObterTarefaPorId(int id)

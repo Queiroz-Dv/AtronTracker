@@ -1,32 +1,40 @@
-﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.ApiServices.AuthServices.Bases;
+﻿using Atron.Application.Interfaces.ApplicationInterfaces;
+using Atron.Application.Interfaces.Services;
+using Atron.Application.Interfaces.Services.Identity;
+using Atron.Application.Services.AuthServices.Bases;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Shared.DTO.API;
 using Shared.DTO.API.Request;
+using Shared.Enums;
 using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Interfaces.Caching;
+using Shared.Interfaces.Services;
 using Shared.Models;
+using System;
 using System.Threading.Tasks;
 
-namespace Atron.Application.ApiServices.AuthServices
+namespace Atron.Application.Services.AuthServices
 {
-    public class LoginService : LoginBaseService, ILoginService
+    public class LoginService : ServiceBase, ILoginService
     {
         const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
+        private readonly ILoginRepository _loginRepository;
 
-        public LoginService(
-            IServiceAccessor serviceAccessor,
-            ILoginRepository loginRepository) : base(serviceAccessor, loginRepository) { }
+        private DadosDoTokenDTO CriarToken(string token, DateTime expires) => new(token, expires);
+
+        public LoginService(IServiceAccessor serviceAccessor, ILoginRepository loginRepository) : base(serviceAccessor)
+        {
+            _loginRepository = loginRepository;
+        }
 
         public async Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO loginRequest)
         {
             var usuario = await UsuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
-
             if (usuario == null)
             {
-                Messages.AddError("Usuário não encontrado.");
+                Messages.AdicionarErro("Usuário não encontrado.");
                 return null;
             }
 
@@ -45,13 +53,15 @@ namespace Atron.Application.ApiServices.AuthServices
 
             if (!usuarioAutenticado)
             {
-                Messages.AddError(ERRO_AUTENTICACAO);
+                Messages.AdicionarErro(ERRO_AUTENTICACAO);
                 return null;
             }
 
+            var token = CriarToken(dadosDoToken.TokenDTO.Token, dadosDoToken.TokenDTO.Expires);
+
             CacheUsuarioService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDoToken);
-            CookieService.CriarCookiesDoToken(dadosDoToken);
-            return new DadosDoTokenDTO(dadosDoToken.TokenDTO.Token, dadosDoToken.TokenDTO.Expires);
+            CookieService.CriarCookieDoToken(token, usuario.Codigo);
+            return token;
         }
 
         public async Task<DadosDoTokenDTO> RefreshAcesso(DadosDoTokenDTO dadosDoToken)
@@ -68,7 +78,7 @@ namespace Atron.Application.ApiServices.AuthServices
 
             if (refreshTokenDoUsuarioEstaExpirado)
             {
-                Messages.AddError("Token expirado ou inválido.");
+                Messages.AdicionarErro("Token expirado ou inválido.");
                 return null;
             }
 
@@ -82,7 +92,7 @@ namespace Atron.Application.ApiServices.AuthServices
             {
                 var dadosDeToken = await TokenService.ObterTokenComRefreshToken(dadosComplementares);
 
-                var result = await _loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity()
+                var autenticado = await _loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity()
                 {
                     Codigo = dadosComplementares.DadosDoUsuario.CodigoDoUsuario,
                     Token = dadosDeToken.TokenDTO.Token,
@@ -90,33 +100,58 @@ namespace Atron.Application.ApiServices.AuthServices
                     RefreshTokenExpireTime = dadosDeToken.RefrehTokenDTO.Expires,
                 });
 
-                if (!result)
+                if (!autenticado)
                 {
-                    Messages.AddError(ERRO_AUTENTICACAO);
+                    Messages.AdicionarErro(ERRO_AUTENTICACAO);
                     return null;
                 }
 
+                var token = CriarToken(dadosDeToken.TokenDTO.Token, dadosDeToken.TokenDTO.Expires);
+
                 CacheUsuarioService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDeToken);
-                CookieService.CriarCookiesDoToken(dadosDeToken);
-                return new DadosDoTokenDTO(dadosDeToken.TokenDTO.Token, dadosDeToken.TokenDTO.Expires);
+                CookieService.CriarCookieDoToken(token, codigoUsuario);
+                return token;
             }
 
             return null;
         }
 
-        public async Task Logout(string usuarioCodigo)
+        public async Task<bool> Logout(string usuarioCodigo)
         {
-            var cacheService = _serviceAccessor.ObterService<ICacheService>();
+            var cacheService = ObterService<ICacheService>();
+            var identityService = ObterService<IUserIdentityService>();
+            var cookieService = ObterService<ICookieService>();
 
             cacheService.RemoverCache(ECacheKeysInfo.Acesso, usuarioCodigo);
             cacheService.RemoverCache(ECacheKeysInfo.TokenInfo, usuarioCodigo);
-            await UserIdentityService.RedefinirRefreshTokenServiceAsync(usuarioCodigo);
-            await _loginRepository.Logout();
+
+            var chaveDoCookie = $"{usuarioCodigo}{ETokenInfo.AcesssToken.GetDescription()}";
+
+            cookieService.RemoverCookie(chaveDoCookie);
+
+            var refreshTokenRedefinido = await identityService.RedefinirRefreshTokenServiceAsync(usuarioCodigo);
+
+            if (refreshTokenRedefinido)
+            {
+                await _loginRepository.Logout();
+                return refreshTokenRedefinido;
+            }
+
+            return false;
         }
 
         public async Task<bool> TrocarSenha(LoginRequestDTO dto)
         {
             return await _loginRepository.AtualizarSenhaUsuario(dto.CodigoDoUsuario, dto.Senha);
         }
+
+        #region Services
+        private IUsuarioService UsuarioService => ObterService<IUsuarioService>();
+        private IDadosComplementaresDoUsuarioService DadosComplementaresDoUsuarioService => ObterService<IDadosComplementaresDoUsuarioService>();
+        private ITokenService TokenService => ObterService<ITokenService>();
+        private ICacheUsuarioService CacheUsuarioService => ObterService<ICacheUsuarioService>();
+        private ICookieService CookieService => ObterService<ICookieService>();
+        private IUserIdentityService UserIdentityService => ObterService<IUserIdentityService>();
+        #endregion
     }
 }

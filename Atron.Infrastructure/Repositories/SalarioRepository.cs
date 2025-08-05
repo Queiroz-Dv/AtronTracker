@@ -17,7 +17,7 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AtualizarSalarioRepositoryAsync(int id, Salario salario)
+        public async Task<bool> AtualizarSalarioRepositoryAsync(int id, Salario salario)
         {
             var entidade = await _context.Salarios.FirstOrDefaultAsync(slr => slr.Id == id);
 
@@ -28,7 +28,8 @@ namespace Atron.Infrastructure.Repositories
             try
             {
                 _context.Salarios.Update(entidade);
-                await _context.SaveChangesAsync();
+                var atualizado  = await _context.SaveChangesAsync();
+                return atualizado > 0;
             }
             catch (Exception ex)
             {
@@ -37,12 +38,13 @@ namespace Atron.Infrastructure.Repositories
             }
         }
 
-        public async Task CriarSalarioAsync(Salario entidade)
+        public async Task<bool> CriarSalarioAsync(Salario entidade)
         {
             try
             {
                 await _context.Salarios.AddAsync(entidade);
-                await _context.SaveChangesAsync();
+                var gravado = await _context.SaveChangesAsync();
+                return gravado > 0;
             }
             catch (Exception ex)
             {

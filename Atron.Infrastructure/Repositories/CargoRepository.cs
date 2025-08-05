@@ -18,20 +18,21 @@ namespace Atron.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Cargo> CriarCargoAsync(Cargo cargo)
+        public async Task<bool> CriarCargoAsync(Cargo cargo)
         {
-            _context.Cargos.Add(cargo);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Cargos.AddAsync(cargo);
+
+                var cargoGravado = await _context.SaveChangesAsync();
+                return cargoGravado > 0;
             }
             catch (Exception ex)
             {
 
                 throw ex;
             }
-            return cargo;
         }
 
         public async Task<Cargo> ObterCargoPorIdAsync(int? id)
@@ -62,14 +63,14 @@ namespace Atron.Infrastructure.Repositories
             return cargos;
         }
 
-        public async Task<Cargo> RemoverCargoAsync(Cargo cargo)
+        public async Task<bool> RemoverCargoAsync(Cargo cargo)
         {
             _context.Cargos.Remove(cargo);
-            await _context.SaveChangesAsync();
-            return cargo;
+            var cargoRemovido = await _context.SaveChangesAsync();
+            return cargoRemovido > 0;
         }
 
-        public async Task<Cargo> AtualizarCargoAsync(Cargo cargo)
+        public async Task<bool> AtualizarCargoAsync(Cargo cargo)
         {
             var cargoBd = await ObterCargoPorCodigoAsync(cargo.Codigo);
             cargoBd.Descricao = cargo.Descricao;
@@ -79,7 +80,8 @@ namespace Atron.Infrastructure.Repositories
             try
             {
                 _context.Cargos.Update(cargoBd);
-                await _context.SaveChangesAsync();
+                var atualizado = await _context.SaveChangesAsync();
+                return atualizado > 0;
             }
             catch (Exception ex)
             {
@@ -87,7 +89,6 @@ namespace Atron.Infrastructure.Repositories
                 throw ex;
             }
 
-            return cargo;
         }
 
         public async Task<Cargo> ObterCargoPorCodigoAsync(string codigo)
@@ -98,12 +99,6 @@ namespace Atron.Infrastructure.Repositories
         public async Task<Cargo> ObterCargoPorCodigoAsyncAsNoTracking(string codigo)
         {
             return await _context.Cargos.Include(dpt => dpt.Departamento).AsNoTracking().FirstOrDefaultAsync(crg => crg.Codigo == codigo);
-        }
-
-
-        public bool CargoExiste(string codigo)
-        {
-            return _context.Cargos.Any(crg => crg.Codigo == codigo);
         }
 
         public async Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo)

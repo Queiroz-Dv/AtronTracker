@@ -110,25 +110,20 @@ namespace Atron.Infrastructure.Repositories
             return await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).ToListAsync();
         }
 
-        public async Task<Usuario> RemoverUsuarioAsync(Usuario usuario)
+        public async Task<bool> RemoverUsuarioAsync(Usuario usuario)
         {
             try
             {
                 _context.Usuarios.Remove(usuario);
-                await _context.SaveChangesAsync();
-                return new Usuario();
+                var removido = await _context.SaveChangesAsync();
+                return removido > 0;
             }
             catch (Exception)
             {
 
                 throw;
             }
-        }
-
-        public bool UsuarioExiste(string codigo)
-        {
-            return _context.Usuarios.Any(usr => usr.Codigo == codigo);
-        }
+        }   
 
         public async Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()
         {

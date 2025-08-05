@@ -41,7 +41,7 @@ namespace Atron.Infra.IoC
 
             services.AddScoped<IAuthManagerContext, AuthManagerContext>();
             services.AddScoped<IUserIdentityService, UserIdentityService>();
-            services.AddScoped<IUserIdentityRepository, UserIdentityRepository>();
+            services.AddScoped<IUsuarioIdentityRepository, UserIdentityRepository>();
             return services;
         }
     }

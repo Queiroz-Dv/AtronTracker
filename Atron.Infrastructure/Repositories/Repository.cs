@@ -2,7 +2,6 @@
 using Atron.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.Infrastructure.Repositories
@@ -18,24 +17,27 @@ namespace Atron.Infrastructure.Repositories
             _dbSet = _context.Set<TEntity>();
         }
 
-        public async Task AtualizarRepositoryAsync(TEntity entity)
-        {            
+        public async Task<bool> AtualizarRepositoryAsync(TEntity entity)
+        {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            var atualizado = await _context.SaveChangesAsync();
+            return atualizado > 0;
         }
 
-        public async Task AtualizarRepositoryAsync(int id, TEntity entity)
+        public async Task<bool> AtualizarRepositoryAsync(int id, TEntity entity)
         {
             TEntity entityBd = await _dbSet.FindAsync(id);
             entityBd = entity;
             _dbSet.Update(entityBd);
-            await _context.SaveChangesAsync();
+            var atualizado  = await _context.SaveChangesAsync();
+            return atualizado > 0;
         }
 
-        public async Task CriarRepositoryAsync(TEntity entity)
+        public async Task<bool> CriarRepositoryAsync(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            var gravado = await _context.SaveChangesAsync();
+            return gravado > 0;
         }
 
         public async Task<TEntity> ObterPorCodigoRepositoryAsync(string codigo)
@@ -56,10 +58,20 @@ namespace Atron.Infrastructure.Repositories
             return entidades;
         }
 
-        public async Task RemoverRepositoryAsync(TEntity entity)
+        public async Task<bool> RemoverRepositoryAsync(TEntity entity)
         {
             _context.Remove(entity);
-            await _context.SaveChangesAsync();
+            var removido  = await _context.SaveChangesAsync();
+            return removido > 0;
         }
+
+        public async Task<bool> RemoverRepositoryAsync(int id)
+        {
+            TEntity entityBd = await _dbSet.FindAsync(id);
+            _context.Remove(entityBd);
+
+            var removido = await _context.SaveChangesAsync();
+            return removido > 0;            
+        }        
     }
 }

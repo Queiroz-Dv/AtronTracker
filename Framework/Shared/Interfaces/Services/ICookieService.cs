@@ -5,8 +5,10 @@ namespace Shared.Interfaces.Services
 {
     public interface ICookieService
     {
-        DadosDeTokenComRefreshToken ObterTokenRefreshTokenPorRequest(HttpRequest httpRequest);
+        Task<DadosDoTokenDTO> ObterTokenRefreshTokenPorRequest(HttpRequest httpRequest);
 
-        void CriarCookiesDoToken(DadosDeTokenComRefreshToken tokenComRefreshToken);
+        void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario);
+
+        void RemoverCookie(string chave);
     }
 }

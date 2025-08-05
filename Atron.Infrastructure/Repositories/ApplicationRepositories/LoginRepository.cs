@@ -10,9 +10,9 @@ namespace Atron.Infrastructure.Repositories.ApplicationRepositories
     public class LoginRepository : ILoginRepository
     {
         private readonly IAuthManagerContext _authManager;
-        private readonly IUserIdentityRepository _userIdentityRepo;
+        private readonly IUsuarioIdentityRepository _userIdentityRepo;
 
-        public LoginRepository(IUserIdentityRepository userIdentityRepo, IAuthManagerContext authManagerContext)
+        public LoginRepository(IUsuarioIdentityRepository userIdentityRepo, IAuthManagerContext authManagerContext)
         {
             _userIdentityRepo = userIdentityRepo;
             _authManager = authManagerContext;

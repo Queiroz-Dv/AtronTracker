@@ -52,7 +52,7 @@ namespace Atron.WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            await _service.ExcluirAsync(id);
+            await _service.ExcluirAsync(id.ToInt());
 
             return _messageModel.Notificacoes.HasErrors() ?
                     BadRequest(ObterNotificacoes()) :

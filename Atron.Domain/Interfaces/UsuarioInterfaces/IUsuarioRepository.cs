@@ -16,9 +16,7 @@ namespace Atron.Domain.Interfaces.UsuarioInterfaces
 
         Task<bool> AtualizarUsuarioAsync(string codigo, Usuario usuario);
 
-        Task<Usuario> RemoverUsuarioAsync(Usuario usuario);
-
-        bool UsuarioExiste(string codigo);
+        Task<bool> RemoverUsuarioAsync(Usuario usuario);
 
         Task<bool> AtualizarSalario(int usuarioId, int quantidadeTotal);
 

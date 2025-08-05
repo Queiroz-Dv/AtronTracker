@@ -5,8 +5,10 @@ namespace Shared.Interfaces.Factory
 {
     public interface ICookieFactory
     {
-        DadosDeTokenComRefreshToken ObterDadosDoTokenPorRequest(HttpRequest request);
+        Task<DadosDoTokenDTO> ObterDadosDoTokenPorRequest(HttpRequest request);
 
-        void CriarCookiesDoToken(DadosDeTokenComRefreshToken tokenComRefreshToken);
+        void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario);
+
+        void RemoverCookie(string chave);
     }
 }

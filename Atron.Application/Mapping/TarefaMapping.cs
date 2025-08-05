@@ -1,27 +1,24 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Shared.Extensions;
 using Shared.Services.Mapper;
-using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Atron.Application.Mapping
 {
-    public class TarefaMapping : ApplicationMapService<TarefaDTO, Tarefa>
+    public class TarefaMapping : AsyncApplicationMapService<TarefaDTO, Tarefa>
     {
-        private readonly IRepository<Usuario> _usuarioRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly ICargoRepository _cargoRepository;
+        private readonly IUsuarioService usuarioService;
 
-        public TarefaMapping(IRepository<Usuario> usuarioRepository, IDepartamentoRepository departamentoRepository, ICargoRepository cargoRepository)
+        public TarefaMapping(IUsuarioService usuarioService)
         {
-            _usuarioRepository = usuarioRepository;
-            _departamentoRepository = departamentoRepository;
-            _cargoRepository = cargoRepository;
+            this.usuarioService = usuarioService;
         }
 
-        public override TarefaDTO MapToDTO(Tarefa entity)
+        public override async  Task<TarefaDTO>  MapToDTOAsync(Tarefa entity)
         {
             var dto = new TarefaDTO
             {
@@ -30,39 +27,28 @@ namespace Atron.Application.Mapping
                 Conteudo = entity.Conteudo,
                 DataInicial = entity.DataInicial,
                 DataFinal = entity.DataFinal,
-                UsuarioCodigo = entity.UsuarioCodigo,
-                Usuario = new UsuarioDTO()
-                {
-                    Codigo = entity.UsuarioCodigo,
-                    Nome = entity.Usuario.Nome,
-                    Sobrenome = entity.Usuario.Sobrenome
-                }
+                UsuarioCodigo = entity.UsuarioCodigo,              
             };
 
-            if (entity.Usuario.UsuarioCargoDepartamentos.Any())
-            {
-                foreach (var item in entity.Usuario.UsuarioCargoDepartamentos)
-                {
-                    dto.Usuario.Cargo = new CargoDTO { Codigo = item.Cargo.Codigo, Descricao = item.Cargo.Descricao };
+            var usuario = await usuarioService.ObterPorCodigoAsync(entity.UsuarioCodigo);
 
-                    dto.Usuario.Departamento = new DepartamentoDTO(item.Departamento.Codigo, item.Departamento.Descricao);
-                }
+            if (usuario != null)
+            {
+                dto.Usuario = usuario;
             }
 
             if (!entity.TarefaEstadoId.ToString().IsNullOrEmpty())
             {
-                dto.EstadoDaTarefa = new TarefaEstadoDTO() { Id =  entity.TarefaEstadoId, Descricao = TarefaEstadoDTO.TarefasEstados().FirstOrDefault(trf => trf.Id == entity.TarefaEstadoId).Descricao };                    
+                dto.EstadoDaTarefa = new TarefaEstadoDTO() { Id = entity.TarefaEstadoId, Descricao = TarefaEstadoDTO.TarefasEstados().FirstOrDefault(trf => trf.Id == entity.TarefaEstadoId).Descricao };
             }
 
             return dto;
         }
 
-        public override Tarefa MapToEntity(TarefaDTO dto)
+        public override async Task<Tarefa> MapToEntityAsync(TarefaDTO dto)
         {
-            var usuarioBdTask = _usuarioRepository.ObterPorCodigoRepositoryAsync(dto.UsuarioCodigo);
-            usuarioBdTask.Wait();
-            var usuario = usuarioBdTask.Result;
-
+            var usuario = await usuarioService.ObterPorCodigoAsync(dto.UsuarioCodigo);
+          
             return new Tarefa
             {
                 UsuarioId = usuario.Id,
@@ -71,7 +57,7 @@ namespace Atron.Application.Mapping
                 Conteudo = dto.Conteudo,
                 DataInicial = dto.DataInicial,
                 DataFinal = dto.DataFinal,
-                TarefaEstadoId = Convert.ToInt16(dto.EstadoDaTarefa.Id)
+                TarefaEstadoId = dto.EstadoDaTarefa?.Id ?? 0,
             };
         }
     }

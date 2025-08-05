@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atron.Domain.Entities;
+using System;
 using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces.Identity
@@ -6,7 +7,7 @@ namespace Atron.Domain.Interfaces.Identity
     /// <summary>
     /// Interface para o repositório de usuários da aplicação.
     /// </summary>
-    public interface IUserIdentityRepository
+    public interface IUsuarioIdentityRepository
     {
         /// <summary>
         /// Recupera o refresh token associado ao código do usuário.
@@ -29,7 +30,7 @@ namespace Atron.Domain.Interfaces.Identity
         /// </summary>
         /// <param name="codigoUsuario"></param>
         /// <returns></returns>
-        Task RedefinirRefreshTokenRepositoryAsync(string codigoUsuario);
+        Task<bool> RedefinirRefreshTokenRepositoryAsync(string codigoUsuario);
 
         /// <summary>
         /// Atualiza o refresh token do usuário com o código fornecido.
@@ -37,7 +38,18 @@ namespace Atron.Domain.Interfaces.Identity
         /// <param name="codigoUsuario"> Código do usuário para o qual o refresh token será atualizado. </param>
         /// <param name="refreshToken"> Refresh token a ser atualizado para o usuário. </param>
         /// <param name="refreshTokenExpireTime"> Refresh token expire time a ser atualizado para o usuário. </param>
-        /// <returns> Retorna true se o refresh token foi atualizado com sucesso, caso contrário, retorna false. </returns>
+        /// <returns> Retorna true se o refresh token foi atualizado com sucesso, caso contrário, retorna false. </returns>       
+
         Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime);
+
+        Task<bool> AtualizarUserIdentityRepositoryAsync(string codigoUsuario, string email, string senha);
+
+        Task<bool> RegistrarContaDeUsuarioRepositoryAsync(string codigoUsuario, string email, string senha);
+
+        Task<bool> DeletarContaUserRepositoryAsync(string codigoUsuario);
+
+        Task<bool> ContaExisteRepositoryAsync(string codigoUsuario, string email);
+
+        Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario);
     }
 }

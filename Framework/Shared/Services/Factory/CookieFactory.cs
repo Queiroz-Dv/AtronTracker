@@ -1,56 +1,47 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Shared.DTO.API;
 using Shared.Enums;
 using Shared.Extensions;
 using Shared.Interfaces.Factory;
-using Shared.Interfaces.Services;
-using System.Security.Claims;
+using System.Text.Json;
 
 namespace Shared.Services.Factory
 {
     public class CookieFactory : CookieBuilder, ICookieFactory
-    {        
-        private readonly ITokenService _tokenService;
-
-        public CookieFactory(IResponseCookies responseCookies, ITokenService tokenService) : base(responseCookies)
+    {
+        private readonly IDataProtector protector;
+        public CookieFactory(IResponseCookies responseCookies, IDataProtectionProvider provider) : base(responseCookies)
         {
-            _tokenService = tokenService;
+            protector = provider.CreateProtector("TokenCookieProtector");
         }
 
-        public void CriarCookiesDoToken(DadosDeTokenComRefreshToken tokenComRefreshToken)
-        {
-            MontarCookie(ETokenInfo.AcesssToken.GetDescription(), tokenComRefreshToken.TokenDTO.Token);
+        private string TokenUsuarioCookie(string codigoUsuario, ETokenInfo tokenInfo) => $"{codigoUsuario}{tokenInfo.GetDescription()}".ToUpper();
 
-            MontarCookie(ETokenInfo.RefreshToken.GetDescription(),
-                tokenComRefreshToken.RefrehTokenDTO.Token,
-                tokenComRefreshToken.RefrehTokenDTO.Expires);           
+        public void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario)
+        {
+            var json = JsonSerializer.Serialize(dadosDoToken);                
+            var jsonProtegido = protector.Protect(json);
+
+            MontarCookie(TokenUsuarioCookie(codigoUsuario, ETokenInfo.AcesssToken), jsonProtegido);
         }
 
-        public DadosDeTokenComRefreshToken ObterDadosDoTokenPorRequest(HttpRequest request)
+        public async Task<DadosDoTokenDTO> ObterDadosDoTokenPorRequest(HttpRequest request)
         {
-            var accessToken = request.Cookies[ETokenInfo.AcesssToken.GetDescription()];
-            var refreshToken = request.Cookies[ETokenInfo.RefreshToken.GetDescription()];
+            var codigo = request.Headers.ExtrairCodigoUsuarioDoRequest();
+            if (string.IsNullOrWhiteSpace(codigo)) return null;
 
-            if (accessToken != null) { return null; }
+            if (!request.Cookies.TryGetValue(TokenUsuarioCookie(codigo, ETokenInfo.AcesssToken), out var valor)) return null;
 
-            var claimPrincipal = _tokenService.ObterClaimPrincipal(accessToken);
+            var json = protector.Unprotect(valor);
+            var dados = JsonSerializer.Deserialize<DadosDoTokenDTO>(json);
 
-            if (claimPrincipal == null)
-            {
-                return null; // Ou lançar uma exceção, dependendo do seu fluxo de erro
-            }
+            return await Task.FromResult(dados);
+        }
 
-            var accessClaimExpires = claimPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Expiration)?.Value;
-            var refreshClaimExpires = claimPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimCode.EXPIRACAO_REFRESH_TOKEN)?.Value;
-
-            _ = DateTime.TryParse(accessClaimExpires, out DateTime accessTokenExpires);
-            _ = DateTime.TryParse(refreshClaimExpires, out var refreshTokenExpires);
-
-            return new DadosDeTokenComRefreshToken()
-            {
-                TokenDTO = new DadosDoTokenDTO(accessToken, accessTokenExpires),
-                RefrehTokenDTO = new DadosDoRefrehTokenDTO(refreshToken, refreshTokenExpires)
-            };
+        void ICookieFactory.RemoverCookie(string chave)
+        {
+            RemoverCookie(chave.ToUpper());
         }
     }
 }

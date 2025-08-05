@@ -1,6 +1,6 @@
-﻿using Atron.Application.ApiInterfaces.ApplicationInterfaces;
-using Atron.Application.ApiServices.AuthServices;
+﻿using Atron.Application.Interfaces.ApplicationInterfaces;
 using Atron.Application.Interfaces.Services;
+using Atron.Application.Services.AuthServices;
 using Atron.Application.Services.EntitiesServices;
 using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
@@ -9,12 +9,15 @@ using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
 using Atron.Infrastructure.Repositories;
 using Atron.Infrastructure.Repositories.ApplicationRepositories;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Models.ApplicationModels;
+using System;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace Atron.Infra.IoC
@@ -40,10 +43,9 @@ namespace Atron.Infra.IoC
 
             // Evitar o looping infinito 
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-            
+
             // With this line:  
             services.AddScoped(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
-
 
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
@@ -51,7 +53,6 @@ namespace Atron.Infra.IoC
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);
             ConfigureModuloServices(services);
-            //services = services.AddModuleAuthorizationPolicies(services.BuildServiceProvider());
             ConfigureTarefaServices(services);
             ConfigureSalarioServices(services);
             ConfigureDepartamentoServices(services);
@@ -62,13 +63,17 @@ namespace Atron.Infra.IoC
             ConfigureSalarioRepositoryServices(services);
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
-            ConfigureUserAuthenticationServices(services);
             ConfigurePropriedadesDeFluxoServices(services);
             ConfigurePropriedadesDeFluxoModuloServices(services);
             ConfigurePerfilDeAcessoServices(services);
             ConfigurePerfilDeAcessoUsuarioServices(services);
 
             services = services.AddContexts();
+
+            services.AddDataProtection()
+             .SetApplicationName("Atron")
+             .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
+             .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
             return services;
         }
 
@@ -92,16 +97,11 @@ namespace Atron.Infra.IoC
             services.AddScoped<IUsuarioCargoDepartamentoRepository, UsuarioCargoDepartamentoRepository>();
         }
 
-        private static void ConfigureUserAuthenticationServices(IServiceCollection services)
-        {
-            services.AddScoped<ILoginRepository, LoginRepository>();
-            services.AddScoped<IRegisterApplicationRepository, RegisterApplicationRepository>();
-        }
-
         private static void ConfigureAuthenticationServices(IServiceCollection services)
         {
             services.AddScoped<ILoginService, LoginService>();
-            services.AddScoped<IRegisterUserService, RegisterUserService>();
+            services.AddScoped<ILoginRepository, LoginRepository>();
+            services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
         }
 
         private static void ConfigureDefaultUserRoleServices(IServiceCollection services)

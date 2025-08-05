@@ -9,17 +9,15 @@ namespace Atron.Domain.Interfaces
         Task<IEnumerable<Cargo>> ObterCargosAsync();
 
         Task<Cargo> ObterCargoPorIdAsync(int? id);
+
         Task<Cargo> ObterCargoPorCodigoAsync(string codigo);
 
-        Task<Cargo> ObterCargoPorCodigoAsyncAsNoTracking(string codigo);
+        Task<bool> CriarCargoAsync(Cargo cargo);
 
-        Task<Cargo> CriarCargoAsync(Cargo cargo);
+        Task<bool> AtualizarCargoAsync(Cargo cargo);
 
-        Task<Cargo> AtualizarCargoAsync(Cargo cargo);
+        Task<bool> RemoverCargoAsync(Cargo cargo);        
 
-        Task<Cargo> RemoverCargoAsync(Cargo cargo);
-
-        bool CargoExiste(string codigo);
         Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo);
     }
 }

@@ -1,32 +1,31 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
 using Shared.Services.Mapper;
+using System.Threading.Tasks;
 
 namespace Atron.Application.Mapping
 {
-    public class CargoMapping : ApplicationMapService<CargoDTO, Cargo>
+    public class CargoMapping : AsyncApplicationMapService<CargoDTO, Cargo>
     {
-        public override CargoDTO MapToDTO(Cargo entity)
+        public override  Task<CargoDTO> MapToDTOAsync(Cargo entity)
         {
-            return new CargoDTO(entity.Codigo, entity.Descricao)
+            var cargo = new CargoDTO(entity.Codigo, entity.Descricao)
             {
                 DepartamentoCodigo = entity.DepartamentoCodigo,
-                Departamento = new DepartamentoDTO
-                {
-                    Codigo = entity.Departamento.Codigo,
-                    Descricao = entity.Departamento.Descricao
-                }
+                DepartamentoDescricao = entity.Departamento.Descricao,
             };
+
+            return Task.FromResult(cargo);
         }
 
-        public override Cargo MapToEntity(CargoDTO dto)
+        public override Task<Cargo> MapToEntityAsync(CargoDTO dto)
         {
-            return new Cargo
+            return Task.FromResult(new Cargo
             {
                 Codigo = dto.Codigo.ToUpper(),
                 Descricao = dto.Descricao.ToUpper(),
                 DepartamentoCodigo = dto.DepartamentoCodigo.ToUpper()
-            };
+            });
         }
     }
 }

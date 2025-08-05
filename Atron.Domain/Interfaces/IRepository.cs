@@ -11,11 +11,12 @@ namespace Atron.Domain.Interfaces
 
         Task<TEntity> ObterPorCodigoRepositoryAsync(string codigo);
 
-        Task CriarRepositoryAsync(TEntity entity);
+        Task<bool> CriarRepositoryAsync(TEntity entity);
 
-        Task AtualizarRepositoryAsync(TEntity entity);
-        Task AtualizarRepositoryAsync(int id, TEntity entity);
+        Task<bool> AtualizarRepositoryAsync(TEntity entity);
 
-        Task RemoverRepositoryAsync(TEntity entity);
+        Task<bool> AtualizarRepositoryAsync(int id, TEntity entity);        
+
+        Task<bool> RemoverRepositoryAsync(TEntity entity);
     }
 }
