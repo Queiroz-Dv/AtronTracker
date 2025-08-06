@@ -1,27 +1,29 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
+using Shared.DTO.API;
 using Shared.Interfaces.Mapper;
 using Shared.Services.Mapper;
+using System;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Mapping
 {
-    public class UsuarioMapping : AsyncApplicationMapService<UsuarioDTO, Usuario>
+    public class UsuarioIdentityMapping : AsyncApplicationMapService<UsuarioDTO, UsuarioIdentity>
     {
         private readonly IAsyncApplicationMapService<CargoDTO, Cargo> _cargoMap;
         private readonly IAsyncApplicationMapService<DepartamentoDTO, Departamento> _departamentoMap;
         private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _perfilDeAcessoMap;
 
-        public UsuarioMapping(IAsyncApplicationMapService<CargoDTO, Cargo> cargoMap,
+        public UsuarioIdentityMapping(IAsyncApplicationMapService<CargoDTO, Cargo> cargoMap,
                               IAsyncApplicationMapService<DepartamentoDTO, Departamento> departamentoMap,
-                              IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> perfilDeAcessoMap)
+                              IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> perfilDeAcessoMap) : base()
         {
             _cargoMap = cargoMap;
             _departamentoMap = departamentoMap;
             _perfilDeAcessoMap = perfilDeAcessoMap;
         }
 
-        public override async Task<UsuarioDTO> MapToDTOAsync(Usuario entity)
+        public override async Task<UsuarioDTO> MapToDTOAsync(UsuarioIdentity entity)
         {
             var usuario = new UsuarioDTO
             {
@@ -32,6 +34,11 @@ namespace Atron.Application.Mapping
                 Email = entity.Email,
                 Salario = entity.SalarioAtual,
                 DataNascimento = entity.DataNascimento,
+                DadosDoToken = new DadosDeTokenComRefreshToken()
+                {
+                    TokenDTO = new DadosDoTokenDTO(entity.Token, DateTime.Now),
+                    RefrehTokenDTO = new DadosDoRefrehTokenDTO(entity.RefreshToken, entity.RefreshTokenExpireTime)
+                },
                 PerfisDeAcesso = []
             };
 
@@ -60,9 +67,9 @@ namespace Atron.Application.Mapping
             return usuario;
         }
 
-        public override Task<Usuario> MapToEntityAsync(UsuarioDTO dto)
+        public override Task<UsuarioIdentity> MapToEntityAsync(UsuarioDTO dto)
         {
-            return Task.FromResult(new Usuario()
+            return Task.FromResult(new UsuarioIdentity()
             {
                 Codigo = dto.Codigo.ToUpper(),
                 Nome = dto.Nome,

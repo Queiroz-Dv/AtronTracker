@@ -1,8 +1,7 @@
 ﻿using Atron.Application.DTO;
-using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
-using Atron.Domain.Interfaces;
 using Shared.Extensions;
+using Shared.Interfaces.Mapper;
 using Shared.Services.Mapper;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,14 +10,14 @@ namespace Atron.Application.Mapping
 {
     public class TarefaMapping : AsyncApplicationMapService<TarefaDTO, Tarefa>
     {
-        private readonly IUsuarioService usuarioService;
+        private readonly IAsyncApplicationMapService<UsuarioDTO, Usuario> _usuarioMap;
 
-        public TarefaMapping(IUsuarioService usuarioService)
+        public TarefaMapping(IAsyncApplicationMapService<UsuarioDTO, Usuario> usuarioMap) : base()
         {
-            this.usuarioService = usuarioService;
+            _usuarioMap = usuarioMap;
         }
 
-        public override async  Task<TarefaDTO>  MapToDTOAsync(Tarefa entity)
+        public override async Task<TarefaDTO> MapToDTOAsync(Tarefa entity)
         {
             var dto = new TarefaDTO
             {
@@ -27,15 +26,9 @@ namespace Atron.Application.Mapping
                 Conteudo = entity.Conteudo,
                 DataInicial = entity.DataInicial,
                 DataFinal = entity.DataFinal,
-                UsuarioCodigo = entity.UsuarioCodigo,              
+                UsuarioCodigo = entity.UsuarioCodigo,
+                Usuario = await MapChildAsync(entity.Usuario, _usuarioMap)
             };
-
-            var usuario = await usuarioService.ObterPorCodigoAsync(entity.UsuarioCodigo);
-
-            if (usuario != null)
-            {
-                dto.Usuario = usuario;
-            }
 
             if (!entity.TarefaEstadoId.ToString().IsNullOrEmpty())
             {
@@ -45,20 +38,17 @@ namespace Atron.Application.Mapping
             return dto;
         }
 
-        public override async Task<Tarefa> MapToEntityAsync(TarefaDTO dto)
+        public override Task<Tarefa> MapToEntityAsync(TarefaDTO dto)
         {
-            var usuario = await usuarioService.ObterPorCodigoAsync(dto.UsuarioCodigo);
-          
-            return new Tarefa
+            return Task.FromResult(new Tarefa
             {
-                UsuarioId = usuario.Id,
-                UsuarioCodigo = usuario.Codigo,
+                UsuarioCodigo = dto.UsuarioCodigo,
                 Titulo = dto.Titulo,
                 Conteudo = dto.Conteudo,
                 DataInicial = dto.DataInicial,
                 DataFinal = dto.DataFinal,
                 TarefaEstadoId = dto.EstadoDaTarefa?.Id ?? 0,
-            };
+            });
         }
     }
 }
