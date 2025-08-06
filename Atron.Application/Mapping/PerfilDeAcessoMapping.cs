@@ -1,38 +1,40 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Entities;
-using Atron.Domain.Interfaces;
+using Shared.Interfaces.Mapper;
 using Shared.Services.Mapper;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Atron.Application.Mapping
 {
     public class PerfilDeAcessoMapping : AsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso>
     {
-        private readonly IModuloRepository moduloRepository;
+        private readonly IAsyncApplicationMapService<ModuloDTO, Modulo> _moduloMap;
 
-        public PerfilDeAcessoMapping(IModuloRepository moduloRepository)
+        public PerfilDeAcessoMapping(IAsyncApplicationMapService<ModuloDTO, Modulo> moduloMap) : base()
         {
-            this.moduloRepository = moduloRepository;
+            _moduloMap = moduloMap;
         }
 
         public override async Task<PerfilDeAcessoDTO> MapToDTOAsync(PerfilDeAcesso entity)
         {
-            var dto = new PerfilDeAcessoDTO() { Id = entity.Id, Codigo = entity.Codigo, Descricao = entity.Descricao, };
+            var dto = new PerfilDeAcessoDTO
+            {
+                Id = entity.Id,
+                Codigo = entity.Codigo,
+                Descricao = entity.Descricao,
+                Modulos = []
+            };
 
-            dto.Modulos = new List<ModuloDTO>();
             if (entity.PerfilDeAcessoModulos != null)
             {
-                foreach (var item in entity.PerfilDeAcessoModulos)
-                {
-                    var modulo = await moduloRepository.ObterPorCodigoRepository(item.ModuloCodigo);                 
-                    var moduloDTO = new ModuloDTO()
-                    {
-                        Codigo = modulo.Codigo,
-                        Descricao = modulo.Descricao
-                    };
 
-                    dto.Modulos.Add(moduloDTO);
+                foreach (var relacionamento in entity.PerfilDeAcessoModulos)
+                {
+                    if (relacionamento.Modulo != null)
+                    {
+                        var moduloDTO = await MapChildAsync(relacionamento.Modulo, _moduloMap);
+                        dto.Modulos.Add(moduloDTO);
+                    }
                 }
             }
 

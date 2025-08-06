@@ -55,7 +55,7 @@ namespace Atron.Infrastructure.Repositories
 
         public async Task<Modulo> ObterPorCodigoRepository(string codigo)
         {
-            return await _context.Modulos.FirstOrDefaultAsync(mdl => mdl.Codigo == codigo);
+            return await _context.Modulos.AsNoTracking().FirstOrDefaultAsync(mdl => mdl.Codigo == codigo);
         }
 
         public async Task<Modulo> ObterPorIdRepository(int id)

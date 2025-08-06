@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Atron.Application.Mapping
 {
     public class DepartamentoMapping : AsyncApplicationMapService<DepartamentoDTO, Departamento>
-    {       
+    {
         public override Task<DepartamentoDTO> MapToDTOAsync(Departamento entity)
         {
             var dto = new DepartamentoDTO
@@ -28,6 +28,6 @@ namespace Atron.Application.Mapping
                 Descricao = dto.Descricao.ToUpper()
             };
             return Task.FromResult(entity);
-        }              
+        }
     }
 }

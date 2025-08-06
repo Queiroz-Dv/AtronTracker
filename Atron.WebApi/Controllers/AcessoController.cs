@@ -27,7 +27,6 @@ namespace Atron.WebApi.Controllers
              : base(loginUserService, serviceAccessor, messageModel)
         { }
 
-
         /// <summary>
         /// Endpoint para logar um usuário no sistema
         /// </summary>
@@ -77,7 +76,6 @@ namespace Atron.WebApi.Controllers
         /// Endpoint de trocar a senha do usuário autenticado no sistema
         /// </summary>
         /// <param name="dto"></param>
-        /// <returns></returns>
         [HttpPost(nameof(TrocarSenha))]
         public async Task<ActionResult<bool>> TrocarSenha([FromBody] LoginRequestDTO dto)
         {
@@ -85,6 +83,10 @@ namespace Atron.WebApi.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Endpoint de registro de conta de usuário
+        /// </summary>
+        /// <param name="registerDTO"></param>        
         [HttpPost("Registrar")]
         public async Task<ActionResult> Post([FromBody] UsuarioRegistroDTO registerDTO)
         {

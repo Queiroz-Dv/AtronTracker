@@ -78,6 +78,7 @@ namespace Atron.Application.Services.EntitiesServices
         {
             var entidade = await _map.MapToEntityAsync(salarioDTO);
             var usuarioIdentity = await _usuarioRepository.ObterUsuarioPorCodigoAsync(salarioDTO.UsuarioCodigo);
+            entidade.UsuarioId = usuarioIdentity.Id;
 
             _validateModel.Validate(entidade);
             if (!_messageModel.Notificacoes.HasErrors())
