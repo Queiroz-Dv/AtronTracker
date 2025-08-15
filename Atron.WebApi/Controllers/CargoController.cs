@@ -1,4 +1,7 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.DTO.Request;
+using Atron.Application.DTO.Response;
+using Atron.Application.Extensions;
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +10,7 @@ using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
@@ -28,16 +32,17 @@ namespace Atron.WebApi.Controllers
         public CargoController(ICargoService cargoService, IServiceAccessor serviceAccessor, MessageModel messageModel)
             : base(cargoService, serviceAccessor, messageModel)
         { }
-
+        
         /// <summary>
         /// Obtém todos os cargos.
         /// </summary>
         /// <returns>Lista de cargos.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CargoDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<CargoResponse>>> Get()
         {
             var cargos = await _service.ObterTodosAsync();
-            return Ok(cargos);
+
+            return Ok(cargos.Select(x => x.MontarResponse()).ToList());
         }
 
         /// <summary>
@@ -46,9 +51,9 @@ namespace Atron.WebApi.Controllers
         /// <param name="cargo">Dados do cargo a ser criado.</param>
         /// <returns>Resultado da operação.</returns>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] CargoDTO cargo)
+        public async Task<ActionResult> Post([FromBody] CargoRequest cargo)
         {
-            await _service.CriarAsync(cargo);
+            await _service.CriarAsync(cargo.MontarDTO());
             return _messageModel.Notificacoes.HasErrors() ?
                BadRequest(ObterNotificacoes()) :
                Ok(ObterNotificacoes());
@@ -61,9 +66,9 @@ namespace Atron.WebApi.Controllers
         /// <param name="cargo">Dados atualizados do cargo.</param>
         /// <returns>Resultado da operação.</returns>
         [HttpPut("{codigo}")]
-        public async Task<ActionResult> Put(string codigo, [FromBody] CargoDTO cargo)
+        public async Task<ActionResult> Put(string codigo, [FromBody] CargoRequest cargo)
         {
-            await _service.AtualizarAsync(codigo, cargo);
+            await _service.AtualizarAsync(codigo, cargo.MontarDTO());
 
             return _messageModel.Notificacoes.HasErrors() ?
                BadRequest(ObterNotificacoes()) :
@@ -91,12 +96,12 @@ namespace Atron.WebApi.Controllers
         /// <param name="codigo">Código do cargo.</param>
         /// <returns>Dados do departamento.</returns>
         [HttpGet("{codigo}")]
-        public async Task<ActionResult<CargoDTO>> Get(string codigo)
+        public async Task<ActionResult<CargoResponse>> Get(string codigo)
         {
             var cargo = await _service.ObterPorCodigoAsync(codigo);
             return cargo is null ?
                NotFound(ObterNotificacoes()) :
-               Ok(cargo);
+               Ok(cargo.MontarResponse());
         }
     }
 }
