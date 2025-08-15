@@ -1,4 +1,6 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.DTO.Request;
+using Atron.Application.Extensions;
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +9,7 @@ using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Atron.WebApi.Controllers
@@ -36,14 +39,13 @@ namespace Atron.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<SalarioDTO>>> Get()
         {
             var salarios = await _service.ObterTodosAsync();
-
-            return Ok(salarios);
+            return Ok(salarios.Select(s => s.MontarResponse()).ToList());
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] SalarioDTO salario)
+        public async Task<ActionResult> Put(int id, [FromBody] SalarioRequest salario)
         {
-            await _service.AtualizarServiceAsync(id, salario);
+            await _service.AtualizarServiceAsync(id, salario.MontarDTO());
 
             return _messageModel.Notificacoes.HasErrors() ?
                  BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
@@ -66,7 +68,7 @@ namespace Atron.WebApi.Controllers
 
             return salario is null ?
             NotFound(ObterNotificacoes()) :
-            Ok(salario);
+            Ok(salario.MontarResponse());
         }
     }
 }

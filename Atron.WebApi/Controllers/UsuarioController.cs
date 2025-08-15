@@ -1,4 +1,5 @@
 ﻿using Atron.Application.DTO;
+using Atron.Application.DTO.Response;
 using Atron.Application.Interfaces.Services;
 using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,10 @@ using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Atron.Application.Extensions;
+using Atron.Application.DTO.Request;
 
 namespace Atron.WebApi.Controllers
 {
@@ -25,9 +29,9 @@ namespace Atron.WebApi.Controllers
         { }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] UsuarioDTO usuario)
+        public async Task<ActionResult> Post([FromBody] UsuarioRequest usuarioRequest)
         {
-            await _service.CriarAsync(usuario);
+            await _service.CriarAsync(usuarioRequest.MontarDTO());
 
             return _messageModel.Notificacoes.HasErrors() ?
                      BadRequest(ObterNotificacoes()) :
@@ -35,17 +39,17 @@ namespace Atron.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UsuarioDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<UsuarioResponse>>> Get()
         {
             var usuarios = await _service.ObterTodosAsync();
-            return Ok(usuarios);
+            return Ok(usuarios.Select(usr => usr.MontarResponse()).ToList());
         }
 
         [HttpPut("{codigo}")]
-        public async Task<ActionResult<UsuarioDTO>> Put(string codigo, [FromBody] UsuarioDTO usuario)
+        public async Task<ActionResult<UsuarioDTO>> Put(string codigo, [FromBody] UsuarioRequest usuario)
         {
             // Verificar o código que é enviado
-            await _service.AtualizarAsync(codigo, usuario);
+            await _service.AtualizarAsync(codigo, usuario.MontarDTO());
 
             return _messageModel.Notificacoes.HasErrors() ?
                 BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());

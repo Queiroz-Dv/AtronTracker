@@ -1,13 +1,17 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.DTO.Request;
 using Atron.Application.DTO.Response;
-using Atron.Domain.Entities;
 using System.Linq;
 
 namespace Atron.Application.Extensions
 {
     public static class BuilderExtensions
     {
+        #region Cargo
+        public static CargoDTO MontarDTO(this CargoRequest request) => new(request?.Codigo, request?.Descricao, request?.DepartamentoCodigo);
+        public static CargoResponse MontarResponse(this CargoDTO dto) => new(dto?.Codigo, dto?.Descricao, dto?.DepartamentoCodigo, dto?.DepartamentoDescricao);
+        #endregion
+
         #region Tarefa
         public static TarefaDTO MontarDTO(this TarefaRequest tarefa)
         {
@@ -117,7 +121,7 @@ namespace Atron.Application.Extensions
                     Descricao = p.Descricao
                 }).ToList(),
                 Email = usuario.Email,
-                
+
             };
         }
         #endregion

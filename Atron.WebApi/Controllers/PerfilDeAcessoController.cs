@@ -87,7 +87,7 @@ namespace Atron.WebApi.Controllers
         }
     }
 
-    public class UsuarioRequest
+    public class UsuarioPerfilRequest
     {
         public string Codigo { get; set; }
     }
@@ -95,6 +95,6 @@ namespace Atron.WebApi.Controllers
     public class PerfilUsuarioRequest
     {
         public string CodigoPerfil { get; set; }
-        public UsuarioRequest[] Usuarios { get; set; }
+        public UsuarioPerfilRequest[] Usuarios { get; set; }
     }
 }
