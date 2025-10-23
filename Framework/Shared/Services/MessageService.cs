@@ -20,10 +20,7 @@ namespace Shared.Services
 
     public abstract class MessageService : MensagemRegistro, IMessageService
     {
-        protected MessageService()
-        {
-            Notificacoes = new List<Message>();
-        }
+        protected MessageService() => Notificacoes = [];
 
         public List<Message> Notificacoes { get; }
 

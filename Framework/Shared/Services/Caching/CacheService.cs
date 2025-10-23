@@ -5,18 +5,16 @@ using Shared.Models;
 
 namespace Shared.Services.Caching
 {
-    public class CacheService : ICacheService
+    public class CacheService(IMemoryCache memoryCache) : ICacheService
     {
-        private readonly IMemoryCache _memoryCache;
-
-        public CacheService(IMemoryCache memoryCache)
-        {
-            _memoryCache = memoryCache;
-        }
+        private readonly IMemoryCache _memoryCache = memoryCache;
 
         public void GravarCache<T>(CacheInfo<T> cacheInfo)
         {
-            _memoryCache.Set(cacheInfo.KeyDescription, cacheInfo.EntityInfo, TimeSpan.FromMinutes(30));
+            _memoryCache.Set(
+                cacheInfo.KeyDescription,
+                cacheInfo.EntityInfo,
+                TimeSpan.FromMinutes(30));
         }
         
         public T ObterCache<T>(string cacheKey)
