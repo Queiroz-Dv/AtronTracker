@@ -37,7 +37,7 @@ namespace Atron.WebViews
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseHttpLogging();
+                //app.UseHttpLogging();
             }
             else
             {

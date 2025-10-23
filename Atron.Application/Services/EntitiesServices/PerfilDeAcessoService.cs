@@ -59,8 +59,7 @@ namespace Atron.Application.Services.EntitiesServices
 
 
         public async Task<bool> AtualizarPerfilServiceAsync(string codigo, PerfilDeAcessoDTO perfilDeAcessoDTO)
-        {
-            // TODO: Utilizar o speficiation no futuro pra verificar se os códigos está válidos
+        {            
             ChecarPerfilModulo(perfilDeAcessoDTO);
 
             if (!_messageModel.Notificacoes.HasErrors())
@@ -68,8 +67,7 @@ namespace Atron.Application.Services.EntitiesServices
                 var perfilDeAcesso = await _map.MapToEntityAsync(perfilDeAcessoDTO);
 
                 await PreencherInformacoesDaEntidade(perfilDeAcessoDTO, perfilDeAcesso);
-
-                // Lembrar de validar o módulo de acordo com as regras de negócio
+                
                 _validateModel.Validate(perfilDeAcesso);
 
                 if (!_messageModel.Notificacoes.HasErrors())
@@ -164,9 +162,10 @@ namespace Atron.Application.Services.EntitiesServices
             return entidade is null ? null : await _map.MapToDTOAsync(entidade);
         }
 
-        public Task<PerfilDeAcessoDTO> ObterPerfilPorIdServiceAsync(int id)
+        public async Task<PerfilDeAcessoDTO> ObterPerfilPorIdServiceAsync(int id)
         {
-            throw new NotImplementedException();
+            var entidade = await _perfilDeAcessoRepository.ObterPerfilPorIdRepositoryAsync(id);
+            return entidade is null ? null : await _map.MapToDTOAsync(entidade);
         }
 
         public async Task<ICollection<PerfilDeAcessoDTO>> ObterTodosPerfisServiceAsync()
