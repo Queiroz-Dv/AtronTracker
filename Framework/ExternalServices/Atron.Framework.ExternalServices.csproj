@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Atron.Application\Atron.Application.csproj" />
-    <ProjectReference Include="..\Communication\Communication.csproj" />
+    <ProjectReference Include="..\..\Atron.Application\Atron.Tracker.Application.csproj" />
+    <ProjectReference Include="..\Communication\Atron.Framework.Communication.csproj" />
   </ItemGroup>
 
 </Project>

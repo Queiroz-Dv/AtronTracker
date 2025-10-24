@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Atron.Domain\Atron.Domain.csproj" />
+	  <ProjectReference Include="..\..\Atron.Domain\Atron.Tracker.Domain.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

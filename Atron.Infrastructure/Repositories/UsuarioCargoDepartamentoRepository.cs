@@ -1,13 +1,13 @@
-﻿using Atron.Domain.Entities;
-using Atron.Domain.Interfaces.UsuarioInterfaces;
+﻿using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
+using Atron.Tracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Atron.Infrastructure.Repositories
+namespace Atron.Tracker.Infrastructure.Repositories
 {
     public class UsuarioCargoDepartamentoRepository : Repository<UsuarioCargoDepartamento>, IUsuarioCargoDepartamentoRepository
     {

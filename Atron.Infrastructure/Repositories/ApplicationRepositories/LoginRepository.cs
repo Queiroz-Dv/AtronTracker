@@ -1,11 +1,11 @@
-﻿using Atron.Domain.Entities;
-using Atron.Domain.Interfaces.ApplicationInterfaces;
+﻿using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.Identity;
+using Atron.Tracker.Domain.Entities;
 using Shared.Extensions;
 using Shared.Interfaces.Contexts;
 using System.Threading.Tasks;
 
-namespace Atron.Infrastructure.Repositories.ApplicationRepositories
+namespace Atron.Tracker.Infrastructure.Repositories.ApplicationRepositories
 {
     public class LoginRepository : ILoginRepository
     {

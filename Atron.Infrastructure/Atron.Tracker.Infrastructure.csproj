@@ -4,8 +4,8 @@
 	</PropertyGroup>	
 
 	<ItemGroup>
-		<ProjectReference Include="..\Atron.Domain\Atron.Domain.csproj" />
-		<ProjectReference Include="..\Framework\Shared\Shared.csproj" />
+		<ProjectReference Include="..\Atron.Domain\Atron.Tracker.Domain.csproj" />
+		<ProjectReference Include="..\Framework\Shared\Atron.Framework.Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

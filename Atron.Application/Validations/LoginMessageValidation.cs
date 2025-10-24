@@ -1,4 +1,4 @@
-﻿using Atron.Domain.ApiEntities;
+﻿using Atron.Tracker.Domain.ApiEntities;
 using Shared.Extensions;
 using Shared.Interfaces;
 using Shared.Interfaces.Validations;

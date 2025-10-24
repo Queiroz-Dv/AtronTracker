@@ -9,7 +9,7 @@ using Shared.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Atron.WebApi.Helpers
+namespace Atron.Tracker.WebApi.Helpers
 {
     /// <summary>
     /// Handler para verificar se o usuário tem acesso a um módulo específico.

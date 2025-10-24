@@ -1,6 +1,6 @@
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Infra.IoC;
-using Atron.WebApi.Helpers;
+using Atron.Tracker.WebApi.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Atron.WebApi
+namespace Atron.Tracker.WebApi
 {
     /// <summary>
     /// Classe principal onde são definidas as configurações e os serviços da API.

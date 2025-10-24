@@ -9,7 +9,7 @@ using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Atron.WebApi.Controllers
+namespace Atron.Tracker.WebApi.Controllers
 {
     /// <summary>  
     /// Controlador para gerenciar entidades de Departamento.  

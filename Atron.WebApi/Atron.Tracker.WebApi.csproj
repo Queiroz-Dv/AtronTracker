@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Atron.Infra.IoC\Atron.Infra.IoC.csproj" />
+    <ProjectReference Include="..\Atron.Infra.IoC\Atron.Framework.IoC.csproj" />
   </ItemGroup>
 
 </Project>

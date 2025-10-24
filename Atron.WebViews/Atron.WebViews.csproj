@@ -9,8 +9,8 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <ProjectReference Include="..\Atron.Infra.IoC\Atron.Infra.IoC.csproj" />
-    <ProjectReference Include="..\Framework\ExternalServices\ExternalServices.csproj" />
+    <ProjectReference Include="..\Atron.Infra.IoC\Atron.Framework.IoC.csproj" />
+    <ProjectReference Include="..\Framework\ExternalServices\Atron.Framework.ExternalServices.csproj" />
   </ItemGroup>
 
 </Project>

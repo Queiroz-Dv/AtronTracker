@@ -1,6 +1,6 @@
 ﻿using Atron.Application.DTO.ApiDTO;
 using Atron.Application.Interfaces.ApplicationInterfaces;
-using Atron.Domain.ApiEntities;
+using Atron.Tracker.Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.DTO.API;
@@ -11,7 +11,7 @@ using Shared.Interfaces.Services;
 using Shared.Models;
 using System.Threading.Tasks;
 
-namespace Atron.WebApi.Controllers
+namespace Atron.Tracker.WebApi.Controllers
 {
     /// <summary>
     /// Controller para gerenciar o login de usuários na aplicação.

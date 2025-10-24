@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Atron.WebApi.Controllers
+namespace Atron.Tracker.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,6 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Mapping;
-using Atron.Domain.Entities;
+using Atron.Tracker.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Interfaces.Mapper;
 using Shared.Services.Mapper;

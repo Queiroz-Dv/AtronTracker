@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Atron.Domain.Entities
+namespace Atron.Tracker.Domain.Entities
 {
     public sealed class Cargo
     {

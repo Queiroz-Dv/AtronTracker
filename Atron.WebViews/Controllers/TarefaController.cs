@@ -1,5 +1,5 @@
 ﻿using Atron.Application.DTO;
-using Atron.Domain.Entities;
+using Atron.Tracker.Domain.Entities;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;

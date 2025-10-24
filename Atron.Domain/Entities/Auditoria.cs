@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Atron.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Atron.Domain.Entities
+namespace Atron.Tracker.Domain.Entities
 {
     public sealed class Auditoria
     {

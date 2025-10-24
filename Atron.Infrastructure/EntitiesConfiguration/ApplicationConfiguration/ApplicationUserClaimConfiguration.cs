@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Shared.Models.ApplicationModels;
 
-namespace Atron.Infrastructure.EntitiesConfiguration.ApplicationConfiguration
+namespace Atron.Tracker.Infrastructure.EntitiesConfiguration.ApplicationConfiguration
 {
     public class ApplicationUserClaimConfiguration : IEntityTypeConfiguration<ApplicationUserClaim>
     {

@@ -1,7 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.DTO.Response;
 using Atron.Application.Interfaces.Services;
-using Atron.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -13,8 +12,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Atron.Application.Extensions;
 using Atron.Application.DTO.Request;
+using Atron.Tracker.Domain.Entities;
 
-namespace Atron.WebApi.Controllers
+namespace Atron.Tracker.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

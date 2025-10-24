@@ -1,5 +1,5 @@
 ﻿using Atron.Application.DTO.ApiDTO;
-using Atron.Domain.ApiEntities;
+using Atron.Tracker.Domain.ApiEntities;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;

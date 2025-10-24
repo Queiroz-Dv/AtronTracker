@@ -7,7 +7,7 @@ using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Threading.Tasks;
 
-namespace Atron.WebApi.Controllers
+namespace Atron.Tracker.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

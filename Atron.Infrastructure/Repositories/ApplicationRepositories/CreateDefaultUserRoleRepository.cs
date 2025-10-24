@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Shared.Models.ApplicationModels;
 using System;
 
-namespace Atron.Infrastructure.Repositories.ApplicationRepositories
+namespace Atron.Tracker.Infrastructure.Repositories.ApplicationRepositories
 {
     public class CreateDefaultUserRoleRepository : ICreateDefaultUserRoleRepository
     {

@@ -1,6 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces.Services;
-using Atron.Domain.Entities;
+using Atron.Tracker.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
@@ -9,7 +9,7 @@ using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Atron.WebApi.Controllers
+namespace Atron.Tracker.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

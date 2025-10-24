@@ -1,4 +1,6 @@
-﻿namespace Atron.Domain.Entities
+﻿using Atron.Tracker.Domain.Entities;
+
+namespace Atron.Tracker.Domain.Entities
 {
     public class PerfilDeAcessoUsuario
     {

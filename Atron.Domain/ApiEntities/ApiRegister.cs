@@ -1,4 +1,4 @@
-﻿namespace Atron.Domain.ApiEntities
+﻿namespace Atron.Tracker.Domain.ApiEntities
 {
     public class ApiRegister
     {

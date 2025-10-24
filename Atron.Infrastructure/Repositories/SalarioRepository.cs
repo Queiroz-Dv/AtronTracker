@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Atron.Infrastructure.Repositories
+namespace Atron.Tracker.Infrastructure.Repositories
 {
     public class SalarioRepository : Repository<Salario>, ISalarioRepository
     {
