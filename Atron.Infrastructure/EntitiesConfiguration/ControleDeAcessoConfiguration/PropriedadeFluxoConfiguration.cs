@@ -1,8 +1,8 @@
-﻿using Atron.Domain.Componentes;
+﻿using Atron.Tracker.Domain.Componentes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Atron.Infrastructure.EntitiesConfiguration.ControleDeAcessoConfiguration
+namespace Atron.Tracker.Infrastructure.EntitiesConfiguration.ControleDeAcessoConfiguration
 {
     public class PropriedadeFluxoConfiguration : IEntityTypeConfiguration<PropriedadesDeFluxo>
     {

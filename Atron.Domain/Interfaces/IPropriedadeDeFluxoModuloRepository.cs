@@ -1,4 +1,4 @@
-﻿using Atron.Domain.Componentes;
+﻿using Atron.Tracker.Domain.Componentes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

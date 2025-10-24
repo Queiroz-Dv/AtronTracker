@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Atron.Domain.Entities
+namespace Atron.Tracker.Domain.Entities
 {
     public class Usuario : EntityBase
     {

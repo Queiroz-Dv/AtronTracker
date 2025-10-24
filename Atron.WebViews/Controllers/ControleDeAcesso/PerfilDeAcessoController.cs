@@ -1,6 +1,6 @@
 ﻿using Atron.Application.DTO;
 using Atron.Domain.Componentes;
-using Atron.Domain.Entities;
+using Atron.Tracker.Domain.Entities;
 using Atron.WebViews.Models;
 using Atron.WebViews.Models.ControleDeAcesso;
 using Communication.Interfaces.Services;

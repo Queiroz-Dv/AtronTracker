@@ -1,6 +1,6 @@
 ﻿using Atron.Application.Validations;
-using Atron.Domain.ApiEntities;
-using Atron.Domain.Entities;
+using Atron.Tracker.Domain.ApiEntities;
+using Atron.Tracker.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.DTO.API;
 using Shared.Interfaces;

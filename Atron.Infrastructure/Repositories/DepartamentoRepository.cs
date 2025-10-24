@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Atron.Infrastructure.Repositories
+namespace Atron.Tracker.Infrastructure.Repositories
 {
     public class DepartamentoRepository : IDepartamentoRepository
     {

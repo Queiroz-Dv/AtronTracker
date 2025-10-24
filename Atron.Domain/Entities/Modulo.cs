@@ -1,7 +1,7 @@
-﻿using Atron.Domain.Componentes;
+﻿using Atron.Tracker.Domain.Componentes;
 using System.Collections.Generic;
 
-namespace Atron.Domain.Entities
+namespace Atron.Tracker.Domain.Entities
 {
     public class Modulo
     {

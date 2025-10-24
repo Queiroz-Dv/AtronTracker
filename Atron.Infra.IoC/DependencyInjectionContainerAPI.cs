@@ -2,13 +2,13 @@
 using Atron.Application.Interfaces.Services;
 using Atron.Application.Services.AuthServices;
 using Atron.Application.Services.EntitiesServices;
-using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.ApplicationInterfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
 using Atron.Infrastructure.Context;
-using Atron.Infrastructure.Repositories;
-using Atron.Infrastructure.Repositories.ApplicationRepositories;
+using Atron.Tracker.Domain.Entities;
+using Atron.Tracker.Infrastructure.Repositories;
+using Atron.Tracker.Infrastructure.Repositories.ApplicationRepositories;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

@@ -1,5 +1,4 @@
-﻿using Atron.Application.DTO;
-using Atron.Application.DTO.Request;
+﻿using Atron.Application.DTO.Request;
 using Atron.Application.DTO.Response;
 using Atron.Application.Extensions;
 using Atron.Application.Interfaces.Services;
@@ -13,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Atron.WebApi.Controllers
+namespace Atron.Tracker.WebApi.Controllers
 {
     /// <summary>
     /// Controlador para gerenciar entidades de cargo.
@@ -32,7 +31,7 @@ namespace Atron.WebApi.Controllers
         public CargoController(ICargoService cargoService, IServiceAccessor serviceAccessor, MessageModel messageModel)
             : base(cargoService, serviceAccessor, messageModel)
         { }
-        
+
         /// <summary>
         /// Obtém todos os cargos.
         /// </summary>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Atron.Domain.Entities
+namespace Atron.Tracker.Domain.Entities
 {
     public class ProdutoCategoria
     {

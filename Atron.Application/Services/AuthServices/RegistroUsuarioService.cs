@@ -2,11 +2,11 @@
 using Atron.Application.Interfaces.ApplicationInterfaces;
 using Atron.Application.Services.AuthServices.Bases;
 using Atron.Application.Specifications.UsuarioSpecifications;
-using Atron.Domain.ApiEntities;
-using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.Identity;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
+using Atron.Tracker.Domain.ApiEntities;
+using Atron.Tracker.Domain.Entities;
 using Shared.Extensions;
 using Shared.Interfaces.Accessor;
 using Shared.Models;

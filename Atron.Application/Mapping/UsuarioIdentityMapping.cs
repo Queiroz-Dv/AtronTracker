@@ -1,5 +1,5 @@
 ﻿using Atron.Application.DTO;
-using Atron.Domain.Entities;
+using Atron.Tracker.Domain.Entities;
 using Shared.DTO.API;
 using Shared.Interfaces.Mapper;
 using Shared.Services.Mapper;

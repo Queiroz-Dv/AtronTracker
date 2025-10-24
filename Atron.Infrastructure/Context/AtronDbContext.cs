@@ -1,10 +1,10 @@
-﻿using Atron.Domain.Componentes;
-using Atron.Domain.Entities;
+﻿using Atron.Tracker.Domain.Componentes;
+using Atron.Tracker.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models.ApplicationModels;
 
-namespace Atron.Infrastructure.Context
+namespace Atron.Tracker.Infrastructure.Context
 {
     public class AtronDbContext : IdentityDbContext<
         ApplicationUser,

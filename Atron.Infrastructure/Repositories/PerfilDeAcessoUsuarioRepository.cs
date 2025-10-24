@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
-namespace Atron.Infrastructure.Repositories
+namespace Atron.Tracker.Infrastructure.Repositories
 {
     public class PerfilDeAcessoUsuarioRepository : IPerfilDeAcessoUsuarioRepository
     {

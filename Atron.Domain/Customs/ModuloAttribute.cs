@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Atron.Domain.Customs
+namespace Atron.Tracker.Domain.Customs
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class ModuloInfoAttribute : Attribute

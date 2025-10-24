@@ -1,11 +1,11 @@
-﻿using Atron.Domain.Componentes;
-using Atron.Domain.Interfaces;
+﻿using Atron.Domain.Interfaces;
 using Atron.Infrastructure.Context;
+using Atron.Tracker.Domain.Componentes;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Atron.Infrastructure.Repositories
+namespace Atron.Tracker.Infrastructure.Repositories
 {
     public class PropriedadeDeFluxoRepository : IPropriedadeDeFluxoRepository
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Atron.Domain.Entities
+﻿namespace Atron.Tracker.Domain.Entities
 {
     // Entidade com propriedade padrão de todas as classes
     public abstract class EntityBase

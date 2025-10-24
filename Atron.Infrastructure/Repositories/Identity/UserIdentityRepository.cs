@@ -1,7 +1,7 @@
-﻿using Atron.Domain.ApiEntities;
-using Atron.Domain.Entities;
-using Atron.Domain.Interfaces.Identity;
+﻿using Atron.Domain.Interfaces.Identity;
 using Atron.Infrastructure.Context;
+using Atron.Tracker.Domain.ApiEntities;
+using Atron.Tracker.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Extensions;
@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Atron.Infrastructure.Repositories.Identity
+namespace Atron.Tracker.Infrastructure.Repositories.Identity
 {
     public class UserIdentityRepository : IUsuarioIdentityRepository
     {

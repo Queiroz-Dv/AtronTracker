@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Atron.Domain.Entities
+namespace Atron.Tracker.Domain.Entities
 {
     public class Tarefa : EntityBase
     {

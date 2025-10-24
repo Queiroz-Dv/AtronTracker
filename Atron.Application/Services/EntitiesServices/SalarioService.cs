@@ -1,8 +1,8 @@
 ﻿using Atron.Application.DTO;
 using Atron.Application.Interfaces.Services;
-using Atron.Domain.Entities;
 using Atron.Domain.Interfaces;
 using Atron.Domain.Interfaces.UsuarioInterfaces;
+using Atron.Tracker.Domain.Entities;
 using Shared.Extensions;
 using Shared.Interfaces.Mapper;
 using Shared.Interfaces.Validations;

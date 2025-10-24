@@ -1,8 +1,8 @@
-﻿using Atron.Domain.Entities;
+﻿using Atron.Tracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Atron.Infrastructure.EntitiesConfiguration
+namespace Atron.Tracker.Infrastructure.EntitiesConfiguration
 {
     public class ProdutoCategoriaConfiguration : IEntityTypeConfiguration<ProdutoCategoria>
     {

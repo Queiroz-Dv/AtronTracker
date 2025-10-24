@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Atron.WebApi.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 
-namespace Atron.WebApi.Helpers
+namespace Atron.Tracker.WebApi.Helpers
 {
     public class DynamicModuloPolicyProvider : DefaultAuthorizationPolicyProvider
     {

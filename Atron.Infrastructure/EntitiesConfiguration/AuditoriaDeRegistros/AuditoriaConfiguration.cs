@@ -1,8 +1,8 @@
-﻿using Atron.Domain.Entities;
+﻿using Atron.Tracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Atron.Infrastructure.EntitiesConfiguration.AuditoriaDeRegistros
+namespace Atron.Tracker.Infrastructure.EntitiesConfiguration.AuditoriaDeRegistros
 {
     public class AuditoriaConfiguration : IEntityTypeConfiguration<Auditoria>
     {

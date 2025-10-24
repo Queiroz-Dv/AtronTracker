@@ -1,4 +1,4 @@
-﻿using Atron.Domain.ApiEntities;
+﻿using Atron.Tracker.Domain.ApiEntities;
 using System.Threading.Tasks;
 
 namespace Atron.Domain.Interfaces.ApplicationInterfaces

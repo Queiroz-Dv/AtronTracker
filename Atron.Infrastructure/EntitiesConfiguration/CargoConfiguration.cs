@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Atron.Infrastructure.EntitiesConfiguration
+namespace Atron.Tracker.Infrastructure.EntitiesConfiguration
 {
     public class CargoConfiguration : IEntityTypeConfiguration<Cargo>
     {

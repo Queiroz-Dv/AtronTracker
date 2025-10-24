@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Atron.Infrastructure.EntitiesConfiguration.AuditoriaDeRegistros
+namespace Atron.Tracker.Infrastructure.EntitiesConfiguration.AuditoriaDeRegistros
 {
     public class HistoricoConfiguration : IEntityTypeConfiguration<Historico>
     {

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Atron.WebApi
+namespace Atron.Tracker.WebApi
 {
     /// <summary>
     /// The main entry point for the application.

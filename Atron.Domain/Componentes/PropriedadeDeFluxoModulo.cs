@@ -1,6 +1,6 @@
 ﻿using Atron.Domain.Entities;
 
-namespace Atron.Domain.Componentes
+namespace Atron.Tracker.Domain.Componentes
 {
     public class PropriedadeDeFluxoModulo
     {

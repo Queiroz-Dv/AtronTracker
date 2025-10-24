@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Atron.WebApi.Helpers
+namespace Atron.Tracker.WebApi.Helpers
 {
     public class ModuloRequirement : IAuthorizationRequirement
     {

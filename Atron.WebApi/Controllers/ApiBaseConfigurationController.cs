@@ -4,7 +4,7 @@ using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
 
-namespace Atron.WebApi.Controllers
+namespace Atron.Tracker.WebApi.Controllers
 {
     // Qual o objetivo da controller de módulos?
     // Centralizar operações repetitivas e segregar responsabilidades da controller dos módulos

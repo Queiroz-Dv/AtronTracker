@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Atron.Domain.Componentes
+namespace Atron.Tracker.Domain.Componentes
 {
     public class PropriedadesDeFluxo
     {
