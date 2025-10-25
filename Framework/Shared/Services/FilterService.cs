@@ -1,9 +1,9 @@
-﻿using Shared.Interfaces;
+﻿using Shared.Interfaces.Services;
 
 namespace Shared.Services
 {
     public class FilterService<T> : IFilterService<T>
-    {      
+    {
         public List<T> ApplyFilter(List<T> items, string filter, string? keyToSearch = null)
         {
             if (string.IsNullOrEmpty(filter))

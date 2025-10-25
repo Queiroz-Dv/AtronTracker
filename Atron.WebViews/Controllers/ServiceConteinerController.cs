@@ -1,6 +1,6 @@
 ﻿using Atron.WebViews.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Interfaces;
+using Shared.Interfaces.Services;
 using Shared.Models;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -71,7 +71,7 @@ namespace Atron.WebViews.Controllers
         {
             SetViewData("Filter", _paginationService.GetPageInfo().PageRequestInfo.Filter);
         }
-        
+
         /// <summary>
         /// Cria mensagens de dados temporários para notificações.
         /// </summary>
@@ -95,7 +95,7 @@ namespace Atron.WebViews.Controllers
         /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa contém a mensagem de exclusão.</returns>
         [HttpGet]
         public abstract Task<string> ObterMensagemExclusao();
-        
+
         /// <summary>
         /// Método auxiliar para definir dados no ViewData.
         /// </summary>

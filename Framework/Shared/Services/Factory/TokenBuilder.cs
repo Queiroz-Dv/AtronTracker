@@ -1,4 +1,4 @@
-﻿using Atron.Domain.Interfaces.Identity;
+﻿using Domain.Interfaces.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Extensions;
@@ -12,10 +12,10 @@ namespace Shared.Services.Factory
 {
     public class TokenBuilder
     {
-        private readonly IConfiguration _configuration;        
+        private readonly IConfiguration _configuration;
         private readonly IServiceAccessor _serviceAccessor;
 
-        public TokenBuilder(IConfiguration configuration, 
+        public TokenBuilder(IConfiguration configuration,
                             IServiceAccessor serviceAccessor)
         {
             _configuration = configuration;

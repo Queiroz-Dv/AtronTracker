@@ -16,7 +16,7 @@ namespace Shared.Services.Caching
                 cacheInfo.EntityInfo,
                 TimeSpan.FromMinutes(30));
         }
-        
+
         public T ObterCache<T>(string cacheKey)
         {
             try

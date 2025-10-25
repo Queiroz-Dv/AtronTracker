@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\AtronTracker\Application\Application.csproj" />
+		<ProjectReference Include="..\..\AtronTracker\Infrastructure\Infrastructure.csproj" />
+		<ProjectReference Include="..\Communication\Communication.csproj" />
+		<ProjectReference Include="..\ExternalServices\ExternalServices.csproj" />
+	</ItemGroup>
+
+</Project>

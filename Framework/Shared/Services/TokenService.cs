@@ -16,7 +16,7 @@ namespace Shared.Services
 
         public ClaimsPrincipal ObterClaimPrincipal(string token)
         {
-            return _tokenFactory.ObterClaimPrincipal(token); 
+            return _tokenFactory.ObterClaimPrincipal(token);
         }
 
         public Task<string> ObterCodigoUsuarioPorClaim(string token)

@@ -3,7 +3,7 @@
 namespace Shared.DTO.API
 {
     public abstract class TokenBaseDTO
-    {       
+    {
         /// <summary>
         /// Token de acesso do usuário.
         /// </summary>

@@ -2,10 +2,10 @@
 using Communication.Security;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Shared.Extensions;
 using Shared.Models;
 using System.Net.Http.Headers;
 using System.Text;
+using Shared.Extensions;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Communication.Models
@@ -134,7 +134,7 @@ namespace Communication.Models
 
             return _messageModel.Notificacoes.HasErrors() ?
                 await Task.FromResult<DTO>(default) :
-                JsonConvert.DeserializeObject<DTO>(responseContent);            
+                JsonConvert.DeserializeObject<DTO>(responseContent);
         }
 
         public async Task<string> GetAsync(int parameter)

@@ -10,7 +10,7 @@ namespace Shared.Services.Mapper
     /// <typeparam name="DTO">O tipo do Data Transfer Object.</typeparam>
     /// <typeparam name="Entity">O tipo da Entidade de Domínio.</typeparam>
     public abstract class AsyncApplicationMapService<DTO, Entity> : IAsyncApplicationMapService<DTO, Entity>
-    {        
+    {
         protected readonly IMapperEngine _mapperEngine;
 
         protected AsyncApplicationMapService(IMapperEngine mapperEngine)

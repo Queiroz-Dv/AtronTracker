@@ -9,7 +9,7 @@ namespace Shared.DTO
     /// </summary>
     [Serializable]
     public class ResultResponseDTO
-    {        
+    {
         /// <summary>
         /// Mensagem que será apresentada ao usuário
         /// </summary>
@@ -19,6 +19,6 @@ namespace Shared.DTO
         /// Nível da mensagem
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public ResultResponseLevelEnum Level {get; set;}
+        public ResultResponseLevelEnum Level { get; set; }
     }
 }

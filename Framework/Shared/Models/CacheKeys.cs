@@ -13,7 +13,7 @@ namespace Shared.Models
 
         public ECacheKeysInfo Key { get; set; }
 
-        public string KeyDescription { get; set; }            
+        public string KeyDescription { get; set; }
 
         public T EntityInfo { get; set; }
 

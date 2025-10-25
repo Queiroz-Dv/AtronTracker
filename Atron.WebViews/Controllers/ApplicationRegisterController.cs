@@ -1,10 +1,10 @@
-﻿using Atron.Application.DTO.ApiDTO;
-using Atron.Tracker.Domain.ApiEntities;
+﻿using Application.DTO.ApiDTO;
 using Communication.Interfaces.Services;
+using Domain.ApiEntities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
-using Shared.Interfaces;
+using Shared.Interfaces.Services;
 using Shared.Models;
 using System.Threading.Tasks;
 

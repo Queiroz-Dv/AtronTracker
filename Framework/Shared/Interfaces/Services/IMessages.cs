@@ -1,6 +1,6 @@
 ﻿using Shared.Models;
 
-namespace Shared.Interfaces
+namespace Shared.Interfaces.Services
 {
     public interface IMessages
     {

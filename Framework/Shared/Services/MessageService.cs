@@ -1,4 +1,4 @@
-﻿using Shared.Interfaces;
+﻿using Shared.Interfaces.Services;
 using Shared.Models;
 
 namespace Shared.Services
@@ -29,7 +29,7 @@ namespace Shared.Services
         public abstract void AdicionarErro(string message);
 
         public abstract void AdicionarAviso(string message);
-        
+
         /// <summary>
         /// Método de automação para inclusão de notificações
         /// </summary>
@@ -37,7 +37,7 @@ namespace Shared.Services
         /// <param name="nivel">Tipo de notificação</param>
         public void AddNotification(string descricao, string nivel)
         {
-            Notificacoes.Add(new Message() { Descricao = descricao,  Nivel = nivel}); 
+            Notificacoes.Add(new Message() { Descricao = descricao, Nivel = nivel });
         }
     }
 }

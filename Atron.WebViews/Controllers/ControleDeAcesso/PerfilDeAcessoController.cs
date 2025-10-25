@@ -1,14 +1,13 @@
-﻿using Atron.Application.DTO;
-using Atron.Domain.Componentes;
-using Atron.Tracker.Domain.Entities;
+﻿using Application.DTO;
 using Atron.WebViews.Models;
 using Atron.WebViews.Models.ControleDeAcesso;
 using Communication.Interfaces.Services;
+using Domain.Entities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
-using Shared.Interfaces;
+using Shared.Interfaces.Services;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;

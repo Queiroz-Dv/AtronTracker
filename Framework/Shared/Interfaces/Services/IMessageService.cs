@@ -1,4 +1,4 @@
-﻿namespace Shared.Interfaces
+﻿namespace Shared.Interfaces.Services
 {
     public interface IMessageService : IMessages
     {

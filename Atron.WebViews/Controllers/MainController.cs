@@ -4,7 +4,7 @@ using Communication.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Shared.DTO;
 using Shared.Extensions;
-using Shared.Interfaces;
+using Shared.Interfaces.Services;
 using Shared.Models;
 using System;
 using System.Collections.Generic;
