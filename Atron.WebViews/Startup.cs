@@ -1,6 +1,6 @@
-using Atron.Infra.IoC;
 using Atron.WebViews.Helpers;
 using Communication.Security;
+using IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -80,14 +80,14 @@ namespace Atron.WebViews
                 // Chama o próximo middleware na pipeline
                 await next();
             });
-            
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-          
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

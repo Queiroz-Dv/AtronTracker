@@ -1,17 +1,15 @@
-﻿using Atron.Application.DTO;
-using Atron.Domain.Entities;
+﻿using Application.DTO;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
+using Domain.Entities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shared.DTO;
-using Shared.Extensions;
-using Shared.Interfaces;
+using Shared.Interfaces.Services;
 using Shared.Models;
-using System;
 using System.Linq;
+using Shared.Extensions;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
@@ -44,7 +42,7 @@ namespace Atron.WebViews.Controllers
             var cargos = await _service.ObterTodos();
 
             ConfigurePaginationForView(cargos, nameof(MenuPrincipal), itemPage, filter);
-            return View(GetModel<CargoModel>());            
+            return View(GetModel<CargoModel>());
         }
 
         [HttpGet]

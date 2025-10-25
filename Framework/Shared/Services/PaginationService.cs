@@ -1,5 +1,5 @@
 ﻿using Shared.DTO;
-using Shared.Interfaces;
+using Shared.Interfaces.Services;
 
 namespace Shared.Services
 {
@@ -14,7 +14,7 @@ namespace Shared.Services
         private List<T> Entities { get; set; }
 
         private PageInfoDTO Page { get; set; }
-        
+
         public PaginationService(IFilterService<T> filterService)
         {
             _filterService = filterService;
@@ -34,21 +34,21 @@ namespace Shared.Services
             {
                 TotalItems = totalItems,
                 CurrentPage = pageInfo.CurrentPage,
-                ItemsPerPage = pageInfo.ItemsPerPage,             
+                ItemsPerPage = pageInfo.ItemsPerPage,
                 StartPage = pageInfo.StartPage,
                 EndPage = pageInfo.EndPage,
                 PageRequestInfo = pageInfo.PageRequestInfo
             };
 
-            Page = pageInfoDTO;           
+            Page = pageInfoDTO;
         }
 
         private List<T> PaginateEntities(List<T> entities, PageInfoDTO pageInfo)
         {
-           return entities
-                  .Skip((pageInfo.CurrentPage - 1) * pageInfo.ItemsPerPage)
-                  .Take(pageInfo.ItemsPerPage)
-                  .ToList();
+            return entities
+                   .Skip((pageInfo.CurrentPage - 1) * pageInfo.ItemsPerPage)
+                   .Take(pageInfo.ItemsPerPage)
+                   .ToList();
         }
 
         private static void CalculatePageRange(PageInfoDTO pageInfo)
@@ -60,7 +60,7 @@ namespace Shared.Services
         public PageInfoDTO GetPageInfo()
         {
             return Page;
-        }        
+        }
 
         public List<T> GetEntitiesFilled()
         {

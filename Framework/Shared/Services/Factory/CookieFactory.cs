@@ -20,7 +20,7 @@ namespace Shared.Services.Factory
 
         public void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario)
         {
-            var json = JsonSerializer.Serialize(dadosDoToken);                
+            var json = JsonSerializer.Serialize(dadosDoToken);
             var jsonProtegido = protector.Protect(json);
 
             MontarCookie(TokenUsuarioCookie(codigoUsuario, ETokenInfo.AcesssToken), jsonProtegido);

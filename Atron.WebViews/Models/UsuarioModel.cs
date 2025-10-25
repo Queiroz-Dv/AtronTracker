@@ -1,4 +1,4 @@
-﻿using Atron.Application.DTO;
+﻿using Application.DTO;
 using System.Collections.Generic;
 
 namespace Atron.WebViews.Models
@@ -6,7 +6,7 @@ namespace Atron.WebViews.Models
     public class UsuarioModel : DefaultModel<UsuarioDTO>
     {
         public UsuarioModel()
-        {          
+        {
             Entities = new List<UsuarioDTO>();
         }
 

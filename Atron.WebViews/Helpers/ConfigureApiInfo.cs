@@ -1,6 +1,4 @@
-﻿using Shared.Extensions;
-
-namespace Atron.WebViews.Helpers
+﻿namespace Atron.WebViews.Helpers
 {
     public record ConfigureApiInfo
     {

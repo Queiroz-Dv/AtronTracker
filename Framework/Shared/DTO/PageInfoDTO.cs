@@ -13,7 +13,7 @@
         public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / ItemsPerPage);        
 
 
-        public PageRequestInfoDTO? PageRequestInfo { get; set; }
+        public PageRequestInfoDTO PageRequestInfo { get; set; }
     }
 
     public class PageRequestInfoDTO

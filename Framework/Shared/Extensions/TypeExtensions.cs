@@ -1,4 +1,4 @@
-﻿using Atron.Tracker.Domain.Customs;
+﻿using Domain.Customs;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -6,7 +6,7 @@ namespace Shared.Extensions
 {
     public static class TypeExtensions
     {
-        public static string? ObterDescricao(this Type tipo)
+        public static string ObterDescricao(this Type tipo)
         {
             var attr = tipo.GetCustomAttribute<DescriptionAttribute>();
             return attr?.Description;
@@ -15,7 +15,7 @@ namespace Shared.Extensions
 
     public static class ObjectExtensions
     {
-        public static string? ObterDescricaoDoTipo<T>(this T obj)
+        public static string ObterDescricaoDoTipo<T>(this T obj)
         {
             var tipo = obj?.GetType();
             var attr = tipo?.GetCustomAttribute<DescriptionAttribute>();

@@ -1,4 +1,4 @@
-﻿using Atron.Application.DTO;
+﻿using Application.DTO;
 using System.Collections.Generic;
 
 namespace Atron.WebViews.Models
@@ -10,6 +10,6 @@ namespace Atron.WebViews.Models
             Entities = new List<CargoDTO>();
         }
 
-        public CargoDTO Cargo { get; set; }     
+        public CargoDTO Cargo { get; set; }
     }
 }

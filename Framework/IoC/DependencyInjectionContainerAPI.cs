@@ -1,0 +1,167 @@
+﻿using Application.Interfaces.ApplicationInterfaces;
+using Application.Interfaces.Services;
+using Application.Services;
+using Application.Services.AuthServices;
+using Application.Services.EntitiesServices;
+using Atron.Tracker.Infrastructure.Repositories;
+using Domain.Entities;
+using Domain.Interfaces;
+using Domain.Interfaces.ApplicationInterfaces;
+using Domain.Interfaces.UsuarioInterfaces;
+using Infrastructure.Context;
+using Infrastructure.Repositories;
+using Infrastructure.Repositories.ApplicationRepositories;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Shared.Models.ApplicationModels;
+using System;
+using System.IO;
+using System.Text.Json.Serialization;
+
+namespace IoC
+{
+    public static class DependencyInjectionContainerAPI
+    {
+        public static IServiceCollection AddInfrastructureAPI(this IServiceCollection services, IConfiguration configuration)
+        {
+            // O método AddScoped indica que os serviços são criados uma vez por requisição HTTP
+            // O método Singleton indica que o serviço é criado uma vez para todas as requisições
+            // O método Transiente indica que sempre será criado um novo serviço cada vez que for necessário
+
+            // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo 
+            services.AddDbContext<AtronDbContext>(options =>
+            // Define o provedor e a string de conexão
+            options.UseSqlServer(configuration.GetConnectionString("AtronConnection"),
+            // Define o asembly de onde as migrações devem ser mantidas 
+            m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                    .AddEntityFrameworkStores<AtronDbContext>()
+                    .AddDefaultTokenProviders();
+
+            // Evitar o looping infinito 
+            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+            // With this line:  
+            services.AddScoped(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
+
+            // Registra os repositories e services da API
+            services = services.AddDependencyInjectionApiDoc();
+            services = services.AddServiceMappings();
+            services = services.AddMessageValidationServices();
+            services = services.AddInfrastructureSecurity(configuration);
+            ConfigureModuloServices(services);
+            ConfigureTarefaServices(services);
+            ConfigureSalarioServices(services);
+            ConfigureDepartamentoServices(services);
+            ConfigureCargoServices(services);
+            ConfigureUsuarioServices(services);
+            ConfigureUsuarioCargoDepartamentoServices(services);
+            ConfigureTarefaRepositoryServices(services);
+            ConfigureSalarioRepositoryServices(services);
+            ConfigureDefaultUserRoleServices(services);
+            ConfigureAuthenticationServices(services);
+            ConfigurePropriedadesDeFluxoServices(services);
+            ConfigurePropriedadesDeFluxoModuloServices(services);
+            ConfigurePerfilDeAcessoServices(services);
+            ConfigurePerfilDeAcessoUsuarioServices(services);
+
+            services = services.AddContexts();
+
+            services.AddDataProtection()
+             .SetApplicationName("Atron")
+             .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
+             .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+            return services;
+        }
+
+        private static void ConfigurePerfilDeAcessoUsuarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IPerfilDeAcessoUsuarioRepository, PerfilDeAcessoUsuarioRepository>();
+        }
+
+        private static void ConfigurePropriedadesDeFluxoModuloServices(IServiceCollection services)
+        {
+            services.AddScoped<IPropriedadeDeFluxoModuloRepository, PropriedadeDeFluxoModuloRepository>();
+        }
+
+        private static void ConfigurePropriedadesDeFluxoServices(IServiceCollection services)
+        {
+            services.AddScoped<IPropriedadeDeFluxoRepository, PropriedadeDeFluxoRepository>();
+        }
+
+        private static void ConfigureUsuarioCargoDepartamentoServices(IServiceCollection services)
+        {
+            services.AddScoped<IUsuarioCargoDepartamentoRepository, UsuarioCargoDepartamentoRepository>();
+        }
+
+        private static void ConfigureAuthenticationServices(IServiceCollection services)
+        {
+            services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<ILoginRepository, LoginRepository>();
+            services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
+        }
+
+        private static void ConfigureDefaultUserRoleServices(IServiceCollection services)
+        {
+            services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
+        }
+
+        private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
+        {
+            services.AddScoped<ISalarioRepository, SalarioRepository>();
+            services.AddScoped<ISalarioService, SalarioService>();
+        }
+
+        private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
+        {
+            services.AddScoped<ITarefaRepository, TarefaRepository>();
+            services.AddScoped<ITarefaService, TarefaService>();
+        }
+
+        private static void ConfigureUsuarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
+        }
+
+        private static void ConfigureCargoServices(IServiceCollection services)
+        {
+            services.AddScoped<ICargoRepository, CargoRepository>();
+            services.AddScoped<ICargoService, CargoService>();
+        }
+
+        private static void ConfigureDepartamentoServices(IServiceCollection services)
+        {
+            services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
+            services.AddScoped<IDepartamentoService, DepartamentoService>();
+        }
+
+        private static void ConfigureModuloServices(IServiceCollection services)
+        {
+            services.AddScoped<IModuloRepository, ModuloRepository>();
+            services.AddScoped<IModuloService, ModuloService>();
+        }
+
+        private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
+        {
+            services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
+            services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
+        }
+
+        private static void ConfigureSalarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IRepository<Salario>, Repository<Salario>>();
+        }
+
+        private static void ConfigureTarefaServices(IServiceCollection services)
+        {
+            services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
+        }
+    }
+}

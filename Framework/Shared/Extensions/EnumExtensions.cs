@@ -15,9 +15,9 @@ namespace Shared.Extensions
         /// <returns>O valor da descrição do enumerado</returns>
         public static string GetDescription(this Enum value)
         {
-            FieldInfo? fi = value.GetType().GetField(value.ToString());
+            FieldInfo fi = value.GetType().GetField(value.ToString());
 
-            DescriptionAttribute[]? attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+            DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
 
             if (attributes != null && attributes.Any())
             {
