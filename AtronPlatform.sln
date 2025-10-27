@@ -27,13 +27,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atron.WebViews", "Atron.Web
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AtronStock", "AtronStock", "{1E05F7A5-1B5E-4B76-8C9C-F92EA222993A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "AtronStock\Domain\Domain.csproj", "{C7D1325B-BB5F-4F32-AA01-9BDFF2D7B8E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronStock.Domain", "AtronStock\Domain\AtronStock.Domain.csproj", "{C7D1325B-BB5F-4F32-AA01-9BDFF2D7B8E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "AtronStock\Application\Application.csproj", "{BF2B30CE-4E81-46B6-BF65-838AA815CFFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronStock.Application", "AtronStock\Application\AtronStock.Application.csproj", "{BF2B30CE-4E81-46B6-BF65-838AA815CFFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "AtronStock\Infrastructure\Infrastructure.csproj", "{B807996B-74EC-4CC5-A004-5B43527CDB5F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronStock.Infrastructure", "AtronStock\Infrastructure\AtronStock.Infrastructure.csproj", "{B807996B-74EC-4CC5-A004-5B43527CDB5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "AtronStock\WebApi\WebApi.csproj", "{6134D0C2-0C6F-4E59-9281-25A054128137}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronStock.WebApi", "AtronStock\WebApi\AtronStock.WebApi.csproj", "{6134D0C2-0C6F-4E59-9281-25A054128137}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

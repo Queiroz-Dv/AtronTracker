@@ -27,9 +27,7 @@ namespace Application.Services.EntitiesServices
             IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
             IUsuarioRepository usuarioRepository,
             IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
-            IPerfilDeAcessoRepository perfilDeAcessoRepository,
-            IPropriedadeDeFluxoRepository propriedadeDeFluxoRepository,
-            IPropriedadeDeFluxoModuloRepository propriedadeDeFluxoModuloRepository,
+            IPerfilDeAcessoRepository perfilDeAcessoRepository,          
             IModuloRepository moduloRepository,
             IValidateModel<PerfilDeAcesso> validateModel,
             MessageModel messageModel)

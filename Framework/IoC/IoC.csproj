@@ -11,7 +11,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\AtronTracker\Application\Application.csproj" />
+		<ProjectReference Include="..\..\AtronStock\Application\AtronStock.Application.csproj" />
+		<ProjectReference Include="..\..\AtronStock\Infrastructure\AtronStock.Infrastructure.csproj" />		
+		<ProjectReference Include="..\..\AtronTracker\Application\Application.csproj" />		
 		<ProjectReference Include="..\..\AtronTracker\Infrastructure\Infrastructure.csproj" />
 		<ProjectReference Include="..\Communication\Communication.csproj" />
 		<ProjectReference Include="..\ExternalServices\ExternalServices.csproj" />

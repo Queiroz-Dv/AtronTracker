@@ -1,5 +1,4 @@
-﻿using Domain.Componentes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Domain.Entities
 {
@@ -9,6 +8,5 @@ namespace Domain.Entities
         public string Codigo { get; set; }
         public string Descricao { get; set; }
         public ICollection<PerfilDeAcessoModulo> PerfilDeAcessoModulos { get; set; }
-        public ICollection<PropriedadeDeFluxoModulo> PropriedadeDeFluxoModulos { get; set; }
     }
 }

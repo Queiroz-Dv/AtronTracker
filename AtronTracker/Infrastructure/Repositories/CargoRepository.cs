@@ -1,14 +1,13 @@
-﻿using Domain.Entities;
+﻿using AtronTracker.Infrastructure.Context;
+using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Context;
-using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Atron.Tracker.Infrastructure.Repositories
+namespace Infrastructure.Repositories
 {
     public class CargoRepository : Repository<Cargo>, ICargoRepository
     {
