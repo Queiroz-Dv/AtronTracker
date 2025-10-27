@@ -20,5 +20,5 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\AtronTracker\Domain\Domain.csproj" />
-	</ItemGroup>
+	</ItemGroup>	
 </Project>

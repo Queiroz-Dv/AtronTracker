@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models.ApplicationModels;
 
-namespace Infrastructure.Context
+namespace AtronTracker.Infrastructure.Context
 {
     public class AtronDbContext : IdentityDbContext<
         ApplicationUser,

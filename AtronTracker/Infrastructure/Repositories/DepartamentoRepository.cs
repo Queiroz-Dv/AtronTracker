@@ -1,6 +1,6 @@
-﻿using Domain.Entities;
+﻿using AtronTracker.Infrastructure.Context;
+using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -60,7 +60,6 @@ namespace Infrastructure.Repositories
         {
             return await _context.Departamentos.FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
         }
-
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo)
         {

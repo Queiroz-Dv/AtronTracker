@@ -1,34 +1,34 @@
-
-namespace WebApi
+namespace AtronStock.WebApi
 {
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// The main method which starts the application.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-
-            app.MapControllers();
-
-            app.Run();
+            CreateHostBuilder(args).Build().Run();
         }
+
+        /// <summary>
+        /// Creates the host builder for the application.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
+        /// <returns>An IHostBuilder instance.</returns>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.ConfigureLogging(logging =>
+                    {
+                        logging.AddConsole();
+                    });
+
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }

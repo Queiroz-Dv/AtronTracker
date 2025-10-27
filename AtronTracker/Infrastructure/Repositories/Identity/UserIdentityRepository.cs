@@ -1,7 +1,7 @@
 ﻿using Domain.ApiEntities;
 using Domain.Entities;
 using Domain.Interfaces.Identity;
-using Infrastructure.Context;
+using AtronTracker.Infrastructure.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Extensions;

@@ -17,11 +17,7 @@ namespace Infrastructure.EntitiesConfiguration.ControleDeAcessoConfiguration
 
             builder.HasMany(mod => mod.PerfilDeAcessoModulos)
                    .WithOne(pam => pam.Modulo)
-                   .HasForeignKey(pam => new { pam.ModuloId, pam.ModuloCodigo });
-
-            builder.HasMany(mod => mod.PropriedadeDeFluxoModulos)
-                   .WithOne(pfm => pfm.Modulo)
-                   .HasForeignKey(pfm => new { pfm.ModuloId, pfm.ModuloCodigo });
+                   .HasForeignKey(pam => new { pam.ModuloId, pam.ModuloCodigo });        
 
             builder.HasData(
             new Modulo { Id = 1, Codigo = "DPT", Descricao = "Departamentos" },

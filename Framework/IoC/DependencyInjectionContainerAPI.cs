@@ -3,12 +3,17 @@ using Application.Interfaces.Services;
 using Application.Services;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
-using Atron.Tracker.Infrastructure.Repositories;
+using AtronStock.Application.Interfaces;
+using AtronStock.Application.Services;
+using AtronStock.Domain.Entities;
+using AtronStock.Domain.Interfaces;
+using AtronStock.Infrastructure.Context;
+using AtronStock.Infrastructure.Repositories;
+using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.UsuarioInterfaces;
-using Infrastructure.Context;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.ApplicationRepositories;
 using Microsoft.AspNetCore.DataProtection;
@@ -17,6 +22,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.DataContexts;
+using Shared.Interfaces.Data;
 using Shared.Models.ApplicationModels;
 using System;
 using System.IO;
@@ -27,27 +34,28 @@ namespace IoC
     public static class DependencyInjectionContainerAPI
     {
         public static IServiceCollection AddInfrastructureAPI(this IServiceCollection services, IConfiguration configuration)
-        {
-            // O método AddScoped indica que os serviços são criados uma vez por requisição HTTP
-            // O método Singleton indica que o serviço é criado uma vez para todas as requisições
-            // O método Transiente indica que sempre será criado um novo serviço cada vez que for necessário
-
-            // Como padrão vou manter o AddScoped pois atende melhor a aplicação com um todo 
+        {            
+            string sqlConnection = configuration.GetConnectionString("AtronConnection");
+            
             services.AddDbContext<AtronDbContext>(options =>
-            // Define o provedor e a string de conexão
-            options.UseSqlServer(configuration.GetConnectionString("AtronConnection"),
-            // Define o asembly de onde as migrações devem ser mantidas 
-            m => m.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
-
+                options.UseSqlServer(sqlConnection,
+                b => b.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName))); 
+            
+            services.AddDbContext<StockDbContext>(options => 
+                options.UseSqlServer(sqlConnection,
+                b => b.MigrationsAssembly(typeof(StockDbContext).Assembly.FullName))); 
+                       
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                     .AddEntityFrameworkStores<AtronDbContext>()
                     .AddDefaultTokenProviders();
 
             // Evitar o looping infinito 
-            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
-            // With this line:  
+            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));            
             services.AddScoped(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
+
+
+            services.AddScoped<IClienteService, ClienteService>();
+            services.AddScoped<IClienteRepository, ClienteRepository>();
 
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
@@ -65,8 +73,6 @@ namespace IoC
             ConfigureSalarioRepositoryServices(services);
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
-            ConfigurePropriedadesDeFluxoServices(services);
-            ConfigurePropriedadesDeFluxoModuloServices(services);
             ConfigurePerfilDeAcessoServices(services);
             ConfigurePerfilDeAcessoUsuarioServices(services);
 
@@ -82,17 +88,7 @@ namespace IoC
         private static void ConfigurePerfilDeAcessoUsuarioServices(IServiceCollection services)
         {
             services.AddScoped<IPerfilDeAcessoUsuarioRepository, PerfilDeAcessoUsuarioRepository>();
-        }
-
-        private static void ConfigurePropriedadesDeFluxoModuloServices(IServiceCollection services)
-        {
-            services.AddScoped<IPropriedadeDeFluxoModuloRepository, PropriedadeDeFluxoModuloRepository>();
-        }
-
-        private static void ConfigurePropriedadesDeFluxoServices(IServiceCollection services)
-        {
-            services.AddScoped<IPropriedadeDeFluxoRepository, PropriedadeDeFluxoRepository>();
-        }
+        }   
 
         private static void ConfigureUsuarioCargoDepartamentoServices(IServiceCollection services)
         {
