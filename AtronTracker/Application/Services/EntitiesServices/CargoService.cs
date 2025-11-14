@@ -66,7 +66,6 @@ namespace Application.Services.EntitiesServices
                 cargo.DepartamentoCodigo = departamento.Codigo;
             }
 
-            // Validações finais da entidade
             _validateModel.Validate(cargo);
 
             return _messageModel.Notificacoes.HasErrors() ? null : cargo;

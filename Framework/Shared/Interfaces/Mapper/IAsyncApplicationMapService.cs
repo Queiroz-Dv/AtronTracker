@@ -46,6 +46,16 @@
         /// <returns>
         /// Uma Task que representa a operação assíncrona. O resultado da Task contém a lista de DTOs mapeados.
         /// </returns>
-        Task<List<DTO>> MapToListDTOAsync(IEnumerable<Entity> entities);
+        Task<List<DTO>> MapToListDTOAsync(IEnumerable<Entity> entities);        
+    }
+
+    public interface IAsyncMap<DTO, Entity> : IAsyncApplicationMapService<DTO, Entity>
+    {
+        /// <summary>
+        /// Mapeia de forma assíncrona um DTO para uma Entidade existente (Atualização).
+        /// </summary>
+        /// <param name="dto">O DTO com os dados de origem.</param>
+        /// <param name="entityToUpdate">A Entidade existente a ser atualizada.</param>
+        Task MapToEntityAsync(DTO dto, Entity entityToUpdate);
     }
 }

@@ -138,6 +138,6 @@ namespace Shared.Services.Mapper
             var results = await Task.WhenAll(tasks);
 
             return results.ToList();
-        }
+        }       
     }
 }

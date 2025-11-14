@@ -1,4 +1,6 @@
 ﻿using AtronStock.Domain.Enums;
+using AtronStock.Domain.ValueObjects;
+using System.ComponentModel;
 
 namespace AtronStock.Application.DTO.Request
 {
@@ -11,5 +13,14 @@ namespace AtronStock.Application.DTO.Request
         public string Email { get; set; }
         public string Telefone { get; set; }
         public EStatusPessoa StatusPessoa { get; set; }
+
+        [DisplayName("Endereço")]
+        public EnderecoVO EnderecoVO { get; set; }
+
+        public ClienteRequest()
+        {
+            StatusPessoa = EStatusPessoa.Ativo;
+            EnderecoVO = new EnderecoVO();
+        }
     }
 }

@@ -20,10 +20,10 @@ namespace AtronStock.Infrastructure.EntitiesConfiguration
                 .IsRequired()
                 .HasMaxLength(50);
 
-            builder.Property(c => c.CPF)
+            builder.Property(c => c.CPF).IsRequired(false)
                 .HasMaxLength(11);
 
-            builder.Property(c => c.CNPJ)
+            builder.Property(c => c.CNPJ).IsRequired(false)
                 .HasMaxLength(14);
 
             builder.Property(c => c.Status)

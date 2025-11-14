@@ -35,4 +35,7 @@
         /// <returns>A lista de DTOs mapeados.</returns>
         List<DTO> MapToListDTO(List<Entity> entities);
     }
+
+    public interface IMapService<DTO, Entity> : IApplicationMapService<DTO, Entity>
+    {    }
 }

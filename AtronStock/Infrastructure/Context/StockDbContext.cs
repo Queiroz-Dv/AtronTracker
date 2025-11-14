@@ -1,10 +1,9 @@
 ﻿using AtronStock.Domain.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AtronStock.Infrastructure.Context
 {
-    public class StockDbContext(DbContextOptions<StockDbContext> options) : IdentityDbContext(options)
+    public class StockDbContext(DbContextOptions<StockDbContext> options) : DbContext(options)
     {
         public DbSet<Cliente> Clientes { get; set; }
 
