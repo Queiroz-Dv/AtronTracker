@@ -3,12 +3,6 @@ using Application.Interfaces.Services;
 using Application.Services;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
-using AtronStock.Application.Interfaces;
-using AtronStock.Application.Services;
-using AtronStock.Domain.Entities;
-using AtronStock.Domain.Interfaces;
-using AtronStock.Infrastructure.Context;
-using AtronStock.Infrastructure.Repositories;
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -22,8 +16,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.DataContexts;
-using Shared.Interfaces.Data;
 using Shared.Models.ApplicationModels;
 using System;
 using System.IO;
@@ -34,28 +26,20 @@ namespace IoC
     public static class DependencyInjectionContainerAPI
     {
         public static IServiceCollection AddInfrastructureAPI(this IServiceCollection services, IConfiguration configuration)
-        {            
+        {
             string sqlConnection = configuration.GetConnectionString("AtronConnection");
-            
+
             services.AddDbContext<AtronDbContext>(options =>
                 options.UseSqlServer(sqlConnection,
-                b => b.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName))); 
-            
-            services.AddDbContext<StockDbContext>(options => 
-                options.UseSqlServer(sqlConnection,
-                b => b.MigrationsAssembly(typeof(StockDbContext).Assembly.FullName))); 
-                       
+                b => b.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
+
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                     .AddEntityFrameworkStores<AtronDbContext>()
                     .AddDefaultTokenProviders();
 
             // Evitar o looping infinito 
-            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));            
+            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             services.AddScoped(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
-
-
-            services.AddScoped<IClienteService, ClienteService>();
-            services.AddScoped<IClienteRepository, ClienteRepository>();
 
             // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
@@ -78,17 +62,27 @@ namespace IoC
 
             services = services.AddContexts();
 
+            // Registra os serviços essenciais do sistema de proteção de dados (Data Protection) na injeção de dependência.
             services.AddDataProtection()
-             .SetApplicationName("Atron")
-             .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
-             .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+
+                // Define um nome de aplicativo exclusivo ("Atron").
+                // Usado para isolar os cookies e tokens da sua aplicação de outras aplicações rodando no mesmo servidor.
+                .SetApplicationName("Atron")
+
+                // Instruiu o sistema a salvar (persistir) as chaves de criptografia em uma pasta local chamada "./keys".
+                // Isso é vital para produção, garantindo que os usuários não sejam deslogados a cada reinício da aplicação.
+                .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
+
+                // Configura o "rodízio de chaves" (key rotation), gerando uma nova chave de criptografia a cada 90 dias.
+                // É uma boa prática de segurança para limitar o tempo de vida de qualquer chave.
+                .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
             return services;
         }
 
         private static void ConfigurePerfilDeAcessoUsuarioServices(IServiceCollection services)
         {
             services.AddScoped<IPerfilDeAcessoUsuarioRepository, PerfilDeAcessoUsuarioRepository>();
-        }   
+        }
 
         private static void ConfigureUsuarioCargoDepartamentoServices(IServiceCollection services)
         {

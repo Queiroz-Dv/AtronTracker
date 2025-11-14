@@ -29,5 +29,11 @@ namespace AtronStock.Domain.Entities
 
         [MaxLength(15), Required]
         public string Telefone { get; set; } = string.Empty;
+
+        public Cliente()
+        {
+            Status = EStatusPessoa.Ativo;
+            Endereco = new EnderecoVO();
+        }
     }
 }

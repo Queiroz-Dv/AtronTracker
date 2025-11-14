@@ -34,6 +34,7 @@ namespace AtronStock.WebApi
 
             // 🧱 Registra os serviços da camada de infraestrutura (ex: DbContext, Repositórios, JWT, AutoMapper, etc)
             services.AddInfrastructureAPI(Configuration);
+            services.AddStockInfrastructure(Configuration);
 
             // 🔐 Registra os serviços necessários para a política dinâmica de autorização baseada em "módulo"
             //services.AddSingleton<IAuthorizationPolicyProvider, DynamicModuloPolicyProvider>();

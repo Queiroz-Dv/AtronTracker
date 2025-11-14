@@ -4,6 +4,14 @@ namespace AtronStock.Domain.Interfaces
 {
     public interface IClienteRepository
     {
-        Task CriarCliente(Cliente cliente);
+        Task<bool> CriarClienteAsync(Cliente cliente);
+
+        Task<ICollection<Cliente>> ObterTodoClientesAsync();
+
+        Task<Cliente> ObterClientePorCodigoAsync(string codigo);
+
+        Task<bool> AtualizarClienteAsync(Cliente cliente);
+
+        Task<bool> RemoverClienteAsync(Cliente cliente);
     }
 }
