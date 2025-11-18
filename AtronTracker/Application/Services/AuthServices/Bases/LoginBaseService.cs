@@ -2,17 +2,16 @@
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
 using Domain.Interfaces.ApplicationInterfaces;
-using Shared.Interfaces.Accessor;
-using Shared.Interfaces.Services;
+using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.AuthServices.Bases
 {
     public abstract class LoginBaseService : ServiceBase
     {
-        protected readonly IServiceAccessor _serviceAccessor;
+        protected readonly IAccessorService _serviceAccessor;
         protected readonly ILoginRepository _loginRepository;
 
-        public LoginBaseService(IServiceAccessor serviceAccessor, ILoginRepository loginRepository) : base(serviceAccessor)
+        public LoginBaseService(IAccessorService serviceAccessor, ILoginRepository loginRepository) : base(serviceAccessor)
         {
             _serviceAccessor = serviceAccessor;
             _loginRepository = loginRepository;

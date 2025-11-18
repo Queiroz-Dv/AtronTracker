@@ -6,12 +6,12 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Interfaces.Accessor;
 using Shared.Models;
 using Shared.Extensions;
 using System;
 using System.Threading.Tasks;
 using Application.Specifications.UsuarioSpecifications;
+using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.AuthServices
 {
@@ -23,7 +23,7 @@ namespace Application.Services.AuthServices
         private readonly MessageModel _messageModel;
 
         public RegistroUsuarioService(
-            IServiceAccessor accessor,
+            IAccessorService accessor,
             IUsuarioRepository usuarioRepository,
             MessageModel messageModel,
             IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,

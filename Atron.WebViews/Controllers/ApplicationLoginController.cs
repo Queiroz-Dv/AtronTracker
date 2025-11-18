@@ -5,8 +5,8 @@ using Communication.Security;
 using Domain.ApiEntities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
-using Shared.Interfaces.Services;
 using Shared.Models;
 using System.Threading.Tasks;
 

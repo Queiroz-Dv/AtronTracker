@@ -2,14 +2,13 @@
 using Application.Interfaces.Services;
 using Domain.Entities;
 using Domain.Interfaces;
-using Shared.Interfaces.Mapper;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Extensions;
 using Application.Specifications.CargoSpecifications;
+using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.EntitiesServices
 {
@@ -21,13 +20,13 @@ namespace Application.Services.EntitiesServices
         private ICargoRepository _cargoRepository;
         private IDepartamentoRepository _departamentoRepository;
         private IAsyncApplicationMapService<CargoDTO, Cargo> _map;
-        private readonly IValidateModel<Cargo> _validateModel;
+        private readonly IValidateModelService<Cargo> _validateModel;
         private readonly MessageModel _messageModel;
 
         public CargoService(IAsyncApplicationMapService<CargoDTO, Cargo> map,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
-                            IValidateModel<Cargo> validateModel,
+                            IValidateModelService<Cargo> validateModel,
                             MessageModel messageModel)
         {
             _map = map;

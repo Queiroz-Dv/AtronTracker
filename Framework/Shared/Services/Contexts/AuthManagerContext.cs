@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Shared.Interfaces.Contexts;
+using Shared.Application.Interfaces.Service;
 using Shared.Models.ApplicationModels;
 
 namespace Shared.Services.Contexts
@@ -7,7 +7,7 @@ namespace Shared.Services.Contexts
     /// <summary>
     /// Facade concreto para gerenciar autenticação e usuários.
     /// </summary>
-    public class AuthManagerContext : IAuthManagerContext
+    public class AuthManagerContext : IAuthManagerService
     {
         public AuthManagerContext(
             SignInManager<ApplicationUser> signInManager,

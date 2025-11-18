@@ -1,6 +1,6 @@
 ﻿using Atron.WebViews.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Interfaces.Services;
+using Shared.Application.Interfaces.Service;
 using Shared.Models;
 using System.Text.Json;
 using System.Threading.Tasks;

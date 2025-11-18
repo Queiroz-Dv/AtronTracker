@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
+using Shared.Application.Interfaces.Service;
 using Shared.DTO.API;
 using Shared.Enums;
 using Shared.Extensions;
-using Shared.Interfaces.Factory;
 using System.Text.Json;
 
 namespace Shared.Services.Factory
 {
-    public class CookieFactory : CookieBuilder, ICookieFactory
+    public class CookieFactory : CookieBuilder, ICookieFactoryService
     {
         private readonly IDataProtector protector;
         public CookieFactory(IResponseCookies responseCookies, IDataProtectionProvider provider) : base(responseCookies)
@@ -39,7 +39,7 @@ namespace Shared.Services.Factory
             return await Task.FromResult(dados);
         }
 
-        void ICookieFactory.RemoverCookie(string chave)
+        void ICookieFactoryService.RemoverCookie(string chave)
         {
             RemoverCookie(chave.ToUpper());
         }

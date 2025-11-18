@@ -1,11 +1,10 @@
 ﻿using Domain.Entities;
-using Shared.Interfaces.Services;
-using Shared.Interfaces.Validations;
+using Shared.Application.Interfaces.Service;
 using Shared.Models;
 
 namespace Application.Validations
 {
-    public class ModuloMessageValidation : MessageModel, IMessages, IValidateModel<Modulo>
+    public class ModuloMessageValidation : MessageModel, IMessageBaseService, IValidateModelService<Modulo>
     {
         public void Validate(Modulo entity)
         {

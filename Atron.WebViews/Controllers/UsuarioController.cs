@@ -6,11 +6,11 @@ using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shared.Interfaces.Services;
 using Shared.Models;
 using System.Linq;
 using Shared.Extensions;
 using System.Threading.Tasks;
+using Shared.Application.Interfaces.Service;
 
 namespace Atron.WebViews.Controllers
 {

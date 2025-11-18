@@ -2,7 +2,7 @@
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Interfaces.Accessor;
+using Shared.Application.Interfaces.Service;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,7 +23,7 @@ namespace WebApi.Controllers
         /// <param name="service">O serviço para gerenciar módulos.</param>
         /// <param name="serviceAccessor">O serviço de acesso para inicializar qualquer serviço necessário</param>
         /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>
-        public ModuloController(IModuloService service, IServiceAccessor serviceAccessor, MessageModel messageModel) : base(service, serviceAccessor, messageModel)
+        public ModuloController(IModuloService service, IAccessorService serviceAccessor, MessageModel messageModel) : base(service, serviceAccessor, messageModel)
         { }
 
         /// <summary>

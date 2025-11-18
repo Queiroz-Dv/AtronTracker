@@ -1,6 +1,6 @@
 ﻿using Application.Interfaces.Services;
+using Shared.Application.Interfaces.Service;
 using Shared.DTO.API;
-using Shared.Interfaces.Caching;
 using Shared.Models;
 
 namespace Application.Services.EntitiesServices

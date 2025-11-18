@@ -6,11 +6,11 @@ using Domain.Entities;
 using Shared.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Application.Interfaces.Service;
 
 namespace WebApi.Controllers
 {
@@ -28,7 +28,7 @@ namespace WebApi.Controllers
         /// <param name="cargoService">O serviço para gerenciar departamentos.</param>
         /// <param name="serviceAccessor">O serviço de acesso para inicializar qualquer serviço necessário</param>
         /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>
-        public CargoController(ICargoService cargoService, IServiceAccessor serviceAccessor, MessageModel messageModel)
+        public CargoController(ICargoService cargoService, IAccessorService serviceAccessor, MessageModel messageModel)
             : base(cargoService, serviceAccessor, messageModel)
         { }
 

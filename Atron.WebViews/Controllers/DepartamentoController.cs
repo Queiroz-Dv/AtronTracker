@@ -5,10 +5,10 @@ using Domain.Entities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Interfaces.Services;
 using Shared.Models;
 using Shared.Extensions;
 using System.Threading.Tasks;
+using Shared.Application.Interfaces.Service;
 
 namespace Atron.WebViews.Controllers
 {

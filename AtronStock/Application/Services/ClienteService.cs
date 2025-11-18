@@ -2,9 +2,8 @@
 using AtronStock.Application.Interfaces;
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Interfaces;
+using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
-using Shared.Interfaces.Mapper;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 
 namespace AtronStock.Application.Services
@@ -13,7 +12,7 @@ namespace AtronStock.Application.Services
     {
         private readonly IClienteRepository _repository;
         private readonly IValidador<ClienteRequest> _validador;
-        private readonly IAsyncMap<ClienteRequest, Cliente> _mapService;
+        private readonly IAsyncMap<ClienteRequest, Cliente> _mapService;        
 
         public ClienteService(
             IClienteRepository repository,
@@ -28,14 +27,16 @@ namespace AtronStock.Application.Services
         public async Task<Resultado> CriarAsync(ClienteRequest request)
         {
             var messages = _validador.Validar(request);
-            if (!messages.HasErrors())
+            if (messages.TemErros() is not true)
             {
                 var cliente = await _mapService.MapToEntityAsync(request);
-                var foiSalvo = await _repository.CriarClienteAsync(cliente);
+                var foiSalvo = await _repository.CriarClienteAsync(cliente);                
 
-                if (!foiSalvo)                
+                if (foiSalvo is not true)
+                {
                     return Resultado.Falha("Ocorreu um erro inesperado ao salvar o cliente.");
-                
+                }
+
                 var context = new NotificationContext();
                 context.MensagemRegistroSalvo("Cliente");
                 return Resultado.Sucesso(request, context.Messages.ToList());

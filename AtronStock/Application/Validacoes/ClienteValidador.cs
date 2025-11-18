@@ -1,6 +1,6 @@
 ﻿using AtronStock.Application.DTO.Request;
+using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Net.Mail;
 

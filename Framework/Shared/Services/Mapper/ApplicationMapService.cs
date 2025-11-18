@@ -1,4 +1,4 @@
-﻿using Shared.Interfaces.Mapper;
+﻿using Shared.Application.Interfaces.Service;
 
 namespace Shared.Services.Mapper
 {

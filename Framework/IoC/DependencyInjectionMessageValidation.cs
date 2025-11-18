@@ -2,9 +2,8 @@
 using Domain.ApiEntities;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Application.Interfaces.Service;
 using Shared.DTO.API;
-using Shared.Interfaces.Services;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 
 namespace IoC
@@ -27,69 +26,69 @@ namespace IoC
 
         private static void ConfigureLoginMessageValidation(IServiceCollection services)
         {
-            services.AddScoped<IMessages, LoginMessageValidation>();
-            services.AddScoped<IValidateModel<ApiLogin>, LoginMessageValidation>();
+            services.AddScoped<IMessageBaseService, LoginMessageValidation>();
+            services.AddScoped<IValidateModelService<ApiLogin>, LoginMessageValidation>();
             services.AddScoped<MessageModel, LoginMessageValidation>();
 
-            services.AddScoped<IMessages, InfoTokenMessageValidation>();
-            services.AddScoped<IValidateModel<DadosDoTokenDTO>, InfoTokenMessageValidation>();
+            services.AddScoped<IMessageBaseService, InfoTokenMessageValidation>();
+            services.AddScoped<IValidateModelService<DadosDoTokenDTO>, InfoTokenMessageValidation>();
             services.AddScoped<MessageModel, InfoTokenMessageValidation>();
         }
 
         private static void ConfigureApiRegisterMessageValidation(IServiceCollection services)
         {
-            services.AddScoped<IMessages, ApiRegisterMessageValidation>();
-            services.AddScoped<IValidateModel<UsuarioRegistro>, ApiRegisterMessageValidation>();
+            services.AddScoped<IMessageBaseService, ApiRegisterMessageValidation>();
+            services.AddScoped<IValidateModelService<UsuarioRegistro>, ApiRegisterMessageValidation>();
             services.AddScoped<MessageModel, ApiRegisterMessageValidation>();
         }
 
         private static void ConfigurarSalarioServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, SalarioMessageValidation>();
-            services.AddScoped<IValidateModel<Salario>, SalarioMessageValidation>();
+            services.AddScoped<IMessageBaseService, SalarioMessageValidation>();
+            services.AddScoped<IValidateModelService<Salario>, SalarioMessageValidation>();
             services.AddScoped<MessageModel, SalarioMessageValidation>();
         }
 
         private static void ConfigurarTarefaServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, TarefaMessageValidation>();
-            services.AddScoped<IValidateModel<Tarefa>, TarefaMessageValidation>();
+            services.AddScoped<IMessageBaseService, TarefaMessageValidation>();
+            services.AddScoped<IValidateModelService<Tarefa>, TarefaMessageValidation>();
             services.AddScoped<MessageModel, TarefaMessageValidation>();
 
         }
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, DepartamentoMessageValidation>();
-            services.AddScoped<IValidateModel<Departamento>, DepartamentoMessageValidation>();
+            services.AddScoped<IMessageBaseService, DepartamentoMessageValidation>();
+            services.AddScoped<IValidateModelService<Departamento>, DepartamentoMessageValidation>();
             services.AddScoped<MessageModel, DepartamentoMessageValidation>();
         }
 
         private static void ConfgureCargoServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, CargoMessageValidation>();
-            services.AddScoped<IValidateModel<Cargo>, CargoMessageValidation>();
+            services.AddScoped<IMessageBaseService, CargoMessageValidation>();
+            services.AddScoped<IValidateModelService<Cargo>, CargoMessageValidation>();
             services.AddScoped<MessageModel, CargoMessageValidation>();
         }
 
         private static void ConfigureUsuarioServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, UsuarioMessageValidation>();
-            services.AddScoped<IValidateModel<Usuario>, UsuarioMessageValidation>();
+            services.AddScoped<IMessageBaseService, UsuarioMessageValidation>();
+            services.AddScoped<IValidateModelService<Usuario>, UsuarioMessageValidation>();
             services.AddScoped<MessageModel, UsuarioMessageValidation>();
         }
 
         private static void ConfigureModuloServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, ModuloMessageValidation>();
-            services.AddScoped<IValidateModel<Modulo>, ModuloMessageValidation>();
+            services.AddScoped<IMessageBaseService, ModuloMessageValidation>();
+            services.AddScoped<IValidateModelService<Modulo>, ModuloMessageValidation>();
             services.AddScoped<MessageModel, ModuloMessageValidation>();
         }
 
         private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
         {
-            services.AddScoped<IMessages, PerfilDeAcessoMessageValidation>();
-            services.AddScoped<IValidateModel<PerfilDeAcesso>, PerfilDeAcessoMessageValidation>();
+            services.AddScoped<IMessageBaseService, PerfilDeAcessoMessageValidation>();
+            services.AddScoped<IValidateModelService<PerfilDeAcesso>, PerfilDeAcessoMessageValidation>();
             services.AddScoped<MessageModel, PerfilDeAcessoMessageValidation>();
         }
     }

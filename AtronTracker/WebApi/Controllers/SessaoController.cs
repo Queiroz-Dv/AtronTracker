@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application.Interfaces.Service;
 using Shared.DTO.API;
 using Shared.Extensions;
-using Shared.Interfaces.Accessor;
-using Shared.Interfaces.Caching;
 using Shared.Models;
 using System.Linq;
 using System.Security.Claims;
@@ -20,9 +19,9 @@ namespace WebApi.Controllers
     {
         private readonly ICacheService _cacheService;
         private readonly IPerfilDeAcessoService _perfilDeAcessoService;
-        private readonly IServiceAccessor _serviceAccessor;
+        private readonly IAccessorService _serviceAccessor;
 
-        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService, IServiceAccessor serviceAccessor)
+        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService, IAccessorService serviceAccessor)
         {
             _cacheService = cacheService;
             _perfilDeAcessoService = perfilDeAcessoService;

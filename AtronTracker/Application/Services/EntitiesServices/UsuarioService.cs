@@ -4,14 +4,13 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Interfaces.Mapper;
-using Shared.Interfaces.Validations;
 using Shared.Extensions;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.DTO.ApiDTO;
+using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.EntitiesServices
 {
@@ -26,7 +25,7 @@ namespace Application.Services.EntitiesServices
         private readonly ITarefaRepository _tarefaRepository;
         private readonly ISalarioRepository _salarioRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
-        private readonly IValidateModel<Usuario> _validateModel;
+        private readonly IValidateModelService<Usuario> _validateModel;
         private readonly MessageModel _messageModel;
 
         public UsuarioService(IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> map,
@@ -36,7 +35,7 @@ namespace Application.Services.EntitiesServices
                               ICargoRepository cargoRepository,
                               ITarefaRepository tarefaRepository,
                               ISalarioRepository salarioRepository,
-                              IValidateModel<Usuario> validateModel,
+                              IValidateModelService<Usuario> validateModel,
                               MessageModel messageModel,
                               IUsuarioIdentityRepository usuarioIdentityRepository)
         {

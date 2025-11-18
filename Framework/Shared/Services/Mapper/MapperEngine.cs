@@ -1,4 +1,4 @@
-﻿using Shared.Interfaces.Mapper;
+﻿using Shared.Application.Interfaces.Service;
 
 namespace Shared.Services.Mapper
 {
@@ -6,7 +6,7 @@ namespace Shared.Services.Mapper
     /// Implementação padrão do motor de mapeamento. Esta classe deve ser registrada
     /// como Scoped ou Transient no contêiner de DI.
     /// </summary>
-    public class MapperEngine : IMapperEngine
+    public class MapperEngine : IMapperEngineService
     {
         /// <summary>
         /// Usa a implementação base do AsyncApplicationMapService para mapear a coleção de forma

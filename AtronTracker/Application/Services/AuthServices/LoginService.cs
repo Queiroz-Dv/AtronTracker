@@ -4,13 +4,11 @@ using Application.Interfaces.Services.Identity;
 using Application.Services.AuthServices.Bases;
 using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
+using Shared.Application.Interfaces.Service;
 using Shared.DTO.API;
 using Shared.DTO.API.Request;
 using Shared.Enums;
 using Shared.Extensions;
-using Shared.Interfaces.Accessor;
-using Shared.Interfaces.Caching;
-using Shared.Interfaces.Services;
 using Shared.Models;
 using System;
 using System.Threading.Tasks;
@@ -24,7 +22,7 @@ namespace Application.Services.AuthServices
 
         private DadosDoTokenDTO CriarToken(string token, DateTime expires) => new(token, expires);
 
-        public LoginService(IServiceAccessor serviceAccessor, ILoginRepository loginRepository) : base(serviceAccessor)
+        public LoginService(IAccessorService serviceAccessor, ILoginRepository loginRepository) : base(serviceAccessor)
         {
             _loginRepository = loginRepository;
         }

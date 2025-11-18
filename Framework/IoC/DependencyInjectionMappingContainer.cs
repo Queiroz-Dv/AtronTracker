@@ -2,7 +2,7 @@
 using Application.Mapping;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Interfaces.Mapper;
+using Shared.Application.Interfaces.Service;
 using Shared.Services.Mapper;
 
 namespace IoC
@@ -11,7 +11,7 @@ namespace IoC
     {
         public static IServiceCollection AddServiceMappings(this IServiceCollection services)
         {
-            services.AddScoped<IMapperEngine, MapperEngine>();
+            services.AddScoped<IMapperEngineService, MapperEngine>();
             services.AddScoped<IAsyncApplicationMapService<DepartamentoDTO, Departamento>, DepartamentoMapping>();
             services.AddScoped<IAsyncApplicationMapService<CargoDTO, Cargo>, CargoMapping>();
             services.AddScoped<IAsyncApplicationMapService<UsuarioDTO, Usuario>, UsuarioMapping>();
