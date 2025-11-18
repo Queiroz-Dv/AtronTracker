@@ -1,10 +1,10 @@
 ﻿using Application.DTO;
 using Shared.Extensions;
 using Domain.Entities;
-using Shared.Interfaces.Mapper;
 using Shared.Services.Mapper;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Application.Interfaces.Service;
 
 namespace Application.Mapping
 {

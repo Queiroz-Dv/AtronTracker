@@ -1,16 +1,15 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Shared.Application.Interfaces.Service;
 using Shared.DTO.API;
 using Shared.Extensions;
-using Shared.Interfaces.Accessor;
-using Shared.Interfaces.Factory;
 using System.Security.Claims;
 
 namespace Shared.Services.Factory
 {
-    public class TokenFactory : TokenBuilder, ITokenFactory
+    public class TokenFactory : TokenBuilder, ITokenFactoryService
     {
         public TokenFactory(IConfiguration configuration,
-            IServiceAccessor serviceAccessor) : base(configuration, serviceAccessor) { }
+            IAccessorService serviceAccessor) : base(configuration, serviceAccessor) { }
 
         public async Task<DadosDeTokenComRefreshToken> ObterDadosDoTokenAsync(DadosComplementaresDoUsuarioDTO dadosComplementaresDoUsuarioDTO)
         {

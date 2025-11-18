@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.DTO.API;
 using Shared.DTO.API.Request;
-using Shared.Interfaces.Accessor;
-using Shared.Interfaces.Services;
 using Shared.Models;
 using Shared.Extensions;
 using System.Threading.Tasks;
 using Application.DTO.ApiDTO;
+using Shared.Application.Interfaces.Service;
 
 namespace WebApi.Controllers
 {
@@ -23,7 +22,7 @@ namespace WebApi.Controllers
         public AcessoController(
              MessageModel messageModel,
              ILoginService loginUserService,
-             IServiceAccessor serviceAccessor)
+             IAccessorService serviceAccessor)
              : base(loginUserService, serviceAccessor, messageModel)
         { }
 

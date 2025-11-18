@@ -13,12 +13,12 @@ namespace AtronStock.Domain.Entities
         [MaxLength(50), Required]
         public string Descricao { get; set; } = string.Empty;
 
-        public bool Removido { get; set; }
+        public EStatus Removido { get; set; }
 
         public DateTime? RemovidoEm { get; set; }
 
-        public List<ProdutoCategoria> Produtos { get; set; } = [];
+        //public List<ProdutoCategoria> Produtos { get; set; } = [];
 
-        public List<Venda> Vendas { get; set; } = [];
+        //public List<Venda> Vendas { get; set; } = [];
     }
 }

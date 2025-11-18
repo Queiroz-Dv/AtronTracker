@@ -1,4 +1,4 @@
-﻿using Shared.Services;
+﻿using Shared.Application.Services;
 
 namespace Shared.Models
 {

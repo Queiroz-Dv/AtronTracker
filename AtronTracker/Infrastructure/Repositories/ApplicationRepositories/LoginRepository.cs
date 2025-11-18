@@ -1,18 +1,18 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
+using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
-using Shared.Interfaces.Contexts;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.ApplicationRepositories
 {
     public class LoginRepository : ILoginRepository
     {
-        private readonly IAuthManagerContext _authManager;
+        private readonly IAuthManagerService _authManager;
         private readonly IUsuarioIdentityRepository _userIdentityRepo;
 
-        public LoginRepository(IUsuarioIdentityRepository userIdentityRepo, IAuthManagerContext authManagerContext)
+        public LoginRepository(IUsuarioIdentityRepository userIdentityRepo, IAuthManagerService authManagerContext)
         {
             _userIdentityRepo = userIdentityRepo;
             _authManager = authManagerContext;

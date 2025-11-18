@@ -1,12 +1,11 @@
 ﻿using Domain.Entities;
-using Shared.Interfaces.Services;
-using Shared.Interfaces.Validations;
+using Shared.Application.Interfaces.Service;
 using Shared.Models;
 using System.Linq;
 
 namespace Application.Validations
 {
-    public class PerfilDeAcessoMessageValidation : MessageModel, IMessages, IValidateModel<PerfilDeAcesso>
+    public class PerfilDeAcessoMessageValidation : MessageModel, IMessageBaseService, IValidateModelService<PerfilDeAcesso>
     {
         public void Validate(PerfilDeAcesso entity)
         {

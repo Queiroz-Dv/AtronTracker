@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Shared\Shared.csproj" />
     <ProjectReference Include="..\Domain\AtronStock.Domain.csproj" />
   </ItemGroup>
 

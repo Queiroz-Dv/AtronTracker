@@ -1,5 +1,5 @@
 ﻿using Application.Interfaces.Contexts;
-using Shared.Interfaces.Contexts;
+using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.Contexts
 {
@@ -7,7 +7,7 @@ namespace Application.Services.Contexts
     {
         public LoginContext(
          IUsuarioContext usuarioContext,
-         IAuthManagerContext authManagerContext,
+         IAuthManagerService authManagerContext,
          IControleDeSessaoContext controleDeSessaoContext)
         {
             UsuarioContext = usuarioContext;
@@ -16,7 +16,7 @@ namespace Application.Services.Contexts
         }
 
         public IUsuarioContext UsuarioContext { get; }
-        public IAuthManagerContext AuthManagerContext { get; }
+        public IAuthManagerService AuthManagerContext { get; }
         public IControleDeSessaoContext ControleDeSessaoContext { get; }
     }
 }

@@ -24,10 +24,9 @@ namespace AtronStock.Infrastructure.EntitiesConfiguration
                 .HasMaxLength(11);
 
             builder.Property(c => c.CNPJ).IsRequired(false)
-                .HasMaxLength(14);
+                .HasMaxLength(14);          
 
-            builder.Property(c => c.Status)
-                .IsRequired();
+            builder.Property(c => c.AuditoriaId).IsRequired(false);
 
             builder.OwnsOne(c => c.Endereco, e =>
             {

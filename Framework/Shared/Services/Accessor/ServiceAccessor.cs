@@ -1,8 +1,8 @@
-﻿using Shared.Interfaces.Accessor;
+﻿using Shared.Application.Interfaces.Service;
 
 namespace Shared.Services.Accessor
 {
-    public class ServiceAccessor : IServiceAccessor
+    public class ServiceAccessor : IAccessorService
     {
         private readonly IServiceProvider _provider;
         private readonly Dictionary<Type, object> _cache = new();

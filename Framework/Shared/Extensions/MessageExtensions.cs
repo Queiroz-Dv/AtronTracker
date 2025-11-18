@@ -9,6 +9,12 @@ namespace Shared.Extensions
             return messages.Any(m => m.Nivel == Level.Error);
         }
 
+        public static bool TemErros(this IList<Message> messages)
+        {
+            return messages.Any(m => m.Nivel == Level.Error);
+        }
+
+
         public static IEnumerable<object> ConvertMessageToJson(this IList<Message> messages)
         {
             return messages.Select(ms => new

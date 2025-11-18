@@ -1,9 +1,8 @@
 ﻿using Application.DTO;
 using Domain.Entities;
 using Domain.Interfaces;
+using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
-using Shared.Interfaces.Mapper;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -15,13 +14,13 @@ namespace Application.Services.EntitiesServices
     {
         private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _map;
         private readonly ITarefaRepository _tarefaRepository;
-        private readonly IValidateModel<Tarefa> _validateModel;
+        private readonly IValidateModelService<Tarefa> _validateModel;
         private readonly MessageModel _messageModel;
 
         public TarefaService(IAsyncApplicationMapService<TarefaDTO, Tarefa> map,
                              ITarefaRepository tarefaRepository,
                              MessageModel messageModel,
-                             IValidateModel<Tarefa> validateModel)
+                             IValidateModelService<Tarefa> validateModel)
         {
             _map = map;
             _messageModel = messageModel;

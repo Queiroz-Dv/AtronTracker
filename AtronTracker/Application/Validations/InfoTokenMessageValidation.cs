@@ -1,13 +1,12 @@
-﻿using Shared.DTO.API;
+﻿using Shared.Application.Interfaces.Service;
+using Shared.DTO.API;
 using Shared.Extensions;
-using Shared.Interfaces.Services;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 using System;
 
 namespace Application.Validations
 {
-    public class InfoTokenMessageValidation : MessageModel, IMessages, IValidateModel<DadosDoTokenDTO>
+    public class InfoTokenMessageValidation : MessageModel, IMessageBaseService, IValidateModelService<DadosDoTokenDTO>
     {
         public void Validate(DadosDoTokenDTO entity)
         {

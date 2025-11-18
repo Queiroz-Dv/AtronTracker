@@ -4,7 +4,6 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Shared.Interfaces.Accessor;
 using Shared.Models;
 using Shared.Extensions;
 using System.Collections.Generic;
@@ -13,6 +12,7 @@ using System.Threading.Tasks;
 using Application.Extensions;
 using Application.DTO.Response;
 using Application.DTO;
+using Shared.Application.Interfaces.Service;
 
 namespace WebApi.Controllers
 {
@@ -23,7 +23,7 @@ namespace WebApi.Controllers
     {
         public UsuarioController(
             IUsuarioService usuarioService,
-            IServiceAccessor serviceAccessor,
+            IAccessorService serviceAccessor,
             MessageModel messageModel) :
             base(usuarioService, serviceAccessor, messageModel)
         { }

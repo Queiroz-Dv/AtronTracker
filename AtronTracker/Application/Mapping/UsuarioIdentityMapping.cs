@@ -1,7 +1,7 @@
 ﻿using Application.DTO;
 using Domain.Entities;
+using Shared.Application.Interfaces.Service;
 using Shared.DTO.API;
-using Shared.Interfaces.Mapper;
 using Shared.Services.Mapper;
 using System;
 using System.Threading.Tasks;

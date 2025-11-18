@@ -1,12 +1,11 @@
 ﻿using Domain.ApiEntities;
+using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
-using Shared.Interfaces.Services;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 
 namespace Application.Validations
 {
-    public class LoginMessageValidation : MessageModel, IMessages, IValidateModel<ApiLogin>
+    public class LoginMessageValidation : MessageModel, IMessageBaseService, IValidateModelService<ApiLogin>
     {
         public void Validate(ApiLogin entity)
         {

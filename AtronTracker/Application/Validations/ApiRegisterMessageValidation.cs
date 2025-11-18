@@ -1,13 +1,12 @@
 ﻿using Domain.ApiEntities;
+using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
-using Shared.Interfaces.Services;
-using Shared.Interfaces.Validations;
 using Shared.Models;
 using System.Text.RegularExpressions;
 
 namespace Application.Validations
 {
-    public class ApiRegisterMessageValidation : MessageModel, IMessages, IValidateModel<UsuarioRegistro>
+    public class ApiRegisterMessageValidation : MessageModel, IMessageBaseService, IValidateModelService<UsuarioRegistro>
     {
         public void Validate(UsuarioRegistro entity)
         {

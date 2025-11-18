@@ -1,8 +1,8 @@
 ﻿using Domain.Interfaces.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
-using Shared.Interfaces.Accessor;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -13,10 +13,10 @@ namespace Shared.Services.Factory
     public class TokenBuilder
     {
         private readonly IConfiguration _configuration;
-        private readonly IServiceAccessor _serviceAccessor;
+        private readonly IAccessorService _serviceAccessor;
 
         public TokenBuilder(IConfiguration configuration,
-                            IServiceAccessor serviceAccessor)
+                            IAccessorService serviceAccessor)
         {
             _configuration = configuration;
             _serviceAccessor = serviceAccessor;

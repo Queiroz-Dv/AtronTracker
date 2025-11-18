@@ -2,8 +2,7 @@
 using Application.Interfaces.Services;
 using Domain.Entities;
 using Domain.Interfaces;
-using Shared.Interfaces.Mapper;
-using Shared.Interfaces.Validations;
+using Shared.Application.Interfaces.Service;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +14,13 @@ namespace Application.Services.EntitiesServices
     {
         private readonly IAsyncApplicationMapService<ModuloDTO, Modulo> _map;
         private readonly IModuloRepository _moduloRepository;
-        private readonly IValidateModel<Modulo> _validateModel;
+        private readonly IValidateModelService<Modulo> _validateModel;
         private readonly MessageModel messageModel;
 
         public ModuloService(
             IAsyncApplicationMapService<ModuloDTO, Modulo> map,
             IModuloRepository moduloRepository,
-            IValidateModel<Modulo> validateModel,
+            IValidateModelService<Modulo> validateModel,
             MessageModel messageModel)
         {
             _map = map;

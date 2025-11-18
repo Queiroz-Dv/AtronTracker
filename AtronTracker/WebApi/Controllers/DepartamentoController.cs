@@ -3,11 +3,11 @@ using Application.Interfaces.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Interfaces.Accessor;
 using Shared.Models;
 using Shared.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Shared.Application.Interfaces.Service;
 
 namespace WebApi.Controllers
 {
@@ -25,7 +25,7 @@ namespace WebApi.Controllers
         /// <param name="departamentoService">O serviço para gerenciar departamentos.</param>
         /// <param name="serviceAccessor">O serviço de acesso para inicializar qualquer serviço necessário</param>
         /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>  
-        public DepartamentoController(IDepartamentoService departamentoService, IServiceAccessor serviceAccessor, MessageModel messageModel)
+        public DepartamentoController(IDepartamentoService departamentoService, IAccessorService serviceAccessor, MessageModel messageModel)
             : base(departamentoService, serviceAccessor, messageModel)
         { }
 

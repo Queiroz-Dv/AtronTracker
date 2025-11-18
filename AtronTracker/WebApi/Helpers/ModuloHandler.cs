@@ -1,10 +1,9 @@
 ﻿using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Shared.Application.Interfaces.Service;
 using Shared.DTO.API;
 using Shared.Extensions;
-using Shared.Interfaces.Accessor;
-using Shared.Interfaces.Caching;
 using Shared.Models;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,12 +17,12 @@ namespace WebApi.Helpers
     {
         private readonly ICacheService _cacheService;
         private readonly IUsuarioService _usuarioService;
-        private readonly IServiceAccessor _serviceAccessor;
+        private readonly IAccessorService _serviceAccessor;
 
         public ModuloHandler(
            ICacheService cacheService,
            IUsuarioService usuarioService,
-           IServiceAccessor serviceAccessor)
+           IAccessorService serviceAccessor)
         {
             _cacheService = cacheService;
             _usuarioService = usuarioService;

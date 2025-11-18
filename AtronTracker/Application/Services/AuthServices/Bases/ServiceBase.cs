@@ -1,5 +1,4 @@
-﻿using Shared.Interfaces.Accessor;
-using Shared.Interfaces.Validations;
+﻿using Shared.Application.Interfaces.Service;
 using Shared.Models;
 using System;
 
@@ -7,9 +6,9 @@ namespace Application.Services.AuthServices.Bases
 {
     public abstract class ServiceBase
     {
-        protected readonly IServiceAccessor _accessor;
+        protected readonly IAccessorService _accessor;
 
-        protected ServiceBase(IServiceAccessor accessor)
+        protected ServiceBase(IAccessorService accessor)
         {
             _accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
         }
@@ -27,6 +26,6 @@ namespace Application.Services.AuthServices.Bases
         protected MessageModel Messages => ObterService<MessageModel>();
 
         // 📏 Validação tipada por DTO
-        protected IValidateModel<T> GetValidator<T>() => ObterService<IValidateModel<T>>();
+        protected IValidateModelService<T> GetValidator<T>() => ObterService<IValidateModelService<T>>();
     }
 }

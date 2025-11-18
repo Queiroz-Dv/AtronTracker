@@ -7,16 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\Auditoria.cs" />
     <Compile Remove="Entities\Categoria.cs" />
-    <Compile Remove="Entities\Historico.cs" />
     <Compile Remove="Entities\Produto.cs" />
     <Compile Remove="Entities\ProdutoCategoria.cs" />
     <Compile Remove="Entities\Venda.cs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Framework\Shared\Shared.csproj" />
-  </ItemGroup>
-
+	
 </Project>

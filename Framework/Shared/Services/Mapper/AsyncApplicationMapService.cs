@@ -1,4 +1,4 @@
-﻿using Shared.Interfaces.Mapper;
+﻿using Shared.Application.Interfaces.Service;
 
 namespace Shared.Services.Mapper
 {
@@ -11,9 +11,9 @@ namespace Shared.Services.Mapper
     /// <typeparam name="Entity">O tipo da Entidade de Domínio.</typeparam>
     public abstract class AsyncApplicationMapService<DTO, Entity> : IAsyncApplicationMapService<DTO, Entity>
     {
-        protected readonly IMapperEngine _mapperEngine;
+        protected readonly IMapperEngineService _mapperEngine;
 
-        protected AsyncApplicationMapService(IMapperEngine mapperEngine)
+        protected AsyncApplicationMapService(IMapperEngineService mapperEngine)
         {
             // Garante que a dependência não seja nula quando este construtor for usado.
             _mapperEngine = mapperEngine ?? throw new ArgumentNullException(nameof(mapperEngine));

@@ -2,7 +2,7 @@
 
 namespace AtronStock.Domain.Enums
 {
-    public enum EStatusPessoa
+    public enum EStatus
     {
         [Description("Ativo")]
         Ativo = 1,

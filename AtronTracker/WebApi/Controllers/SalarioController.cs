@@ -5,8 +5,8 @@ using Application.Interfaces.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
-using Shared.Interfaces.Accessor;
 using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace WebApi.Controllers
     public class SalarioController : ApiBaseConfigurationController<Salario, ISalarioService>
     {
         public SalarioController(ISalarioService service,
-             IServiceAccessor serviceAccessor,
+             IAccessorService serviceAccessor,
             MessageModel messageModel)
         : base(service, serviceAccessor, messageModel)
         { }

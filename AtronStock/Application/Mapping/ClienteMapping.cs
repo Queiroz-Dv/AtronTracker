@@ -1,6 +1,6 @@
 ﻿using AtronStock.Application.DTO.Request;
 using AtronStock.Domain.Entities;
-using Shared.Interfaces.Mapper;
+using Shared.Application.Interfaces.Service;
 using Shared.Services.Mapper;
 
 namespace AtronStock.Application.Mapping
@@ -16,8 +16,7 @@ namespace AtronStock.Application.Mapping
                 CPF = entity.CPF,
                 CNPJ = entity.CNPJ,
                 Email = entity.Email,
-                Telefone = entity.Telefone,
-                StatusPessoa = entity.Status,              
+                Telefone = entity.Telefone,                             
                 EnderecoVO = entity.Endereco
             };           
 
@@ -33,8 +32,7 @@ namespace AtronStock.Application.Mapping
                 CPF = dto.CPF,
                 CNPJ = dto.CNPJ,
                 Email = dto.Email,
-                Telefone = dto.Telefone,
-                Status = dto.StatusPessoa,
+                Telefone = dto.Telefone,               
                 Endereco = dto.EnderecoVO
             };
 
@@ -48,7 +46,6 @@ namespace AtronStock.Application.Mapping
             entityToUpdate.CNPJ = dto.CNPJ;
             entityToUpdate.Email = dto.Email;
             entityToUpdate.Telefone = dto.Telefone;
-            entityToUpdate.Status = dto.StatusPessoa;
             entityToUpdate.Endereco = dto.EnderecoVO;
 
             return Task.CompletedTask;

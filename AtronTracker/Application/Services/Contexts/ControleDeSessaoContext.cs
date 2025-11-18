@@ -1,8 +1,7 @@
 ﻿using Application.Interfaces.Contexts;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
-using Shared.Interfaces.Caching;
-using Shared.Interfaces.Services;
+using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.Contexts
 {

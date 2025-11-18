@@ -1,8 +1,8 @@
 ﻿using Application.DTO;
 using Application.DTO.ApiDTO;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Interfaces.Services;
-using Shared.Services;
+using Shared.Application.Interfaces.Service;
+using Shared.Application.Services;
 
 namespace IoC
 {
