@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,7 +40,7 @@ namespace Atron.WebViews.Controllers
                                  IPaginationService<SalarioDTO> paginationService,
                                  IExternalService<UsuarioDTO> usuarioService,
                                  IRouterBuilderService router,
-                                 MessageModel messageModel) :
+                                 Notifiable messageModel) :
             base(messageModel, paginationService)
         {
             _service = service;

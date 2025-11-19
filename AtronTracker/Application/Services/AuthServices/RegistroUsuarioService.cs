@@ -6,12 +6,12 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Models;
 using Shared.Extensions;
 using System;
 using System.Threading.Tasks;
 using Application.Specifications.UsuarioSpecifications;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace Application.Services.AuthServices
 {
@@ -20,12 +20,12 @@ namespace Application.Services.AuthServices
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IPerfilDeAcessoRepository perfilDeAcessoRepository;
         private readonly IPerfilDeAcessoUsuarioRepository _perfilDeAcessoUsuarioRepository;
-        private readonly MessageModel _messageModel;
+        private readonly Notifiable _messageModel;
 
         public RegistroUsuarioService(
             IAccessorService accessor,
             IUsuarioRepository usuarioRepository,
-            MessageModel messageModel,
+            Notifiable messageModel,
             IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
             IPerfilDeAcessoRepository perfilDeAcessoRepository) : base(accessor)
         {

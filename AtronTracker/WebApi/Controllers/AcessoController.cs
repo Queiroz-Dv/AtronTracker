@@ -2,13 +2,12 @@
 using Domain.ApiEntities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Shared.DTO.API;
-using Shared.DTO.API.Request;
-using Shared.Models;
 using Shared.Extensions;
 using System.Threading.Tasks;
 using Application.DTO.ApiDTO;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
+using Shared.Application.DTOS.Auth;
 
 namespace WebApi.Controllers
 {
@@ -20,7 +19,7 @@ namespace WebApi.Controllers
     public class AcessoController : ApiBaseConfigurationController<ApiLogin, ILoginService>
     {
         public AcessoController(
-             MessageModel messageModel,
+             Notifiable messageModel,
              ILoginService loginUserService,
              IAccessorService serviceAccessor)
              : base(loginUserService, serviceAccessor, messageModel)

@@ -1,4 +1,4 @@
-﻿using Shared.DTO.API;
+﻿using Shared.Application.DTOS.Common;
 
 namespace Atron.WebViews.Helpers
 {

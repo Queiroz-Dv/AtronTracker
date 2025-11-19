@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
-using Shared.DTO.API;
 using Shared.Extensions;
 using System.Security.Claims;
 

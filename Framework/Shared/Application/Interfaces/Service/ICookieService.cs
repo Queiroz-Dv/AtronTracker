@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Shared.DTO.API;
+using Shared.Application.DTOS.Auth;
 
 namespace Shared.Application.Interfaces.Service
 {

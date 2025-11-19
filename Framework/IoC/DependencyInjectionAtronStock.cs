@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Application.Interfaces.Service;
-using Shared.Infrastructure.Context;
 
 namespace IoC
 {
@@ -49,20 +48,6 @@ namespace IoC
         public static IServiceCollection AddStockValidador(this IServiceCollection services)
         {
             services.AddScoped<IValidador<ClienteRequest>, ClienteValidador>();
-            return services;
-        }
-    }
-
-    public static class DependencyInjectionAtronShared
-    {
-        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration)
-        {
-            string sqlConnection = configuration.GetConnectionString("AtronConnection");
-
-            services.AddDbContext<SharedDbContext>(options =>
-            options.UseSqlServer(sqlConnection,
-            b => b.MigrationsAssembly(typeof(SharedDbContext).Assembly.FullName)));
-
             return services;
         }
     }

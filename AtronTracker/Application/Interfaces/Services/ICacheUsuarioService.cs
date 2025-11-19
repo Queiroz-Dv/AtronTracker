@@ -1,4 +1,5 @@
-﻿using Shared.DTO.API;
+﻿using Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Users;
 
 namespace Application.Interfaces.Services
 {

@@ -6,11 +6,11 @@ using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shared.Models;
 using System.Linq;
 using Shared.Extensions;
 using System.Threading.Tasks;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace Atron.WebViews.Controllers
 {
@@ -27,7 +27,7 @@ namespace Atron.WebViews.Controllers
             IExternalService<DepartamentoDTO> departamentoExternalService,
             IExternalService<CargoDTO> cargoExternalService,
             IRouterBuilderService router,
-            MessageModel messageModel)
+            Notifiable messageModel)
             : base(messageModel, paginationService)
         {
             _service = service;

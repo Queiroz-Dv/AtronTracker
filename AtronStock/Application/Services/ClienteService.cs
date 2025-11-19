@@ -3,8 +3,8 @@ using AtronStock.Application.Interfaces;
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 
 namespace AtronStock.Application.Services
 {

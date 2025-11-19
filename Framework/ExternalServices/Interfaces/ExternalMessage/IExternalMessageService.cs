@@ -1,4 +1,4 @@
-using Shared.DTO;
+using Shared.Application.DTOS.Responses;
 
 namespace ExternalServices.Interfaces.ExternalMessage
 {

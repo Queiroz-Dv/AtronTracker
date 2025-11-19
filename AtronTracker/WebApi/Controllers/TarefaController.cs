@@ -3,11 +3,11 @@ using Application.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Models;
 using Shared.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace WebApi.Controllers
 {
@@ -16,7 +16,7 @@ namespace WebApi.Controllers
     [Authorize(Policy = "Modulo:TAR")]
     public class TarefaController : ApiBaseConfigurationController<Tarefa, ITarefaService>
     {
-        public TarefaController(ITarefaService service, IAccessorService serviceAccessor, MessageModel messageModel) :
+        public TarefaController(ITarefaService service, IAccessorService serviceAccessor, Notifiable messageModel) :
             base(service, serviceAccessor, messageModel)
         { }
 

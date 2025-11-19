@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Shared.DTO.API;
-using Shared.Enums;
+using Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Users;
+using Shared.Domain.Enums;
 using System.Security.Claims;
 
 namespace Shared.Extensions

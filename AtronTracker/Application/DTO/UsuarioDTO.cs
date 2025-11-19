@@ -1,4 +1,4 @@
-﻿using Shared.DTO.API;
+﻿using Shared.Application.DTOS.Auth;
 using System;
 using System.Collections.Generic;
 

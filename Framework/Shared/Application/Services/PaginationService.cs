@@ -1,5 +1,5 @@
-﻿using Shared.Application.Interfaces.Service;
-using Shared.DTO;
+﻿using Shared.Application.DTOS.Common;
+using Shared.Application.Interfaces.Service;
 
 namespace Shared.Application.Services
 {

@@ -1,7 +1,8 @@
-﻿@{
+﻿@using Shared.Domain.ValueObjects
+@{
     var notificationsTempData = TempData["Notifications"];
-    List<Message> notifications = notificationsTempData is not null
-        ? JsonConvert.DeserializeObject<List<Message>>(notificationsTempData.ToString())
+    List<NotificationMessage> notifications = notificationsTempData is not null
+        ? JsonConvert.DeserializeObject<List<NotificationMessage>>(notificationsTempData.ToString())
         : null;
 }
 

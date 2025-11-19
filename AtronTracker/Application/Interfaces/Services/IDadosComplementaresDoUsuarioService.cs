@@ -1,5 +1,5 @@
 ﻿using Application.DTO;
-using Shared.DTO.API;
+using Shared.Application.DTOS.Users;
 using System.Threading.Tasks;
 
 namespace Application.Interfaces.Services

@@ -6,8 +6,8 @@ using Domain.ApiEntities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
@@ -21,7 +21,7 @@ namespace Atron.WebViews.Controllers
             ILoginExternalService service,
             IPaginationService<LoginDTO> paginationService,
             IRouterBuilderService router,
-            MessageModel messageModel) :
+            Notifiable messageModel) :
             base(messageModel, paginationService)
         {
             _router = router;

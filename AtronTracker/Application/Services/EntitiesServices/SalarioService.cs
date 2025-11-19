@@ -4,8 +4,8 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,13 +19,13 @@ namespace Application.Services.EntitiesServices
         private readonly ISalarioRepository _salarioRepository;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IValidateModelService<Salario> _validateModel;
-        private readonly MessageModel _messageModel;
+        private readonly Notifiable _messageModel;
 
         public SalarioService(IAsyncApplicationMapService<SalarioDTO, Salario> map,
                               ISalarioRepository salarioRepository,
                               IUsuarioRepository usuarioRepository,
                               IValidateModelService<Salario> validateModel,
-                              MessageModel messageModel)
+                              Notifiable messageModel)
 
         {
             _map = map;

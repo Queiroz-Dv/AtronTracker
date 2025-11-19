@@ -1,6 +1,6 @@
 ﻿using Application.DTO;
 using Application.Interfaces.Services;
-using Shared.DTO.API;
+using Shared.Application.DTOS.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;

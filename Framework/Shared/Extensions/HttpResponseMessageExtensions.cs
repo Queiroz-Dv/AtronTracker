@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Shared.DTO;
+using Shared.Application.DTOS.Responses;
 
 namespace Shared.Extensions
 {

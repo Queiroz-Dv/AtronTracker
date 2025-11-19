@@ -1,5 +1,5 @@
 ﻿using Shared.Application.Interfaces.Service;
-using Shared.Models;
+using Shared.Domain.ValueObjects;
 using System;
 
 namespace Application.Services.AuthServices.Bases
@@ -23,7 +23,7 @@ namespace Application.Services.AuthServices.Bases
         }
 
         // 🧭 Mensagens (centralizadas)
-        protected MessageModel Messages => ObterService<MessageModel>();
+        protected Notifiable Messages => ObterService<Notifiable>();
 
         // 📏 Validação tipada por DTO
         protected IValidateModelService<T> GetValidator<T>() => ObterService<IValidateModelService<T>>();

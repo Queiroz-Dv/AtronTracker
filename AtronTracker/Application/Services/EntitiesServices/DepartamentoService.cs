@@ -5,8 +5,8 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,12 +29,12 @@ namespace Application.Services.EntitiesServices
         private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
         private readonly ICargoRepository _cargoRepository;
         private readonly IValidateModelService<Departamento> _validateModel;
-        private readonly MessageModel messageModel;
+        private readonly Notifiable messageModel;
 
         public DepartamentoService(IAsyncApplicationMapService<DepartamentoDTO, Departamento> map,
                                    IDepartamentoRepository departamentoRepository,
                                    IValidateModelService<Departamento> validateModel,
-                                   MessageModel messageModel,
+                                   Notifiable messageModel,
                                    ICargoRepository cargoRepository,
                                    IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         {

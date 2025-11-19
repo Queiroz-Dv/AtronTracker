@@ -2,10 +2,10 @@
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Models;
 using Shared.Extensions;
 using System.Threading.Tasks;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace WebApi.Controllers
 {
@@ -17,7 +17,7 @@ namespace WebApi.Controllers
         public PerfilDeAcessoController(
             IPerfilDeAcessoService service,
             IAccessorService serviceAccessor,
-            MessageModel messageModel) : base(service, serviceAccessor, messageModel)
+            Notifiable messageModel) : base(service, serviceAccessor, messageModel)
         {
         }
 

@@ -1,4 +1,4 @@
-﻿using Shared.DTO.Email;
+﻿using Shared.Application.DTOS.Email;
 
 namespace Shared.Application.Interfaces.Service
 {
