@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Shared.DTO.API;
+using Shared.Application.DTOS.Common;
 using Shared.Extensions;
 
 namespace Atron.WebViews

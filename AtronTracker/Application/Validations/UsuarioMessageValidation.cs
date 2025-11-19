@@ -1,12 +1,12 @@
 ﻿using Domain.Entities;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System;
 
 namespace Application.Validations
 {
-    public class UsuarioMessageValidation : MessageModel, IMessageBaseService, IValidateModelService<Usuario>
+    public class UsuarioMessageValidation : Notifiable, IMessageBaseService, IValidateModelService<Usuario>
     {
         public void Validate(Usuario entity)
         {

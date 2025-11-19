@@ -1,4 +1,4 @@
-﻿using Shared.DTO;
+﻿using Shared.Application.DTOS.Common;
 
 namespace Shared.Application.Interfaces.Service
 {

@@ -5,10 +5,10 @@ using AtronTracker.Infrastructure.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Extensions;
-using Shared.Models.ApplicationModels;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Domain.Entities.Identity;
 
 namespace Infrastructure.Repositories.Identity
 {

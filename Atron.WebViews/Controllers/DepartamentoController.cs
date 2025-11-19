@@ -5,10 +5,10 @@ using Domain.Entities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Models;
 using Shared.Extensions;
 using System.Threading.Tasks;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace Atron.WebViews.Controllers
 {
@@ -21,7 +21,7 @@ namespace Atron.WebViews.Controllers
             IExternalService<DepartamentoDTO> service,
             IPaginationService<DepartamentoDTO> paginationService,
             IRouterBuilderService router,
-            MessageModel messageModel)
+            Notifiable messageModel)
             : base(messageModel, paginationService)
         {
             _paginationService = paginationService;

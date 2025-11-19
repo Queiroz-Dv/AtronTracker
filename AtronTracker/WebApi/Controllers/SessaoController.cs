@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
-using Shared.DTO.API;
+using Shared.Domain.Enums;
 using Shared.Extensions;
 using Shared.Models;
 using System.Linq;

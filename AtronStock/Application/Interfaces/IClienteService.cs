@@ -1,5 +1,5 @@
 ﻿using AtronStock.Application.DTO.Request;
-using Shared.Models;
+using Shared.Domain.ValueObjects;
 
 namespace AtronStock.Application.Interfaces
 {

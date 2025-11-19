@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Shared.Application.Interfaces.Service;
-using Shared.Models.ApplicationModels;
+using Shared.Domain.Entities.Identity;
 
 namespace Shared.Services.Contexts
 {

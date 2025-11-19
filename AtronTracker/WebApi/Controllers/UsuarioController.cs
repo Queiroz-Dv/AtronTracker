@@ -4,7 +4,6 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Shared.Models;
 using Shared.Extensions;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +12,7 @@ using Application.Extensions;
 using Application.DTO.Response;
 using Application.DTO;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace WebApi.Controllers
 {
@@ -24,7 +24,7 @@ namespace WebApi.Controllers
         public UsuarioController(
             IUsuarioService usuarioService,
             IAccessorService serviceAccessor,
-            MessageModel messageModel) :
+            Notifiable messageModel) :
             base(usuarioService, serviceAccessor, messageModel)
         { }
 

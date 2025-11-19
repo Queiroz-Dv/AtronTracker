@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Shared.Enums;
+using Shared.Domain.Enums;
 
 namespace Shared.Extensions
 {

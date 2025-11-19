@@ -6,8 +6,8 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +21,7 @@ namespace WebApi.Controllers
     {
         public SalarioController(ISalarioService service,
              IAccessorService serviceAccessor,
-            MessageModel messageModel)
+            Notifiable messageModel)
         : base(service, serviceAccessor, messageModel)
         { }
 

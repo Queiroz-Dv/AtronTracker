@@ -1,10 +1,10 @@
 ﻿using Domain.Entities;
 using Shared.Application.Interfaces.Service;
-using Shared.Models;
+using Shared.Domain.ValueObjects;
 
 namespace Application.Validations
 {
-    public class TarefaMessageValidation : MessageModel, IMessageBaseService, IValidateModelService<Tarefa>
+    public class TarefaMessageValidation : Notifiable, IMessageBaseService, IValidateModelService<Tarefa>
     {
         public void Validate(Tarefa entity)
         {

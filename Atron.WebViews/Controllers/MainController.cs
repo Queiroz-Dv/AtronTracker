@@ -2,10 +2,10 @@ using Atron.WebViews.Helpers;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
+using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Service;
-using Shared.DTO;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,7 +18,7 @@ namespace Atron.WebViews.Controllers
         protected string ApiControllerName;
         protected string KeyToSearch;
 
-        public MainController(MessageModel messageModel, IPaginationService<DTO> paginationService)
+        public MainController(Notifiable messageModel, IPaginationService<DTO> paginationService)
             : base(messageModel)
         {
             _paginationService = paginationService;

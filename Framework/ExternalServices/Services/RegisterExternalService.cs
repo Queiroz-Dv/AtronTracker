@@ -3,7 +3,7 @@ using Communication.Interfaces;
 using Communication.Interfaces.Services;
 using ExternalServices.Interfaces;
 using Newtonsoft.Json;
-using Shared.Models;
+using Shared.Domain.ValueObjects;
 
 namespace ExternalServices.Services
 {
@@ -13,7 +13,7 @@ namespace ExternalServices.Services
 
         public RegisterExternalService(
             IUrlTransferService urlModuleFactory,
-            MessageModel messageModel,
+            Notifiable messageModel,
             IApiClient apiClient) : base(apiClient)
         {
             _apiClient = apiClient;

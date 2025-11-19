@@ -1,6 +1,6 @@
 ﻿using Domain.Interfaces.ApplicationInterfaces;
 using Microsoft.AspNetCore.Identity;
-using Shared.Models.ApplicationModels;
+using Shared.Domain.Entities.Identity;
 using System;
 
 namespace Infrastructure.Repositories.ApplicationRepositories

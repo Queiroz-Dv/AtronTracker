@@ -1,10 +1,10 @@
 ﻿using Domain.Entities;
 using Shared.Application.Interfaces.Service;
-using Shared.Models;
+using Shared.Domain.ValueObjects;
 
 namespace Application.Validations
 {
-    public class CargoMessageValidation : MessageModel, IMessageBaseService, IValidateModelService<Cargo>
+    public class CargoMessageValidation : Notifiable, IMessageBaseService, IValidateModelService<Cargo>
     {
         public void Validate(Cargo entity)
         {

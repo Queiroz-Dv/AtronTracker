@@ -1,4 +1,5 @@
-﻿using Shared.Models;
+﻿using Shared.Domain.Entities;
+using Shared.Domain.ValueObjects;
 
 namespace Shared.Application.Interfaces.Service
 {

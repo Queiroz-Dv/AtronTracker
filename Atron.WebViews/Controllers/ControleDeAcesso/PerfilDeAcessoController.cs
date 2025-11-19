@@ -7,8 +7,8 @@ using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +22,7 @@ namespace Atron.WebViews.Controllers.ControleDeAcesso
         private readonly IExternalService<ModuloDTO> _moduloService;
 
         public PerfilDeAcessoController(
-                        MessageModel messageModel,
+                        Notifiable messageModel,
                         IExternalService<PerfilDeAcessoDTO> service,
                         IExternalService<ModuloDTO> moduloService,
                         IRouterBuilderService router,

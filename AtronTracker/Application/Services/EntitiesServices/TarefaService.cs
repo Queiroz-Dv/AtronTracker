@@ -2,8 +2,8 @@
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,11 +15,11 @@ namespace Application.Services.EntitiesServices
         private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _map;
         private readonly ITarefaRepository _tarefaRepository;
         private readonly IValidateModelService<Tarefa> _validateModel;
-        private readonly MessageModel _messageModel;
+        private readonly Notifiable _messageModel;
 
         public TarefaService(IAsyncApplicationMapService<TarefaDTO, Tarefa> map,
                              ITarefaRepository tarefaRepository,
-                             MessageModel messageModel,
+                             Notifiable messageModel,
                              IValidateModelService<Tarefa> validateModel)
         {
             _map = map;

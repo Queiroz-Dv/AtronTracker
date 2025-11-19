@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System.Collections.Generic;
 
 namespace WebApi.Controllers
@@ -12,9 +12,9 @@ namespace WebApi.Controllers
     {
         private readonly IAccessorService serviceAccessor; // Acessor de serviços para obter serviços adicionais
         protected readonly Service _service; // Serviço da entidade
-        protected readonly MessageModel _messageModel; // Modelo de notificações e validações para a entidade
+        protected readonly Notifiable _messageModel; // Modelo de notificações e validações para a entidade
 
-        public ApiBaseConfigurationController(Service service, IAccessorService serviceAccessor, MessageModel messageModel)
+        public ApiBaseConfigurationController(Service service, IAccessorService serviceAccessor, Notifiable messageModel)
         {
             // Injeta as dependências necessárias para os processos automatizados
             _service = service;

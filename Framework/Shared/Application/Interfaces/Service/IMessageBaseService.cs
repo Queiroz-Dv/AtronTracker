@@ -1,9 +1,9 @@
-﻿using Shared.Models;
+﻿using Shared.Domain.ValueObjects;
 
 namespace Shared.Application.Interfaces.Service
 {
     public interface IMessageBaseService
     {
-        public List<Message> Notificacoes { get; }
+        public List<NotificationMessage> Notificacoes { get; }
     }
 }

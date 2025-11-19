@@ -1,5 +1,5 @@
 ﻿using Shared.Application.Interfaces.Service;
-using Shared.Models;
+using Shared.Domain.ValueObjects;
 
 namespace Shared.Application.Services
 {
@@ -20,7 +20,7 @@ namespace Shared.Application.Services
 
     public abstract class MessageService : MensagemRegistro, IMessageService
     {
-        public List<Message> Notificacoes { get; }
+        public List<NotificationMessage> Notificacoes { get; }
 
         public abstract void AdicionarMensagem(string message);
 
@@ -35,7 +35,7 @@ namespace Shared.Application.Services
         /// <param name="nivel">Tipo de notificação</param>
         public void AddNotification(string descricao, string nivel)
         {
-            Notificacoes.Add(new Message() { Descricao = descricao, Nivel = nivel });
+            Notificacoes.Add(new NotificationMessage() { Descricao = descricao, Nivel = nivel });
         }
     }
 }

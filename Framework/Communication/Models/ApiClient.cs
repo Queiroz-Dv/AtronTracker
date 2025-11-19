@@ -2,11 +2,12 @@
 using Communication.Security;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Shared.Models;
 using System.Net.Http.Headers;
 using System.Text;
 using Shared.Extensions;
 using static System.Net.Mime.MediaTypeNames;
+using Shared.Domain.ValueObjects;
+using Shared.Domain.Enums;
 
 namespace Communication.Models
 {
@@ -15,14 +16,14 @@ namespace Communication.Models
     /// </summary>
     public class ApiClient : IApiClient
     {
-        private readonly MessageModel _messageModel;
+        private readonly Notifiable _messageModel;
         private readonly HttpClient _httpClient;
-        public static Level LeveL;
+        public static ENotificationType LeveL;
 
         public string Url { get; set; }
         public string Modulo { get; set; }
 
-        public ApiClient(HttpClient httpClient, MessageModel messageModel)
+        public ApiClient(HttpClient httpClient, Notifiable messageModel)
         {
             _httpClient = httpClient;
             _messageModel = messageModel;
@@ -74,12 +75,12 @@ namespace Communication.Models
 
         private void FillMessageModel(string responseContent)
         {
-            if (responseContent.Contains(Level.Sucesso) ||
-                responseContent.Contains(Level.Mensagem) ||
-                responseContent.Contains(Level.Aviso) ||
-                responseContent.Contains(Level.Error))
+            if (responseContent.Contains(ENotificationType.Sucesso) ||
+                responseContent.Contains(ENotificationType.Mensagem) ||
+                responseContent.Contains(ENotificationType.Aviso) ||
+                responseContent.Contains(ENotificationType.Error))
             {
-                var messages = JsonConvert.DeserializeObject<List<Message>>(responseContent);
+                var messages = JsonConvert.DeserializeObject<List<NotificationMessage>>(responseContent);
                 if (messages != null)
                 {
                     _messageModel.Notificacoes.AddRange(messages);

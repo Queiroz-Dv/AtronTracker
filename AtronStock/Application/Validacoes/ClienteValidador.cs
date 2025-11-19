@@ -1,5 +1,6 @@
 ﻿using AtronStock.Application.DTO.Request;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using Shared.Models;
 using System.Net.Mail;
@@ -8,9 +9,9 @@ namespace AtronStock.Application.Validacoes
 {
     public class ClienteValidador : IValidador<ClienteRequest>
     {
-        public IList<Message> Validar(ClienteRequest entity)
+        public IList<NotificationMessage> Validar(ClienteRequest entity)
         {
-            var context = new NotificationContext();
+            var context = new NotificationBag();
 
             if (entity.Nome.IsNullOrEmpty())
             {

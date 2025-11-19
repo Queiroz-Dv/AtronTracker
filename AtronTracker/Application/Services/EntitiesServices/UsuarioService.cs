@@ -5,12 +5,12 @@ using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
-using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.DTO.ApiDTO;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace Application.Services.EntitiesServices
 {
@@ -26,7 +26,7 @@ namespace Application.Services.EntitiesServices
         private readonly ISalarioRepository _salarioRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
         private readonly IValidateModelService<Usuario> _validateModel;
-        private readonly MessageModel _messageModel;
+        private readonly Notifiable _messageModel;
 
         public UsuarioService(IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> map,
                               IUsuarioRepository repository,
@@ -36,7 +36,7 @@ namespace Application.Services.EntitiesServices
                               ITarefaRepository tarefaRepository,
                               ISalarioRepository salarioRepository,
                               IValidateModelService<Usuario> validateModel,
-                              MessageModel messageModel,
+                              Notifiable messageModel,
                               IUsuarioIdentityRepository usuarioIdentityRepository)
         {
             _map = map;

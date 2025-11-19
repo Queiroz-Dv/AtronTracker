@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.Enums;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 
 namespace Shared.Services.Caching
 {

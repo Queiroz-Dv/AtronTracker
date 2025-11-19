@@ -1,5 +1,4 @@
-﻿using Shared.DTO.API;
-using Shared.DTO.API.Request;
+﻿using Shared.Application.DTOS.Auth;
 using System.Threading.Tasks;
 
 namespace Application.Interfaces.ApplicationInterfaces

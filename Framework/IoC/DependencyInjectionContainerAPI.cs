@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Models.ApplicationModels;
+using Shared.Domain.Entities.Identity;
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
@@ -60,9 +60,7 @@ namespace IoC
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigurePerfilDeAcessoServices(services);
-            ConfigurePerfilDeAcessoUsuarioServices(services);
-
-            services = services.AddContexts();
+            ConfigurePerfilDeAcessoUsuarioServices(services);            
 
             // Registra os serviços essenciais do sistema de proteção de dados (Data Protection) na injeção de dependência.
             services.AddDataProtection()

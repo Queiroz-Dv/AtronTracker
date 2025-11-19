@@ -4,8 +4,8 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +20,7 @@ namespace Application.Services.EntitiesServices
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IModuloRepository _moduloRepository;
         private readonly IValidateModelService<PerfilDeAcesso> _validateModel;
-        private readonly MessageModel _messageModel;
+        private readonly Notifiable _messageModel;
 
         public PerfilDeAcessoService(
             IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
@@ -29,7 +29,7 @@ namespace Application.Services.EntitiesServices
             IPerfilDeAcessoRepository perfilDeAcessoRepository,          
             IModuloRepository moduloRepository,
             IValidateModelService<PerfilDeAcesso> validateModel,
-            MessageModel messageModel)
+            Notifiable messageModel)
         {
             _map = map;
             _usuarioRepository = usuarioRepository;

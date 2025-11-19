@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Shared.Models.ApplicationModels;
+using Shared.Domain.Entities.Identity;
 
 namespace Shared.Application.Interfaces.Service
 {

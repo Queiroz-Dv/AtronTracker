@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
-using Shared.DTO.API;
-using Shared.Enums;
+using Shared.Domain.Enums;
 using Shared.Extensions;
 using System.Text.Json;
 

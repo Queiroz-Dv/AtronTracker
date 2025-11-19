@@ -1,7 +1,7 @@
 ﻿using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Models;
+using Shared.Domain.ValueObjects;
 
 namespace AtronStock.WebApi.Controllers
 {

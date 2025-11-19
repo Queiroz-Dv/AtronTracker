@@ -4,12 +4,10 @@ using Application.Interfaces.Services.Identity;
 using Application.Services.AuthServices.Bases;
 using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
-using Shared.DTO.API;
-using Shared.DTO.API.Request;
-using Shared.Enums;
+using Shared.Domain.Enums;
 using Shared.Extensions;
-using Shared.Models;
 using System;
 using System.Threading.Tasks;
 

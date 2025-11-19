@@ -1,4 +1,4 @@
-﻿using Shared.Models;
+﻿using Shared.Domain.ValueObjects;
 
 namespace Shared.Application.Interfaces.Service
 {
@@ -9,6 +9,6 @@ namespace Shared.Application.Interfaces.Service
 
     public interface IValidador<Entity>
     {
-        IList<Message> Validar(Entity entity);
+        IList<NotificationMessage> Validar(Entity entity);
     }
 }

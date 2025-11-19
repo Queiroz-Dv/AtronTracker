@@ -1,6 +1,8 @@
 ﻿using Application.Interfaces.Services;
+using Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
-using Shared.DTO.API;
+using Shared.Domain.Enums;
 using Shared.Models;
 
 namespace Application.Services.EntitiesServices

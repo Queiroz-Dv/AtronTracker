@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Shared.Models.ApplicationModels;
+using Shared.Domain.Entities.Identity;
 
 namespace AtronTracker.Infrastructure.Context
 {

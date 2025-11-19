@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Shared.Models.ApplicationModels;
+using Shared.Domain.Entities.Identity;
 
 namespace Infrastructure.EntitiesConfiguration.ApplicationConfiguration
 {
