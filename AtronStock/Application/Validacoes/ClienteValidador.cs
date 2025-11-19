@@ -2,7 +2,6 @@
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System.Net.Mail;
 
 namespace AtronStock.Application.Validacoes

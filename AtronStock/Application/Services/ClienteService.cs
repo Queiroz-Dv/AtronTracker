@@ -37,7 +37,7 @@ namespace AtronStock.Application.Services
                     return Resultado.Falha("Ocorreu um erro inesperado ao salvar o cliente.");
                 }
 
-                var context = new NotificationContext();
+                var context = new NotificationBag();
                 context.MensagemRegistroSalvo("Cliente");
                 return Resultado.Sucesso(request, context.Messages.ToList());
             }
@@ -64,7 +64,7 @@ namespace AtronStock.Application.Services
             if (!foiAtualizado)            
                 return Resultado.Falha("Ocorreu um erro inesperado ao atualizar o cliente.");
             
-            var context = new NotificationContext();
+            var context = new NotificationBag();
             context.MensagemRegistroAtualizado("Cliente");
             return Resultado.Sucesso(context.Messages.ToList());
         }
@@ -93,7 +93,7 @@ namespace AtronStock.Application.Services
             
             if (clienteParaRemover == null)
             {
-                var contextNaoEncontrado = new NotificationContext();
+                var contextNaoEncontrado = new NotificationBag();
                 contextNaoEncontrado.MensagemRegistroNaoEncontrado(codigo);
                 return Resultado.Falha(contextNaoEncontrado.Messages.ToList());
             }
@@ -104,7 +104,7 @@ namespace AtronStock.Application.Services
                 return Resultado.Falha("Ocorreu um erro inesperado ao remover o cliente.");
             
           
-            var contextSucesso = new NotificationContext();
+            var contextSucesso = new NotificationBag();
             contextSucesso.MensagemRegistroRemovido(codigo);
             return Resultado.Sucesso(contextSucesso.Messages.ToList());
         }

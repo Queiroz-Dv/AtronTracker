@@ -18,9 +18,9 @@ namespace AtronStock.Domain.Entities
         public string CPF { get; set; } = string.Empty;
 
         [MaxLength(14)]
-        public string CNPJ { get; set; } = string.Empty;        
+        public string CNPJ { get; set; } = string.Empty;
 
-        public int? AuditoriaId { get; set; }        
+        public EStatus Status { get; set; }
 
         public EnderecoVO Endereco { get; set; } = new();
 
@@ -32,6 +32,7 @@ namespace AtronStock.Domain.Entities
 
         public Cliente()
         {
+            Status = EStatus.Ativo;
             Endereco = new EnderecoVO();
         }
     }

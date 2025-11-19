@@ -3,7 +3,7 @@ using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
-using Shared.Models;
+using Shared.Domain.ValueObjects;
 
 namespace Application.Services.EntitiesServices
 {

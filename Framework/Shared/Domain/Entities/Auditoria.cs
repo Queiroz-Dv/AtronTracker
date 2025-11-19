@@ -18,7 +18,12 @@ namespace Shared.Domain.Entities
         [MaxLength(25)]
         public string AlteradoPor { get; set; } = string.Empty;
 
-        public bool? Inativo { get; set; } = false;
+        public string NomeTabela { get; set; }
+
+        public string IdRegistro { get; set; }
+
+        public string ValoresAntigos { get; set; }
+        public string ValoresNovos { get; set; }
 
         public DateTime? RemovidoEm { get; set; }
 
