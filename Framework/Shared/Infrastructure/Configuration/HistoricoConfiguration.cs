@@ -12,12 +12,20 @@ namespace Shared.Infrastructure.Configuration
 
             builder.Property(h => h.Id).ValueGeneratedOnAdd();
 
-            builder.Property(h => h.AuditoriaId)
-                   .IsRequired();
+            // Configura o campo para usar o valor da Sequence por padrão
+            builder.Property(h => h.CodigoHistorico)
+                   .HasDefaultValueSql("NEXT VALUE FOR AtronShared.HistoricoSeq");
+            
+            builder.HasIndex(h => h.CodigoRegistro);
+            builder.Property(h => h.CodigoRegistro).IsRequired().HasMaxLength(50);
 
             builder.Property(h => h.Descricao)
                    .IsRequired()
                    .HasMaxLength(1500);
+
+            // Data de criação padrão
+            builder.Property(h => h.DataCriacao)
+                  .HasDefaultValueSql("GETUTCDATE()");
         }
     }
 }

@@ -1,0 +1,11 @@
+﻿using Shared.Domain.Entities;
+
+namespace Shared.Application.Interfaces.Repositories
+{
+    public interface IAuditoriaRepository
+    {
+        Task<bool> AdicionarAsync(Auditoria auditoria);
+        Task<bool> AtualizarAsync(Auditoria auditoria); // Você mencionou atualizar o cabeçalho
+        Task<Auditoria?> ObterPorCodigoRegistroAsync(string codigoRegistro);
+    }
+}
