@@ -9,14 +9,17 @@ namespace Shared.Infrastructure.Configuration
         public void Configure(EntityTypeBuilder<Auditoria> builder)
         {
             builder.HasKey(a => a.Id);
-
             builder.Property(a => a.Id).ValueGeneratedOnAdd();
+
+            builder.HasIndex(a => a.CodigoRegistro);
+            builder.Property(a => a.CodigoRegistro)
+                   .IsRequired()
+                   .HasMaxLength(50);
 
             builder.Property(a => a.DataCriacao)
                    .IsRequired()
                    .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.Property(a => a.DataAlteracao).IsRequired(false);
 
             builder.Property(a => a.CriadoPor)
                    .IsRequired()
@@ -25,15 +28,11 @@ namespace Shared.Infrastructure.Configuration
             builder.Property(a => a.AlteradoPor)
                      .IsRequired(false)
                      .HasMaxLength(25);
-            
-            builder.Property(a => a.Inativo)
-                     .IsRequired(false)
-                     .HasDefaultValue(false);
 
-            builder.HasMany(a => a.Historicos)
-                   .WithOne(h => h.Auditoria)
-                   .HasForeignKey(h => h.AuditoriaId)
-                   .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(a => a.DataAlteracao).IsRequired(false);
+
+            builder.Property(a => a.RemovidoEm)
+                     .IsRequired(false);
         }
     }
 }

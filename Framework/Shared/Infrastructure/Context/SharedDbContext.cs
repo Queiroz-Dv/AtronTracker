@@ -12,6 +12,11 @@ namespace Shared.Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.HasDefaultSchema("AtronShared");
+
+            modelBuilder.HasSequence<long>("HistoricoSeq", schema: "AtronShared")
+                .StartsAt(1)
+                .IncrementsBy(1);
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(SharedDbContext).Assembly);
         }
     }

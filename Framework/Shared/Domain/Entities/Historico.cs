@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Shared.Domain.Entities
 {
@@ -8,11 +7,13 @@ namespace Shared.Domain.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public int AuditoriaId { get; set; }
+        public long CodigoHistorico { get; set; }
 
-        [ForeignKey(nameof(AuditoriaId))]
-        public Auditoria Auditoria { get; set; } = new Auditoria();
+        [Required, MaxLength(50)]
+        public string CodigoRegistro { get; set; }
+
+        [Required]
+        public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
 
         [Required, MaxLength(1500)]
         public string Descricao { get; set; } = string.Empty;

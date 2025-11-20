@@ -18,16 +18,9 @@ namespace Shared.Domain.Entities
         [MaxLength(25)]
         public string AlteradoPor { get; set; } = string.Empty;
 
-        public string NomeTabela { get; set; }
+        [Required, MaxLength(50)]
+        public string CodigoRegistro { get; set; }        
 
-        public string IdRegistro { get; set; }
-
-        public string ValoresAntigos { get; set; }
-        public string ValoresNovos { get; set; }
-
-        public DateTime? RemovidoEm { get; set; }
-
-        // Relacionamento 1:N com histórico
-        public List<Historico> Historicos { get; set; } = new();
+        public DateTime? RemovidoEm { get; set; }       
     }
 }

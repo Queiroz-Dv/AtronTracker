@@ -9,9 +9,11 @@ using Infrastructure.Repositories.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Application.Interfaces.Repositories;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services;
 using Shared.Infrastructure.Context;
+using Shared.Repositories;
 using Shared.Services.Accessor;
 using Shared.Services.Caching;
 using Shared.Services.Contexts;
@@ -48,6 +50,9 @@ namespace IoC
             services.AddScoped<IUserIdentityService, UserIdentityService>();
             services.AddScoped<IUsuarioIdentityRepository, UserIdentityRepository>();
 
+
+            services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
+            services.AddScoped<IHistoricoRepository, HistoricoRepository>();
             return services;
         }
     }
