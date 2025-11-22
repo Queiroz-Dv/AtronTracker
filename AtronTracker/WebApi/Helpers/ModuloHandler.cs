@@ -5,8 +5,8 @@ using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Models;
 using System.Linq;
 using System.Threading.Tasks;
 

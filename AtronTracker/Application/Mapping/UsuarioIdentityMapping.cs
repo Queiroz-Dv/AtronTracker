@@ -2,7 +2,7 @@
 using Domain.Entities;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
-using Shared.Services.Mapper;
+using Shared.Application.Services.Mapper;
 using System;
 using System.Threading.Tasks;
 

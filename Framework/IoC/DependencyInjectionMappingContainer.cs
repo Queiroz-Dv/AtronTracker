@@ -3,7 +3,7 @@ using Application.Mapping;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Application.Interfaces.Service;
-using Shared.Services.Mapper;
+using Shared.Application.Services.Mapper;
 
 namespace IoC
 {

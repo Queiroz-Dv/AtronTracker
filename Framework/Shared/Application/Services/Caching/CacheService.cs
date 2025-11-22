@@ -4,7 +4,7 @@ using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 
-namespace Shared.Services.Caching
+namespace Shared.Application.Services.Caching
 {
     public class CacheService(IMemoryCache memoryCache) : ICacheService
     {

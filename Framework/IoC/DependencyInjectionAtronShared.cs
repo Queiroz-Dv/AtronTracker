@@ -12,12 +12,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Application.Interfaces.Repositories;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services;
+using Shared.Application.Services.Accessor;
+using Shared.Application.Services.Caching;
+using Shared.Application.Services.Contexts;
+using Shared.Application.Services.Factory;
 using Shared.Infrastructure.Context;
 using Shared.Repositories;
-using Shared.Services.Accessor;
-using Shared.Services.Caching;
-using Shared.Services.Contexts;
-using Shared.Services.Factory;
 
 namespace IoC
 {
@@ -50,6 +50,10 @@ namespace IoC
             services.AddScoped<IUserIdentityService, UserIdentityService>();
             services.AddScoped<IUsuarioIdentityRepository, UserIdentityRepository>();
 
+            services.AddScoped<IUserAccessor, UserAccessor>();
+
+            services.AddScoped<IAuditoriaService, AuditoriaService>();
+            services.AddScoped<IHistoricoService, HistoricoService>();
 
             services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
             services.AddScoped<IHistoricoRepository, HistoricoRepository>();

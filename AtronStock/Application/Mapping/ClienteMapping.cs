@@ -1,7 +1,7 @@
 ﻿using AtronStock.Application.DTO.Request;
 using AtronStock.Domain.Entities;
 using Shared.Application.Interfaces.Service;
-using Shared.Services.Mapper;
+using Shared.Application.Services.Mapper;
 
 namespace AtronStock.Application.Mapping
 {

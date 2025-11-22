@@ -2,7 +2,7 @@
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Entities.Identity;
 
-namespace Shared.Services.Contexts
+namespace Shared.Application.Services.Contexts
 {
     /// <summary>
     /// Facade concreto para gerenciar autenticação e usuários.

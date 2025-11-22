@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using Application.DTO;
-using Shared.Services.Mapper;
 using System.Threading.Tasks;
+using Shared.Application.Services.Mapper;
 
 namespace Application.Mapping
 {

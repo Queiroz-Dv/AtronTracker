@@ -5,7 +5,7 @@ using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
 using System.Security.Claims;
 
-namespace Shared.Services.Factory
+namespace Shared.Application.Services.Factory
 {
     public class TokenFactory : TokenBuilder, ITokenFactoryService
     {

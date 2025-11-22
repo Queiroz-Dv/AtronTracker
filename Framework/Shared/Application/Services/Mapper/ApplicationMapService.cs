@@ -1,6 +1,6 @@
 ﻿using Shared.Application.Interfaces.Service;
 
-namespace Shared.Services.Mapper
+namespace Shared.Application.Services.Mapper
 {
     public abstract class ApplicationMapService<DTO, Entity> : IApplicationMapService<DTO, Entity>
     {
