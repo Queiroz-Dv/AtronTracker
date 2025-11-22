@@ -1,6 +1,6 @@
 ﻿using Shared.Application.Interfaces.Service;
 
-namespace Shared.Services.Mapper
+namespace Shared.Application.Services.Mapper
 {
     /// <summary>
     /// Fornece uma implementação base para a interface <see cref="IAsyncApplicationMapService{DTO, Entity}"/>.

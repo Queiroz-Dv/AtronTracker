@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Shared.Services.Factory
+namespace Shared.Application.Services.Factory
 {
     public class TokenBuilder
     {

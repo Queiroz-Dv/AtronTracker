@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Shared.Services.Factory
+namespace Shared.Application.Services.Factory
 {
     public class CookieBuilder
     {

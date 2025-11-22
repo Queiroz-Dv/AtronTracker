@@ -6,7 +6,7 @@ using Shared.Domain.Enums;
 using Shared.Extensions;
 using System.Text.Json;
 
-namespace Shared.Services.Factory
+namespace Shared.Application.Services.Factory
 {
     public class CookieFactory : CookieBuilder, ICookieFactoryService
     {

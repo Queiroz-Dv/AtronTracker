@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronStock.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronStock.WebApi", "AtronStock\WebApi\AtronStock.WebApi.csproj", "{6134D0C2-0C6F-4E59-9281-25A054128137}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AtronAudit", "AtronAudit", "{867CC91A-D7FB-4FFA-8AE3-5167EF1191B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronAuditoria", "AtronAudit\AtronAuditoria\AtronAuditoria.csproj", "{065B7F8A-CEE1-4A52-B59C-3EBB1C76DC3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +97,10 @@ Global
 		{6134D0C2-0C6F-4E59-9281-25A054128137}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6134D0C2-0C6F-4E59-9281-25A054128137}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6134D0C2-0C6F-4E59-9281-25A054128137}.Release|Any CPU.Build.0 = Release|Any CPU
+		{065B7F8A-CEE1-4A52-B59C-3EBB1C76DC3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{065B7F8A-CEE1-4A52-B59C-3EBB1C76DC3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{065B7F8A-CEE1-4A52-B59C-3EBB1C76DC3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{065B7F8A-CEE1-4A52-B59C-3EBB1C76DC3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,6 +118,7 @@ Global
 		{BF2B30CE-4E81-46B6-BF65-838AA815CFFB} = {1E05F7A5-1B5E-4B76-8C9C-F92EA222993A}
 		{B807996B-74EC-4CC5-A004-5B43527CDB5F} = {1E05F7A5-1B5E-4B76-8C9C-F92EA222993A}
 		{6134D0C2-0C6F-4E59-9281-25A054128137} = {1E05F7A5-1B5E-4B76-8C9C-F92EA222993A}
+		{065B7F8A-CEE1-4A52-B59C-3EBB1C76DC3B} = {867CC91A-D7FB-4FFA-8AE3-5167EF1191B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76F4151D-172C-4239-BF99-E9C71E81BD38}

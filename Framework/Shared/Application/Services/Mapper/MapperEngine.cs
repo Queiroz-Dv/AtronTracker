@@ -1,6 +1,6 @@
 ﻿using Shared.Application.Interfaces.Service;
 
-namespace Shared.Services.Mapper
+namespace Shared.Application.Services.Mapper
 {
     /// <summary>
     /// Implementação padrão do motor de mapeamento. Esta classe deve ser registrada

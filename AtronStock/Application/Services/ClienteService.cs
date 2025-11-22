@@ -10,18 +10,24 @@ namespace AtronStock.Application.Services
 {
     public class ClienteService : IClienteService
     {
-        private readonly IClienteRepository _repository;
         private readonly IValidador<ClienteRequest> _validador;
-        private readonly IAsyncMap<ClienteRequest, Cliente> _mapService;        
+        private readonly IAsyncMap<ClienteRequest, Cliente> _mapService;
+        private readonly IClienteRepository _repository;
+        private readonly IAuditoriaService _auditoriaService;
+        private readonly IHistoricoService _historicoService;
 
         public ClienteService(
             IClienteRepository repository,
             IValidador<ClienteRequest> validador,
-            IAsyncMap<ClienteRequest, Cliente> mapService)
+            IAsyncMap<ClienteRequest, Cliente> mapService,
+            IAuditoriaService auditoriaService,
+            IHistoricoService historicoService)
         {
             _repository = repository;
             _validador = validador;
             _mapService = mapService;
+            _auditoriaService = auditoriaService;
+            _historicoService = historicoService;
         }
 
         public async Task<Resultado> CriarAsync(ClienteRequest request)
@@ -30,12 +36,14 @@ namespace AtronStock.Application.Services
             if (messages.TemErros() is not true)
             {
                 var cliente = await _mapService.MapToEntityAsync(request);
-                var foiSalvo = await _repository.CriarClienteAsync(cliente);                
+                var foiSalvo = await _repository.CriarClienteAsync(cliente);
 
                 if (foiSalvo is not true)
                 {
                     return Resultado.Falha("Ocorreu um erro inesperado ao salvar o cliente.");
                 }
+
+                await CriarAuditoria(cliente);
 
                 var context = new NotificationBag();
                 context.MensagemRegistroSalvo("Cliente");
@@ -43,6 +51,15 @@ namespace AtronStock.Application.Services
             }
 
             return Resultado.Falha(messages);
+        }
+
+        private async Task CriarAuditoria(Cliente cliente)
+        {
+            await _auditoriaService.RegistrarCriacaoAsync(cliente.Codigo);
+
+            var historicoDescricao = $"Cliente gravado com o código {cliente.Codigo} e nome {cliente.Nome} na data {DateTime.Now}";
+
+            await _historicoService.RegistrarEventoAsync(cliente.Codigo, historicoDescricao);
         }
 
         public async Task<Resultado> AtualizarClienteServiceAsync(ClienteRequest request)
@@ -75,7 +92,8 @@ namespace AtronStock.Application.Services
             if (cliente == null)            
                 return (Resultado<ClienteRequest>)Resultado.Falha("Cliente não existe.");
             
-            var clienteRequest = await _mapService.MapToDTOAsync(cliente);
+            var clienteRequest = await _mapService.MapToDTOAsync(cliente);                   
+             
             return Resultado.Sucesso(clienteRequest);
         }
 

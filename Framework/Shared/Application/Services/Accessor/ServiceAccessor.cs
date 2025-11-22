@@ -1,6 +1,6 @@
 ﻿using Shared.Application.Interfaces.Service;
 
-namespace Shared.Services.Accessor
+namespace Shared.Application.Services.Accessor
 {
     public class ServiceAccessor : IAccessorService
     {
