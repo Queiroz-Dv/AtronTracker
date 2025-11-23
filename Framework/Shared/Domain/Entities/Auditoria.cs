@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Shared.Domain.Entities
 {
@@ -21,6 +22,9 @@ namespace Shared.Domain.Entities
         [Required, MaxLength(50)]
         public string CodigoRegistro { get; set; }        
 
-        public DateTime? RemovidoEm { get; set; }       
+        public DateTime? RemovidoEm { get; set; }
+
+        [NotMapped]
+        public List<Historico> Historicos { get; set; } = [];
     }
 }
