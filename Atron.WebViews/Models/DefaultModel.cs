@@ -1,4 +1,4 @@
-﻿using Shared.DTO;
+﻿using Shared.Application.DTOS.Common;
 using System.Collections.Generic;
 
 namespace Atron.WebViews.Models

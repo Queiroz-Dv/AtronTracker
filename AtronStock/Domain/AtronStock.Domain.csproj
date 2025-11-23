@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Entities\Categoria.cs" />
+    <Compile Remove="Entities\Produto.cs" />
+    <Compile Remove="Entities\ProdutoCategoria.cs" />
+    <Compile Remove="Entities\Venda.cs" />
+  </ItemGroup>
+	
+</Project>

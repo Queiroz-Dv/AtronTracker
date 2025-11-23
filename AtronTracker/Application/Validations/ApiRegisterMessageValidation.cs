@@ -1,0 +1,61 @@
+﻿using Domain.ApiEntities;
+using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
+using Shared.Extensions;
+using System.Text.RegularExpressions;
+
+namespace Application.Validations
+{
+    public class ApiRegisterMessageValidation : Notifiable, IMessageBaseService, IValidateModelService<UsuarioRegistro>
+    {
+        public void Validate(UsuarioRegistro entity)
+        {
+            var senha = entity.Senha;
+
+            if (entity.CodigoDeAcesso.IsNullOrEmpty())
+            {
+                AdicionarErro("Nome de usuário vazio ou não informado.");
+            }
+
+            if (entity.Senha.IsNullOrEmpty())
+            {
+                AdicionarErro("Senha vazia ou não informada.");
+            }
+
+            if (entity.Senha.Length < 9)
+            {
+                AdicionarErro("A senha deve conter mais de 8 caracteres");
+            }
+
+            if (!(Regex.IsMatch(senha, "a-z") && Regex.IsMatch(senha, "A-Z") && Regex.IsMatch(senha, "[0-9]")))
+            {
+                AdicionarErro("A senha deve conter letras maiúsculas, minúsculas e pelo menos um número.");
+            }
+
+            if (!Regex.IsMatch(senha, @"[!@#$%^&*(),.?""{}|<>]"))
+            {
+                AdicionarErro("A senha deve conter pelo menos um caractere especial.");
+            }
+
+            if (entity.Email.IsNullOrEmpty())
+            {
+                AdicionarErro("Endereço de e-mail vazio ou não informado.");
+            }
+
+            if (!entity.Senha.Equals(entity.ConfirmarSenha))
+            {
+                AdicionarErro("As senhas não são iguais");
+            }
+
+            if (entity.CodigoDeAcesso.Length > 50)
+            {
+                AdicionarErro("Quantidade de caracteres para o nome de usuário excedido. Tamanho máximo de 50 caracteres.");
+            }
+
+            if (entity.Email.Length > 25)
+            {
+                AdicionarErro("Quantidade de caracteres para o email de usuário excedido. Tamanho máximo de 25 caracteres.");
+            }
+        }
+    }
+}

@@ -1,13 +1,13 @@
-using Atron.Infra.IoC;
 using Atron.WebViews.Helpers;
 using Communication.Security;
+using IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Shared.DTO.API;
+using Shared.Application.DTOS.Common;
 using Shared.Extensions;
 
 namespace Atron.WebViews
@@ -37,7 +37,7 @@ namespace Atron.WebViews
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseHttpLogging();
+                //app.UseHttpLogging();
             }
             else
             {
@@ -80,14 +80,14 @@ namespace Atron.WebViews
                 // Chama o próximo middleware na pipeline
                 await next();
             });
-            
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-          
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

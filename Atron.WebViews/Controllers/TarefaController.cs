@@ -1,17 +1,17 @@
-﻿using Atron.Application.DTO;
-using Atron.Domain.Entities;
+﻿using Application.DTO;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
+using Domain.Entities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shared.Extensions;
-using Shared.Interfaces;
-using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Shared.Extensions;
 using System.Threading.Tasks;
+using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace Atron.WebViews.Controllers
 {
@@ -38,7 +38,7 @@ namespace Atron.WebViews.Controllers
                         IExternalService<CargoDTO> cargoService,
                         IExternalService<DepartamentoDTO> departamentoService,
                         IRouterBuilderService router,
-                        MessageModel messageModel)
+                        Notifiable messageModel)
             : base(messageModel, paginationService)
         {
             _service = service;
@@ -132,7 +132,7 @@ namespace Atron.WebViews.Controllers
             ConfigureDataTitleForView("Cadastro de tarefas");
 
             if (ModelState.IsValid)
-            {                
+            {
                 BuildRoute();
 
                 await _service.Criar(tarefaDTO);

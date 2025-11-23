@@ -1,4 +1,4 @@
-﻿using Atron.Application.DTO.ApiDTO;
+﻿using Application.DTO.ApiDTO;
 
 namespace ExternalServices.Interfaces
 {

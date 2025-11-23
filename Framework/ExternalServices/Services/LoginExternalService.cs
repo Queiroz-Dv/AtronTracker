@@ -1,4 +1,4 @@
-﻿using Atron.Application.DTO.ApiDTO;
+﻿using Application.DTO.ApiDTO;
 using Communication.Interfaces;
 using ExternalServices.Interfaces;
 using Newtonsoft.Json;

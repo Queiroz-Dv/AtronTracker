@@ -1,14 +1,14 @@
-﻿using Atron.Application.DTO;
-using Atron.Domain.Entities;
+﻿using Application.DTO;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
+using Domain.Entities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
-using Shared.Interfaces;
-using Shared.Models;
 using System.Threading.Tasks;
+using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace Atron.WebViews.Controllers
 {
@@ -21,13 +21,13 @@ namespace Atron.WebViews.Controllers
             IExternalService<DepartamentoDTO> service,
             IPaginationService<DepartamentoDTO> paginationService,
             IRouterBuilderService router,
-            MessageModel messageModel)
+            Notifiable messageModel)
             : base(messageModel, paginationService)
         {
             _paginationService = paginationService;
             _service = service;
             _router = router;
-            ApiControllerName = nameof(Departamento);           
+            ApiControllerName = nameof(Departamento);
         }
 
         [HttpGet]

@@ -1,11 +1,11 @@
-﻿using Atron.Application.DTO.ApiDTO;
-using Atron.Domain.ApiEntities;
+﻿using Application.DTO.ApiDTO;
 using Communication.Interfaces.Services;
+using Domain.ApiEntities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Interfaces;
-using Shared.Models;
 using System.Threading.Tasks;
 
 namespace Atron.WebViews.Controllers
@@ -18,7 +18,7 @@ namespace Atron.WebViews.Controllers
             IRegisterExternalService service,
             IPaginationService<RegisterDTO> paginationService,
             IRouterBuilderService router,
-            MessageModel messageModel)
+            Notifiable messageModel)
             : base(messageModel, paginationService)
         {
             _router = router;

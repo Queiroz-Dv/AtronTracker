@@ -11,7 +11,7 @@ namespace Communication.Services
         {
             _apiClient = apiClient;
         }
-        
+
         public void TransferRouteToApiClient(string url)
         {
             _apiClient.Url = url;

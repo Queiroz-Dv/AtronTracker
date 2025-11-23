@@ -46,7 +46,7 @@ namespace ExternalServices.Services
         public async Task<List<DTO>> ObterTodos()
         {
             var entities = await _apiClient.GetAsync();
-            return JsonConvert.DeserializeObject<List<DTO>>(entities);            
+            return JsonConvert.DeserializeObject<List<DTO>>(entities);
         }
 
         public async Task<List<T>> ObterTodos<T>()

@@ -1,14 +1,14 @@
-﻿using Atron.Application.DTO;
-using Atron.Domain.Entities;
+﻿using Application.DTO;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
+using Domain.Entities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Interfaces;
-using Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,7 +40,7 @@ namespace Atron.WebViews.Controllers
                                  IPaginationService<SalarioDTO> paginationService,
                                  IExternalService<UsuarioDTO> usuarioService,
                                  IRouterBuilderService router,
-                                 MessageModel messageModel) :
+                                 Notifiable messageModel) :
             base(messageModel, paginationService)
         {
             _service = service;
@@ -76,7 +76,7 @@ namespace Atron.WebViews.Controllers
                          mes => mes.Id,
                          (salario, mes) =>
                          {
-                           //  salario.MesDescricao = mes.Descricao;
+                             //  salario.MesDescricao = mes.Descricao;
                              return salario;
                          }
             ).ToList();

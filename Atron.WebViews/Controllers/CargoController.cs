@@ -1,18 +1,16 @@
-﻿using Atron.Application.DTO;
-using Atron.Domain.Entities;
+﻿using Application.DTO;
 using Atron.WebViews.Models;
 using Communication.Interfaces.Services;
+using Domain.Entities;
 using ExternalServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shared.DTO;
-using Shared.Extensions;
-using Shared.Interfaces;
-using Shared.Models;
-using System;
 using System.Linq;
+using Shared.Extensions;
 using System.Threading.Tasks;
+using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 
 namespace Atron.WebViews.Controllers
 {
@@ -27,7 +25,7 @@ namespace Atron.WebViews.Controllers
             IPaginationService<CargoDTO> paginationService,
             IExternalService<DepartamentoDTO> departamentoService,
             IRouterBuilderService router,
-            MessageModel messageModel)
+            Notifiable messageModel)
             : base(messageModel, paginationService)
         {
             _departamentoService = departamentoService;
@@ -44,7 +42,7 @@ namespace Atron.WebViews.Controllers
             var cargos = await _service.ObterTodos();
 
             ConfigurePaginationForView(cargos, nameof(MenuPrincipal), itemPage, filter);
-            return View(GetModel<CargoModel>());            
+            return View(GetModel<CargoModel>());
         }
 
         [HttpGet]
@@ -64,7 +62,7 @@ namespace Atron.WebViews.Controllers
 
             if (!departamentos.Any())
             {
-                _messageModel.AddError("Para criar um cargo é necessário ter um departamento.");
+                _messageModel.AdicionarErro("Para criar um cargo é necessário ter um departamento.");
                 CreateTempDataMessages();
                 return;
             }
@@ -105,7 +103,7 @@ namespace Atron.WebViews.Controllers
             ConfigureDataTitleForView("Atualizar informação de cargo");
             if (codigo is null)
             {
-                _messageModel.AddError("O código informado não foi encontrado");
+                _messageModel.AdicionarErro("O código informado não foi encontrado");
                 CreateTempDataMessages();
                 return View(nameof(MenuPrincipal));
             }
@@ -130,7 +128,7 @@ namespace Atron.WebViews.Controllers
                 return RedirectToAction(nameof(MenuPrincipal));
             }
 
-            _messageModel.AddError("Registro inválido tente novamente");
+            _messageModel.AdicionarErro("Registro inválido tente novamente");
             CreateTempDataMessages();
             return RedirectToAction(nameof(MenuPrincipal));
         }
