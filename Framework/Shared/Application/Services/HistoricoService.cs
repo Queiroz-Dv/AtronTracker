@@ -27,7 +27,7 @@ namespace Shared.Application.Services
             return Resultado.Sucesso<IList<Historico>>(historicos.ToList());
         }
 
-        public async Task<Resultado> RegistrarEventoAsync(string codigoRegistro, string descricao)
+        public async Task<Resultado> RegistrarHistoricoAsync(string codigoRegistro, string descricao)
         {
             try
             {
@@ -45,6 +45,17 @@ namespace Shared.Application.Services
             {
                 return Resultado.Falha($"Erro ao registrar histórico: {ex.Message}");
             }
+        }
+
+        public async Task<Resultado> RegistrarHistoricoAsync(Historico historico)
+        {
+            if (historico == null)
+            {
+                return Resultado.Falha("Histórico enviado nnão pode ser nulo");
+            }
+
+            await _repository.AdicionarAsync(historico);
+            return Resultado.Sucesso();
         }
     }
 }

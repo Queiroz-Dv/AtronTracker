@@ -40,11 +40,9 @@ namespace AtronStock.Infrastructure.Repositories
         public async Task<bool> RemoverClienteAsync(Cliente cliente)
         {
             try
-            {                
-                _context.Clientes.Remove(cliente);
-
-                var linhasAfetadas = await _context.SaveChangesAsync();
-                return linhasAfetadas > 0;
+            {
+                var atualizado = await _context.SaveChangesAsync();
+                return atualizado > 0;
             }
             catch (Exception ex)
             {                

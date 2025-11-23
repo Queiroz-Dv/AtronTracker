@@ -41,7 +41,22 @@ namespace AtronStock.WebApi.Controllers
          
             return Ok(resultado.Dado);
         }
-        
+
+        [HttpGet]
+        [Route("inativos")]
+        public async Task<ActionResult<ClienteRequest>> ClientesInativos()
+        {
+            var resultado = await _service.ObterTodosClientesInativoServiceAsync();
+
+            if (resultado.TeveFalha)
+            {
+                return BadRequest(resultado.ObterNotificacoes());
+            }
+
+            return Ok(resultado.Dado);
+        }
+
+
         [HttpGet("{codigo}")]
         public async Task<ActionResult<ClienteRequest>> Get(string codigo)
         {
@@ -100,6 +115,6 @@ namespace AtronStock.WebApi.Controllers
             }
            
             return Ok(resultado.Response);
-        }
+        }        
     }
 }
