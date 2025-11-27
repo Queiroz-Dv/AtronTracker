@@ -10,5 +10,4 @@ namespace AtronStock.Domain.ValueObjects
         [MaxLength(2)] public string UF { get; set; } = string.Empty;
         [MaxLength(9)] public string CEP { get; set; } = string.Empty;
     }
-
 }

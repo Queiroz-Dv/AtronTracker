@@ -16,5 +16,7 @@ namespace AtronStock.Application.Interfaces
         Task<Resultado<ClienteRequest>> ObterClientePorCodigoServiceAsync(string codigo);
 
         Task<Resultado<ICollection<ClienteRequest>>> ObterTodosClientesInativoServiceAsync();
+
+        Task<Resultado> AtivarInativarClienteServiceAsync(string codigo, bool ativar);
     }
 }

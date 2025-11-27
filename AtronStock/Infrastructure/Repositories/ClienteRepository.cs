@@ -1,4 +1,5 @@
 ﻿using AtronStock.Domain.Entities;
+using AtronStock.Domain.Enums;
 using AtronStock.Domain.Interfaces;
 using AtronStock.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -36,18 +37,10 @@ namespace AtronStock.Infrastructure.Repositories
         {
             return await _context.Clientes.ToListAsync();
         }
-        
-        public async Task<bool> RemoverClienteAsync(Cliente cliente)
+
+        public async Task<ICollection<Cliente>> ObterTodoClientesInativosAsync()
         {
-            try
-            {
-                var atualizado = await _context.SaveChangesAsync();
-                return atualizado > 0;
-            }
-            catch (Exception ex)
-            {                
-                return false;
-            }
-        }
+            return await _context.Clientes.Where(c => c.Status == EStatus.Inativo).ToListAsync();
+        }        
     }
 }

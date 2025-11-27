@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Shared\Shared.csproj" />
     <ProjectReference Include="..\Domain\AtronStock.Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure\AtronStock.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

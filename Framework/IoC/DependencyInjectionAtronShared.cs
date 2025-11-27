@@ -17,6 +17,7 @@ using Shared.Application.Services.Caching;
 using Shared.Application.Services.Contexts;
 using Shared.Application.Services.Factory;
 using Shared.Infrastructure.Context;
+using Shared.Infrastructure.Repositories;
 using Shared.Repositories;
 
 namespace IoC
@@ -30,6 +31,8 @@ namespace IoC
             services.AddDbContext<SharedDbContext>(options =>
             options.UseSqlServer(sqlConnection,
             b => b.MigrationsAssembly(typeof(SharedDbContext).Assembly.FullName)));
+
+            services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 
             services.AddScoped<IAccessorService, ServiceAccessor>();
             services.AddScoped<ILoginContext, LoginContext>();
