@@ -17,10 +17,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Infrastructure\Repositories\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\..\AtronTracker\Domain\Domain.csproj" />
 	</ItemGroup>	
 </Project>

@@ -2,6 +2,8 @@
 using AtronStock.Domain.Entities;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services.Mapper;
+using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 
 namespace AtronStock.Application.Mapping
 {
@@ -13,8 +15,7 @@ namespace AtronStock.Application.Mapping
             {
                 Codigo = entity.Codigo,
                 Nome = entity.Nome,
-                CPF = entity.CPF,
-                CNPJ = entity.CNPJ,
+                Documento = new Documento(entity.CPF.IsNullOrEmpty() ? entity.CNPJ : entity.CPF),                
                 Email = entity.Email,
                 Telefone = entity.Telefone,                             
                 StatusPessoa = entity.Status,
@@ -30,8 +31,8 @@ namespace AtronStock.Application.Mapping
             {
                 Codigo = dto.Codigo,
                 Nome = dto.Nome,
-                CPF = dto.CPF,
-                CNPJ = dto.CNPJ,
+                CPF = dto.Documento.Dado,
+                CNPJ = dto.Documento.Dado,
                 Email = dto.Email,
                 Telefone = dto.Telefone,            
                 Status = dto.StatusPessoa,
@@ -44,8 +45,8 @@ namespace AtronStock.Application.Mapping
         public Task MapToEntityAsync(ClienteRequest dto, Cliente entityToUpdate)
         {
             entityToUpdate.Nome = dto.Nome;
-            entityToUpdate.CPF = dto.CPF;
-            entityToUpdate.CNPJ = dto.CNPJ;
+            entityToUpdate.CPF = dto.Documento.Dado;
+            entityToUpdate.CNPJ = dto.Documento.Dado;
             entityToUpdate.Email = dto.Email;
             entityToUpdate.Telefone = dto.Telefone;
             entityToUpdate.Status = dto.StatusPessoa;

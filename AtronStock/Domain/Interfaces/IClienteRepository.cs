@@ -8,10 +8,10 @@ namespace AtronStock.Domain.Interfaces
 
         Task<ICollection<Cliente>> ObterTodoClientesAsync();
 
+        Task<ICollection<Cliente>> ObterTodoClientesInativosAsync();
+
         Task<Cliente> ObterClientePorCodigoAsync(string codigo);
 
-        Task<bool> AtualizarClienteAsync(Cliente cliente);
-
-        Task<bool> RemoverClienteAsync(Cliente cliente);
+        Task<bool> AtualizarClienteAsync(Cliente cliente);        
     }
 }
