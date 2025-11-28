@@ -11,7 +11,8 @@ namespace Shared.Infrastructure.Configuration
             builder.HasKey(a => a.Id);
             builder.Property(a => a.Id).ValueGeneratedOnAdd();
 
-            builder.HasIndex(a => a.CodigoRegistro);
+            builder.HasIndex(a => new { a.Contexto, a.CodigoRegistro }); 
+
             builder.Property(a => a.CodigoRegistro)
                    .IsRequired()
                    .HasMaxLength(50);

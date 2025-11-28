@@ -20,11 +20,11 @@ namespace Shared.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<IEnumerable<Historico>> ListarPorCodigoRegistroAsync(string codigoRegistro)
+        public async Task<IEnumerable<Historico>> ListarPorContextoCodigoAsync(string contexto, string codigo)
         {
             return await _context.Historicos
                 .AsNoTracking()
-                .Where(h => h.CodigoRegistro == codigoRegistro)
+                .Where(h => h.Contexto == contexto && h.CodigoRegistro == codigo)
                 .OrderByDescending(h => h.CodigoHistorico)
                 .ToListAsync();
         }

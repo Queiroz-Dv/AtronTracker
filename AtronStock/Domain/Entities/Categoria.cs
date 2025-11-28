@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AtronStock.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace AtronStock.Domain.Entities
 {
@@ -13,12 +14,6 @@ namespace AtronStock.Domain.Entities
         [MaxLength(50), Required]
         public string Descricao { get; set; } = string.Empty;
 
-        public EStatus Removido { get; set; }
-
-        public DateTime? RemovidoEm { get; set; }
-
-        //public List<ProdutoCategoria> Produtos { get; set; } = [];
-
-        //public List<Venda> Vendas { get; set; } = [];
+        public EStatus Status { get; set; }
     }
 }

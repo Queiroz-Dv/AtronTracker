@@ -20,7 +20,10 @@ namespace Shared.Domain.Entities
         public string AlteradoPor { get; set; } = string.Empty;
 
         [Required, MaxLength(50)]
-        public string CodigoRegistro { get; set; }        
+        public string CodigoRegistro { get; set; }
+
+        [Required, MaxLength(50)]
+        public string Contexto { get; set; } = string.Empty;
 
         public DateTime? RemovidoEm { get; set; }
 

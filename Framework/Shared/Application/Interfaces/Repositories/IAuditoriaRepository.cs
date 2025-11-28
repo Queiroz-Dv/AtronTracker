@@ -6,6 +6,7 @@ namespace Shared.Application.Interfaces.Repositories
     {
         Task<bool> AdicionarAsync(Auditoria auditoria);
         Task<bool> AtualizarAsync(Auditoria auditoria); // Você mencionou atualizar o cabeçalho
-        Task<Auditoria?> ObterPorCodigoRegistroAsync(string codigoRegistro);
+
+        Task<Auditoria?> ObterPorContextoCodigoAsync(string contexto, string codigo);
     }
 }

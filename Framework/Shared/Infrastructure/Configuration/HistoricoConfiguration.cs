@@ -15,8 +15,9 @@ namespace Shared.Infrastructure.Configuration
             // Configura o campo para usar o valor da Sequence por padrão
             builder.Property(h => h.CodigoHistorico)
                    .HasDefaultValueSql("NEXT VALUE FOR AtronShared.HistoricoSeq");
-            
-            builder.HasIndex(h => h.CodigoRegistro);
+
+            builder.HasIndex(a => new { a.Contexto, a.CodigoRegistro });
+
             builder.Property(h => h.CodigoRegistro).IsRequired().HasMaxLength(50);
 
             builder.Property(h => h.Descricao)

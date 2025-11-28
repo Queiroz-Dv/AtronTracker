@@ -1,7 +1,9 @@
 ﻿using Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Repositories;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.Entities;
 using Shared.Domain.ValueObjects;
 
@@ -25,30 +27,47 @@ namespace Shared.Application.Services
             DataAtual = DateTime.Now;
         }
 
-        public async Task<Resultado> RegistrarAuditoriaAsync(string codigoRegistro, string usuario = null, string historicoDescricao = null)
+        public async Task<Resultado> RegistrarAuditoriaAsync(AuditoriaDTO auditoriaDTO)
         {
-            if (codigoRegistro.IsNullOrEmpty())
+            if (auditoriaDTO.CodigoRegistro.IsNullOrEmpty())
             {
-                return Resultado.Falha($"Código de registro não pode estar vazio para registrar a auditoria.");
+                return Resultado.Falha(AuditoriaResource.ErroCodigoRegistro);
             }
 
             try
             {
                 var auditoria = new Auditoria
                 {
-                    CodigoRegistro = codigoRegistro,
-                    CriadoPor = ObterUsuario(usuario),
-                    DataCriacao = DataAtual
+                    CodigoRegistro = auditoriaDTO.CodigoRegistro,
+                    CriadoPor = _userAccessor.ObterUsuario(),
+                    DataCriacao = DataAtual,
+                    Contexto = auditoriaDTO.Contexto,
                 };
 
-                await RegistrarHistorico(codigoRegistro, historicoDescricao);
+                await RegistrarHistorico(auditoriaDTO);
 
                 await _repository.AdicionarAsync(auditoria);
                 return Resultado.Sucesso();
             }
             catch (Exception ex)
             {
-                return Resultado.Falha($"Erro ao criar auditoria: {ex.Message}");
+                return Resultado.Falha(string.Format(AuditoriaResource.ErroAoCriarAuditoria, ex.Message));
+            }
+        }
+
+        private async Task RegistrarHistorico(AuditoriaDTO auditoriaDTO)
+        {
+            if (!auditoriaDTO.DescricaoHistorico.IsNullOrEmpty())
+            {
+                var historico = new Historico()
+                {
+                    CodigoRegistro = auditoriaDTO.CodigoRegistro,
+                    DataCriacao = DataAtual,
+                    Descricao = auditoriaDTO.DescricaoHistorico,
+                    Contexto = auditoriaDTO.Contexto
+                };
+
+                await _historicoService.RegistrarHistoricoAsync(historico);
             }
         }
 
@@ -65,121 +84,44 @@ namespace Shared.Application.Services
 
                 await _historicoService.RegistrarHistoricoAsync(historico);
             }
-        }
+        }        
 
-        public async Task<Resultado> RegistrarAuditoriaAsync(string codigoRegistro, string? usuario = null)
+        public async Task<Resultado> RegistrarAlteracaoAuditoriaAsync(AuditoriaDTO auditoriaDTO)
         {
-            if (!codigoRegistro.IsNullOrEmpty())
+            if (!auditoriaDTO.CodigoRegistro.IsNullOrEmpty() || auditoriaDTO.CodigoRegistro.IsNullOrEmpty())
             {
-                return Resultado.Falha($"Código de registro não pode estar vazio para registrar a auditoria.");
-            }
-
-            try
-            {                
-                var auditoria = new Auditoria
-                {
-                    CodigoRegistro = codigoRegistro,
-                    CriadoPor = ObterUsuario(usuario),
-                    DataCriacao = DateTime.Now
-                };
-
-                await _repository.AdicionarAsync(auditoria);
-                return Resultado.Sucesso();
-            }
-            catch (Exception ex)
-            {
-                return Resultado.Falha($"Erro ao criar auditoria: {ex.Message}");
-            }
-        }
-
-        public async Task<Resultado> RegistrarAlteracaoAuditoriaAsync(string codigoRegistro, string? usuario = null)
-        {
-            if (!codigoRegistro.IsNullOrEmpty())
-            {
-                return Resultado.Falha($"Código de registro não pode estar vazio para registrar a auditoria.");
+                return Resultado.Falha(AuditoriaResource.ErroCodigoRegistro);
             }
 
             try
             {
-                var auditoria = await _repository.ObterPorCodigoRegistroAsync(codigoRegistro);
+                var auditoria = await _repository.ObterPorContextoCodigoAsync(auditoriaDTO.Contexto, auditoriaDTO.Contexto);
                 if (auditoria == null)
                 {
-                    return Resultado.Falha($"Auditoria não encontrada para o código {codigoRegistro}");
+                    return Resultado.Falha(AuditoriaResource.ErroAuditoriaNaoEncontrada);
                 }
 
-                auditoria.AlteradoPor = ObterUsuario(usuario);
-                auditoria.DataAlteracao = DateTime.Now;
+                auditoria.AlteradoPor = _userAccessor.ObterUsuario();
+                auditoria.DataAlteracao = DateTime.Now.Date;
                 
                 await _repository.AtualizarAsync(auditoria);
+                await RegistrarHistorico(auditoriaDTO);
                 return Resultado.Sucesso();
             }
             catch (Exception ex)
             {
                 return Resultado.Falha($"Erro ao atualizar auditoria: {ex.Message}");
             }
-        }
+        }                    
 
-        public async Task<Resultado> RegistrarAlteracaoAuditoriaAsync(string codigoRegistro, string? usuario = null, string historicoDescricao = null)
-        {
-            if (codigoRegistro.IsNullOrEmpty())
-            {
-                return Resultado.Falha($"Código de registro não pode estar vazio para registrar a auditoria.");
-            }
-
-            try
-            {
-                var auditoria = await _repository.ObterPorCodigoRegistroAsync(codigoRegistro);
-                if (auditoria == null)
-                    return Resultado.Falha($"Auditoria não encontrada para o código {codigoRegistro}");
-
-                auditoria.AlteradoPor = ObterUsuario(usuario);
-                auditoria.DataAlteracao = DateTime.Now;
-
-                await _repository.AtualizarAsync(auditoria);
-                await RegistrarHistorico(codigoRegistro, historicoDescricao);
-                return Resultado.Sucesso();
-            }
-            catch (Exception ex)
-            {
-                return Resultado.Falha($"Erro ao atualizar auditoria: {ex.Message}");
-            }
-        }
-
-        public async Task<Resultado> RegistrarRemocaoAsync(string codigoRegistro, string? usuario = null)
-        {
-            try
-            {
-
-                var auditoria = await _repository.ObterPorCodigoRegistroAsync(codigoRegistro);
-                if (auditoria == null)
-                    return Resultado.Falha($"Auditoria não encontrada para o código {codigoRegistro}");
-
-                auditoria.RemovidoEm = DateTime.Now;
-                auditoria.AlteradoPor = ObterUsuario(usuario);
-                auditoria.DataAlteracao = DateTime.Now;
-
-                await _repository.AtualizarAsync(auditoria);
-                return Resultado.Sucesso();
-            }
-            catch (Exception ex)
-            {
-                return Resultado.Falha($"Erro ao registrar remoção na auditoria: {ex.Message}");
-            }
-        }
-
-        private string ObterUsuario(string usuario = null)
-        {
-            return !string.IsNullOrEmpty(usuario) ? usuario : _userAccessor.ObterUsuario();
-        }
-
-        public async Task<Resultado<Auditoria>> ObterPorCodigoRegistro(string codigoRegistro)
+        public async Task<Resultado<Auditoria>> ObterPorCodigoRegistro(string contexto, string codigoRegistro)
         {
             if (codigoRegistro == null)
             {
-                return Resultado.Falha<Auditoria>("Código inválido");
+                return Resultado.Falha<Auditoria>(AuditoriaResource.ErroCodigoRegistro);
             }
 
-            var auditoria = await _repository.ObterPorCodigoRegistroAsync(codigoRegistro);
+            var auditoria = await _repository.ObterPorContextoCodigoAsync(contexto, codigoRegistro);
 
             var historicos = await _historicoService.ObterHistoricoPorCodigoRegistro(codigoRegistro);
 
@@ -209,7 +151,7 @@ namespace Shared.Application.Services
             try
             {
 
-                var auditoria = await _repository.ObterPorCodigoRegistroAsync(codigoRegistro);
+                var auditoria = new Auditoria();
                 if (auditoria == null)
                     return Resultado.Falha($"Auditoria não encontrada para o código {codigoRegistro}");
 

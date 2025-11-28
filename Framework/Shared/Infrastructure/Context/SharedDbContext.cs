@@ -11,9 +11,8 @@ namespace Shared.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.HasDefaultSchema("AtronShared");
-
-            modelBuilder.HasSequence<long>("HistoricoSeq", schema: "AtronShared")
+            
+            modelBuilder.HasSequence<long>("HistoricoSeq")
                 .StartsAt(1)
                 .IncrementsBy(1);
 

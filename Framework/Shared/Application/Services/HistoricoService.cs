@@ -14,17 +14,18 @@ namespace Shared.Application.Services
         {
             _repository = repository;
         }
+     
 
-        public async Task<Resultado<IList<Historico>>> ObterHistoricoPorCodigoRegistro(string codigoRegistro)
+        public async Task<Resultado<IList<Historico>>> ObterHistoricoPorContextoCodigoRegistro(string contexto, string codigoRegistro)
         {
             if (codigoRegistro.IsNullOrEmpty())
             {
                 return (Resultado<IList<Historico>>)Resultado.Falha("Código do registro vazio ou nulo");
             }
+            
+            var historicos = await _repository.ListarPorContextoCodigoAsync(contexto, codigoRegistro);
 
-            var historicos = await _repository.ListarPorCodigoRegistroAsync(codigoRegistro);
-
-            return Resultado.Sucesso<IList<Historico>>(historicos.ToList());
+            return Resultado.Sucesso<IList<Historico>>(historicos.ToList());            
         }
 
         public async Task<Resultado> RegistrarHistoricoAsync(string codigoRegistro, string descricao)
