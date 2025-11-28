@@ -18,5 +18,29 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\AtronTracker\Domain\Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Application\Resources\AuditoriaResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AuditoriaResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\ClienteResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ClienteResource.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Application\Resources\AuditoriaResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>AuditoriaResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\ClienteResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ClienteResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>	
 </Project>

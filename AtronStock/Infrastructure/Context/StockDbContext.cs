@@ -7,10 +7,11 @@ namespace AtronStock.Infrastructure.Context
     {
         public DbSet<Cliente> Clientes { get; set; }
 
+        public DbSet<Categoria> Categorias { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.HasDefaultSchema("AtronStock");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(StockDbContext).Assembly);
         }
     }

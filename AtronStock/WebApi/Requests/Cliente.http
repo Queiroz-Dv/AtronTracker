@@ -1,0 +1,53 @@
+﻿POST {{HostAddress}}/api/cliente
+Content-Type: application/json
+
+{  
+  
+  "codigo": "NZK",
+  "nome": "Nezuko Matsuda",
+  "documento": {
+    "dado": "01234567895"
+  },
+  "email": "nezuko@email.com",
+  "telefone": "970995478",
+  "statusPessoa": "Ativo"
+  
+}
+
+###
+
+### Listar todos os clientes
+GET {{HostAddress}}/api/cliente
+Accept: application/json
+
+
+### Buscar cliente pelo código
+GET {{AtronStock.WebApi_HostAddress}}/api/cliente/NZK
+Accept: application/json
+
+
+### Listar clientes inativos
+GET {{AtronStock.WebApi_HostAddress}}/api/cliente/inativos
+Accept: application/json
+
+### Atualizar um cliente
+PUT {{AtronStock.WebApi_HostAddress}}/api/cliente/NZK
+Content-Type: application/json
+
+{
+  "codigo": "NZK",
+  "nome": "Nezuko Kamado",
+  "documento": {
+    "dado": "01234567895"
+  },
+  "email": "nezuko.kamado@email.com",
+  "telefone": "999999999",
+  "statusPessoa": "Ativo"
+}
+
+### Inativar um cliente (Passando false)
+PUT {{AtronStock.WebApi_HostAddress}}/api/cliente/ativar-inativar/NZK/false
+Content-Type: application/json
+
+### Remover um cliente
+DELETE {{AtronStock.WebApi_HostAddress}}/api/cliente/NZK

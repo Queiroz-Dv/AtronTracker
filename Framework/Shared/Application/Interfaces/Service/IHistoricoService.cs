@@ -10,5 +10,7 @@ namespace Shared.Application.Interfaces.Service
         Task<Resultado> RegistrarHistoricoAsync(Historico historico);
 
         Task<Resultado<IList<Historico>>> ObterHistoricoPorCodigoRegistro(string codigoRegistro);
+
+        Task<Resultado<IList<Historico>>> ObterHistoricoPorContextoCodigoRegistro(string contexto, string codigoRegistro);
     }
 }

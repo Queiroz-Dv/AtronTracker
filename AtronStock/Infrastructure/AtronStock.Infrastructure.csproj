@@ -4,10 +4,6 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>    
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="EntitiesConfiguration\CategoriaConfiguration.cs" />
-  </ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="MailKit" Version="4.13.0" />
@@ -32,7 +28,6 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <Folder Include="EntitiesConfiguration\" />
 	  <Folder Include="Migrations\" />
 	</ItemGroup>
 	

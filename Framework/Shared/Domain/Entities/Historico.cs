@@ -10,6 +10,9 @@ namespace Shared.Domain.Entities
         public long CodigoHistorico { get; set; }
 
         [Required, MaxLength(50)]
+        public string Contexto { get; set; } = string.Empty;
+
+        [Required, MaxLength(50)]
         public string CodigoRegistro { get; set; }
 
         [Required]

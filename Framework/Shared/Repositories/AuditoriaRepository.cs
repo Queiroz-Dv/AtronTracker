@@ -24,13 +24,13 @@ namespace Shared.Repositories
         {
             _context.Auditorias.Update(auditoria);
             return await _context.SaveChangesAsync() > 0;
-        }
+        }       
 
-        public async Task<Auditoria?> ObterPorCodigoRegistroAsync(string codigoRegistro)
+        public async Task<Auditoria?> ObterPorContextoCodigoAsync(string contexto, string codigo)
         {
             return await _context.Auditorias
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.CodigoRegistro == codigoRegistro);
+                .FirstOrDefaultAsync(a => a.Contexto == contexto && a.CodigoRegistro == codigo);
         }
     }
 }

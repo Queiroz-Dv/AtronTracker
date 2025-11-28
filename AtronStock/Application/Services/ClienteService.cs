@@ -3,11 +3,11 @@ using AtronStock.Application.Interfaces;
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Enums;
 using AtronStock.Domain.Interfaces;
-using AtronStock.Infrastructure.Context;
+using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using Shared.Infrastructure.Repositories;
 
 namespace AtronStock.Application.Services
 {
@@ -40,14 +40,17 @@ namespace AtronStock.Application.Services
 
                 if (!foiSalvo)
                 {
-                    return Resultado.Falha("Ocorreu um erro inesperado ao salvar o cliente.");
+                    return Resultado.Falha(ClienteResource.ErroAoGravarCliente);
                 }
 
-                var historicoDescricao = $"Cliente gravado com o código {cliente.Codigo} e nome {cliente.Nome} na data {DateTime.Now}";
-                await _auditoriaService.RegistrarAuditoriaAsync(cliente.Codigo, null, historicoDescricao);
+                var auditoriaDTO = new AuditoriaDTO(cliente.Codigo,
+                    nameof(Cliente),
+                    string.Format(ClienteResource.HistoricoDescricao, cliente.Codigo, cliente.Nome, DateTime.Now));
+
+                await _auditoriaService.RegistrarAuditoriaAsync(auditoriaDTO);
 
                 var context = new NotificationBag();
-                context.MensagemRegistroSalvo("Cliente");
+                context.MensagemRegistroSalvo(nameof(Cliente));
                 return Resultado.Sucesso(request, [.. context.Messages]);
             }
 
@@ -67,7 +70,7 @@ namespace AtronStock.Application.Services
 
             if (cliente == null)
             {
-                return Resultado.Falha("Cliente não existe.");
+                return Resultado.Falha(ClienteResource.ErroClienteNaoExiste);
             }
 
             await _mapService.MapToEntityAsync(request, cliente);
@@ -76,10 +79,10 @@ namespace AtronStock.Application.Services
 
             if (!foiAtualizado)
             {
-                return Resultado.Falha("Ocorreu um erro inesperado ao atualizar o cliente.");
+                return Resultado.Falha(ClienteResource.ErroAoGravarCliente);
             }
 
-            var historicoDescricao = $"Cliente {cliente.Codigo} atualizado na data {DateTime.Now}";
+            var historicoDescricao = string.Format(ClienteResource.ClienteAtualizadoDescricao, cliente.Codigo, DateTime.Now.Date);
             await _auditoriaService.RegistrarAlteracaoAuditoriaAsync(cliente.Codigo, null, historicoDescricao);
 
             var context = new NotificationBag();
@@ -91,7 +94,7 @@ namespace AtronStock.Application.Services
         {
             var cliente = await _repository.ObterClientePorCodigoAsync(codigo);
             if (cliente == null)
-                return (Resultado<ClienteRequest>)Resultado.Falha("Cliente não existe.");
+                return (Resultado<ClienteRequest>)Resultado.Falha(ClienteResource.ErroClienteNaoExiste);
 
             var clienteRequest = await _mapService.MapToDTOAsync(cliente);
 

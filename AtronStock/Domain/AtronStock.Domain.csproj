@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\Categoria.cs" />
     <Compile Remove="Entities\Produto.cs" />
     <Compile Remove="Entities\ProdutoCategoria.cs" />
     <Compile Remove="Entities\Venda.cs" />
