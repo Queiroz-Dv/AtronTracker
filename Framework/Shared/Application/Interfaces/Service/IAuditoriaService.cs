@@ -6,14 +6,12 @@ namespace Shared.Application.Interfaces.Service
 {
     public interface IAuditoriaService
     {      
-        Task<Resultado> RegistrarAuditoriaAsync(AuditoriaDTO auditoria);
+        Task<Resultado> RegistrarServiceAsync(IAuditoriaDTO auditoria);
                
-        Task<Resultado> RegistrarAlteracaoAuditoriaAsync(AuditoriaDTO auditoriaDTO);
-        
-        Task<Resultado> RegistrarRemocaoAsync(string codigoRegistro, string usuarioLogado = null);
+        Task<Resultado> AtualizarServiceAsync(IAuditoriaDTO auditoriaDTO);
+              
+        Task<Resultado> RemoverServiceAsync(IAuditoriaDTO auditoriaDTO);
 
-        Task<Resultado> RegistrarRemocaoAsync(string codigoRegistro, string usuarioLogado = null, string historicoDescricao = null);
-
-        Task<Resultado<Auditoria>> ObterPorCodigoRegistro(string codigoRegistro);
+        Task<Resultado<Auditoria>> ObterPorChaveServiceAsync(IAuditoriaDTO documento);
     }
 }

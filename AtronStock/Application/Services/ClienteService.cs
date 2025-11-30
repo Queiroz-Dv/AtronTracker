@@ -13,6 +13,8 @@ namespace AtronStock.Application.Services
 {
     public class ClienteService : IClienteService
     {
+        private const string ClienteContexto = nameof(Cliente);
+
         private readonly IValidador<ClienteRequest> _validador;
         private readonly IAsyncMap<ClienteRequest, Cliente> _mapService;
         private readonly IClienteRepository _repository;
@@ -40,17 +42,28 @@ namespace AtronStock.Application.Services
 
                 if (!foiSalvo)
                 {
-                    return Resultado.Falha(ClienteResource.ErroAoGravarCliente);
+                    return Resultado.Falha(ClienteResource.ErroInesperadoCliente);
                 }
 
-                var auditoriaDTO = new AuditoriaDTO(cliente.Codigo,
-                    nameof(Cliente),
-                    string.Format(ClienteResource.HistoricoDescricao, cliente.Codigo, cliente.Nome, DateTime.Now));
+                IAuditoriaDTO auditoriaDTO = new AuditoriaDTO()
+                {
+                    CodigoRegistro = cliente.Codigo,
+                    Contexto = ClienteContexto,
+                    Historico = new HistoricoDTO()
+                    {
+                        CodigoRegistro = cliente.Codigo,
+                        Contexto = ClienteContexto,
+                        Descricao = string.Format(
+                        ClienteResource.HistoricoClienteGravado,
+                        cliente.Codigo,
+                        cliente.Nome, DateTime.Now)
+                    }
+                };
 
-                await _auditoriaService.RegistrarAuditoriaAsync(auditoriaDTO);
+                await _auditoriaService.RegistrarServiceAsync(auditoriaDTO);
 
                 var context = new NotificationBag();
-                context.MensagemRegistroSalvo(nameof(Cliente));
+                context.MensagemRegistroSalvo(ClienteContexto);
                 return Resultado.Sucesso(request, [.. context.Messages]);
             }
 
@@ -79,14 +92,28 @@ namespace AtronStock.Application.Services
 
             if (!foiAtualizado)
             {
-                return Resultado.Falha(ClienteResource.ErroAoGravarCliente);
+                return Resultado.Falha(ClienteResource.ErroInesperadoCliente);
             }
 
-            var historicoDescricao = string.Format(ClienteResource.ClienteAtualizadoDescricao, cliente.Codigo, DateTime.Now.Date);
-            await _auditoriaService.RegistrarAlteracaoAuditoriaAsync(cliente.Codigo, null, historicoDescricao);
+            IAuditoriaDTO auditoria = new AuditoriaDTO()
+            {
+                CodigoRegistro = cliente.Codigo,
+                Contexto = ClienteContexto,
+                Historico = new HistoricoDTO()
+                {
+                    CodigoRegistro = cliente.Codigo,
+                    Contexto = ClienteContexto,
+                    Descricao = string.Format(
+                    ClienteResource.ClienteAtualizadoDescricao,
+                    cliente.Codigo,
+                    DateTime.Now.Date)
+                },
+            };
+
+            await _auditoriaService.RegistrarServiceAsync(auditoria);
 
             var context = new NotificationBag();
-            context.MensagemRegistroAtualizado("Cliente");
+            context.MensagemRegistroAtualizado(ClienteContexto);
             return Resultado.Sucesso([.. context.Messages]);
         }
 
@@ -105,7 +132,7 @@ namespace AtronStock.Application.Services
         {
             var clientes = await _repository.ObterTodoClientesAsync();
             var clientesRequest = await _mapService.MapToListDTOAsync(clientes);
-            return Resultado.Sucesso<ICollection<ClienteRequest>>(clientesRequest.ToList());
+            return Resultado.Sucesso<ICollection<ClienteRequest>>([.. clientesRequest]);
         }
 
         public async Task<Resultado> RemoverAsync(string codigo)
@@ -124,12 +151,22 @@ namespace AtronStock.Application.Services
 
             if (!foiRemovido)
             {
-                return Resultado.Falha("Ocorreu um erro inesperado ao remover o cliente.");
+                return Resultado.Falha(ClienteResource.ErroInesperadoAoRemover);
             }
 
-            var historicoDescricao = $"Cliente {codigo} removido na data {DateTime.Now}";
+            IAuditoriaDTO auditoria = new AuditoriaDTO()
+            {
+                CodigoRegistro = cliente.Codigo,
+                Contexto = ClienteContexto,
+                Historico = new HistoricoDTO()
+                {
+                    CodigoRegistro = cliente.Codigo,
+                    Contexto = ClienteContexto,
+                    Descricao = string.Format(ClienteResource.HistoricoClienteRemovido)
+                },
+            };
 
-            await _auditoriaService.RegistrarRemocaoAsync(codigo, null, historicoDescricao);
+            await _auditoriaService.RemoverServiceAsync(auditoria);
             var notificationBag = new NotificationBag();
             notificationBag.MensagemRegistroRemovido(codigo);
             return Resultado.Sucesso([.. notificationBag.Messages]);
@@ -157,13 +194,26 @@ namespace AtronStock.Application.Services
 
             if (!atualizado)
             {
-                return Resultado.Falha("Ocorreu um erro inesperado ao remover o cliente.");
+                return Resultado.Falha(ClienteResource.ErroInesperadoCliente);
             }
 
-            string ativado = ativar ? "ativado" : "desativado";
-            var historicoDescricao = $"Cliente {codigo} foi {ativado} na data {DateTime.Now}";
+            IAuditoriaDTO auditoria = new AuditoriaDTO()
+            {
+                CodigoRegistro = cliente.Codigo,
+                Contexto = ClienteContexto,
+                Historico = new HistoricoDTO()
+                {
+                    CodigoRegistro = cliente.Codigo,
+                    Contexto = ClienteContexto,
+                    Descricao = string.Format(
+                        ClienteResource.HistoricoClienteAtivado,
+                        cliente.Codigo,
+                        cliente.Status.GetDescription(),
+                        DateTime.Now.Date)
+                },
+            };
 
-            await _auditoriaService.RegistrarAlteracaoAuditoriaAsync(codigo, null, historicoDescricao);
+            await _auditoriaService.RemoverServiceAsync(auditoria);
 
             var notificationBag = new NotificationBag();
             notificationBag.MensagemRegistroAtualizado(codigo);

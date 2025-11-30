@@ -13,7 +13,7 @@ namespace Shared.Application.Services.Accessor
             _accessor = accessor;
         }
 
-        public string ObterUsuario()
+        public string ObterLogadoUsuario()
         {
             if (_accessor.HttpContext == null)
             {

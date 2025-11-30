@@ -1,15 +1,14 @@
 ﻿POST {{HostAddress}}/api/cliente
 Content-Type: application/json
 
-{  
-  
-  "codigo": "NZK",
-  "nome": "Nezuko Matsuda",
+{    
+  "codigo": "MTH",
+  "nome": "Matheus Lima",
   "documento": {
-    "dado": "01234567895"
+    "dado": "01234567896"
   },
-  "email": "nezuko@email.com",
-  "telefone": "970995478",
+  "email": "matheus@email.com",
+  "telefone": "970995479",
   "statusPessoa": "Ativo"
   
 }
@@ -22,32 +21,32 @@ Accept: application/json
 
 
 ### Buscar cliente pelo código
-GET {{AtronStock.WebApi_HostAddress}}/api/cliente/NZK
+GET {{HostAddress}}/api/cliente/MTH
 Accept: application/json
 
 
 ### Listar clientes inativos
-GET {{AtronStock.WebApi_HostAddress}}/api/cliente/inativos
+GET {{HostAddress}}/api/cliente/inativos
 Accept: application/json
 
 ### Atualizar um cliente
-PUT {{AtronStock.WebApi_HostAddress}}/api/cliente/NZK
+PUT {{HostAddress}}/api/cliente/MTH
 Content-Type: application/json
 
 {
-  "codigo": "NZK",
-  "nome": "Nezuko Kamado",
+  "codigo": "MTH",
+  "nome": "Matheus Gonzaga",
   "documento": {
-    "dado": "01234567895"
+    "dado": "01234567897"
   },
-  "email": "nezuko.kamado@email.com",
-  "telefone": "999999999",
+  "email": "matheus@email.com",
+  "telefone": "970995478",
   "statusPessoa": "Ativo"
 }
 
 ### Inativar um cliente (Passando false)
-PUT {{AtronStock.WebApi_HostAddress}}/api/cliente/ativar-inativar/NZK/false
+PUT {{HostAddress}}/api/cliente/ativar-inativar/MTH/false
 Content-Type: application/json
 
 ### Remover um cliente
-DELETE {{AtronStock.WebApi_HostAddress}}/api/cliente/NZK
+DELETE {{HostAddress}}/api/cliente/NZK

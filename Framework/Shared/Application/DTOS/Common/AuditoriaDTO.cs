@@ -1,35 +1,33 @@
 ﻿namespace Shared.Application.DTOS.Common
 {
-    public record AuditoriaDTO
+    public interface IDocumento
     {
-        public AuditoriaDTO(string codigoRegistro, string contexto, HistoricoDTO historico)
-        {
-            CodigoRegistro = codigoRegistro;
-            Contexto = contexto;
-            Historico = historico;
-            Historicos = [];
-        }
+        string CodigoRegistro { get; set; }
 
-        public string CodigoRegistro { get; private set; }
-
-        public string Contexto { get; private set; }
-
-        public HistoricoDTO Historico { get; set; }
-
-        public IList<HistoricoDTO> Historicos { get; private set; }
+        string Contexto { get; set; }
     }
 
-    public record HistoricoDTO
+    public interface IHistoricoDTO : IDocumento
     {
-        public HistoricoDTO(string codigoRegistro, string contexto, string descricaoHistorico)
-        {
-            CodigoRegistro = codigoRegistro;
-            Contexto = contexto;
-            DescricaoHistorico = descricaoHistorico;
-        }
+         string Descricao { get; set; }
+    }
 
-        public string CodigoRegistro { get; private set; }
-        public string Contexto { get; private set; }
-        public string DescricaoHistorico { get; private set; }
+    public interface IAuditoriaDTO  : IDocumento
+    {
+         IHistoricoDTO Historico { get; set; }
+    }
+
+    public class HistoricoDTO : IHistoricoDTO
+    {       
+        public string CodigoRegistro { get; set; }
+        public string Contexto { get; set; }
+        public string Descricao { get; set;}
+    }
+
+    public class AuditoriaDTO : IAuditoriaDTO
+    {        
+        public string CodigoRegistro { get; set; }
+        public string Contexto { get; set; }
+        public IHistoricoDTO Historico { get; set; }
     }
 }
