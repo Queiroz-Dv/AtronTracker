@@ -22,14 +22,14 @@ namespace Shared.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ClienteResource {
+    public class HistoricoResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ClienteResource() {
+        internal HistoricoResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Shared.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Shared.Application.Resources.ClienteResource", typeof(ClienteResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Shared.Application.Resources.HistoricoResource", typeof(HistoricoResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,65 +61,20 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cliente {0} atualizado na data {1}.
+        ///   Looks up a localized string similar to Código do registro vazio ou nulo..
         /// </summary>
-        public static string ClienteAtualizadoDescricao {
+        public static string ErroCodigoNulo {
             get {
-                return ResourceManager.GetString("ClienteAtualizadoDescricao", resourceCulture);
+                return ResourceManager.GetString("ErroCodigoNulo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cliente não existe..
+        ///   Looks up a localized string similar to Erro ao registrar histórico: {0}.
         /// </summary>
-        public static string ErroClienteNaoExiste {
+        public static string ExecaoRegistrarHistorico {
             get {
-                return ResourceManager.GetString("ErroClienteNaoExiste", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ocorreu um erro inesperado ao remover o cliente..
-        /// </summary>
-        public static string ErroInesperadoAoRemover {
-            get {
-                return ResourceManager.GetString("ErroInesperadoAoRemover", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ocorreu um erro inesperado ao salvar o cliente..
-        /// </summary>
-        public static string ErroInesperadoCliente {
-            get {
-                return ResourceManager.GetString("ErroInesperadoCliente", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cliente {0} foi {1} na data {2}.
-        /// </summary>
-        public static string HistoricoClienteAtivado {
-            get {
-                return ResourceManager.GetString("HistoricoClienteAtivado", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cliente gravado com o código {0} e nome {1} na data {2}.
-        /// </summary>
-        public static string HistoricoClienteGravado {
-            get {
-                return ResourceManager.GetString("HistoricoClienteGravado", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cliente {0} removido na data {1}.
-        /// </summary>
-        public static string HistoricoClienteRemovido {
-            get {
-                return ResourceManager.GetString("HistoricoClienteRemovido", resourceCulture);
+                return ResourceManager.GetString("ExecaoRegistrarHistorico", resourceCulture);
             }
         }
     }

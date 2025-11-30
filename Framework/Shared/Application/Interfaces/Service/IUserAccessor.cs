@@ -2,6 +2,6 @@
 {
     public interface IUserAccessor
     {
-        string ObterUsuario();
+        string ObterLogadoUsuario();
     }
 }
