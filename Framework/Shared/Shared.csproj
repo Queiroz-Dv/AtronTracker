@@ -21,12 +21,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>CategoriaResource.resx</DependentUpon>
+	  </Compile>
 	  <Compile Update="Application\Resources\AuditoriaResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>AuditoriaResource.resx</DependentUpon>
 	  </Compile>
-	  <Compile Update="Application\Resources\ClienteResource.Designer.cs">
+	  <Compile Update="Application\Resources\AtronStock\ClienteResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ClienteResource.resx</DependentUpon>
@@ -39,11 +44,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Update="Application\Resources\AtronStock\CategoriaResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>CategoriaResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\AuditoriaResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>AuditoriaResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\ClienteResource.resx">
+	  <EmbeddedResource Update="Application\Resources\AtronStock\ClienteResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ClienteResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>

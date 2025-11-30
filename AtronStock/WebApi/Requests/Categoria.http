@@ -1,0 +1,59 @@
+### 1. Criar Nova Categoria (Sucesso)
+POST {{HostAddress}}/api/categoria
+Content-Type: application/json
+
+{
+  "codigo": "ELE",
+  "descricao": "Eletrônicos e Gadgets",
+  "status": "Ativo"
+}
+
+### 2. Criar Outra Categoria (Para testes de listagem)
+POST {{HostAddress}}/api/categoria
+Content-Type: application/json
+
+{
+  "codigo": "CLR",
+  "descricao": "Celulares",
+  "status": "Ativo"
+}
+
+### 3. Tentar Criar Categoria Duplicada (Deve retornar Erro)
+POST {{HostAddress}}/api/categoria
+Content-Type: application/json
+
+{
+  "codigo": "ELE",
+  "descricao": "Tentativa de Duplicidade",
+  "status": "Ativo"
+}
+
+### 4. Listar Todas as Categorias
+GET {{HostAddress}}/api/categoria
+Accept: application/json
+
+### 5. Buscar Categoria por Código
+GET {{HostAddress}}/api/categoria/ELE
+Accept: application/json
+
+### 6. Atualizar Categoria
+PUT {{HostAddress}}/api/categoria/ELE
+Content-Type: application/json
+
+{
+  "codigo": "ELE",
+  "descricao": "Eletrônicos, Gadgets e Informática",
+  "status": "Ativo"
+}
+
+### 7. Inativar Categoria (Passando false)
+PUT {{HostAddress}}/api/categoria/ativar-inativar/ELE/false
+Content-Type: application/json
+
+### 8. Listar Categorias Inativas
+GET {{HostAddress}}/api/categoria/inativas
+Accept: application/json
+
+### 9. Reativar Categoria (Passando true)
+PUT {{HostAddress}}/api/categoria/ativar-inativar/ELE/true
+Content-Type: application/json

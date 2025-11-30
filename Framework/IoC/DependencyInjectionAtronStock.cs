@@ -44,6 +44,10 @@ namespace IoC
 
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IClienteRepository, ClienteRepository>();
+
+            services.AddScoped<ICategoriaService, CategoriaService>();
+            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+
             services = services.AddStockMapping();
             services = services.AddStockValidador();
             return services;
@@ -55,6 +59,8 @@ namespace IoC
         public static IServiceCollection AddStockMapping(this IServiceCollection services)
         {
             services.AddScoped<IAsyncMap<ClienteRequest, Cliente>, ClienteMapping>();
+            services.AddScoped<IAsyncMap<CategoriaRequest, Categoria>, CategoriaMapping>();
+
             return services;
         }
     }
@@ -64,6 +70,7 @@ namespace IoC
         public static IServiceCollection AddStockValidador(this IServiceCollection services)
         {
             services.AddScoped<IValidador<ClienteRequest>, ClienteValidador>();
+            services.AddScoped<IValidador<CategoriaRequest>, CategoriaValidador>();
             return services;
         }
     }

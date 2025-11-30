@@ -12,7 +12,6 @@ namespace Shared.Application.Services
     {
         private readonly IHistoricoRepository _repository;
 
-
         public HistoricoService(IHistoricoRepository repository)
         {
             _repository = repository;
@@ -27,7 +26,7 @@ namespace Shared.Application.Services
             
             var historicos = await _repository.ListarPorContextoCodigoAsync(historicoDTO.Contexto, historicoDTO.CodigoRegistro);
 
-            return Resultado.Sucesso<IList<Historico>>(historicos.ToList());
+            return Resultado.Sucesso<IList<Historico>>([.. historicos]);
         }
 
         public async Task<Resultado> RegistrarServiceAsync(IHistoricoDTO historicoDTO)
