@@ -64,7 +64,7 @@ namespace Shared.Application.Services
 
         public async Task<Resultado> AtualizarServiceAsync(IAuditoriaDTO auditoriaDTO)
         {
-            if (!auditoriaDTO.CodigoRegistro.IsNullOrEmpty() || auditoriaDTO.Contexto.IsNullOrEmpty())
+            if (auditoriaDTO.CodigoRegistro.IsNullOrEmpty() || auditoriaDTO.Contexto.IsNullOrEmpty())
             {
                 return Resultado.Falha(AuditoriaResource.ErroCodigoRegistro);
             }

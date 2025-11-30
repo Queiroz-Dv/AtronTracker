@@ -24,4 +24,6 @@
     <ProjectReference Include="..\Application\AtronStock.Application.csproj" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
 </Project>

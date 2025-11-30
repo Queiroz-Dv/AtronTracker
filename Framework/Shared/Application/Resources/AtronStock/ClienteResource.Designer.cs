@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Shared.Application.Resources {
+namespace Shared.Application.Resources.AtronStock {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Shared.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Shared.Application.Resources.ClienteResource", typeof(ClienteResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Shared.Application.Resources.AtronStock.ClienteResource", typeof(ClienteResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

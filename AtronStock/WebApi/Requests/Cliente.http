@@ -49,4 +49,4 @@ PUT {{HostAddress}}/api/cliente/ativar-inativar/MTH/false
 Content-Type: application/json
 
 ### Remover um cliente
-DELETE {{HostAddress}}/api/cliente/NZK
+DELETE {{HostAddress}}/api/cliente/MTH
