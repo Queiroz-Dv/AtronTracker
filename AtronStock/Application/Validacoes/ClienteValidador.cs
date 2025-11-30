@@ -30,22 +30,25 @@ namespace AtronStock.Application.Validacoes
                 context.AdicionarErro("O tamanho do código está inválido (min 3, max 25).");
             }
 
-            if (!entity.CPF.IsNullOrEmpty())
+            if (!entity.Documento.Dado.IsNullOrEmpty())
             {
-                if (!DocumentoValidator.IsValidCpf(entity.CPF))
+                if (entity.Documento.Dado.Length > 11)
                 {
-                    context.AdicionarErro("O formato do CPF é inválido.");
+                    if (!DocumentoValidator.IsValidCpf(entity.Documento.Dado))
+                    {
+                        context.AdicionarErro("O formato do CPF é inválido.");
+                    }
+                }
+
+                if (entity.Documento.Dado.Length > 14)
+                {
+                    if (!DocumentoValidator.IsValidCnpj(entity.Documento.Dado))
+                    {
+                        context.AdicionarErro("O formato do CNPJ é inválido.");
+                    }
                 }
             }
-
-            if (!entity.CNPJ.IsNullOrEmpty())
-            {
-                if (!DocumentoValidator.IsValidCnpj(entity.CNPJ))
-                {
-                    context.AdicionarErro("O formato do CNPJ é inválido.");
-                }
-            }
-
+            
             if (entity.StatusPessoa.GetDescription().IsNullOrEmpty())
             {
                 context.AdicionarErro("O status do cliente deve ser informado.");

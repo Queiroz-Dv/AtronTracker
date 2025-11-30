@@ -17,10 +17,48 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Infrastructure\Repositories\" />
+	  <ProjectReference Include="..\..\AtronTracker\Domain\Domain.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\AtronTracker\Domain\Domain.csproj" />
+	  <Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>CategoriaResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\AuditoriaResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AuditoriaResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\AtronStock\ClienteResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ClienteResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\HistoricoResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>HistoricoResource.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Application\Resources\AtronStock\CategoriaResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>CategoriaResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\AuditoriaResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>AuditoriaResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\AtronStock\ClienteResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ClienteResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\HistoricoResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>HistoricoResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>	
 </Project>

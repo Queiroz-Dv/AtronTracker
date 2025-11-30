@@ -16,11 +16,38 @@ namespace AtronStock.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("AtronStock")
                 .HasAnnotation("ProductVersion", "6.0.32")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("AtronStock.Domain.Entities.Categoria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("Codigo");
+
+                    b.ToTable("Categorias");
+                });
 
             modelBuilder.Entity("AtronStock.Domain.Entities.Cliente", b =>
                 {
@@ -63,7 +90,7 @@ namespace AtronStock.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clientes", "AtronStock");
+                    b.ToTable("Clientes", (string)null);
                 });
 
             modelBuilder.Entity("AtronStock.Domain.Entities.Cliente", b =>
@@ -95,7 +122,7 @@ namespace AtronStock.Infrastructure.Migrations
 
                             b1.HasKey("ClienteId");
 
-                            b1.ToTable("Clientes", "AtronStock");
+                            b1.ToTable("Clientes");
 
                             b1.WithOwner()
                                 .HasForeignKey("ClienteId");

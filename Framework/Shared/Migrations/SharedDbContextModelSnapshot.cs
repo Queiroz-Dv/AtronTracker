@@ -17,13 +17,12 @@ namespace Shared.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("AtronShared")
                 .HasAnnotation("ProductVersion", "6.0.32")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.HasSequence("HistoricoSeq");
+            modelBuilder.HasSequence("HistoricoSeq", "AtronShared");
 
             modelBuilder.Entity("Shared.Domain.Entities.Auditoria", b =>
                 {
@@ -38,6 +37,11 @@ namespace Shared.Migrations
                         .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("CodigoRegistro")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Contexto")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -60,9 +64,9 @@ namespace Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CodigoRegistro");
+                    b.HasIndex("Contexto", "CodigoRegistro");
 
-                    b.ToTable("Auditorias", "AtronShared");
+                    b.ToTable("Auditorias");
                 });
 
             modelBuilder.Entity("Shared.Domain.Entities.Historico", b =>
@@ -83,6 +87,11 @@ namespace Shared.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Contexto")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<DateTime>("DataCriacao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -95,9 +104,9 @@ namespace Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CodigoRegistro");
+                    b.HasIndex("Contexto", "CodigoRegistro");
 
-                    b.ToTable("Historicos", "AtronShared");
+                    b.ToTable("Historicos");
                 });
 #pragma warning restore 612, 618
         }

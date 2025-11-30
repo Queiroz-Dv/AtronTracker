@@ -2,6 +2,7 @@
 using AtronStock.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Domain.ValueObjects;
+using Shared.Infrastructure.Filters;
 
 namespace AtronStock.WebApi.Controllers
 {
@@ -17,28 +18,19 @@ namespace AtronStock.WebApi.Controllers
         }
 
         [HttpPost]
+        [Transactional]
         public async Task<ActionResult> Post([FromBody] ClienteRequest request)
         {
             var resultado = await _service.CriarAsync(request);
 
-            if (resultado.TeveFalha)
-            {
-                return BadRequest(resultado.ObterNotificacoes());
-            }
-
-            return Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
         }
-        
+
         [HttpGet]
         public async Task<ActionResult<ICollection<ClienteRequest>>> Get()
-        {            
+        {
             var resultado = await _service.ObterTodosClientesServiceAsync();
-
-            if (resultado.TeveFalha)
-            {
-                return BadRequest(resultado.ObterNotificacoes());
-            }
-         
+            
             return Ok(resultado.Dado);
         }
 
@@ -48,34 +40,17 @@ namespace AtronStock.WebApi.Controllers
         {
             var resultado = await _service.ObterTodosClientesInativoServiceAsync();
 
-            if (resultado.TeveFalha)
-            {
-                return BadRequest(resultado.ObterNotificacoes());
-            }
-
             return Ok(resultado.Dado);
         }
-
 
         [HttpGet("{codigo}")]
         public async Task<ActionResult<ClienteRequest>> Get(string codigo)
         {
             var resultado = await _service.ObterClientePorCodigoServiceAsync(codigo);
 
-            if (resultado.TeveFalha)
-            {                
-                if (resultado.Response.Any(m => m.Descricao.Contains("não existe")))
-                {
-                    return NotFound(resultado.ObterNotificacoes());
-                }
-
-                return BadRequest(resultado.ObterNotificacoes());
-            }
-            
-            return Ok(resultado.Dado);
+            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Dado);
         }
 
- 
         [HttpPut("{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] ClienteRequest request)
         {
@@ -86,35 +61,23 @@ namespace AtronStock.WebApi.Controllers
 
             var resultado = await _service.AtualizarClienteServiceAsync(request);
 
-            if (resultado.TeveFalha)
-            {                
-                if (resultado.Response.Any(m => m.Descricao.Contains("não existe")))
-                {
-                    return NotFound(resultado.ObterNotificacoes());
-                }
-
-                return BadRequest(resultado.ObterNotificacoes());
-            }
-            
-            return Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
         }
-        
+
+        [HttpPut("ativar-inativar/{codigo}/{ativar}")]
+        public async Task<ActionResult> AtivarInativarCliente([FromRoute] string codigo, [FromRoute] bool ativar)
+        {
+            var resultado = await _service.AtivarInativarClienteServiceAsync(codigo, ativar);
+
+            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+        }
+
         [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
         {
             var resultado = await _service.RemoverAsync(codigo);
 
-            if (resultado.TeveFalha)
-            {              
-                if (resultado.Response.Any(m => m.Descricao.Contains("não encontrado")))
-                {
-                    return NotFound(resultado.ObterNotificacoes());
-                }
-
-                return BadRequest(resultado.ObterNotificacoes());
-            }
-           
-            return Ok(resultado.Response);
-        }        
+            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+        }
     }
 }

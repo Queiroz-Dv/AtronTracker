@@ -1,5 +1,7 @@
-﻿using Shared.Application.Interfaces.Repositories;
+﻿using Shared.Application.DTOS.Common;
+using Shared.Application.Interfaces.Repositories;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.Entities;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -14,27 +16,28 @@ namespace Shared.Application.Services
         {
             _repository = repository;
         }
-
-        public async Task<Resultado<IList<Historico>>> ObterHistoricoPorCodigoRegistro(string codigoRegistro)
+     
+        public async Task<Resultado<IList<Historico>>> ObterPorChaveServiceAsync(IHistoricoDTO historicoDTO)
         {
-            if (codigoRegistro.IsNullOrEmpty())
+            if (historicoDTO.CodigoRegistro.IsNullOrEmpty())
             {
-                return (Resultado<IList<Historico>>)Resultado.Falha("Código do registro vazio ou nulo");
+                return Resultado.Falha<IList<Historico>>(HistoricoResource.ErroCodigoNulo);
             }
+            
+            var historicos = await _repository.ListarPorContextoCodigoAsync(historicoDTO.Contexto, historicoDTO.CodigoRegistro);
 
-            var historicos = await _repository.ListarPorCodigoRegistroAsync(codigoRegistro);
-
-            return Resultado.Sucesso<IList<Historico>>(historicos.ToList());
+            return Resultado.Sucesso<IList<Historico>>([.. historicos]);
         }
 
-        public async Task<Resultado> RegistrarHistoricoAsync(string codigoRegistro, string descricao)
+        public async Task<Resultado> RegistrarServiceAsync(IHistoricoDTO historicoDTO)
         {
             try
             {
                 var historico = new Historico
                 {
-                    CodigoRegistro = codigoRegistro,
-                    Descricao = descricao,
+                    CodigoRegistro = historicoDTO.CodigoRegistro,
+                    Descricao = historicoDTO.Descricao,
+                    Contexto = historicoDTO.Contexto,
                     DataCriacao = DateTime.Now
                 };
 
@@ -43,19 +46,8 @@ namespace Shared.Application.Services
             }
             catch (Exception ex)
             {
-                return Resultado.Falha($"Erro ao registrar histórico: {ex.Message}");
+                return Resultado.Falha(string.Format(HistoricoResource.ExecaoRegistrarHistorico, ex.Message));
             }
-        }
-
-        public async Task<Resultado> RegistrarHistoricoAsync(Historico historico)
-        {
-            if (historico == null)
-            {
-                return Resultado.Falha("Histórico enviado nnão pode ser nulo");
-            }
-
-            await _repository.AdicionarAsync(historico);
-            return Resultado.Sucesso();
-        }
+        }        
     }
 }

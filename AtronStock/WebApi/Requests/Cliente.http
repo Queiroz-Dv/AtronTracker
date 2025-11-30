@@ -1,0 +1,52 @@
+﻿POST {{HostAddress}}/api/cliente
+Content-Type: application/json
+
+{    
+  "codigo": "MTH",
+  "nome": "Matheus Lima",
+  "documento": {
+    "dado": "01234567896"
+  },
+  "email": "matheus@email.com",
+  "telefone": "970995479",
+  "statusPessoa": "Ativo"
+  
+}
+
+###
+
+### Listar todos os clientes
+GET {{HostAddress}}/api/cliente
+Accept: application/json
+
+
+### Buscar cliente pelo código
+GET {{HostAddress}}/api/cliente/MTH
+Accept: application/json
+
+
+### Listar clientes inativos
+GET {{HostAddress}}/api/cliente/inativos
+Accept: application/json
+
+### Atualizar um cliente
+PUT {{HostAddress}}/api/cliente/MTH
+Content-Type: application/json
+
+{
+  "codigo": "MTH",
+  "nome": "Matheus Gonzaga",
+  "documento": {
+    "dado": "01234567897"
+  },
+  "email": "matheus@email.com",
+  "telefone": "970995478",
+  "statusPessoa": "Ativo"
+}
+
+### Inativar um cliente (Passando false)
+PUT {{HostAddress}}/api/cliente/ativar-inativar/MTH/false
+Content-Type: application/json
+
+### Remover um cliente
+DELETE {{HostAddress}}/api/cliente/MTH
