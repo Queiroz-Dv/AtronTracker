@@ -35,65 +35,54 @@ namespace AtronStock.Application.Services
         public async Task<Resultado> CriarAsync(ClienteRequest request)
         {
             var messages = _validador.Validar(request);
-            if (!messages.TemErros())
+            if (messages.Any()) return Resultado.Falha(messages);
+
+            var clienteExistente = await _repository.ObterClientePorCodigoAsync(request.Codigo);
+            if (clienteExistente != null) return Resultado.Falha(ClienteResource.ErroClienteExistente);
+
+            var cliente = await _mapService.MapToEntityAsync(request);
+            var foiSalvo = await _repository.CriarClienteAsync(cliente);
+
+            if (!foiSalvo) return Resultado.Falha(ClienteResource.ErroInesperadoCliente);
+
+            IAuditoriaDTO auditoriaDTO = new AuditoriaDTO()
             {
-                var cliente = await _mapService.MapToEntityAsync(request);
-                var foiSalvo = await _repository.CriarClienteAsync(cliente);
-
-                if (!foiSalvo)
-                {
-                    return Resultado.Falha(ClienteResource.ErroInesperadoCliente);
-                }
-
-                IAuditoriaDTO auditoriaDTO = new AuditoriaDTO()
+                CodigoRegistro = cliente.Codigo,
+                Contexto = ClienteContexto,
+                Historico = new HistoricoDTO()
                 {
                     CodigoRegistro = cliente.Codigo,
                     Contexto = ClienteContexto,
-                    Historico = new HistoricoDTO()
-                    {
-                        CodigoRegistro = cliente.Codigo,
-                        Contexto = ClienteContexto,
-                        Descricao = string.Format(
-                        ClienteResource.HistoricoClienteGravado,
-                        cliente.Codigo,
-                        cliente.Nome, DateTime.Now)
-                    }
-                };
+                    Descricao = string.Format(
+                    ClienteResource.HistoricoClienteGravado,
+                    cliente.Codigo,
+                    cliente.Nome, DateTime.Now)
+                }
+            };
 
-                await _auditoriaService.RegistrarServiceAsync(auditoriaDTO);
+            await _auditoriaService.RegistrarServiceAsync(auditoriaDTO);
 
-                var context = new NotificationBag();
-                context.MensagemRegistroSalvo(ClienteContexto);
-                return Resultado.Sucesso(request, [.. context.Messages]);
-            }
+            var context = new NotificationBag();
+            context.MensagemRegistroSalvo(ClienteContexto);
+            return Resultado.Sucesso(request, [.. context.Messages]);
 
-            return Resultado.Falha(messages);
         }
 
         public async Task<Resultado> AtualizarClienteServiceAsync(ClienteRequest request)
         {
             var messages = _validador.Validar(request);
 
-            if (messages.HasErrors())
-            {
-                return Resultado.Falha(messages);
-            }
+            if (messages.Any()) return Resultado.Falha(messages);
 
             var cliente = await _repository.ObterClientePorCodigoAsync(request.Codigo);
 
-            if (cliente == null)
-            {
-                return Resultado.Falha(ClienteResource.ErroClienteNaoExiste);
-            }
+            if (cliente == null) return Resultado.Falha(ClienteResource.ErroClienteNaoExiste);
 
             await _mapService.MapToEntityAsync(request, cliente);
 
             var foiAtualizado = await _repository.AtualizarClienteAsync(cliente);
 
-            if (!foiAtualizado)
-            {
-                return Resultado.Falha(ClienteResource.ErroInesperadoCliente);
-            }
+            if (!foiAtualizado) return Resultado.Falha(ClienteResource.ErroInesperadoCliente);
 
             IAuditoriaDTO auditoria = new AuditoriaDTO()
             {
@@ -120,8 +109,7 @@ namespace AtronStock.Application.Services
         public async Task<Resultado<ClienteRequest>> ObterClientePorCodigoServiceAsync(string codigo)
         {
             var cliente = await _repository.ObterClientePorCodigoAsync(codigo);
-            if (cliente == null)
-                return (Resultado<ClienteRequest>)Resultado.Falha(ClienteResource.ErroClienteNaoExiste);
+            if (cliente == null) return Resultado.Falha<ClienteRequest>(ClienteResource.ErroClienteNaoExiste);
 
             var clienteRequest = await _mapService.MapToDTOAsync(cliente);
 
@@ -139,20 +127,12 @@ namespace AtronStock.Application.Services
         {
             var cliente = await _repository.ObterClientePorCodigoAsync(codigo);
 
-            if (cliente == null)
-            {
-                var messsageBag = new NotificationBag();
-                messsageBag.MensagemRegistroNaoEncontrado(codigo);
-                return Resultado.Falha([.. messsageBag.Messages]);
-            }
+            if (cliente == null) return Resultado.Falha(ClienteResource.ErroClienteNaoExiste);
 
             cliente.Status = EStatus.Removido;
             var foiRemovido = await _repository.AtualizarClienteAsync(cliente);
 
-            if (!foiRemovido)
-            {
-                return Resultado.Falha(ClienteResource.ErroInesperadoAoRemover);
-            }
+            if (!foiRemovido) return Resultado.Falha(ClienteResource.ErroInesperadoAoRemover);
 
             IAuditoriaDTO auditoria = new AuditoriaDTO()
             {
@@ -182,20 +162,12 @@ namespace AtronStock.Application.Services
         public async Task<Resultado> AtivarInativarClienteServiceAsync(string codigo, bool ativar)
         {
             var cliente = await _repository.ObterClientePorCodigoAsync(codigo);
-            if (cliente == null)
-            {
-                var messageBag = new NotificationBag();
-                messageBag.MensagemRegistroNaoEncontrado(codigo);
-                return Resultado.Falha([.. messageBag.Messages]);
-            }
+            if (cliente == null) return Resultado.Falha(ClienteResource.ErroClienteNaoExiste);
 
             cliente.Status = ativar ? EStatus.Ativo : EStatus.Inativo;
             var atualizado = await _repository.AtualizarClienteAsync(cliente);
 
-            if (!atualizado)
-            {
-                return Resultado.Falha(ClienteResource.ErroInesperadoCliente);
-            }
+            if (!atualizado) return Resultado.Falha(ClienteResource.ErroInesperadoCliente);
 
             IAuditoriaDTO auditoria = new AuditoriaDTO()
             {
