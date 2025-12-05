@@ -138,4 +138,7 @@
   <data name="HistoricoClienteRemovido" xml:space="preserve">
     <value>Cliente {0} removido na data {1}</value>
   </data>
+  <data name="ErroClienteExistente" xml:space="preserve">
+    <value>Código de cliente informado existente.</value>
+  </data>
 </root>
