@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AtronStock.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace AtronStock.Domain.Entities
 {

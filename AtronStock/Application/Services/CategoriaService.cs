@@ -83,7 +83,7 @@ namespace AtronStock.Application.Services
             {
                 return Resultado.Falha(CategoriaResource.ErroInesperadoAtualizar);
             }
-            
+
             IAuditoriaDTO auditoria = new AuditoriaDTO
             {
                 CodigoRegistro = categoria.Codigo,
@@ -113,14 +113,14 @@ namespace AtronStock.Application.Services
             var categoria = await _repository.ObterCategoriaPorCodigoAsync(codigo);
             if (categoria == null)
             {
-                var bag = new NotificationBag();      
+                var bag = new NotificationBag();
                 bag.MensagemRegistroNaoEncontrado(codigo);
                 return Resultado.Falha(bag.Messages.ToList());
             }
 
             categoria.Status = ativar ? EStatus.Ativo : EStatus.Inativo;
             await _repository.AtualizarCategoriaAsync(categoria);
-            
+
             IAuditoriaDTO auditoria = new AuditoriaDTO
             {
                 CodigoRegistro = categoria.Codigo,

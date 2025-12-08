@@ -15,5 +15,7 @@ namespace AtronStock.Domain.Entities
         public string Descricao { get; set; } = string.Empty;
 
         public EStatus Status { get; set; }
+
+        public List<ProdutoCategoria> Produtos { get; set; } = [];
     }
 }

@@ -1,0 +1,16 @@
+@HostAddress = http://localhost:5000
+
+### Registrar Fornecedor
+POST {{HostAddress}}/api/fornecedor
+Content-Type: application/json
+
+{
+  "codigo": "FORN001",
+  "nome": "Fornecedor Teste",
+  "email": "fornecedor@teste.com",
+  "telefone": "11999999999"
+}
+
+### Listar Fornecedores
+GET {{HostAddress}}/api/fornecedor
+Accept: application/json

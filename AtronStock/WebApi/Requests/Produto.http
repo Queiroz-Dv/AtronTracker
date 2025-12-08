@@ -1,0 +1,30 @@
+### Registrar Produto
+POST {{HostAddress}}/api/produto
+Content-Type: application/json
+
+{
+  "codigo": "MTRG",
+  "descricao": "Motorola G4",
+  "categoriaCodigos": ["CLR"]
+}
+
+### Registrar Produtos em Lote
+POST {{HostAddress}}/api/produto/lote
+Content-Type: application/json
+
+{
+  "codigo": "MTR",
+  "descricao": "Motorola G",
+  "categoriaIds": [1],
+  "quantidade": 5
+}
+
+### Inativar Produto
+PUT {{HostAddress}}/api/produto/inativar/1
+Content-Type: application/json
+
+### Inativar Produtos em Lote
+PUT {{HostAddress}}/api/produto/inativar-lote
+Content-Type: application/json
+
+[1, 2, 3]

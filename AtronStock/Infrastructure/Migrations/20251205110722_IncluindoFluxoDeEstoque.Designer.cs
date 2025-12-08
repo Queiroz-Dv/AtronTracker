@@ -4,6 +4,7 @@ using AtronStock.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AtronStock.Infrastructure.Migrations
 {
     [DbContext(typeof(StockDbContext))]
-    partial class StockDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251205110722_IncluindoFluxoDeEstoque")]
+    partial class IncluindoFluxoDeEstoque
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -317,7 +319,18 @@ namespace AtronStock.Infrastructure.Migrations
                     b.Property<int>("QuantidadeEmEstoque")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Removido")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemovidoEm")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VendaId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("VendaId");
 
                     b.ToTable("Produtos");
                 });
@@ -366,6 +379,9 @@ namespace AtronStock.Infrastructure.Migrations
                     b.Property<DateTime>("DataVenda")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("ProdutoId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Removido")
                         .HasColumnType("bit");
 
@@ -375,6 +391,8 @@ namespace AtronStock.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
+
+                    b.HasIndex("ProdutoId");
 
                     b.ToTable("Vendas", (string)null);
                 });
@@ -528,6 +546,17 @@ namespace AtronStock.Infrastructure.Migrations
                     b.Navigation("Estoque");
                 });
 
+            modelBuilder.Entity("AtronStock.Domain.Entities.Produto", b =>
+                {
+                    b.HasOne("AtronStock.Domain.Entities.Venda", "Venda")
+                        .WithMany()
+                        .HasForeignKey("VendaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Venda");
+                });
+
             modelBuilder.Entity("AtronStock.Domain.Entities.ProdutoCategoria", b =>
                 {
                     b.HasOne("AtronStock.Domain.Entities.Categoria", "Categoria")
@@ -555,6 +584,10 @@ namespace AtronStock.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("AtronStock.Domain.Entities.Produto", null)
+                        .WithMany("Vendas")
+                        .HasForeignKey("ProdutoId");
+
                     b.Navigation("Cliente");
                 });
 
@@ -571,6 +604,8 @@ namespace AtronStock.Infrastructure.Migrations
             modelBuilder.Entity("AtronStock.Domain.Entities.Produto", b =>
                 {
                     b.Navigation("Categorias");
+
+                    b.Navigation("Vendas");
                 });
 
             modelBuilder.Entity("AtronStock.Domain.Entities.Venda", b =>

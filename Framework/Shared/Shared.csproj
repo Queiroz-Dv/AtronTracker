@@ -26,6 +26,16 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>CategoriaResource.resx</DependentUpon>
 	  </Compile>
+	  <Compile Update="Application\Resources\AtronStock\FornecedoResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>FornecedoResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\AtronStock\ProdutoResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ProdutoResource.resx</DependentUpon>
+	  </Compile>
 	  <Compile Update="Application\Resources\AuditoriaResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -47,6 +57,14 @@
 	  <EmbeddedResource Update="Application\Resources\AtronStock\CategoriaResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>CategoriaResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\AtronStock\FornecedoResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>FornecedoResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\AtronStock\ProdutoResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ProdutoResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\AuditoriaResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>

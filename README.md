@@ -1,135 +1,115 @@
-<!DOCTYPE html>
-<html>
-<head>
-</head>
-<body>
+# 🚀 Projeto Atron Tracker
 
-<h1>Projeto Atron Tracker</h1>
+Bem-vindo ao **Atron Tracker**! Este projeto é um protótipo robusto projetado para demonstrar o ciclo completo de desenvolvimento de software, aplicando práticas modernas de arquitetura e design.
 
-<p>Esse protótipo tem como objetivo exemplificar todo o desenvolvimento e ciclo de um software. 
-O projeto apresentado segue a base de alguns de  padrões da Arquitetura Limpa com 
-aplicação parcial do Domain-Driven Design (DDD) e MVC. 
+![Status do Projeto](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow)
+![Licença](https://img.shields.io/badge/Licença-MIT-blue)
+![.NET](https://img.shields.io/badge/.NET-8.0-purple)
 
-As bases desse projeto foram desenvolvidas para desktop; no entanto, 
-devido aos conhecimentos adquiridos após exercer minha função na área e dos estudos realizados, 
-estou constanemente refatorando e melhorando o sistema.</p>
-<br>
-<div>
-  <h2>Tecnologias Utilizadas</h2>
-  <p>Para o projeto Web Api utilizei o <strong>Swagger para documentação</strong> além do Redoc para um layout mais apresentável.
-  No projeto anterior utilizei o AutoMapper para lidar com os mapeamentos do DTO para entidade, no entanto, decidi montar meu próprio mapeador.</p>
-  <p>O ORM utilizado é o Entity Framework Core, e está desacoplado das outras camadas podendo ser alterado por outro ORM de preferência.</p>
-  <p>O projeto de web view pode ser utilizado parcialmente com Razor Pages, no entanto, decidi migrar para o Angular.</p>
-  <p>Caso queira ver o projeto em Angular, clique nesse link: <a href="https://github.com/Queiroz-Dv/AtronTracker-WebView">Atron Tracker Web View</a></p>
-  <p>O banco de dados utilizado é o SQL Server, assim como o ORM também pode ser alterado facilmente pois está desacoplado.</p>
-</div>
-<div>
-  <h2>Como configurar?</h2>
-  <p> Para configurar e inicializar o sistema será necessário utilizar o Visual Studio Code ou instalar o Visual Studio 2022 na sua máquina.
+---
 
-  Feita a instalação, configure o projeto inicial para o WebApi: <img src="images/ProjetoInicialConfig.png" alt="Configuração do projeto inicial">  
+## 📖 Sobre o Projeto
 
-  Em seguida, abra o Package Manager Console e digite <i>update-database</i> isso irá instalar e inicializar o banco de dados do projeto. Além disso você precisa configurar o projeto padrão para o <i>Atron.Infrastructure</i> pois as configurações de acesso a dados e das entidades estão concentradas nesse módulo.
-  <img src="images/ConfigPMC.png" alt="Configuração do PMC">
-  </p>
-</div>
+O **Atron Tracker** segue os princípios da **Arquitetura Limpa (Clean Architecture)**, com aplicação parcial de **Domain-Driven Design (DDD)** e **MVC**. Embora as bases tenham sido desenvolvidas inicialmente para desktop, o sistema está em constante evolução, incorporando novos conhecimentos e refatorações para garantir qualidade e escalabilidade.
 
-<div>
-  <h2>Como funciona?</h2>
-  <p> O projeto (até o momento) pode ser usado de duas formas: 
-    <ul>
-        <li>
-          <b>Web Api</b>
-             <p><img src="images/AtronWebApi.png" alt="Módulo Atron Web Api"></p>
-            <p> O projeto de Api é a parte principal do sistema onde foi configurado os endpoints de acesso para cada módulo.            
-              É nesse projeto que se concentra as principais regras de negócio e validações.
-             Pode-se utilizar todo o sistema apenas com esse módulo mesmo que o projeto Web View não seja inicializado.</p>
-       </li>
-      <br>
-      <li>
-          <b>Web View (Razor Pages)</b>
-           <p><img src="images/AtronWebView.png" alt="Módulo Atron Web View"></p>
-            <p> O projeto da View é onde ocorre os processos mais variados para a apresentação e o envio dos dados para a API.
-            É nesse projeto que se concentra a comunicação com a API, 
-            a configuração dos serviços externos e das View Models.           
-            Por enquanto esse módulo depende do projeto de API para funcionar, ou seja, 
-            não vai há possibilidade de utilizá-lo sozinho.
-       </li>
-    </ul>
-  </p>
-</div>
-<br>
+### 🌟 Destaques
 
-<h2>Estrutura dos Projetos</h2>
-<p>Nesse tópico irei explicar de forma resumida cada módulo, componente e classes apresentando seus funcionamentos e responsabilidades.</p>
-<p>Para verificar mais informações você pode clicar no link de cada tópico.</p>
-<hr>
+- **Arquitetura Desacoplada**: Facilita a manutenção e a substituição de componentes (ex: ORM, Banco de Dados).
+- **Documentação Automática**: Uso do Swagger e Redoc para uma documentação de API clara e interativa.
+- **Mapeamento Personalizado**: Implementação de um mapeador próprio para DTOs e Entidades.
+- **Flexibilidade**: Banco de dados SQL Server e ORM Entity Framework Core configurados, mas facilmente substituíveis.
 
-<ul>
-  <li>
-    <h3>Framework</h3>
-    <p><img src="images/AtronFrameworkFolder.png" alt="Módulos do framework" /></p>
-    <p>Decidi modelar e montar a estrutura interna dos processos e fluxos do sistema por conta própria, 
-      apesar de ter outras abordagens para utilizar. 
-      No entanto, para desafiar-me, centralizei tudo nessa pasta a fim de organizar 
-      as bibliotecas do fluxo interno do sistema.</p>    
-    <ul>
-      <li>
-        <p><strong><a title="Communication Doc" href="/Framework/Communication/README.md">Communication:</a></strong>
-        <p><img src="images/AtronCommunication.png" alt="Módulo Communication" /></p>
-        A biblioteca Communication gerencia a comunicação com as rotas da API e do token de acesso entre os endpoints, além de abstrair uma parte da segurança para a API.</p>         
-      </li> 
-      <br>     
-      <li>
-        <p><strong><a title="External Services Doc" href="/Framework/ExternalServices/README.md">External Services:</a></strong><br><img src="images/AtronExternalServices.png" alt="Módulo External Services" /><br>
-        <p>Essa biblioteca é responsável por abstrair a comunicação com o projeto de Web API, em outras palavras,
-            é ele quem faz a interceptação de envio e recebimento dos dados da view para a API.</p>        
-        <p> É um módulo especificamente separado para lidar com as requisições HTTP, 
-            incluindo funcionalidades para as págians de Login e de Registro ed usuário.
-        </p>
-      </li>          
-      <li>
-        <p><strong><a title="Shared Doc" href="/Framework/Shared/README.md">Shared</a>:</strong><br><img src="images/AtronShared.png" alt="Módulo Shared" /><br>
-         Contém código compartilhado entre diferentes módulos ou camadas da aplicação, como utilitários, helpers e outras classes reutilizáveis.<p>
-      </li>
-    </ul>
-  </li>
+---
 
-  <li>
-    <h3><a title="Atron Application Doc" href="/Atron.Application/README.md">Atron.Application</a></h3>
-    <img src="images/AtronApplication.png" alt="Módulo Atron Application"/>
-    <p>Contém a lógica de aplicação, como regras de negócios, validações, e manipulação de dados específicos do domínio. Esta camada coordena a execução de tarefas entre diferentes camadas, gerencia casos de uso, e orquestra o funcionamento geral da aplicação.</p>
-  </li>
+## 🛠️ Tecnologias Utilizadas
 
-  <li>
-    <h3><a title="Atron Domain Doc" href="/Atron.Domain/README.md">Atron.Domain</a></h3>
-    <img src="images/AtronDomain.png" alt="Módulo Atron Domain"/>
-    <p>Representa a camada de domínio, incluindo entidades principais. Esta camada define os conceitos fundamentais e operações dentro do domínio da aplicação. Além de definir as interfaces para a camada de dados.</p>
-  </li>
+| Tecnologia                | Descrição                                |
+| ------------------------- | ---------------------------------------- |
+| **.NET 8**                | Plataforma base para o desenvolvimento.  |
+| **Entity Framework Core** | ORM para manipulação de dados.           |
+| **SQL Server**            | Banco de dados relacional.               |
+| **Swagger / Redoc**       | Documentação da API.                     |
+| **Angular**               | Framework para o Web View (em migração). |
 
-  <li>
-    <h3><a title="Atron Infra IoC Doc" href="/Atron.Infra.IoC/README.md">Atron.Infra.IoC</a></h3>
-    <img src="images/AtronInfraIoc.png" alt="Módulo Atron Infra IoC"/>
-    <p>Responsável pela Injeção de Dependência (IoC - Inversion of Control). 
-    Este projeto configura e gerencia a injeção de dependências através de contêineres, 
-    permitindo que os diferentes componentes da aplicação sejam desacoplados e testáveis.</p>
-  </li>
+> **Nota**: O projeto Web View está sendo migrado para Angular. Confira o repositório aqui: [Atron Tracker Web View](https://github.com/Queiroz-Dv/AtronTracker-WebView)
 
-  <li>
-    <h3><a title="Atron Infrastructure Doc" href="/Atron.Infrastructure/README.md">Atron.Infrastructure</a></h3>
-    <img src="images/AtronInfrastructure.png" alt="Módulo Atron Infrastructure"/>
-    <p>Trata das preocupações de infraestrutura, como o acesso a dados (implementações de repositório), serviços externos, e qualquer outra operação que interaja com o mundo externo ou que suporte as camadas superiores. Contém implementações concretas para interfaces definidas na camada de domínio.</p>
-  </li>
+---
 
-  <li>
-    <h3>Atron.WebApi</h3>
-    <p>A camada de interface da Web para a sua aplicação, expondo APIs RESTful ou endpoints que podem ser consumidos por clientes front-end ou outros serviços. Manipula solicitações HTTP, validações de entrada, autenticação, e retorna respostas apropriadas aos clientes.</p>
-  </li>
+## ⚙️ Como Configurar
 
-  <li>
-    <h3>Atron.WebViews</h3>
-    <p>Focado na interface do usuário, este projeto inclui páginas da web, layouts, e componentes visuais que compõem a interface da sua aplicação. Pode ser um front-end MVC, Razor Pages, ou outra abordagem para renderização de conteúdo dinâmico para os usuários finais.</p>
-  </li>
-</ul>
-</body>
-</html>
+Siga os passos abaixo para configurar e rodar o projeto em sua máquina:
+
+1. **Pré-requisitos**:
+
+   - Visual Studio 2022 ou Visual Studio Code.
+   - .NET SDK instalado.
+   - SQL Server instalado.
+
+2. **Configuração Inicial**:
+
+   - Abra a solução no Visual Studio.
+   - Defina o projeto **Atron.WebApi** como projeto de inicialização.
+
+   ![Configuração do Projeto Inicial](images/ProjetoInicialConfig.png)
+
+3. **Banco de Dados**:
+
+   - Abra o **Package Manager Console (PMC)**.
+   - Defina o projeto padrão como `Atron.Infrastructure`.
+   - Execute o comando:
+     ```powershell
+     update-database
+     ```
+
+   ![Configuração do PMC](images/ConfigPMC.png)
+
+---
+
+## 🧩 Como Funciona?
+
+O sistema é dividido em módulos principais:
+
+### 🌐 Web Api
+
+A espinha dorsal do sistema. Centraliza as regras de negócio, validações e endpoints.
+
+- **Independência**: Pode ser utilizado isoladamente.
+- **Segurança**: Gerencia autenticação e autorização.
+
+![Módulo Atron Web Api](images/AtronWebApi.png)
+
+### 💻 Web View (Razor Pages / Angular)
+
+A interface do usuário. Responsável pela apresentação e interação com o usuário.
+
+- **Comunicação**: Consome a API para exibir e enviar dados.
+- **Dependência**: Necessita da API rodando para funcionar plenamente.
+
+![Módulo Atron Web View](images/AtronWebView.png)
+
+---
+
+## 🏗️ Estrutura dos Projetos
+
+Abaixo, uma visão geral dos módulos e suas responsabilidades:
+
+### 📂 Framework
+
+Núcleo compartilhado e utilitários do sistema.
+
+- **[Communication](/Framework/Communication/README.md)**: Gerencia chamadas HTTP e tokens.
+- **[External Services](/Framework/ExternalServices/README.md)**: Abstração para comunicação com a API.
+- **[Shared](/Framework/Shared/README.md)**: Utilitários e helpers globais.
+
+### 📂 Camadas da Aplicação
+
+- **[Atron.Application](/Atron.Application/README.md)**: Orquestração de tarefas e casos de uso.
+- **[Atron.Domain](/Atron.Domain/README.md)**: O coração do sistema. Entidades, interfaces e regras de negócio.
+- **[Atron.Infrastructure](/Atron.Infrastructure/README.md)**: Implementação de repositórios e acesso a dados.
+- **[Atron.Infra.IoC](/Atron.Infra.IoC/README.md)**: Configuração de Injeção de Dependência.
+- **Atron.WebApi**: Interface RESTful.
+- **Atron.WebViews**: Interface de Usuário.
+
+---
+
+Feito com ❤️ por [Queiroz-Dv](https://github.com/Queiroz-Dv)
