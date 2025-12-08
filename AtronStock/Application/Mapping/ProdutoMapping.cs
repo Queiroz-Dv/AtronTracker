@@ -6,7 +6,7 @@ using Shared.Application.Services.Mapper;
 namespace AtronStock.Application.Mapping
 {
     public class ProdutoMapping : AsyncApplicationMapService<ProdutoRequest, Produto>, IAsyncMap<ProdutoRequest, Produto>
-    {
+    {       
         public override Task<ProdutoRequest> MapToDTOAsync(Produto entity)
         {
             var produtoRequest = new ProdutoRequest

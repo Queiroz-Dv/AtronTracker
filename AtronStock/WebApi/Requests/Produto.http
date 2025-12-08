@@ -5,7 +5,9 @@ Content-Type: application/json
 {
   "codigo": "MTRG",
   "descricao": "Motorola G4",
+  "preco": 4500
   "categoriaCodigos": ["CLR"]
+  "fornecedoresCodigos" ["ATL"]
 }
 
 ### Registrar Produtos em Lote

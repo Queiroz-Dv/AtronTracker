@@ -97,6 +97,15 @@ namespace Shared.Application.Resources.AtronStock {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fornecedor não encontrado..
+        /// </summary>
+        public static string ErroFornecedorNaoEncontrado {
+            get {
+                return ResourceManager.GetString("ErroFornecedorNaoEncontrado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O nome do fornecedor tem um limite máximo de 100 caracteres..
         /// </summary>
         public static string ErroNomeLimiteMaximoDeCaractere {

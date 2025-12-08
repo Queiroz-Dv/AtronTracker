@@ -1,14 +1,13 @@
-@HostAddress = http://localhost:5000
-
 ### Registrar Fornecedor
 POST {{HostAddress}}/api/fornecedor
 Content-Type: application/json
 
 {
-  "codigo": "FORN001",
-  "nome": "Fornecedor Teste",
-  "email": "fornecedor@teste.com",
-  "telefone": "11999999999"
+  "codigo": "ATL",
+  "nome": "Atalanta Logistics",
+  "email": "atl@email.com",
+  "telefone": "21970995342",
+  "cnpj": "12458687000211"  
 }
 
 ### Listar Fornecedores

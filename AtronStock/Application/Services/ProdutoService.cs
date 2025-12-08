@@ -34,6 +34,11 @@ namespace AtronStock.Application.Services
             _fornecedorRepository = fornecedorRepository;
         }
 
+        private async Task PreencherInformacoesDaEntidade()
+        {
+
+        }
+
         public async Task<Resultado> RegistrarProdutoAsync(ProdutoRequest request)
         {
             var messages = _validador.Validar(request);
