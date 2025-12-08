@@ -18,7 +18,6 @@ namespace AtronStock.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult> RegistrarFornecedor([FromBody] FornecedorRequest request)
         {
-
             var resultado = await _fornecedorService.RegistrarFornecedorAsync(request);
 
             return resultado.TeveFalha ? 
@@ -31,6 +30,15 @@ namespace AtronStock.WebApi.Controllers
         {
             var fornecedores = await _fornecedorService.ListarFornecedoresAsync();
             return Ok(fornecedores);
+        }
+
+        [HttpGet("{codigo}")]
+        public async Task<ActionResult<FornecedorRequest>> ObterPorCodigo(string codigo)
+        {
+            var resultado = await _fornecedorService.ObterFornecedorPorCodigoAsync(codigo);
+
+
+            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Dado);
         }
     }
 }

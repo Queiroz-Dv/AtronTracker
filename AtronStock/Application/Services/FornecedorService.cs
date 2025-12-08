@@ -56,20 +56,16 @@ namespace AtronStock.Application.Services
 
         public async Task<Resultado<FornecedorRequest>> ObterFornecedorPorCodigoAsync(string codigo)
         {
-            var fornecedor = await _fornecedorRepository.ObterPorCodigoAsync(codigo);
+            Fornecedor fornecedor = await _fornecedorRepository.ObterPorCodigoAsync(codigo);
+
             if (fornecedor == null)
             {
-                return Resultado.Falha<FornecedorRequest>("Fornecedor não encontrado.");
+                return Resultado.Falha<FornecedorRequest>(FornecedoResource.ErroFornecedorNaoEncontrado);
             }
 
-            var fornecedorRequest = new FornecedorRequest
-            {
-                Codigo = fornecedor.Codigo,
-                Nome = fornecedor.Nome,
-                Email = fornecedor.Email,
-                Telefone = fornecedor.Telefone
-            };
-            return Resultado.Sucesso(fornecedorRequest);
+            FornecedorRequest dto = await _map.MapToDTOAsync(fornecedor);
+
+            return Resultado.Sucesso(dto);
         }
     }
 }
