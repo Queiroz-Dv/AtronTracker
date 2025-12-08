@@ -12,6 +12,8 @@ namespace AtronStock.Domain.Interfaces
 
         Task<Cliente> ObterClientePorCodigoAsync(string codigo);
 
-        Task<bool> AtualizarClienteAsync(Cliente cliente);        
+        Task<bool> AtualizarClienteAsync(Cliente cliente);
+
+        Task<Cliente?> ObterPorIdAsync(int id);
     }
 }
