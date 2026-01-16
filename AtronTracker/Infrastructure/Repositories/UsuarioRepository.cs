@@ -82,21 +82,26 @@ namespace Infrastructure.Repositories
         {
             var applicationUser = await _context.Users.FirstOrDefaultAsync(usr => usr.UserName == codigo);
             var usuario = await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).FirstOrDefaultAsync(usr => usr.Codigo == codigo);
-
-            var usuarioIdentity = new UsuarioIdentity
+            if (usuario != null)
             {
-                Codigo = usuario.Codigo,
-                Nome = usuario.Nome,
-                Sobrenome = usuario.Sobrenome,
-                Email = usuario.Email,
-                SalarioAtual = usuario.SalarioAtual,
-                DataNascimento = usuario.DataNascimento,
-                UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
-                RefreshToken = applicationUser.RefreshToken,
-                RefreshTokenExpireTime = applicationUser.RefreshTokenExpireTime
-            };
 
-            return usuarioIdentity;
+                var usuarioIdentity = new UsuarioIdentity
+                {
+                    Codigo = usuario.Codigo,
+                    Nome = usuario.Nome,
+                    Sobrenome = usuario.Sobrenome,
+                    Email = usuario.Email,
+                    SalarioAtual = usuario.SalarioAtual,
+                    DataNascimento = usuario.DataNascimento,
+                    UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
+                    RefreshToken = applicationUser.RefreshToken,
+                    RefreshTokenExpireTime = (DateTime)applicationUser.RefreshTokenExpireTime
+                };
+
+                return usuarioIdentity;
+            }
+
+            return null;
         }
 
         public async Task<Usuario> ObterUsuarioPorIdAsync(int? id)
@@ -132,36 +137,31 @@ namespace Infrastructure.Repositories
                 var applicationUsers = await _context.Users.ToListAsync();
                 var usuarios = await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).ToListAsync();
 
-                var usuariosIdentity = new List<UsuarioIdentity>();
-
-                foreach (var user in applicationUsers)
-                {
-                    var usuario = usuarios.FirstOrDefault(cdg => cdg.Codigo == user.UserName);
-
-                    if (usuario is not null)
-                    {
-                        var usuarioIdentity = new UsuarioIdentity
-                        {
-                            Codigo = usuario.Codigo,
-                            Nome = usuario.Nome,
-                            Sobrenome = usuario.Sobrenome,
-                            Email = usuario.Email,
-                            Salario = usuario.Salario,
-                            DataNascimento = usuario.DataNascimento,
-                            UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
-                        };
-
-                        usuariosIdentity.Add(usuarioIdentity);
-                    }
-                }
+                var usuariosIdentity = await (from au in _context.Users
+                                              join u in _context.Usuarios.Include(r => r.UsuarioCargoDepartamentos)
+                                                on au.UserName equals u.Codigo
+                                              select new UsuarioIdentity
+                                              {
+                                                  Codigo = u.Codigo,
+                                                  Nome = u.Nome,
+                                                  Sobrenome = u.Sobrenome,
+                                                  Email = u.Email,
+                                                  Salario = u.Salario,
+                                                  DataNascimento = u.DataNascimento,
+                                                  UsuarioCargoDepartamentos = u.UsuarioCargoDepartamentos
+                                              }).ToListAsync();
 
                 return usuariosIdentity;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
+        }
+
+        public async Task<bool> VerificarEmailExistenteAsync(string email)
+        {
+            return await _context.Usuarios.AnyAsync(u => u.Email == email);
         }
     }
 }

@@ -8,6 +8,9 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.DTOS.Email;
+using Shared.Application.Interfaces.Service;
+using Shared.Application.Services.Email;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.ApplicationRepositories;
 using Microsoft.AspNetCore.DataProtection;
@@ -60,7 +63,8 @@ namespace IoC
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigurePerfilDeAcessoServices(services);
-            ConfigurePerfilDeAcessoUsuarioServices(services);            
+            ConfigurePerfilDeAcessoUsuarioServices(services);
+            ConfigureSharedEmailServices(services, configuration);
 
             // Registra os serviços essenciais do sistema de proteção de dados (Data Protection) na injeção de dependência.
             services.AddDataProtection()
@@ -152,6 +156,16 @@ namespace IoC
         private static void ConfigureTarefaServices(IServiceCollection services)
         {
             services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
+        }
+
+        /// <summary>
+        /// Configura os serviços de e-mail compartilhados.
+        /// O módulo AtronEmail expõe endpoints de diagnóstico, mas a implementação do serviço é compartilhada.
+        /// </summary>
+        private static void ConfigureSharedEmailServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+            services.AddScoped<IEmailService, SharedEmailService>();
         }
     }
 }

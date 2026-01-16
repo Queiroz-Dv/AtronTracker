@@ -21,5 +21,7 @@ namespace Domain.Interfaces.UsuarioInterfaces
         Task<bool> AtualizarSalario(int usuarioId, int quantidadeTotal);
 
         Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity();
+
+        Task<bool> VerificarEmailExistenteAsync(string email);
     }
 }

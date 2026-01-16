@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 using Shared.Extensions;
-using static System.Net.Mime.MediaTypeNames;
 using Shared.Domain.ValueObjects;
 using Shared.Domain.Enums;
 
@@ -66,7 +65,7 @@ namespace Communication.Models
 
         public async Task PostAsync(string content)
         {
-            var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
+            var httpContent = new StringContent(content, Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json);
             var response = await _httpClient.PostAsync(Url, httpContent);
             var responseContent = await response.Content.ReadAsStringAsync();
 
@@ -90,7 +89,7 @@ namespace Communication.Models
 
         public async Task PutAsync(string parameter, string content)
         {
-            var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
+            var httpContent = new StringContent(content, Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json);
             try
             {
                 NormalizeUrl();
@@ -127,7 +126,7 @@ namespace Communication.Models
 
         public async Task<DTO> PostAsync<DTO>(string content)
         {
-            var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
+            var httpContent = new StringContent(content, Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json);
             var response = await _httpClient.PostAsync(Url, httpContent);
 
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -157,7 +156,7 @@ namespace Communication.Models
 
         public async Task PutAsyncById(int parameter, string content)
         {
-            var httpContent = new StringContent(content, Encoding.UTF8, Application.Json);
+            var httpContent = new StringContent(content, Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json);
             try
             {
                 var response = await _httpClient.PutAsync($"{Url}{parameter}", httpContent);
