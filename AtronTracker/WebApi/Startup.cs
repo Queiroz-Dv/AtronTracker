@@ -101,8 +101,8 @@ namespace WebApi
             app.UseRouting();
 
             // 🧠 Cria roles e usuários padrões se ainda não existirem
-            createDefaultUserRole.CreateDefaultRoles();
-            createDefaultUserRole.CreateDefaultUsers();
+           // createDefaultUserRole.CreateDefaultRoles();
+         //   createDefaultUserRole.CreateDefaultUsers();
 
             // 🌍 Habilita a política de CORS para permitir requisições de outras origens (frontend, mobile, etc)
             app.UseCors("CorsPolicy");

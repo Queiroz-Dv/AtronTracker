@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Shared.Domain.Entities.Identity;
 using System;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.ApplicationRepositories
 {
@@ -20,7 +21,8 @@ namespace Infrastructure.Repositories.ApplicationRepositories
         public void CreateDefaultUsers()
         {
             // Use
-            if (_userManager.FindByEmailAsync("atronUser@email.com").Result == null)
+            var userAtron = _userManager.FindByEmailAsync("atronUser@email.com").Result;
+            if (userAtron == null)
             {
                 var applicationUser = new ApplicationUser();
                 applicationUser.UserName = "AtronUser@Tracker";
@@ -29,6 +31,9 @@ namespace Infrastructure.Repositories.ApplicationRepositories
                 applicationUser.NormalizedEmail = "ATRON_USER@TRACKER";
                 applicationUser.EmailConfirmed = true;
                 applicationUser.LockoutEnabled = false;
+                applicationUser.SecurityStamp ??= Guid.NewGuid().ToString();
+                applicationUser.ConcurrencyStamp ??= Guid.NewGuid().ToString();
+                applicationUser.RefreshToken ??= string.Empty;
                 applicationUser.SecurityStamp = Guid.NewGuid().ToString();
 
                 IdentityResult identityResult = _userManager.CreateAsync(applicationUser, "AtronUser#2024").Result;
@@ -49,6 +54,9 @@ namespace Infrastructure.Repositories.ApplicationRepositories
                 applicationUser.NormalizedEmail = "ATRON_ADMIN@TRACKER";
                 applicationUser.EmailConfirmed = true;
                 applicationUser.LockoutEnabled = false;
+                applicationUser.SecurityStamp ??= Guid.NewGuid().ToString();
+                applicationUser.ConcurrencyStamp ??= Guid.NewGuid().ToString();
+                applicationUser.RefreshToken ??= string.Empty;
                 applicationUser.SecurityStamp = Guid.NewGuid().ToString();
 
                 IdentityResult identityResult = _userManager.CreateAsync(applicationUser, "AtronAdmin#2024").Result;

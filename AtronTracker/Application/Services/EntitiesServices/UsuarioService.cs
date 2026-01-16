@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.DTO.ApiDTO;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.DTOS.Email;
 using Shared.Domain.ValueObjects;
 
 namespace Application.Services.EntitiesServices
@@ -26,6 +27,7 @@ namespace Application.Services.EntitiesServices
         private readonly ISalarioRepository _salarioRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
         private readonly IValidateModelService<Usuario> _validateModel;
+        private readonly IEmailService _emailService;
         private readonly Notifiable _messageModel;
 
         public UsuarioService(IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> map,
@@ -37,7 +39,8 @@ namespace Application.Services.EntitiesServices
                               ISalarioRepository salarioRepository,
                               IValidateModelService<Usuario> validateModel,
                               Notifiable messageModel,
-                              IUsuarioIdentityRepository usuarioIdentityRepository)
+                              IUsuarioIdentityRepository usuarioIdentityRepository,
+                              IEmailService emailService)
         {
             _map = map;
             _usuarioRepository = repository;
@@ -49,6 +52,7 @@ namespace Application.Services.EntitiesServices
             _tarefaRepository = tarefaRepository;
             _salarioRepository = salarioRepository;
             _usuarioIdentityRepository = usuarioIdentityRepository;
+            _emailService = emailService;
         }
 
         public async Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO)
@@ -126,6 +130,17 @@ namespace Application.Services.EntitiesServices
             };
 
             _validateModel.Validate(entidade);
+
+            // Validação assíncrona de e-mail único
+            if (!string.IsNullOrEmpty(entidade.Email))
+            {
+                var emailExiste = await _usuarioRepository.VerificarEmailExistenteAsync(entidade.Email);
+                if (emailExiste)
+                {
+                    _messageModel.AdicionarErro("O e-mail informado já está cadastrado no sistema.");
+                }
+            }
+
             if (!_messageModel.Notificacoes.HasErrors())
             {
                 var usuarioExiste = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.Codigo);
@@ -163,6 +178,17 @@ namespace Application.Services.EntitiesServices
 
                     if (!_messageModel.Notificacoes.HasErrors())
                     {
+                        // Enviar e-mail de boas-vindas
+                        try
+                        {
+                            var emailMessage = CriarEmailBoasVindas(entidade.Email, entidade.Nome);
+                            await _emailService.EnviarAsync(emailMessage);
+                        }
+                        catch
+                        {
+                            // Log ou tratamento de erro - não interrompe o fluxo de criação
+                        }
+
                         _messageModel.AdicionarMensagem($"Usuário de acesso da aplicação: {usuarioDTO.Nome} cadastrado com sucesso");
                     }
                 }
@@ -240,6 +266,54 @@ namespace Application.Services.EntitiesServices
 
                 _messageModel.MensagemRegistroRemovido(nameof(Usuario));
             }
+        }
+
+        /// <summary>
+        /// Cria a mensagem de e-mail de boas-vindas para novo usuário.
+        /// </summary>
+        private static EmailMessage CriarEmailBoasVindas(string destinatario, string nomeUsuario)
+        {
+            var assunto = "Bem-vindo ao Sistema Atron!";
+            var corpo = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }}
+        .container {{ max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+        .header {{ text-align: center; padding-bottom: 20px; border-bottom: 2px solid #007bff; }}
+        .header h1 {{ color: #007bff; margin: 0; }}
+        .content {{ padding: 20px 0; }}
+        .content p {{ color: #333; line-height: 1.6; }}
+        .footer {{ text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>🎉 Bem-vindo ao Sistema Atron!</h1>
+        </div>
+        <div class='content'>
+            <p>Olá, <strong>{nomeUsuario}</strong>!</p>
+            <p>Sua conta foi criada com sucesso no Sistema Atron.</p>
+            <p>Agora você pode acessar o sistema utilizando suas credenciais de login.</p>
+            <p>Se você tiver alguma dúvida, entre em contato com o suporte.</p>
+        </div>
+        <div class='footer'>
+            <p>Este é um e-mail automático. Por favor, não responda.</p>
+            <p>&copy; {System.DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>";
+
+            return new EmailMessage
+            {
+                To = new System.Collections.Generic.List<string> { destinatario },
+                Subject = assunto,
+                Body = corpo
+            };
         }
     }
 }

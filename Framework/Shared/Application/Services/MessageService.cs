@@ -20,7 +20,7 @@ namespace Shared.Application.Services
 
     public abstract class MessageService : MensagemRegistro, IMessageService
     {
-        public List<NotificationMessage> Notificacoes { get; }
+        public List<NotificationMessage> Notificacoes { get; private set; } = [];
 
         public abstract void AdicionarMensagem(string message);
 
