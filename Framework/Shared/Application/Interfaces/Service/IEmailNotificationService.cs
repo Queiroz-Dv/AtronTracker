@@ -1,6 +1,6 @@
-using Shared.Application.DTOS.Email;
+using Shared.Application.DTOS.Requests;
 
-namespace AtronEmail.Application.Interfaces
+namespace Shared.Application.Interfaces.Service
 {
     /// <summary>
     /// Interface do serviço de notificação por e-mail.
@@ -29,6 +29,6 @@ namespace AtronEmail.Application.Interfaces
         /// Envia e-mail usando a mensagem padrão do sistema.
         /// </summary>
         /// <param name="message">Mensagem de e-mail.</param>
-        Task EnviarAsync(EmailMessage message);
+        Task EnviarAsync(EmailRequest message);
     }
 }

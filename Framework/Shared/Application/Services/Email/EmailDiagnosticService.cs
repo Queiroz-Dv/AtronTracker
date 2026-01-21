@@ -1,12 +1,12 @@
-using AtronEmail.Application.Interfaces;
-using AtronEmail.DTOs.Requests;
-using AtronEmail.DTOs.Responses;
 using Microsoft.Extensions.Options;
 using Shared.Application.DTOS.Email;
+using Shared.Application.DTOS.Requests;
+using Shared.Application.DTOS.Responses;
 using Shared.Application.Email;
 using Shared.Application.Interfaces.Service;
+using Shared.Extensions;
 
-namespace AtronEmail.Application.Services
+namespace Shared.Application.Services.Email
 {
     /// <summary>
     /// Serviço para diagnóstico de configurações de e-mail.
@@ -27,7 +27,11 @@ namespace AtronEmail.Application.Services
 
             try
             {
-                (_provider, _providerSettings) = EmailProviderIdentifier.IdentificarEObterConfiguracoes(_settings.FromEmail);
+                var providerData = EmailProviderIdentifier.IdentificarEObterConfiguracoes(_settings.FromEmail);
+                if (!EmailProviderIdentifier.Messages.HasErrors())
+                {
+                    (_provider, _providerSettings) = providerData;
+                }
             }
             catch
             {
@@ -37,9 +41,9 @@ namespace AtronEmail.Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<EmailStatusResponse> EnviarDiagnosticoAsync(EmailDiagnosticoRequest request)
+        public async Task<EmailStatusResponse> EnviarDiagnosticoAsync(EmailRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request?.EmailDestino))
+            if (request.EmailsDestino.Count < 0)
             {
                 return EmailStatusResponse.CriarErro(
                     "E-mail de destino é obrigatório.",
@@ -60,21 +64,14 @@ namespace AtronEmail.Application.Services
 
                 var corpo = GerarCorpoEmailDiagnostico(request.Mensagem);
 
-                var message = new EmailMessage
-                {
-                    To = new List<string> { request.EmailDestino },
-                    Subject = assunto,
-                    Body = corpo
-                };
-
-                await _emailService.EnviarAsync(message);
+                await _emailService.EnviarAsync(request);
 
                 return EmailStatusResponse.CriarSucesso(
                     _provider.ToString(),
                     _providerSettings!.SmtpHost,
                     _providerSettings.SmtpPort,
                     _settings.FromEmail,
-                    request.EmailDestino);
+                    request.EmailsDestino);
             }
             catch (Exception ex)
             {

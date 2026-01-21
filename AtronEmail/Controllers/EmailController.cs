@@ -1,7 +1,7 @@
-using AtronEmail.Application.Interfaces;
-using AtronEmail.DTOs.Requests;
-using AtronEmail.DTOs.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application.DTOS.Requests;
+using Shared.Application.DTOS.Responses;
+using Shared.Application.Interfaces.Service;
 
 namespace AtronEmail.Controllers
 {
@@ -56,7 +56,7 @@ namespace AtronEmail.Controllers
         [HttpPost("enviar-diagnostico")]
         [ProducesResponseType(typeof(EmailStatusResponse), 200)]
         [ProducesResponseType(typeof(EmailStatusResponse), 400)]
-        public async Task<ActionResult<EmailStatusResponse>> EnviarDiagnostico([FromBody] EmailDiagnosticoRequest request)
+        public async Task<ActionResult<EmailStatusResponse>> EnviarDiagnostico([FromBody] EmailRequest request)
         {
             var resultado = await _diagnosticService.EnviarDiagnosticoAsync(request);
 
@@ -74,21 +74,20 @@ namespace AtronEmail.Controllers
         [ProducesResponseType(typeof(EmailStatusResponse), 200)]
         [ProducesResponseType(typeof(EmailStatusResponse), 400)]
         public async Task<ActionResult<EmailStatusResponse>> AutoDiagnostico()
-        {
-            // Primeiro verifica a configuração
+        {            
             var configResult = await _diagnosticService.VerificarConfiguracaoAsync();
             if (!configResult.Sucesso)
             {
                 return BadRequest(configResult);
             }
-
-            // Envia para o próprio e-mail configurado
-            var request = new EmailDiagnosticoRequest
+            
+            var request = new EmailRequest
             {
-                EmailDestino = configResult.EmailRemetente!,
                 Assunto = "[AUTO-DIAGNÓSTICO] Validação de configuração de e-mail",
                 Mensagem = "Este e-mail foi enviado automaticamente para validar que as configurações estão funcionando corretamente."
             };
+
+            request.EmailsDestino = new List<string> { configResult.EmailRemetente! };
 
             var resultado = await _diagnosticService.EnviarDiagnosticoAsync(request);
 

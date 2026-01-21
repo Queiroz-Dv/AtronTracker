@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Shared.Application.DTOS.Requests
 {
     /// <summary>
@@ -8,10 +10,11 @@ namespace Shared.Application.DTOS.Requests
         /// <summary>
         /// E-mail de destino 
         /// </summary>
-        public string EmailDestino { get; set; }
+        [DisplayName("E-mails de destino")]
+        public List<string> EmailsDestino { get; set; }
 
         /// <summary>
-        /// Assunto do e-mail de teste 
+        /// Assunto do e-mail
         /// Se não informado, será usado um assunto padrão.
         /// </summary>
         public string Assunto { get; set; }

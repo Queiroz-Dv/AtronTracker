@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Framework\IoC\IoC.csproj" />
     <ProjectReference Include="..\Framework\Shared\Shared.csproj" />
   </ItemGroup>
 

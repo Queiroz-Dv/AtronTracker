@@ -23,6 +23,8 @@ using Shared.Domain.Entities.Identity;
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
+using Shared.Application.DTOS.Requests;
+using Shared.Application.Validacoes;
 
 namespace IoC
 {
@@ -51,6 +53,7 @@ namespace IoC
             services = services.AddServiceMappings();
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);
+            services = services.AddEmailServices(configuration);
             ConfigureModuloServices(services);
             ConfigureTarefaServices(services);
             ConfigureSalarioServices(services);
@@ -64,7 +67,7 @@ namespace IoC
             ConfigureAuthenticationServices(services);
             ConfigurePerfilDeAcessoServices(services);
             ConfigurePerfilDeAcessoUsuarioServices(services);
-            ConfigureSharedEmailServices(services, configuration);
+            
 
             // Registra os serviços essenciais do sistema de proteção de dados (Data Protection) na injeção de dependência.
             services.AddDataProtection()
@@ -156,16 +159,6 @@ namespace IoC
         private static void ConfigureTarefaServices(IServiceCollection services)
         {
             services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
-        }
-
-        /// <summary>
-        /// Configura os serviços de e-mail compartilhados.
-        /// O módulo AtronEmail expõe endpoints de diagnóstico, mas a implementação do serviço é compartilhada.
-        /// </summary>
-        private static void ConfigureSharedEmailServices(IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
-            services.AddScoped<IEmailService, SharedEmailService>();
-        }
+        }             
     }
 }

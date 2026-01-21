@@ -8,7 +8,7 @@
         public bool UseSsl { get; set; }
         public string UserName { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public string FromName { get; set; } = "Atron System";
+        public string FromName { get; set; }
         public string FromEmail { get; set; } = null!;
     }
 }

@@ -1,3 +1,7 @@
+using Shared.Application.Resources;
+using Shared.Domain.Enums;
+using Shared.Domain.ValueObjects;
+
 namespace Shared.Application.Email
 {
     /// <summary>
@@ -5,27 +9,29 @@ namespace Shared.Application.Email
     /// </summary>
     public static class EmailProviderIdentifier
     {
+    public static readonly List<NotificationMessage> Messages = new List<NotificationMessage>();
+
         /// <summary>
         /// Mapeamento de domínios para provedores.
         /// </summary>
         private static readonly Dictionary<string, EmailProvider> DomainToProvider = new(StringComparer.OrdinalIgnoreCase)
         {
             // Gmail
-            { "gmail.com", EmailProvider.Gmail },
-            { "googlemail.com", EmailProvider.Gmail },
-            
-            // Outlook/Microsoft
-            { "outlook.com", EmailProvider.Outlook },
-            { "outlook.com.br", EmailProvider.Outlook },
-            { "hotmail.com", EmailProvider.Outlook },
-            { "hotmail.com.br", EmailProvider.Outlook },
-            { "live.com", EmailProvider.Outlook },
-            { "msn.com", EmailProvider.Outlook },
-            
-            // Yahoo
-            { "yahoo.com", EmailProvider.Yahoo },
-            { "yahoo.com.br", EmailProvider.Yahoo },
-            { "ymail.com", EmailProvider.Yahoo }
+            { EmailResource.GmailProvider, EmailProvider.Gmail },
+            { EmailResource.GoogleMailProvider, EmailProvider.Gmail },
+
+            // Outlook / Microsoft family
+            { EmailResource.OutlookProvider, EmailProvider.Outlook },
+            { EmailResource.OutlookBrProvider, EmailProvider.Outlook },
+            { EmailResource.HotmailProvider, EmailProvider.Outlook },
+            { EmailResource.HotmailBrProvider, EmailProvider.Outlook },
+            { EmailResource.LiveProvider, EmailProvider.Outlook },
+            { EmailResource.MsnProvider, EmailProvider.Outlook },
+
+            // Yahoo family
+            { EmailResource.YahooProvider, EmailProvider.Yahoo },
+            { EmailResource.YahooBrProvider, EmailProvider.Yahoo },
+            { EmailResource.YahooMailProvider, EmailProvider.Yahoo }
         };
 
         /// <summary>
@@ -33,9 +39,9 @@ namespace Shared.Application.Email
         /// </summary>
         private static readonly Dictionary<EmailProvider, EmailProviderSettings> ProviderSettings = new()
         {
-            { EmailProvider.Gmail, new EmailProviderSettings("smtp.gmail.com", 587) },
-            { EmailProvider.Outlook, new EmailProviderSettings("smtp-mail.outlook.com", 587) },
-            { EmailProvider.Yahoo, new EmailProviderSettings("smtp.mail.yahoo.com", 587) }
+            { EmailProvider.Gmail, new EmailProviderSettings(EmailResource.GoogleSmtp) },
+            { EmailProvider.Outlook, new EmailProviderSettings(EmailResource.OutlookSmtp) },
+            { EmailProvider.Yahoo, new EmailProviderSettings(EmailResource.YahooSmtp) }
         };
 
         /// <summary>
@@ -43,17 +49,7 @@ namespace Shared.Application.Email
         /// </summary>
         public static EmailProvider IdentificarProvedor(string email)
         {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                throw new ArgumentException("O e-mail não pode ser nulo ou vazio.", nameof(email));
-            }
-
             var partes = email.Split('@');
-            if (partes.Length != 2)
-            {
-                throw new ArgumentException("Formato de e-mail inválido.", nameof(email));
-            }
-
             var dominio = partes[1].ToLowerInvariant();
 
             return DomainToProvider.TryGetValue(dominio, out var provider)
@@ -67,15 +63,21 @@ namespace Shared.Application.Email
         public static EmailProviderSettings ObterConfiguracoes(EmailProvider provider)
         {
             if (provider == EmailProvider.Desconhecido)
-            {
-                throw new NotSupportedException(
-                    "Provedor de e-mail não suportado. " +
-                    "Os provedores suportados são: Gmail, Outlook (Hotmail/Live/MSN) e Yahoo.");
+            {                         
+                Messages.Add(new NotificationMessage()
+                {
+                    Descricao = EmailResource.ErroProvedorDesconhecido,
+                    Nivel = ENotificationType.Error
+                });
             }
 
             if (!ProviderSettings.TryGetValue(provider, out var settings))
             {
-                throw new NotSupportedException($"Configurações não encontradas para o provedor: {provider}");
+                Messages.Add(new NotificationMessage()
+                {
+                    Descricao = string.Format(EmailResource.ErroConfiguracoesProvedor, provider),
+                    Nivel = ENotificationType.Error
+                });
             }
 
             return settings;

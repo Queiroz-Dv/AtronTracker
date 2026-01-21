@@ -20,7 +20,7 @@ namespace Shared.Application.Email
         /// </summary>
         public bool UseSSL { get; set; }
 
-        public EmailProviderSettings(string smtpHost, int smtpPort, bool useSSL = true)
+        public EmailProviderSettings(string smtpHost, int smtpPort = 587, bool useSSL = true)
         {
             SmtpHost = smtpHost;
             SmtpPort = smtpPort;

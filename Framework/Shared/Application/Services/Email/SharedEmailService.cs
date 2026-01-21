@@ -1,7 +1,10 @@
 using Microsoft.Extensions.Options;
 using Shared.Application.DTOS.Email;
+using Shared.Application.DTOS.Requests;
 using Shared.Application.Email;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 using System.Net;
 using System.Net.Mail;
 
@@ -14,91 +17,76 @@ namespace Shared.Application.Services.Email
     public class SharedEmailService : IEmailService
     {
         private readonly EmailSettings _settings;
+        private readonly IValidador<EmailRequest> _validador;
         private readonly EmailProvider _provider;
         private readonly EmailProviderSettings? _providerSettings;
 
-        public SharedEmailService(IOptions<EmailSettings> settings)
+        public SharedEmailService(IOptions<EmailSettings> settings, IValidador<EmailRequest> validador)
         {
             _settings = settings.Value;
 
             try
             {
-                (_provider, _providerSettings) = EmailProviderIdentifier.IdentificarEObterConfiguracoes(_settings.FromEmail);
+                var providerData = EmailProviderIdentifier.IdentificarEObterConfiguracoes(_settings.FromEmail);
+                if (!EmailProviderIdentifier.Messages.HasErrors())
+                {
+                    (_provider, _providerSettings) = providerData;
+                }
             }
             catch
             {
                 _provider = EmailProvider.Desconhecido;
                 _providerSettings = null;
             }
-        }
 
-        /// <summary>
-        /// Obtém o provedor de e-mail identificado.
-        /// </summary>
-        public EmailProvider ProvedorIdentificado => _provider;
-
-        /// <summary>
-        /// Indica se o serviço está configurado corretamente.
-        /// </summary>
-        public bool EstaConfigurado =>
-            !string.IsNullOrWhiteSpace(_settings.FromEmail) &&
-            !string.IsNullOrWhiteSpace(_settings.Password) &&
-            _provider != EmailProvider.Desconhecido &&
-            _providerSettings != null;
-
-        /// <inheritdoc/>
-        public async Task EnviarAsync(EmailMessage message)
+            _validador = validador;
+        }                
+        
+        public async Task<Resultado> EnviarAsync(EmailRequest message)
         {
-            ValidarConfiguracao();
+            var messages = _validador.Validar(message);
+            if (messages.Any()) return Resultado.Falha(messages);
 
-            if (message == null) throw new ArgumentNullException(nameof(message));
-            if (message.To == null || message.To.Count == 0)
-                throw new InvalidOperationException("Nenhum destinatário informado.");
+            var mail = new MailMessage
+            {
+                From = new MailAddress(_settings.FromEmail, _settings.FromName)
+            };
 
-            using var mail = new MailMessage();
-            mail.From = new MailAddress(_settings.FromEmail, _settings.FromName);
-
-            foreach (var destinatario in message.To)
+            foreach (var destinatario in message.EmailsDestino)
             {
                 if (string.IsNullOrWhiteSpace(destinatario)) continue;
                 mail.To.Add(new MailAddress(destinatario));
             }
 
-            mail.Subject = message.Subject ?? string.Empty;
-            mail.Body = message.Body ?? string.Empty;
+            mail.Subject = message.Assunto ?? string.Empty;
+            mail.Body = message.Mensagem ?? string.Empty;
             mail.IsBodyHtml = true;
+           
+            var smtpHost = _providerSettings?.SmtpHost ?? _settings.SmtpServer;
+            var smtpPort = _providerSettings?.SmtpPort ?? _settings.SmtpPort;
+            var enableSsl = _providerSettings?.UseSSL ?? _settings.UseSsl;
 
-            using var client = new SmtpClient(_providerSettings!.SmtpHost, _providerSettings.SmtpPort);
-            client.EnableSsl = _providerSettings.UseSSL;
-            client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential(_settings.FromEmail, _settings.Password);
-
-            await client.SendMailAsync(mail);
-        }
-
-        /// <summary>
-        /// Valida se as configurações do e-mail estão preenchidas.
-        /// </summary>
-        private void ValidarConfiguracao()
-        {
-            if (string.IsNullOrWhiteSpace(_settings.FromEmail))
+            if (string.IsNullOrWhiteSpace(smtpHost))
             {
-                throw new InvalidOperationException("O e-mail do remetente não foi configurado.");
+                return Resultado.Falha("SMTP host is not configured. Check EmailSettings or provider recognition.");
             }
 
-            if (string.IsNullOrWhiteSpace(_settings.Password))
+            var client = new SmtpClient(smtpHost, smtpPort)
             {
-                throw new InvalidOperationException("A senha do remetente não foi configurada.");
-            }
+                EnableSsl = enableSsl,
+                UseDefaultCredentials = false,                
+                Credentials = new NetworkCredential(string.IsNullOrWhiteSpace(_settings.UserName) ? _settings.FromEmail : _settings.UserName, _settings.Password)
+            };
 
-            if (string.IsNullOrWhiteSpace(_settings.FromName))
+            try
             {
-                throw new InvalidOperationException("O nome do remetente não foi configurado.");
+                
+                await client.SendMailAsync(mail);
+                return Resultado.Sucesso();
             }
-
-            if (_providerSettings == null)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("Provedor de e-mail não identificado.");
+                return Resultado.Falha($"Erro ao enviar e-mail: {ex.Message}");
             }
         }
     }

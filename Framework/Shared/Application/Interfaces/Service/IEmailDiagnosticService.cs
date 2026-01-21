@@ -1,7 +1,7 @@
-using AtronEmail.DTOs.Requests;
-using AtronEmail.DTOs.Responses;
+using Shared.Application.DTOS.Requests;
+using Shared.Application.DTOS.Responses;
 
-namespace AtronEmail.Application.Interfaces
+namespace Shared.Application.Interfaces.Service
 {
     /// <summary>
     /// Interface do serviço de diagnóstico de e-mail.
@@ -14,7 +14,7 @@ namespace AtronEmail.Application.Interfaces
         /// </summary>
         /// <param name="request">Dados do diagnóstico.</param>
         /// <returns>Resultado do diagnóstico com detalhes da configuração.</returns>
-        Task<EmailStatusResponse> EnviarDiagnosticoAsync(EmailDiagnosticoRequest request);
+        Task<EmailStatusResponse> EnviarDiagnosticoAsync(EmailRequest request);
 
         /// <summary>
         /// Verifica se as configurações de e-mail estão válidas.

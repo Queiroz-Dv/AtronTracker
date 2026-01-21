@@ -12,6 +12,7 @@ using Application.DTO.ApiDTO;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.DTOS.Email;
 using Shared.Domain.ValueObjects;
+using Shared.Application.DTOS.Requests;
 
 namespace Application.Services.EntitiesServices
 {
@@ -271,7 +272,7 @@ namespace Application.Services.EntitiesServices
         /// <summary>
         /// Cria a mensagem de e-mail de boas-vindas para novo usuário.
         /// </summary>
-        private static EmailMessage CriarEmailBoasVindas(string destinatario, string nomeUsuario)
+        private static EmailRequest CriarEmailBoasVindas(string destinatario, string nomeUsuario)
         {
             var assunto = "Bem-vindo ao Sistema Atron!";
             var corpo = $@"
@@ -308,11 +309,11 @@ namespace Application.Services.EntitiesServices
 </body>
 </html>";
 
-            return new EmailMessage
+            return new EmailRequest
             {
-                To = new System.Collections.Generic.List<string> { destinatario },
-                Subject = assunto,
-                Body = corpo
+                EmailsDestino = new System.Collections.Generic.List<string> { destinatario },
+                Assunto = assunto,
+                Mensagem = corpo
             };
         }
     }

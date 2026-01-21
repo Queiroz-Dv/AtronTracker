@@ -1,9 +1,9 @@
-using AtronEmail.Application.Interfaces;
 using Microsoft.Extensions.Options;
 using Shared.Application.DTOS.Email;
+using Shared.Application.DTOS.Requests;
 using Shared.Application.Interfaces.Service;
 
-namespace AtronEmail.Infrastructure.Email
+namespace Shared.Application.Services.Email
 {
     /// <summary>
     /// Serviço de notificação por e-mail.
@@ -23,7 +23,7 @@ namespace AtronEmail.Infrastructure.Email
         }
 
         /// <inheritdoc/>
-        public async Task EnviarAsync(EmailMessage message)
+        public async Task EnviarAsync(EmailRequest message)
         {
             await _emailService.EnviarAsync(message);
         }
@@ -36,11 +36,11 @@ namespace AtronEmail.Infrastructure.Email
                 return;
             }
 
-            var message = new EmailMessage
+            var message = new EmailRequest
             {
-                To = destinatarios.ToList(),
-                Subject = assunto,
-                Body = GerarCorpoNotificacao(mensagem)
+                EmailsDestino = destinatarios.ToList(),
+                Assunto = assunto,
+                Mensagem = GerarCorpoNotificacao(mensagem)
             };
 
             await _emailService.EnviarAsync(message);
@@ -57,11 +57,11 @@ namespace AtronEmail.Infrastructure.Email
             var assunto = $"[NOTIFICAÇÃO] {tipoEvento} - {entidade}";
             var corpo = GerarCorpoNotificacaoSuperior(tipoEvento, descricao, entidade);
 
-            var message = new EmailMessage
+            var message = new EmailRequest
             {
-                To = emailsSuperiores.ToList(),
-                Subject = assunto,
-                Body = corpo
+                EmailsDestino = emailsSuperiores.ToList(),
+                Assunto = assunto,
+                Mensagem = corpo
             };
 
             await _emailService.EnviarAsync(message);
