@@ -1,4 +1,4 @@
-namespace AtronEmail.DTOs.Responses
+namespace Shared.Application.DTOS.Responses
 {
     /// <summary>
     /// Response do status/diagnóstico do serviço de e-mail.
@@ -38,7 +38,7 @@ namespace AtronEmail.DTOs.Responses
         /// <summary>
         /// E-mail de destino do diagnóstico.
         /// </summary>
-        public string? EmailDestino { get; set; }
+        public List<string> EmailDestino { get; set; } = [];
 
         /// <summary>
         /// Data/hora da operação.
@@ -63,7 +63,7 @@ namespace AtronEmail.DTOs.Responses
             string smtpHost,
             int smtpPort,
             string emailRemetente,
-            string emailDestino)
+            List<string> emailDestino)
         {
             return new EmailStatusResponse
             {

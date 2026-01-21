@@ -1,10 +1,5 @@
-using AtronEmail.Application.Interfaces;
-using AtronEmail.Application.Services;
-using AtronEmail.Infrastructure.Email;
+using IoC;
 using Microsoft.AspNetCore.HttpOverrides;
-using Shared.Application.DTOS.Email;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Email;
 
 namespace AtronEmail
 {
@@ -35,15 +30,7 @@ namespace AtronEmail
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-
-            // Configurações de e-mail
-            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
-
-            // Serviços de e-mail - usando SharedEmailService do Framework
-            services.AddScoped<IEmailService, SharedEmailService>();
-            services.AddScoped<IEmailDiagnosticService, EmailDiagnosticService>();
-            services.AddScoped<IEmailNotificationService, EmailNotificationService>();
-
+            services.AddEmailServices(Configuration);
             services.AddControllers();
             services.AddHttpClient();
             services.AddHttpContextAccessor();

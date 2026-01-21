@@ -1,9 +1,10 @@
-﻿using Shared.Application.DTOS.Email;
+﻿using Shared.Application.DTOS.Requests;
+using Shared.Domain.ValueObjects;
 
 namespace Shared.Application.Interfaces.Service
 {
     public interface IEmailService
     {
-        Task EnviarAsync(EmailMessage message);
+        Task<Resultado> EnviarAsync(EmailRequest message);
     }
 }
