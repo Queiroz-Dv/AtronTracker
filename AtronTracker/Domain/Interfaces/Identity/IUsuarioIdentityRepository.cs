@@ -51,5 +51,8 @@ namespace Domain.Interfaces.Identity
         Task<bool> ContaExisteRepositoryAsync(string codigoUsuario, string email);
 
         Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario);
+
+        Task<string> GerarTokenConfirmacaoEmailAsync(string codigoUsuario);
+        Task<bool> ConfirmarEmailAsync(string codigoUsuario, string token);
     }
 }

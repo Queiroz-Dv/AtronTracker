@@ -32,6 +32,13 @@ namespace Shared.Application.DTOS.Auth
             Expires = expires;
         }
 
+        public DadosDoTokenDTO()
+        {
+
+        }
+
+        public string UsuarioCodigo { get; set; }
+
         public override bool IsValid()
         {
             return !Token.IsNullOrEmpty() && Expires > DateTime.UtcNow;

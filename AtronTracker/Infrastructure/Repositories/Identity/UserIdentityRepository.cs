@@ -128,18 +128,21 @@ namespace Infrastructure.Repositories.Identity
         public async Task<bool> DeletarContaUserRepositoryAsync(string codigoUsuario)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(reg => reg.UserName == codigoUsuario);
+            if (user == null) return false;
             var usuarioDeletado = await _userManager.DeleteAsync(user);
             return usuarioDeletado.Succeeded;
         }
 
         public async Task<bool> ContaExisteRepositoryAsync(string codigoUsuario, string email)
         {
-            return await _userManager.Users.AnyAsync(x => x.UserName == codigoUsuario && x.Email == email);
+            return await _userManager.Users.AnyAsync(x => x.UserName == codigoUsuario || x.Email == email);
         }
 
         public async Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario)
         {
             var applicationUsuario = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == codigoUsuario);
+
+            if (applicationUsuario == null) return null;
 
             var usuarioIdentity = new UsuarioIdentity()
             {
@@ -148,6 +151,23 @@ namespace Infrastructure.Repositories.Identity
             };
 
             return usuarioIdentity;
+        }
+
+        public async Task<string> GerarTokenConfirmacaoEmailAsync(string codigoUsuario)
+        {
+            var user = await _userManager.FindByNameAsync(codigoUsuario);
+            if (user == null) return null;
+
+            return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        }
+
+        public async Task<bool> ConfirmarEmailAsync(string codigoUsuario, string token)
+        {
+            var user = await _userManager.FindByNameAsync(codigoUsuario);
+            if (user == null) return false;
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            return result.Succeeded;
         }
     }
 }

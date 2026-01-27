@@ -42,7 +42,8 @@ namespace WebApi.Controllers
         public async Task<ActionResult<IEnumerable<UsuarioResponse>>> Get()
         {
             var usuarios = await _service.ObterTodosAsync();
-            return Ok(usuarios.Select(usr => usr.MontarResponse()).ToList());
+            var response = usuarios.Select(usr => usr.MontarResponse()).ToList();
+            return Ok(response);
         }
 
         [HttpPut("{codigo}")]

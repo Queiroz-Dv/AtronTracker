@@ -68,8 +68,7 @@ namespace Application.Services.AuthServices
 
             if (Messages.Notificacoes.HasErrors()) return null;
 
-            var codigoUsuario = await TokenService.ObterCodigoUsuarioPorClaim(dadosDoToken.Token);
-
+            string codigoUsuario = dadosDoToken.Token != null ? await TokenService.ObterCodigoUsuarioPorClaim(dadosDoToken.Token) : dadosDoToken.UsuarioCodigo;
             var refreshTokenDoUsuarioEstaExpirado = await UserIdentityService.RefreshTokenExpiradoServiceAsync(codigoUsuario);
 
             if (refreshTokenDoUsuarioEstaExpirado)

@@ -2,8 +2,6 @@
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -25,7 +23,7 @@ namespace Infrastructure.Repositories
                 return result > 0;
             }
             catch (Exception ex)
-            {
+            {               
                 throw ex;
             }
         }

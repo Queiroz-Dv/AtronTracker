@@ -66,16 +66,9 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> CriarUsuarioAsync(Usuario usuario)
         {
-            try
-            {
-                await _context.Usuarios.AddAsync(usuario);
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            await _context.Usuarios.AddAsync(usuario);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
 
         public async Task<UsuarioIdentity> ObterUsuarioPorCodigoAsync(string codigo)
@@ -139,6 +132,8 @@ namespace Infrastructure.Repositories
 
                 var usuariosIdentity = await (from au in _context.Users
                                               join u in _context.Usuarios.Include(r => r.UsuarioCargoDepartamentos)
+                                              .ThenInclude(crg => crg.Cargo)
+                                              .ThenInclude(dpt => dpt.Departamento)
                                                 on au.UserName equals u.Codigo
                                               select new UsuarioIdentity
                                               {
@@ -149,7 +144,7 @@ namespace Infrastructure.Repositories
                                                   Salario = u.Salario,
                                                   DataNascimento = u.DataNascimento,
                                                   UsuarioCargoDepartamentos = u.UsuarioCargoDepartamentos
-                                              }).ToListAsync();
+                                              }).OrderByDescending(c => c.Codigo).ToListAsync();
 
                 return usuariosIdentity;
             }

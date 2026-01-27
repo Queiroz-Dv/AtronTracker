@@ -31,7 +31,10 @@ namespace Shared.Application.Services.Factory
             var codigo = request.Headers.ExtrairCodigoUsuarioDoRequest();
             if (string.IsNullOrWhiteSpace(codigo)) return null;
 
-            if (!request.Cookies.TryGetValue(TokenUsuarioCookie(codigo, ETokenInfo.AcesssToken), out var valor)) return null;
+            if (!request.Cookies.TryGetValue(TokenUsuarioCookie(codigo, ETokenInfo.AcesssToken), out var valor))
+            {
+                return await Task.FromResult(new DadosDoTokenDTO() { UsuarioCodigo = codigo });
+            }
 
             var json = protector.Unprotect(valor);
             var dados = JsonSerializer.Deserialize<DadosDoTokenDTO>(json);
