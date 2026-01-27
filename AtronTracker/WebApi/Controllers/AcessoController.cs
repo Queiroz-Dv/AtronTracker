@@ -1,13 +1,14 @@
-﻿using Application.Interfaces.ApplicationInterfaces;
+﻿using Application.DTO.ApiDTO;
+using Application.Interfaces.ApplicationInterfaces;
 using Domain.ApiEntities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Shared.Extensions;
-using System.Threading.Tasks;
-using Application.DTO.ApiDTO;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
-using Shared.Application.DTOS.Auth;
+using Shared.Extensions;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -49,7 +50,7 @@ namespace WebApi.Controllers
             var cookieService = ObterService<ICookieService>();
 
             var dadosDeToken = await cookieService.ObterTokenRefreshTokenPorRequest(Request);
-
+            
             var novoToken = await _service.RefreshAcesso(dadosDeToken);
             if (novoToken is null) return Unauthorized();
 
@@ -94,6 +95,31 @@ namespace WebApi.Controllers
             return _messageModel.Notificacoes.HasErrors() ?
                 BadRequest(ObterNotificacoes()) :
                 Ok(ObterNotificacoes());
+        }
+
+      
+        [HttpPost("ConfirmarEmail")]
+        [AllowAnonymous]
+        public async Task<ActionResult> ConfirmarEmail([FromBody] ConfirmarEmailRequest request)
+        {
+            var usuarioCodigo = request.usuarioCodigo;
+            var token = request.token;
+
+            if (string.IsNullOrWhiteSpace(usuarioCodigo) || string.IsNullOrWhiteSpace(token))
+                return BadRequest("Usuário e Token são obrigatórios.");
+
+            var _registroUsuarioService = ObterService<IRegistroUsuarioService>();
+            _ = await _registroUsuarioService.ConfirmarEmail(usuarioCodigo, token);
+
+            return _messageModel.Notificacoes.HasErrors() ?
+                BadRequest(ObterNotificacoes()) :
+                Ok(ObterNotificacoes());
+        }
+
+        public class ConfirmarEmailRequest
+        {
+            public string usuarioCodigo { get; set; }
+            public string token { get; set; }
         }
     }
 }

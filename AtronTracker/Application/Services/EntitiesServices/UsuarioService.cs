@@ -139,6 +139,7 @@ namespace Application.Services.EntitiesServices
                 if (emailExiste)
                 {
                     _messageModel.AdicionarErro("O e-mail informado já está cadastrado no sistema.");
+                    return null;
                 }
             }
 
@@ -151,9 +152,9 @@ namespace Application.Services.EntitiesServices
                     return null;
                 }
 
-                var usuarioCriado = await _usuarioRepository.CriarUsuarioAsync(entidade);
-
-                if (usuarioCriado)
+                await _usuarioRepository.CriarUsuarioAsync(entidade);
+                var usuarioRegistrado = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.Codigo);
+                if (usuarioRegistrado != null)
                 {
                     var usuarioRegistro = new UsuarioRegistroDTO()
                     {
@@ -207,8 +208,8 @@ namespace Application.Services.EntitiesServices
 
         public async Task<List<UsuarioDTO>> ObterTodosAsync()
         {
-            var usuarios = await _usuarioRepository.ObterTodosUsuariosDoIdentity();
-            return await _map.MapToListDTOAsync(usuarios.OrderByDescending(c => c.Codigo).ToList());
+            var usuarios = await _usuarioRepository.ObterTodosUsuariosDoIdentity();            
+            return await _map.MapToListDTOAsync(usuarios);
         }
 
         public async Task RemoverAsync(string codigo)
