@@ -32,18 +32,18 @@ namespace AtronStock.Application.Services
             _auditoriaService = auditoriaService;
         }
 
-        public async Task<Resultado> CriarAsync(CategoriaRequest dto)
+        public async Task<Resultado> CriarAsync(CategoriaRequest request)
         {
-            var messages = _validador.Validar(dto);
+            var messages = _validador.Validar(request);
             if (messages.Any()) return Resultado.Falha(messages);
 
-            var categoriaExistente = await _repository.ObterCategoriaPorCodigoAsync(dto.Codigo);
+            var categoriaExistente = await _repository.ObterCategoriaPorCodigoAsync(request.Codigo);
             if (categoriaExistente != null)
             {
-                return Resultado.Falha(string.Format(CategoriaResource.ErroCategoriaJaExiste, dto.Codigo));
+                return Resultado.Falha(string.Format(CategoriaResource.ErroCategoriaJaExiste, request.Codigo));
             }
 
-            var categoria = await _mapService.MapToEntityAsync(dto);
+            var categoria = await _mapService.MapToEntityAsync(request);
             await _repository.CriarCategoriaAsync(categoria);
 
             IAuditoriaDTO auditoria = new AuditoriaDTO
@@ -62,7 +62,7 @@ namespace AtronStock.Application.Services
 
             var context = new NotificationBag();
             context.MensagemRegistroSalvo(CategoriaResource.SucessoCadastro);
-            return Resultado.Sucesso(dto, [.. context.Messages]);
+            return Resultado.Sucesso(request, [.. context.Messages]);
         }
 
         public async Task<Resultado> AtualizarAsync(CategoriaRequest dto)

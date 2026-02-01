@@ -73,10 +73,10 @@ namespace IoC
 
         private static void ConfigureUsuarioServices(IServiceCollection services)
         {
-            services.AddScoped<IMessageBaseService, UsuarioMessageValidation>();
-            services.AddScoped<IValidateModelService<Usuario>, UsuarioMessageValidation>();
-            services.AddScoped<Notifiable, UsuarioMessageValidation>();
+            // O validador de usuário agora usa o novo padrão IValidador<UsuarioRequest>
+            // registrado em DependencyInjectionContainerAPI.ConfigureUsuarioServices()
         }
+
 
         private static void ConfigureModuloServices(IServiceCollection services)
         {

@@ -82,48 +82,6 @@ namespace Application.Extensions
                 }
             };
         }
-        #endregion
-
-        #region Usuario
-        public static UsuarioDTO MontarDTO(this UsuarioRequest usuario)
-        {
-            return new UsuarioDTO
-            {
-                Codigo = usuario.Codigo,
-                Nome = usuario.Nome,
-                Sobrenome = usuario.Sobrenome,
-                DataNascimento = usuario.DataNascimento,
-                Salario = usuario.SalarioMensal,
-                CargoCodigo = usuario.CargoCodigo,
-                DepartamentoCodigo = usuario.DepartamentoCodigo,
-                PerfilDeAcessoCodigo = usuario.CodigoPerfilDeAcesso,
-                Email = usuario.Email,
-                Senha = usuario.Senha
-            };
-        }
-
-        public static UsuarioResponse MontarResponse(this UsuarioDTO usuario)
-        {
-            return new UsuarioResponse
-            {
-                Codigo = usuario.Codigo,
-                Nome = usuario.Nome,
-                Sobrenome = usuario.Sobrenome,
-                DataNascimento = usuario.DataNascimento,
-                Salario = usuario.Salario,
-                CargoCodigo = usuario.CargoCodigo,
-                CargoDescricao = usuario.Cargo?.Descricao,
-                DepartamentoCodigo = usuario.DepartamentoCodigo,
-                DepartamentoDescricao = usuario.Departamento?.Descricao,
-                PerfisDeAcesso = usuario.PerfisDeAcesso?.Select(p => new PerfilDeAcessoDTO
-                {
-                    Codigo = p.Codigo,
-                    Descricao = p.Descricao
-                }).ToList(),
-                Email = usuario.Email,
-
-            };
-        }
-        #endregion
+        #endregion        
     }
 }
