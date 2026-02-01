@@ -1,21 +1,17 @@
 ﻿using Application.DTO.Request;
+using Application.DTO.Response;
+using Application.Extensions;
 using Application.Interfaces.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Shared.Extensions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Extensions;
-using Application.DTO.Response;
-using Application.DTO;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
-{
+{   
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Policy = "Modulo:USR")]
@@ -28,51 +24,79 @@ namespace WebApi.Controllers
             base(usuarioService, serviceAccessor, messageModel)
         { }
 
+        /// <summary>
+        /// Cria um novo usuário.
+        /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] UsuarioRequest usuarioRequest)
+        public async Task<ActionResult> Post([FromBody] UsuarioRequest request)
         {
-            await _service.CriarAsync(usuarioRequest.MontarDTO());
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                     BadRequest(ObterNotificacoes()) :
-                     Ok(ObterNotificacoes());
+            var resultado = await _service.CriarAsync(request);
+            return resultado.TeveFalha
+                ? BadRequest(resultado.ObterNotificacoes())
+                : Ok(resultado.Response);
         }
 
+        /// <summary>
+        /// Atualiza um usuário existente.
+        /// </summary>
+        [HttpPut("{codigo}")]
+        public async Task<ActionResult> Put(string codigo, [FromBody] UsuarioRequest request)
+        {
+            if (codigo != request.Codigo)
+            {
+                return BadRequest(Resultado.Falha("O código na URL não corresponde ao código no corpo da requisição.").ObterNotificacoes());
+            }
+
+            var resultado = await _service.AtualizarAsync(request);
+            return resultado.TeveFalha
+                ? BadRequest(resultado.ObterNotificacoes())
+                : Ok(resultado.Response);
+        }
+
+        /// <summary>
+        /// Remove um usuário pelo código.
+        /// </summary>
+        [HttpDelete("{codigo}")]
+        public async Task<ActionResult> Delete(string codigo)
+        {
+            var resultado = await _service.RemoverAsync(codigo);
+            return resultado.TeveFalha
+                ? BadRequest(resultado.ObterNotificacoes())
+                : Ok(resultado.Response);
+        }
+
+        /// <summary>
+        /// Obtém todos os usuários (formato Response para o frontend).
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuarioResponse>>> Get()
         {
             var usuarios = await _service.ObterTodosAsync();
-            var response = usuarios.Select(usr => usr.MontarResponse()).ToList();
+            var response = usuarios.MontarUsuarioResponse();
             return Ok(response);
         }
 
-        [HttpPut("{codigo}")]
-        public async Task<ActionResult<UsuarioDTO>> Put(string codigo, [FromBody] UsuarioRequest usuario)
+        /// <summary>
+        /// Obtém todos os usuários (formato Request/DTO).
+        /// </summary>
+        [HttpGet("request")]
+        public async Task<ActionResult<ICollection<UsuarioRequest>>> GetRequest()
         {
-            // Verificar o código que é enviado
-            await _service.AtualizarAsync(codigo, usuario.MontarDTO());
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
+            var resultado = await _service.ObterTodosRequestAsync();
+            return Ok(resultado.Dado);
         }
 
-        [HttpDelete("{codigo}")]
-        public async Task<ActionResult> Delete(string codigo)
-        {
-            await _service.RemoverAsync(codigo);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                BadRequest(ObterNotificacoes()) :
-                Ok(ObterNotificacoes());
-        }
-
+        /// <summary>
+        /// Obtém um usuário pelo código (formato DTO para compatibilidade).
+        /// </summary>
         [HttpGet("{codigo}")]
-        public async Task<ActionResult<UsuarioDTO>> Get(string codigo)
+        public async Task<ActionResult> Get(string codigo)
         {
-            var usuario = await _service.ObterPorCodigoAsync(codigo);
-            return usuario is null ?
-             NotFound(ObterNotificacoes()) :
-             Ok(usuario);
+            var resultado = await _service.ObterPorCodigoRequestAsync(codigo);
+            var response = resultado.Dado.MontarUsuarioResponse();
+            return resultado.TeveFalha
+                ? NotFound(resultado.ObterNotificacoes())
+                : Ok(response);
         }
     }
 }

@@ -70,7 +70,16 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to EmailProviderIdentifier_UnsupportedProvider.Provedor de e-mail não suportado. Os provedores suportados são: Gmail, Outlook (Hotmail/Live/MSN) e Yahoo..
+        ///   Looks up a localized string similar to O e-mail informado já está cadastrado no sistema..
+        /// </summary>
+        public static string ErroEmailUtilizado {
+            get {
+                return ResourceManager.GetString("ErroEmailUtilizado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Provedor de e-mail não suportado. Os provedores suportados são: Gmail, Outlook (Hotmail/Live/MSN) e Yahoo..
         /// </summary>
         public static string ErroProvedorDesconhecido {
             get {

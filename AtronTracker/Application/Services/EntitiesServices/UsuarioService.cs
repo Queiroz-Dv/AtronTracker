@@ -1,25 +1,33 @@
 ﻿using Application.DTO;
+using Application.DTO.Request;
 using Application.Interfaces.Services;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.DTOS.Requests;
+using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.DTO.ApiDTO;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.DTOS.Email;
-using Shared.Domain.ValueObjects;
-using Shared.Application.DTOS.Requests;
 
 namespace Application.Services.EntitiesServices
 {
+    /// <summary>
+    /// Serviço de usuário refatorado seguindo o padrão CategoriaService.
+    /// Gerencia operações CRUD de usuários de forma padronizada.
+    /// </summary>
     public class UsuarioService : IUsuarioService
     {
-        // Sempre usar o repository pra acessar a camada de dados
-        private readonly IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> _map;
+        private const string UsuarioContexto = nameof(Usuario);
+
+        private readonly IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> _mapIdentity;
+        private readonly IValidador<UsuarioRequest> _validador;
+        private readonly IAsyncMap<UsuarioRequest, Usuario> _mapService;
+
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
@@ -27,252 +35,272 @@ namespace Application.Services.EntitiesServices
         private readonly ITarefaRepository _tarefaRepository;
         private readonly ISalarioRepository _salarioRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
-        private readonly IValidateModelService<Usuario> _validateModel;
         private readonly IEmailService _emailService;
-        private readonly Notifiable _messageModel;
 
-        public UsuarioService(IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> map,
-                              IUsuarioRepository repository,
-                              IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
-                              IDepartamentoRepository departamentoRepository,
-                              ICargoRepository cargoRepository,
-                              ITarefaRepository tarefaRepository,
-                              ISalarioRepository salarioRepository,
-                              IValidateModelService<Usuario> validateModel,
-                              Notifiable messageModel,
-                              IUsuarioIdentityRepository usuarioIdentityRepository,
-                              IEmailService emailService)
+        public UsuarioService(
+            IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> mapIdentity,
+            IValidador<UsuarioRequest> validador,
+            IAsyncMap<UsuarioRequest, Usuario> mapService,
+            IUsuarioRepository repository,
+            IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
+            IDepartamentoRepository departamentoRepository,
+            ICargoRepository cargoRepository,
+            ITarefaRepository tarefaRepository,
+            ISalarioRepository salarioRepository,
+            IUsuarioIdentityRepository usuarioIdentityRepository,
+            IEmailService emailService)
         {
-            _map = map;
+            _mapIdentity = mapIdentity;
             _usuarioRepository = repository;
+            _validador = validador;
+            _mapService = mapService;
             _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
             _departamentoRepository = departamentoRepository;
             _cargoRepository = cargoRepository;
-            _validateModel = validateModel;
-            _messageModel = messageModel;
             _tarefaRepository = tarefaRepository;
             _salarioRepository = salarioRepository;
             _usuarioIdentityRepository = usuarioIdentityRepository;
             _emailService = emailService;
         }
 
-        public async Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO)
+        #region Criação
+
+        public async Task<Resultado> CriarAsync(UsuarioRequest request)
         {
-            if (usuarioDTO is null)
+            // Validação do request
+            var messages = _validador.Validar(request);
+            if (messages.Any()) return Resultado.Falha(messages);
+
+            // Verificar se código já existe
+            var usuarioExistente = await _usuarioRepository.ObterUsuarioPorCodigoAsync(request.Codigo.ToUpper());
+            if (usuarioExistente != null)
             {
-                _messageModel.MensagemRegistroInvalido(nameof(Usuario));
-                return;
+                return Resultado.Falha("Código de usuário informado já existe. Tente outro novamente.");
             }
 
-            var usuarioIdentity = await _map.MapToEntityAsync(usuarioDTO);
-
-            var entidade = new Usuario()
+            // Verificar se email já existe
+            if (!string.IsNullOrEmpty(request.Email))
             {
-                Codigo = usuarioDTO.Codigo,
-                Nome = usuarioDTO.Nome,
-                Sobrenome = usuarioDTO.Sobrenome,
-                DataNascimento = usuarioDTO.DataNascimento,
-                Email = usuarioDTO.Email,
-                SalarioAtual = usuarioDTO.Salario,
-            };
-
-            _validateModel.Validate(entidade);
-
-            if (!_messageModel.Notificacoes.HasErrors())
-            {
-                var atualizado = await _usuarioRepository.AtualizarUsuarioAsync(codigo, entidade);
-
-                if (atualizado)
-                {
-                    var usuarioRegistroAtualizado = await _usuarioIdentityRepository.AtualizarUserIdentityRepositoryAsync(entidade.Codigo, entidade.Email, usuarioDTO.Senha);
-
-                    var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-                    var departamentoBd = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(usuarioDTO.DepartamentoCodigo);
-                    var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
-
-                    var relacionamento = new UsuarioCargoDepartamento()
-                    {
-                        UsuarioId = entidade.Id,
-                        UsuarioCodigo = usuarioDTO.Codigo,
-                        CargoId = cargoBd.Id,
-                        CargoCodigo = cargoBd.Codigo,
-                        DepartamentoId = departamentoBd.Id,
-                        DepartamentoCodigo = departamentoBd.Codigo
-                    };
-
-                    var relacionamentoAtualizado = await _usuarioCargoDepartamentoRepository.AtualizarRepositoryAsync(relacionamento);
-
-                    if (usuarioRegistroAtualizado && relacionamentoAtualizado)
-                    {
-                        _messageModel.AdicionarMensagem($"Informações do usuário: {usuarioDTO.Nome} atualizadas com sucesso.");
-                    }
-                }
-            }
-        }
-
-        public async Task<UsuarioDTO> CriarAsync(UsuarioDTO usuarioDTO)
-        {
-            if (usuarioDTO is null)
-            {
-                _messageModel.MensagemRegistroInvalido(nameof(Usuario));
-                return usuarioDTO;
-            }
-
-            var usuarioIdentity = await _map.MapToEntityAsync(usuarioDTO);
-
-            var entidade = new Usuario()
-            {
-                Codigo = usuarioDTO.Codigo,
-                Nome = usuarioDTO.Nome,
-                Sobrenome = usuarioDTO.Sobrenome,
-                DataNascimento = usuarioDTO.DataNascimento,
-                Email = usuarioDTO.Email,
-                SalarioAtual = usuarioDTO.Salario
-            };
-
-            _validateModel.Validate(entidade);
-
-            // Validação assíncrona de e-mail único
-            if (!string.IsNullOrEmpty(entidade.Email))
-            {
-                var emailExiste = await _usuarioRepository.VerificarEmailExistenteAsync(entidade.Email);
+                var emailExiste = await _usuarioRepository.VerificarEmailExistenteAsync(request.Email);
                 if (emailExiste)
                 {
-                    _messageModel.AdicionarErro("O e-mail informado já está cadastrado no sistema.");
-                    return null;
+                    return Resultado.Falha("O e-mail informado já está cadastrado no sistema.");
                 }
             }
 
-            if (!_messageModel.Notificacoes.HasErrors())
+            // Mapear para entidade
+            var usuario = await _mapService.MapToEntityAsync(request);
+
+            // Criar usuário no banco
+            var usuarioCriado = await _usuarioRepository.CriarUsuarioAsync(usuario);
+            if (!usuarioCriado)
             {
-                var usuarioExiste = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.Codigo);
-                if (usuarioExiste != null)
+                return Resultado.Falha("Erro inesperado ao criar usuário.");
+            }
+
+            // Buscar usuário criado para obter ID
+            var usuarioBd = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
+
+            // Registrar conta de identity se senha foi fornecida
+            if (!request.Senha.IsNullOrEmpty())
+            {
+                await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(
+                    request.Codigo.ToUpper(),
+                    request.Email,
+                    request.Senha);
+            }
+
+            // Criar relacionamento com cargo/departamento se fornecido
+            if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
+            {
+                var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
+                var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(request.CargoCodigo);
+
+                if (departamento != null && cargo != null)
                 {
-                    _messageModel.AdicionarErro("Código de usuário informado já existe. Tente outro novamente.");
-                    return null;
-                }
-
-                await _usuarioRepository.CriarUsuarioAsync(entidade);
-                var usuarioRegistrado = await _usuarioRepository.ObterUsuarioPorCodigoAsync(entidade.Codigo);
-                if (usuarioRegistrado != null)
-                {
-                    var usuarioRegistro = new UsuarioRegistroDTO()
-                    {
-                        Codigo = entidade.Codigo,
-                        CodigoPerfilDeAcesso = usuarioDTO.PerfilDeAcessoCodigo,
-                        Email = entidade.Email,
-                        Senha = usuarioDTO.Senha,
-                        ConfirmaSenha = usuarioDTO.Senha
-                    };
-
-                    var contaRegistrada = await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(usuarioRegistro.Codigo,
-                                                                                       usuarioRegistro.Email,
-                                                                                       usuarioRegistro.Senha);
-
-
-                    if (!usuarioDTO.DepartamentoCodigo.IsNullOrEmpty())
-                    {
-                        var departamentoBd = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(usuarioDTO.DepartamentoCodigo);
-                        var cargoBd = await _cargoRepository.ObterCargoPorCodigoAsync(usuarioDTO.CargoCodigo);
-
-                        await _usuarioCargoDepartamentoRepository.GravarAssociacaoUsuarioCargoDepartamento(entidade, cargoBd, departamentoBd);
-                    }
-
-                    if (!_messageModel.Notificacoes.HasErrors())
-                    {
-                        // Enviar e-mail de boas-vindas
-                        try
-                        {
-                            var emailMessage = CriarEmailBoasVindas(entidade.Email, entidade.Nome);
-                            await _emailService.EnviarAsync(emailMessage);
-                        }
-                        catch
-                        {
-                            // Log ou tratamento de erro - não interrompe o fluxo de criação
-                        }
-
-                        _messageModel.AdicionarMensagem($"Usuário de acesso da aplicação: {usuarioDTO.Nome} cadastrado com sucesso");
-                    }
+                    await _usuarioCargoDepartamentoRepository.GravarAssociacaoUsuarioCargoDepartamento(usuarioBd, cargo, departamento);
                 }
             }
 
-            return usuarioDTO;
+            // Enviar e-mail de boas-vindas
+            await EnviarEmailBoasVindasAsync(request.Email, request.Nome);
+
+            var context = new NotificationBag();
+            context.MensagemRegistroSalvo($"Usuário {request.Nome} {request.Sobrenome}");
+            return Resultado.Sucesso(request, [.. context.Messages]);
         }
 
+        #endregion
+
+        #region Atualização
+
+        public async Task<Resultado> AtualizarAsync(UsuarioRequest request)
+        {
+            // Validação do request
+            var messages = _validador.Validar(request);
+            if (messages.Any()) return Resultado.Falha(messages);
+
+            // Buscar usuário existente
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(request.Codigo);
+            if (usuario == null)
+            {
+                var bag = new NotificationBag();
+                bag.MensagemRegistroNaoEncontrado(request.Codigo);
+                return Resultado.Falha(bag.Messages.ToList());
+            }
+
+            // Mapear dados do request para a entidade existente
+            await _mapService.MapToEntityAsync(request, usuario);
+
+            // Atualizar no banco
+            var atualizado = await _usuarioRepository.AtualizarUsuarioAsync(request.Codigo, usuario);
+            if (!atualizado)
+            {
+                return Resultado.Falha("Erro inesperado ao atualizar usuário.");
+            }
+
+            // Atualizar identity se senha foi fornecida
+            if (!request.Senha.IsNullOrEmpty())
+            {
+                await _usuarioIdentityRepository.AtualizarUserIdentityRepositoryAsync(
+                    usuario.Codigo,
+                    usuario.Email,
+                    request.Senha);
+            }
+
+            // Atualizar relacionamento com cargo/departamento se fornecido
+            if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
+            {
+                var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
+                var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(request.CargoCodigo);
+
+                if (departamento != null && cargo != null)
+                {
+                    var relacionamento = new UsuarioCargoDepartamento
+                    {
+                        UsuarioId = usuario.Id,
+                        UsuarioCodigo = usuario.Codigo,
+                        CargoId = cargo.Id,
+                        CargoCodigo = cargo.Codigo,
+                        DepartamentoId = departamento.Id,
+                        DepartamentoCodigo = departamento.Codigo
+                    };
+
+                    await _usuarioCargoDepartamentoRepository.AtualizarRepositoryAsync(relacionamento);
+                }
+            }
+
+            var context = new NotificationBag();
+            context.MensagemRegistroAtualizado(UsuarioContexto);
+            return Resultado.Sucesso(request, [.. context.Messages]);
+        }
+
+        #endregion
+
+        #region Consultas
+
+        public async Task<Resultado<ICollection<UsuarioRequest>>> ObterTodosRequestAsync()
+        {
+            var usuarios = await _usuarioRepository.ObterTodosRepositoryAsync();
+            var dtos = await _mapService.MapToListDTOAsync(usuarios);
+            return Resultado.Sucesso<ICollection<UsuarioRequest>>(dtos);
+        }
+
+        public async Task<Resultado<UsuarioDTO>> ObterPorCodigoRequestAsync(string codigo)
+        {
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
+            if (usuario == null)
+            {
+                var bag = new NotificationBag();
+                bag.MensagemRegistroNaoEncontrado(codigo);
+                return Resultado.Falha<UsuarioDTO>(bag.Messages.ToList());
+            }
+
+            var dto = await _mapIdentity.MapToDTOAsync(usuario);
+            return Resultado.Sucesso(dto);
+        }
+
+        /// <summary>
+        /// Mantido para compatibilidade com LoginService e outros serviços existentes.
+        /// </summary>
         public async Task<UsuarioDTO> ObterPorCodigoAsync(string codigo)
         {
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-
-            return usuario is null ? null : await _map.MapToDTOAsync(usuario);
+            return usuario is null ? null : await _mapIdentity.MapToDTOAsync(usuario);
         }
 
+        /// <summary>
+        /// Mantido para compatibilidade com outros serviços existentes.
+        /// </summary>
         public async Task<List<UsuarioDTO>> ObterTodosAsync()
         {
-            var usuarios = await _usuarioRepository.ObterTodosUsuariosDoIdentity();            
-            return await _map.MapToListDTOAsync(usuarios);
+            var usuarios = await _usuarioRepository.ObterTodosUsuariosDoIdentity();
+            return await _mapIdentity.MapToListDTOAsync(usuarios);
         }
 
-        public async Task RemoverAsync(string codigo)
+        #endregion
+
+        #region Remoção
+
+        public async Task<Resultado> RemoverAsync(string codigo)
         {
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
 
             if (usuario == null)
             {
-                _messageModel.MensagemRegistroNaoEncontrado(nameof(Usuario));
+                var bag = new NotificationBag();
+                bag.MensagemRegistroNaoEncontrado(codigo);
+                return Resultado.Falha(bag.Messages.ToList());
             }
-            else
+
+            // Remover tarefas do usuário
+            var tarefasDoUsuario = await _tarefaRepository.ObterTodasTarefasPorUsuario(usuario.Id, usuario.Codigo);
+            foreach (var tarefa in tarefasDoUsuario)
             {
-                // Obtém todas as tarefas do usuário
-                IEnumerable<Tarefa> tarefasDoUsuario = await _tarefaRepository.ObterTodasTarefasPorUsuario(usuario.Id, usuario.Codigo);
+                await _tarefaRepository.RemoverRepositoryAsync(tarefa);
+            }
 
-                if (tarefasDoUsuario.Any())
-                {
-                    foreach (var item in tarefasDoUsuario)
-                    {
-                        await _tarefaRepository.RemoverRepositoryAsync(item);
-                    }
-                }
+            // Remover salário do usuário
+            var salarioDoUsuario = await _salarioRepository.ObterSalarioPorUsuario(usuario.Id, usuario.Codigo);
+            if (salarioDoUsuario != null)
+            {
+                await _salarioRepository.RemoverRepositoryAsync(salarioDoUsuario);
+            }
 
-                // Salário sempre será um registro por usuário
-                Salario salarioDoUsuario = await _salarioRepository.ObterSalarioPorUsuario(usuario.Id, usuario.Codigo);
+            // Remover relacionamento cargo/departamento
+            var associacao = await _usuarioCargoDepartamentoRepository.ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
+            if (associacao != null)
+            {
+                await _usuarioCargoDepartamentoRepository.RemoverRepositoryAsync(associacao);
+            }
 
-                if (salarioDoUsuario is not null)
-                {
-                    await _salarioRepository.RemoverRepositoryAsync(salarioDoUsuario);
-                }
+            // Remover usuário
+            await _usuarioRepository.RemoverUsuarioAsync(usuario);
 
-                // O relacionamento será apenas um por usuário
-                var associacao = await _usuarioCargoDepartamentoRepository.ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
+            var context = new NotificationBag();
+            context.MensagemRegistroRemovido(UsuarioContexto);
+            return Resultado.Sucesso([.. context.Messages]);
+        }
 
-                if (associacao is not null)
-                {
-                    await _usuarioCargoDepartamentoRepository.RemoverRepositoryAsync(associacao);
-                }
+        #endregion
 
-                // Como o usuário já existe será removido do cadastro da aplicação
-                // await _registerApplicationRepository.DeleteAccountUserAsync(codigo);
+        #region Métodos Privados
 
-                // Remove o usuário por completo
+        private async Task EnviarEmailBoasVindasAsync(string destinatario, string nomeUsuario)
+        {
+            if (string.IsNullOrEmpty(destinatario)) return;
 
-                var entidade = new Usuario()
-                {
-                    Codigo = usuario.Codigo,
-                    Nome = usuario.Nome,
-                    Sobrenome = usuario.Sobrenome,
-                    DataNascimento = usuario.DataNascimento,
-                    Email = usuario.Email,
-                    Salario = usuario.Salario,
-                };
-
-                await _usuarioRepository.RemoverUsuarioAsync(entidade);
-
-                _messageModel.MensagemRegistroRemovido(nameof(Usuario));
+            try
+            {
+                var emailRequest = CriarEmailBoasVindas(destinatario, nomeUsuario);
+                await _emailService.EnviarAsync(emailRequest);
+            }
+            catch
+            {
+                // Log ou tratamento de erro - não interrompe o fluxo de criação
             }
         }
 
-        /// <summary>
-        /// Cria a mensagem de e-mail de boas-vindas para novo usuário.
-        /// </summary>
         private static EmailRequest CriarEmailBoasVindas(string destinatario, string nomeUsuario)
         {
             var assunto = "Bem-vindo ao Sistema Atron!";
@@ -304,7 +332,7 @@ namespace Application.Services.EntitiesServices
         </div>
         <div class='footer'>
             <p>Este é um e-mail automático. Por favor, não responda.</p>
-            <p>&copy; {System.DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
+            <p>&copy; {DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
         </div>
     </div>
 </body>
@@ -312,10 +340,12 @@ namespace Application.Services.EntitiesServices
 
             return new EmailRequest
             {
-                EmailsDestino = new System.Collections.Generic.List<string> { destinatario },
+                EmailsDestino = new List<string> { destinatario },
                 Assunto = assunto,
                 Mensagem = corpo
             };
         }
+
+        #endregion
     }
 }

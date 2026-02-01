@@ -79,5 +79,5 @@ namespace Application.Mapping
                 SalarioAtual = dto.Salario
             });
         }
-    }
+    }   
 }

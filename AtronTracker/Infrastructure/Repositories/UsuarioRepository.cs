@@ -2,10 +2,6 @@
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -74,10 +70,9 @@ namespace Infrastructure.Repositories
         public async Task<UsuarioIdentity> ObterUsuarioPorCodigoAsync(string codigo)
         {
             var applicationUser = await _context.Users.FirstOrDefaultAsync(usr => usr.UserName == codigo);
-            var usuario = await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).FirstOrDefaultAsync(usr => usr.Codigo == codigo);
+            var usuario = await _context.Usuarios.Include(rel => rel.UsuarioCargoDepartamentos).ThenInclude(crg => crg.Cargo).ThenInclude(dpt => dpt.Departamento).FirstOrDefaultAsync(usr => usr.Codigo == codigo);
             if (usuario != null)
             {
-
                 var usuarioIdentity = new UsuarioIdentity
                 {
                     Codigo = usuario.Codigo,
@@ -87,8 +82,8 @@ namespace Infrastructure.Repositories
                     SalarioAtual = usuario.SalarioAtual,
                     DataNascimento = usuario.DataNascimento,
                     UsuarioCargoDepartamentos = usuario.UsuarioCargoDepartamentos,
-                    RefreshToken = applicationUser.RefreshToken,
-                    RefreshTokenExpireTime = (DateTime)applicationUser.RefreshTokenExpireTime
+                    RefreshToken = applicationUser?.RefreshToken,
+                    RefreshTokenExpireTime = applicationUser?.RefreshTokenExpireTime ?? default
                 };
 
                 return usuarioIdentity;

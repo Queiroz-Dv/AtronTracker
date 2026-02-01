@@ -60,6 +60,11 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>NotificacoesPadronizadas.resx</DependentUpon>
 	  </Compile>
+	  <Compile Update="Application\Resources\UsuarioResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>UsuarioResource.resx</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -94,6 +99,10 @@
 	  <EmbeddedResource Update="Application\Resources\NotificacoesPadronizadas.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>NotificacoesPadronizadas.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\UsuarioResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>UsuarioResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>	
 </Project>

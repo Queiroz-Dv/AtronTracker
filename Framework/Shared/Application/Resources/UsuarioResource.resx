@@ -117,55 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ErroConfiguracoesProvedor" xml:space="preserve">
-    <value>Configurações não encontradas para o provedor: {0}</value>
+  <data name="ErroCodigoLongo" xml:space="preserve">
+    <value>O código informado é muito longo. Tamanho máximo permitido de até 10 caracteres.</value>
   </data>
-  <data name="ErroEmailUtilizado" xml:space="preserve">
-    <value>O e-mail informado já está cadastrado no sistema.</value>
+  <data name="ErroCodigoNulo" xml:space="preserve">
+    <value>O campo código não está preenchido.</value>
   </data>
-  <data name="ErroProvedorDesconhecido" xml:space="preserve">
-    <value>Provedor de e-mail não suportado. Os provedores suportados são: Gmail, Outlook (Hotmail/Live/MSN) e Yahoo.</value>
+  <data name="ErroCodigoPequeno" xml:space="preserve">
+    <value>O código informado é muito pequeno. Tamanho mínimo permitido de até 3 caracteres.</value>
   </data>
-  <data name="GmailProvider" xml:space="preserve">
-    <value>gmail.com</value>
+  <data name="ErroDataDeNascimento" xml:space="preserve">
+    <value>Data de nascimento inválida.</value>
   </data>
-  <data name="GoogleMailProvider" xml:space="preserve">
-    <value>googlemail.com</value>
+  <data name="ErroEmailNulo" xml:space="preserve">
+    <value>E-mail é obrigatório.</value>
   </data>
-  <data name="GoogleSmtp" xml:space="preserve">
-    <value>smtp.gmail.com</value>
+  <data name="ErroNomeLongo" xml:space="preserve">
+    <value>O nome é muito longo. Tamanho máximo permitido de até 25 caracteres.</value>
   </data>
-  <data name="HotmailBrProvider" xml:space="preserve">
-    <value>hotmail.com.br</value>
+  <data name="ErroNomePequeno" xml:space="preserve">
+    <value>O nome é muito pequeno. Tamanho mínimo permitido de até 3 caracteres.</value>
   </data>
-  <data name="HotmailProvider" xml:space="preserve">
-    <value>hotmail.com</value>
+  <data name="ErroNomeUsuarioNulo" xml:space="preserve">
+    <value>Nome de usuário é obrigatório.</value>
   </data>
-  <data name="LiveProvider" xml:space="preserve">
-    <value>live.com</value>
+  <data name="ErroSobrenomeLongo" xml:space="preserve">
+    <value>O sobrenome é muito longo. Tamanho máximo permitido de até 50 caracteres.</value>
   </data>
-  <data name="MsnProvider" xml:space="preserve">
-    <value>msn.com</value>
+  <data name="ErroSobrenomeObrigatorio" xml:space="preserve">
+    <value>Sobrenome de usuário é obrigatório.</value>
   </data>
-  <data name="OutlookBrProvider" xml:space="preserve">
-    <value>outlook.com.br</value>
+  <data name="ErroSobrenomePequeno" xml:space="preserve">
+    <value>O sobrenome é muito pequeno.Tamanho mínimo permitido de até 3 caracteres.</value>
   </data>
-  <data name="OutlookProvider" xml:space="preserve">
-    <value>outlook.com</value>
-  </data>
-  <data name="OutlookSmtp" xml:space="preserve">
-    <value>smtp-mail.outlook.com</value>
-  </data>
-  <data name="YahooBrProvider" xml:space="preserve">
-    <value>yahoo.com.br</value>
-  </data>
-  <data name="YahooMailProvider" xml:space="preserve">
-    <value>ymail.com</value>
-  </data>
-  <data name="YahooProvider" xml:space="preserve">
-    <value>yahoo.com</value>
-  </data>
-  <data name="YahooSmtp" xml:space="preserve">
-    <value>smtp.mail.yahoo.com</value>
+  <data name="ErroUsuarioNulo" xml:space="preserve">
+    <value>Registro inválido ou não preenchido.</value>
   </data>
 </root>

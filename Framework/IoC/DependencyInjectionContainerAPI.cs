@@ -25,6 +25,10 @@ using System.IO;
 using System.Text.Json.Serialization;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Validacoes;
+using Application.DTO.Request;
+using Application.Validations;
+using Application.Mapping;
+
 
 namespace IoC
 {
@@ -125,7 +129,12 @@ namespace IoC
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
+            
+            // Validador e Mapeamento para UsuarioRequest (padrão CategoriaService)
+            services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
+            services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();
         }
+
 
         private static void ConfigureCargoServices(IServiceCollection services)
         {
