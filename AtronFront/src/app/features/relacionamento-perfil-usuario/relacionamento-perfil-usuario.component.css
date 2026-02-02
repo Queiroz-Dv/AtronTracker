@@ -1,0 +1,21 @@
+legend {
+  margin-bottom: 2%;
+}
+
+.perfil-form {
+  margin: 5% auto 0 auto;
+  margin-top: 0%;
+}
+
+.perfil-fieldset {
+  margin: 2%;
+}
+
+.usuario-fieldset {
+  margin: 1% 2% 1% 2%;
+}
+
+.perfil-container {
+  width: 50%;
+  margin-left: 2%;
+}

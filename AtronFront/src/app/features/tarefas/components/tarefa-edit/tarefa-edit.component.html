@@ -1,0 +1,7 @@
+<form [formGroup]="form" (ngSubmit)="salvar()" class="form-container-70">
+  <c-tarefa-form [tarefaForm]="form"></c-tarefa-form>
+  <mat-card-actions>
+    <button mat-raised-button type="submit" [disabled]="form.invalid">Salvar</button>
+    <button mat-raised-button (click)="router.navigate(['atron/tarefas'])">Voltar</button>
+  </mat-card-actions>
+</form>

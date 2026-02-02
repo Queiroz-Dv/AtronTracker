@@ -1,0 +1,65 @@
+<div class="login-wrapper">
+  <div class="login-container">
+    <!-- Header -->
+    <div class="login-header">
+      <div class="logo-container">
+        <mat-icon class="logo-icon">hub</mat-icon>
+      </div>
+      <h1 class="login-title">Gerenciador Atron</h1>
+      <p class="login-subtitle">Faça login para acessar sua conta</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card">
+      <form [formGroup]="form" class="login-form">
+        
+        <!-- Código Field -->
+        <div class="form-field">
+          <mat-form-field appearance="outline">
+            <mat-label>Código de usuário</mat-label>
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <input matInput formControlName="codigo" placeholder="Digite seu código" />
+            <c-control-error [control]="form.get('codigo')"></c-control-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Senha Field -->
+        <div class="form-field">
+          <mat-form-field appearance="outline">
+            <mat-label>Senha</mat-label>
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <input matInput [type]="passwordType" formControlName="senha" placeholder="Digite sua senha" />
+            <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+              <mat-icon>{{ passwordType === 'password' ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <c-control-error [control]="form.get('senha')"></c-control-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="login-actions">
+          <button mat-flat-button type="submit" class="btn-login" (click)="autenticar()">
+            <mat-icon>login</mat-icon>
+            Entrar
+          </button>
+
+          <div class="divider">
+            <span class="divider-line"></span>
+            <span class="divider-text">ou</span>
+            <span class="divider-line"></span>
+          </div>
+
+          <button mat-button type="button" class="btn-register" (click)="registrar()">
+            <mat-icon>person_add</mat-icon>
+            Criar nova conta
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p class="footer-text">© 2026 Atron Manager. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</div>
