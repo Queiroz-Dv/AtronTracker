@@ -1,0 +1,37 @@
+<mat-toolbar color="primary">
+  <span class="spacer"></span>
+  <button mat-icon-button (click)="trocarVisualizacao()" title="Trocar para menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <button mat-icon-button (click)="logout()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="dashboard-container">
+  <h1>Gerenciador Atron</h1>
+  @if(cards | async )
+  {
+  <ng-container>
+    <mat-grid-list [cols]="cardsView.length < 3 ? cardsView.length : 3" gutterSize="9" rowHeight="1:0.5">
+
+      @for (card of cardsView; track $index)
+      {
+      <mat-grid-tile [colspan]="card.cols" [rowspan]="card.rows">
+        <mat-card class="dashboard-card" (click)="navigate(card.route)">
+          <mat-card-content>
+            <mat-icon class="dashboard-icon">{{ card.icon }}</mat-icon>
+            <h3 class="card-title">{{ card.title }}</h3>
+            <p class="card-text">{{ card.description }}</p>
+            <mat-card-actions>
+              <button mat-flat-button color="primary">Acessar</button>
+            </mat-card-actions>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+      }
+
+    </mat-grid-list>
+  </ng-container>
+  }
+</div>

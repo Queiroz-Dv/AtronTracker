@@ -1,0 +1,50 @@
+<div [formGroup]="salarioForm" class="container centered-container  m-10">
+  <!-- Select de Usuários -->
+  <mat-form-field class="usuario-container">
+    <mat-label>Selecione o usuário</mat-label>
+    <input type="text" matInput [formControl]="usuarioControl" [matAutocomplete]="autoUsr" />
+    <c-control-error [control]="salarioForm.get('usuarioCodigo')"></c-control-error>
+    <mat-autocomplete #autoUsr="matAutocomplete" [displayWith]="exibirUsuario">
+      @for (usr of usuarios; track usr.codigo) {
+      <mat-option [value]="usr">{{ exibirUsuario(usr) }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+  <mat-card>
+    <mat-card-content>
+      <c-usuario-informacoes [nome]="salarioForm.get('usuarioNome').value"
+        [cargoDescricao]="salarioForm.get('cargoDescricao').value"
+        [departamentoDescricao]="salarioForm.get('departamentoDescricao').value">
+      </c-usuario-informacoes>
+
+      <fieldset>
+        <legend>Informar novo salário</legend>
+        <div class="fieldset-salario-content">
+          <mat-form-field class="m-20 inpt-salario-valor">
+            <mat-label>Valor do Salário</mat-label>
+            <input matInput formControlName="salarioMensal" type="number" />
+            <c-control-error [control]="salarioForm.get('salariMensal')"></c-control-error>
+          </mat-form-field>
+
+          <mat-form-field class="m-20 inpt-ano">
+            <mat-label>Ano</mat-label>
+            <input matInput formControlName="ano" type="text" />
+            <c-control-error [control]="salarioForm.get('ano')"></c-control-error>
+          </mat-form-field>
+
+          <mat-form-field class="m-20 inpt-mes">
+            <mat-label>Mês</mat-label>
+            <input type="text" matInput [formControl]="mesControl" [matAutocomplete]="autoMes" />
+            <c-control-error [control]="salarioForm.get('mesId')"></c-control-error>
+            <mat-autocomplete #autoMes="matAutocomplete" [displayWith]="exibirMes">
+              @for (mes of meses; track mes.id) {
+              <mat-option [value]="mes">{{ exibirMes(mes) }}</mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+      </fieldset>
+    </mat-card-content>
+  </mat-card>
+
+</div>

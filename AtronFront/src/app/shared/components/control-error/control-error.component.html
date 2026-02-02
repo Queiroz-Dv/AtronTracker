@@ -1,0 +1,5 @@
+@if (control?.invalid && (control?.dirty || control?.touched)) {
+@for (errorKey of errorKeys; track $index) {
+<mat-error>{{ getErrorMessage(errorKey) }}</mat-error>
+}
+}

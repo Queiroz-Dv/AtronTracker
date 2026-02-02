@@ -1,0 +1,26 @@
+.tarefa-edit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* ==========================================================================
+   Fieldset da tarefa
+   ========================================================================== */
+.fieldset-tarefa-content {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+}
+
+/* ==========================================================================
+   Inputs da tarefa
+   ========================================================================== */
+.inpt-tarefa-titulo {
+  margin-top: 1%;
+}
+
+.inpt-tarefa {
+  margin-top: 0%;
+}

@@ -1,0 +1,60 @@
+<mat-card class="container p-10">
+  <mat-card-content>
+    <div class="actions m-10">
+      <button mat-raised-button (click)="router.navigate(['atron/salarios/novo'])">
+        Informar novo salário
+      </button>
+    </div>
+
+    <mat-form-field>
+      <mat-label>Filtrar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" #input>
+    </mat-form-field>
+
+    <table mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="usuarioDescricao">Usuário</th>
+        <td mat-cell *matCellDef="let slr">{{ slr.usuarioDescricao }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="cargo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="cargoDescricao">Cargo</th>
+        <td mat-cell *matCellDef="let slr"> {{ slr.cargoDescricao }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="departamento">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="departamentoDescricao">Departamento</th>
+        <td mat-cell *matCellDef="let slr"> {{ slr.departamentoDescricao}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="salario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="salarioMensal">Salário</th>
+        <td mat-cell *matCellDef="let slr">{{ slr.salarioMensal }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef>Ações</th>
+        <td mat-cell *matCellDef="let slr">
+          <mat-card-actions>
+            <button mat-icon-button (click)="editar(slr.id)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="excluir(slr.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-card-actions>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+      <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Selecione a página de salários">
+    </mat-paginator>
+
+    <mat-card-actions class="m-10">
+      <c-botao-voltar></c-botao-voltar>
+    </mat-card-actions>
+  </mat-card-content>
+</mat-card>

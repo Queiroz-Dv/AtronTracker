@@ -1,0 +1,52 @@
+<div class="confirmation-wrapper">
+  <div class="confirmation-card" [class.success]="confirmado && sucesso" [class.error]="confirmado && !sucesso">
+    <div class="decoration-circles"></div>
+
+    <!-- Loading State -->
+    @if (!confirmado) {
+      <div class="loading-container">
+        <div class="spinner-wrapper">
+          <mat-spinner diameter="64" color="primary"></mat-spinner>
+        </div>
+        <p class="loading-text">Confirmando seu e-mail...</p>
+      </div>
+    }
+
+    <!-- Success State -->
+    @if (confirmado && sucesso) {
+      <div class="icon-container success-icon-bg">
+        <mat-icon class="status-icon success">check_circle</mat-icon>
+      </div>
+      <h2 class="confirmation-title">E-mail Confirmado!</h2>      
+      <button mat-flat-button (click)="irParaLogin()" class="action-button primary">
+        <mat-icon>login</mat-icon>
+        Ir para Login
+      </button>
+      <div class="email-details">
+        <div class="detail-item">
+          <mat-icon>verified</mat-icon>
+          <span>Sua conta está pronta para uso</span>
+        </div>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (confirmado && !sucesso) {
+      <div class="icon-container error-icon-bg">
+        <mat-icon class="status-icon error">error_outline</mat-icon>
+      </div>
+      <h2 class="confirmation-title">Falha na Confirmação</h2>
+      <p class="confirmation-message">{{ mensagem }}</p>
+      <button mat-flat-button [routerLink]="['/login']" class="action-button secondary">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar para Login
+      </button>
+      <div class="email-details">
+        <div class="detail-item">
+          <mat-icon>help_outline</mat-icon>
+          <span>Entre em contato se o problema persistir</span>
+        </div>
+      </div>
+    }
+  </div>
+</div>

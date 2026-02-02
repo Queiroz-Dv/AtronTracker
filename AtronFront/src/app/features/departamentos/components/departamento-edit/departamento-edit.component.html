@@ -1,0 +1,7 @@
+<form [formGroup]="form" (ngSubmit)="salvar()" class="form-container">
+  <c-departamento-form [form]="form"></c-departamento-form>
+  <mat-card-actions>
+    <button mat-raised-button type="submit" [disabled]="form.invalid">Salvar</button>
+    <button mat-raised-button (click)="router.navigate(['atron/departamentos'])">Voltar</button>
+  </mat-card-actions>
+</form>

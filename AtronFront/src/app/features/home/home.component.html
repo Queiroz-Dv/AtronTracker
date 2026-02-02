@@ -1,0 +1,24 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="trocarVisualizacao()" title="Trocar para dashboard">
+        <mat-icon>dashboard_customize</mat-icon>
+      </button>
+      <button mat-icon-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+    <mat-nav-list>
+      @for (item of modulosView; track $index) {
+      <a mat-list-item (click)="navigate(item.route)">
+        {{ item.title }}
+      </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="m-10">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

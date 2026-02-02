@@ -1,0 +1,32 @@
+/* ==========================================================================
+   Fieldset do usuário
+   ========================================================================== */
+.usuario-informacoes-content {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: start;
+  margin-top: 20px;
+  gap: 1rem;
+}
+
+/* ==========================================================================
+   Inputs do usuário
+   ========================================================================== */
+.inpt-usuario-nome {
+  width: 30%;
+}
+
+.inpt-usuario-cargo-descricao {
+  width: 30%;
+}
+
+.inpt-usuario-departamento-descricao {
+  width: 40%;
+  height: 20%;
+}
+
+.inpt-usuario-total-tarefas{
+  width: 20%;
+  height: 20%;
+}

@@ -1,0 +1,26 @@
+<mat-card>
+  <mat-card-title>Informações do Usuário</mat-card-title>
+  <mat-card-content class="usuario-informacoes-content">
+    <mat-form-field class="m-20 inpt-usuario-nome">
+      <mat-label>Nome</mat-label>
+      <input matInput [value]="nome" disabled />
+    </mat-form-field>
+
+    <mat-form-field class="m-20 inpt-usuario-cargo-descricao">
+      <mat-label>Cargo</mat-label>
+      <input matInput [value]="cargoDescricao" disabled />
+    </mat-form-field>
+
+    <mat-form-field class="m-20 inpt-usuario-departamento-descricao">
+      <mat-label>Departamento</mat-label>
+      <input matInput [value]="departamentoDescricao" disabled />
+    </mat-form-field>
+
+    @if (totalDeTarefas) {
+    <mat-form-field class="m-20 inpt-usuario-total-tarefas">
+      <mat-label>Total de tarefas</mat-label>
+      <input matInput [value]="totalDeTarefas" disabled />
+    </mat-form-field>
+    }
+  </mat-card-content>
+</mat-card>

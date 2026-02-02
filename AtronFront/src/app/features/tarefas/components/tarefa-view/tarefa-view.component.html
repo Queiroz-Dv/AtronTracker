@@ -1,0 +1,75 @@
+<mat-card class="container p-10">
+  <mat-card-content>
+    <div class="actions m-10">
+      <button mat-raised-button color="primary" (click)="router.navigate(['atron/tarefas/novo'])">
+        Nova tarefa
+      </button>
+    </div>
+
+    <mat-form-field>
+      <mat-label>Filtrar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" #input>
+    </mat-form-field>
+
+    <table mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="nomeDoUsuario">Usuário</th>
+        <td mat-cell *matCellDef="let trf">{{ trf.nomeDoUsuario }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="titulo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="titulo">Título</th>
+        <td mat-cell *matCellDef="let trf">{{ trf.titulo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="cargo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="cargoDescricao">Cargo</th>
+        <td mat-cell *matCellDef="let trf"> {{ trf.cargoDescricao }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="departamento">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="departamentoDescricao">Departamento</th>
+        <td mat-cell *matCellDef="let trf"> {{ trf.departamentoDescricao}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="dataInicial">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Data Inicial</th>
+        <td mat-cell *matCellDef="let trf">{{ formatDate(trf.dataInicial) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="dataFinal">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Data Final</th>
+        <td mat-cell *matCellDef="let trf">{{ formatDate(trf.dataFinal) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="descricaoDoEstadoDaTarefa">Estado</th>
+        <td mat-cell *matCellDef="let trf">{{ trf.descricaoDoEstadoDaTarefa }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef>Ações</th>
+        <td mat-cell *matCellDef="let trf">
+          <mat-card-actions>
+            <button mat-icon-button (click)="editar(trf.id)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="excluir(trf.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-card-actions>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+      <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Selecione a página de tarefas">
+    </mat-paginator>
+
+    <mat-card-actions class="m-10">
+      <c-botao-voltar></c-botao-voltar>
+    </mat-card-actions>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,7 @@
+<form [formGroup]="form" class="form-container-70">
+  <c-perfil-de-acesso-form [form]="form" [todosModulos]="todosModulos"></c-perfil-de-acesso-form>
+  <mat-card-actions>
+    <button mat-raised-button (click)="salvar()" type="submit" [disabled]="form.invalid">Salvar</button>
+    <button mat-raised-button (click)="router.navigate(['atron/perfil-de-acesso'])">Voltar</button>
+  </mat-card-actions>
+</form>
