@@ -5,7 +5,6 @@ using Application.Interfaces.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Collections.Generic;
@@ -20,9 +19,8 @@ namespace WebApi.Controllers
     public class SalarioController : ApiBaseConfigurationController<Salario, ISalarioService>
     {
         public SalarioController(ISalarioService service,
-             IAccessorService serviceAccessor,
             Notifiable messageModel)
-        : base(service, serviceAccessor, messageModel)
+        : base(service, messageModel)
         { }
 
         [HttpPost]

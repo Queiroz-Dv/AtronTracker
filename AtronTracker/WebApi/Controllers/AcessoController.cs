@@ -23,7 +23,7 @@ namespace WebApi.Controllers
              Notifiable messageModel,
              ILoginService loginUserService,
              IAccessorService serviceAccessor)
-             : base(loginUserService, serviceAccessor, messageModel)
+             : base(loginUserService, messageModel, serviceAccessor)
         { }
 
         /// <summary>

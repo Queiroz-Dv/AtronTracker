@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 
 namespace WebApi.Controllers
@@ -26,10 +25,9 @@ namespace WebApi.Controllers
         /// Inicializa uma nova instância da classe <see cref="CargoController"/>.
         /// </summary>
         /// <param name="cargoService">O serviço para gerenciar departamentos.</param>
-        /// <param name="serviceAccessor">O serviço de acesso para inicializar qualquer serviço necessário</param>
         /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>
-        public CargoController(ICargoService cargoService, IAccessorService serviceAccessor, Notifiable messageModel)
-            : base(cargoService, serviceAccessor, messageModel)
+        public CargoController(ICargoService cargoService, Notifiable messageModel)
+            : base(cargoService, messageModel)
         { }
 
         /// <summary>

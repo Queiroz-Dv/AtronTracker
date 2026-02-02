@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 
 namespace WebApi.Controllers
@@ -23,10 +22,9 @@ namespace WebApi.Controllers
         /// Inicializa uma nova instância da classe <see cref="DepartamentoController"/>.  
         /// </summary>  
         /// <param name="departamentoService">O serviço para gerenciar departamentos.</param>
-        /// <param name="serviceAccessor">O serviço de acesso para inicializar qualquer serviço necessário</param>
         /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>  
-        public DepartamentoController(IDepartamentoService departamentoService, IAccessorService serviceAccessor, Notifiable messageModel)
-            : base(departamentoService, serviceAccessor, messageModel)
+        public DepartamentoController(IDepartamentoService departamentoService, Notifiable messageModel)
+            : base(departamentoService, messageModel)
         { }
 
         /// <summary>  
