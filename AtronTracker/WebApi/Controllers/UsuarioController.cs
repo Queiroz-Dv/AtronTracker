@@ -5,7 +5,6 @@ using Application.Interfaces.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,9 +18,8 @@ namespace WebApi.Controllers
     {
         public UsuarioController(
             IUsuarioService usuarioService,
-            IAccessorService serviceAccessor,
             Notifiable messageModel) :
-            base(usuarioService, serviceAccessor, messageModel)
+            base(usuarioService, messageModel)
         { }
 
         /// <summary>
