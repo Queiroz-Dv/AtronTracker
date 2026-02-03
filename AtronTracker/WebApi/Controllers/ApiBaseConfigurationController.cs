@@ -14,9 +14,9 @@ namespace WebApi.Controllers
     {
         private readonly IAccessorService? serviceAccessor; // Acessor de serviços para obter serviços adicionais (opcional)
         protected readonly Service _service; // Serviço da entidade
-        protected readonly Notifiable _messageModel; // Modelo de notificações e validações para a entidade
+        protected readonly Notifiable? _messageModel; // Modelo de notificações e validações para a entidade
 
-        public ApiBaseConfigurationController(Service service, Notifiable messageModel, IAccessorService? serviceAccessor = null)
+        public ApiBaseConfigurationController(Service service, Notifiable? messageModel = null, IAccessorService? serviceAccessor = null)
         {
             // Injeta as dependências necessárias para os processos automatizados
             _service = service;
@@ -34,9 +34,10 @@ namespace WebApi.Controllers
 
         // Serve para retornar um objeto dinâmico (aqui estou retornando a conversão em json)
         protected virtual IEnumerable<dynamic> ObterNotificacoes()
-        {
-            // Passar para um método de extensão
-            return _messageModel.Notificacoes.ConvertMessageToJson();
+        {            
+            if (serviceAccessor is null)
+                throw new InvalidOperationException("IAccessorService não foi injetado nesta controller. Adicione-o ao construtor para usar ObterService<T>().");
+            return _messageModel?.Notificacoes.ConvertMessageToJson();
         }
     }
 }

@@ -13,6 +13,7 @@ namespace IoC
         {
             services.AddScoped<IMapperEngineService, MapperEngine>();
             services.AddScoped<IAsyncApplicationMapService<DepartamentoDTO, Departamento>, DepartamentoMapping>();
+            services.AddScoped<IAsyncMap<DepartamentoDTO, Departamento>, DepartamentoMapping>();
             services.AddScoped<IAsyncApplicationMapService<CargoDTO, Cargo>, CargoMapping>();
             services.AddScoped<IAsyncApplicationMapService<UsuarioDTO, Usuario>, UsuarioMapping>();
             services.AddScoped<IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity>, UsuarioIdentityMapping>();

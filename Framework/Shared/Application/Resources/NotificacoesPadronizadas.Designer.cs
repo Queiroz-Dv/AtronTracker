@@ -61,6 +61,15 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to O campo está inválido ou não preenchido..
+        /// </summary>
+        public static string ErroCampoInvalido {
+            get {
+                return ResourceManager.GetString("ErroCampoInvalido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O campo {0} é obrigatório..
         /// </summary>
         public static string ErroCampoObrigatorio {
@@ -70,11 +79,29 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to O registro não pode ser nulo..
+        ///   Looks up a localized string similar to Registro não encontrado..
+        /// </summary>
+        public static string ErroRegistroNaoEncontrado {
+            get {
+                return ResourceManager.GetString("ErroRegistroNaoEncontrado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registro inválido ou não preenchido..
         /// </summary>
         public static string ErroRegistroNulo {
             get {
                 return ResourceManager.GetString("ErroRegistroNulo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registro removido com sucesso..
+        /// </summary>
+        public static string MensagemRemocaoSucesso {
+            get {
+                return ResourceManager.GetString("MensagemRemocaoSucesso", resourceCulture);
             }
         }
     }

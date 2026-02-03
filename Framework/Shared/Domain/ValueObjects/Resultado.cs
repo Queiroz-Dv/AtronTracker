@@ -13,7 +13,7 @@ namespace Shared.Domain.ValueObjects
         /// <summary>
         /// Obtém o payload de dados associado a um resultado de sucesso.
         /// </summary>
-        public T Dado { get; }
+        public T? Dado { get; }
 
         /// <summary>
         /// Construtor interno para forçar o uso dos métodos de fábrica estáticos.
@@ -25,26 +25,29 @@ namespace Shared.Domain.ValueObjects
             : base(teveSucesso, response)
         {
             Dado = dado;
+            Entidade = dado;
         }
     }
-    
+
     public class Resultado
-    {        
-        public bool TeveSucesso { get; }       
-        public bool TeveFalha => !TeveSucesso;       
+    {
+        public object? Entidade { get; set; }
+
+        public bool TeveSucesso { get; }
+        public bool TeveFalha => !TeveSucesso;
         public IList<NotificationMessage> Response { get; }
-       
+
         protected Resultado(bool teveSucesso, IList<NotificationMessage> response)
         {
             TeveSucesso = teveSucesso;
             Response = response ?? new List<NotificationMessage>();
         }
-        
+
         public static Resultado Falha(IList<NotificationMessage> response)
         {
             return new Resultado(false, response);
         }
-        
+
         public static Resultado Falha(string mensagemErro)
         {
             var messages = new List<NotificationMessage>
@@ -53,12 +56,17 @@ namespace Shared.Domain.ValueObjects
             };
             return new Resultado(false, messages);
         }
-        
+
+        //public static Resultado Falha(string mensagemErro)
+        //{
+        //    return new Resultado<T>(false, data, [new NotificationMessage { Descricao = mensagemErro, Nivel = ENotificationType.Error }]);
+        //}
+
         public static Resultado Falha(Notifiable messageModel)
         {
             return new Resultado(false, messageModel.Notificacoes);
         }
- 
+
         public static Resultado Sucesso()
         {
             return new Resultado(true, new List<NotificationMessage>());
@@ -68,7 +76,7 @@ namespace Shared.Domain.ValueObjects
         {
             return new Resultado(true, response);
         }
-        
+
         public static Resultado<T> Falha<T>(IList<NotificationMessage> response)
         {
             return new Resultado<T>(false, default, response);
@@ -92,7 +100,7 @@ namespace Shared.Domain.ValueObjects
         {
             return new Resultado<T>(true, data, new List<NotificationMessage>());
         }
-        
+
         public static Resultado<T> Sucesso<T>(T data, IList<NotificationMessage> response)
         {
             return new Resultado<T>(true, data, response);

@@ -1,5 +1,5 @@
 ﻿using Application.DTO;
-using System.Collections.Generic;
+using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
 namespace Application.Interfaces.Services
@@ -10,39 +10,39 @@ namespace Application.Interfaces.Services
         /// Obtém todos os departamentos
         /// </summary>
         /// <returns>Uma lista de departamentos</returns>
-        Task<IEnumerable<DepartamentoDTO>> ObterTodosAsync();
+        Task<Resultado> ObterTodosAsync();
 
         /// <summary>
         /// Obtém um departamento por código
         /// </summary>
         /// <param name="codigo">Código do departamento</param>
         /// <returns>Um departamento</returns>
-        Task<DepartamentoDTO> ObterPorCodigo(string codigo);
+        Task<Resultado> ObterPorCodigo(string codigo);
 
         /// <summary>
         /// Obtém um departamento por id
         /// </summary>
         /// <param name="departamentoId">Identificador do departamento</param>
         /// <returns>Um departamento</returns>
-        Task<DepartamentoDTO> ObterPorIdAsync(int? departamentoId);
+        Task<Resultado> ObterPorIdAsync(int? departamentoId);
 
         /// <summary>
         /// Cria um departamento
         /// </summary>
         /// <param name="departamentoDTO">Modelo que será criado</param>
 
-        Task CriarAsync(DepartamentoDTO departamentoDTO);
+        Task<Resultado> CriarAsync(DepartamentoDTO departamentoDTO);
 
         /// <summary>
         /// Atualiza um departamento existente
         /// </summary>
         /// <param name="departamentoDTO">Modelo que será atualizado</param>
-        Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO);
+        Task<Resultado> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO);
 
         /// <summary>
         /// Exclui um departamento existente por código informado
         /// </summary>
         /// <param name="codigo">Código do departamento</param>
-        Task RemoverAsync(string codigo);
+        Task<Resultado> RemoverAsync(string codigo);
     }
 }

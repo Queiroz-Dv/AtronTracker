@@ -117,19 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ErroCampoInvalido" xml:space="preserve">
-    <value>O campo está inválido ou não preenchido.</value>
+  <data name="ErroCodigoDepartamentoExistente" xml:space="preserve">
+    <value>O código do departamento informado está cadastrado no sistema.</value>
   </data>
-  <data name="ErroCampoObrigatorio" xml:space="preserve">
-    <value>O campo {0} é obrigatório.</value>
+  <data name="ErroCodigoLongo" xml:space="preserve">
+    <value>O código informado é muito longo. Tamanho máximo permitido de até 10 caracteres.</value>
   </data>
-  <data name="ErroRegistroNaoEncontrado" xml:space="preserve">
-    <value>Registro não encontrado.</value>
+  <data name="ErroCodigoNulo" xml:space="preserve">
+    <value>O código do departamento não está preenchido.</value>
   </data>
-  <data name="ErroRegistroNulo" xml:space="preserve">
-    <value>Registro inválido ou não preenchido.</value>
+  <data name="ErroCodigoPequeno" xml:space="preserve">
+    <value>O código informado é muito pequeno. Tamanho mínimo permitido de até 3 caracteres.</value>
   </data>
-  <data name="MensagemRemocaoSucesso" xml:space="preserve">
-    <value>Registro removido com sucesso.</value>
+  <data name="ErroDepartamentoContemRelacionamento" xml:space="preserve">
+    <value>O departamento {0} contém relacionamentos pendentes que impedem a sua exclusão.</value>
+  </data>
+  <data name="ErroDescricaoLonga" xml:space="preserve">
+    <value>A descrição é muito longa. Tamanho máximo permitido de até 50 caracteres.</value>
+  </data>
+  <data name="ErroDescricaoNula" xml:space="preserve">
+    <value>A descrição do departamento não está preenchida.</value>
+  </data>
+  <data name="ErroDescricaoPequena" xml:space="preserve">
+    <value>A descrição informada é muito pequena. Tamanho mínimo permitido de até 3 caracteres</value>
+  </data>
+  <data name="ErroGravacao" xml:space="preserve">
+    <value>Ocorreu uma falha ao gravar o departamento.</value>
+  </data>
+  <data name="ErroInesperadoAtualizacao" xml:space="preserve">
+    <value>Ocorreu um erro inesperado ao atualizar o departamento {0}.</value>
+  </data>
+  <data name="ErroRemocao" xml:space="preserve">
+    <value>Ocorreu uma falha na remoção do departamento {0}.</value>
+  </data>
+  <data name="MensagemAtualizacao" xml:space="preserve">
+    <value>Departamento {0} atualizado com sucesso.</value>
   </data>
 </root>

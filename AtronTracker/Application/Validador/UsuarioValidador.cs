@@ -7,7 +7,7 @@ using Shared.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Application.Validations
+namespace Application.Validador
 {
     public class UsuarioValidador : IValidador<Usuario>
     {

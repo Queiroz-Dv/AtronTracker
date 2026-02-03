@@ -33,7 +33,7 @@ namespace Shared.Domain.ValueObjects
             AdicionarErro(mensagemFormatada);
         }
 
-        public void AdicioonarErroRegistroNulo()
+        public void AdicionarErroRegistroNulo()
         {
             AdicionarErro(NotificacoesPadronizadas.ErroRegistroNulo);
         }

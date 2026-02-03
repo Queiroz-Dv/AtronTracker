@@ -8,7 +8,7 @@ namespace Shared.Application.Interfaces.Service
     }
 
     public interface IValidador<Entity>
-    {
+    {     
         IList<NotificationMessage> Validar(Entity entity);
     }
 }
