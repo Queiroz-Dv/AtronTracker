@@ -2,10 +2,6 @@
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -20,40 +16,15 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> AtualizarDepartamentoRepositoryAsync(Departamento departamento)
         {
-            var entidade = await _context.Departamentos.FirstOrDefaultAsync(dpt => dpt.Codigo == departamento.Codigo);
-
-            try
-            {
-                if (entidade is not null)
-                {
-                    entidade.Descricao = departamento.Descricao;
-                    var atualizado = await _context.SaveChangesAsync();
-                    return atualizado > 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                var message = ex.ToString();
-                throw;
-            }
-
-            return false;
+            var atualizado = await _context.SaveChangesAsync();
+            return atualizado > 0;
         }
 
         public async Task<bool> CriarDepartamentoRepositoryAsync(Departamento departamento)
         {
-            try
-            {
-                await _context.AddAsync(departamento);
-
-                var gravado = await _context.SaveChangesAsync();
-                return gravado > 0;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
+            await _context.AddAsync(departamento);
+            var gravado = await _context.SaveChangesAsync();
+            return gravado > 0;
         }
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)

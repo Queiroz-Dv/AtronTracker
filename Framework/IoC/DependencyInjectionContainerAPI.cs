@@ -1,16 +1,16 @@
-﻿using Application.Interfaces.ApplicationInterfaces;
+﻿using Application.DTO.Request;
+using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
+using Application.Mapping;
 using Application.Services;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
+using Application.Validador;
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Application.DTOS.Email;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Email;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.ApplicationRepositories;
 using Microsoft.AspNetCore.DataProtection;
@@ -19,15 +19,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Application.Interfaces.Service;
 using Shared.Domain.Entities.Identity;
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
-using Shared.Application.DTOS.Requests;
-using Shared.Application.Validacoes;
-using Application.DTO.Request;
-using Application.Validations;
-using Application.Mapping;
 
 
 namespace IoC
@@ -71,7 +67,7 @@ namespace IoC
             ConfigureAuthenticationServices(services);
             ConfigurePerfilDeAcessoServices(services);
             ConfigurePerfilDeAcessoUsuarioServices(services);
-            
+
 
             // Registra os serviços essenciais do sistema de proteção de dados (Data Protection) na injeção de dependência.
             services.AddDataProtection()
@@ -129,7 +125,7 @@ namespace IoC
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
-            
+
             // Validador e Mapeamento para UsuarioRequest (padrão CategoriaService)
             services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
             services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();
@@ -168,6 +164,6 @@ namespace IoC
         private static void ConfigureTarefaServices(IServiceCollection services)
         {
             services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
-        }             
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Application.Validations;
+﻿using Application.DTO;
+using Application.Validador;
+using Application.Validations;
 using Domain.ApiEntities;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,10 +60,8 @@ namespace IoC
         }
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)
-        {
-            services.AddScoped<IMessageBaseService, DepartamentoMessageValidation>();
-            services.AddScoped<IValidateModelService<Departamento>, DepartamentoMessageValidation>();
-            services.AddScoped<Notifiable, DepartamentoMessageValidation>();
+        {            
+            services.AddScoped<IValidador<DepartamentoDTO>, DepartamentoValidador>();
         }
 
         private static void ConfgureCargoServices(IServiceCollection services)

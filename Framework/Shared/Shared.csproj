@@ -45,6 +45,11 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ClienteResource.resx</DependentUpon>
 	  </Compile>
+	  <Compile Update="Application\Resources\DepartamentoResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>DepartamentoResource.resx</DependentUpon>
+	  </Compile>
 	  <Compile Update="Application\Resources\EmailResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -87,6 +92,10 @@
 	  <EmbeddedResource Update="Application\Resources\AtronStock\ClienteResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ClienteResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\DepartamentoResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>DepartamentoResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\EmailResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
