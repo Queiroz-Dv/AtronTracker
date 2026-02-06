@@ -2,13 +2,13 @@
 using Application.Interfaces.Services;
 using Domain.Entities;
 using Domain.Interfaces;
-using System.Collections.Generic;
+using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
+using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
-using Shared.Extensions;
-using Application.Specifications.CargoSpecifications;
-using Shared.Application.Interfaces.Service;
-using Shared.Domain.ValueObjects;
 
 namespace Application.Services.EntitiesServices
 {
@@ -17,125 +17,151 @@ namespace Application.Services.EntitiesServices
     /// </summary>
     public class CargoService : ICargoService
     {
-        private ICargoRepository _cargoRepository;
-        private IDepartamentoRepository _departamentoRepository;
-        private IAsyncApplicationMapService<CargoDTO, Cargo> _map;
-        private readonly IValidateModelService<Cargo> _validateModel;
-        private readonly Notifiable _messageModel;
+        private readonly IAsyncMap<CargoDTO, Cargo> _asyncMap;
+        private readonly ICargoRepository _cargoRepository;
+        private readonly IDepartamentoRepository _departamentoRepository;
+        private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
+        private readonly IValidador<CargoDTO> _validador;
 
-        public CargoService(IAsyncApplicationMapService<CargoDTO, Cargo> map,
+        public CargoService(IValidador<CargoDTO> validador,
+                            IAsyncMap<CargoDTO, Cargo> asyncMap,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
-                            IValidateModelService<Cargo> validateModel,
-                            Notifiable messageModel)
+                            IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         {
-            _map = map;
+            _validador = validador;
+            _asyncMap = asyncMap;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
-            _validateModel = validateModel;
-            _messageModel = messageModel;
+            _relacionamentoRepository = relacionamentoRepository;
         }
 
-        public async Task<List<CargoDTO>> ObterTodosAsync()
+        public async Task<Resultado> CriarAsync(CargoDTO cargoDTO)
         {
-            var cargos = await _cargoRepository.ObterCargosAsync();
+            var erros = _validador.Validar(cargoDTO);
+            if (erros.Any())
+            {
+                return Resultado.Falha(erros);
+            }
 
-            return await _map.MapToListDTOAsync(cargos.ToList());
+            var cargoExiste = await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
+            if (cargoExiste != null)
+            {
+                return Resultado.Falha(CargoResource.ErroCodigoCargoExistente);
+            }
+
+            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
+            if (departamento == null)
+            {
+                return Resultado.Falha(CargoResource.ErroDepartamentoNaoEncontrado);
+            }
+
+            var cargo = await _asyncMap.MapToEntityAsync(cargoDTO);
+            PreencherDepartamento(departamento, cargo);
+
+            var foiCriado = await _cargoRepository.CriarCargoAsync(cargo);
+            if (!foiCriado)
+            {
+                return Resultado.Falha(CargoResource.ErroGravacao);
+            }
+
+            var notificacoes = new NotificationBag();
+            notificacoes.MensagemRegistroSalvo(cargo.Codigo);
+            return Resultado.Sucesso(cargo, [.. notificacoes.Messages]);
         }
 
-        public async Task<Cargo?> MontarObjetoValidado(CargoDTO cargoDTO, bool atualizando = false)
+        private static void PreencherDepartamento(Departamento departamento, Cargo cargo)
         {
-            var cargo = await _map.MapToEntityAsync(cargoDTO);
-
-            var departamento = await _departamentoRepository
-                .ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
-            if (departamento is null)
-                _messageModel.MensagemRegistroNaoExiste(nameof(departamento));
-
-            if (!atualizando)
-            {
-                var entity = await _cargoRepository.ObterCargoPorCodigoAsync(cargoDTO.Codigo);
-                if (entity is not null)
-                    _messageModel.AdicionarErro("Código de cargo já existente.");
-            }
-
-            if (departamento is not null)
-            {
-                cargo.DepartamentoId = departamento.Id;
-                cargo.DepartamentoCodigo = departamento.Codigo;
-            }
-
-            _validateModel.Validate(cargo);
-
-            return _messageModel.Notificacoes.HasErrors() ? null : cargo;
+            cargo.DepartamentoId = departamento.Id;
+            cargo.DepartamentoCodigo = departamento.Codigo;
         }
 
-        public async Task CriarAsync(CargoDTO cargoDTO)
+        public async Task<Resultado> AtualizarAsync(string codigo, CargoDTO cargoDTO)
         {
-            if (cargoDTO is null)
+            if (codigo.IsNullOrEmpty())
+                return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
+
+            var erros = _validador.Validar(cargoDTO);
+            if (erros.Any()) return Resultado.Falha(erros);
+
+            var entidade = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
+
+            if (entidade == null)
+                return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+
+            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(cargoDTO.DepartamentoCodigo);
+            if (departamento == null)
             {
-                _messageModel.MensagemRegistroInvalido();
-                return;
+                return Resultado.Falha(CargoResource.ErroDepartamentoNaoEncontrado);
             }
 
-            var cargo = await MontarObjetoValidado(cargoDTO);
+            await _asyncMap.MapToEntityAsync(cargoDTO, entidade);
+            entidade.DepartamentoId = departamento.Id;
+            entidade.DepartamentoCodigo = departamento.Codigo;
 
-            if (!_messageModel.Notificacoes.HasErrors())
+            var atualizado = await _cargoRepository.AtualizarCargoAsync(entidade);
+            if (!atualizado)
             {
-                var criado = await _cargoRepository.CriarCargoAsync(cargo);
-                if (criado)
-                {
-                    _messageModel.MensagemRegistroSalvo(cargo.Codigo);
-                }
+                return Resultado.Falha(string.Format(CargoResource.ErroInesperadoAtualizacao, codigo));
             }
+
+            var notificacoes = new NotificationBag();
+            notificacoes.AdicionarMensagem(string.Format(CargoResource.MensagemAtualizacao, codigo));
+            return Resultado.Sucesso(entidade, [.. notificacoes.Messages]);
         }
 
-        public async Task AtualizarAsync(string codigo, CargoDTO cargoDTO)
+        public async Task<Resultado> RemoverAsync(string codigo)
         {
-            if (!new CargoSpecification(codigo, cargoDTO.DepartamentoCodigo).IsSatisfiedBy(cargoDTO))
-            {
-                _messageModel.MensagemRegistroInvalido();
-                return;
-            }
+            if (codigo.IsNullOrEmpty())
+                return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            var cargo = await MontarObjetoValidado(cargoDTO, true);
-
-            if (!_messageModel.Notificacoes.HasErrors())
-            {
-                var atualizado = await _cargoRepository.AtualizarCargoAsync(cargo);
-                if (atualizado)
-                {
-                    _messageModel.MensagemRegistroAtualizado(cargo.Codigo);
-                }
-            }
-        }
-
-        public async Task RemoverAsync(string codigo)
-        {
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
-            if (cargo is not null)
+
+            if (cargo != null)
             {
-                await _cargoRepository.RemoverCargoAsync(cargo);
-                _messageModel.MensagemRegistroRemovido(cargo.Codigo);
+                var relacionamentos = await _relacionamentoRepository.ObterPorCargo(cargo.Id, cargo.Codigo);
+
+                if (relacionamentos.Any())
+                {
+                    return Resultado.Falha(string.Format(CargoResource.ErroCargoContemRelacionamento, codigo));
+                }
+
+                var removido = await _cargoRepository.RemoverCargoAsync(cargo);
+
+                if (!removido)
+                {
+                    return Resultado.Falha(string.Format(CargoResource.ErroRemocao, codigo));
+                }
+
+                var notificacoes = new NotificationBag();
+                notificacoes.AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
+                return Resultado.Sucesso(cargo, [.. notificacoes.Messages]);
             }
-            else
-            {
-                _messageModel.MensagemRegistroNaoEncontrado(codigo);
-            }
+
+            return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
         }
 
-        public async Task<CargoDTO> ObterPorCodigoAsync(string codigo)
+        public async Task<Resultado> ObterPorCodigoAsync(string codigo)
         {
-            var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
-            if (cargo is not null)
+            if (codigo.IsNullOrEmpty())
+                return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
+
+            var entidade = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
+
+            if (entidade != null)
             {
-                return await _map.MapToDTOAsync(cargo);
+                var dto = await _asyncMap.MapToDTOAsync(entidade);
+                return Resultado.Sucesso(dto);
             }
-            else
-            {
-                _messageModel.MensagemRegistroNaoEncontrado(codigo);
-                return null;
-            }
+
+            return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+        }
+
+        public async Task<Resultado> ObterTodosAsync()
+        {
+            var entities = await _cargoRepository.ObterCargosAsync();
+            var dtos = await _asyncMap.MapToListDTOAsync([.. entities]);
+            return Resultado.Sucesso(dtos);
         }
     }
 }

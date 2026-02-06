@@ -6,26 +6,28 @@ using System.Threading.Tasks;
 
 namespace Application.Mapping
 {
-    public class CargoMapping : AsyncApplicationMapService<CargoDTO, Cargo>
+    /// <summary>
+    /// Mapeamento assíncrono entre CargoDTO e Cargo
+    /// </summary>
+    public class CargoMapping : AsyncApplicationMapService<CargoDTO, Cargo>, IAsyncMap<CargoDTO, Cargo>
     {
-        private readonly IAsyncApplicationMapService<DepartamentoDTO, Departamento> _departamentoMap;
-
-        public CargoMapping(IAsyncApplicationMapService<DepartamentoDTO, Departamento> departamentoMap) : base()
-        {
-            _departamentoMap = departamentoMap;
-        }
-
-        public override async Task<CargoDTO> MapToDTOAsync(Cargo entity)
+        public override Task<CargoDTO> MapToDTOAsync(Cargo entity)
         {
             var cargo = new CargoDTO(entity.Codigo, entity.Descricao)
             {
+                Id = entity.Id,
                 DepartamentoCodigo = entity.DepartamentoCodigo,
                 DepartamentoDescricao = entity.Departamento?.Descricao,
-
-                Departamento = await MapChildAsync(entity.Departamento, _departamentoMap)
+                DepartamentoId = entity.DepartamentoId,
+                Departamento = entity.Departamento != null ? new DepartamentoDTO
+                {
+                    Id = entity.Departamento.Id,
+                    Codigo = entity.Departamento.Codigo,
+                    Descricao = entity.Departamento.Descricao
+                } : null
             };
 
-            return cargo;
+            return Task.FromResult(cargo);
         }
 
         public override Task<Cargo> MapToEntityAsync(CargoDTO dto)
@@ -38,6 +40,16 @@ namespace Application.Mapping
             };
 
             return Task.FromResult(entity);
+        }
+
+        /// <summary>
+        /// Atualiza uma entidade existente com os dados do DTO
+        /// </summary>
+        public Task MapToEntityAsync(CargoDTO dto, Cargo entityToUpdate)
+        {
+            entityToUpdate.Descricao = dto.Descricao.ToUpper();
+            entityToUpdate.DepartamentoCodigo = dto.DepartamentoCodigo.ToUpper();
+            return Task.CompletedTask;
         }
     }
 }

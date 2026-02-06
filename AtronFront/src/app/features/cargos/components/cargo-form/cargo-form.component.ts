@@ -22,16 +22,30 @@ export class CargoFormComponent implements OnInit {
       this.departamentos = deps;
 
       const dptCodigo = this.cargoForm.get('departamentoCodigo')?.value;
-      const selecionado = this.departamentos.find(d => d.codigo === dptCodigo);
-      this.departamentoControl.setValue(selecionado);
+      this.atualizarDepartamentoSelecionado(dptCodigo);
+    });
+
+    this.cargoForm.get('departamentoCodigo')?.valueChanges.subscribe(val => {
+      this.atualizarDepartamentoSelecionado(val);
     });
 
     this.departamentoControl.valueChanges.subscribe((value: string | Departamento) => {
       const dpt = typeof value === 'string' ? null : value;
       this.cargoForm.patchValue({
         departamentoCodigo: dpt?.codigo || null
-      });
+      }, { emitEvent: false });
     });
+  }
+
+  private atualizarDepartamentoSelecionado(codigo: any) {
+    if (this.departamentos) {
+      const selecionado = this.departamentos.find(d => d.codigo === codigo);
+      // Only update if different to avoid loops/redundancy, although emitEvent: false in the other direction helps.
+      // But here we are setting the local control.
+      if (this.departamentoControl.value !== selecionado) {
+        this.departamentoControl.setValue(selecionado, { emitEvent: false });
+      }
+    }
   }
 
   exibirDescricao = (dpt: Departamento) => dpt?.descricao || '';
