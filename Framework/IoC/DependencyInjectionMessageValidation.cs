@@ -66,9 +66,7 @@ namespace IoC
 
         private static void ConfgureCargoServices(IServiceCollection services)
         {
-            services.AddScoped<IMessageBaseService, CargoMessageValidation>();
-            services.AddScoped<IValidateModelService<Cargo>, CargoMessageValidation>();
-            services.AddScoped<Notifiable, CargoMessageValidation>();
+            services.AddScoped<IValidador<CargoDTO>, CargoValidador>();
         }
 
         private static void ConfigureUsuarioServices(IServiceCollection services)

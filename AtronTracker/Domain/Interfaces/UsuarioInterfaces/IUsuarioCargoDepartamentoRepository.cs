@@ -11,5 +11,7 @@ namespace Domain.Interfaces.UsuarioInterfaces
         public Task<bool> GravarAssociacaoUsuarioCargoDepartamento(Usuario usuario, Cargo cargo, Departamento departamento);
 
         public Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorDepartamento(int id, string codigo);
+
+        public Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorCargo(int id, string codigo);
     }
 }

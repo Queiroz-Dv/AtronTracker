@@ -56,5 +56,10 @@ namespace Infrastructure.Repositories
         {
             return await _context.UsuarioCargoDepartamentos.Where(rel => rel.DepartamentoId == id && rel.DepartamentoCodigo == codigo).ToListAsync();
         }
+
+        public async Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorCargo(int id, string codigo)
+        {
+            return await _context.UsuarioCargoDepartamentos.Where(rel => rel.CargoId == id && rel.CargoCodigo == codigo).ToListAsync();
+        }
     }
 }
