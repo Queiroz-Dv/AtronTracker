@@ -94,21 +94,21 @@ namespace Shared.Application.Services
         {
             if (auditoriaDTO.CodigoRegistro == null)
             {
-                return Resultado.Falha<Auditoria>(AuditoriaResource.ErroCodigoRegistro);
+                return Resultado<Auditoria>.Falha(AuditoriaResource.ErroCodigoRegistro);
             }
 
             Auditoria auditoria = await _repository.ObterPorContextoCodigoAsync(auditoriaDTO.Contexto, auditoriaDTO.CodigoRegistro);
 
             if (auditoria == null)
             {
-                return Resultado.Falha<Auditoria>(AuditoriaResource.ErroAuditoriaNaoEncontrada);
+                return Resultado<Auditoria>.Falha(AuditoriaResource.ErroAuditoriaNaoEncontrada);
             }
 
 
             var historicos = await _historicoService.ObterPorChaveServiceAsync(new HistoricoDTO() { CodigoRegistro = auditoria.CodigoRegistro, Contexto = auditoria.Contexto });
-            if (historicos.Dado != null)
+            if (historicos.Dados != null)
             {
-                foreach (var item in historicos.Dado)
+                foreach (var item in historicos.Dados)
                 {
                     var historicoResponse = new Historico
                     {
@@ -122,7 +122,7 @@ namespace Shared.Application.Services
                 }
             }
 
-            return Resultado.Sucesso(auditoria);
+            return Resultado<Auditoria>.Sucesso(auditoria);
         }
 
         public async Task<Resultado> RemoverServiceAsync(IAuditoriaDTO auditoriaDTO)
@@ -132,7 +132,7 @@ namespace Shared.Application.Services
                 var auditoria = await _repository.ObterPorContextoCodigoAsync(auditoriaDTO.Contexto, auditoriaDTO.CodigoRegistro);
                 if (auditoria == null)
                 {
-                    return Resultado.Falha<Auditoria>(AuditoriaResource.ErroAuditoriaNaoEncontrada);
+                    return Resultado<Auditoria>.Falha(AuditoriaResource.ErroAuditoriaNaoEncontrada);
                 }
 
                 auditoria.RemovidoEm = DateTime.Now;

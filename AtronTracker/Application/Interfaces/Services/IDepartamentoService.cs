@@ -1,4 +1,5 @@
 ﻿using Application.DTO;
+using System.Collections.Generic;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
@@ -10,34 +11,34 @@ namespace Application.Interfaces.Services
         /// Obtém todos os departamentos
         /// </summary>
         /// <returns>Uma lista de departamentos</returns>
-        Task<Resultado> ObterTodosAsync();
+        Task<Resultado<List<DepartamentoDTO>>> ObterTodosAsync();
 
         /// <summary>
         /// Obtém um departamento por código
         /// </summary>
         /// <param name="codigo">Código do departamento</param>
         /// <returns>Um departamento</returns>
-        Task<Resultado> ObterPorCodigo(string codigo);
+        Task<Resultado<DepartamentoDTO>> ObterPorCodigo(string codigo);
 
         /// <summary>
         /// Obtém um departamento por id
         /// </summary>
         /// <param name="departamentoId">Identificador do departamento</param>
         /// <returns>Um departamento</returns>
-        Task<Resultado> ObterPorIdAsync(int? departamentoId);
+        Task<Resultado<DepartamentoDTO>> ObterPorIdAsync(int? departamentoId);
 
         /// <summary>
         /// Cria um departamento
         /// </summary>
         /// <param name="departamentoDTO">Modelo que será criado</param>
 
-        Task<Resultado> CriarAsync(DepartamentoDTO departamentoDTO);
+        Task<Resultado<DepartamentoDTO>> CriarAsync(DepartamentoDTO departamentoDTO);
 
         /// <summary>
         /// Atualiza um departamento existente
         /// </summary>
         /// <param name="departamentoDTO">Modelo que será atualizado</param>
-        Task<Resultado> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO);
+        Task<Resultado<DepartamentoDTO>> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO);
 
         /// <summary>
         /// Exclui um departamento existente por código informado

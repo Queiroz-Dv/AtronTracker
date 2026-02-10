@@ -22,9 +22,7 @@ namespace AtronStock.WebApi.Controllers
         {
             var resultado = await _produtoService.RegistrarProdutoAsync(request);
 
-            return resultado.TeveFalha ?
-            BadRequest(resultado.ObterNotificacoes()) :
-            Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         //[HttpPost("lote")]

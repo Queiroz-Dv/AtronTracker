@@ -28,7 +28,7 @@ namespace Shared.Application.Services.Caching
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
         }
 

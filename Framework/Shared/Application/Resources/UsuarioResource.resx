@@ -132,6 +132,12 @@
   <data name="ErroEmailNulo" xml:space="preserve">
     <value>E-mail é obrigatório.</value>
   </data>
+  <data name="ErroInesperadoAtualizacao" xml:space="preserve">
+    <value>Erro inesperado ao atualizar usuário.</value>
+  </data>
+  <data name="ErroInesperadoGravacao" xml:space="preserve">
+    <value>Erro inesperado ao criar usuário.</value>
+  </data>
   <data name="ErroNomeLongo" xml:space="preserve">
     <value>O nome é muito longo. Tamanho máximo permitido de até 25 caracteres.</value>
   </data>
@@ -149,6 +155,9 @@
   </data>
   <data name="ErroSobrenomePequeno" xml:space="preserve">
     <value>O sobrenome é muito pequeno.Tamanho mínimo permitido de até 3 caracteres.</value>
+  </data>
+  <data name="ErroUsuarioExistente" xml:space="preserve">
+    <value>Código de usuário informado já existe. Tente outro novamente.</value>
   </data>
   <data name="ErroUsuarioNulo" xml:space="preserve">
     <value>Registro inválido ou não preenchido.</value>

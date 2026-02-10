@@ -28,8 +28,8 @@ namespace WebApi.Controllers
             var resultado = await departamentoService.CriarAsync(departamento);
 
             return resultado.TeveFalha ?
-                BadRequest(resultado.ObterNotificacoes()) :
-                Ok(resultado.Response);
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
         /// <summary>  
@@ -40,7 +40,7 @@ namespace WebApi.Controllers
         public async Task<ActionResult<ICollection<DepartamentoDTO>>> Get()
         {
             var resultado = await departamentoService.ObterTodosAsync();
-            return Ok(resultado.Entidade);
+            return Ok(resultado.Dados);
         }
 
         /// <summary>  
@@ -53,11 +53,11 @@ namespace WebApi.Controllers
         public async Task<ActionResult> Put(string codigo, [FromBody] DepartamentoDTO departamento)
         {
             if (codigo != departamento.Codigo)
-                return BadRequest(Resultado.Falha("O código na URL não corresponde ao código no corpo da requisição.").ObterNotificacoes());
+                return BadRequest(Resultado<object>.Falha("O código na URL não corresponde ao código no corpo da requisição.").Messages);
 
             var resultado = await departamentoService.AtualizarAsync(codigo, departamento);
 
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         /// <summary>  
@@ -71,8 +71,8 @@ namespace WebApi.Controllers
             var resultado = await departamentoService.RemoverAsync(codigo);
 
             return resultado.TeveFalha ?
-                BadRequest(resultado.ObterNotificacoes()) :
-                Ok(resultado.Response);
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
         /// <summary>  
@@ -86,8 +86,8 @@ namespace WebApi.Controllers
             var resultado = await departamentoService.ObterPorCodigo(codigo);
 
             return resultado.TeveFalha ?
-                NotFound(resultado.ObterNotificacoes()) :
-                Ok(resultado.Entidade);
+                NotFound(resultado.Messages) :
+                Ok(resultado.Dados);
         }
     }
 }

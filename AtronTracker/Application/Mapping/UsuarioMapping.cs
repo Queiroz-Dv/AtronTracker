@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Mapping
 {
-    public class UsuarioMapping : AsyncApplicationMapService<UsuarioDTO, Usuario>
+    public class UsuarioMapping : AsyncApplicationMapService<UsuarioDTO, Usuario>, IAsyncMap<UsuarioDTO, Usuario>
     {
         private readonly IAsyncApplicationMapService<CargoDTO, Cargo> _cargoMap;
         private readonly IAsyncApplicationMapService<DepartamentoDTO, Departamento> _departamentoMap;
@@ -71,6 +71,18 @@ namespace Application.Mapping
                 DataNascimento = dto.DataNascimento,
                 SalarioAtual = dto.Salario
             });
+        }
+
+        public Task MapToEntityAsync(UsuarioDTO dto, Usuario entityToUpdate)
+        {
+            entityToUpdate.Codigo = dto.Codigo?.ToUpper();
+            entityToUpdate.Nome = dto.Nome;
+            entityToUpdate.Sobrenome = dto.Sobrenome;
+            entityToUpdate.Email = dto.Email;
+            entityToUpdate.DataNascimento = dto.DataNascimento;
+            entityToUpdate.SalarioAtual = dto.Salario;
+
+            return Task.CompletedTask;
         }
     }
 }

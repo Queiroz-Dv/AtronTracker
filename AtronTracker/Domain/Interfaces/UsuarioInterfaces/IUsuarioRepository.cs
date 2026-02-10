@@ -10,11 +10,11 @@ namespace Domain.Interfaces.UsuarioInterfaces
 
         Task<Usuario> ObterUsuarioPorIdAsync(int? id);
 
-        Task<UsuarioIdentity> ObterUsuarioPorCodigoAsync(string codigo);
+        Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo);
 
         Task<bool> CriarUsuarioAsync(Usuario usuario);
 
-        Task<bool> AtualizarUsuarioAsync(string codigo, Usuario usuario);
+        Task<bool> AtualizarUsuarioAsync(Usuario usuario);
 
         Task<bool> RemoverUsuarioAsync(Usuario usuario);
 

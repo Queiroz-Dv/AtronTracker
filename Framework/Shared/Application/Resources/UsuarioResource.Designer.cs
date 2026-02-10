@@ -106,6 +106,24 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Erro inesperado ao atualizar usuário..
+        /// </summary>
+        public static string ErroInesperadoAtualizacao {
+            get {
+                return ResourceManager.GetString("ErroInesperadoAtualizacao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Erro inesperado ao criar usuário..
+        /// </summary>
+        public static string ErroInesperadoGravacao {
+            get {
+                return ResourceManager.GetString("ErroInesperadoGravacao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O nome é muito longo. Tamanho máximo permitido de até 25 caracteres..
         /// </summary>
         public static string ErroNomeLongo {
@@ -156,6 +174,15 @@ namespace Shared.Application.Resources {
         public static string ErroSobrenomePequeno {
             get {
                 return ResourceManager.GetString("ErroSobrenomePequeno", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Código de usuário informado já existe. Tente outro novamente..
+        /// </summary>
+        public static string ErroUsuarioExistente {
+            get {
+                return ResourceManager.GetString("ErroUsuarioExistente", resourceCulture);
             }
         }
         

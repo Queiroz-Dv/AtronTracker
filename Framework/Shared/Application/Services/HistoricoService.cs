@@ -21,12 +21,12 @@ namespace Shared.Application.Services
         {
             if (historicoDTO.CodigoRegistro.IsNullOrEmpty())
             {
-                return Resultado.Falha<IList<Historico>>(HistoricoResource.ErroCodigoNulo);
+                return Resultado<IList<Historico>>.Falha(HistoricoResource.ErroCodigoNulo);
             }
             
             var historicos = await _repository.ListarPorContextoCodigoAsync(historicoDTO.Contexto, historicoDTO.CodigoRegistro);
 
-            return Resultado.Sucesso<IList<Historico>>([.. historicos]);
+            return Resultado<IList<Historico>>.Sucesso([.. historicos]);
         }
 
         public async Task<Resultado> RegistrarServiceAsync(IHistoricoDTO historicoDTO)

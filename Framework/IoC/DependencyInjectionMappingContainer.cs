@@ -17,6 +17,7 @@ namespace IoC
             services.AddScoped<IAsyncApplicationMapService<CargoDTO, Cargo>, CargoMapping>();
             services.AddScoped<IAsyncMap<CargoDTO, Cargo>, CargoMapping>();
             services.AddScoped<IAsyncApplicationMapService<UsuarioDTO, Usuario>, UsuarioMapping>();
+            services.AddScoped<IAsyncMap<UsuarioDTO, Usuario>, UsuarioMapping>();
             services.AddScoped<IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity>, UsuarioIdentityMapping>();
             services.AddScoped<IAsyncApplicationMapService<TarefaDTO, Tarefa>, TarefaMapping>();
             services.AddScoped<IAsyncApplicationMapService<SalarioDTO, Salario>, SalarioMapping>();

@@ -27,8 +27,8 @@ namespace WebApi.Controllers
             var resultado = await cargoService.CriarAsync(cargo);
 
             return resultado.TeveFalha ?
-                BadRequest(resultado.ObterNotificacoes()) :
-                Ok(resultado.Response);
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
         /// <summary>  
@@ -39,7 +39,7 @@ namespace WebApi.Controllers
         public async Task<ActionResult<ICollection<CargoDTO>>> Get()
         {
             var resultado = await cargoService.ObterTodosAsync();
-            return Ok(resultado.Entidade);
+            return Ok(resultado.Dados);
         }
 
         /// <summary>  
@@ -52,11 +52,11 @@ namespace WebApi.Controllers
         public async Task<ActionResult> Put(string codigo, [FromBody] CargoDTO cargo)
         {
             if (codigo != cargo.Codigo)
-                return BadRequest(Resultado.Falha("O código na URL não corresponde ao código no corpo da requisição.").ObterNotificacoes());
+                return BadRequest(Resultado<object>.Falha("O código na URL não corresponde ao código no corpo da requisição.").Messages);
 
             var resultado = await cargoService.AtualizarAsync(codigo, cargo);
 
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         /// <summary>  
@@ -70,8 +70,8 @@ namespace WebApi.Controllers
             var resultado = await cargoService.RemoverAsync(codigo);
 
             return resultado.TeveFalha ?
-                BadRequest(resultado.ObterNotificacoes()) :
-                Ok(resultado.Response);
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
         /// <summary>  
@@ -85,8 +85,8 @@ namespace WebApi.Controllers
             var resultado = await cargoService.ObterPorCodigoAsync(codigo);
 
             return resultado.TeveFalha ?
-                NotFound(resultado.ObterNotificacoes()) :
-                Ok(resultado.Entidade);
+                NotFound(resultado.Messages) :
+                Ok(resultado.Dados);
         }
     }
 }

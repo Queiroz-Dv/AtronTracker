@@ -17,6 +17,11 @@ namespace Shared.Domain.ValueObjects
             _messages.Add(new NotificationMessage { Descricao = description, Nivel = level });
         }
 
+        public void Adicionar(NotificationMessage message)
+        {
+            _messages.Add(message);
+        }
+
         public void AdicionarErro(string description)
         {
             AddNotification(description, ENotificationType.Error);

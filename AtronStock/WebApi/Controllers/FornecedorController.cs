@@ -20,9 +20,7 @@ namespace AtronStock.WebApi.Controllers
         {
             var resultado = await _fornecedorService.RegistrarFornecedorAsync(request);
 
-            return resultado.TeveFalha ? 
-                BadRequest(resultado.ObterNotificacoes()) : 
-                Ok(resultado.Response);           
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         [HttpGet]
@@ -38,7 +36,7 @@ namespace AtronStock.WebApi.Controllers
             var resultado = await _fornecedorService.ObterFornecedorPorCodigoAsync(codigo);
 
 
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Dado);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
     }
 }

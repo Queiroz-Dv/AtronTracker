@@ -23,7 +23,7 @@ namespace AtronStock.WebApi.Controllers
         {
             var resultado = await _service.CriarAsync(request);
 
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         [HttpGet]
@@ -31,7 +31,7 @@ namespace AtronStock.WebApi.Controllers
         {
             var resultado = await _service.ObterTodosClientesServiceAsync();
             
-            return Ok(resultado.Dado);
+            return Ok(resultado.Dados);
         }
 
         [HttpGet]
@@ -40,7 +40,7 @@ namespace AtronStock.WebApi.Controllers
         {
             var resultado = await _service.ObterTodosClientesInativoServiceAsync();
 
-            return Ok(resultado.Dado);
+            return Ok(resultado.Dados);
         }
 
         [HttpGet("{codigo}")]
@@ -48,7 +48,7 @@ namespace AtronStock.WebApi.Controllers
         {
             var resultado = await _service.ObterClientePorCodigoServiceAsync(codigo);
 
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Dado);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         [HttpPut("{codigo}")]
@@ -56,12 +56,12 @@ namespace AtronStock.WebApi.Controllers
         {
             if (codigo != request.Codigo)
             {
-                return BadRequest(Resultado.Falha("O código na URL não corresponde ao código no corpo da requisição.").ObterNotificacoes());
+                return BadRequest(Resultado.Falha("O código na URL não corresponde ao código no corpo da requisição."));
             }
 
             var resultado = await _service.AtualizarClienteServiceAsync(request);
 
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         [HttpPut("ativar-inativar/{codigo}/{ativar}")]
@@ -69,7 +69,7 @@ namespace AtronStock.WebApi.Controllers
         {
             var resultado = await _service.AtivarInativarClienteServiceAsync(codigo, ativar);
 
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         [HttpDelete("{codigo}")]
@@ -77,7 +77,7 @@ namespace AtronStock.WebApi.Controllers
         {
             var resultado = await _service.RemoverAsync(codigo);
 
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
     }
 }
