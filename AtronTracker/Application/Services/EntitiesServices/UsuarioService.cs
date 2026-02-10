@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.DTO.Request;
+using System.Collections.Generic;
 using Application.Interfaces.Services;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -7,26 +8,24 @@ using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices
 {
     /// <summary>
-    /// Serviço de usuário refatorado seguindo o padrão CategoriaService.
-    /// Gerencia operações CRUD de usuários de forma padronizada.
+    /// Classe de serviço para usuários
     /// </summary>
     public class UsuarioService : IUsuarioService
     {
         private const string UsuarioContexto = nameof(Usuario);
-
-        private readonly IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> _mapIdentity;
         private readonly IValidador<UsuarioRequest> _validador;
         private readonly IAsyncMap<UsuarioRequest, Usuario> _mapService;
+        private readonly IAsyncMap<UsuarioDTO, Usuario> _asyncMap;
 
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
@@ -38,9 +37,9 @@ namespace Application.Services.EntitiesServices
         private readonly IEmailService _emailService;
 
         public UsuarioService(
-            IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity> mapIdentity,
             IValidador<UsuarioRequest> validador,
             IAsyncMap<UsuarioRequest, Usuario> mapService,
+            IAsyncMap<UsuarioDTO, Usuario> asyncMap,
             IUsuarioRepository repository,
             IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
             IDepartamentoRepository departamentoRepository,
@@ -50,10 +49,10 @@ namespace Application.Services.EntitiesServices
             IUsuarioIdentityRepository usuarioIdentityRepository,
             IEmailService emailService)
         {
-            _mapIdentity = mapIdentity;
-            _usuarioRepository = repository;
             _validador = validador;
+            _asyncMap = asyncMap;
             _mapService = mapService;
+            _usuarioRepository = repository;
             _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
             _departamentoRepository = departamentoRepository;
             _cargoRepository = cargoRepository;
@@ -65,43 +64,31 @@ namespace Application.Services.EntitiesServices
 
         #region Criação
 
-        public async Task<Resultado> CriarAsync(UsuarioRequest request)
+        public async Task<Resultado<UsuarioRequest>> CriarAsync(UsuarioRequest request)
         {
-            // Validação do request
             var messages = _validador.Validar(request);
-            if (messages.Any()) return Resultado.Falha(messages);
-
-            // Verificar se código já existe
-            var usuarioExistente = await _usuarioRepository.ObterUsuarioPorCodigoAsync(request.Codigo.ToUpper());
-            if (usuarioExistente != null)
+            if (messages.Any())
             {
-                return Resultado.Falha("Código de usuário informado já existe. Tente outro novamente.");
+                var resultado = Resultado<UsuarioRequest>.Falha(messages.FirstOrDefault()); // Falha agora aceita um erro ou notification
+                foreach(var msg in messages.Skip(1)) resultado.Adicionar(msg);
+                return resultado; 
             }
 
-            // Verificar se email já existe
+            var usuarioExistente = await _usuarioRepository.ObterUsuarioPorCodigoAsync(request.Codigo.ToUpper());
+            if (usuarioExistente != null) return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
+
             if (!string.IsNullOrEmpty(request.Email))
             {
                 var emailExiste = await _usuarioRepository.VerificarEmailExistenteAsync(request.Email);
-                if (emailExiste)
-                {
-                    return Resultado.Falha("O e-mail informado já está cadastrado no sistema.");
-                }
+                if (emailExiste) return Resultado<UsuarioRequest>.Falha(EmailResource.ErroEmailUtilizado);
             }
 
-            // Mapear para entidade
             var usuario = await _mapService.MapToEntityAsync(request);
-
-            // Criar usuário no banco
             var usuarioCriado = await _usuarioRepository.CriarUsuarioAsync(usuario);
-            if (!usuarioCriado)
-            {
-                return Resultado.Falha("Erro inesperado ao criar usuário.");
-            }
+            if (!usuarioCriado) return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
 
-            // Buscar usuário criado para obter ID
             var usuarioBd = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
 
-            // Registrar conta de identity se senha foi fornecida
             if (!request.Senha.IsNullOrEmpty())
             {
                 await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(
@@ -110,7 +97,6 @@ namespace Application.Services.EntitiesServices
                     request.Senha);
             }
 
-            // Criar relacionamento com cargo/departamento se fornecido
             if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
             {
                 var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
@@ -122,44 +108,47 @@ namespace Application.Services.EntitiesServices
                 }
             }
 
-            // Enviar e-mail de boas-vindas
             await EnviarEmailBoasVindasAsync(request.Email, request.Nome);
 
             var context = new NotificationBag();
             context.MensagemRegistroSalvo($"Usuário {request.Nome} {request.Sobrenome}");
-            return Resultado.Sucesso(request, [.. context.Messages]);
+            
+            var resultadoSucesso = Resultado<UsuarioRequest>.Sucesso(request);
+            foreach(var msg in context.Messages) resultadoSucesso.Adicionar(msg);
+            return resultadoSucesso;
         }
 
         #endregion
 
         #region Atualização
 
-        public async Task<Resultado> AtualizarAsync(UsuarioRequest request)
+        public async Task<Resultado<UsuarioRequest>> AtualizarAsync(UsuarioRequest request)
         {
-            // Validação do request
             var messages = _validador.Validar(request);
-            if (messages.Any()) return Resultado.Falha(messages);
 
-            // Buscar usuário existente
+            if (messages.Any())
+            {
+                 var resultado = Resultado<UsuarioRequest>.Falha(messages.FirstOrDefault());
+                 foreach(var msg in messages.Skip(1)) resultado.Adicionar(msg);
+                 return resultado;
+            }
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(request.Codigo);
             if (usuario == null)
             {
                 var bag = new NotificationBag();
                 bag.MensagemRegistroNaoEncontrado(request.Codigo);
-                return Resultado.Falha(bag.Messages.ToList());
+                var res = Resultado<UsuarioRequest>.Falha(bag.Messages.FirstOrDefault());
+                return res;
             }
 
-            // Mapear dados do request para a entidade existente
             await _mapService.MapToEntityAsync(request, usuario);
 
-            // Atualizar no banco
-            var atualizado = await _usuarioRepository.AtualizarUsuarioAsync(request.Codigo, usuario);
+            var atualizado = await _usuarioRepository.AtualizarUsuarioAsync(usuario);
             if (!atualizado)
             {
-                return Resultado.Falha("Erro inesperado ao atualizar usuário.");
+                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoAtualizacao);
             }
 
-            // Atualizar identity se senha foi fornecida
             if (!request.Senha.IsNullOrEmpty())
             {
                 await _usuarioIdentityRepository.AtualizarUserIdentityRepositoryAsync(
@@ -167,8 +156,7 @@ namespace Application.Services.EntitiesServices
                     usuario.Email,
                     request.Senha);
             }
-
-            // Atualizar relacionamento com cargo/departamento se fornecido
+            
             if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
             {
                 var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
@@ -192,50 +180,33 @@ namespace Application.Services.EntitiesServices
 
             var context = new NotificationBag();
             context.MensagemRegistroAtualizado(UsuarioContexto);
-            return Resultado.Sucesso(request, [.. context.Messages]);
+            var resultadoSucesso = Resultado<UsuarioRequest>.Sucesso(request);
+            foreach(var msg in context.Messages) resultadoSucesso.Adicionar(msg);
+            return resultadoSucesso;
         }
 
         #endregion
 
         #region Consultas
 
-        public async Task<Resultado<ICollection<UsuarioRequest>>> ObterTodosRequestAsync()
+        public async Task<Resultado<List<UsuarioDTO>>> ObterTodosAsync()
         {
-            var usuarios = await _usuarioRepository.ObterTodosRepositoryAsync();
-            var dtos = await _mapService.MapToListDTOAsync(usuarios);
-            return Resultado.Sucesso<ICollection<UsuarioRequest>>(dtos);
+            var entities = await _usuarioRepository.ObterUsuariosAsync();
+            var dtos = await _asyncMap.MapToListDTOAsync([.. entities]);
+            return Resultado<List<UsuarioDTO>>.Sucesso(dtos);
         }
 
-        public async Task<Resultado<UsuarioDTO>> ObterPorCodigoRequestAsync(string codigo)
+        public async Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo)
         {
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-            if (usuario == null)
-            {
-                var bag = new NotificationBag();
-                bag.MensagemRegistroNaoEncontrado(codigo);
-                return Resultado.Falha<UsuarioDTO>(bag.Messages.ToList());
-            }
+            if (codigo.IsNullOrEmpty()) return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            var dto = await _mapIdentity.MapToDTOAsync(usuario);
-            return Resultado.Sucesso(dto);
-        }
+            var entidade = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
 
-        /// <summary>
-        /// Mantido para compatibilidade com LoginService e outros serviços existentes.
-        /// </summary>
-        public async Task<UsuarioDTO> ObterPorCodigoAsync(string codigo)
-        {
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-            return usuario is null ? null : await _mapIdentity.MapToDTOAsync(usuario);
-        }
+            if (entidade == null) return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-        /// <summary>
-        /// Mantido para compatibilidade com outros serviços existentes.
-        /// </summary>
-        public async Task<List<UsuarioDTO>> ObterTodosAsync()
-        {
-            var usuarios = await _usuarioRepository.ObterTodosUsuariosDoIdentity();
-            return await _mapIdentity.MapToListDTOAsync(usuarios);
+            var dto = await _asyncMap.MapToDTOAsync(entidade);
+            return Resultado<UsuarioDTO>.Sucesso(dto);
+
         }
 
         #endregion
@@ -250,17 +221,19 @@ namespace Application.Services.EntitiesServices
             {
                 var bag = new NotificationBag();
                 bag.MensagemRegistroNaoEncontrado(codigo);
-                return Resultado.Falha(bag.Messages.ToList());
+                var res = Resultado.Falha(bag.Messages.FirstOrDefault());
+                return res;
             }
 
-            // Remover tarefas do usuário
+            // Remover tarefas do usuário - Alterar para manter as tarefas, mas desvincular do usuário, se necessário
             var tarefasDoUsuario = await _tarefaRepository.ObterTodasTarefasPorUsuario(usuario.Id, usuario.Codigo);
+
             foreach (var tarefa in tarefasDoUsuario)
             {
                 await _tarefaRepository.RemoverRepositoryAsync(tarefa);
             }
 
-            // Remover salário do usuário
+            // Remover salário do usuário - Alterar para manter o histórico salarial, mas desvincular do usuário, se necessário
             var salarioDoUsuario = await _salarioRepository.ObterSalarioPorUsuario(usuario.Id, usuario.Codigo);
             if (salarioDoUsuario != null)
             {
@@ -279,7 +252,9 @@ namespace Application.Services.EntitiesServices
 
             var context = new NotificationBag();
             context.MensagemRegistroRemovido(UsuarioContexto);
-            return Resultado.Sucesso([.. context.Messages]);
+            var resultadoSucesso = Resultado.Sucesso();
+            foreach(var msg in context.Messages) resultadoSucesso.Adicionar(msg);
+            return resultadoSucesso;
         }
 
         #endregion
@@ -305,42 +280,42 @@ namespace Application.Services.EntitiesServices
         {
             var assunto = "Bem-vindo ao Sistema Atron!";
             var corpo = $@"
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset='utf-8'>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }}
-        .container {{ max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-        .header {{ text-align: center; padding-bottom: 20px; border-bottom: 2px solid #007bff; }}
-        .header h1 {{ color: #007bff; margin: 0; }}
-        .content {{ padding: 20px 0; }}
-        .content p {{ color: #333; line-height: 1.6; }}
-        .footer {{ text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; }}
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <div class='header'>
-            <h1>🎉 Bem-vindo ao Sistema Atron!</h1>
-        </div>
-        <div class='content'>
-            <p>Olá, <strong>{nomeUsuario}</strong>!</p>
-            <p>Sua conta foi criada com sucesso no Sistema Atron.</p>
-            <p>Agora você pode acessar o sistema utilizando suas credenciais de login.</p>
-            <p>Se você tiver alguma dúvida, entre em contato com o suporte.</p>
-        </div>
-        <div class='footer'>
-            <p>Este é um e-mail automático. Por favor, não responda.</p>
-            <p>&copy; {DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
-        </div>
-    </div>
-</body>
-</html>";
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset='utf-8'>
+                                <style>
+                                    body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }}
+                                    .container {{ max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+                                    .header {{ text-align: center; padding-bottom: 20px; border-bottom: 2px solid #007bff; }}
+                                    .header h1 {{ color: #007bff; margin: 0; }}
+                                    .content {{ padding: 20px 0; }}
+                                    .content p {{ color: #333; line-height: 1.6; }}
+                                    .footer {{ text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; }}
+                                </style>
+                            </head>
+                            <body>
+                                <div class='container'>
+                                    <div class='header'>
+                                        <h1>🎉 Bem-vindo ao Sistema Atron!</h1>
+                                    </div>
+                                    <div class='content'>
+                                        <p>Olá, <strong>{nomeUsuario}</strong>!</p>
+                                        <p>Sua conta foi criada com sucesso no Sistema Atron.</p>
+                                        <p>Agora você pode acessar o sistema utilizando suas credenciais de login.</p>
+                                        <p>Se você tiver alguma dúvida, entre em contato com o suporte.</p>
+                                    </div>
+                                    <div class='footer'>
+                                        <p>Este é um e-mail automático. Por favor, não responda.</p>
+                                        <p>&copy; {DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>";
 
             return new EmailRequest
             {
-                EmailsDestino = new List<string> { destinatario },
+                EmailsDestino = [destinatario],
                 Assunto = assunto,
                 Mensagem = corpo
             };

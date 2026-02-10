@@ -1,100 +1,93 @@
 ﻿using Application.DTO.Request;
-using Application.DTO.Response;
-using Application.Extensions;
 using Application.Interfaces.Services;
-using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace WebApi.Controllers
-{   
-    [Route("api/[controller]")]
-    [ApiController]
+{
+    /// <summary>
+    /// Controlador para gerenciar entidades de Usuário.
+    /// </summary>
     [Authorize(Policy = "Modulo:USR")]
-    public class UsuarioController : ApiBaseConfigurationController<Usuario, IUsuarioService>
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsuarioController(IUsuarioService usuarioService) : ControllerBase
     {
-        public UsuarioController(
-            IUsuarioService usuarioService,
-            Notifiable messageModel) :
-            base(usuarioService, messageModel)
-        { }
-
         /// <summary>
         /// Cria um novo usuário.
         /// </summary>
+        /// <param name="request">Dados do usuário a ser criado.</param>
+        /// <returns>Resultado da operação.</returns>
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] UsuarioRequest request)
         {
-            var resultado = await _service.CriarAsync(request);
-            return resultado.TeveFalha
-                ? BadRequest(resultado.ObterNotificacoes())
-                : Ok(resultado.Response);
+            var resultado = await usuarioService.CriarAsync(request);
+
+            return resultado.TeveFalha ?
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
+        }
+
+        /// <summary>
+        /// Obtém todos os usuários.
+        /// </summary>
+        /// <returns>Lista de usuários.</returns>
+        [HttpGet]
+        public async Task<ActionResult> Get()
+        {
+            var resultado = await usuarioService.ObterTodosAsync();
+            return Ok(resultado.Dados);
         }
 
         /// <summary>
         /// Atualiza um usuário existente.
         /// </summary>
+        /// <param name="codigo">Código do usuário a ser atualizado.</param>
+        /// <param name="request">Dados atualizados do usuário.</param>
+        /// <returns>Resultado da operação.</returns>
         [HttpPut("{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] UsuarioRequest request)
         {
             if (codigo != request.Codigo)
-            {
-                return BadRequest(Resultado.Falha("O código na URL não corresponde ao código no corpo da requisição.").ObterNotificacoes());
-            }
+                return BadRequest(Resultado<object>.Falha("O código na URL não corresponde ao código no corpo da requisição.").Messages);
 
-            var resultado = await _service.AtualizarAsync(request);
-            return resultado.TeveFalha
-                ? BadRequest(resultado.ObterNotificacoes())
-                : Ok(resultado.Response);
+            var resultado = await usuarioService.AtualizarAsync(request);
+
+            return resultado.TeveFalha ?
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
         /// <summary>
-        /// Remove um usuário pelo código.
+        /// Remove um usuário existente.
         /// </summary>
+        /// <param name="codigo">Código do usuário a ser removido.</param>
+        /// <returns>Resultado da operação.</returns>
         [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
         {
-            var resultado = await _service.RemoverAsync(codigo);
-            return resultado.TeveFalha
-                ? BadRequest(resultado.ObterNotificacoes())
-                : Ok(resultado.Response);
+            var resultado = await usuarioService.RemoverAsync(codigo);
+
+            return resultado.TeveFalha ?
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
         /// <summary>
-        /// Obtém todos os usuários (formato Response para o frontend).
+        /// Obtém um usuário pelo código.
         /// </summary>
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<UsuarioResponse>>> Get()
-        {
-            var usuarios = await _service.ObterTodosAsync();
-            var response = usuarios.MontarUsuarioResponse();
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Obtém todos os usuários (formato Request/DTO).
-        /// </summary>
-        [HttpGet("request")]
-        public async Task<ActionResult<ICollection<UsuarioRequest>>> GetRequest()
-        {
-            var resultado = await _service.ObterTodosRequestAsync();
-            return Ok(resultado.Dado);
-        }
-
-        /// <summary>
-        /// Obtém um usuário pelo código (formato DTO para compatibilidade).
-        /// </summary>
+        /// <param name="codigo">Código do usuário.</param>
+        /// <returns>Dados do usuário.</returns>
         [HttpGet("{codigo}")]
         public async Task<ActionResult> Get(string codigo)
         {
-            var resultado = await _service.ObterPorCodigoRequestAsync(codigo);
-            var response = resultado.Dado.MontarUsuarioResponse();
-            return resultado.TeveFalha
-                ? NotFound(resultado.ObterNotificacoes())
-                : Ok(response);
+            var resultado = await usuarioService.ObterPorCodigoAsync(codigo);
+
+            return resultado.TeveFalha ?
+                NotFound(resultado.Messages) :
+                Ok(resultado.Dados);
         }
     }
 }

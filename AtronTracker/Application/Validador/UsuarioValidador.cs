@@ -9,14 +9,9 @@ using System.Collections.Generic;
 
 namespace Application.Validador
 {
-    public class UsuarioValidador : IValidador<Usuario>
+    public class UsuarioValidador(IAccessorService accessorService) : IValidador<Usuario>
     {
-        private readonly IAccessorService _accessorService;
-
-        public UsuarioValidador(IAccessorService accessorService)
-        {
-            _accessorService = accessorService;
-        }
+        private readonly IAccessorService _accessorService = accessorService;
 
         public IList<NotificationMessage> Validar(Usuario entity)
         {
@@ -28,72 +23,85 @@ namespace Application.Validador
                 return [.. context.Messages];
             }
 
+            ValidarCodigo(entity, context);
+            ValidarNome(entity, context);
+            ValidarSobrenome(entity, context);
+            ValidarDataNascimento(entity, context);
+            ValidarEmail(entity, context);
+
+            return [.. context.Messages];
+        }
+
+        private void ValidarCodigo(Usuario entity, NotificationBag context)
+        {
             if (entity.Codigo.IsNullOrEmpty())
             {
                 context.AdicionarErro(UsuarioResource.ErroCodigoNulo);
             }
-
-            if (entity.Codigo.Length > 10)
+            else if (entity.Codigo.Length > 10)
             {
                 context.AdicionarErro(UsuarioResource.ErroCodigoLongo);
             }
-
-            if (entity.Codigo.Length < 3)
+            else if (entity.Codigo.Length < 3)
             {
                 context.AdicionarErro(UsuarioResource.ErroCodigoPequeno);
             }
+        }
 
+        private void ValidarNome(Usuario entity, NotificationBag context)
+        {
             if (entity.Nome.IsNullOrEmpty())
             {
                 context.AdicionarErro(UsuarioResource.ErroNomeUsuarioNulo);
             }
-
-            if (entity.Nome.Length < 3)
+            else if (entity.Nome.Length < 3)
             {
                 context.AdicionarErro(UsuarioResource.ErroNomePequeno);
             }
-
-            if (entity.Nome.Length > 25)
+            else if (entity.Nome.Length > 25)
             {
                 context.AdicionarErro(UsuarioResource.ErroNomeLongo);
             }
+        }
 
+        private void ValidarSobrenome(Usuario entity, NotificationBag context)
+        {
             if (entity.Sobrenome.IsNullOrEmpty())
             {
                 context.AdicionarErro(UsuarioResource.ErroSobrenomeObrigatorio);
             }
-
-            if (entity.Sobrenome.Length < 3)
+            else if (entity.Sobrenome.Length < 3)
             {
                 context.AdicionarErro(UsuarioResource.ErroSobrenomePequeno);
             }
-
-            if (entity.Sobrenome.Length > 50)
+            else if (entity.Sobrenome.Length > 50)
             {
                 context.AdicionarErro(UsuarioResource.ErroSobrenomeLongo);
             }
+        }
 
+        private void ValidarDataNascimento(Usuario entity, NotificationBag context)
+        {
             if (entity.DataNascimento == DateTime.Now)
             {
                 context.AdicionarErro(UsuarioResource.ErroDataDeNascimento);
             }
+        }
 
+        private void ValidarEmail(Usuario entity, NotificationBag context)
+        {
             if (entity.Email.IsNullOrEmpty())
             {
                 context.AdicionarErro(UsuarioResource.ErroEmailNulo);
+                return;
             }
 
-            if (!entity.Email.IsNullOrEmpty())
+            var usuarioRepository = _accessorService.ObterService<IUsuarioRepository>();
+            var emailExiste = usuarioRepository.VerificarEmailExistenteAsync(entity.Email).Result;
+            if (emailExiste)
             {
-                var _usuarioRepository = _accessorService.ObterService<IUsuarioRepository>();
-                var emailExiste = _usuarioRepository.VerificarEmailExistenteAsync(entity.Email).Result;
-                if (emailExiste)
-                {
-                    context.AdicionarErro(EmailResource.ErroEmailUtilizado);
-                }
+                context.AdicionarErro(EmailResource.ErroEmailUtilizado);
             }
-
-            return [.. context.Messages];
         }
     }
 }

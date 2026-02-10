@@ -9,34 +9,27 @@ namespace Application.Interfaces.Services
     public interface IUsuarioService
     {
         /// <summary>
-        /// Obtém todos os usuários como UsuarioDTO (para compatibilidade com LoginService).
+        /// Obtém todos os usuários
         /// </summary>
-        Task<List<UsuarioDTO>> ObterTodosAsync();
+        /// <summary>
+        /// Obtém todos os usuários
+        /// </summary>
+        Task<Resultado<List<UsuarioDTO>>> ObterTodosAsync();
 
         /// <summary>
-        /// Obtém um usuário por código como UsuarioDTO (para compatibilidade com LoginService).
+        /// Obtém um usuário por código
         /// </summary>
-        Task<UsuarioDTO> ObterPorCodigoAsync(string codigo);
-
-        /// <summary>
-        /// Obtém todos os usuários como UsuarioRequest (padrão CategoriaService).
-        /// </summary>
-        Task<Resultado<ICollection<UsuarioRequest>>> ObterTodosRequestAsync();
-
-        /// <summary>
-        /// Obtém um usuário por código como UsuarioRequest (padrão CategoriaService).
-        /// </summary>
-        Task<Resultado<UsuarioDTO>> ObterPorCodigoRequestAsync(string codigo);
+        Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo);
 
         /// <summary>
         /// Cria um novo usuário.
         /// </summary>
-        Task<Resultado> CriarAsync(UsuarioRequest request);
+        Task<Resultado<UsuarioRequest>> CriarAsync(UsuarioRequest request);
 
         /// <summary>
-        /// Atualiza um usuário existente (padrão CategoriaService).
+        /// Atualiza um usuário existente.
         /// </summary>
-        Task<Resultado> AtualizarAsync(UsuarioRequest request);
+        Task<Resultado<UsuarioRequest>> AtualizarAsync(UsuarioRequest request);
 
         /// <summary>
         /// Remove um usuário pelo código.

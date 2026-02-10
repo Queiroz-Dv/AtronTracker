@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.ApplicationInterfaces;
+﻿using Application.DTO;
+using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
 using Application.Services.AuthServices.Bases;
@@ -27,14 +28,15 @@ namespace Application.Services.AuthServices
 
         public async Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO loginRequest)
         {
-            var usuario = await UsuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
-            if (usuario == null)
+            var resultadoUsuario = await UsuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
+
+            if (resultadoUsuario?.Dados == null)
             {
                 Messages.AdicionarErro("Usuário não encontrado.");
                 return null;
             }
 
-            var dadosComplementares = await DadosComplementaresDoUsuarioService.ObterInformacoesComplementaresDoUsuario(usuario);
+            var dadosComplementares = resultadoUsuario?.Dados != null ? await DadosComplementaresDoUsuarioService.ObterInformacoesComplementaresDoUsuario(resultadoUsuario.Dados) : null;
 
             var dadosDoToken = await TokenService.ObterTokenComRefreshToken(dadosComplementares);
 
@@ -56,7 +58,7 @@ namespace Application.Services.AuthServices
             var token = CriarToken(dadosDoToken.TokenDTO.Token, dadosDoToken.TokenDTO.Expires);
 
             CacheUsuarioService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDoToken);
-            CookieService.CriarCookieDoToken(token, usuario.Codigo);
+            CookieService.CriarCookieDoToken(token, resultadoUsuario.Dados.Codigo);
             return token;
         }
 
@@ -81,7 +83,9 @@ namespace Application.Services.AuthServices
 
             if (usuario == null) return null;
 
-            var dadosComplementares = await DadosComplementaresDoUsuarioService.ObterInformacoesComplementaresDoUsuario(usuario);
+            if (usuario?.Dados == null) return null;
+
+            var dadosComplementares = await DadosComplementaresDoUsuarioService.ObterInformacoesComplementaresDoUsuario(usuario.Dados);
 
             if (dadosComplementares != null)
             {

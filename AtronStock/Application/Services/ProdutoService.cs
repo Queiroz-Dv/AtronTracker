@@ -138,7 +138,7 @@ namespace AtronStock.Application.Services
         {
             var produtos = await _produtoRepository.ObterTodos();
 
-            return Resultado.Sucesso(produtos);
+            return Resultado<ICollection<Produto>>.Sucesso(produtos);
         }
     }
 }

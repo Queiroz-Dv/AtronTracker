@@ -1,4 +1,5 @@
 ﻿using Application.DTO;
+using System.Collections.Generic;
 using Application.Interfaces.Services;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -33,44 +34,47 @@ namespace Application.Services.EntitiesServices
             _asyncMap = asyncMap;
         }
 
-        public async Task<Resultado> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
+        public async Task<Resultado<DepartamentoDTO>> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
             if (codigo.IsNullOrEmpty())
-                return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
+                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var erros = _validador.Validar(departamentoDTO);
-            if (erros.Any()) return Resultado.Falha(erros);
+            if (erros.Any()) return Resultado<DepartamentoDTO>.Falha(erros.FirstOrDefault());
 
             var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
             if (entidade == null)
-                return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             await _asyncMap.MapToEntityAsync(departamentoDTO, entidade);
 
             var atualizado = await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(entidade);
             if (!atualizado)
             {
-                return Resultado.Falha(string.Format(DepartamentoResource.ErroInesperadoAtualizacao, codigo));
+                return Resultado<DepartamentoDTO>.Falha(string.Format(DepartamentoResource.ErroInesperadoAtualizacao, codigo));
             }
 
             var notificacoes = new NotificationBag();
             notificacoes.AdicionarMensagem(string.Format(DepartamentoResource.MensagemAtualizacao, codigo));
-            return Resultado.Sucesso(entidade, [.. notificacoes.Messages]);
+            var dto = await _asyncMap.MapToDTOAsync(entidade);
+            var res = Resultado<DepartamentoDTO>.Sucesso(dto);
+            foreach(var msg in notificacoes.Messages) res.Adicionar(msg);
+            return res;
         }
 
-        public async Task<Resultado> CriarAsync(DepartamentoDTO departamentoDTO)
+        public async Task<Resultado<DepartamentoDTO>> CriarAsync(DepartamentoDTO departamentoDTO)
         {
             var erros = _validador.Validar(departamentoDTO);
             if (erros.Any())
             {
-                return Resultado.Falha(erros);
+                return Resultado<DepartamentoDTO>.Falha(erros.FirstOrDefault());
             }
 
             var departamentoExiste = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamentoDTO.Codigo);
             if (departamentoExiste != null)
             {
-                return Resultado.Falha(DepartamentoResource.ErroCodigoDepartamentoExistente);
+                return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroCodigoDepartamentoExistente);
             }
 
             var departamento = await _asyncMap.MapToEntityAsync(departamentoDTO);
@@ -78,52 +82,55 @@ namespace Application.Services.EntitiesServices
             var foiCriado = await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
             if (!foiCriado)
             {
-                return Resultado.Falha(DepartamentoResource.ErroGravacao);
+                return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroGravacao);
             }
 
             var notificacoes = new NotificationBag();
             notificacoes.MensagemRegistroSalvo(departamento.Codigo);
-            return Resultado.Sucesso(departamento, [.. notificacoes.Messages]);
+            var dto = await _asyncMap.MapToDTOAsync(departamento);
+            var res = Resultado<DepartamentoDTO>.Sucesso(dto);
+            foreach(var msg in notificacoes.Messages) res.Adicionar(msg);
+            return res;
 
         }
 
-        public async Task<Resultado> ObterPorCodigo(string codigo)
+        public async Task<Resultado<DepartamentoDTO>> ObterPorCodigo(string codigo)
         {
             if (codigo.IsNullOrEmpty())
-                return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
+                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
             if (entidade != null)
             {
                 var dto = await _asyncMap.MapToDTOAsync(entidade);
-                return Resultado.Sucesso(dto);
+                return Resultado<DepartamentoDTO>.Sucesso(dto);
             }
 
-            return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+            return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
         }
 
-        public async Task<Resultado> ObterPorIdAsync(int? departamentoId)
+        public async Task<Resultado<DepartamentoDTO>> ObterPorIdAsync(int? departamentoId)
         {
             if (departamentoId == 0)
-                return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
+                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var entidade = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);
 
             if (entidade != null)
             {
                 var dto = await _asyncMap.MapToDTOAsync(entidade);
-                return Resultado.Sucesso(dto);
+                return Resultado<DepartamentoDTO>.Sucesso(dto);
             }
 
-            return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+            return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
         }
 
-        public async Task<Resultado> ObterTodosAsync()
+        public async Task<Resultado<List<DepartamentoDTO>>> ObterTodosAsync()
         {
             var entities = await _departamentoRepository.ObterDepartmentosAsync();
             var dtos = await _asyncMap.MapToListDTOAsync([.. entities]);
-            return Resultado.Sucesso(dtos);
+            return Resultado<List<DepartamentoDTO>>.Sucesso(dtos);
         }
 
         public async Task<Resultado> RemoverAsync(string codigo)
@@ -152,7 +159,9 @@ namespace Application.Services.EntitiesServices
 
                 var notificacoes = new NotificationBag();
                 notificacoes.AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
-                return Resultado.Sucesso(departamento, [.. notificacoes.Messages]);
+                var res = Resultado.Sucesso(departamento);
+                foreach(var msg in notificacoes.Messages) res.Adicionar(msg);
+                return res;
             }
 
             return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);

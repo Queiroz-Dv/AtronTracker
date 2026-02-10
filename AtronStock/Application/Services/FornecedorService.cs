@@ -60,12 +60,12 @@ namespace AtronStock.Application.Services
 
             if (fornecedor == null)
             {
-                return Resultado.Falha<FornecedorRequest>(FornecedoResource.ErroFornecedorNaoEncontrado);
+                return Resultado<FornecedorRequest>.Falha(FornecedoResource.ErroFornecedorNaoEncontrado);
             }
 
             FornecedorRequest dto = await _map.MapToDTOAsync(fornecedor);
 
-            return Resultado.Sucesso(dto);
+            return Resultado<FornecedorRequest>.Sucesso(dto);
         }
     }
 }

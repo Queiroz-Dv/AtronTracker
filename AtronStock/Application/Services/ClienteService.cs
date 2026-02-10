@@ -109,18 +109,18 @@ namespace AtronStock.Application.Services
         public async Task<Resultado<ClienteRequest>> ObterClientePorCodigoServiceAsync(string codigo)
         {
             var cliente = await _repository.ObterClientePorCodigoAsync(codigo);
-            if (cliente == null) return Resultado.Falha<ClienteRequest>(ClienteResource.ErroClienteNaoExiste);
+            if (cliente == null) return Resultado<ClienteRequest>.Falha(ClienteResource.ErroClienteNaoExiste);
 
             var clienteRequest = await _mapService.MapToDTOAsync(cliente);
 
-            return Resultado.Sucesso(clienteRequest);
+            return Resultado<ClienteRequest>.Sucesso(clienteRequest);
         }
 
         public async Task<Resultado<ICollection<ClienteRequest>>> ObterTodosClientesServiceAsync()
         {
             var clientes = await _repository.ObterTodoClientesAsync();
             var clientesRequest = await _mapService.MapToListDTOAsync(clientes);
-            return Resultado.Sucesso<ICollection<ClienteRequest>>([.. clientesRequest]);
+            return Resultado<ICollection<ClienteRequest>>.Sucesso([.. clientesRequest]);
         }
 
         public async Task<Resultado> RemoverAsync(string codigo)
@@ -156,7 +156,7 @@ namespace AtronStock.Application.Services
         {
             var clientes = await _repository.ObterTodoClientesInativosAsync();
             var clientesRequest = await _mapService.MapToListDTOAsync(clientes);
-            return Resultado.Sucesso<ICollection<ClienteRequest>>(clientesRequest);
+            return Resultado<ICollection<ClienteRequest>>.Sucesso(clientesRequest);
         }
 
         public async Task<Resultado> AtivarInativarClienteServiceAsync(string codigo, bool ativar)

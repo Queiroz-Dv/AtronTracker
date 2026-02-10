@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Services;
+﻿using Application.DTO;
+using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Shared.Application.DTOS.Auth;
@@ -79,7 +80,7 @@ namespace WebApi.Helpers
         {
             var dadosComplementaresService = _serviceAccessor.ObterService<IDadosComplementaresDoUsuarioService>();
             var userDto = await _usuarioService.ObterPorCodigoAsync(userId);
-            var dadosDto = await dadosComplementaresService.ObterInformacoesComplementaresDoUsuario(userDto);
+            var dadosDto = await dadosComplementaresService.ObterInformacoesComplementaresDoUsuario(userDto.Dados);
             _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, userId));
             return dadosDto;
         }

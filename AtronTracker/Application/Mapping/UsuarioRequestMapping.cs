@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 namespace Application.Mapping
 {
     /// <summary>
-    /// Mapeamento para UsuarioRequest ↔ Usuario seguindo o padrão CategoriaMapping.
-    /// Focado em operações CRUD administrativas, separado do UsuarioIdentityMapping
-    /// que é utilizado em cenários de autenticação.
+    /// Mapeamento para UsuarioRequest ↔ Usuario.    
     /// </summary>
     public class UsuarioRequestMapping : AsyncApplicationMapService<UsuarioRequest, Usuario>, IAsyncMap<UsuarioRequest, Usuario>
     {

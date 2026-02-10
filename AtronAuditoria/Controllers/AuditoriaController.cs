@@ -29,7 +29,7 @@ namespace AtronAuditoria.Controllers
             IAuditoriaDTO auditoria = new AuditoriaDTO() { CodigoRegistro = codigoRegistro, Contexto = contexto };
 
             var auditoriaResultado = await _service.ObterPorChaveServiceAsync(auditoria);
-            return Ok(auditoriaResultado.Dado);
+            return Ok(auditoriaResultado.Dados);
         }
     }
 }

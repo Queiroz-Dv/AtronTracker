@@ -148,14 +148,14 @@ namespace AtronStock.Application.Services
         {
             var categorias = await _repository.ObterTodasCategoriasAsync();
             var dtos = await _mapService.MapToListDTOAsync(categorias);
-            return Resultado.Sucesso<ICollection<CategoriaRequest>>(dtos);
+            return Resultado<ICollection<CategoriaRequest>>.Sucesso(dtos);
         }
 
         public async Task<Resultado<ICollection<CategoriaRequest>>> ObterInativasAsync()
         {
             var categorias = await _repository.ObterTodasCategoriasInativasAsync();
             var dtos = await _mapService.MapToListDTOAsync(categorias);
-            return Resultado.Sucesso<ICollection<CategoriaRequest>>(dtos);
+            return Resultado<ICollection<CategoriaRequest>>.Sucesso(dtos);
         }
 
         public async Task<Resultado<CategoriaRequest>> ObterPorCodigoAsync(string codigo)
@@ -165,11 +165,11 @@ namespace AtronStock.Application.Services
             {
                 var bag = new NotificationBag();
                 bag.MensagemRegistroNaoEncontrado(codigo);
-                return Resultado.Falha<CategoriaRequest>(bag.Messages.ToList());
+                return Resultado<CategoriaRequest>.Falha(bag.Messages.ToList());
             }
 
             var dto = await _mapService.MapToDTOAsync(categoria);
-            return Resultado.Sucesso(dto);
+            return Resultado<CategoriaRequest>.Sucesso(dto);
         }
     }
 }
