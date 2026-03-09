@@ -87,7 +87,7 @@ namespace AtronEmail.Controllers
                 Mensagem = "Este e-mail foi enviado automaticamente para validar que as configurações estão funcionando corretamente."
             };
 
-            request.EmailsDestino = new List<string> { "queiroz.dv@outlook.com" };
+            request.EmailsDestino = new List<string> { configResult.EmailRemetente! };
 
             var resultado = await _diagnosticService.EnviarDiagnosticoAsync(request);
 
