@@ -66,56 +66,75 @@ namespace Application.Services.EntitiesServices
 
         public async Task<Resultado<UsuarioRequest>> CriarAsync(UsuarioRequest request)
         {
-            var messages = _validador.Validar(request);
-            if (messages.Any())
+            // 1. Validação
+            var mensagens = _validador.Validar(request);
+            if (mensagens.Any())
+                return Resultado<UsuarioRequest>.Falhas(mensagens);
+
+            // 2. Verificações de existência
+            var usuarioExistente = await _usuarioRepository
+                .ObterUsuarioPorCodigoAsync(request.Codigo.ToUpper());
+
+            if (usuarioExistente != null)
+                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
+
+            if (!request.Email.IsNullOrEmpty())
             {
-                var resultado = Resultado<UsuarioRequest>.Falha(messages.FirstOrDefault()); // Falha agora aceita um erro ou notification
-                foreach(var msg in messages.Skip(1)) resultado.Adicionar(msg);
-                return resultado; 
+                var emailExiste = await _usuarioRepository
+                    .VerificarEmailExistenteAsync(request.Email);
+
+                if (emailExiste)
+                    return Resultado<UsuarioRequest>.Falha(EmailResource.ErroEmailUtilizado);
             }
 
-            var usuarioExistente = await _usuarioRepository.ObterUsuarioPorCodigoAsync(request.Codigo.ToUpper());
-            if (usuarioExistente != null) return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
-
-            if (!string.IsNullOrEmpty(request.Email))
-            {
-                var emailExiste = await _usuarioRepository.VerificarEmailExistenteAsync(request.Email);
-                if (emailExiste) return Resultado<UsuarioRequest>.Falha(EmailResource.ErroEmailUtilizado);
-            }
-
+            // 3. Criação do usuário de negócio
             var usuario = await _mapService.MapToEntityAsync(request);
-            var usuarioCriado = await _usuarioRepository.CriarUsuarioAsync(usuario);
-            if (!usuarioCriado) return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
 
-            var usuarioBd = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
+            var criado = await _usuarioRepository.CriarUsuarioAsync(usuario);
+            if (!criado)
+                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
 
+            var usuarioBd = await _usuarioRepository
+                .ObterUsuarioPorCodigoAsync(usuario.Codigo);
+
+            // 4. Criação da conta Identity (se aplicável)
             if (!request.Senha.IsNullOrEmpty())
             {
-                await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(
-                    request.Codigo.ToUpper(),
-                    request.Email,
-                    request.Senha);
+                await _usuarioIdentityRepository
+                    .RegistrarContaDeUsuarioRepositoryAsync(
+                        request.Codigo.ToUpper(),
+                        request.Email,
+                        request.Senha);
             }
 
-            if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
+            // 5. Associação Cargo / Departamento (se aplicável)
+            if (!request.DepartamentoCodigo.IsNullOrEmpty() &&
+                !request.CargoCodigo.IsNullOrEmpty())
             {
-                var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
-                var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(request.CargoCodigo);
+                var departamento = await _departamentoRepository
+                    .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(
+                        request.DepartamentoCodigo);
+
+                var cargo = await _cargoRepository
+                    .ObterCargoPorCodigoAsync(request.CargoCodigo);
 
                 if (departamento != null && cargo != null)
                 {
-                    await _usuarioCargoDepartamentoRepository.GravarAssociacaoUsuarioCargoDepartamento(usuarioBd, cargo, departamento);
+                    await _usuarioCargoDepartamentoRepository
+                        .GravarAssociacaoUsuarioCargoDepartamento(
+                            usuarioBd,
+                            cargo,
+                            departamento);
                 }
             }
 
+            // 6. E-mail de boas-vindas (best-effort)
             await EnviarEmailBoasVindasAsync(request.Email, request.Nome);
 
-            var context = new NotificationBag();
-            context.MensagemRegistroSalvo($"Usuário {request.Nome} {request.Sobrenome}");
-            
-            var resultadoSucesso = Resultado<UsuarioRequest>.Sucesso(request);
-            foreach(var msg in context.Messages) resultadoSucesso.Adicionar(msg);
-            return resultadoSucesso;
+            // 7. Retorno padronizado
+            return Resultado<UsuarioRequest>
+                .Sucesso(request)
+                .AdicionarMensagem($"Usuário {request.Nome} {request.Sobrenome} salvo com sucesso.");
         }
 
         #endregion
@@ -124,43 +143,49 @@ namespace Application.Services.EntitiesServices
 
         public async Task<Resultado<UsuarioRequest>> AtualizarAsync(UsuarioRequest request)
         {
-            var messages = _validador.Validar(request);
+            // 1. Validação
+            var mensagens = _validador.Validar(request);
+            if (mensagens.Any())
+                return Resultado<UsuarioRequest>.Falhas(mensagens);
 
-            if (messages.Any())
-            {
-                 var resultado = Resultado<UsuarioRequest>.Falha(messages.FirstOrDefault());
-                 foreach(var msg in messages.Skip(1)) resultado.Adicionar(msg);
-                 return resultado;
-            }
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(request.Codigo);
+            // 2. Verificação de existência
+            var usuario = await _usuarioRepository
+                .ObterUsuarioPorCodigoAsync(request.Codigo);
+
             if (usuario == null)
-            {
-                var bag = new NotificationBag();
-                bag.MensagemRegistroNaoEncontrado(request.Codigo);
-                var res = Resultado<UsuarioRequest>.Falha(bag.Messages.FirstOrDefault());
-                return res;
-            }
+                return Resultado<UsuarioRequest>
+                    .Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
+            // 3. Atualização do usuário de negócio
             await _mapService.MapToEntityAsync(request, usuario);
 
-            var atualizado = await _usuarioRepository.AtualizarUsuarioAsync(usuario);
-            if (!atualizado)
-            {
-                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoAtualizacao);
-            }
+            var atualizado = await _usuarioRepository
+                .AtualizarUsuarioAsync(usuario);
 
+            if (!atualizado)
+                return Resultado<UsuarioRequest>
+                    .Falha(UsuarioResource.ErroInesperadoAtualizacao);
+
+            // 4. Atualização da conta Identity (se aplicável)
             if (!request.Senha.IsNullOrEmpty())
             {
-                await _usuarioIdentityRepository.AtualizarUserIdentityRepositoryAsync(
-                    usuario.Codigo,
-                    usuario.Email,
-                    request.Senha);
+                await _usuarioIdentityRepository
+                    .AtualizarUserIdentityRepositoryAsync(
+                        usuario.Codigo,
+                        usuario.Email,
+                        request.Senha);
             }
-            
-            if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
+
+            // 5. Atualização da associação Cargo / Departamento (se aplicável)
+            if (!request.DepartamentoCodigo.IsNullOrEmpty() &&
+                !request.CargoCodigo.IsNullOrEmpty())
             {
-                var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
-                var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(request.CargoCodigo);
+                var departamento = await _departamentoRepository
+                    .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(
+                        request.DepartamentoCodigo);
+
+                var cargo = await _cargoRepository
+                    .ObterCargoPorCodigoAsync(request.CargoCodigo);
 
                 if (departamento != null && cargo != null)
                 {
@@ -174,15 +199,15 @@ namespace Application.Services.EntitiesServices
                         DepartamentoCodigo = departamento.Codigo
                     };
 
-                    await _usuarioCargoDepartamentoRepository.AtualizarRepositoryAsync(relacionamento);
+                    await _usuarioCargoDepartamentoRepository
+                        .AtualizarRepositoryAsync(relacionamento);
                 }
             }
 
-            var context = new NotificationBag();
-            context.MensagemRegistroAtualizado(UsuarioContexto);
-            var resultadoSucesso = Resultado<UsuarioRequest>.Sucesso(request);
-            foreach(var msg in context.Messages) resultadoSucesso.Adicionar(msg);
-            return resultadoSucesso;
+            // 6. Retorno padronizado
+            return Resultado<UsuarioRequest>
+                .Sucesso(request)
+                .AdicionarMensagem("Usuário atualizado com sucesso.";
         }
 
         #endregion
@@ -215,46 +240,49 @@ namespace Application.Services.EntitiesServices
 
         public async Task<Resultado> RemoverAsync(string codigo)
         {
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
+            // 1. Verificação de existência
+            var usuario = await _usuarioRepository
+                .ObterUsuarioPorCodigoAsync(codigo);
 
             if (usuario == null)
-            {
-                var bag = new NotificationBag();
-                bag.MensagemRegistroNaoEncontrado(codigo);
-                var res = Resultado.Falha(bag.Messages.FirstOrDefault());
-                return res;
-            }
+                return Resultado
+                    .Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            // Remover tarefas do usuário - Alterar para manter as tarefas, mas desvincular do usuário, se necessário
-            var tarefasDoUsuario = await _tarefaRepository.ObterTodasTarefasPorUsuario(usuario.Id, usuario.Codigo);
+            // 2. Remoção das tarefas do usuário
+            var tarefasDoUsuario = await _tarefaRepository
+                .ObterTodasTarefasPorUsuario(usuario.Id, usuario.Codigo);
 
             foreach (var tarefa in tarefasDoUsuario)
             {
                 await _tarefaRepository.RemoverRepositoryAsync(tarefa);
             }
 
-            // Remover salário do usuário - Alterar para manter o histórico salarial, mas desvincular do usuário, se necessário
-            var salarioDoUsuario = await _salarioRepository.ObterSalarioPorUsuario(usuario.Id, usuario.Codigo);
+            // 3. Remoção do salário do usuário
+            var salarioDoUsuario = await _salarioRepository
+                .ObterSalarioPorUsuario(usuario.Id, usuario.Codigo);
+
             if (salarioDoUsuario != null)
             {
                 await _salarioRepository.RemoverRepositoryAsync(salarioDoUsuario);
             }
 
-            // Remover relacionamento cargo/departamento
-            var associacao = await _usuarioCargoDepartamentoRepository.ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
+            // 4. Remoção da associação Cargo / Departamento
+            var associacao = await _usuarioCargoDepartamentoRepository
+                .ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
+
             if (associacao != null)
             {
-                await _usuarioCargoDepartamentoRepository.RemoverRepositoryAsync(associacao);
+                await _usuarioCargoDepartamentoRepository
+                    .RemoverRepositoryAsync(associacao);
             }
 
-            // Remover usuário
+            // 5. Remoção do usuário
             await _usuarioRepository.RemoverUsuarioAsync(usuario);
 
-            var context = new NotificationBag();
-            context.MensagemRegistroRemovido(UsuarioContexto);
-            var resultadoSucesso = Resultado.Sucesso();
-            foreach(var msg in context.Messages) resultadoSucesso.Adicionar(msg);
-            return resultadoSucesso;
+            // 6. Retorno padronizado
+            return Resultado
+                .Sucesso()
+                .AdicionarMensagem("Usuário removido com sucesso.");
         }
 
         #endregion

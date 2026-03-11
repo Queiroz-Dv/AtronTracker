@@ -3,7 +3,6 @@ using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Domain.ValueObjects;
-using Shared.Infrastructure.Filters;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
