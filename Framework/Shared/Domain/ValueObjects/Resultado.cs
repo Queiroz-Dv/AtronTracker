@@ -1,5 +1,4 @@
 ﻿using Shared.Domain.Enums;
-using Shared.Extensions;
 using System.Text.Json.Serialization;
 
 namespace Shared.Domain.ValueObjects
@@ -37,7 +36,7 @@ namespace Shared.Domain.ValueObjects
         public static new Resultado<T> Sucesso(T data, IEnumerable<NotificationMessage> messages)
         {
             var resultado = new Resultado<T>(true, data);
-             foreach (var message in messages)
+            foreach (var message in messages)
             {
                 resultado.Adicionar(message);
             }
@@ -58,14 +57,26 @@ namespace Shared.Domain.ValueObjects
             return resultado;
         }
 
-        public static new Resultado<T> Falha(IEnumerable<NotificationMessage> messages)
+        public static new Resultado<T> Falhas(IEnumerable<NotificationMessage> messages)
         {
             var resultado = new Resultado<T>(false);
-             foreach (var message in messages)
+            foreach (var message in messages)
             {
                 resultado.Adicionar(message);
             }
             return resultado;
+        }
+
+        public Resultado<T> ComMensagemRegistroSalvo(string codigo)
+        {
+            AdicionarMensagem($"Registro {codigo} salvo com sucesso.");
+            return this;
+        }
+
+        public new Resultado<T> AdicionarMensagem(string mensagem)
+        {
+            base.AdicionarMensagem(mensagem);
+            return this;
         }
     }
 
@@ -143,6 +154,12 @@ namespace Shared.Domain.ValueObjects
         public void Adicionar(string mensagem, string tipo)
         {
             AddNotification(mensagem, tipo);
+        }
+
+        public Resultado AdicionarMensagem(string mensagem)
+        {
+            AddNotification(mensagem, ENotificationType.Sucesso);
+            return this;
         }
 
         // Adicionar(NotificationMessage) já existe em NotificationBag (via minha alteração anterior) ou eu adiciono aqui se não estiver lá
