@@ -15,7 +15,7 @@ namespace Application.DTO.ApiDTO
         [DisplayName("Data de nascimento")]
         public DateOnly? DataNascimento { get; set; }
 
-        [DisplayName("Códigod de perfil de acesso")]
+        [DisplayName("Código de perfil de acesso")]
         public string? CodigoPerfilDeAcesso { get; set; }
 
         public string Email { get; set; }
@@ -23,5 +23,7 @@ namespace Application.DTO.ApiDTO
         public string Senha { get; set; }
 
         public string ConfirmaSenha { get; set; }
+
+        public string ClientUri { get; set; } = string.Empty;
     }
 }

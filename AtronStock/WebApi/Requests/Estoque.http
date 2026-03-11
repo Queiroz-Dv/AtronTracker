@@ -1,0 +1,31 @@
+@HostAddress = http://localhost:5000
+
+### Processar Entrada
+POST {{HostAddress}}/api/estoque/entrada
+Content-Type: application/json
+
+{
+  "fornecedorId": 1,
+  "itens": [
+    {
+      "produtoId": 1,
+      "quantidade": 10,
+      "precoCusto": 100.00
+    }
+  ]
+}
+
+### Processar Venda
+POST {{HostAddress}}/api/estoque/venda
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "itens": [
+    {
+      "produtoId": 1,
+      "quantidade": 2,
+      "precoVenda": 150.00
+    }
+  ]
+}

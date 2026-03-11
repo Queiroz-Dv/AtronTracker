@@ -1,0 +1,26 @@
+<div [formGroup]="cargoForm" class="container centered-container">
+  <h2>Cadastro de cargos</h2>
+
+  <mat-form-field>
+    <mat-label>Código</mat-label>
+    <input matInput formControlName="codigo" />
+    <c-control-error [control]="cargoForm.get('codigo')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Descrição</mat-label>
+    <input matInput formControlName="descricao" />
+    <c-control-error [control]="cargoForm.get('descricao')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Departamento</mat-label>
+    <input type="text" matInput [formControl]="departamentoControl" [matAutocomplete]="auto" />
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="exibirDescricao">
+      @for (dpt of departamentos; track dpt.codigo) {
+      <mat-option [value]="dpt">{{ dpt.descricao }}</mat-option>
+      }
+    </mat-autocomplete>
+    <c-control-error [control]="cargoForm.get('departamentoCodigo')"></c-control-error>
+  </mat-form-field>
+</div>

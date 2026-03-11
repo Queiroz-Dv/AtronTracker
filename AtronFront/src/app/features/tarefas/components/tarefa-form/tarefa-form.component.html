@@ -1,0 +1,60 @@
+<div [formGroup]="tarefaForm" class="container centered-container  m-10">
+  <!-- Select de Usuários -->
+  <mat-form-field>
+    <mat-label>Selecione o usuário</mat-label>
+    <input type="text" matInput [formControl]="usuarioControl" [matAutocomplete]="autoUsr" />
+    <c-control-error [control]="tarefaForm.get('usuarioCodigo')"></c-control-error>
+    <mat-autocomplete #autoUsr="matAutocomplete" [displayWith]="exibirUsuario">
+      @for (usr of usuarios; track usr.codigo) {
+      <mat-option [value]="usr">{{ exibirUsuario(usr) }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+  <mat-card>
+    <mat-card-content>
+
+      <c-usuario-informacoes [nome]="tarefaForm.get('usuarioNome').value"
+        [cargoDescricao]="tarefaForm.get('cargoDescricao').value"
+        [departamentoDescricao]="tarefaForm.get('departamentoDescricao').value" [totalDeTarefas]="totalDeTarefas">
+      </c-usuario-informacoes>
+
+      <fieldset>
+        <legend>Informação de tarefa</legend>
+        <div class="fieldset-tarefa-content">
+          <mat-form-field class="m-20 inpt-tarefa-titulo ">
+            <mat-label>Título</mat-label>
+            <input matInput formControlName="titulo" />
+            <c-control-error [control]="tarefaForm.get('titulo')"></c-control-error>
+          </mat-form-field>
+
+          <mat-form-field class="m-20 inpt-tarefa">
+            <mat-label>Conteúdo</mat-label>
+            <textarea matInput formControlName="conteudo"></textarea>
+            <c-control-error [control]="tarefaForm.get('conteudo')"></c-control-error>
+          </mat-form-field>
+
+          <mat-form-field class="m-20 inpt-tarefa">
+            <mat-label>Data Inicial</mat-label>
+            <input matInput type="date" formControlName="dataInicial" />
+          </mat-form-field>
+
+          <mat-form-field class="m-20 inpt-tarefa">
+            <mat-label>Data Final</mat-label>
+            <input matInput type="date" formControlName="dataFinal" />
+          </mat-form-field>
+
+          <mat-form-field class="m-20 inpt-tarefa">
+            <mat-label>Estado da tarefa</mat-label>
+            <input type="text" matInput [formControl]="estadoControl" [matAutocomplete]="autoEstado" />
+            <c-control-error [control]="tarefaForm.get('estadoId')"></c-control-error>
+            <mat-autocomplete #autoEstado="matAutocomplete" [displayWith]="exibirEstado">
+              @for (est of estadosDaTarefa; track est.id) {
+              <mat-option [value]="est">{{ est.descricao }}</mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+      </fieldset>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -25,17 +25,17 @@ namespace IoC
             string sqlConnection = configuration.GetConnectionString("AtronConnection");
 
             services.AddDbContext<StockDbContext>(options => options.UseSqlServer(sqlConnection, b => b.MigrationsAssembly(typeof(StockDbContext).Assembly.FullName)));
-            services = services.AddSharedInfrastructure(configuration);            
+            services = services.AddSharedInfrastructure(configuration);
             services.AddScoped<ITransactionManager, TransactionManager>();
 
             var descriptor = services.FirstOrDefault(d => d.ServiceType == typeof(SharedDbContext));
             if (descriptor != null) services.Remove(descriptor);
 
             services.AddScoped(provider =>
-            {                
+            {
                 var stockContext = provider.GetRequiredService<StockDbContext>();
                 var connection = stockContext.Database.GetDbConnection();
-                
+
                 var optionsBuilder = new DbContextOptionsBuilder<SharedDbContext>();
                 optionsBuilder.UseSqlServer(connection);
 
@@ -47,6 +47,14 @@ namespace IoC
 
             services.AddScoped<ICategoriaService, CategoriaService>();
             services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+
+            services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+            services.AddScoped<IProdutoRepository, ProdutoRepository>();
+            services.AddScoped<IEstoqueRepository, EstoqueRepository>();
+
+            services.AddScoped<IProdutoService, ProdutoService>();
+            services.AddScoped<IFornecedorService, FornecedorService>();
+            services.AddScoped<IEstoqueService, EstoqueService>();
 
             services = services.AddStockMapping();
             services = services.AddStockValidador();
@@ -60,7 +68,8 @@ namespace IoC
         {
             services.AddScoped<IAsyncMap<ClienteRequest, Cliente>, ClienteMapping>();
             services.AddScoped<IAsyncMap<CategoriaRequest, Categoria>, CategoriaMapping>();
-
+            services.AddScoped<IAsyncMap<ProdutoRequest, Produto>, ProdutoMapping>();
+            services.AddScoped<IAsyncMap<FornecedorRequest, Fornecedor>, FornecedorMapping>();
             return services;
         }
     }
@@ -71,6 +80,8 @@ namespace IoC
         {
             services.AddScoped<IValidador<ClienteRequest>, ClienteValidador>();
             services.AddScoped<IValidador<CategoriaRequest>, CategoriaValidador>();
+            services.AddScoped<IValidador<ProdutoRequest>, ProdutoValidador>();
+            services.AddScoped<IValidador<FornecedorRequest>, FornecedorValidador>();
             return services;
         }
     }

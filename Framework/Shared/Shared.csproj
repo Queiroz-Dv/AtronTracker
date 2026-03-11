@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <!--<Nullable>enable</Nullable>-->
+    <ImplicitUsings>enable</ImplicitUsings>    
   </PropertyGroup>
 
 	<ItemGroup>
@@ -26,6 +25,16 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>CategoriaResource.resx</DependentUpon>
 	  </Compile>
+	  <Compile Update="Application\Resources\AtronStock\FornecedoResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>FornecedoResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\AtronStock\ProdutoResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ProdutoResource.resx</DependentUpon>
+	  </Compile>
 	  <Compile Update="Application\Resources\AuditoriaResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -36,10 +45,30 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ClienteResource.resx</DependentUpon>
 	  </Compile>
+	  <Compile Update="Application\Resources\DepartamentoResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>DepartamentoResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\EmailResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>EmailResource.resx</DependentUpon>
+	  </Compile>
 	  <Compile Update="Application\Resources\HistoricoResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>HistoricoResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\NotificacoesPadronizadas.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>NotificacoesPadronizadas.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\UsuarioResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>UsuarioResource.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -47,6 +76,14 @@
 	  <EmbeddedResource Update="Application\Resources\AtronStock\CategoriaResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>CategoriaResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\AtronStock\FornecedoResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>FornecedoResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\AtronStock\ProdutoResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ProdutoResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\AuditoriaResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
@@ -56,9 +93,25 @@
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ClienteResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\DepartamentoResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>DepartamentoResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\EmailResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>EmailResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\HistoricoResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>HistoricoResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\NotificacoesPadronizadas.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>NotificacoesPadronizadas.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\UsuarioResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>UsuarioResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>	
 </Project>

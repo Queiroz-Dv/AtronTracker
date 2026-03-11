@@ -2,7 +2,6 @@
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,9 +20,8 @@ namespace WebApi.Controllers
         /// Inicializa uma nova instância da classe <see cref="ModuloController"/>.
         /// </summary>
         /// <param name="service">O serviço para gerenciar módulos.</param>
-        /// <param name="serviceAccessor">O serviço de acesso para inicializar qualquer serviço necessário</param>
         /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>
-        public ModuloController(IModuloService service, IAccessorService serviceAccessor, Notifiable messageModel) : base(service, serviceAccessor, messageModel)
+        public ModuloController(IModuloService service, Notifiable messageModel) : base(service, messageModel)
         { }
 
         /// <summary>

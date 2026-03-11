@@ -22,7 +22,7 @@ namespace AtronStock.WebApi.Controllers
         public async Task<ActionResult> Post([FromBody] CategoriaRequest dto)
         {
             var resultado = await _service.CriarAsync(dto);
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         [HttpPut("{codigo}")]
@@ -31,11 +31,11 @@ namespace AtronStock.WebApi.Controllers
         {
             if (codigo != dto.Codigo)
             {
-                return BadRequest(Resultado.Falha("O código na URL não corresponde ao código no corpo da requisição.").ObterNotificacoes());
+                return BadRequest(Resultado.Falha("O código na URL não corresponde ao código no corpo da requisição."));
             }
 
             var resultado = await _service.AtualizarAsync(dto);
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         [HttpPut("ativar-inativar/{codigo}/{ativar}")]
@@ -43,28 +43,28 @@ namespace AtronStock.WebApi.Controllers
         public async Task<ActionResult> AtivarInativar([FromRoute] string codigo, [FromRoute] bool ativar)
         {
             var resultado = await _service.AtivarInativarAsync(codigo, ativar);
-            return resultado.TeveFalha ? BadRequest(resultado.ObterNotificacoes()) : Ok(resultado.Response);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         [HttpGet]
         public async Task<ActionResult<ICollection<CategoriaRequest>>> Get()
         {
             var resultado = await _service.ObterTodasAsync();
-            return Ok(resultado.Dado);
+            return Ok(resultado.Dados);
         }
 
         [HttpGet("inativas")]
         public async Task<ActionResult<ICollection<CategoriaRequest>>> GetInativas()
         {
             var resultado = await _service.ObterInativasAsync();
-            return Ok(resultado.Dado);
+            return Ok(resultado.Dados);
         }
 
         [HttpGet("{codigo}")]
         public async Task<ActionResult<CategoriaRequest>> Get(string codigo)
         {
             var resultado = await _service.ObterPorCodigoAsync(codigo);
-            return resultado.TeveFalha ? NotFound(resultado.ObterNotificacoes()) : Ok(resultado.Dado);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
     }
 }

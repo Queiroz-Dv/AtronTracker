@@ -1,13 +1,13 @@
 ﻿using Application.DTO;
+using System.Collections.Generic;
 using Application.Interfaces.Services;
-using Application.Specifications.DepartamentoSpecifications;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,150 +15,147 @@ namespace Application.Services.EntitiesServices
 {
     public class DepartamentoService : IDepartamentoService
     {
-        /*  A Inversão de Controle consiste em não criar uma instância do repositório
-         *  diretamente no construtor, mas utilizar um contêiner para lidar com isso. 
-         *  Em outras palavras, você inverte o controle da criação e gerenciamento
-         *  das dependências do serviço para um contêiner de IoC. 
-         *  Em vez de o DepartamentoService controlar a criação do DepartamentoRepository, 
-         *  essa responsabilidade é delegada ao contêiner de IoC. 
-         *  O serviço depende de uma abstração (IDepartamentoRepository) 
-         *  em vez de uma implementação concreta (DepartamentoRepository).
-         */
-        private readonly IAsyncApplicationMapService<DepartamentoDTO, Departamento> _map;
+        private readonly IAsyncMap<DepartamentoDTO, Departamento> _asyncMap;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
         private readonly ICargoRepository _cargoRepository;
-        private readonly IValidateModelService<Departamento> _validateModel;
-        private readonly Notifiable messageModel;
+        private readonly IValidador<DepartamentoDTO> _validador;
 
-        public DepartamentoService(IAsyncApplicationMapService<DepartamentoDTO, Departamento> map,
+        public DepartamentoService(IValidador<DepartamentoDTO> validador,
+                                   IAsyncMap<DepartamentoDTO, Departamento> asyncMap,
                                    IDepartamentoRepository departamentoRepository,
-                                   IValidateModelService<Departamento> validateModel,
-                                   Notifiable messageModel,
                                    ICargoRepository cargoRepository,
                                    IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         {
-            /* A Injeção de Dependência via construtor é usada para fornecer 
-             * a dependência ao DepartamentoService. 
-             * Isso é feito passando apenas a abstração (IDepartamentoRepository) 
-             * sem instanciar a classe concreta dentro do serviço.
-             * Isso permite que o DepartamentoService não precise saber
-             * como o repositório executa suas funções, promovendo o desacoplamento e a testabilidade. */
-            _map = map;
             _departamentoRepository = departamentoRepository;
-            this.messageModel = messageModel;
-            _validateModel = validateModel;
             _cargoRepository = cargoRepository;
             _relacionamentoRepository = relacionamentoRepository;
+            _validador = validador;
+            _asyncMap = asyncMap;
         }
 
-        public async Task AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
+        public async Task<Resultado<DepartamentoDTO>> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
-            if (!new DepartamentoSpecification(codigo).IsSatisfiedBy(departamentoDTO))
+            if (codigo.IsNullOrEmpty())
+                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
+
+            var erros = _validador.Validar(departamentoDTO);
+            if (erros.Any()) 
+                return Resultado<DepartamentoDTO>.Falha(erros.FirstOrDefault());
+
+            var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
+
+            if (entidade == null)
+                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+
+            await _asyncMap.MapToEntityAsync(departamentoDTO, entidade);
+
+            var atualizado = await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(entidade);
+            if (!atualizado)
             {
-                messageModel.MensagemRegistroInvalido(codigo);
-                return;
+                return Resultado<DepartamentoDTO>.Falha(string.Format(DepartamentoResource.ErroInesperadoAtualizacao, codigo));
             }
 
-            var departamento = await _map.MapToEntityAsync(departamentoDTO);
-            _validateModel.Validate(departamento);
-
-            if (!messageModel.Notificacoes.HasErrors())
-            {
-                await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(departamento);
-                messageModel.MensagemRegistroAtualizado(departamentoDTO.Codigo);
-            }
+            return Resultado<DepartamentoDTO>.Sucesso(departamentoDTO).AdicionarMensagem(string.Format(DepartamentoResource.MensagemAtualizacao, codigo));
         }
 
-        public async Task CriarAsync(DepartamentoDTO departamentoDTO)
+        public async Task<Resultado<DepartamentoDTO>> CriarAsync(DepartamentoDTO departamentoDTO)
         {
-            if (departamentoDTO is null)
+            var erros = _validador.Validar(departamentoDTO);
+            if (erros.Any())
             {
-                messageModel.MensagemRegistroInvalido();
-                return;
+                return Resultado<DepartamentoDTO>.Falhas(erros);
             }
 
-            var departamento = await _map.MapToEntityAsync(departamentoDTO);
-
-            var entity = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamento.Codigo);
-
-            if (entity is not null)
-                messageModel.MensagemRegistroNaoExiste(departamentoDTO.Codigo);
-
-            _validateModel.Validate(departamento);
-            if (!messageModel.Notificacoes.HasErrors())
+            var departamentoExiste = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamentoDTO.Codigo);
+            if (departamentoExiste != null)
             {
-                await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
-                messageModel.MensagemRegistroSalvo(departamentoDTO.Codigo);
+                return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroCodigoDepartamentoExistente);
             }
+
+            var departamento = await _asyncMap.MapToEntityAsync(departamentoDTO);
+
+            var foiCriado = await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
+            if (!foiCriado)
+            {
+                return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroGravacao);
+            }
+
+            return Resultado<DepartamentoDTO>.Sucesso(departamentoDTO).ComMensagemRegistroSalvo(departamento.Codigo);          
         }
 
-        public async Task<DepartamentoDTO> ObterPorCodigo(string codigo)
+        public async Task<Resultado<DepartamentoDTO>> ObterPorCodigo(string codigo)
         {
-            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
+            if (codigo.IsNullOrEmpty())
+                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            if (departamento is not null)
+            var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
+
+            if (entidade != null)
             {
-                return await _map.MapToDTOAsync(departamento);
+                var dto = await _asyncMap.MapToDTOAsync(entidade);
+                return Resultado<DepartamentoDTO>.Sucesso(dto);
             }
-            else
-            {
-                messageModel.MensagemRegistroNaoEncontrado(codigo);
-                return null;
-            }
+
+            return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
         }
 
-        public async Task<DepartamentoDTO> ObterPorIdAsync(int? departamentoId)
+        public async Task<Resultado<DepartamentoDTO>> ObterPorIdAsync(int? departamentoId)
         {
-            var entity = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);
-            return await _map.MapToDTOAsync(entity);
+            if (departamentoId == 0)
+                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
+
+            var entidade = await _departamentoRepository.ObterDepartamentoPorIdRepositoryAsync(departamentoId);
+
+            if (entidade != null)
+            {
+                var dto = await _asyncMap.MapToDTOAsync(entidade);
+                return Resultado<DepartamentoDTO>.Sucesso(dto);
+            }
+
+            return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
         }
 
-        public async Task<IEnumerable<DepartamentoDTO>> ObterTodosAsync()
+        public async Task<Resultado<List<DepartamentoDTO>>> ObterTodosAsync()
         {
             var entities = await _departamentoRepository.ObterDepartmentosAsync();
-            return await _map.MapToListDTOAsync(entities.ToList());
+            var dtos = await _asyncMap.MapToListDTOAsync([.. entities]);
+            return Resultado<List<DepartamentoDTO>>.Sucesso(dtos);
         }
 
-        public async Task RemoverAsync(string codigo)
+        public async Task<Resultado> RemoverAsync(string codigo)
         {
-            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
+            if (codigo.IsNullOrEmpty())
+                return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            if (departamento is not null)
-            {
-                var relacionamentos = await _relacionamentoRepository.ObterPorDepartamento(departamento.Id, departamento.Codigo);
-                if (relacionamentos.Any())
-                {
-                    foreach (var item in relacionamentos)
-                    {
-                        await _relacionamentoRepository.RemoverRepositoryAsync(item);
-                    }
-                }
+            var departamento = await _departamentoRepository
+                .ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
-                var cargos = await _cargoRepository.ObterCargosPorDepartamento(departamento.Id, departamento.Codigo);
+            if (departamento == null)
+                return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-                if (cargos.Any())
-                {
-                    foreach (var item in cargos)
-                    {
-                        await _cargoRepository.RemoverCargoAsync(item);
-                    }
-                }
+            var relacionamentos = await _relacionamentoRepository
+                .ObterPorDepartamento(departamento.Id, departamento.Codigo);
 
-                var removido = await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
+            var cargos = await _cargoRepository
+                .ObterCargosPorDepartamento(departamento.Id, departamento.Codigo);
 
-                if (!removido)
-                {
-                    messageModel.MensagemRegistroNaoEncontrado(codigo);
-                    return;
-                }
+            if (relacionamentos.Any() || cargos.Any())
+                return Resultado.Falha(
+                    string.Format(DepartamentoResource.ErroDepartamentoContemRelacionamento, codigo)
+                );
 
-                messageModel.MensagemRegistroRemovido(codigo);
-            }
-            else
-            {
-                messageModel.MensagemRegistroNaoEncontrado(codigo);
-            }
+            var removido = await _departamentoRepository
+                .RemoverDepartmentoRepositoryAsync(departamento);
+
+            if (!removido)
+                return Resultado.Falha(
+                    string.Format(DepartamentoResource.ErroRemocao, codigo)
+                );
+
+            return Resultado
+                .Sucesso(departamento)
+                .AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
         }
     }
 }

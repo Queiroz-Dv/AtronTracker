@@ -1,4 +1,5 @@
-﻿using Shared.Domain.Enums;
+﻿using Shared.Application.Resources;
+using Shared.Domain.Enums;
 using Shared.Extensions;
 
 namespace Shared.Domain.ValueObjects
@@ -16,6 +17,11 @@ namespace Shared.Domain.ValueObjects
             _messages.Add(new NotificationMessage { Descricao = description, Nivel = level });
         }
 
+        public void Adicionar(NotificationMessage message)
+        {
+            _messages.Add(message);
+        }
+
         public void AdicionarErro(string description)
         {
             AddNotification(description, ENotificationType.Error);
@@ -24,6 +30,17 @@ namespace Shared.Domain.ValueObjects
         public void AdicionarAviso(string description)
         {
             AddNotification(description, ENotificationType.Aviso);
+        }
+
+        public void AdicionarErroCampoObrigatorio(string campo)
+        {
+            var mensagemFormatada = string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, campo);
+            AdicionarErro(mensagemFormatada);
+        }
+
+        public void AdicionarErroRegistroNulo()
+        {
+            AdicionarErro(NotificacoesPadronizadas.ErroRegistroNulo);
         }
 
         public void AdicionarMensagem(string description)

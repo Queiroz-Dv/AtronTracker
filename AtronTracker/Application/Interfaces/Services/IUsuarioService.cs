@@ -1,4 +1,6 @@
 ﻿using Application.DTO;
+using Application.DTO.Request;
+using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,14 +8,32 @@ namespace Application.Interfaces.Services
 {
     public interface IUsuarioService
     {
-        Task<List<UsuarioDTO>> ObterTodosAsync();
+        /// <summary>
+        /// Obtém todos os usuários
+        /// </summary>
+        /// <summary>
+        /// Obtém todos os usuários
+        /// </summary>
+        Task<Resultado<List<UsuarioDTO>>> ObterTodosAsync();
 
-        Task<UsuarioDTO> ObterPorCodigoAsync(string codigo);
+        /// <summary>
+        /// Obtém um usuário por código
+        /// </summary>
+        Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo);
 
-        Task<UsuarioDTO> CriarAsync(UsuarioDTO usuarioDTO);
+        /// <summary>
+        /// Cria um novo usuário.
+        /// </summary>
+        Task<Resultado<UsuarioRequest>> CriarAsync(UsuarioRequest request);
 
-        Task AtualizarAsync(string codigo, UsuarioDTO usuarioDTO);
+        /// <summary>
+        /// Atualiza um usuário existente.
+        /// </summary>
+        Task<Resultado<UsuarioRequest>> AtualizarAsync(UsuarioRequest request);
 
-        Task RemoverAsync(string codigo);
+        /// <summary>
+        /// Remove um usuário pelo código.
+        /// </summary>
+        Task<Resultado> RemoverAsync(string codigo);
     }
 }

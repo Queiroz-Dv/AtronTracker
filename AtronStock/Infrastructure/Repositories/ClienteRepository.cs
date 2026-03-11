@@ -41,6 +41,11 @@ namespace AtronStock.Infrastructure.Repositories
         public async Task<ICollection<Cliente>> ObterTodoClientesInativosAsync()
         {
             return await _context.Clientes.Where(c => c.Status == EStatus.Inativo).ToListAsync();
-        }        
+        }
+
+        public async Task<Cliente?> ObterPorIdAsync(int id)
+        {
+            return await _context.Clientes.FindAsync(id);
+        }
     }
 }

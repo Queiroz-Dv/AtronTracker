@@ -1,11 +1,12 @@
 ﻿using Application.DTO;
 using Domain.Entities;
+using Shared.Application.Interfaces.Service;
 using Shared.Application.Services.Mapper;
 using System.Threading.Tasks;
 
 namespace Application.Mapping
 {
-    public class DepartamentoMapping : AsyncApplicationMapService<DepartamentoDTO, Departamento>
+    public class DepartamentoMapping : AsyncApplicationMapService<DepartamentoDTO, Departamento>, IAsyncMap<DepartamentoDTO, Departamento>
     {
         public override Task<DepartamentoDTO> MapToDTOAsync(Departamento entity)
         {
@@ -28,6 +29,12 @@ namespace Application.Mapping
                 Descricao = dto.Descricao.ToUpper()
             };
             return Task.FromResult(entity);
+        }
+
+        public Task MapToEntityAsync(DepartamentoDTO dto, Departamento entityToUpdate)
+        {
+            entityToUpdate.Descricao = dto.Descricao;
+            return Task.CompletedTask;
         }
     }
 }

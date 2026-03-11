@@ -1,5 +1,5 @@
 ﻿using Shared.Domain.Enums;
-using Shared.Extensions;
+using System.Text.Json.Serialization;
 
 namespace Shared.Domain.ValueObjects
 {
@@ -13,94 +13,156 @@ namespace Shared.Domain.ValueObjects
         /// <summary>
         /// Obtém o payload de dados associado a um resultado de sucesso.
         /// </summary>
-        public T Dado { get; }
+        public new T? Dados
+        {
+            get => (T?)base.Dados;
+            private set => base.Dados = value;
+        }
 
         /// <summary>
         /// Construtor interno para forçar o uso dos métodos de fábrica estáticos.
         /// </summary>
-        /// <param name="teveSucesso">Indica se a operação foi bem-sucedida.</param>
-        /// <param name="dado">O payload de dados.</param>
-        /// <param name="response">A lista de mensagens associadas.</param>
-        internal Resultado(bool teveSucesso, T dado, IList<NotificationMessage> response)
-            : base(teveSucesso, response)
+        internal Resultado(bool teveSucesso, T? dado = default)
+            : base(teveSucesso)
         {
-            Dado = dado;
+            Dados = dado;
+        }
+
+        public static new Resultado<T> Sucesso(T data)
+        {
+            return new Resultado<T>(true, data);
+        }
+
+        public static new Resultado<T> Sucesso(T data, IEnumerable<NotificationMessage> messages)
+        {
+            var resultado = new Resultado<T>(true, data);
+            foreach (var message in messages)
+            {
+                resultado.Adicionar(message);
+            }
+            return resultado;
+        }
+
+        public static new Resultado<T> Falha(string mensagemErro)
+        {
+            var resultado = new Resultado<T>(false);
+            resultado.AdicionarErro(mensagemErro);
+            return resultado;
+        }
+
+        public static new Resultado<T> Falha(NotificationMessage message)
+        {
+            var resultado = new Resultado<T>(false);
+            resultado.Adicionar(message);
+            return resultado;
+        }
+
+        public static new Resultado<T> Falhas(IEnumerable<NotificationMessage> messages)
+        {
+            var resultado = new Resultado<T>(false);
+            foreach (var message in messages)
+            {
+                resultado.Adicionar(message);
+            }
+            return resultado;
+        }
+
+        public Resultado<T> ComMensagemRegistroSalvo(string codigo)
+        {
+            AdicionarMensagem($"Registro {codigo} salvo com sucesso.");
+            return this;
+        }
+
+        public new Resultado<T> AdicionarMensagem(string mensagem)
+        {
+            base.AdicionarMensagem(mensagem);
+            return this;
         }
     }
-    
-    public class Resultado
-    {        
-        public bool TeveSucesso { get; }       
-        public bool TeveFalha => !TeveSucesso;       
-        public IList<NotificationMessage> Response { get; }
-       
-        protected Resultado(bool teveSucesso, IList<NotificationMessage> response)
+
+    public class Resultado : NotificationBag
+    {
+        public object? Dados { get; protected set; }
+
+        public bool TeveSucesso => !Messages.Any(m => m.Nivel == ENotificationType.Error);
+
+        [JsonIgnore]
+        public bool TeveFalha => !TeveSucesso;
+
+        protected Resultado(bool teveSucesso)
         {
-            TeveSucesso = teveSucesso;
-            Response = response ?? new List<NotificationMessage>();
+            // O estado de sucesso/falha é inferido pelas notificações, 
+            // mas o construtor pode ser usado para inicializar.
+            // Se falha for forçada na construção, talvez devêssemos adicionar um erro genérico se não houver mensagens?
+            // Por enquanto, seguimos a lógica de que "Sem erros = Sucesso".
         }
-        
-        public static Resultado Falha(IList<NotificationMessage> response)
-        {
-            return new Resultado(false, response);
-        }
-        
+
         public static Resultado Falha(string mensagemErro)
         {
-            var messages = new List<NotificationMessage>
-            {
-                new NotificationMessage { Descricao = mensagemErro, Nivel = ENotificationType.Error }
-            };
-            return new Resultado(false, messages);
+            var resultado = new Resultado(false);
+            resultado.AdicionarErro(mensagemErro);
+            return resultado;
         }
-        
-        public static Resultado Falha(Notifiable messageModel)
+
+        public static Resultado Falha(NotificationMessage message)
         {
-            return new Resultado(false, messageModel.Notificacoes);
+            var resultado = new Resultado(false);
+            resultado.Adicionar(message);
+            return resultado;
         }
- 
+
+        public static Resultado Falha(IEnumerable<NotificationMessage> messages)
+        {
+            var resultado = new Resultado(false);
+            foreach (var message in messages)
+            {
+                resultado.Adicionar(message);
+            }
+            return resultado;
+        }
+
         public static Resultado Sucesso()
         {
-            return new Resultado(true, new List<NotificationMessage>());
+            return new Resultado(true);
         }
 
-        public static Resultado Sucesso(IList<NotificationMessage> response)
+        public static Resultado Sucesso(object dados)
         {
-            return new Resultado(true, response);
-        }
-        
-        public static Resultado<T> Falha<T>(IList<NotificationMessage> response)
-        {
-            return new Resultado<T>(false, default, response);
+            return new Resultado(true) { Dados = dados };
         }
 
-        public static Resultado<T> Falha<T>(string mensagemErro)
+        public static Resultado Sucesso(object dados, IEnumerable<NotificationMessage> messages)
         {
-            var messages = new List<NotificationMessage>
+            var resultado = new Resultado(true) { Dados = dados };
+            foreach (var message in messages)
             {
-                new NotificationMessage { Descricao = mensagemErro, Nivel = ENotificationType.Error }
-            };
-            return new Resultado<T>(false, default, messages);
+                resultado.Adicionar(message);
+            }
+            return resultado;
         }
 
-        public static Resultado<T> Falha<T>(Notifiable messageModel)
+        public static Resultado Sucesso(IEnumerable<NotificationMessage> messages)
         {
-            return new Resultado<T>(false, default, messageModel.Notificacoes);
+            var resultado = new Resultado(true);
+            foreach (var message in messages)
+            {
+                resultado.Adicionar(message);
+            }
+            return resultado;
         }
 
-        public static Resultado<T> Sucesso<T>(T data)
+        public void Adicionar(string mensagem, string tipo)
         {
-            return new Resultado<T>(true, data, new List<NotificationMessage>());
-        }
-        
-        public static Resultado<T> Sucesso<T>(T data, IList<NotificationMessage> response)
-        {
-            return new Resultado<T>(true, data, response);
+            AddNotification(mensagem, tipo);
         }
 
-        public IEnumerable<dynamic> ObterNotificacoes()
+        public Resultado AdicionarMensagem(string mensagem)
         {
-            return Response.ConvertMessageToJson();
+            AddNotification(mensagem, ENotificationType.Sucesso);
+            return this;
         }
+
+        // Adicionar(NotificationMessage) já existe em NotificationBag (via minha alteração anterior) ou eu adiciono aqui se não estiver lá
+        // NotificationBag tem Adicionar(NotificationMessage) agora.
     }
 }

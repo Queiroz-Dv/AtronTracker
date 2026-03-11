@@ -1,5 +1,5 @@
 ﻿using AtronStock.Domain.Entities;
-using AtronStock.Domain.Enums; 
+using AtronStock.Domain.Enums;
 using AtronStock.Domain.Interfaces;
 using AtronStock.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ namespace AtronStock.Infrastructure.Repositories
         }
 
         public async Task<bool> AtualizarCategoriaAsync(Categoria categoria)
-        {           
+        {
             var atualizado = await _context.SaveChangesAsync();
             return atualizado > 0;
         }
@@ -29,7 +29,7 @@ namespace AtronStock.Infrastructure.Repositories
         }
 
         public async Task<Categoria> ObterCategoriaPorCodigoAsync(string codigo)
-        {          
+        {
             return await _context.Categorias.FirstOrDefaultAsync(c => c.Codigo == codigo);
         }
 
@@ -39,7 +39,7 @@ namespace AtronStock.Infrastructure.Repositories
         }
 
         public async Task<ICollection<Categoria>> ObterTodasCategoriasInativasAsync()
-        {            
+        {
             return await _context.Categorias
                                  .Where(c => c.Status == EStatus.Inativo)
                                  .ToListAsync();

@@ -1,0 +1,14 @@
+.perfil-codigo-input {
+  gap: 15px;
+  margin-right: 15px;
+  width: 25%;
+}
+
+.perfil-descricao-input {
+  margin-left: 5px;
+  width: 50%;
+}
+
+.modulo-fieldset {
+  margin: 1% 2% 1% 2%;
+}
