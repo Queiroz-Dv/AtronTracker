@@ -58,27 +58,16 @@ namespace Application.Services.EntitiesServices
             }
 
             var cargo = await _asyncMap.MapToEntityAsync(cargoDTO);
-            PreencherDepartamento(departamento, cargo);
-
+            cargo.VincularDepartamento(departamento);
+            
             var foiCriado = await _cargoRepository.CriarCargoAsync(cargo);
             if (!foiCriado)
             {
                 return Resultado<CargoDTO>.Falha(CargoResource.ErroGravacao);
             }
 
-            var notificacoes = new NotificationBag();
-            notificacoes.MensagemRegistroSalvo(cargo.Codigo);
-            var dto = await _asyncMap.MapToDTOAsync(cargo);
-            var res = Resultado<CargoDTO>.Sucesso(dto);
-            foreach(var msg in notificacoes.Messages) res.Adicionar(msg);
-            return res;
-        }
-
-        private static void PreencherDepartamento(Departamento departamento, Cargo cargo)
-        {
-            cargo.DepartamentoId = departamento.Id;
-            cargo.DepartamentoCodigo = departamento.Codigo;
-        }
+            return Resultado<CargoDTO>.Sucesso(cargoDTO).ComMensagemRegistroSalvo(cargoDTO.Codigo);
+        }      
 
         public async Task<Resultado<CargoDTO>> AtualizarAsync(string codigo, CargoDTO cargoDTO)
         {
@@ -100,8 +89,7 @@ namespace Application.Services.EntitiesServices
             }
 
             await _asyncMap.MapToEntityAsync(cargoDTO, entidade);
-            entidade.DepartamentoId = departamento.Id;
-            entidade.DepartamentoCodigo = departamento.Codigo;
+            entidade.VincularDepartamento(departamento);
 
             var atualizado = await _cargoRepository.AtualizarCargoAsync(entidade);
             if (!atualizado)
@@ -109,12 +97,7 @@ namespace Application.Services.EntitiesServices
                 return Resultado<CargoDTO>.Falha(string.Format(CargoResource.ErroInesperadoAtualizacao, codigo));
             }
 
-            var notificacoes = new NotificationBag();
-            notificacoes.AdicionarMensagem(string.Format(CargoResource.MensagemAtualizacao, codigo));
-            var dto = await _asyncMap.MapToDTOAsync(entidade);
-            var res = Resultado<CargoDTO>.Sucesso(dto);
-            foreach(var msg in notificacoes.Messages) res.Adicionar(msg);
-            return res;
+            return Resultado<CargoDTO>.Sucesso(cargoDTO).AdicionarMensagem(string.Format(CargoResource.MensagemAtualizacao, codigo));
         }
 
         public async Task<Resultado> RemoverAsync(string codigo)
@@ -124,31 +107,24 @@ namespace Application.Services.EntitiesServices
 
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(codigo);
 
-            if (cargo != null)
-            {
-                var relacionamentos = await _relacionamentoRepository.ObterPorCargo(cargo.Id, cargo.Codigo);
+            if (cargo == null)
+                return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-                if (relacionamentos.Any())
-                {
-                    return Resultado.Falha(string.Format(CargoResource.ErroCargoContemRelacionamento, codigo));
-                }
+            var relacionamentos = await _relacionamentoRepository.ObterPorCargo(cargo.Id, cargo.Codigo);
 
-                var removido = await _cargoRepository.RemoverCargoAsync(cargo);
+            if (relacionamentos.Any())
+                return Resultado.Falha(string.Format(CargoResource.ErroCargoContemRelacionamento, codigo));
 
-                if (!removido)
-                {
-                    return Resultado.Falha(string.Format(CargoResource.ErroRemocao, codigo));
-                }
+            var removido = await _cargoRepository.RemoverCargoAsync(cargo);
 
-                var notificacoes = new NotificationBag();
-                notificacoes.AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
-                var res = Resultado.Sucesso(cargo);
-                foreach(var msg in notificacoes.Messages) res.Adicionar(msg);
-                return res;
-            }
+            if (!removido)
+                return Resultado.Falha(string.Format(CargoResource.ErroRemocao, codigo));
 
-            return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+            return Resultado
+                .Sucesso(cargo)
+                .AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
         }
+
 
         public async Task<Resultado<CargoDTO>> ObterPorCodigoAsync(string codigo)
         {

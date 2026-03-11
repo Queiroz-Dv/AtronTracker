@@ -80,14 +80,13 @@ namespace AtronEmail.Controllers
             {
                 return BadRequest(configResult);
             }
-            
+
             var request = new EmailRequest
             {
                 Assunto = "[AUTO-DIAGNÓSTICO] Validação de configuração de e-mail",
-                Mensagem = "Este e-mail foi enviado automaticamente para validar que as configurações estão funcionando corretamente."
+                Mensagem = "Este e-mail foi enviado automaticamente para validar que as configurações estão funcionando corretamente.",
+                EmailsDestino = [configResult.EmailRemetente!]
             };
-
-            request.EmailsDestino = new List<string> { configResult.EmailRemetente! };
 
             var resultado = await _diagnosticService.EnviarDiagnosticoAsync(request);
 

@@ -40,7 +40,8 @@ namespace Application.Services.EntitiesServices
                 return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var erros = _validador.Validar(departamentoDTO);
-            if (erros.Any()) return Resultado<DepartamentoDTO>.Falha(erros.FirstOrDefault());
+            if (erros.Any()) 
+                return Resultado<DepartamentoDTO>.Falha(erros.FirstOrDefault());
 
             var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
@@ -55,12 +56,7 @@ namespace Application.Services.EntitiesServices
                 return Resultado<DepartamentoDTO>.Falha(string.Format(DepartamentoResource.ErroInesperadoAtualizacao, codigo));
             }
 
-            var notificacoes = new NotificationBag();
-            notificacoes.AdicionarMensagem(string.Format(DepartamentoResource.MensagemAtualizacao, codigo));
-            var dto = await _asyncMap.MapToDTOAsync(entidade);
-            var res = Resultado<DepartamentoDTO>.Sucesso(dto);
-            foreach(var msg in notificacoes.Messages) res.Adicionar(msg);
-            return res;
+            return Resultado<DepartamentoDTO>.Sucesso(departamentoDTO).AdicionarMensagem(string.Format(DepartamentoResource.MensagemAtualizacao, codigo));
         }
 
         public async Task<Resultado<DepartamentoDTO>> CriarAsync(DepartamentoDTO departamentoDTO)
@@ -68,7 +64,7 @@ namespace Application.Services.EntitiesServices
             var erros = _validador.Validar(departamentoDTO);
             if (erros.Any())
             {
-                return Resultado<DepartamentoDTO>.Falha(erros.FirstOrDefault());
+                return Resultado<DepartamentoDTO>.Falhas(erros);
             }
 
             var departamentoExiste = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamentoDTO.Codigo);
@@ -85,13 +81,7 @@ namespace Application.Services.EntitiesServices
                 return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroGravacao);
             }
 
-            var notificacoes = new NotificationBag();
-            notificacoes.MensagemRegistroSalvo(departamento.Codigo);
-            var dto = await _asyncMap.MapToDTOAsync(departamento);
-            var res = Resultado<DepartamentoDTO>.Sucesso(dto);
-            foreach(var msg in notificacoes.Messages) res.Adicionar(msg);
-            return res;
-
+            return Resultado<DepartamentoDTO>.Sucesso(departamentoDTO).ComMensagemRegistroSalvo(departamento.Codigo);          
         }
 
         public async Task<Resultado<DepartamentoDTO>> ObterPorCodigo(string codigo)
@@ -138,33 +128,34 @@ namespace Application.Services.EntitiesServices
             if (codigo.IsNullOrEmpty())
                 return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
+            var departamento = await _departamentoRepository
+                .ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
-            if (departamento != null)
-            {
-                var relacionamentos = await _relacionamentoRepository.ObterPorDepartamento(departamento.Id, departamento.Codigo);
-                var cargos = await _cargoRepository.ObterCargosPorDepartamento(departamento.Id, departamento.Codigo);
+            if (departamento == null)
+                return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-                if (relacionamentos.Any() || cargos.Any())
-                {
-                    return Resultado.Falha(string.Format(DepartamentoResource.ErroDepartamentoContemRelacionamento, codigo));
-                }
+            var relacionamentos = await _relacionamentoRepository
+                .ObterPorDepartamento(departamento.Id, departamento.Codigo);
 
-                var removido = await _departamentoRepository.RemoverDepartmentoRepositoryAsync(departamento);
+            var cargos = await _cargoRepository
+                .ObterCargosPorDepartamento(departamento.Id, departamento.Codigo);
 
-                if (!removido)
-                {
-                    return Resultado.Falha(string.Format(DepartamentoResource.ErroRemocao, codigo));
-                }
+            if (relacionamentos.Any() || cargos.Any())
+                return Resultado.Falha(
+                    string.Format(DepartamentoResource.ErroDepartamentoContemRelacionamento, codigo)
+                );
 
-                var notificacoes = new NotificationBag();
-                notificacoes.AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
-                var res = Resultado.Sucesso(departamento);
-                foreach(var msg in notificacoes.Messages) res.Adicionar(msg);
-                return res;
-            }
+            var removido = await _departamentoRepository
+                .RemoverDepartmentoRepositoryAsync(departamento);
 
-            return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+            if (!removido)
+                return Resultado.Falha(
+                    string.Format(DepartamentoResource.ErroRemocao, codigo)
+                );
+
+            return Resultado
+                .Sucesso(departamento)
+                .AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
         }
     }
 }
