@@ -1,214 +1,56 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.DTO.Request;
-using System.Collections.Generic;
 using Application.Interfaces.Services;
+using Application.UseCases.Usuario;
 using Domain.Entities;
-using Domain.Interfaces;
-using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Application.DTOS.Requests;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices
 {
     /// <summary>
-    /// Classe de serviço para usuários
+    /// Serviço de usuários — delega cada operação ao respectivo use case.
     /// </summary>
     public class UsuarioService : IUsuarioService
     {
-        private const string UsuarioContexto = nameof(Usuario);
-        private readonly IValidador<UsuarioRequest> _validador;
-        private readonly IAsyncMap<UsuarioRequest, Usuario> _mapService;
         private readonly IAsyncMap<UsuarioDTO, Usuario> _asyncMap;
-
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly ICargoRepository _cargoRepository;
-        private readonly ITarefaRepository _tarefaRepository;
-        private readonly ISalarioRepository _salarioRepository;
-        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
-        private readonly IEmailService _emailService;
+
+        // Use cases
+        private readonly CriarUsuario _criarUsuario;
+        private readonly AtualizarUsuario _atualizarUsuario;
+        private readonly RemoverUsuario _removerUsuario;
 
         public UsuarioService(
-            IValidador<UsuarioRequest> validador,
-            IAsyncMap<UsuarioRequest, Usuario> mapService,
             IAsyncMap<UsuarioDTO, Usuario> asyncMap,
-            IUsuarioRepository repository,
-            IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
-            IDepartamentoRepository departamentoRepository,
-            ICargoRepository cargoRepository,
-            ITarefaRepository tarefaRepository,
-            ISalarioRepository salarioRepository,
-            IUsuarioIdentityRepository usuarioIdentityRepository,
-            IEmailService emailService)
+            IUsuarioRepository usuarioRepository,
+            CriarUsuario criarUsuario,
+            AtualizarUsuario atualizarUsuario,
+            RemoverUsuario removerUsuario)
         {
-            _validador = validador;
             _asyncMap = asyncMap;
-            _mapService = mapService;
-            _usuarioRepository = repository;
-            _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
-            _departamentoRepository = departamentoRepository;
-            _cargoRepository = cargoRepository;
-            _tarefaRepository = tarefaRepository;
-            _salarioRepository = salarioRepository;
-            _usuarioIdentityRepository = usuarioIdentityRepository;
-            _emailService = emailService;
+            _usuarioRepository = usuarioRepository;
+            _criarUsuario = criarUsuario;
+            _atualizarUsuario = atualizarUsuario;
+            _removerUsuario = removerUsuario;
         }
 
         #region Criação
 
         public async Task<Resultado<UsuarioRequest>> CriarAsync(UsuarioRequest request)
-        {
-            // 1. Validação
-            var mensagens = _validador.Validar(request);
-            if (mensagens.Any())
-                return Resultado<UsuarioRequest>.Falhas(mensagens);
-
-            // 2. Verificações de existência
-            var usuarioExistente = await _usuarioRepository
-                .ObterUsuarioPorCodigoAsync(request.Codigo.ToUpper());
-
-            if (usuarioExistente != null)
-                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
-
-            if (!request.Email.IsNullOrEmpty())
-            {
-                var emailExiste = await _usuarioRepository
-                    .VerificarEmailExistenteAsync(request.Email);
-
-                if (emailExiste)
-                    return Resultado<UsuarioRequest>.Falha(EmailResource.ErroEmailUtilizado);
-            }
-
-            // 3. Criação do usuário de negócio
-            var usuario = await _mapService.MapToEntityAsync(request);
-
-            var criado = await _usuarioRepository.CriarUsuarioAsync(usuario);
-            if (!criado)
-                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
-
-            var usuarioBd = await _usuarioRepository
-                .ObterUsuarioPorCodigoAsync(usuario.Codigo);
-
-            // 4. Criação da conta Identity (se aplicável)
-            if (!request.Senha.IsNullOrEmpty())
-            {
-                await _usuarioIdentityRepository
-                    .RegistrarContaDeUsuarioRepositoryAsync(
-                        request.Codigo.ToUpper(),
-                        request.Email,
-                        request.Senha);
-            }
-
-            // 5. Associação Cargo / Departamento (se aplicável)
-            if (!request.DepartamentoCodigo.IsNullOrEmpty() &&
-                !request.CargoCodigo.IsNullOrEmpty())
-            {
-                var departamento = await _departamentoRepository
-                    .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(
-                        request.DepartamentoCodigo);
-
-                var cargo = await _cargoRepository
-                    .ObterCargoPorCodigoAsync(request.CargoCodigo);
-
-                if (departamento != null && cargo != null)
-                {
-                    await _usuarioCargoDepartamentoRepository
-                        .GravarAssociacaoUsuarioCargoDepartamento(
-                            usuarioBd,
-                            cargo,
-                            departamento);
-                }
-            }
-
-            // 6. E-mail de boas-vindas (best-effort)
-            await EnviarEmailBoasVindasAsync(request.Email, request.Nome);
-
-            // 7. Retorno padronizado
-            return Resultado<UsuarioRequest>
-                .Sucesso(request)
-                .AdicionarMensagem($"Usuário {request.Nome} {request.Sobrenome} salvo com sucesso.");
-        }
+            => await _criarUsuario.ExecutarAsync(request);
 
         #endregion
 
         #region Atualização
 
         public async Task<Resultado<UsuarioRequest>> AtualizarAsync(UsuarioRequest request)
-        {
-            // 1. Validação
-            var mensagens = _validador.Validar(request);
-            if (mensagens.Any())
-                return Resultado<UsuarioRequest>.Falhas(mensagens);
-
-            // 2. Verificação de existência
-            var usuario = await _usuarioRepository
-                .ObterUsuarioPorCodigoAsync(request.Codigo);
-
-            if (usuario == null)
-                return Resultado<UsuarioRequest>
-                    .Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
-
-            // 3. Atualização do usuário de negócio
-            await _mapService.MapToEntityAsync(request, usuario);
-
-            var atualizado = await _usuarioRepository
-                .AtualizarUsuarioAsync(usuario);
-
-            if (!atualizado)
-                return Resultado<UsuarioRequest>
-                    .Falha(UsuarioResource.ErroInesperadoAtualizacao);
-
-            // 4. Atualização da conta Identity (se aplicável)
-            if (!request.Senha.IsNullOrEmpty())
-            {
-                await _usuarioIdentityRepository
-                    .AtualizarUserIdentityRepositoryAsync(
-                        usuario.Codigo,
-                        usuario.Email,
-                        request.Senha);
-            }
-
-            // 5. Atualização da associação Cargo / Departamento (se aplicável)
-            if (!request.DepartamentoCodigo.IsNullOrEmpty() &&
-                !request.CargoCodigo.IsNullOrEmpty())
-            {
-                var departamento = await _departamentoRepository
-                    .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(
-                        request.DepartamentoCodigo);
-
-                var cargo = await _cargoRepository
-                    .ObterCargoPorCodigoAsync(request.CargoCodigo);
-
-                if (departamento != null && cargo != null)
-                {
-                    var relacionamento = new UsuarioCargoDepartamento
-                    {
-                        UsuarioId = usuario.Id,
-                        UsuarioCodigo = usuario.Codigo,
-                        CargoId = cargo.Id,
-                        CargoCodigo = cargo.Codigo,
-                        DepartamentoId = departamento.Id,
-                        DepartamentoCodigo = departamento.Codigo
-                    };
-
-                    await _usuarioCargoDepartamentoRepository
-                        .AtualizarRepositoryAsync(relacionamento);
-                }
-            }
-
-            // 6. Retorno padronizado
-            return Resultado<UsuarioRequest>
-                .Sucesso(request)
-                .AdicionarMensagem("Usuário atualizado com sucesso.";
-        }
+            => await _atualizarUsuario.ExecutarAsync(request);
 
         #endregion
 
@@ -223,15 +65,16 @@ namespace Application.Services.EntitiesServices
 
         public async Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo)
         {
-            if (codigo.IsNullOrEmpty()) return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
+            if (codigo.IsNullOrEmpty())
+                return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var entidade = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
 
-            if (entidade == null) return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+            if (entidade == null)
+                return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             var dto = await _asyncMap.MapToDTOAsync(entidade);
             return Resultado<UsuarioDTO>.Sucesso(dto);
-
         }
 
         #endregion
@@ -239,115 +82,7 @@ namespace Application.Services.EntitiesServices
         #region Remoção
 
         public async Task<Resultado> RemoverAsync(string codigo)
-        {
-            // 1. Verificação de existência
-            var usuario = await _usuarioRepository
-                .ObterUsuarioPorCodigoAsync(codigo);
-
-            if (usuario == null)
-                return Resultado
-                    .Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
-
-            // 2. Remoção das tarefas do usuário
-            var tarefasDoUsuario = await _tarefaRepository
-                .ObterTodasTarefasPorUsuario(usuario.Id, usuario.Codigo);
-
-            foreach (var tarefa in tarefasDoUsuario)
-            {
-                await _tarefaRepository.RemoverRepositoryAsync(tarefa);
-            }
-
-            // 3. Remoção do salário do usuário
-            var salarioDoUsuario = await _salarioRepository
-                .ObterSalarioPorUsuario(usuario.Id, usuario.Codigo);
-
-            if (salarioDoUsuario != null)
-            {
-                await _salarioRepository.RemoverRepositoryAsync(salarioDoUsuario);
-            }
-
-            // 4. Remoção da associação Cargo / Departamento
-            var associacao = await _usuarioCargoDepartamentoRepository
-                .ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
-
-            if (associacao != null)
-            {
-                await _usuarioCargoDepartamentoRepository
-                    .RemoverRepositoryAsync(associacao);
-            }
-
-            // 5. Remoção do usuário
-            await _usuarioRepository.RemoverUsuarioAsync(usuario);
-
-            // 6. Retorno padronizado
-            return Resultado
-                .Sucesso()
-                .AdicionarMensagem("Usuário removido com sucesso.");
-        }
-
-        #endregion
-
-        #region Métodos Privados
-
-        private async Task EnviarEmailBoasVindasAsync(string destinatario, string nomeUsuario)
-        {
-            if (string.IsNullOrEmpty(destinatario)) return;
-
-            try
-            {
-                var emailRequest = CriarEmailBoasVindas(destinatario, nomeUsuario);
-                await _emailService.EnviarAsync(emailRequest);
-            }
-            catch
-            {
-                // Log ou tratamento de erro - não interrompe o fluxo de criação
-            }
-        }
-
-        private static EmailRequest CriarEmailBoasVindas(string destinatario, string nomeUsuario)
-        {
-            var assunto = "Bem-vindo ao Sistema Atron!";
-            var corpo = $@"
-                            <!DOCTYPE html>
-                            <html>
-                            <head>
-                                <meta charset='utf-8'>
-                                <style>
-                                    body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }}
-                                    .container {{ max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-                                    .header {{ text-align: center; padding-bottom: 20px; border-bottom: 2px solid #007bff; }}
-                                    .header h1 {{ color: #007bff; margin: 0; }}
-                                    .content {{ padding: 20px 0; }}
-                                    .content p {{ color: #333; line-height: 1.6; }}
-                                    .footer {{ text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; }}
-                                </style>
-                            </head>
-                            <body>
-                                <div class='container'>
-                                    <div class='header'>
-                                        <h1>🎉 Bem-vindo ao Sistema Atron!</h1>
-                                    </div>
-                                    <div class='content'>
-                                        <p>Olá, <strong>{nomeUsuario}</strong>!</p>
-                                        <p>Sua conta foi criada com sucesso no Sistema Atron.</p>
-                                        <p>Agora você pode acessar o sistema utilizando suas credenciais de login.</p>
-                                        <p>Se você tiver alguma dúvida, entre em contato com o suporte.</p>
-                                    </div>
-                                    <div class='footer'>
-                                        <p>Este é um e-mail automático. Por favor, não responda.</p>
-                                        <p>&copy; {DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
-                                    </div>
-                                </div>
-                            </body>
-                            </html>";
-
-            return new EmailRequest
-            {
-                EmailsDestino = [destinatario],
-                Assunto = assunto,
-                Mensagem = corpo
-            };
-        }
+            => await _removerUsuario.ExecutarAsync(codigo);
 
         #endregion
     }

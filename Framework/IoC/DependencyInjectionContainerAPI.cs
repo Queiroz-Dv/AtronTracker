@@ -5,6 +5,7 @@ using Application.Mapping;
 using Application.Services;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
+using Application.UseCases.Usuario;
 using Application.Validador;
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
@@ -123,6 +124,9 @@ namespace IoC
         private static void ConfigureUsuarioServices(IServiceCollection services)
         {
             services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<CriarUsuario>();
+            services.AddScoped<AtualizarUsuario>();
+            services.AddScoped<RemoverUsuario>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
 
