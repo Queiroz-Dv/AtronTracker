@@ -80,7 +80,7 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="codigo">Código do usuário.</param>
         /// <returns>Dados do usuário.</returns>
-        [HttpGet("{codigo}")]
+        [HttpGet("{codigo}")]        
         public async Task<ActionResult> Get(string codigo)
         {
             var resultado = await usuarioService.ObterPorCodigoAsync(codigo);

@@ -165,7 +165,7 @@ namespace AtronStock.Application.Services
             {
                 var bag = new NotificationBag();
                 bag.MensagemRegistroNaoEncontrado(codigo);
-                return Resultado<CategoriaRequest>.Falha(bag.Messages.ToList());
+                return Resultado<CategoriaRequest>.Falhas(bag.Messages.ToList());
             }
 
             var dto = await _mapService.MapToDTOAsync(categoria);
