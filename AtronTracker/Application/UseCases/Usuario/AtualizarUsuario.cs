@@ -3,18 +3,17 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.Usuario
 {
-    /// <summary>
-    /// Caso de uso responsável pela atualização de um usuário existente.
-    /// </summary>
     public class AtualizarUsuario
     {
         private readonly IValidador<UsuarioRequest> _validador;
@@ -24,6 +23,9 @@ namespace Application.UseCases.Usuario
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly ICargoRepository _cargoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
+        private readonly IAuditoriaService _auditoriaService;
+
+        private const string UsuarioContexto = "Usuario";
 
         public AtualizarUsuario(
             IValidador<UsuarioRequest> validador,
@@ -32,7 +34,8 @@ namespace Application.UseCases.Usuario
             IUsuarioIdentityRepository usuarioIdentityRepository,
             IDepartamentoRepository departamentoRepository,
             ICargoRepository cargoRepository,
-            IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository)
+            IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
+            IAuditoriaService auditoriaService)
         {
             _validador = validador;
             _mapService = mapService;
@@ -41,58 +44,37 @@ namespace Application.UseCases.Usuario
             _departamentoRepository = departamentoRepository;
             _cargoRepository = cargoRepository;
             _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
+            _auditoriaService = auditoriaService;
         }
 
         public async Task<Resultado<UsuarioRequest>> ExecutarAsync(UsuarioRequest request)
         {
-            // 1. Validação
             var mensagens = _validador.Validar(request);
             if (mensagens.Any())
                 return Resultado<UsuarioRequest>.Falhas(mensagens);
 
-            // 2. Verificação de existência
-            var usuario = await _usuarioRepository
-                .ObterUsuarioPorCodigoAsync(request.Codigo);
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(request.Codigo);
+            if (usuario is null)
+                return Resultado<UsuarioRequest>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            if (usuario == null)
-                return Resultado<UsuarioRequest>
-                    .Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
-
-            // 3. Atualização do usuário de negócio
             await _mapService.MapToEntityAsync(request, usuario);
 
-            var atualizado = await _usuarioRepository
-                .AtualizarUsuarioAsync(usuario);
-
+            var atualizado = await _usuarioRepository.AtualizarUsuarioAsync(usuario);
             if (!atualizado)
-                return Resultado<UsuarioRequest>
-                    .Falha(UsuarioResource.ErroInesperadoAtualizacao);
+                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoAtualizacao);
 
-            // 4. Atualização da conta Identity (se aplicável)
             if (!request.Senha.IsNullOrEmpty())
             {
-                var identityAtualizado = await _usuarioIdentityRepository
-                    .AtualizarUserIdentityRepositoryAsync(
-                        usuario.Codigo,
-                        usuario.Email,
-                        request.Senha);
+                var identityAtualizado = await _usuarioIdentityRepository.AtualizarUserIdentityRepositoryAsync(usuario.Codigo, usuario.Email, request.Senha);
 
                 if (!identityAtualizado)
-                    return Resultado<UsuarioRequest>
-                        .Falha(UsuarioResource.ErroInesperadoAtualizacao);
+                    return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoAtualizacao);
             }
 
-            // 5. Atualização da associação Cargo / Departamento (se aplicável)
-            //    Decisão: Cargo/Departamento serão substituídos por RBAC em versão futura.
-            if (!request.DepartamentoCodigo.IsNullOrEmpty() &&
-                !request.CargoCodigo.IsNullOrEmpty())
+            if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
             {
-                var departamento = await _departamentoRepository
-                    .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(
-                        request.DepartamentoCodigo);
-
-                var cargo = await _cargoRepository
-                    .ObterCargoPorCodigoAsync(request.CargoCodigo);
+                var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
+                var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(request.CargoCodigo);
 
                 if (departamento != null && cargo != null)
                 {
@@ -106,12 +88,22 @@ namespace Application.UseCases.Usuario
                         DepartamentoCodigo = departamento.Codigo
                     };
 
-                    await _usuarioCargoDepartamentoRepository
-                        .AtualizarRepositoryAsync(relacionamento);
+                    await _usuarioCargoDepartamentoRepository.AtualizarRepositoryAsync(relacionamento);
                 }
             }
 
-            // 6. Retorno padronizado
+            await _auditoriaService.AtualizarServiceAsync(new AuditoriaDTO
+            {
+                CodigoRegistro = usuario.Codigo,
+                Contexto = UsuarioContexto,
+                Historico = new HistoricoDTO
+                {
+                    CodigoRegistro = usuario.Codigo,
+                    Contexto = UsuarioContexto,
+                    Descricao = $"Usuário {usuario.Codigo} atualizado em {DateTime.Now:dd/MM/yyyy HH:mm}."
+                }
+            });
+
             return Resultado<UsuarioRequest>
                 .Sucesso(request)
                 .AdicionarMensagem("Usuário atualizado com sucesso.");

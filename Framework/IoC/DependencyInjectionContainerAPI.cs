@@ -127,10 +127,11 @@ namespace IoC
             services.AddScoped<CriarUsuario>();
             services.AddScoped<AtualizarUsuario>();
             services.AddScoped<RemoverUsuario>();
+            services.AddScoped<DesativarUsuario>();
+            services.AddScoped<SolicitarReativacao>();
+            services.AddScoped<ReativarUsuario>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
-
-            // Validador e Mapeamento para UsuarioRequest (padrão CategoriaService)
+            services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
             services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
             services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();
         }
