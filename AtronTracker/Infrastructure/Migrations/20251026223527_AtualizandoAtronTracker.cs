@@ -8,15 +8,7 @@ namespace Atron.Infrastructure.Migrations
     public partial class AtualizandoAtronTracker : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Vendas_Categorias_CategoriaId_CategoriaCodigo",
-                table: "Vendas");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Vendas_Produtos_ProdutoId_ProdutoCodigo",
-                table: "Vendas");
-
+        {          
             migrationBuilder.DropTable(
                 name: "Historicos");
 

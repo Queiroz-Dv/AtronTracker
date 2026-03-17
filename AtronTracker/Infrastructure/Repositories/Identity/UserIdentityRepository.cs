@@ -1,14 +1,10 @@
-﻿using Domain.ApiEntities;
+﻿using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces.Identity;
-using AtronTracker.Infrastructure.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Shared.Extensions;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Shared.Domain.Entities.Identity;
+using Shared.Extensions;
 
 namespace Infrastructure.Repositories.Identity
 {
@@ -23,20 +19,38 @@ namespace Infrastructure.Repositories.Identity
             _userManager = userManager;
         }
 
+        public async Task<bool> DesativarContaAsync(string codigoUsuario)
+        {
+            var user = await _userManager.FindByNameAsync(codigoUsuario);
+            if (user is null) return false;
+
+            user.LockoutEnabled = true;
+            user.LockoutEnd = DateTimeOffset.MaxValue;
+
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> ReativarContaAsync(string codigoUsuario)
+        {
+            var user = await _userManager.FindByNameAsync(codigoUsuario);
+            if (user is null) return false;
+
+            user.LockoutEnd = null;
+
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+
         public async Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime)
         {
             var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
+            if (user is null) return false;
 
-            if (user != null)
-            {
-                user.RefreshToken = refreshToken;
-                user.RefreshTokenExpireTime = refreshTokenExpireTime;
-                _context.AppUsers.Update(user);
-                var gravado = await _context.SaveChangesAsync();
-                return gravado > 0;
-            }
-
-            return false;
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpireTime = refreshTokenExpireTime;
+            _context.AppUsers.Update(user);
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> RefreshTokenExisteRepositoryAsync(string refreshToken)
@@ -44,9 +58,9 @@ namespace Infrastructure.Repositories.Identity
             return await _context.AppUsers.AnyAsync(u => u.RefreshToken == refreshToken);
         }
 
-        public Task<string> ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(string codigoUsuario)
+        public async Task<string> ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(string codigoUsuario)
         {
-            return _context.AppUsers
+            return await _context.AppUsers
                 .Where(u => u.UserName == codigoUsuario)
                 .Select(u => u.RefreshToken)
                 .FirstOrDefaultAsync();
@@ -54,20 +68,13 @@ namespace Infrastructure.Repositories.Identity
 
         public async Task<bool> RedefinirRefreshTokenRepositoryAsync(string codigoUsuario)
         {
-            var user = await _context.AppUsers
-                .FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
+            var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
+            if (user is null) return false;
 
-            if (user != null)
-            {
-                user.RefreshToken = null;
-                user.RefreshTokenExpireTime = DateTime.MinValue;
-
-                _context.AppUsers.Update(user);
-                var atualizado = await _context.SaveChangesAsync();
-                return atualizado > 0;
-            }
-
-            return false;
+            user.RefreshToken = null;
+            user.RefreshTokenExpireTime = DateTime.MinValue;
+            _context.AppUsers.Update(user);
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public Task<bool> RefreshTokenExpiradoRepositoryAsync(string codigoUsuario)
@@ -81,45 +88,35 @@ namespace Infrastructure.Repositories.Identity
         public async Task<bool> AtualizarUserIdentityRepositoryAsync(string codigoUsuario, string email, string senha)
         {
             var user = await _userManager.FindByNameAsync(codigoUsuario);
-
-            if (user is null)
-                return false;
+            if (user is null) return false;
 
             user.Email = email;
             user.UserName = codigoUsuario;
 
-            // Atualiza a senha apenas se foi informada uma nova
             if (!senha.IsNullOrEmpty())
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var resultadoDaSenha = await _userManager.ResetPasswordAsync(user, token, senha);
-                if (!resultadoDaSenha.Succeeded)
-                    return false;
+                if (!resultadoDaSenha.Succeeded) return false;
             }
 
             var result = await _userManager.UpdateAsync(user);
-
             return result.Succeeded;
-        }
-
-        private static ApplicationUser CreateUser(ApiRegister register)
-        {
-            return new ApplicationUser()
-            {
-                UserName = register.UserName,
-                Email = register.Email
-            };
         }
 
         public async Task<bool> RegistrarContaDeUsuarioRepositoryAsync(string codigoUsuario, string email, string senha)
         {
             try
             {
-                var applicationUser = CreateUser(new ApiRegister(codigoUsuario, email, senha, senha));
+                var applicationUser = new ApplicationUser
+                {
+                    UserName = codigoUsuario,
+                    Email = email
+                };
                 var result = await _userManager.CreateAsync(applicationUser, senha);
                 return result.Succeeded;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -127,10 +124,9 @@ namespace Infrastructure.Repositories.Identity
 
         public async Task<bool> DeletarContaUserRepositoryAsync(string codigoUsuario)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(reg => reg.UserName == codigoUsuario);
-            if (user == null) return false;
-            var usuarioDeletado = await _userManager.DeleteAsync(user);
-            return usuarioDeletado.Succeeded;
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
+            if (user is null) return false;
+            return (await _userManager.DeleteAsync(user)).Succeeded;
         }
 
         public async Task<bool> ContaExisteRepositoryAsync(string codigoUsuario, string email)
@@ -140,34 +136,28 @@ namespace Infrastructure.Repositories.Identity
 
         public async Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario)
         {
-            var applicationUsuario = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == codigoUsuario);
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == codigoUsuario);
+            if (user is null) return null;
 
-            if (applicationUsuario == null) return null;
-
-            var usuarioIdentity = new UsuarioIdentity()
+            return new UsuarioIdentity
             {
-                Codigo = applicationUsuario.UserName,
-                Email = applicationUsuario.Email,
+                Codigo = user.UserName,
+                Email = user.Email
             };
-
-            return usuarioIdentity;
         }
 
         public async Task<string> GerarTokenConfirmacaoEmailAsync(string codigoUsuario)
         {
             var user = await _userManager.FindByNameAsync(codigoUsuario);
-            if (user == null) return null;
-
+            if (user is null) return null;
             return await _userManager.GenerateEmailConfirmationTokenAsync(user);
         }
 
         public async Task<bool> ConfirmarEmailAsync(string codigoUsuario, string token)
         {
             var user = await _userManager.FindByNameAsync(codigoUsuario);
-            if (user == null) return false;
-
-            var result = await _userManager.ConfirmEmailAsync(user, token);
-            return result.Succeeded;
+            if (user is null) return false;
+            return (await _userManager.ConfirmEmailAsync(user, token)).Succeeded;
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using Application.DTO.ApiDTO;
 using Application.Interfaces.ApplicationInterfaces;
+using Application.UseCases.Usuario;
 using Domain.ApiEntities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
@@ -12,69 +12,48 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    /// <summary>
-    /// Controller para gerenciar o login de usuários na aplicação.
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AcessoController : ApiBaseConfigurationController<ApiLogin, ILoginService>
     {
-        public AcessoController(
-             Notifiable messageModel,
-             ILoginService loginUserService,
-             IAccessorService serviceAccessor)
-             : base(loginUserService, messageModel, serviceAccessor)
-        { }
+        private readonly IRegistroUsuarioService _registroUsuarioService;
 
-        /// <summary>
-        /// Endpoint para logar um usuário no sistema
-        /// </summary>
-        /// <param name="loginDTO">DTO que será autenticado </param>
-        /// <returns>O resultado do processamento</returns>
+        public AcessoController(
+            Notifiable messageModel,
+            ILoginService loginUserService,
+            IAccessorService serviceAccessor,
+            IRegistroUsuarioService registroUsuarioService)
+            : base(loginUserService, messageModel, serviceAccessor)
+        {
+            _registroUsuarioService = registroUsuarioService;
+        }
+
         [HttpPost(nameof(Login))]
         public async Task<ActionResult<DadosDoTokenDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
             var dto = await _service.Autenticar(loginDTO);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-             BadRequest(ObterNotificacoes()) :
-             Ok(dto);
+            return _messageModel.Notificacoes.HasErrors() ? BadRequest(ObterNotificacoes()) : Ok(dto);
         }
 
-        /// <summary>
-        /// Endpoint para atualizar o token de acesso do usuário
-        /// </summary>        
         [HttpGet("RefreshToken")]
         public async Task<IActionResult> Refresh()
         {
             var cookieService = ObterService<ICookieService>();
-
             var dadosDeToken = await cookieService.ObterTokenRefreshTokenPorRequest(Request);
-            
             var novoToken = await _service.RefreshAcesso(dadosDeToken);
             if (novoToken is null) return Unauthorized();
 
-            return _messageModel.Notificacoes.HasErrors() ?
-              BadRequest(ObterNotificacoes()) :
-              Ok(dadosDeToken);
+            return _messageModel.Notificacoes.HasErrors() ? BadRequest(ObterNotificacoes()) : Ok(dadosDeToken);
         }
 
-        /// <summary>
-        /// Endpoint para desconectar o usuário do sistema
-        /// </summary>
         [HttpGet("Desconectar")]
         public async Task<ActionResult<bool>> Logout()
         {
             var usuarioCodigo = HttpContext.Request.Headers.ExtrairCodigoUsuarioDoRequest();
-
             var deslogado = await _service.Logout(usuarioCodigo);
             return deslogado ? Ok(deslogado) : BadRequest(deslogado);
         }
 
-        /// <summary>
-        /// Endpoint de trocar a senha do usuário autenticado no sistema
-        /// </summary>
-        /// <param name="dto"></param>
         [HttpPost(nameof(TrocarSenha))]
         public async Task<ActionResult<bool>> TrocarSenha([FromBody] LoginRequestDTO dto)
         {
@@ -82,44 +61,60 @@ namespace WebApi.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Endpoint de registro de conta de usuário
-        /// </summary>
-        /// <param name="registerDTO"></param>        
         [HttpPost("Registrar")]
-        public async Task<ActionResult> Post([FromBody] UsuarioRegistroDTO registerDTO)
+        public async Task<ActionResult> Post([FromBody] UsuarioRegistroDTO usuarioRegistroDTO)
         {
-            var _registroUsuarioService = ObterService<IRegistroUsuarioService>();
-            await _registroUsuarioService.RegistrarUsuario(registerDTO);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                BadRequest(ObterNotificacoes()) :
-                Ok(ObterNotificacoes());
+            var resultado = await _registroUsuarioService.RegistrarUsuario(usuarioRegistroDTO);
+            
+            return _messageModel.Notificacoes.HasErrors() ? BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
         }
 
-      
         [HttpPost("ConfirmarEmail")]
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmarEmail([FromBody] ConfirmarEmailRequest request)
         {
-            var usuarioCodigo = request.usuarioCodigo;
-            var token = request.token;
-
-            if (string.IsNullOrWhiteSpace(usuarioCodigo) || string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(request.usuarioCodigo) || string.IsNullOrWhiteSpace(request.token))
                 return BadRequest("Usuário e Token são obrigatórios.");
 
             var _registroUsuarioService = ObterService<IRegistroUsuarioService>();
-            _ = await _registroUsuarioService.ConfirmarEmail(usuarioCodigo, token);
+            _ = await _registroUsuarioService.ConfirmarEmail(request.usuarioCodigo, request.token);
 
-            return _messageModel.Notificacoes.HasErrors() ?
-                BadRequest(ObterNotificacoes()) :
-                Ok(ObterNotificacoes());
+            return _messageModel.Notificacoes.HasErrors() ? BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
+        }
+
+        [HttpPost("SolicitarReativacao")]
+        [AllowAnonymous]
+        public async Task<ActionResult> SolicitarReativacao([FromBody] SolicitarReativacaoRequest request)
+        {
+            var useCase = ObterService<SolicitarReativacao>();
+            var resultado = await useCase.ExecutarAsync(request.Email);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        [HttpPost("ReativarConta")]
+        [AllowAnonymous]
+        public async Task<ActionResult> ReativarConta([FromBody] ReativarContaRequest request)
+        {
+            var useCase = ObterService<ReativarUsuario>();
+            var resultado = await useCase.ExecutarAsync(request.Email, request.CodigoReativacao);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         public class ConfirmarEmailRequest
         {
             public string usuarioCodigo { get; set; }
             public string token { get; set; }
+        }
+
+        public class SolicitarReativacaoRequest
+        {
+            public string Email { get; set; }
+        }
+
+        public class ReativarContaRequest
+        {
+            public string Email { get; set; }
+            public string CodigoReativacao { get; set; }
         }
     }
 }
