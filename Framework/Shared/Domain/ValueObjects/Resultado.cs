@@ -131,6 +131,13 @@ namespace Shared.Domain.ValueObjects
             return new Resultado(true) { Dados = dados };
         }
 
+        public static Resultado Sucesso(string mensagem)
+        {
+            var resultado = new Resultado(true);
+            resultado.AdicionarMensagem(mensagem);
+            return resultado;
+        }
+
         public static Resultado Sucesso(object dados, IEnumerable<NotificationMessage> messages)
         {
             var resultado = new Resultado(true) { Dados = dados };

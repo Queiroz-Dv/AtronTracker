@@ -1,0 +1,30 @@
+### Registra um novo usuário
+POST {{$projectUrl}}/api/acesso/registrar
+Content-Type: application/json
+{
+  "codigo": "DEW",
+  "nome": "Dery",
+  "sobrenome": "Dghit",
+  "dataNascimento": "1990-06-15",  
+  "email": "kalifor_dbel@hotmail.com",
+  "senha": "!QAZ24wsx@#",
+  "confirmaSenha": "!QAZ24wsx@#"
+}
+
+### Confirma o e-mail do usuário
+
+POST {{$projectUrl}}/api/acesso/confirmarEmail
+Content-Type: application/json
+{
+  "codigoDoUsuario": "DEW",
+  "senha": "!QAZ24wsx@#"
+}
+
+### Login para acessar
+POST {{$projectUrl}}/api/acesso/login
+Content-Type: application/json
+{
+  "usuarioCodigo": "",
+  "token": ""
+}
+

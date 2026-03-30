@@ -1,12 +1,10 @@
-﻿using Application.DTO.ApiDTO;
+﻿using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
-using Application.Services.AuthServices.Bases;
-using Application.Specifications.UsuarioSpecifications;
-using Domain.ApiEntities;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
+using Microsoft.AspNetCore.Http;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
@@ -17,87 +15,58 @@ using System.Web;
 
 namespace Application.Services.AuthServices
 {
-    public class RegistroUsuarioService : ServiceBase, IRegistroUsuarioService
+    public class RegistroUsuarioService : IRegistroUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
+        private readonly IEmailService _emailService;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository;
         private readonly IPerfilDeAcessoUsuarioRepository _perfilDeAcessoUsuarioRepository;
-        private readonly Notifiable _messageModel;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IValidador<UsuarioRegistroRequest> _validador;
 
         public RegistroUsuarioService(
             IAccessorService accessor,
             IUsuarioRepository usuarioRepository,
-            Notifiable messageModel,
             IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
-            IPerfilDeAcessoRepository perfilDeAcessoRepository) : base(accessor)
+            IPerfilDeAcessoRepository perfilDeAcessoRepository,
+            IUsuarioIdentityRepository usuarioIdentityRepository,
+            IEmailService emailService,
+            IValidador<UsuarioRegistroRequest> validador,
+            IHttpContextAccessor httpContextAccessor)
         {
             _usuarioRepository = usuarioRepository;
-            _messageModel = messageModel;
             _perfilDeAcessoUsuarioRepository = perfilDeAcessoUsuarioRepository;
             _perfilDeAcessoRepository = perfilDeAcessoRepository;
+            _usuarioIdentityRepository = usuarioIdentityRepository;
+            _emailService = emailService;
+            _validador = validador;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<Resultado> RegistrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO)
+        public async Task<Resultado> RegistrarUsuario(UsuarioRegistroRequest request)
         {
-            var _usuarioIdentityRepository = ObterService<IUsuarioIdentityRepository>();
-            var _emailService = ObterService<IEmailService>();
+            var notificacoes = _validador.Validar(request);
+            if (notificacoes.TemErros()) return Resultado.Falha(notificacoes);
 
-            var usuarioRegistro = new UsuarioRegistro
-            {
-                CodigoDeAcesso = usuarioRegistroDTO.Codigo.ToUpper(),
-                Email = usuarioRegistroDTO.Email,
-                Senha = usuarioRegistroDTO.Senha,
-                ConfirmarSenha = usuarioRegistroDTO.ConfirmaSenha
-            };
+            var contaExiste = await _usuarioIdentityRepository.ContaExisteRepositoryAsync(request.Codigo, request.Email);
+            if (contaExiste) return Resultado.Falha("Usuário já cadastrado.");
 
-            GetValidator<UsuarioRegistro>().Validate(usuarioRegistro);
+            var registrado = await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(request.Codigo, request.Email, request.Senha);
+            if (!registrado) return Resultado.Falha("Erro na gravação da conta.");
 
-            if (_messageModel.Notificacoes.HasErrors()) return;
-
-            var contaExiste = await _usuarioIdentityRepository
-                .ContaExisteRepositoryAsync(usuarioRegistro.CodigoDeAcesso, usuarioRegistro.Email);
-
-            if (contaExiste)
-            {
-                _messageModel.AdicionarErro("Usuário já cadastrado.");
-                return;
-            }
-
-            var registrado = await _usuarioIdentityRepository
-                .RegistrarContaDeUsuarioRepositoryAsync(
-                    usuarioRegistro.CodigoDeAcesso,
-                    usuarioRegistro.Email,
-                    usuarioRegistro.Senha);
-
-            if (!registrado) return;
-
-            var usuario = new Usuario
-            {
-                Codigo = usuarioRegistroDTO.Codigo.ToUpper(),
-                Nome = usuarioRegistroDTO.Nome,
-                Sobrenome = usuarioRegistroDTO.Sobrenome,
-                DataNascimento = usuarioRegistroDTO.DataNascimento?.ToDateTime(TimeOnly.MinValue),
-                Email = usuarioRegistroDTO.Email
-            };
-
-            //ObterValidador<Usuario>().Validate(usuario);
-
-            var usuarioSpec = new UsuarioSpecification(usuario.Codigo, usuario.Email);
-            if (!usuarioSpec.IsSatisfiedBy(usuario))
-            {
-                usuarioSpec.Errors.ForEach(_messageModel.AdicionarErro);
-                return;
-            }
-
-            if (_messageModel.Notificacoes.HasErrors()) return;
+            var usuario = new Usuario(request.Codigo,
+                                      request.Nome,
+                                      request.Sobrenome,
+                                      request.Email,
+                                      request.DataNascimento?.ToDateTime(TimeOnly.MinValue));
 
             var usuarioGravado = await _usuarioRepository.CriarUsuarioAsync(usuario);
-            if (!usuarioGravado) return;
+            if (!usuarioGravado) return Resultado.Falha("Erro ao salvar usuário.");
 
             var usuarioBd = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
 
-            var perfilDeAcesso = await _perfilDeAcessoRepository
-                .ObterPerfilPorCodigoRepositoryAsync(usuarioRegistroDTO.CodigoPerfilDeAcesso);
+            var perfilDeAcesso = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(request.CodigoPerfilDeAcesso);
 
             if (perfilDeAcesso != null)
             {
@@ -110,14 +79,7 @@ namespace Application.Services.AuthServices
                 });
             }
 
-            var token = await _usuarioIdentityRepository
-                .GerarTokenConfirmacaoEmailAsync(usuarioRegistro.CodigoDeAcesso);
-
-            string baseUri = !string.IsNullOrEmpty(usuarioRegistroDTO.ClientUri)
-                ? usuarioRegistroDTO.ClientUri
-                : "http://localhost:4200";
-
-            string link = $"{baseUri}/confirmar-email?usuarioCodigo={usuarioRegistro.CodigoDeAcesso}&token={HttpUtility.UrlEncode(token)}";
+            string link = await ObterUrlDeConfirmacao(request.ClientUri, request.Codigo);
 
             try
             {
@@ -125,26 +87,36 @@ namespace Application.Services.AuthServices
                 {
                     Assunto = "Confirme seu cadastro - AtronTracker",
                     Mensagem = CorpoDoEmailDeCadastro(usuario, link),
-                    EmailsDestino = [usuarioRegistro.Email]
+                    EmailsDestino = [request.Email]
                 });
             }
             catch { }
 
-            _messageModel.AdicionarMensagem(
-                $"Usuário {usuario.Nome} {usuario.Sobrenome}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar.");
+            return Resultado.Sucesso($"Usuário {usuario.Nome} {usuario.Sobrenome}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar.");
         }
 
-        public async Task<bool> ConfirmarEmail(string codigoUsuario, string token)
+        private async Task<string> ObterUrlDeConfirmacao(string uri, string codigoUsuario)
         {
-            var _usuarioIdentityRepository = ObterService<IUsuarioIdentityRepository>();
+            var token = await _usuarioIdentityRepository.GerarTokenConfirmacaoEmailAsync(codigoUsuario);
+            var baseUri = ObterUri(uri);
+            return $"{baseUri}/confirmar-email?usuarioCodigo={codigoUsuario}&token={token}";
+        }
+
+        private string ObterUri(string uri)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var uriContext = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
+
+            return !string.IsNullOrEmpty(uri) ? uri : uriContext;
+        }
+
+        public async Task<Resultado> ConfirmarEmail(string codigoUsuario, string token)
+        {
             var resultado = await _usuarioIdentityRepository.ConfirmarEmailAsync(codigoUsuario, token);
 
-            if (!resultado)
-                _messageModel.AdicionarErro("Falha ao confirmar e-mail. Token inválido ou expirado.");
-            else
-                _messageModel.AdicionarMensagem("E-mail confirmado com sucesso!");
-
-            return resultado;
+            return !resultado
+                ? Resultado.Falha("Falha ao confirmar e-mail. Token inválido ou expirado.")
+                : Resultado.Sucesso("E-mail confirmado com sucesso!");
         }
 
         private static string CorpoDoEmailDeCadastro(Usuario usuario, string link)
