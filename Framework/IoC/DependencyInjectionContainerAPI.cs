@@ -43,6 +43,11 @@ namespace IoC
                     .AddEntityFrameworkStores<AtronDbContext>()
                     .AddDefaultTokenProviders();
 
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(24);
+            });
+
             services = services.AddSharedInfrastructure(configuration);
 
             // Evitar o looping infinito 
@@ -102,6 +107,7 @@ namespace IoC
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
+            services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidador>();
         }
 
         private static void ConfigureDefaultUserRoleServices(IServiceCollection services)
@@ -132,7 +138,7 @@ namespace IoC
             services.AddScoped<ReativarUsuario>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
-            services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
+            services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();            
             services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();
         }
 

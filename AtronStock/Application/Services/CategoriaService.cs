@@ -68,7 +68,7 @@ namespace AtronStock.Application.Services
         public async Task<Resultado> AtualizarAsync(CategoriaRequest dto)
         {
             var messages = _validador.Validar(dto);
-            if (messages.Any()) return Resultado.Falha(messages);
+            if (messages.TemErros()) return Resultado.Falha(messages);
 
             var categoria = await _repository.ObterCategoriaPorCodigoAsync(dto.Codigo);
             if (categoria == null)

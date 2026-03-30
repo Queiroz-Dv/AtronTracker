@@ -1,4 +1,4 @@
-﻿using Application.DTO.ApiDTO;
+﻿using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.UseCases.Usuario;
 using Domain.ApiEntities;
@@ -62,11 +62,11 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("Registrar")]
-        public async Task<ActionResult> Post([FromBody] UsuarioRegistroDTO usuarioRegistroDTO)
+        public async Task<ActionResult> Post([FromBody] UsuarioRegistroRequest registroRequest)
         {
-            var resultado = await _registroUsuarioService.RegistrarUsuario(usuarioRegistroDTO);
-            
-            return _messageModel.Notificacoes.HasErrors() ? BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
+            var resultado = await _registroUsuarioService.RegistrarUsuario(registroRequest);
+
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         [HttpPost("ConfirmarEmail")]
@@ -76,10 +76,9 @@ namespace WebApi.Controllers
             if (string.IsNullOrWhiteSpace(request.usuarioCodigo) || string.IsNullOrWhiteSpace(request.token))
                 return BadRequest("Usuário e Token são obrigatórios.");
 
-            var _registroUsuarioService = ObterService<IRegistroUsuarioService>();
-            _ = await _registroUsuarioService.ConfirmarEmail(request.usuarioCodigo, request.token);
+            var resultado = await _registroUsuarioService.ConfirmarEmail(request.usuarioCodigo, request.token);
 
-            return _messageModel.Notificacoes.HasErrors() ? BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         [HttpPost("SolicitarReativacao")]

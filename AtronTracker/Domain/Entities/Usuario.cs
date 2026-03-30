@@ -5,6 +5,21 @@ namespace Domain.Entities
 {
     public class Usuario : EntityBase
     {
+        public Usuario()
+        {
+            
+        }
+
+        public Usuario(string codigo, string nome, string sobrenome, string email, DateTime? dataNascimento)
+        {
+            Codigo = codigo;
+            Nome = nome;
+            Sobrenome = sobrenome;
+            Email = email;
+            DataNascimento = dataNascimento;
+            Inativo = false;
+        }
+
         public string Codigo { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }

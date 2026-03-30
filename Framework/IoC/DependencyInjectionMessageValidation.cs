@@ -14,8 +14,7 @@ namespace IoC
     {
         public static IServiceCollection AddMessageValidationServices(this IServiceCollection services)
         {
-            ConfigureLoginMessageValidation(services);
-            ConfigureApiRegisterMessageValidation(services);
+            ConfigureLoginMessageValidation(services);            
             ConfigureDepartamentoServices(services);
             ConfgureCargoServices(services);
             ConfigureUsuarioServices(services);
@@ -37,12 +36,12 @@ namespace IoC
             services.AddScoped<Notifiable, InfoTokenMessageValidation>();
         }
 
-        private static void ConfigureApiRegisterMessageValidation(IServiceCollection services)
-        {
-            services.AddScoped<IMessageBaseService, ApiRegisterMessageValidation>();
-            services.AddScoped<IValidateModelService<UsuarioRegistro>, ApiRegisterMessageValidation>();
-            services.AddScoped<Notifiable, ApiRegisterMessageValidation>();
-        }
+        //private static void ConfigureApiRegisterMessageValidation(IServiceCollection services)
+        //{
+        //    services.AddScoped<IMessageBaseService, ApiRegisterMessageValidation>();
+        //    services.AddScoped<IValidateModelService<UsuarioRegistro>, ApiRegisterMessageValidation>();
+        //    services.AddScoped<Notifiable, ApiRegisterMessageValidation>();
+        //}
 
         private static void ConfigurarSalarioServices(IServiceCollection services)
         {
