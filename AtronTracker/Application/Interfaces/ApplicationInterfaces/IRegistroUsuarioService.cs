@@ -1,4 +1,5 @@
 ﻿using Application.DTO.Request;
+using Shared.Application.DTOS.Auth;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
@@ -8,5 +9,7 @@ namespace Application.Interfaces.ApplicationInterfaces
     {
         Task<Resultado> RegistrarUsuario(UsuarioRegistroRequest registroRequest);
         Task<Resultado> ConfirmarEmail(string codigoUsuario, string token);
+
+        Task<Resultado> TrocarSenha(LoginRequestDTO dto);
     }
 }

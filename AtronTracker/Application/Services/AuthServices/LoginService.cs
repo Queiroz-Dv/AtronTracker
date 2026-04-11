@@ -1,46 +1,64 @@
-﻿using Application.DTO;
-using Application.Interfaces.ApplicationInterfaces;
+﻿using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
-using Application.Services.AuthServices.Bases;
 using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.Enums;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
 using System.Threading.Tasks;
 
 namespace Application.Services.AuthServices
 {
-    public class LoginService : ServiceBase, ILoginService
+    public class LoginService : ILoginService
     {
-        const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
         private readonly ILoginRepository _loginRepository;
+        private readonly IUsuarioService _usuarioService;
+        private readonly IDadosComplementaresDoUsuarioService _dadosComplementaresDoUsuarioService;
+        private readonly ITokenService _tokenService;
+        private readonly ICacheUsuarioService _cacheUsuarioService;
+        private readonly ICookieService _cookieService;
+        private readonly IUserIdentityService _userIdentityService;
+        private readonly IValidador<DadosDoTokenDTO> _tokenValidator;
 
-        private DadosDoTokenDTO CriarToken(string token, DateTime expires) => new(token, expires);
+        private const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
 
-        public LoginService(IAccessorService serviceAccessor, ILoginRepository loginRepository) : base(serviceAccessor)
+        public LoginService(
+            ILoginRepository loginRepository,
+            IUsuarioService usuarioService,
+            IDadosComplementaresDoUsuarioService dadosComplementaresDoUsuarioService,
+            ITokenService tokenService,
+            ICacheUsuarioService cacheUsuarioService,
+            ICookieService cookieService,
+            IUserIdentityService userIdentityService,
+            IValidador<DadosDoTokenDTO> tokenValidator)
         {
             _loginRepository = loginRepository;
+            _usuarioService = usuarioService;
+            _dadosComplementaresDoUsuarioService = dadosComplementaresDoUsuarioService;
+            _tokenService = tokenService;
+            _cacheUsuarioService = cacheUsuarioService;
+            _cookieService = cookieService;
+            _userIdentityService = userIdentityService;
+            _tokenValidator = tokenValidator;
         }
 
-        public async Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO loginRequest)
+        public async Task<Resultado<DadosDoTokenDTO>> Autenticar(LoginRequestDTO loginRequest)
         {
-            var resultadoUsuario = await UsuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
+            var resultadoUsuario = await _usuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
 
             if (resultadoUsuario?.Dados == null)
-            {
-                Messages.AdicionarErro("Usuário não encontrado.");
-                return null;
-            }
+                return Resultado<DadosDoTokenDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            var dadosComplementares = resultadoUsuario?.Dados != null ? await DadosComplementaresDoUsuarioService.ObterInformacoesComplementaresDoUsuario(resultadoUsuario.Dados) : null;
+            var dadosComplementares = await _dadosComplementaresDoUsuarioService
+                .ObterInformacoesComplementaresDoUsuario(resultadoUsuario.Dados);
 
-            var dadosDoToken = await TokenService.ObterTokenComRefreshToken(dadosComplementares);
+            var dadosDoToken = await _tokenService.ObterTokenComRefreshToken(dadosComplementares);
 
-            var usuarioAutenticado = await _loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity()
+            var usuarioAutenticado = await _loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity
             {
                 Codigo = dadosComplementares.DadosDoUsuario.CodigoDoUsuario,
                 Token = dadosDoToken.TokenDTO.Token,
@@ -50,107 +68,73 @@ namespace Application.Services.AuthServices
             });
 
             if (!usuarioAutenticado)
-            {
-                Messages.AdicionarErro(ERRO_AUTENTICACAO);
-                return null;
-            }
+                return Resultado<DadosDoTokenDTO>.Falha(ERRO_AUTENTICACAO);
 
-            var token = CriarToken(dadosDoToken.TokenDTO.Token, dadosDoToken.TokenDTO.Expires);
+            var token = new DadosDoTokenDTO(dadosDoToken.TokenDTO.Token, dadosDoToken.TokenDTO.Expires);
 
-            CacheUsuarioService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDoToken);
-            CookieService.CriarCookieDoToken(token, resultadoUsuario.Dados.Codigo);
-            return token;
+            _cacheUsuarioService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDoToken);
+            _cookieService.CriarCookieDoToken(token, resultadoUsuario.Dados.Codigo);
+
+            return Resultado<DadosDoTokenDTO>.Sucesso(token);
         }
 
-        public async Task<DadosDoTokenDTO> RefreshAcesso(DadosDoTokenDTO dadosDoToken)
+        public async Task<Resultado<DadosDoTokenDTO>> RefreshAcesso(DadosDoTokenDTO dadosDoToken)
         {
-            var validarDTO = GetValidator<DadosDoTokenDTO>();
+            var notificacoes = _tokenValidator.Validar(dadosDoToken);
+            if (notificacoes.HasErrors())
+                return Resultado<DadosDoTokenDTO>.Falha("Dados do token inválidos.");
 
-            validarDTO.Validate(dadosDoToken);
+            string codigoUsuario = dadosDoToken.Token != null
+                ? await _tokenService.ObterCodigoUsuarioPorClaim(dadosDoToken.Token)
+                : dadosDoToken.UsuarioCodigo;
 
-            if (Messages.Notificacoes.HasErrors()) return null;
+            var refreshTokenExpirado = await _userIdentityService.RefreshTokenExpiradoServiceAsync(codigoUsuario);
+            if (refreshTokenExpirado)
+                return Resultado<DadosDoTokenDTO>.Falha("Token expirado ou inválido.");
 
-            string codigoUsuario = dadosDoToken.Token != null ? await TokenService.ObterCodigoUsuarioPorClaim(dadosDoToken.Token) : dadosDoToken.UsuarioCodigo;
-            var refreshTokenDoUsuarioEstaExpirado = await UserIdentityService.RefreshTokenExpiradoServiceAsync(codigoUsuario);
+            var usuario = await _usuarioService.ObterPorCodigoAsync(codigoUsuario);
+            if (usuario?.Dados == null)
+                return Resultado<DadosDoTokenDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            if (refreshTokenDoUsuarioEstaExpirado)
+            var dadosComplementares = await _dadosComplementaresDoUsuarioService
+                .ObterInformacoesComplementaresDoUsuario(usuario.Dados);
+
+            if (dadosComplementares == null)
+                return Resultado<DadosDoTokenDTO>.Falha(ERRO_AUTENTICACAO);
+
+            var dadosDeToken = await _tokenService.ObterTokenComRefreshToken(dadosComplementares);
+
+            var autenticado = await _loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity
             {
-                Messages.AdicionarErro("Token expirado ou inválido.");
-                return null;
-            }
+                Codigo = dadosComplementares.DadosDoUsuario.CodigoDoUsuario,
+                Token = dadosDeToken.TokenDTO.Token,
+                RefreshToken = dadosDeToken.RefrehTokenDTO.Token,
+                RefreshTokenExpireTime = dadosDeToken.RefrehTokenDTO.Expires,
+            });
 
-            var usuario = await UsuarioService.ObterPorCodigoAsync(codigoUsuario);
+            if (!autenticado)
+                return Resultado<DadosDoTokenDTO>.Falha(ERRO_AUTENTICACAO);
 
-            if (usuario == null) return null;
+            var token = new DadosDoTokenDTO(dadosDeToken.TokenDTO.Token, dadosDeToken.TokenDTO.Expires);
 
-            if (usuario?.Dados == null) return null;
+            _cacheUsuarioService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDeToken);
+            _cookieService.CriarCookieDoToken(token, codigoUsuario);
 
-            var dadosComplementares = await DadosComplementaresDoUsuarioService.ObterInformacoesComplementaresDoUsuario(usuario.Dados);
-
-            if (dadosComplementares != null)
-            {
-                var dadosDeToken = await TokenService.ObterTokenComRefreshToken(dadosComplementares);
-
-                var autenticado = await _loginRepository.AutenticarUsuarioAsync(new UsuarioIdentity()
-                {
-                    Codigo = dadosComplementares.DadosDoUsuario.CodigoDoUsuario,
-                    Token = dadosDeToken.TokenDTO.Token,
-                    RefreshToken = dadosDeToken.RefrehTokenDTO.Token,
-                    RefreshTokenExpireTime = dadosDeToken.RefrehTokenDTO.Expires,
-                });
-
-                if (!autenticado)
-                {
-                    Messages.AdicionarErro(ERRO_AUTENTICACAO);
-                    return null;
-                }
-
-                var token = CriarToken(dadosDeToken.TokenDTO.Token, dadosDeToken.TokenDTO.Expires);
-
-                CacheUsuarioService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDeToken);
-                CookieService.CriarCookieDoToken(token, codigoUsuario);
-                return token;
-            }
-
-            return null;
+            return Resultado<DadosDoTokenDTO>.Sucesso(token);
         }
 
-        public async Task<bool> Logout(string usuarioCodigo)
+        public async Task<Resultado> Logout(string usuarioCodigo)
         {
-            var cacheService = ObterService<ICacheService>();
-            var identityService = ObterService<IUserIdentityService>();
-            var cookieService = ObterService<ICookieService>();
-
-            cacheService.RemoverCache(ECacheKeysInfo.Acesso, usuarioCodigo);
-            cacheService.RemoverCache(ECacheKeysInfo.TokenInfo, usuarioCodigo);
-
             var chaveDoCookie = $"{usuarioCodigo}{ETokenInfo.AcesssToken.GetDescription()}";
+            _cookieService.RemoverCookie(chaveDoCookie);
 
-            cookieService.RemoverCookie(chaveDoCookie);
+            var refreshTokenRedefinido = await _userIdentityService.RedefinirRefreshTokenServiceAsync(usuarioCodigo);
 
-            var refreshTokenRedefinido = await identityService.RedefinirRefreshTokenServiceAsync(usuarioCodigo);
+            if (!refreshTokenRedefinido)
+                return Resultado.Falha("Erro ao encerrar sessão.");
 
-            if (refreshTokenRedefinido)
-            {
-                await _loginRepository.Logout();
-                return refreshTokenRedefinido;
-            }
-
-            return false;
-        }
-
-        public async Task<bool> TrocarSenha(LoginRequestDTO dto)
-        {
-            return await _loginRepository.AtualizarSenhaUsuario(dto.CodigoDoUsuario, dto.Senha);
-        }
-
-        #region Services
-        private IUsuarioService UsuarioService => ObterService<IUsuarioService>();
-        private IDadosComplementaresDoUsuarioService DadosComplementaresDoUsuarioService => ObterService<IDadosComplementaresDoUsuarioService>();
-        private ITokenService TokenService => ObterService<ITokenService>();
-        private ICacheUsuarioService CacheUsuarioService => ObterService<ICacheUsuarioService>();
-        private ICookieService CookieService => ObterService<ICookieService>();
-        private IUserIdentityService UserIdentityService => ObterService<IUserIdentityService>();
-        #endregion
+            await _loginRepository.Logout();
+            return Resultado.Sucesso("Sessão encerrada com sucesso.");
+        }        
     }
 }

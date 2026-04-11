@@ -2,9 +2,11 @@
 using Application.Interfaces.ApplicationInterfaces;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.AspNetCore.Http;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
@@ -18,6 +20,7 @@ namespace Application.Services.AuthServices
     public class RegistroUsuarioService : IRegistroUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly ILoginRepository _loginRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
         private readonly IEmailService _emailService;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository;
@@ -33,7 +36,8 @@ namespace Application.Services.AuthServices
             IUsuarioIdentityRepository usuarioIdentityRepository,
             IEmailService emailService,
             IValidador<UsuarioRegistroRequest> validador,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ILoginRepository loginRepository)
         {
             _usuarioRepository = usuarioRepository;
             _perfilDeAcessoUsuarioRepository = perfilDeAcessoUsuarioRepository;
@@ -42,6 +46,7 @@ namespace Application.Services.AuthServices
             _emailService = emailService;
             _validador = validador;
             _httpContextAccessor = httpContextAccessor;
+            _loginRepository = loginRepository;
         }
 
         public async Task<Resultado> RegistrarUsuario(UsuarioRegistroRequest request)
@@ -93,6 +98,12 @@ namespace Application.Services.AuthServices
             catch { }
 
             return Resultado.Sucesso($"Usuário {usuario.Nome} {usuario.Sobrenome}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar.");
+        }
+
+        public async Task<Resultado> TrocarSenha(LoginRequestDTO dto)
+        {
+            var resultado = await _loginRepository.AtualizarSenhaUsuario(dto.CodigoDoUsuario, dto.Senha);
+            return resultado ? Resultado.Sucesso() : Resultado.Falha("Erro ao atualizar a senha");
         }
 
         private async Task<string> ObterUrlDeConfirmacao(string uri, string codigoUsuario)
