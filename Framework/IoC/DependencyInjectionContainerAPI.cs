@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Entities.Identity;
 using System;
@@ -107,6 +108,7 @@ namespace IoC
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
+            services.AddScoped<IValidador<DadosDoTokenDTO>, DadosDoTokenValidador>();
             services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidador>();
         }
 
