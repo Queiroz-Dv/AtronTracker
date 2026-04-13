@@ -159,5 +159,39 @@ namespace Infrastructure.Repositories.Identity
             if (user is null) return false;
             return (await _userManager.ConfirmEmailAsync(user, token)).Succeeded;
         }
+
+        public async Task<string> GerarTokenAlteracaoEmailAsync(string codigoUsuario, string emailNovo)
+        {
+            var usuario = await _userManager.FindByNameAsync(codigoUsuario);
+            if (usuario == null) return string.Empty;
+
+            return await _userManager.GenerateChangeEmailTokenAsync(usuario, emailNovo);
+        }
+
+        public async Task<bool> ConfirmarAlteracaoEmailAsync(string codigoUsuario, string emailNovo, string token)
+        {
+            var usuario = await _userManager.FindByNameAsync(codigoUsuario);
+            if (usuario == null) return false;
+
+            var resultado = await _userManager.ChangeEmailAsync(usuario, emailNovo, token);
+
+            if (resultado.Succeeded)
+            {
+                // Mantém o UserName sincronizado com o e-mail no Identity
+                usuario.Email = emailNovo;
+                usuario.NormalizedEmail = emailNovo.ToUpperInvariant();
+                await _userManager.UpdateAsync(usuario);
+            }
+
+            return resultado.Succeeded;
+        }
+
+        public async Task<bool> EmailConfirmadoAsync(string codigoUsuario)
+        {
+            var usuario = await _userManager.FindByNameAsync(codigoUsuario);
+            if (usuario == null) return false;
+
+            return await _userManager.IsEmailConfirmedAsync(usuario);
+        }
     }
 }

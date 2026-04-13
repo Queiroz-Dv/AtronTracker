@@ -109,6 +109,7 @@ namespace Application.Services.AuthServices
         private async Task<string> ObterUrlDeConfirmacao(string uri, string codigoUsuario)
         {
             var token = await _usuarioIdentityRepository.GerarTokenConfirmacaoEmailAsync(codigoUsuario);
+            var tokenEncoded = HttpUtility.UrlEncode(token); // <-- importante
             var baseUri = ObterUri(uri);
             return $"{baseUri}/confirmar-email?usuarioCodigo={codigoUsuario}&token={token}";
         }
@@ -125,9 +126,70 @@ namespace Application.Services.AuthServices
         {
             var resultado = await _usuarioIdentityRepository.ConfirmarEmailAsync(codigoUsuario, token);
 
-            return !resultado
-                ? Resultado.Falha("Falha ao confirmar e-mail. Token inválido ou expirado.")
-                : Resultado.Sucesso("E-mail confirmado com sucesso!");
+            if (!resultado)
+                return Resultado.Falha("Falha ao confirmar e-mail. Token inválido ou expirado.");
+
+            // Se a confirmação foi bem sucedida, tentar enviar e-mail de notificação ao usuário
+            try
+            {
+                // Obter e-mail do usuário pelo código (não depende do request)
+                var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
+                if (usuario != null && !string.IsNullOrEmpty(usuario.Email))
+                {
+                    var assunto = "E-mail confirmado - AtronTracker";
+                    var mensagem = CorpoEmailConfirmacaoSucesso(usuario.Nome);
+
+                    // Envio best-effort: não interrompe o fluxo se falhar
+                    await _emailService.EnviarAsync(new EmailRequest
+                    {
+                        Assunto = assunto,
+                        Mensagem = mensagem,
+                        EmailsDestino = [usuario.Email]
+                    });
+                }
+            }
+            catch
+            {
+                // Log opcional aqui (não interrompe o fluxo)
+            }
+
+            return Resultado.Sucesso("E-mail confirmado com sucesso!");
+        }
+
+        private static string CorpoEmailConfirmacaoSucesso(string nomeUsuario)
+        {
+            return $@"
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset='utf-8'>
+                        <style>
+                            body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }}
+                            .container {{ max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+                            .header {{ text-align: center; padding-bottom: 20px; border-bottom: 2px solid #007bff; }}
+                            .header h1 {{ color: #007bff; margin: 0; }}
+                            .content {{ padding: 20px 0; }}
+                            .content p {{ color: #333; line-height: 1.6; }}
+                            .footer {{ text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class='container'>
+                            <div class='header'>
+                                <h1>✔️ E-mail confirmado</h1>
+                            </div>
+                            <div class='content'>
+                                <p>Olá, <strong>{nomeUsuario}</strong>!</p>
+                                <p>Seu e-mail foi confirmado com sucesso. Agora você pode acessar sua conta normalmente.</p>
+                                <p>Se você não realizou essa ação, entre em contato com o suporte imediatamente.</p>
+                            </div>
+                            <div class='footer'>
+                                <p>Este é um e-mail automático. Por favor, não responda.</p>
+                                <p>&copy; {DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>";
         }
 
         private static string CorpoDoEmailDeCadastro(Usuario usuario, string link)

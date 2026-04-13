@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
-using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
+    /// <summary>
+    /// Controller responsável por operações de autenticação e registro de usuários.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AcessoController : ControllerBase
@@ -33,17 +35,27 @@ namespace WebApi.Controllers
             _cookieService = cookieService;
             _solicitarReativacao = solicitarReativacao;
             _reativarUsuario = reativarUsuario;
+            _service = loginUserService;
         }
 
+        /// <summary>
+        /// Autentica um usuário e retorna os dados do token (access + refresh).
+        /// </summary>
+        /// <param name="loginDTO">Credenciais do usuário (código e senha).</param>
+        /// <returns>Dados do token em caso de sucesso; mensagens de erro em caso de falha.</returns>
         [HttpPost(nameof(Login))]
         public async Task<ActionResult<DadosDoTokenDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
             var resultado = await _service.Autenticar(loginDTO);
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
-                Ok(resultado.Messages);
+                Ok(resultado.Dados);
         }
 
+        /// <summary>
+        /// Atualiza o token de acesso usando o refresh token presente no cookie da requisição.
+        /// </summary>
+        /// <returns>Mensagens de sucesso ou falha.</returns>
         [HttpGet("RefreshToken")]
         public async Task<IActionResult> Refresh()
         {
@@ -53,6 +65,10 @@ namespace WebApi.Controllers
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
+        /// <summary>
+        /// Encerra a sessão do usuário atual, removendo cookies e invalidando refresh token.
+        /// </summary>
+        /// <returns>Mensagens de sucesso ou falha.</returns>
         [HttpGet("Desconectar")]
         public async Task<ActionResult<bool>> Logout()
         {
@@ -61,6 +77,11 @@ namespace WebApi.Controllers
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
+        /// <summary>
+        /// Atualiza a senha do usuário (fluxo de troca de senha).
+        /// </summary>
+        /// <param name="dto">DTO contendo código do usuário e nova senha.</param>
+        /// <returns>Mensagens de sucesso ou falha.</returns>
         [HttpPost(nameof(TrocarSenha))]
         public async Task<ActionResult<bool>> TrocarSenha([FromBody] LoginRequestDTO dto)
         {
@@ -68,6 +89,11 @@ namespace WebApi.Controllers
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
+        /// <summary>
+        /// Registra um novo usuário no sistema e envia e-mail de confirmação.
+        /// </summary>
+        /// <param name="registroRequest">Dados necessários para registro (código, nome, e-mail, senha, etc.).</param>
+        /// <returns>Mensagens de sucesso ou falha.</returns>
         [HttpPost("Registrar")]
         public async Task<ActionResult> Post([FromBody] UsuarioRegistroRequest registroRequest)
         {
@@ -76,6 +102,11 @@ namespace WebApi.Controllers
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
+        /// <summary>
+        /// Confirma o e-mail do usuário usando o código do usuário e o token de confirmação.
+        /// </summary>
+        /// <param name="request">Objeto contendo UsuarioCodigo e Token.</param>
+        /// <returns>Mensagens de sucesso ou falha.</returns>
         [HttpPost("ConfirmarEmail")]
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmarEmail([FromBody] ConfirmarEmailRequest request)
@@ -88,18 +119,28 @@ namespace WebApi.Controllers
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
+        /// <summary>
+        /// Solicita reativação de conta — inicia fluxo de reativação (envio de código por e-mail).
+        /// </summary>
+        /// <param name="request">Objeto contendo o e-mail para solicitação de reativação.</param>
+        /// <returns>Mensagens de sucesso ou falha.</returns>
         [HttpPost("SolicitarReativacao")]
         [AllowAnonymous]
         public async Task<ActionResult> SolicitarReativacao([FromBody] SolicitarReativacaoRequest request)
-        {            
+        {
             var resultado = await _solicitarReativacao.ExecutarAsync(request.Email);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
+        /// <summary>
+        /// Reativa uma conta usando o código de reativação enviado por e-mail.
+        /// </summary>
+        /// <param name="request">Objeto contendo e-mail e código de reativação.</param>
+        /// <returns>Mensagens de sucesso ou falha.</returns>
         [HttpPost("ReativarConta")]
         [AllowAnonymous]
         public async Task<ActionResult> ReativarConta([FromBody] ReativarContaRequest request)
-        {            
+        {
             var resultado = await _reativarUsuario.ExecutarAsync(request.Email, request.CodigoReativacao);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }

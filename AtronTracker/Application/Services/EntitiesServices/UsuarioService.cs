@@ -15,15 +15,24 @@ namespace Application.Services.EntitiesServices
 {
     public class UsuarioService : IUsuarioService
     {
+        // Mapeamento
         private readonly IAsyncMap<UsuarioDTO, Usuario> _asyncMap;
+
+        // Dados
         private readonly IUsuarioRepository _usuarioRepository;
 
+        // Casos de Uso do módulo
         private readonly CriarUsuario _criarUsuario;
         private readonly AtualizarUsuario _atualizarUsuario;
         private readonly RemoverUsuario _removerUsuario;
         private readonly DesativarUsuario _desativarUsuario;
         private readonly ReativarUsuario _reativarUsuario;
         private readonly SolicitarReativacao _solicitarReativacao;
+
+        // Casos de Uso - E-mail
+        private readonly AlterarEmail _alterarEmail;
+        private readonly ConfirmarAlteracaoEmail _confirmarAlteracaoEmail;
+        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail;
 
         public UsuarioService(
             IAsyncMap<UsuarioDTO, Usuario> asyncMap,
@@ -33,7 +42,10 @@ namespace Application.Services.EntitiesServices
             RemoverUsuario removerUsuario,
             DesativarUsuario desativarUsuario,
             ReativarUsuario reativarUsuario,
-            SolicitarReativacao solicitarReativacao)
+            SolicitarReativacao solicitarReativacao,
+            AlterarEmail alterarEmail,
+            ConfirmarAlteracaoEmail confirmarAlteracaoEmail,
+            ReenviarConfirmacaoEmail reenviarConfirmacaoEmail)
         {
             _asyncMap = asyncMap;
             _usuarioRepository = usuarioRepository;
@@ -43,6 +55,9 @@ namespace Application.Services.EntitiesServices
             _desativarUsuario = desativarUsuario;
             _reativarUsuario = reativarUsuario;
             _solicitarReativacao = solicitarReativacao;
+            _alterarEmail = alterarEmail;
+            _confirmarAlteracaoEmail = confirmarAlteracaoEmail;
+            _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
         }
 
         public async Task<Resultado<UsuarioRequest>> CriarAsync(UsuarioRequest request)
@@ -63,6 +78,15 @@ namespace Application.Services.EntitiesServices
         public async Task<Resultado> SolicitarReativacaoAsync(string email)
             => await _solicitarReativacao.ExecutarAsync(email);
 
+        public async Task<Resultado> AlterarEmailAsync(string codigo, string emailNovo, string clienteUri) 
+            => await _alterarEmail.ExecutarAsync(codigo, emailNovo, clienteUri);
+
+        public async Task<Resultado> ConfirmarAlteracaoEmailAsync(string usuarioCodigo, string emailNovo, string token) 
+            => await _confirmarAlteracaoEmail.ExecutarAsync(usuarioCodigo, emailNovo, token);
+
+        public async Task<Resultado> ReenviarConfirmacaoEmailAsync(string codigo, string clientUri)
+            => await _reenviarConfirmacaoEmail.ExecutarAsync(codigo, clientUri);
+
         public async Task<Resultado<List<UsuarioDTO>>> ObterTodosAsync()
         {
             var entities = await _usuarioRepository.ObterUsuariosAsync();
@@ -81,6 +105,6 @@ namespace Application.Services.EntitiesServices
 
             var dto = await _asyncMap.MapToDTOAsync(entidade);
             return Resultado<UsuarioDTO>.Sucesso(dto);
-        }
+        }       
     }
 }

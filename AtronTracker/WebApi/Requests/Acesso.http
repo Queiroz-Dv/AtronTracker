@@ -16,15 +16,15 @@ Content-Type: application/json
 POST {{$projectUrl}}/api/acesso/confirmarEmail
 Content-Type: application/json
 {
-  "codigoDoUsuario": "DEW",
-  "senha": "!QAZ24wsx@#"
+  "usuarioCodigo": "DEW",
+  "token": "CfDJ8PJTg7FyAV9CujOiiXrPYNsWvSuowIiwNYWKAUSCQcecOJvEMRHJQQ0fl4CDIL6780bdHX9xEQOrFe3Iccrw+QRihqediz5ygkE2LGBtf2lG3PBJwO/toRk+Oyd5C41YKopITdPqEnFT44S6kBRxzxJVWekeBtrkG3Wvn8dzkdmu1zE32vHZyVN4z9LNxEVj3dwhh8RFR9qwE0/GozkbORY="
 }
 
 ### Login para acessar
 POST {{$projectUrl}}/api/acesso/login
 Content-Type: application/json
 {
-  "usuarioCodigo": "",
+  "usuarioCodigo": "Dew",
   "token": ""
 }
 
