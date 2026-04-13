@@ -27,7 +27,6 @@ using System;
 using System.IO;
 using System.Text.Json.Serialization;
 
-
 namespace IoC
 {
     public static class DependencyInjectionContainerAPI
@@ -138,12 +137,14 @@ namespace IoC
             services.AddScoped<DesativarUsuario>();
             services.AddScoped<SolicitarReativacao>();
             services.AddScoped<ReativarUsuario>();
+            services.AddScoped<AlterarEmail>();
+            services.AddScoped<ConfirmarAlteracaoEmail>();
+            services.AddScoped<ReenviarConfirmacaoEmail>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
             services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();            
             services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();
         }
-
 
         private static void ConfigureCargoServices(IServiceCollection services)
         {

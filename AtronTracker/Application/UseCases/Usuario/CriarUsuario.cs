@@ -140,12 +140,38 @@ namespace Application.UseCases.Usuario
         private static EmailRequest CriarEmailBoasVindas(string destinatario, string nomeUsuario)
         {
             var corpo = $@"
-                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;'>
-                    <h1 style='color: #007bff;'>Bem-vindo ao Sistema Atron!</h1>
-                    <p>Olá, <strong>{nomeUsuario}</strong>!</p>
-                    <p>Sua conta foi criada com sucesso. Acesse o sistema com suas credenciais.</p>
-                    <p style='font-size: 12px; color: #aaa;'>Este é um e-mail automático. Por favor, não responda.</p>
-                </div>";
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset='utf-8'>
+                                <style>
+                                    body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }}
+                                    .container {{ max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+                                    .header {{ text-align: center; padding-bottom: 20px; border-bottom: 2px solid #007bff; }}
+                                    .header h1 {{ color: #007bff; margin: 0; }}
+                                    .content {{ padding: 20px 0; }}
+                                    .content p {{ color: #333; line-height: 1.6; }}
+                                    .footer {{ text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; }}
+                                </style>
+                            </head>
+                            <body>
+                                <div class='container'>
+                                    <div class='header'>
+                                        <h1>🎉 Bem-vindo ao Sistema Atron!</h1>
+                                    </div>
+                                    <div class='content'>
+                                        <p>Olá, <strong>{nomeUsuario}</strong>!</p>
+                                        <p>Sua conta foi criada com sucesso no Sistema Atron.</p>
+                                        <p>Agora você pode acessar o sistema utilizando suas credenciais de login.</p>
+                                        <p>Se você tiver alguma dúvida, entre em contato com o suporte.</p>
+                                    </div>
+                                    <div class='footer'>
+                                        <p>Este é um e-mail automático. Por favor, não responda.</p>
+                                        <p>&copy; {DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>";
 
             return new EmailRequest
             {

@@ -326,8 +326,8 @@ namespace AtronStock.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "MovimentacoesEstoque");
 
-            migrationBuilder.DropTable(
-                name: "ProdutoCategorias");
+            //migrationBuilder.DropTable(
+            //    name: "ProdutoCategorias");
 
             migrationBuilder.DropTable(
                 name: "Entradas");
