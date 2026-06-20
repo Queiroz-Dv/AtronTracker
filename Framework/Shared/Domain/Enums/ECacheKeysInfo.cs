@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Shared.Domain.Enums
 {
@@ -9,6 +9,8 @@ namespace Shared.Domain.Enums
         [Description("sessao")]
         Sessao,
         [Description("tokenInfo")]
-        TokenInfo
+        TokenInfo,
+        [Description("dadosTemporarios")]
+        DadosTemporarios
     }
 }

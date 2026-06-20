@@ -84,7 +84,7 @@ export class AcessoService {
   }
 
   confirmarEmail(confirmarEmailRequest: ConfirmarEmailRequest): Observable<string> {
-    
+
     return this.http.post<string>(RotasApi.confirmarEmailEndpoint, confirmarEmailRequest).pipe(
       map(response => {
         console.log(response);
@@ -96,9 +96,34 @@ export class AcessoService {
       })
     );
   }
+
+  solicitarRecuperacaoSenha(request: SolicitarRecuperacaoSenhaRequest): Observable<string[]> {
+    return this.http.post<string[]>(RotasApi.recuperarSenhaEndpoint, request).pipe(
+      map(response => response || []),
+      catchError(error => throwError(() => error))
+    );
+  }
+
+  trocarSenha(request: RedefinirSenhaRequest): Observable<string[]> {
+    return this.http.post<string[]>(RotasApi.trocarSenhaEndpoint, request).pipe(
+      map(response => response || []),
+      catchError(error => throwError(() => error))
+    );
+  }
 }
 
-export class ConfirmarEmailRequest{
+export class ConfirmarEmailRequest {
   public usuarioCodigo: string;
-  public token: string
+  public token: string;
+}
+
+export class SolicitarRecuperacaoSenhaRequest {
+  public identificador: string;
+  public clientUri: string;
+}
+
+export class RedefinirSenhaRequest {
+  public identificadorTemporario: string;
+  public novaSenha: string;
+  public repetirSenha: string;
 }
