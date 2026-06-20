@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Memory;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
@@ -16,6 +16,14 @@ namespace Shared.Application.Services.Caching
                 cacheInfo.KeyDescription,
                 cacheInfo.EntityInfo,
                 TimeSpan.FromMinutes(30));
+        }
+
+        public void GravarCache<T>(CacheInfo<T> cacheInfo, TimeSpan expiracao)
+        {
+            _memoryCache.Set(
+                cacheInfo.KeyDescription,
+                cacheInfo.EntityInfo,
+                expiracao);
         }
 
         public T ObterCache<T>(string cacheKey)

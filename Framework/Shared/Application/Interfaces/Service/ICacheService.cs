@@ -1,4 +1,4 @@
-﻿using Shared.Domain.Enums;
+using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 
 namespace Shared.Application.Interfaces.Service
@@ -6,6 +6,7 @@ namespace Shared.Application.Interfaces.Service
     public interface ICacheService
     {
         void GravarCache<T>(CacheInfo<T> cacheInfo);
+        void GravarCache<T>(CacheInfo<T> cacheInfo, TimeSpan expiracao);
 
         T ObterCache<T>(string cacheKey);
 

@@ -49,7 +49,6 @@ export class LoginComponent implements OnInit {
     let loginPayload = new LoginRequest();
     loginPayload.codigoDoUsuario = this.form.value.codigo;
     loginPayload.senha = this.form.value.senha;
-    //loginPayload.lembrar = this.form.value.lembrar;
 
     this.loginService.autenticar(loginPayload).subscribe({
       next: () => {
@@ -70,5 +69,9 @@ export class LoginComponent implements OnInit {
 
   registrar() {
     this.router.navigate(['/registrar']);
+  }
+
+  esqueciSenha() {
+    this.router.navigate(['/esqueci-senha']);
   }
 }

@@ -1,4 +1,4 @@
-﻿using Application.DTO.Request;
+using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.UseCases.Usuario;
 using Microsoft.AspNetCore.Authorization;
@@ -78,14 +78,28 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Atualiza a senha do usuário (fluxo de troca de senha).
+        ///Atualiza a senha do usuário utilizando o token de recuperação.
         /// </summary>
-        /// <param name="dto">DTO contendo código do usuário e nova senha.</param>
+        /// <param name="request">DTO contendo token, código e senhas criptografadas.</param>
         /// <returns>Mensagens de sucesso ou falha.</returns>
         [HttpPost(nameof(TrocarSenha))]
-        public async Task<ActionResult<bool>> TrocarSenha([FromBody] LoginRequestDTO dto)
+        [AllowAnonymous]
+        public async Task<ActionResult<bool>> TrocarSenha([FromBody] RedefinirSenhaRequest request)
         {
-            var resultado = await _registroUsuarioService.TrocarSenha(dto);
+            var resultado = await _registroUsuarioService.TrocarSenha(request);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        /// <summary>
+        /// Solicitar Recuperação de Senha.
+        /// </summary>
+        /// <param name="request">Email ou Codigo para envio do token de alteração de senha.</param>
+        /// <returns>Ok ou BadRequest</returns>
+        [HttpPost("RecuperarSenha")]
+        [AllowAnonymous]
+        public async Task<ActionResult> RecuperarSenha([FromBody] SolicitarRecuperacaoSenhaRequest request)
+        {
+            var resultado = await _registroUsuarioService.SolicitarRecuperacaoSenha(request);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 

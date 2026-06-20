@@ -22,7 +22,9 @@ export class AuthInterceptor implements HttpInterceptor {
 
     this.usuarioCodigo = this.sessaoService.getUsuarioCodigoLocalStorage();
 
-    if (req.url.startsWith(RotasApi.logarEndpoint) || req.url.startsWith(RotasApi.registrarEndpoint)) {
+    // Ignora rotas que não precisam de autenticação ou refresh token
+   let rotasPadrao = [RotasApi.logarEndpoint, RotasApi.registrarEndpoint, RotasApi.recuperarSenhaEndpoint, RotasApi.trocarSenhaEndpoint];
+    if (rotasPadrao.some(r => req.url.startsWith(r))) {
       this.sessaoService.clearSessionInfo();
       return next.handle(req);
     }

@@ -55,11 +55,28 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(usr => usr.Codigo == codigo && !usr.Inativo);
         }
 
+        public async Task<Usuario> ObterUsuarioGeralPorCodigoAsync(string codigo)
+        {
+            return await _context.Usuarios
+                .Include(rel => rel.UsuarioCargoDepartamentos)
+                    .ThenInclude(crg => crg.Cargo)
+                        .ThenInclude(dpt => dpt.Departamento)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(usr => usr.Codigo == codigo );
+        }
+
         public async Task<Usuario> ObterInativoPorEmailAsync(string email)
         {
             return await _context.Usuarios
                 .AsNoTracking()
                 .FirstOrDefaultAsync(usr => usr.Email == email && usr.Inativo);
+        }
+
+        public async Task<Usuario> ObterUsuarioGeralPorEmailAsync(string email)
+        {
+            return await _context.Usuarios
+                .AsNoTracking()
+                .FirstOrDefaultAsync(usr => usr.Email == email);
         }
 
         public async Task<IEnumerable<Usuario>> ObterUsuariosAsync()

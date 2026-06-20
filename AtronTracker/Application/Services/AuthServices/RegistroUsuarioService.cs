@@ -1,4 +1,4 @@
-﻿using Application.DTO.Request;
+using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -6,14 +6,15 @@ using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.AspNetCore.Http;
-using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System;
 using System.Threading.Tasks;
 using System.Web;
+using Application.Extensions;
 
 namespace Application.Services.AuthServices
 {
@@ -27,6 +28,7 @@ namespace Application.Services.AuthServices
         private readonly IPerfilDeAcessoUsuarioRepository _perfilDeAcessoUsuarioRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IValidador<UsuarioRegistroRequest> _validador;
+        private readonly ICacheService _cacheService;
 
         public RegistroUsuarioService(
             IAccessorService accessor,
@@ -37,7 +39,8 @@ namespace Application.Services.AuthServices
             IEmailService emailService,
             IValidador<UsuarioRegistroRequest> validador,
             IHttpContextAccessor httpContextAccessor,
-            ILoginRepository loginRepository)
+            ILoginRepository loginRepository,
+            ICacheService cacheService)
         {
             _usuarioRepository = usuarioRepository;
             _perfilDeAcessoUsuarioRepository = perfilDeAcessoUsuarioRepository;
@@ -47,6 +50,7 @@ namespace Application.Services.AuthServices
             _validador = validador;
             _httpContextAccessor = httpContextAccessor;
             _loginRepository = loginRepository;
+            _cacheService = cacheService;
         }
 
         public async Task<Resultado> RegistrarUsuario(UsuarioRegistroRequest request)
@@ -100,10 +104,124 @@ namespace Application.Services.AuthServices
             return Resultado.Sucesso($"Usuário {usuario.Nome} {usuario.Sobrenome}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar.");
         }
 
-        public async Task<Resultado> TrocarSenha(LoginRequestDTO dto)
+        public async Task<Resultado> TrocarSenha(RedefinirSenhaRequest request)
         {
-            var resultado = await _loginRepository.AtualizarSenhaUsuario(dto.CodigoDoUsuario, dto.Senha);
-            return resultado ? Resultado.Sucesso() : Resultado.Falha("Erro ao atualizar a senha");
+            if (string.IsNullOrWhiteSpace(request.IdentificadorTemporario))
+                return Resultado.Falha("Identificador temporário não informado.");
+
+            // Buscar DadosTemporarios no cache usando o identificador
+            var cacheKey = $"{ECacheKeysInfo.DadosTemporarios.GetDescription()}:{request.IdentificadorTemporario}";
+            var dadosTemporarios = _cacheService.ObterCache<DadosTemporarios>(cacheKey);
+
+            if (dadosTemporarios == null)
+                return Resultado.Falha("Solicitação expirada ou inválida. Solicite uma nova recuperação de senha.");
+
+            var novaSenha = CryptoHelper.DecryptCryptoJsAes(request.NovaSenha);
+            var repetirSenha = CryptoHelper.DecryptCryptoJsAes(request.RepetirSenha);
+
+            if (string.IsNullOrEmpty(novaSenha) || string.IsNullOrEmpty(repetirSenha))
+                return Resultado.Falha("Senha inválida ou falha na descriptografia da requisição.");
+
+            if (novaSenha != repetirSenha)
+                return Resultado.Falha("As senhas informadas não coincidem.");
+
+            // Extrair dados reais do cache (UsuarioCodigo e Token)
+            var usuarioCodigo = dadosTemporarios.UsuarioCodigo;
+            var token = dadosTemporarios.Token;
+
+            var resultado = await _usuarioIdentityRepository.RedefinirSenhaAsync(usuarioCodigo, token, novaSenha);
+            if (resultado)
+            {
+                // Tenta atualizar no repository de login se necessário
+                var atualizouLogin = await _loginRepository.AtualizarSenhaUsuario(usuarioCodigo, novaSenha);
+
+                // Remover dados temporários do cache após sucesso (evitar reutilização)
+                _cacheService.RemoverCache(ECacheKeysInfo.DadosTemporarios, request.IdentificadorTemporario);
+
+                return Resultado.Sucesso("Senha alterada com sucesso.");
+            }
+
+            return Resultado.Falha("Erro ao atualizar a senha. Token inválido ou expirado.");
+        }
+
+        public async Task<Resultado> SolicitarRecuperacaoSenha(SolicitarRecuperacaoSenhaRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Identificador)) return Resultado.Falha("Identificador não informado.");
+
+            Usuario usuario = null;
+            // Se tiver mais de 3 chars, regra dictamina como E-mail. Também vamos checar pelo '@'.
+            if (request.Identificador.Length > 3 || request.Identificador.Contains('@'))
+            {
+                usuario = await _usuarioRepository.ObterUsuarioGeralPorEmailAsync(request.Identificador);
+            }
+            else
+            {
+                usuario = await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(request.Identificador);
+            }
+
+            if (usuario == null)
+                return Resultado.Falha("Usuário não encontrado com o identificador fornecido.");
+
+            if (usuario.Inativo)
+                return Resultado.Falha("Usuário inativo. Solicite a um superior ou suporte a reativação desse usuário.");
+
+            var token = await _usuarioIdentityRepository.GerarTokenRecuperacaoSenhaAsync(usuario.Codigo);
+
+            // Gerar identificador temporário de 9 dígitos com código do usuário embutido
+            var identificadorTemporario = CryptoHelper.GerarIdentificadorTemporario(usuario.Codigo);
+
+            // Criar snapshot dos dados temporários
+            var dadosTemporarios = new DadosTemporarios
+            {
+                IdentificadorTemporario = identificadorTemporario,
+                UsuarioCodigo = usuario.Codigo,
+                Email = usuario.Email,
+                Token = token,
+                DataAlteracaoSenha = DateTime.UtcNow
+            };
+
+            // Gravar no cache com TTL de 15 minutos
+            var cacheInfo = new CacheInfo<DadosTemporarios>(ECacheKeysInfo.DadosTemporarios, identificadorTemporario)
+            {
+                EntityInfo = dadosTemporarios
+            };
+            _cacheService.GravarCache(cacheInfo, TimeSpan.FromMinutes(15));
+
+            // Criptografar o identificador para o link (não expor dados na URL)
+            var identificadorCriptografado = CryptoHelper.EncryptCryptoJsAes(identificadorTemporario);
+            var identificadorUrlEncoded = HttpUtility.UrlEncode(identificadorCriptografado);
+
+            var baseUri = ObterUri(request.ClientUri);
+            var link = $"{baseUri}/trocar-senha?id={identificadorUrlEncoded}";
+
+            try
+            {
+                 await _emailService.EnviarAsync(new EmailRequest
+                 {
+                     Assunto = "Recuperação de Senha - AtronTracker",
+                     Mensagem = CorpoDoEmailRecuperacaoSenha(usuario.Nome, link),
+                     EmailsDestino = [usuario.Email]
+                 });
+            }
+            catch { }
+
+            return Resultado.Sucesso("Se o identificador existir em nossa base, um e-mail com as instruções de recuperação foi enviado.");
+        }
+
+        private static string CorpoDoEmailRecuperacaoSenha(string nome, string link)
+        {
+             return $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;'>
+                    <h1 style='color: #2c3e50;'>Recuperação de Senha</h1>
+                    <p>Olá, <strong>{nome}</strong>!</p>
+                    <p>Recebemos uma solicitação para redefinir a senha da sua conta no Atron.</p>
+                    <p>Para criar uma nova senha, clique no botão abaixo. Este link expira em 15 minutos:</p>
+                    <div style='text-align: center; margin: 30px 0;'>
+                        <a href='{link}' style='background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Redefinir Minha Senha</a>
+                    </div>
+                    <p style='font-size: 12px; color: #999; word-break: break-all;'>Se o botão não funcionar, copie e cole este link no navegador: <br>{link}</p>
+                    <p style='font-size: 12px; color: #aaa;'>Se você não solicitou a alteração de senha, pode ignorar e excluir este e-mail com segurança.</p>
+                </div>";
         }
 
         private async Task<string> ObterUrlDeConfirmacao(string uri, string codigoUsuario)

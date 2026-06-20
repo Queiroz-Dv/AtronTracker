@@ -1,4 +1,4 @@
-﻿using AtronTracker.Infrastructure.Context;
+using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -184,6 +184,21 @@ namespace Infrastructure.Repositories.Identity
             }
 
             return resultado.Succeeded;
+        }
+
+        public async Task<string> GerarTokenRecuperacaoSenhaAsync(string codigoUsuario)
+        {
+            var user = await _userManager.FindByNameAsync(codigoUsuario);
+            if (user is null) return null;
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<bool> RedefinirSenhaAsync(string codigoUsuario, string token, string novaSenha)
+        {
+            var user = await _userManager.FindByNameAsync(codigoUsuario);
+            if (user is null) return false;
+            var result = await _userManager.ResetPasswordAsync(user, token, novaSenha);
+            return result.Succeeded;
         }
 
         public async Task<bool> EmailConfirmadoAsync(string codigoUsuario)

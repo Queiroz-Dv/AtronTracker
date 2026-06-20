@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,7 +9,9 @@ namespace Domain.Interfaces.UsuarioInterfaces
         Task<IEnumerable<Usuario>> ObterUsuariosAsync();
         Task<Usuario> ObterUsuarioPorIdAsync(int? id);
         Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo);
+        Task<Usuario> ObterUsuarioGeralPorCodigoAsync(string codigo);
         Task<Usuario> ObterInativoPorEmailAsync(string email);
+        Task<Usuario> ObterUsuarioGeralPorEmailAsync(string email);
         Task<bool> CriarUsuarioAsync(Usuario usuario);
         Task<bool> AtualizarUsuarioAsync(Usuario usuario);
         Task<bool> RemoverUsuarioAsync(Usuario usuario);

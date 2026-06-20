@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using System;
 using System.Threading.Tasks;
 
@@ -22,6 +22,8 @@ namespace Domain.Interfaces.Identity
         Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario);
         Task<string> GerarTokenAlteracaoEmailAsync(string codigoUsuario, string emailNovo);
         Task<bool> ConfirmarAlteracaoEmailAsync(string codigoUsuario, string emailNovo, string token);
+        Task<string> GerarTokenRecuperacaoSenhaAsync(string codigoUsuario);
+        Task<bool> RedefinirSenhaAsync(string codigoUsuario, string token, string novaSenha);
         /// <summary>
         /// Verifica se o e-mail do usuário já foi confirmado
         /// </summary>
