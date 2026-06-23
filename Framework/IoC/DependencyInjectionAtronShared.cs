@@ -26,11 +26,10 @@ namespace IoC
     {
         public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            string sqlConnection = configuration.GetConnectionString("AtronConnection");
+            var database = DatabaseProviderResolver.Resolve(configuration);
 
             services.AddDbContext<SharedDbContext>(options =>
-            options.UseSqlServer(sqlConnection,
-            b => b.MigrationsAssembly(typeof(SharedDbContext).Assembly.FullName)));
+                options.UseConfiguredDatabase(database, typeof(SharedDbContext).Assembly.FullName));
 
             services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 

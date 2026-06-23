@@ -33,11 +33,10 @@ namespace IoC
     {
         public static IServiceCollection AddInfrastructureAPI(this IServiceCollection services, IConfiguration configuration)
         {
-            string sqlConnection = configuration.GetConnectionString("AtronConnection");
+            var database = DatabaseProviderResolver.Resolve(configuration);
 
             services.AddDbContext<AtronDbContext>(options =>
-                options.UseSqlServer(sqlConnection,
-                b => b.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
+                options.UseConfiguredDatabase(database, typeof(AtronDbContext).Assembly.FullName));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                     .AddEntityFrameworkStores<AtronDbContext>()
