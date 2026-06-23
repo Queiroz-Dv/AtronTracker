@@ -64,6 +64,16 @@ namespace IoC
             }
         }
 
+        public static string ResolveMigrationsAssembly(
+            this DatabaseProviderConfiguration database,
+            string defaultMigrationsAssembly,
+            string postgreSqlMigrationsAssembly)
+        {
+            return database.Provider == DatabaseProvider.PostgreSql
+                ? postgreSqlMigrationsAssembly
+                : defaultMigrationsAssembly;
+        }
+
         public static void UseConfiguredDatabase(
             this DbContextOptionsBuilder options,
             DatabaseProviderConfiguration database,
