@@ -23,8 +23,11 @@ namespace IoC
         public static IServiceCollection AddStockInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             var database = DatabaseProviderResolver.Resolve(configuration);
+            var migrationsAssembly = database.ResolveMigrationsAssembly(
+                typeof(StockDbContext).Assembly.FullName,
+                "AtronStock.Infrastructure.PostgreSqlMigrations");
 
-            services.AddDbContext<StockDbContext>(options => options.UseConfiguredDatabase(database, typeof(StockDbContext).Assembly.FullName));
+            services.AddDbContext<StockDbContext>(options => options.UseConfiguredDatabase(database, migrationsAssembly));
             services = services.AddSharedInfrastructure(configuration);
             services.AddScoped<ITransactionManager, TransactionManager>();
 

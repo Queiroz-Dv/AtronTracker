@@ -17,6 +17,29 @@ namespace Shared.Infrastructure.Context
                 .IncrementsBy(1);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(SharedDbContext).Assembly);
+
+            if (Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL")
+            {
+                foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(entity => entity.GetProperties()))
+                {
+                    var propertyType = Nullable.GetUnderlyingType(property.ClrType) ?? property.ClrType;
+
+                    if (propertyType == typeof(DateTime))
+                        property.SetColumnType("timestamp without time zone");
+                }
+
+                modelBuilder.Entity<Auditoria>()
+                    .Property(a => a.DataCriacao)
+                    .HasDefaultValueSql("now() AT TIME ZONE 'UTC'");
+
+                modelBuilder.Entity<Historico>()
+                    .Property(h => h.CodigoHistorico)
+                    .HasDefaultValueSql("nextval('\"HistoricoSeq\"')");
+
+                modelBuilder.Entity<Historico>()
+                    .Property(h => h.DataCriacao)
+                    .HasDefaultValueSql("now() AT TIME ZONE 'UTC'");
+            }
         }
     }
 }

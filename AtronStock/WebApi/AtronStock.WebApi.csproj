@@ -21,7 +21,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\IoC\IoC.csproj" />
+    <ProjectReference Include="..\..\Framework\Shared.PostgreSqlMigrations\Framework.Shared.PostgreSqlMigrations.csproj" />
     <ProjectReference Include="..\Application\AtronStock.Application.csproj" />
+    <ProjectReference Include="..\Infrastructure.PostgreSqlMigrations\AtronStock.Infrastructure.PostgreSqlMigrations.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

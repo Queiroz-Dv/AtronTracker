@@ -34,9 +34,12 @@ namespace IoC
         public static IServiceCollection AddInfrastructureAPI(this IServiceCollection services, IConfiguration configuration)
         {
             var database = DatabaseProviderResolver.Resolve(configuration);
+            var migrationsAssembly = database.ResolveMigrationsAssembly(
+                typeof(AtronDbContext).Assembly.FullName,
+                "AtronTracker.Infrastructure.PostgreSqlMigrations");
 
             services.AddDbContext<AtronDbContext>(options =>
-                options.UseConfiguredDatabase(database, typeof(AtronDbContext).Assembly.FullName));
+                options.UseConfiguredDatabase(database, migrationsAssembly));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                     .AddEntityFrameworkStores<AtronDbContext>()

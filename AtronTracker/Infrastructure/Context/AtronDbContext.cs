@@ -43,6 +43,17 @@ namespace AtronTracker.Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AtronDbContext).Assembly);
+
+            if (Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL")
+            {
+                foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(entity => entity.GetProperties()))
+                {
+                    var propertyType = Nullable.GetUnderlyingType(property.ClrType) ?? property.ClrType;
+
+                    if (propertyType == typeof(DateTime))
+                        property.SetColumnType("timestamp without time zone");
+                }
+            }
         }
     }
 }

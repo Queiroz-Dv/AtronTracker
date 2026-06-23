@@ -27,9 +27,12 @@ namespace IoC
         public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             var database = DatabaseProviderResolver.Resolve(configuration);
+            var migrationsAssembly = database.ResolveMigrationsAssembly(
+                typeof(SharedDbContext).Assembly.FullName,
+                "Framework.Shared.PostgreSqlMigrations");
 
             services.AddDbContext<SharedDbContext>(options =>
-                options.UseConfiguredDatabase(database, typeof(SharedDbContext).Assembly.FullName));
+                options.UseConfiguredDatabase(database, migrationsAssembly));
 
             services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 
