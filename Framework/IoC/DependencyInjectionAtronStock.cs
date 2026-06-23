@@ -22,9 +22,9 @@ namespace IoC
     {
         public static IServiceCollection AddStockInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            string sqlConnection = configuration.GetConnectionString("AtronConnection");
+            var database = DatabaseProviderResolver.Resolve(configuration);
 
-            services.AddDbContext<StockDbContext>(options => options.UseSqlServer(sqlConnection, b => b.MigrationsAssembly(typeof(StockDbContext).Assembly.FullName)));
+            services.AddDbContext<StockDbContext>(options => options.UseConfiguredDatabase(database, typeof(StockDbContext).Assembly.FullName));
             services = services.AddSharedInfrastructure(configuration);
             services.AddScoped<ITransactionManager, TransactionManager>();
 
@@ -37,7 +37,7 @@ namespace IoC
                 var connection = stockContext.Database.GetDbConnection();
 
                 var optionsBuilder = new DbContextOptionsBuilder<SharedDbContext>();
-                optionsBuilder.UseSqlServer(connection);
+                optionsBuilder.UseConfiguredDatabase(database, connection);
 
                 return new SharedDbContext(optionsBuilder.Options);
             });
