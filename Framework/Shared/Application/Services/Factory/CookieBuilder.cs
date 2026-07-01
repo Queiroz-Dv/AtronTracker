@@ -18,7 +18,7 @@ namespace Shared.Application.Services.Factory
                 _cookies.Append(chaveDoCookie, dado, new CookieOptions
                 {
                     HttpOnly = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Secure = true,
                     Expires = DateTime.UtcNow.AddDays(31) // Expandi para 31 por padrão o token de acesso difere desse tempo
                 });
@@ -34,7 +34,7 @@ namespace Shared.Application.Services.Factory
             _cookies.Append(chaveDoCookie, dado, new CookieOptions
             {
                 HttpOnly = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Secure = true,
                 Expires = expiracao
             });
@@ -45,7 +45,7 @@ namespace Shared.Application.Services.Factory
             _cookies.Delete(chaveDoCookie, new CookieOptions
             {
                 HttpOnly = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Secure = true
             });
         }

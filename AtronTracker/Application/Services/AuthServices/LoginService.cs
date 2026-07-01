@@ -22,7 +22,6 @@ namespace Application.Services.AuthServices
         private readonly ICacheUsuarioService _cacheUsuarioService;
         private readonly ICookieService _cookieService;
         private readonly IUserIdentityService _userIdentityService;
-        private readonly IValidador<DadosDoTokenDTO> _tokenValidator;
 
         private const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
 
@@ -33,8 +32,7 @@ namespace Application.Services.AuthServices
             ITokenService tokenService,
             ICacheUsuarioService cacheUsuarioService,
             ICookieService cookieService,
-            IUserIdentityService userIdentityService,
-            IValidador<DadosDoTokenDTO> tokenValidator)
+            IUserIdentityService userIdentityService)
         {
             _loginRepository = loginRepository;
             _usuarioService = usuarioService;
@@ -43,7 +41,6 @@ namespace Application.Services.AuthServices
             _cacheUsuarioService = cacheUsuarioService;
             _cookieService = cookieService;
             _userIdentityService = userIdentityService;
-            _tokenValidator = tokenValidator;
         }
 
         public async Task<Resultado<DadosDoTokenDTO>> Autenticar(LoginRequestDTO loginRequest)
@@ -73,20 +70,21 @@ namespace Application.Services.AuthServices
             var token = new DadosDoTokenDTO(dadosDoToken.TokenDTO.Token, dadosDoToken.TokenDTO.Expires);
 
             _cacheUsuarioService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDoToken);
-            _cookieService.CriarCookieDoToken(token, resultadoUsuario.Dados.Codigo);
+            _cookieService.CriarCookieDeRefreshToken(dadosDoToken.RefrehTokenDTO, resultadoUsuario.Dados.Codigo);
 
             return Resultado<DadosDoTokenDTO>.Sucesso(token);
         }
 
-        public async Task<Resultado<DadosDoTokenDTO>> RefreshAcesso(DadosDoTokenDTO dadosDoToken)
+        public async Task<Resultado<DadosDoTokenDTO>> RefreshAcesso(DadosDoRefreshTokenCookieDTO dadosDoRefreshToken)
         {
-            var notificacoes = _tokenValidator.Validar(dadosDoToken);
-            if (notificacoes.HasErrors())
-                return Resultado<DadosDoTokenDTO>.Falha("Dados do token inválidos.");
+            if (dadosDoRefreshToken is null || !dadosDoRefreshToken.IsValid())
+                return Resultado<DadosDoTokenDTO>.Falha("Dados do refresh token inválidos.");
 
-            string codigoUsuario = dadosDoToken.Token != null
-                ? await _tokenService.ObterCodigoUsuarioPorClaim(dadosDoToken.Token)
-                : dadosDoToken.UsuarioCodigo;
+            var codigoUsuario = dadosDoRefreshToken.UsuarioCodigo;
+
+            var refreshTokenAtual = await _userIdentityService.ObterRefreshTokenPorCodigoUsuarioServiceAsync(codigoUsuario);
+            if (refreshTokenAtual.IsNullOrEmpty() || refreshTokenAtual != dadosDoRefreshToken.RefreshToken)
+                return Resultado<DadosDoTokenDTO>.Falha("Refresh token inválido.");
 
             var refreshTokenExpirado = await _userIdentityService.RefreshTokenExpiradoServiceAsync(codigoUsuario);
             if (refreshTokenExpirado)
@@ -118,14 +116,14 @@ namespace Application.Services.AuthServices
             var token = new DadosDoTokenDTO(dadosDeToken.TokenDTO.Token, dadosDeToken.TokenDTO.Expires);
 
             _cacheUsuarioService.GravarCacheDeAcessoTokenInfo(dadosComplementares, dadosDeToken);
-            _cookieService.CriarCookieDoToken(token, codigoUsuario);
+            _cookieService.CriarCookieDeRefreshToken(dadosDeToken.RefrehTokenDTO, codigoUsuario);
 
             return Resultado<DadosDoTokenDTO>.Sucesso(token);
         }
 
         public async Task<Resultado> Logout(string usuarioCodigo)
         {
-            var chaveDoCookie = $"{usuarioCodigo}{ETokenInfo.AcesssToken.GetDescription()}";
+            var chaveDoCookie = $"{usuarioCodigo}{ETokenInfo.RefreshToken.GetDescription()}";
             _cookieService.RemoverCookie(chaveDoCookie);
 
             var refreshTokenRedefinido = await _userIdentityService.RedefinirRefreshTokenServiceAsync(usuarioCodigo);

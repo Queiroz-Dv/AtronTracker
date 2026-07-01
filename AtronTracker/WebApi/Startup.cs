@@ -37,7 +37,7 @@ namespace WebApi
         /// <param name="services">Contêiner de serviços.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMemoryCache();
+            services.AddAtronCache(Configuration);
 
             // 🧱 Registra os serviços da camada de infraestrutura (ex: DbContext, Repositórios, JWT, AutoMapper, etc)
             services.AddInfrastructureAPI(Configuration);

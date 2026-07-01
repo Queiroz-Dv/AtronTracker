@@ -1,5 +1,6 @@
 ﻿using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
+using Application.Interfaces.Services;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
@@ -9,13 +10,16 @@ namespace Application.UseCases.Usuario
     {
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
+        private readonly ICacheUsuarioService _cacheUsuarioService;
 
         public ConfirmarAlteracaoEmail(
             IUsuarioRepository usuarioRepository,
-            IUsuarioIdentityRepository usuarioIdentityRepository)
+            IUsuarioIdentityRepository usuarioIdentityRepository,
+            ICacheUsuarioService cacheUsuarioService)
         {
             _usuarioRepository = usuarioRepository;
             _usuarioIdentityRepository = usuarioIdentityRepository;
+            _cacheUsuarioService = cacheUsuarioService;
         }
 
         public async Task<Resultado> ExecutarAsync(string codigoUsuario, string emailNovo, string token)
@@ -37,6 +41,7 @@ namespace Application.UseCases.Usuario
 
             usuario.Email = emailNovo;
             await _usuarioRepository.AtualizarUsuarioAsync(usuario);
+            _cacheUsuarioService.RemoverCacheDeAcessoTokenInfo(usuario.Codigo);
 
             return Resultado.Sucesso("E-mail alterado com sucesso.");
         }

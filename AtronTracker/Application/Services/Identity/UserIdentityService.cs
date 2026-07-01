@@ -20,7 +20,7 @@ namespace Application.Services.Identity
         {
             if (codigoUsuario.IsNullOrEmpty() ||
                 refreshToken.IsNullOrEmpty() ||
-                refreshTokenExpireTime > DateTime.Now)
+                refreshTokenExpireTime <= DateTime.UtcNow)
             {
                 return false;
             }

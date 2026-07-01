@@ -1,30 +1,112 @@
-### Registra um novo usuário
-POST {{$projectUrl}}/api/acesso/registrar
+@baseUrl = {{$projectUrl}}/api/acesso
+@usuarioCodigo = LNA
+@nome = Luan
+@sobrenome = Almeida
+@dataNascimento = 1991-02-14
+@email = dubstep_dbel@hotmail.com
+@usuarioSenha = "!Qer23wsx@#"
+@novaSenha = "!Q12Qwsx@#2026"
+@clientUri = http://localhost:4200
+
+### Fluxo 1: registra um novo usuario
+POST {{baseUrl}}/registrar
 Content-Type: application/json
+
 {
-  "codigo": "DEW",
-  "nome": "Dery",
-  "sobrenome": "Dghit",
-  "dataNascimento": "1990-06-15",  
-  "email": "kalifor_dbel@hotmail.com",
-  "senha": "!QAZ24wsx@#",
-  "confirmaSenha": "!QAZ24wsx@#"
+  "codigo": "{{usuarioCodigo}}",
+  "nome": "{{nome}}",
+  "sobrenome": "{{sobrenome}}",
+  "dataNascimento": "{{dataNascimento}}",
+  "codigoPerfilDeAcesso": null,
+  "email": "{{email}}",
+  "senha": "{{usuarioSenha}}",
+  "confirmaSenha": "{{usuarioSenha}}",
+  "clientUri": "{{clientUri}}"
 }
 
-### Confirma o e-mail do usuário
-
-POST {{$projectUrl}}/api/acesso/confirmarEmail
+### Fluxo 2: confirma o e-mail do usuario
+# Substitua o token pelo valor recebido no e-mail de confirmacao.
+@tokenConfirmacaoEmail = INFORME_O_TOKEN_DE_CONFIRMACAO
+POST {{baseUrl}}/confirmarEmail
 Content-Type: application/json
+
 {
-  "usuarioCodigo": "DEW",
-  "token": "CfDJ8PJTg7FyAV9CujOiiXrPYNsWvSuowIiwNYWKAUSCQcecOJvEMRHJQQ0fl4CDIL6780bdHX9xEQOrFe3Iccrw+QRihqediz5ygkE2LGBtf2lG3PBJwO/toRk+Oyd5C41YKopITdPqEnFT44S6kBRxzxJVWekeBtrkG3Wvn8dzkdmu1zE32vHZyVN4z9LNxEVj3dwhh8RFR9qwE0/GozkbORY="
+  "usuarioCodigo": "{{usuarioCodigo}}",
+  "token": "{{tokenConfirmacaoEmail}}"
 }
 
-### Login para acessar
-POST {{$projectUrl}}/api/acesso/login
+### Fluxo 3: realiza login e captura o access token
+# Clientes compativeis com scripts, como REST Client do VS Code, salvam o token em accessToken.
+# O refresh token fica protegido em cookie pelo backend, com chave {{usuarioCodigo}}RefreshToken em maiusculo.
+# @name login
+POST {{baseUrl}}/login
 Content-Type: application/json
+
 {
-  "usuarioCodigo": "Dew",
-  "token": ""
+  "codigoDoUsuario": "{{usuarioCodigo}}",
+  "senha": {{usuarioSenha}}
 }
 
+### Fluxo 4: atualiza o token de acesso pelo cookie de refresh
+# Requer o cookie emitido no login e o header XUSRCD com o codigo do usuario.
+# A action valida o refresh token do cookie contra o banco, retorna novo access token e rotaciona o cookie.
+# @name refreshToken
+GET {{baseUrl}}/RefreshToken
+XUSRCD: {{usuarioCodigo}}
+
+### Fluxo 5: desconecta o usuario atual
+# Requer o header XUSRCD para invalidar o refresh token do usuario.
+GET {{baseUrl}}/Desconectar
+XUSRCD: {{usuarioCodigo}}
+Authorization: Bearer {{accessToken}}
+
+### Fluxo 6: solicita recuperacao de senha
+# Pode usar codigo do usuario ou e-mail em identificador.
+POST {{baseUrl}}/RecuperarSenha
+Content-Type: application/json
+
+{
+  "identificador": "{{email}}",
+  "clientUri": "{{clientUri}}"
+}
+
+### Fluxo 7: troca a senha usando o identificador temporario
+# Substitua o identificador pelo token/codigo recebido no e-mail de recuperacao.
+@identificadorTemporario = U2FsdGVkX1%2bmrA16xhey4ccrGlunSRqwv2OcNJHwJDU%3d
+POST {{baseUrl}}/TrocarSenha
+Content-Type: application/json
+
+{
+  "identificadorTemporario": "{{identificadorTemporario}}",
+  "novaSenha": {{novaSenha}},
+  "repetirSenha": {{novaSenha}}
+}
+
+### Fluxo 8: login com a nova senha
+# @name loginNovaSenha
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "codigoDoUsuario": "{{usuarioCodigo}}",
+  "senha": "{{novaSenha}}"
+}
+
+### Fluxo 9: solicita reativacao de conta
+POST {{baseUrl}}/SolicitarReativacao
+Content-Type: application/json
+
+{
+  "email": "{{email}}"
+}
+
+### Fluxo 10: reativa a conta
+# Substitua o codigo pelo valor recebido no e-mail de reativacao.
+@codigoReativacao = INFORME_O_CODIGO_DE_REATIVACAO
+POST {{baseUrl}}/ReativarConta
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "codigoReativacao": "{{codigoReativacao}}"
+}

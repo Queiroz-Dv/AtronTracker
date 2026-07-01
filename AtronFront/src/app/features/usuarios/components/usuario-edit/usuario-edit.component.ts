@@ -38,7 +38,10 @@ export class UsuarioEditComponent implements OnInit {
     this.codigo = this.route.snapshot.paramMap.get('codigo');
     if (this.codigo) {
       this.form.get('codigo')?.disable();
-      this.service.obterPorCodigo(this.codigo).subscribe(usr => this.form.patchValue(usr));
+      this.service.obterPorCodigo(this.codigo).subscribe(usr => this.form.patchValue({
+        ...usr,
+        dataNascimento: this.formatarDataParaExibicao(usr.dataNascimento)
+      }));
     }
   }
 
@@ -53,12 +56,42 @@ export class UsuarioEditComponent implements OnInit {
       dadosForm.cargoCodigo,
       dadosForm.departamentoCodigo,
       dadosForm.salario,
-      dadosForm.dataNascimento);
+      this.formatarDataParaEnvio(dadosForm.dataNascimento));
 
     const operacao = this.codigo
       ? this.service.atualizar(this.codigo, usuarioPayload)
       : this.service.gravar(usuarioPayload);
 
     operacao.subscribe(() => this.router.navigate(['atron/usuarios']));
+  }
+
+  private formatarDataParaExibicao(data?: Date | string | null): string | null {
+    if (!data) return null;
+
+    const valor = data.toString();
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(valor)) return valor;
+    if (/^\d{4}-\d{2}-\d{2}/.test(valor)) {
+      const [ano, mes, dia] = valor.substring(0, 10).split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    return valor;
+  }
+
+  private formatarDataParaEnvio(data?: Date | string | null): string | null {
+    if (!data) return null;
+
+    if (data instanceof Date) {
+      return data.toISOString().substring(0, 10);
+    }
+
+    const valor = data.toString().trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) return valor;
+
+    const partes = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(valor);
+    if (!partes) return valor;
+
+    const [, dia, mes, ano] = partes;
+    return `${ano}-${mes}-${dia}`;
   }
 }

@@ -3,6 +3,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
+using Application.Interfaces.Services;
 using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
@@ -24,6 +25,7 @@ namespace Application.UseCases.Usuario
         private readonly ICargoRepository _cargoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
         private readonly IAuditoriaService _auditoriaService;
+        private readonly ICacheUsuarioService _cacheUsuarioService;
 
         private const string UsuarioContexto = "Usuario";
 
@@ -35,7 +37,8 @@ namespace Application.UseCases.Usuario
             IDepartamentoRepository departamentoRepository,
             ICargoRepository cargoRepository,
             IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
-            IAuditoriaService auditoriaService)
+            IAuditoriaService auditoriaService,
+            ICacheUsuarioService cacheUsuarioService)
         {
             _validador = validador;
             _mapService = mapService;
@@ -45,6 +48,7 @@ namespace Application.UseCases.Usuario
             _cargoRepository = cargoRepository;
             _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
             _auditoriaService = auditoriaService;
+            _cacheUsuarioService = cacheUsuarioService;
         }
 
         public async Task<Resultado<UsuarioRequest>> ExecutarAsync(UsuarioRequest request)
@@ -103,6 +107,8 @@ namespace Application.UseCases.Usuario
                     Descricao = $"Usuário {usuario.Codigo} atualizado em {DateTime.Now:dd/MM/yyyy HH:mm}."
                 }
             });
+
+            _cacheUsuarioService.RemoverCacheDeAcessoTokenInfo(usuario.Codigo);
 
             return Resultado<UsuarioRequest>
                 .Sucesso(request)

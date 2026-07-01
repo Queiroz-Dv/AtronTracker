@@ -4,7 +4,7 @@ export interface UsuarioModel {
   sobrenome: string;
   email: string;
   salario?: number;
-  dataNascimento?: Date;
+  dataNascimento?: Date | string;
   senha: string;
   cargoCodigo: string;
   departamentoCodigo: string;

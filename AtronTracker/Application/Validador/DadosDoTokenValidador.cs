@@ -22,6 +22,7 @@ namespace Application.Validador
                 if (entity.UsuarioCodigo.IsNullOrEmpty())
                 {
                     context.AdicionarErro(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, "Código do Usuário"));
+                    return [.. context.Messages];
                 }
 
                 if (entity.UsuarioCodigo.Length > 10)
@@ -34,10 +35,6 @@ namespace Application.Validador
                     context.AdicionarErro(UsuarioResource.ErroCodigoPequeno);
                 }
 
-                if (!entity.IsValid())
-                {
-                    context.AdicionarErro(NotificacoesPadronizadas.ErroRegistroNulo);
-                }
             }
 
             return [.. context.Messages];

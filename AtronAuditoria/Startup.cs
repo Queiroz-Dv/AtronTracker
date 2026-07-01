@@ -31,9 +31,10 @@ namespace AtronAuditoria
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-            
+            services.AddAtronCache(Configuration);
             services.AddInfrastructureAPI(Configuration);
             services.AddStockInfrastructure(Configuration);
+
 
             services.AddControllers();
 

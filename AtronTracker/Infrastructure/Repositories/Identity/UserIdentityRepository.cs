@@ -48,7 +48,7 @@ namespace Infrastructure.Repositories.Identity
             if (user is null) return false;
 
             user.RefreshToken = refreshToken;
-            user.RefreshTokenExpireTime = refreshTokenExpireTime;
+            user.RefreshTokenExpireTime = DateTime.SpecifyKind(refreshTokenExpireTime, DateTimeKind.Unspecified);
             _context.AppUsers.Update(user);
             return await _context.SaveChangesAsync() > 0;
         }
@@ -81,7 +81,7 @@ namespace Infrastructure.Repositories.Identity
         {
             return _context.AppUsers
                 .Where(u => u.UserName == codigoUsuario)
-                .Select(u => u.RefreshTokenExpireTime < DateTime.UtcNow)
+                .Select(u => u.RefreshTokenExpireTime < DateTimeOffset.UtcNow)
                 .FirstOrDefaultAsync();
         }
 

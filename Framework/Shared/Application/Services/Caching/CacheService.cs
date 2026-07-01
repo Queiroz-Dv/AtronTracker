@@ -15,7 +15,7 @@ namespace Shared.Application.Services.Caching
             _memoryCache.Set(
                 cacheInfo.KeyDescription,
                 cacheInfo.EntityInfo,
-                TimeSpan.FromMinutes(30));
+                ObterExpiracaoRelativa(cacheInfo));
         }
 
         public void GravarCache<T>(CacheInfo<T> cacheInfo, TimeSpan expiracao)
@@ -42,9 +42,11 @@ namespace Shared.Application.Services.Caching
 
         public void RemoverCache(ECacheKeysInfo chave)
         {
-            if (_memoryCache.TryGetValue(chave.GetDescription(), out _))
+            var cacheKey = chave.GetDescription();
+
+            if (_memoryCache.TryGetValue(cacheKey, out _))
             {
-                _memoryCache.Remove(chave);
+                _memoryCache.Remove(cacheKey);
             }
         }
 
@@ -56,6 +58,19 @@ namespace Shared.Application.Services.Caching
             {
                 _memoryCache.Remove(cacheKey);
             }
+        }
+
+        private static TimeSpan ObterExpiracaoRelativa<T>(CacheInfo<T> cacheInfo)
+        {
+            if (cacheInfo.ExpireTime == default)
+                return TimeSpan.FromMinutes(30);
+
+            var expireTimeUtc = cacheInfo.ExpireTime.Kind == DateTimeKind.Local
+                ? cacheInfo.ExpireTime.ToUniversalTime()
+                : cacheInfo.ExpireTime;
+
+            var ttl = expireTimeUtc - DateTime.UtcNow;
+            return ttl > TimeSpan.Zero ? ttl : TimeSpan.FromSeconds(1);
         }
     }
 }

@@ -1,4 +1,5 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Optional, Self } from '@angular/core';
+import { NgControl } from '@angular/forms';
 
 /**
  * Diretiva que aplica máscara de data no formato brasileiro (dd/MM/yyyy).
@@ -12,7 +13,10 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 })
 export class DateMaskDirective {
   
-  constructor(private el: ElementRef<HTMLInputElement>) {}
+  constructor(
+    private el: ElementRef<HTMLInputElement>,
+    @Optional() @Self() private ngControl?: NgControl
+  ) {}
 
   @HostListener('input', ['$event'])
   onInput(event: Event): void {
@@ -33,9 +37,7 @@ export class DateMaskDirective {
     }
     
     input.value = value;
-    
-    // Dispara evento de input para atualizar o ngModel/formControl
-    input.dispatchEvent(new Event('input', { bubbles: true }));
+    this.ngControl?.control?.setValue(value, { emitEvent: false });
   }
 
   @HostListener('keydown', ['$event'])
@@ -76,6 +78,6 @@ export class DateMaskDirective {
     }
     
     this.el.nativeElement.value = formatted;
-    this.el.nativeElement.dispatchEvent(new Event('input', { bubbles: true }));
+    this.ngControl?.control?.setValue(formatted, { emitEvent: false });
   }
 }

@@ -20,6 +20,7 @@ namespace Application.Services.EntitiesServices
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IModuloRepository _moduloRepository;
         private readonly IValidateModelService<PerfilDeAcesso> _validateModel;
+        private readonly ICacheUsuarioService _cacheUsuarioService;
         private readonly Notifiable _messageModel;
 
         public PerfilDeAcessoService(
@@ -29,6 +30,7 @@ namespace Application.Services.EntitiesServices
             IPerfilDeAcessoRepository perfilDeAcessoRepository,          
             IModuloRepository moduloRepository,
             IValidateModelService<PerfilDeAcesso> validateModel,
+            ICacheUsuarioService cacheUsuarioService,
             Notifiable messageModel)
         {
             _map = map;
@@ -37,6 +39,7 @@ namespace Application.Services.EntitiesServices
             _perfilDeAcessoRepository = perfilDeAcessoRepository;
             _moduloRepository = moduloRepository;
             _validateModel = validateModel;
+            _cacheUsuarioService = cacheUsuarioService;
             _messageModel = messageModel;
         }
 
@@ -60,6 +63,7 @@ namespace Application.Services.EntitiesServices
 
             if (!_messageModel.Notificacoes.HasErrors())
             {
+                var usuariosAfetados = await ObterCodigosDosUsuariosPorPerfil(codigo);
                 var perfilDeAcesso = await _map.MapToEntityAsync(perfilDeAcessoDTO);
 
                 await PreencherInformacoesDaEntidade(perfilDeAcessoDTO, perfilDeAcesso);
@@ -72,6 +76,7 @@ namespace Application.Services.EntitiesServices
                     if (prf)
                     {
                         _messageModel.AdicionarMensagem($"Perfil de acesso {perfilDeAcesso.Codigo} atualizado com sucesso.");
+                        InvalidarCacheDosUsuarios(usuariosAfetados);
 
                         return prf;
                     }
@@ -143,8 +148,12 @@ namespace Application.Services.EntitiesServices
             }
             else
             {
+                var usuariosAfetados = ObterCodigosDosUsuarios(perfil);
                 var result = await _perfilDeAcessoRepository.DeletarPerfilRepositoryAsync(perfil);
                 _messageModel.AdicionarMensagem("Perfil removido com sucesso");
+
+                if (result)
+                    InvalidarCacheDosUsuarios(usuariosAfetados);
 
                 return result;
             }
@@ -178,9 +187,12 @@ namespace Application.Services.EntitiesServices
             {
                 // Preciso remover antes pois não terei o Update diretamente, basta remover os registros e refazer a gravação
                 var perfilRelacionado = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(dto.PerfilDeAcesso.Codigo);
+                var usuariosAfetados = new List<string>();
 
                 if (perfilRelacionado != null)
                 {
+                    usuariosAfetados.AddRange(ObterCodigosDosUsuarios(perfilRelacionado));
+
                     if (perfilRelacionado.PerfisDeAcessoUsuario.Any())
                     {
                         foreach (var item in perfilRelacionado.PerfisDeAcessoUsuario)
@@ -194,6 +206,7 @@ namespace Application.Services.EntitiesServices
                 perfilDeAcesso.PerfisDeAcessoUsuario = new List<PerfilDeAcessoUsuario>();
                 foreach (var usuarioDTO in dto.Usuarios)
                 {
+                    usuariosAfetados.Add(usuarioDTO.Codigo);
                     var perfilDeAcessoUsuario = new PerfilDeAcessoUsuario();
 
                     var usuarioRepo = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioDTO.Codigo);
@@ -219,7 +232,11 @@ namespace Application.Services.EntitiesServices
                     }
                 }
 
-                return salvos > 0;
+                var relacionou = salvos > 0;
+                if (relacionou)
+                    InvalidarCacheDosUsuarios(usuariosAfetados);
+
+                return relacionou;
             }
 
             return false;
@@ -280,6 +297,29 @@ namespace Application.Services.EntitiesServices
             var perfis = await _perfilDeAcessoRepository.ObterPerfisPorCodigoDeUsuarioRepositoryAsync(usuarioCodigo);
 
             return perfis != null ? await _map.MapToListDTOAsync(perfis) : null;
+        }
+
+        private async Task<List<string>> ObterCodigosDosUsuariosPorPerfil(string codigoPerfil)
+        {
+            var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigoPerfil);
+            return ObterCodigosDosUsuarios(perfil);
+        }
+
+        private static List<string> ObterCodigosDosUsuarios(PerfilDeAcesso perfil)
+        {
+            return perfil?.PerfisDeAcessoUsuario?
+                .Select(relacionamento => relacionamento.UsuarioCodigo ?? relacionamento.Usuario?.Codigo)
+                .Where(codigo => !codigo.IsNullOrEmpty())
+                .Distinct()
+                .ToList() ?? [];
+        }
+
+        private void InvalidarCacheDosUsuarios(IEnumerable<string> codigosUsuarios)
+        {
+            foreach (var codigoUsuario in codigosUsuarios.Where(codigo => !codigo.IsNullOrEmpty()).Distinct())
+            {
+                _cacheUsuarioService.RemoverCacheDeAcessoTokenInfo(codigoUsuario);
+            }
         }
     }
 }

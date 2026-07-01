@@ -31,7 +31,7 @@ namespace Application.Services.EntitiesServices
                 },
 
                 DadosDoPerfil = new List<DadosDoPerfilDTO>(),
-                DadosDoToken = new TempoDosTokensDoUsuarioDTO(DateTime.Now.AddMinutes(15), DateTime.Now.AddDays(7))
+                DadosDoToken = new TempoDosTokensDoUsuarioDTO(DateTime.UtcNow.AddMinutes(15), DateTime.UtcNow.AddDays(7))
             };
 
             // Obtém os perfis associados
