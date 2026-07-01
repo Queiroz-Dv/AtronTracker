@@ -40,5 +40,14 @@ namespace Application.Services.EntitiesServices
 
             return tokenCache is null ? null : tokenCache;
         }
+
+        public void RemoverCacheDeAcessoTokenInfo(string codigoUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(codigoUsuario))
+                return;
+
+            cacheService.RemoverCache(ECacheKeysInfo.Acesso, codigoUsuario);
+            cacheService.RemoverCache(ECacheKeysInfo.TokenInfo, codigoUsuario);
+        }
     }
 }

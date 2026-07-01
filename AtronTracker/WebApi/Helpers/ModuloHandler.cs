@@ -81,7 +81,10 @@ namespace WebApi.Helpers
             var dadosComplementaresService = _serviceAccessor.ObterService<IDadosComplementaresDoUsuarioService>();
             var userDto = await _usuarioService.ObterPorCodigoAsync(userId);
             var dadosDto = await dadosComplementaresService.ObterInformacoesComplementaresDoUsuario(userDto.Dados);
-            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, userId));
+            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, userId)
+            {
+                EntityInfo = dadosDto
+            });
             return dadosDto;
         }
     }

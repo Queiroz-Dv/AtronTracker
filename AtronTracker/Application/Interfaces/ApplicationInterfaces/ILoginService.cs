@@ -13,6 +13,6 @@ namespace Application.Interfaces.ApplicationInterfaces
 
         Task<Resultado> Logout(string usuarioCodigo);
 
-        Task<Resultado<DadosDoTokenDTO>> RefreshAcesso(DadosDoTokenDTO infoToken);        
+        Task<Resultado<DadosDoTokenDTO>> RefreshAcesso(DadosDoRefreshTokenCookieDTO infoToken);        
     }
 }

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
+import { ModuloGuard } from './core/guards/modulo.guard';
 import { HomeComponent } from './features/home/home.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 
@@ -17,12 +18,12 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'departamentos', loadChildren: () => import('./features/departamentos/departamento-routing.module').then(m => m.DepartamentoRoutingModule) },
-      { path: 'cargos', loadChildren: () => import('./features/cargos/cargo-routing.module').then(m => m.CargoRoutingModule) },
-      { path: 'usuarios', loadChildren: () => import('./features/usuarios/usuario-routing.module').then(m => m.UsuarioRoutingModule) },
-      { path: 'tarefas', loadChildren: () => import('./features/tarefas/tarefa-routing.module').then(m => m.TarefaRoutingModule) },
-      { path: 'salarios', loadChildren: () => import('./features/salarios/salario-routing.module').then(m => m.SalarioRoutingModule) },
-      { path: 'perfil-de-acesso', loadChildren: () => import('./features/perfil-de-acesso/perfil-de-acesso.module').then(m => m.PerfilModule) },
+      { path: 'departamentos', canActivate: [ModuloGuard], data: { moduloCodigo: 'DPT' }, loadChildren: () => import('./features/departamentos/departamento-routing.module').then(m => m.DepartamentoRoutingModule) },
+      { path: 'cargos', canActivate: [ModuloGuard], data: { moduloCodigo: 'CRG' }, loadChildren: () => import('./features/cargos/cargo-routing.module').then(m => m.CargoRoutingModule) },
+      { path: 'usuarios', canActivate: [ModuloGuard], data: { moduloCodigo: 'USR' }, loadChildren: () => import('./features/usuarios/usuario-routing.module').then(m => m.UsuarioRoutingModule) },
+      { path: 'tarefas', canActivate: [ModuloGuard], data: { moduloCodigo: 'TRF' }, loadChildren: () => import('./features/tarefas/tarefa-routing.module').then(m => m.TarefaRoutingModule) },
+      { path: 'salarios', canActivate: [ModuloGuard], data: { moduloCodigo: 'SAL' }, loadChildren: () => import('./features/salarios/salario-routing.module').then(m => m.SalarioRoutingModule) },
+      { path: 'perfil-de-acesso', canActivate: [ModuloGuard], data: { moduloCodigo: 'PRF' }, loadChildren: () => import('./features/perfil-de-acesso/perfil-de-acesso.module').then(m => m.PerfilModule) },
     ]
   },
 

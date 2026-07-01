@@ -55,14 +55,14 @@ namespace WebApi.Controllers
         /// <summary>
         /// Atualiza o token de acesso usando o refresh token presente no cookie da requisição.
         /// </summary>
-        /// <returns>Mensagens de sucesso ou falha.</returns>
+        /// <returns>Novo token de acesso em caso de sucesso; mensagens em caso de falha.</returns>
         [HttpGet("RefreshToken")]
         public async Task<IActionResult> Refresh()
         {
-            var dadosDeToken = await _cookieService.ObterTokenRefreshTokenPorRequest(Request);
-            var resultado = await _service.RefreshAcesso(dadosDeToken);
+            var dadosDoRefreshToken = await _cookieService.ObterRefreshTokenPorRequest(Request);
+            var resultado = await _service.RefreshAcesso(dadosDoRefreshToken);
 
-            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         /// <summary>

@@ -38,7 +38,7 @@ export class DashboardComponent implements OnInit {
       code: m.codigo,
       title: m.descricao,
       icon: item.icone || 'default-icon',
-      description: item.descricao || 'Descrição não disponível',
+      description: item.descricao || 'Descricao nao disponivel',
       route: item.rota,
       cols: 1,
       rows: 1
@@ -70,16 +70,9 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/atron/home']);
   }
 
-  authToken: string = 'authToken'; // Define the authToken property
-  usuarioTempData: string = 'usuarioTempData'; // Define the usuarioTempData property
-
   logout() {
-    this.acessoService.logout().subscribe((retorno) => {     
-        // Aqui você obtém o valor de retorno do método logout
-        console.log('Retorno do logout:', retorno);
-        localStorage.removeItem(this.authToken);
-        localStorage.removeItem(this.usuarioTempData);
-        this.router.navigate(['/login']);
+    this.acessoService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
     });
   }
 }

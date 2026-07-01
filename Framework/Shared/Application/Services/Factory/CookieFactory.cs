@@ -18,26 +18,44 @@ namespace Shared.Application.Services.Factory
 
         private string TokenUsuarioCookie(string codigoUsuario, ETokenInfo tokenInfo) => $"{codigoUsuario}{tokenInfo.GetDescription()}".ToUpper();
 
-        public void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario)
+        public void CriarCookieDeRefreshToken(DadosDoRefrehTokenDTO dadosDoRefreshToken, string codigoUsuario)
         {
-            var json = JsonSerializer.Serialize(dadosDoToken);
+            var dadosCookie = new DadosDoRefreshTokenCookieDTO
+            {
+                UsuarioCodigo = codigoUsuario,
+                RefreshToken = dadosDoRefreshToken.Token,
+                Expires = dadosDoRefreshToken.Expires
+            };
+
+            var json = JsonSerializer.Serialize(dadosCookie);
             var jsonProtegido = protector.Protect(json);
 
-            MontarCookie(TokenUsuarioCookie(codigoUsuario, ETokenInfo.AcesssToken), jsonProtegido);
+            MontarCookie(TokenUsuarioCookie(codigoUsuario, ETokenInfo.RefreshToken), jsonProtegido, dadosDoRefreshToken.Expires);
         }
 
-        public async Task<DadosDoTokenDTO> ObterDadosDoTokenPorRequest(HttpRequest request)
+        public async Task<DadosDoRefreshTokenCookieDTO> ObterRefreshTokenPorRequest(HttpRequest request)
         {
             var codigo = request.Headers.ExtrairCodigoUsuarioDoRequest();
             if (string.IsNullOrWhiteSpace(codigo)) return null;
 
-            if (!request.Cookies.TryGetValue(TokenUsuarioCookie(codigo, ETokenInfo.AcesssToken), out var valor))
+            if (!request.Cookies.TryGetValue(TokenUsuarioCookie(codigo, ETokenInfo.RefreshToken), out var valor))
             {
-                return await Task.FromResult(new DadosDoTokenDTO() { UsuarioCodigo = codigo });
+                return null;
             }
 
-            var json = protector.Unprotect(valor);
-            var dados = JsonSerializer.Deserialize<DadosDoTokenDTO>(json);
+            DadosDoRefreshTokenCookieDTO dados;
+            try
+            {
+                var json = protector.Unprotect(valor);
+                dados = JsonSerializer.Deserialize<DadosDoRefreshTokenCookieDTO>(json);
+            }
+            catch
+            {
+                return null;
+            }
+
+            if (dados is null || !string.Equals(dados.UsuarioCodigo, codigo, StringComparison.OrdinalIgnoreCase))
+                return null;
 
             return await Task.FromResult(dados);
         }

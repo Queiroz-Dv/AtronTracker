@@ -84,10 +84,23 @@ namespace WebApi.Controllers
                 }).ToList(),
             };
 
-            // Regrava cache para próxima vez            
-            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo));
+            // Regrava cache para próxima vez
+            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo)
+            {
+                EntityInfo = dto
+            });
 
-            return Ok(jsonDeRetorno);
+            var jsonAtualizado = new
+            {
+                codigoDoUsuario = usuarioCodigo,
+                nomeDoUsuario = dto.DadosDoUsuario.NomeDoUsuario,
+                emailDoUsuario = dto.DadosDoUsuario.Email,
+                codigoDoCargo = dto.DadosDoUsuario.CodigoDoCargo,
+                codigoDoDepartamento = dto.DadosDoUsuario.CodigoDoDepartamento,
+                perfisDeAcesso = dto.DadosDoPerfil
+            };
+
+            return Ok(jsonAtualizado);
         }
     }
 }

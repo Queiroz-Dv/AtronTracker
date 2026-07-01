@@ -8,5 +8,7 @@ namespace Application.Interfaces.Services
         void GravarCacheDeAcessoTokenInfo(DadosComplementaresDoUsuarioDTO dadosDoUsuario, DadosDeTokenComRefreshToken tokenComRefreshToken);
 
         DadosDeTokenComRefreshToken ObterDadosDoTokenPorCodigoUsuario(string codigoUsuario);
+
+        void RemoverCacheDeAcessoTokenInfo(string codigoUsuario);
     }
 }

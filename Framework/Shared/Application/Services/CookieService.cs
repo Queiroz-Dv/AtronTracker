@@ -13,14 +13,14 @@ namespace Shared.Application.Services
             _cookieFactory = cookieFactory;
         }
 
-        public void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario)
+        public async Task<DadosDoRefreshTokenCookieDTO> ObterRefreshTokenPorRequest(HttpRequest httpRequest)
         {
-            _cookieFactory.CriarCookieDoToken(dadosDoToken, codigoUsuario);
+            return await _cookieFactory.ObterRefreshTokenPorRequest(httpRequest);
         }
 
-        public async Task<DadosDoTokenDTO> ObterTokenRefreshTokenPorRequest(HttpRequest httpRequest)
+        public void CriarCookieDeRefreshToken(DadosDoRefrehTokenDTO dadosDoRefreshToken, string codigoUsuario)
         {
-            return await _cookieFactory.ObterDadosDoTokenPorRequest(httpRequest);
+            _cookieFactory.CriarCookieDeRefreshToken(dadosDoRefreshToken, codigoUsuario);
         }
 
         public void RemoverCookie(string chave)

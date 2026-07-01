@@ -67,6 +67,20 @@ namespace Shared.Application.DTOS.Auth
         }
     }
 
+    public class DadosDoRefreshTokenCookieDTO
+    {
+        public string UsuarioCodigo { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime Expires { get; set; }
+
+        public bool IsValid()
+        {
+            return !UsuarioCodigo.IsNullOrEmpty()
+                && !RefreshToken.IsNullOrEmpty()
+                && Expires > DateTime.UtcNow;
+        }
+    }
+
     public class DadosDeTokenComRefreshToken
     {
         public DadosDoTokenDTO TokenDTO { get; set; }

@@ -5,7 +5,7 @@ export class UsuarioRequest implements UsuarioModel {
   nome: string;
   sobrenome: string;
   salario?: number;
-  dataNascimento?: Date;
+  dataNascimento?: Date | string;
   email: string;
   senha: string;
   cargoCodigo: string;
@@ -20,7 +20,7 @@ export class UsuarioRequest implements UsuarioModel {
     cargoCodigo: string,
     departamentoCodigo: string,
     salario?: number,
-    dataNascimento?: Date) {
+    dataNascimento?: Date | string) {
     this.codigo = codigo;
     this.nome = nome;
     this.sobrenome = sobrenome;

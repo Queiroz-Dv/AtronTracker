@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    var codigoDeUsuarioLogado = this.sessaoService.getUsuarioCodigoLocalStorage();
+    var codigoDeUsuarioLogado = this.sessaoService.obterUsuarioCodigo();
     if (codigoDeUsuarioLogado) {
      this.sessaoService.clearSessionInfo();
     }

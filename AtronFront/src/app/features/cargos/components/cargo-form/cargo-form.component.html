@@ -17,7 +17,7 @@
     <mat-label>Departamento</mat-label>
     <input type="text" matInput [formControl]="departamentoControl" [matAutocomplete]="auto" />
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="exibirDescricao">
-      @for (dpt of departamentos; track dpt.codigo) {
+      @for (dpt of departamentosFiltrados; track dpt.codigo) {
       <mat-option [value]="dpt">{{ dpt.descricao }}</mat-option>
       }
     </mat-autocomplete>

@@ -30,7 +30,11 @@ import { Modulo } from '../../shared/models/modulos.model';
 export class HomeComponent implements OnInit {
   private breakpointObserver = inject(BreakpointObserver);
   modulosView: Modulo[] = [];
-  constructor(private router: Router, private visualizacaoService: VisualizacaoService, private authService: AcessoService // ou qualquer serviço de logout que tiver
+
+  constructor(
+    private router: Router,
+    private visualizacaoService: VisualizacaoService,
+    private authService: AcessoService
   ) { }
 
   navigate(route: string) {
@@ -53,8 +57,9 @@ export class HomeComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout();
-    this.router.navigate(["login"]);
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
   }
 
   modulos: Observable<Modulo[]> = this.breakpointObserver.observe(Breakpoints.Handset)

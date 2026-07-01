@@ -5,9 +5,9 @@ namespace Shared.Application.Interfaces.Service
 {
     public interface ICookieFactoryService
     {
-        Task<DadosDoTokenDTO> ObterDadosDoTokenPorRequest(HttpRequest request);
+        Task<DadosDoRefreshTokenCookieDTO> ObterRefreshTokenPorRequest(HttpRequest request);
 
-        void CriarCookieDoToken(DadosDoTokenDTO dadosDoToken, string codigoUsuario);
+        void CriarCookieDeRefreshToken(DadosDoRefrehTokenDTO dadosDoRefreshToken, string codigoUsuario);
 
         void RemoverCookie(string chave);
     }

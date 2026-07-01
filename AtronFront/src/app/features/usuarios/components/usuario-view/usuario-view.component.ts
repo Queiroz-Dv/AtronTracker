@@ -8,6 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { formatLabel } from '../../../../shared/utils/formatar-label.util';
 import { BotaoVoltarComponent } from "../../../../core/layout/botao-voltar/botao-voltar.component";
 import { MatSort } from '@angular/material/sort';
+import { UsuarioResponse } from '../../models/response/usuario-response';
 
 class UsuarioViewData {
   codigoOriginal: string;
@@ -48,8 +49,8 @@ export class UsuarioViewComponent implements AfterViewInit {
       const usuarioViewData = usuarios.map(usr => ({
         codigoOriginal: usr.codigo,
         codigo: `${usr.codigo} - ${usr.nome} ${usr.sobrenome}`,
-        cargo: formatLabel(usr.cargoCodigo, usr.cargoDescricao),
-        departamento: formatLabel(usr.departamentoCodigo, usr.departamentoDescricao)
+        cargo: this.formatarCargo(usr),
+        departamento: this.formatarDepartamento(usr)
       }));
 
       this.dataSource = new MatTableDataSource(usuarioViewData);
@@ -66,6 +67,25 @@ export class UsuarioViewComponent implements AfterViewInit {
     if (confirm('Deseja realmente excluir?')) {
       this.service.deletar(codigo).subscribe(() => this.carregar());
     }
+  }
+
+  private formatarCargo(usuario: UsuarioResponse): string {
+    return formatLabel(
+      usuario.cargoCodigo ?? usuario.cargo?.codigo,
+      usuario.cargoDescricao ?? usuario.cargo?.descricao
+    );
+  }
+
+  private formatarDepartamento(usuario: UsuarioResponse): string {
+    const cargoComDepartamento = usuario.cargo as (typeof usuario.cargo & { departamentoDescricao?: string }) | undefined;
+
+    return formatLabel(
+      usuario.departamentoCodigo ?? usuario.departamento?.codigo ?? usuario.cargo?.departamentoCodigo,
+      usuario.departamentoDescricao
+        ?? usuario.departamento?.descricao
+        ?? cargoComDepartamento?.departamentoDescricao
+        ?? usuario.cargo?.departamento?.descricao
+    );
   }
 }
 

@@ -1,5 +1,6 @@
 ﻿using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
+using Application.Interfaces.Services;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
@@ -16,17 +17,20 @@ namespace Application.UseCases.Usuario
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
         private readonly ITarefaRepository _tarefaRepository;
         private readonly ISalarioRepository _salarioRepository;
+        private readonly ICacheUsuarioService _cacheUsuarioService;
 
         public RemoverUsuario(
             IUsuarioRepository usuarioRepository,
             IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
             ITarefaRepository tarefaRepository,
-            ISalarioRepository salarioRepository)
+            ISalarioRepository salarioRepository,
+            ICacheUsuarioService cacheUsuarioService)
         {
             _usuarioRepository = usuarioRepository;
             _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
             _tarefaRepository = tarefaRepository;
             _salarioRepository = salarioRepository;
+            _cacheUsuarioService = cacheUsuarioService;
         }
 
         public async Task<Resultado> ExecutarAsync(string codigo)
@@ -75,6 +79,7 @@ namespace Application.UseCases.Usuario
 
             // 5. Remoção do usuário de negócio
             await _usuarioRepository.RemoverUsuarioAsync(usuario);
+            _cacheUsuarioService.RemoverCacheDeAcessoTokenInfo(usuario.Codigo);
 
             // DÍVIDA TÉCNICA: A conta Identity NÃO é removida intencionalmente.
             // Motivação: Soft Delete depende de mapeamento EF + migration ainda não implementados.
