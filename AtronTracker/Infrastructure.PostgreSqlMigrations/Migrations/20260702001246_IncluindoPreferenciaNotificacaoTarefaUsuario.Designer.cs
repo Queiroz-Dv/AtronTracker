@@ -3,6 +3,7 @@ using System;
 using AtronTracker.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260702001246_IncluindoPreferenciaNotificacaoTarefaUsuario")]
+    partial class IncluindoPreferenciaNotificacaoTarefaUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

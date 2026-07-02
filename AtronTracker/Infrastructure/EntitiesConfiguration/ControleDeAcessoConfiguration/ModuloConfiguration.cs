@@ -25,7 +25,7 @@ namespace Infrastructure.EntitiesConfiguration.ControleDeAcessoConfiguration
             new Modulo { Id = 3, Codigo = "USR", Descricao = "Usuários" },
             new Modulo { Id = 4, Codigo = "TAR", Descricao = "Tarefas" },
             new Modulo { Id = 5, Codigo = "SAL", Descricao = "Salários" },
-            new Modulo { Id = 6, Codigo = "PAC", Descricao = "Políticas e Acessos" });
+            new Modulo { Id = 6, Codigo = "PERF", Descricao = "Políticas e Acessos" });
         }
     }
 }

@@ -42,7 +42,8 @@ namespace Application.Mapping
         {
             return Task.FromResult(new Tarefa
             {
-                UsuarioCodigo = dto.UsuarioCodigo,
+                Id = dto.Id,
+                UsuarioCodigo = dto.UsuarioCodigo?.ToUpper(),
                 Titulo = dto.Titulo,
                 Conteudo = dto.Conteudo,
                 DataInicial = dto.DataInicial,

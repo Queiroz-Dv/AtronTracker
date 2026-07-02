@@ -1,4 +1,5 @@
-﻿using Application.DTO;
+using Application.DTO;
+using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,13 +7,16 @@ namespace Application.Services
 {
     public interface ITarefaService
     {
-        Task<List<TarefaDTO>> ObterTodosAsync();
+        Task<Resultado<List<TarefaDTO>>> ObterTodosAsync();
 
-        Task CriarAsync(TarefaDTO tarefaDTO);
+        Task<Resultado<List<TarefaEstadoDTO>>> ObterEstadosAsync();
 
-        Task AtualizarAsync(int id, TarefaDTO tarefaDTO);
+        Task<Resultado<TarefaDTO>> CriarAsync(TarefaDTO tarefaDTO);
 
-        Task ExcluirAsync(string id);
-        Task<TarefaDTO> ObterPorId(int id);
+        Task<Resultado<TarefaDTO>> AtualizarAsync(int id, TarefaDTO tarefaDTO);
+
+        Task<Resultado> ExcluirAsync(string id);
+
+        Task<Resultado<TarefaDTO>> ObterPorId(int id);
     }
 }

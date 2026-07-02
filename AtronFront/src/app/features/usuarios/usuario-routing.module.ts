@@ -2,11 +2,13 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { UsuarioEditComponent } from "./components/usuario-edit/usuario-edit.component";
 import { UsuarioViewComponent } from "./components/usuario-view/usuario-view.component";
+import { UsuarioConfiguracoesComponent } from "./components/usuario-configuracoes/usuario-configuracoes.component";
 
 // Declaração das rotas do módulo de usuários
 const USUARIO_ROUTES: Routes = [
   { path: '', component: UsuarioViewComponent },
   { path: 'novo', component: UsuarioEditComponent },
+  { path: 'configuracoes', component: UsuarioConfiguracoesComponent },
   { path: 'editar/:codigo', component: UsuarioEditComponent },
 ];
 

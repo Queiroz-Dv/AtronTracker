@@ -27,6 +27,7 @@ namespace Domain.Entities
         public DateTime? DataNascimento { get; set; }
         public int? SalarioAtual { get; set; }
         public bool Inativo { get; set; }
+        public bool ReceberNotificacaoTarefaPorEmail { get; set; }
         public string CodigoReativacao { get; set; }
 
         public Salario Salario { get; set; }

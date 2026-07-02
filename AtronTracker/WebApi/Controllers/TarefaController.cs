@@ -1,69 +1,58 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.Services;
-using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Extensions;
+using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Shared.Domain.ValueObjects;
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Policy = "Modulo:TAR")]
-    public class TarefaController : ApiBaseConfigurationController<Tarefa, ITarefaService>
+    public class TarefaController(ITarefaService tarefaService) : ControllerBase
     {
-        public TarefaController(ITarefaService service, Notifiable messageModel) :
-            base(service, messageModel)
-        { }
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TarefaDTO>>> Get()
         {
-            var tarefas = await _service.ObterTodosAsync();
+            var resultado = await tarefaService.ObterTodosAsync();
+            return Ok(resultado.Dados);
+        }
 
-            return Ok(tarefas);
+        [HttpGet("Estados")]
+        public async Task<ActionResult<IEnumerable<TarefaEstadoDTO>>> ObterEstados()
+        {
+            var resultado = await tarefaService.ObterEstadosAsync();
+            return Ok(resultado.Dados);
         }
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] TarefaDTO tarefa)
         {
-            await _service.CriarAsync(tarefa);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                   BadRequest(ObterNotificacoes()) :
-                   Ok(ObterNotificacoes());
+            var resultado = await tarefaService.CriarAsync(tarefa);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] TarefaDTO tarefa)
         {
-            await _service.AtualizarAsync(id, tarefa);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                 BadRequest(ObterNotificacoes()) : Ok(ObterNotificacoes());
+            var resultado = await tarefaService.AtualizarAsync(id, tarefa);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            await _service.ExcluirAsync(id);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                    BadRequest(ObterNotificacoes()) :
-                    Ok(ObterNotificacoes());
+            var resultado = await tarefaService.ExcluirAsync(id);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TarefaDTO>> Get(int id)
         {
-            var tarefa = await _service.ObterPorId(id);
-
-            return tarefa is null ?
-            NotFound(ObterNotificacoes()) :
-            Ok(tarefa);
+            var resultado = await tarefaService.ObterPorId(id);
+            return resultado.TeveFalha ? NotFound(resultado.Messages) : Ok(resultado.Dados);
         }
     }
 }

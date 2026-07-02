@@ -5,6 +5,7 @@ import { RotasApi } from '../../../shared/models/rotas-api.model';
 import { BaseService } from '../../../core/services/base-service';
 import { TarefaRequest } from '../models/request/tarefa-request.model';
 import { TarefaResponse } from '../models/response/tarefa-response.model';
+import { EstadoTarefa } from '../models/estadoTarefa.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,5 +22,9 @@ export class TarefaService extends BaseService<TarefaRequest> {
 
   obterTarefaPorIdService(id: number): Observable<TarefaResponse> {
     return this.http.get<TarefaResponse>(`${RotasApi.tarefaEndpoint}/${id}`);
+  }
+
+  obterEstados(): Observable<EstadoTarefa[]> {
+    return this.http.get<EstadoTarefa[]>(RotasApi.tarefaEstadosEndpoint);
   }
 }

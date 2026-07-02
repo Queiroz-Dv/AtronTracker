@@ -30,9 +30,9 @@ O **Atron Tracker** segue os princípios da **Arquitetura Limpa (Clean Architect
 | **SQL Server**            | Banco original, mantido como legado/transição. |
 | **Supabase/PostgreSQL**   | Banco alvo para deploy inicial do sistema. |
 | **Swagger / Redoc**       | Documentação da API.                     |
-| **Angular**               | Framework para o Web View (em migração). |
+| **Angular**               | Front principal do MVP em `AtronFront`. |
 
-> **Nota**: O projeto Web View está sendo migrado para Angular. Confira o repositório aqui: [Atron Tracker Web View](https://github.com/Queiroz-Dv/AtronTracker-WebView)
+> **Nota**: O front MVC/Razor legado foi removido do MVP. A interface mantida no repositório é `AtronFront`.
 
 ---
 
@@ -87,14 +87,12 @@ A espinha dorsal do sistema. Centraliza as regras de negócio, validações e en
 
 ![Módulo Atron Web Api](images/AtronWebApi.png)
 
-### 💻 Web View (Razor Pages / Angular)
+### 💻 Front Angular
 
 A interface do usuário. Responsável pela apresentação e interação com o usuário.
 
 - **Comunicação**: Consome a API para exibir e enviar dados.
 - **Dependência**: Necessita da API rodando para funcionar plenamente.
-
-![Módulo Atron Web View](images/AtronWebView.png)
 
 ---
 
@@ -117,7 +115,7 @@ Núcleo compartilhado e utilitários do sistema.
 - **[Atron.Infrastructure](/Atron.Infrastructure/README.md)**: Implementação de repositórios e acesso a dados.
 - **[Atron.Infra.IoC](/Atron.Infra.IoC/README.md)**: Configuração de Injeção de Dependência.
 - **Atron.WebApi**: Interface RESTful.
-- **Atron.WebViews**: Interface de Usuário.
+- **AtronFront**: Interface de usuário em Angular.
 
 ---
 

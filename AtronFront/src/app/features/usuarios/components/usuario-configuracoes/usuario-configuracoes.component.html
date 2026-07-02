@@ -1,0 +1,20 @@
+<form [formGroup]="form" (ngSubmit)="salvar()" class="form-container">
+  <mat-card class="container p-10">
+    <mat-card-content>
+      <h2>Configurações</h2>
+
+      <mat-checkbox formControlName="receberNotificacaoTarefaPorEmail">
+        Receber notificações de tarefas por e-mail
+      </mat-checkbox>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit" [disabled]="carregando">
+        Salvar
+      </button>
+      <button mat-raised-button type="button" (click)="router.navigate(['atron/usuarios'])">
+        Voltar
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</form>

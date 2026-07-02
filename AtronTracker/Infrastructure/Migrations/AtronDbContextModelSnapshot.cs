@@ -315,6 +315,11 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
+                    b.Property<bool>("ReceberNotificacaoTarefaPorEmail")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<int?>("SalarioAtual")
                         .HasColumnType("int");
 

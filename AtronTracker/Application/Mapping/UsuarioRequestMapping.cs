@@ -41,7 +41,8 @@ namespace Application.Mapping
                 Sobrenome = dto.Sobrenome,
                 DataNascimento = dto.DataNascimento,
                 Email = dto.Email,
-                SalarioAtual = dto.SalarioMensal
+                SalarioAtual = dto.SalarioMensal,
+                ReceberNotificacaoTarefaPorEmail = false
             };
 
             return Task.FromResult(entity);
