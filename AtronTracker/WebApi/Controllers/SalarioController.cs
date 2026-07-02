@@ -10,12 +10,13 @@ using Shared.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Modulo:SAL")]
+    [Authorize(Policy = ModuloPolicies.Salario)]
     public class SalarioController : ApiBaseConfigurationController<Salario, ISalarioService>
     {
         public SalarioController(ISalarioService service,

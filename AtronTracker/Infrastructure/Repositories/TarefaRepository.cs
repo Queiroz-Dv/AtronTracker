@@ -1,4 +1,4 @@
-﻿using AtronTracker.Infrastructure.Context;
+using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -35,17 +35,6 @@ namespace Infrastructure.Repositories
             }
         }
 
-        private static void AtualizarEntidadeParaPersistencia(Tarefa tarefa, Tarefa tarefaBD)
-        {
-            tarefaBD.UsuarioId = tarefa.UsuarioId;
-            tarefaBD.UsuarioCodigo = tarefa.UsuarioCodigo;
-            tarefaBD.Titulo = tarefa.Titulo;
-            tarefaBD.Conteudo = tarefa.Conteudo;
-            tarefaBD.DataInicial = tarefa.DataInicial;
-            tarefaBD.DataFinal = tarefa.DataFinal;
-            tarefaBD.TarefaEstadoId = tarefa.TarefaEstadoId;
-        }
-
         public async Task<bool> CriarTarefaAsync(Tarefa tarefa)
         {
             try
@@ -56,7 +45,6 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -64,29 +52,42 @@ namespace Infrastructure.Repositories
         public async Task<Tarefa> ObterTarefaPorId(int id)
         {
             return await _context.Tarefas
-                                 .Include(usr => usr.Usuario)
-                                 .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
-                                 .ThenInclude(crg => crg.Cargo)
-                                 .ThenInclude(dpt => dpt.Departamento)
-                                 .FirstOrDefaultAsync(trf => trf.Id == id);
-
+                .Include(trf => trf.EstadoDaTarefa)
+                .Include(trf => trf.Usuario)
+                    .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
+                    .ThenInclude(crg => crg.Cargo)
+                    .ThenInclude(dpt => dpt.Departamento)
+                .FirstOrDefaultAsync(trf => trf.Id == id);
         }
 
         public async Task<List<Tarefa>> ObterTodasTarefas()
         {
-            var entidades = await _context.Tarefas
-                .Include(usr => usr.Usuario) // Obtém o usuário associado a tarefa
-                .ThenInclude(rel => rel.UsuarioCargoDepartamentos) // Obtém os relacionamentos associados ao usuário
-                .ThenInclude(crg => crg.Cargo) // Obtém o cargo associado relacionamento do usuário
-                .ThenInclude(dpt => dpt.Departamento) // Obtém o departamento associado ao relacionamento de cargo
+            return await _context.Tarefas
+                .Include(trf => trf.EstadoDaTarefa)
+                .Include(trf => trf.Usuario)
+                    .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
+                    .ThenInclude(crg => crg.Cargo)
+                    .ThenInclude(dpt => dpt.Departamento)
                 .ToListAsync();
-            return entidades;
         }
 
         public async Task<IEnumerable<Tarefa>> ObterTodasTarefasPorUsuario(int usuarioId, string usuarioCodigo)
         {
-            return await _context.Tarefas.Where(trf => trf.UsuarioId == usuarioId && trf.UsuarioCodigo == usuarioCodigo).ToListAsync();
+            return await _context.Tarefas
+                .Include(trf => trf.EstadoDaTarefa)
+                .Where(trf => trf.UsuarioId == usuarioId && trf.UsuarioCodigo == usuarioCodigo)
+                .ToListAsync();
+        }
 
+        private static void AtualizarEntidadeParaPersistencia(Tarefa tarefa, Tarefa tarefaBD)
+        {
+            tarefaBD.UsuarioId = tarefa.UsuarioId;
+            tarefaBD.UsuarioCodigo = tarefa.UsuarioCodigo;
+            tarefaBD.Titulo = tarefa.Titulo;
+            tarefaBD.Conteudo = tarefa.Conteudo;
+            tarefaBD.DataInicial = tarefa.DataInicial;
+            tarefaBD.DataFinal = tarefa.DataFinal;
+            tarefaBD.TarefaEstadoId = tarefa.TarefaEstadoId;
         }
     }
 }

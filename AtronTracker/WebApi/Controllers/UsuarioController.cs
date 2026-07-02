@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shared.Domain.ValueObjects;
 using Shared.Infrastructure.Filters;
 using System.Threading.Tasks;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
@@ -14,7 +15,7 @@ namespace WebApi.Controllers
     /// Contém endpoints para criação, atualização, remoção, desativação, reativação e consultas de usuários.
     /// Requer autorização com a policy Modulo:USR para a maioria das operações.
     /// </summary>
-    [Authorize(Policy = "Modulo:USR")]
+    [Authorize(Policy = ModuloPolicies.Usuario)]
     [ApiController]
     [Route("api/[controller]")]
     public class UsuarioController(IUsuarioService usuarioService) : ControllerBase

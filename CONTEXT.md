@@ -32,9 +32,17 @@ _Avoid_: Minhas Preferencias
 Organizacao configuravel de usuarios em uma cadeia de responsabilidade, usada para decidir quem pode definir preferencias ou regras de acesso de outra pessoa.
 _Avoid_: Cargo fixo, perfil hardcoded, if admin, if gerente
 
-**Politicas e Acessos**:
-Modulo responsavel por catalogar modulos, perfis e permissoes do sistema. O codigo canonico deste modulo e `PAC`.
-_Avoid_: PRF, PERF, modulo paralelo para relacionamento perfil-usuario
+**Perfil de acesso**:
+Modulo responsavel por catalogar perfis de acesso e relacionar quais modulos cada perfil pode acessar. O codigo canonico deste modulo e `PERF`.
+_Avoid_: PAC, PRF, modulo paralelo para perfis
+
+**Relacionamento de perfil e usuarios**:
+Modulo responsavel por vincular usuarios aos perfis de acesso ja cadastrados. O codigo canonico deste modulo e `RPERFUSR`.
+_Avoid_: Regra fixa por cargo, if admin, if gerente
+
+**Politica de acesso por modulo**:
+Regra de autorizacao baseada no catalogo de modulos e nos perfis vinculados ao usuario. A policy tecnica usa o formato `Modulo:CODIGO` e ja aceita a forma futura `Modulo:CODIGO:ACAO`, mantendo a regra atual por modulo ate que permissoes granulares sejam modeladas.
+_Avoid_: Regra hardcoded por cargo, usuario especial, if admin, if gerente
 
 **Front Angular**:
 Interface principal do produto. Para o MVP, o front mantido sera `AtronFront`.

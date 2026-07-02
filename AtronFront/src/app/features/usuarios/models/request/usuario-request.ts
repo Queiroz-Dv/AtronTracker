@@ -10,6 +10,7 @@ export class UsuarioRequest implements UsuarioModel {
   senha: string;
   cargoCodigo: string;
   departamentoCodigo: string;
+  salarioMensal?: number;
 
   constructor(
     codigo: string,
@@ -29,6 +30,7 @@ export class UsuarioRequest implements UsuarioModel {
     this.cargoCodigo = cargoCodigo;
     this.departamentoCodigo = departamentoCodigo;
     this.salario = salario
+    this.salarioMensal = salario
     this.dataNascimento = dataNascimento
   }
 }

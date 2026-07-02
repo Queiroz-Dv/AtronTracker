@@ -37,16 +37,16 @@ export const MODULOS_CONFIG: Record<string, ModuloConfig> = {
     descricao: 'Gerencie os salarios da empresa.'
   },
   PERF: {
-    titulo: 'Politicas e Acessos',
+    titulo: 'Perfil de acesso',
     icone: 'tune',
     rota: '/atron/perfil-de-acesso',
     descricao: 'Gerencie os perfis de acesso do sistema.'
   },
   RPERFUSR: {
-    titulo: 'Relacionamento Perfil-Usuario',
+    titulo: 'Relacionamento de perfil e usuarios',
     icone: 'supervisor_account',
     rota: '/atron/perfil-de-acesso/relacionamento-perfil-usuario/novo',
-    descricao: 'Configure os acessos do usuário de acordo com os perfis do sistema.'
+    descricao: 'Configure os acessos do usuario de acordo com os perfis do sistema.'
   }
 
 };

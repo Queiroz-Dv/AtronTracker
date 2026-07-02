@@ -5,6 +5,7 @@ using Application.Mapping;
 using Application.Services;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
+using Application.Services.EntitiesServices.Tarefas;
 using Application.UseCases.Usuario;
 using Application.Validador;
 using AtronTracker.Infrastructure.Context;
@@ -127,6 +128,9 @@ namespace IoC
         private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ITarefaRepository, TarefaRepository>();
+            services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
+            services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
+            services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
             services.AddScoped<ITarefaService, TarefaService>();
         }
 

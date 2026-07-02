@@ -19,7 +19,9 @@
 
   <mat-form-field>
     <mat-label>Data de Nascimento</mat-label>
-    <input matInput appDateMask placeholder="dd/MM/yyyy" formControlName="dataNascimento" />
+    <input matInput appDateMask [matDatepicker]="dataNascimentoPicker" placeholder="dd/MM/yyyy" formControlName="dataNascimento" />
+    <mat-datepicker-toggle matIconSuffix [for]="dataNascimentoPicker"></mat-datepicker-toggle>
+    <mat-datepicker #dataNascimentoPicker></mat-datepicker>
   </mat-form-field>
 
   <mat-form-field>

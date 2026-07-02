@@ -54,7 +54,8 @@ namespace WebApi.Helpers
             var dados = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription)
             ?? await RecarregarSessaoNoCacheAsync(usuarioCodigo);
 
-            // 4. Verifique o módulo
+            // A acao da policy ja fica disponivel para uma futura regra granular.
+            // Hoje o contrato vigente ainda autoriza pelo modulo.
             var perfis = dados?.DadosDoPerfil;
             var modulosDosPerfis = perfis?.SelectMany(p => p.Modulos).ToList();
 

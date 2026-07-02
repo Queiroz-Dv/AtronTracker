@@ -5,13 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
     /// <summary>  
     /// Controlador para gerenciar entidades de Departamento.  
     /// </summary>       
-    [Authorize(Policy = "Modulo:DPT")]
+    [Authorize(Policy = ModuloPolicies.Departamento)]
     [ApiController]
     [Route("api/[controller]")]
     public class DepartamentoController(IDepartamentoService departamentoService) : ControllerBase

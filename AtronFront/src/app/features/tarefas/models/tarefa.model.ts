@@ -4,8 +4,8 @@ export interface TarefaModel {
   id: number;
   titulo: string;
   conteudo: string;
-  dataInicial: Date;
-  dataFinal: Date;
+  dataInicial: Date | string;
+  dataFinal: Date | string;
 
   usuarioCodigo: string;
   estadoDaTarefa: EstadoTarefa;

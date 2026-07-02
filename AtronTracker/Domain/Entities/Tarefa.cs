@@ -18,6 +18,8 @@ namespace Domain.Entities
 
         public int TarefaEstadoId { get; set; }
 
+        public TarefaEstado EstadoDaTarefa { get; set; }
+
         public Usuario Usuario { get; set; }
     }
 }

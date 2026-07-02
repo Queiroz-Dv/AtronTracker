@@ -82,17 +82,9 @@ namespace Application.UseCases.Usuario
 
                 if (departamento != null && cargo != null)
                 {
-                    var relacionamento = new UsuarioCargoDepartamento
-                    {
-                        UsuarioId = usuario.Id,
-                        UsuarioCodigo = usuario.Codigo,
-                        CargoId = cargo.Id,
-                        CargoCodigo = cargo.Codigo,
-                        DepartamentoId = departamento.Id,
-                        DepartamentoCodigo = departamento.Codigo
-                    };
-
-                    await _usuarioCargoDepartamentoRepository.AtualizarRepositoryAsync(relacionamento);
+                    var relacionamentoAtualizado = await AtualizarRelacionamentoCargoDepartamentoAsync(usuario, cargo, departamento);
+                    if (!relacionamentoAtualizado)
+                        return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoAtualizacao);
                 }
             }
 
@@ -113,6 +105,37 @@ namespace Application.UseCases.Usuario
             return Resultado<UsuarioRequest>
                 .Sucesso(request)
                 .AdicionarMensagem("Usuário atualizado com sucesso.");
+        }
+
+        private async Task<bool> AtualizarRelacionamentoCargoDepartamentoAsync(
+            Domain.Entities.Usuario usuario,
+            Cargo cargo,
+            Departamento departamento)
+        {
+            var relacionamentoExistente = await _usuarioCargoDepartamentoRepository
+                .ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
+
+            if (relacionamentoExistente == null)
+            {
+                return await _usuarioCargoDepartamentoRepository
+                    .GravarAssociacaoUsuarioCargoDepartamento(usuario, cargo, departamento);
+            }
+
+            var relacionamentoJaAtualizado =
+                relacionamentoExistente.CargoId == cargo.Id &&
+                relacionamentoExistente.CargoCodigo == cargo.Codigo &&
+                relacionamentoExistente.DepartamentoId == departamento.Id &&
+                relacionamentoExistente.DepartamentoCodigo == departamento.Codigo;
+
+            if (relacionamentoJaAtualizado)
+                return true;
+
+            var removido = await _usuarioCargoDepartamentoRepository.RemoverRepositoryAsync(relacionamentoExistente);
+            if (!removido)
+                return false;
+
+            return await _usuarioCargoDepartamentoRepository
+                .GravarAssociacaoUsuarioCargoDepartamento(usuario, cargo, departamento);
         }
     }
 }
