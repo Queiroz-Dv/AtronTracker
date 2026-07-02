@@ -35,12 +35,16 @@
 
           <mat-form-field class="m-20 inpt-tarefa">
             <mat-label>Data Inicial</mat-label>
-            <input matInput type="date" formControlName="dataInicial" />
+            <input matInput appDateMask [matDatepicker]="dataInicialPicker" placeholder="dd/MM/yyyy" formControlName="dataInicial" />
+            <mat-datepicker-toggle matIconSuffix [for]="dataInicialPicker"></mat-datepicker-toggle>
+            <mat-datepicker #dataInicialPicker></mat-datepicker>
           </mat-form-field>
 
           <mat-form-field class="m-20 inpt-tarefa">
             <mat-label>Data Final</mat-label>
-            <input matInput type="date" formControlName="dataFinal" />
+            <input matInput appDateMask [matDatepicker]="dataFinalPicker" placeholder="dd/MM/yyyy" formControlName="dataFinal" />
+            <mat-datepicker-toggle matIconSuffix [for]="dataFinalPicker"></mat-datepicker-toggle>
+            <mat-datepicker #dataFinalPicker></mat-datepicker>
           </mat-form-field>
 
           <mat-form-field class="m-20 inpt-tarefa">

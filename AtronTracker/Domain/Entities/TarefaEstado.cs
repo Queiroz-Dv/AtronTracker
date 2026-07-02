@@ -1,6 +1,6 @@
-namespace Application.DTO
+namespace Domain.Entities
 {
-    public class TarefaEstadoDTO
+    public class TarefaEstado
     {
         public int Id { get; set; }
         public string Descricao { get; set; }

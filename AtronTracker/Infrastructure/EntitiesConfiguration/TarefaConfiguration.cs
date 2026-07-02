@@ -17,6 +17,11 @@ namespace Infrastructure.EntitiesConfiguration
 
             builder.Property(trf => trf.TarefaEstadoId).IsRequired();
 
+            builder.HasOne(trf => trf.EstadoDaTarefa)
+                   .WithMany()
+                   .HasForeignKey(trf => trf.TarefaEstadoId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasOne(usr => usr.Usuario)
                    .WithMany(trf => trf.Tarefas)
                    .HasForeignKey(usr => new { usr.UsuarioId, usr.UsuarioCodigo })

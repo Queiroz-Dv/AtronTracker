@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
 using System.Threading.Tasks;
 using Shared.Domain.ValueObjects;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Modulo:PERF")]
     public class PerfilDeAcessoController : ApiBaseConfigurationController<PerfilDeAcessoDTO, IPerfilDeAcessoService>
     {
         public PerfilDeAcessoController(
@@ -20,6 +20,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Post([FromBody] PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
             return !await _service.CriarPerfilServiceAsync(perfilDeAcessoDTO) ?
@@ -28,6 +29,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("{codigo}")]
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Put(string codigo, [FromBody] PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
             return !await _service.AtualizarPerfilServiceAsync(codigo, perfilDeAcessoDTO) ?
@@ -36,6 +38,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Get()
         {
             var perfis = await _service.ObterTodosPerfisServiceAsync();
@@ -43,6 +46,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("{codigo}")]
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Get(string codigo)
         {
             var perfil = await _service.ObterPerfilPorCodigoServiceAsync(codigo);
@@ -50,6 +54,7 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete("{codigo}")]
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Delete(string codigo)
         {
             await _service.DeletarPerfilServiceAsync(codigo);
@@ -61,6 +66,7 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("RelacionamentoPerfilUsuario")]
+        [Authorize(Policy = ModuloPolicies.RelacionamentoPerfilUsuario)]
         public async Task<ActionResult> RelacionamentoPerfilUsuario(PerfilUsuarioRequest request)
         {
             var dto = new PerfilDeAcessoUsuarioDTO();
@@ -78,6 +84,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("ObterRelacionamentoPerfilUsuario/{codigo}")]
+        [Authorize(Policy = ModuloPolicies.RelacionamentoPerfilUsuario)]
         public async Task<ActionResult> ObterRelacionamentosPerfilUsuario([FromRoute] string codigo)
         {
             var perfil = await _service.ObterRelacionamentoDePerfilUsuarioPorCodigoServiceAsync(codigo);

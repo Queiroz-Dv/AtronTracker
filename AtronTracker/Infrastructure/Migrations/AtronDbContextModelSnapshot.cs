@@ -130,8 +130,14 @@ namespace Atron.Infrastructure.Migrations
                         new
                         {
                             Id = 6,
-                            Codigo = "PAC",
-                            Descricao = "Políticas e Acessos"
+                            Codigo = "PERF",
+                            Descricao = "Perfil de acesso"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Codigo = "RPERFUSR",
+                            Descricao = "Relacionamento de perfil e usuários"
                         });
                 });
 
@@ -276,9 +282,53 @@ namespace Atron.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TarefaEstadoId");
+
                     b.HasIndex("UsuarioId", "UsuarioCodigo");
 
                     b.ToTable("Tarefas");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TarefaEstado", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TarefaEstados");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Descricao = "Em atividade"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Descricao = "Pendente de aprovação"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Descricao = "Entregue"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Descricao = "Finalizada"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Descricao = "Iniciada"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Usuario", b =>
@@ -649,9 +699,17 @@ namespace Atron.Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Tarefa", b =>
                 {
+                    b.HasOne("Domain.Entities.TarefaEstado", "EstadoDaTarefa")
+                        .WithMany()
+                        .HasForeignKey("TarefaEstadoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.Usuario", "Usuario")
                         .WithMany("Tarefas")
                         .HasForeignKey("UsuarioId", "UsuarioCodigo");
+
+                    b.Navigation("EstadoDaTarefa");
 
                     b.Navigation("Usuario");
                 });

@@ -1,10 +1,8 @@
-﻿using Application.DTO;
-using Shared.Extensions;
+using Application.DTO;
 using Domain.Entities;
-using System.Linq;
-using System.Threading.Tasks;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services.Mapper;
+using System.Threading.Tasks;
 
 namespace Application.Mapping
 {
@@ -30,9 +28,13 @@ namespace Application.Mapping
                 Usuario = await MapChildAsync(entity.Usuario, _usuarioMap)
             };
 
-            if (!entity.TarefaEstadoId.ToString().IsNullOrEmpty())
+            if (entity.TarefaEstadoId > 0)
             {
-                dto.EstadoDaTarefa = new TarefaEstadoDTO() { Id = entity.TarefaEstadoId, Descricao = TarefaEstadoDTO.TarefasEstados().FirstOrDefault(trf => trf.Id == entity.TarefaEstadoId).Descricao };
+                dto.EstadoDaTarefa = new TarefaEstadoDTO
+                {
+                    Id = entity.TarefaEstadoId,
+                    Descricao = entity.EstadoDaTarefa?.Descricao
+                };
             }
 
             return dto;

@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Modulo:TAR")]
+    [Authorize(Policy = ModuloPolicies.Tarefa)]
     public class TarefaController(ITarefaService tarefaService) : ControllerBase
     {
         [HttpGet]

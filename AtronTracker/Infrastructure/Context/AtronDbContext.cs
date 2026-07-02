@@ -27,6 +27,8 @@ namespace AtronTracker.Infrastructure.Context
 
         public DbSet<Tarefa> Tarefas { get; set; }
 
+        public DbSet<TarefaEstado> TarefaEstados { get; set; }
+
         public DbSet<Salario> Salarios { get; set; }
 
         public DbSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }

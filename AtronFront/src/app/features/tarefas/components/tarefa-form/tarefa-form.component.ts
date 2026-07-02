@@ -10,17 +10,18 @@ import { TarefaService } from '../../services/tarefa.service';
 import { UsuarioRequest } from '../../../usuarios/models/request/usuario-request';
 import { UsuarioResponse } from '../../../usuarios/models/response/usuario-response';
 import { formatLabel } from '../../../../shared/utils/formatar-label.util';
+import { DateMaskDirective } from '../../../../shared/directives/date-mask.directive';
 
 @Component({
   selector: 'c-tarefa-form',
-  imports: [SharedModule, ReactiveFormsModule, ControlErrorComponent, UsuarioInformacoesComponent],
+  imports: [SharedModule, ReactiveFormsModule, ControlErrorComponent, UsuarioInformacoesComponent, DateMaskDirective],
   templateUrl: './tarefa-form.component.html',
   styleUrls: ['../../tarefa.component.css']
 })
 
 export class TarefaFormComponent implements OnInit {
   @Input() tarefaForm!: FormGroup;
-  usuarioControl = new FormControl<string | UsuarioRequest>('');
+  usuarioControl = new FormControl<string | UsuarioRequest | UsuarioResponse>('');
   estadoControl = new FormControl<string | EstadoTarefa>('');
   estadosDaTarefa: EstadoTarefa[] = EstadoTarefa.getEstados();
   usuarios: UsuarioResponse[] = [];
@@ -41,13 +42,22 @@ export class TarefaFormComponent implements OnInit {
       const usuarioCodigo = this.tarefaForm.get('usuarioCodigo')?.value;
       const selecionado = this.todosUsuarios.find(u => u.codigo === usuarioCodigo);
 
-      this.usuarioControl.setValue(selecionado || '');
+      this.sincronizarUsuarioSelecionado(selecionado);
       this.sincronizarEstadoSelecionado();
     });
 
     this.usuarioControl.valueChanges.subscribe(value => {
-      const usuario = value as UsuarioResponse;
-      if (!usuario) { return; }
+      if (typeof value === 'string') {
+        this.usuarios = this.filtrarUsuarios(value);
+        this.limparUsuarioSelecionado(false);
+        return;
+      }
+
+      const usuario = value as UsuarioResponse | null;
+      if (!usuario) {
+        this.limparUsuarioSelecionado();
+        return;
+      }
 
       this.service.obterTodasTarefasRelacionadas().subscribe(tarefas => { this.totalDeTarefas = tarefas.filter(t => t.usuarioCodigo === usuario.codigo).length; });
 
@@ -59,6 +69,11 @@ export class TarefaFormComponent implements OnInit {
       });
     });
 
+    this.tarefaForm.get('usuarioCodigo')?.valueChanges.subscribe(codigo => {
+      const selecionado = this.todosUsuarios.find(u => u.codigo === codigo);
+      this.sincronizarUsuarioSelecionado(selecionado);
+    });
+
     this.estadoControl.valueChanges.subscribe(value => {
       const estado = value as EstadoTarefa;
       this.tarefaForm.patchValue({
@@ -68,7 +83,8 @@ export class TarefaFormComponent implements OnInit {
     });
   }
 
-  exibirUsuario(usuario: UsuarioResponse): string {
+  exibirUsuario(usuario: UsuarioResponse | string): string {
+    if (typeof usuario === 'string') return usuario;
     return usuario ? usuario.nome + ' ' + usuario.sobrenome : '';
   }
 
@@ -82,5 +98,34 @@ export class TarefaFormComponent implements OnInit {
     if (estadoSelecionado) {
       this.estadoControl.setValue(estadoSelecionado);
     }
+  }
+
+  private filtrarUsuarios(valor: string): UsuarioResponse[] {
+    const filtro = valor.toLowerCase();
+
+    return this.todosUsuarios.filter(usuario =>
+      usuario.codigo?.toLowerCase().includes(filtro) ||
+      usuario.nome?.toLowerCase().includes(filtro) ||
+      usuario.sobrenome?.toLowerCase().includes(filtro) ||
+      `${usuario.nome} ${usuario.sobrenome}`.toLowerCase().includes(filtro)
+    );
+  }
+
+  private sincronizarUsuarioSelecionado(usuario?: UsuarioResponse): void {
+    this.usuarioControl.setValue(usuario || '', { emitEvent: false });
+    this.usuarios = usuario ? [usuario] : this.todosUsuarios;
+  }
+
+  private limparUsuarioSelecionado(restaurarLista: boolean = true): void {
+    this.totalDeTarefas = 0;
+    if (restaurarLista) {
+      this.usuarios = this.todosUsuarios;
+    }
+    this.tarefaForm.patchValue({
+      usuarioCodigo: null,
+      usuarioNome: '',
+      cargoDescricao: '',
+      departamentoDescricao: ''
+    }, { emitEvent: false });
   }
 }

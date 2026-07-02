@@ -66,8 +66,8 @@ export class TarefaEditComponent implements OnInit {
       id: formValues.id || 0,
       titulo: formValues.titulo,
       conteudo: formValues.conteudo,
-      dataInicial: formValues.dataInicial,
-      dataFinal: formValues.dataFinal,
+      dataInicial: this.formatarDataParaEnvio(formValues.dataInicial),
+      dataFinal: this.formatarDataParaEnvio(formValues.dataFinal),
       estadoDaTarefa: { id: formValues.estadoId, descricao: '' },
       usuarioCodigo: formValues.usuarioCodigo,
     };
@@ -79,9 +79,33 @@ export class TarefaEditComponent implements OnInit {
     operacao.subscribe(() => this.router.navigate(['atron/tarefas']));
   }
 
-  // Transforma data ISO para yyyy-MM-dd
   private formatDate(dateString?: any): string | null {
     if (!dateString) return null;
-    return dateString.split('T')[0];
+
+    const valor = dateString.toString();
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(valor)) return valor;
+    if (/^\d{4}-\d{2}-\d{2}/.test(valor)) {
+      const [ano, mes, dia] = valor.substring(0, 10).split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    return valor;
+  }
+
+  private formatarDataParaEnvio(data?: Date | string | null): string | null {
+    if (!data) return null;
+
+    if (data instanceof Date) {
+      return data.toISOString().substring(0, 10);
+    }
+
+    const valor = data.toString().trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) return valor;
+
+    const partes = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(valor);
+    if (!partes) return valor;
+
+    const [, dia, mes, ano] = partes;
+    return `${ano}-${mes}-${dia}`;
   }
 }

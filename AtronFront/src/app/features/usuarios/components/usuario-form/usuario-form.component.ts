@@ -39,19 +39,13 @@ export class UsuarioFormComponent implements OnInit {
     this.departamentoService.obterTodos().subscribe(deps => {
       this.todosDepartamentos = deps;
       this.departamentosFiltrados = this.todosDepartamentos;
-
-      const dptCodigo = this.usuarioForm.get('departamentoCodigo')?.value;
-      const selecionado = this.todosDepartamentos.find(d => d.codigo === dptCodigo);
-      this.departamentoControl.setValue(selecionado || '');
+      this.sincronizarDepartamentoSelecionado();
     });
 
     this.cargoService.obterTodos().subscribe(crgs => {
       this.todosCargos = crgs;
       this.cargosFiltrados = this.todosCargos;
-
-      const cargoCodigo = this.usuarioForm.get('cargoCodigo')?.value;
-      const selecionado = this.todosCargos.find(c => c.codigo === cargoCodigo);
-      this.cargoControl.setValue(selecionado || '');
+      this.sincronizarCargoSelecionado();
     });
 
     this.departamentoControl.valueChanges.subscribe(value => {
@@ -77,12 +71,55 @@ export class UsuarioFormComponent implements OnInit {
         // Usuário selecionou um item
         const cargo = value as CargoModel;
         this.departamentosFiltrados = this.todosDepartamentos.filter(d => d.codigo === cargo.departamentoCodigo);
-        this.usuarioForm.patchValue({ cargoCodigo: cargo.codigo });
+        this.usuarioForm.patchValue({
+          cargoCodigo: cargo.codigo,
+          departamentoCodigo: cargo.departamentoCodigo
+        });
       } else {
         this.usuarioForm.patchValue({ cargoCodigo: null });
         this.departamentosFiltrados = this.todosDepartamentos;
       }
     });
+
+    this.usuarioForm.get('departamentoCodigo')?.valueChanges.subscribe(() => {
+      this.sincronizarDepartamentoSelecionado();
+    });
+
+    this.usuarioForm.get('cargoCodigo')?.valueChanges.subscribe(() => {
+      this.sincronizarCargoSelecionado();
+    });
+  }
+
+  private sincronizarDepartamentoSelecionado(): void {
+    const departamentoCodigo = this.usuarioForm.get('departamentoCodigo')?.value;
+    const selecionado = this.todosDepartamentos.find(d => d.codigo === departamentoCodigo);
+
+    this.departamentoControl.setValue(selecionado || '', { emitEvent: false });
+    this.departamentosFiltrados = selecionado ? [selecionado] : this.todosDepartamentos;
+
+    if (selecionado) {
+      this.cargosFiltrados = this.todosCargos.filter(c => c.departamentoCodigo === selecionado.codigo);
+    }
+  }
+
+  private sincronizarCargoSelecionado(): void {
+    const cargoCodigo = this.usuarioForm.get('cargoCodigo')?.value;
+    const selecionado = this.todosCargos.find(c => c.codigo === cargoCodigo);
+
+    this.cargoControl.setValue(selecionado || '', { emitEvent: false });
+
+    if (!selecionado) {
+      this.cargosFiltrados = this.todosCargos;
+      return;
+    }
+
+    this.cargosFiltrados = [selecionado];
+
+    const departamentoSelecionado = this.todosDepartamentos.find(d => d.codigo === selecionado.departamentoCodigo);
+    if (departamentoSelecionado) {
+      this.departamentoControl.setValue(departamentoSelecionado, { emitEvent: false });
+      this.departamentosFiltrados = [departamentoSelecionado];
+    }
   }
 
   private _filtrarDepartamentos(valor: string): Departamento[] {
@@ -101,6 +138,6 @@ export class UsuarioFormComponent implements OnInit {
     );
   }
 
-  exibirDepartamentoDescricao = (dpt: Departamento) => dpt?.descricao ?? '';
-  exibirCargoDescricao = (crg: CargoModel) => crg?.descricao ?? '';
+  exibirDepartamentoDescricao = (dpt: Departamento | string) => typeof dpt === 'string' ? dpt : dpt?.descricao ?? '';
+  exibirCargoDescricao = (crg: CargoModel | CargoResponse | string) => typeof crg === 'string' ? crg : crg?.descricao ?? '';
 }

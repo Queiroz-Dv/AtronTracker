@@ -18,7 +18,7 @@ import { UsuarioRequest } from '../../../usuarios/models/request/usuario-request
 
 export class SalarioFormComponent implements OnInit {
   @Input() salarioForm!: FormGroup;
-  usuarioControl = new FormControl<string | UsuarioRequest>('');
+  usuarioControl = new FormControl<string | UsuarioRequest | UsuarioResponse>('');
   meses: MesDto[] = MesDto.getMeses();
   mesControl = new FormControl<string | MesDto>('');
   usuarios: UsuarioResponse[] = [];
@@ -33,7 +33,7 @@ export class SalarioFormComponent implements OnInit {
 
       const usuarioCodigo = this.salarioForm.get('usuarioCodigo')?.value;
       const selecionado = this.todosUsuarios.find(u => u.codigo === usuarioCodigo);
-      this.usuarioControl.setValue(selecionado || '');
+      this.sincronizarUsuarioSelecionado(selecionado);
 
       const mesId = this.salarioForm.get('mesId')?.value;
       const mesSelecionado = this.meses.find(ms => ms.id === mesId);
@@ -52,8 +52,17 @@ export class SalarioFormComponent implements OnInit {
 
 
     this.usuarioControl.valueChanges.subscribe(value => {
-      const usuario = value as UsuarioResponse;
-      if (!usuario) { return; }
+      if (typeof value === 'string') {
+        this.usuarios = this.filtrarUsuarios(value);
+        this.limparUsuarioSelecionado(false);
+        return;
+      }
+
+      const usuario = value as UsuarioResponse | null;
+      if (!usuario) {
+        this.limparUsuarioSelecionado();
+        return;
+      }
 
       this.salarioForm.patchValue({
         usuarioCodigo: usuario.codigo,
@@ -62,6 +71,11 @@ export class SalarioFormComponent implements OnInit {
         departamentoDescricao: formatLabel(usuario.departamento?.codigo, usuario.departamento?.descricao)
       });
 
+    });
+
+    this.salarioForm.get('usuarioCodigo')?.valueChanges.subscribe(codigo => {
+      const selecionado = this.todosUsuarios.find(u => u.codigo === codigo);
+      this.sincronizarUsuarioSelecionado(selecionado);
     });
   }
 
@@ -73,11 +87,41 @@ export class SalarioFormComponent implements OnInit {
     this.usuarioControl.disable();
   }
 
-  exibirUsuario(usuario: UsuarioResponse): string {
+  exibirUsuario(usuario: UsuarioResponse | string): string {
+    if (typeof usuario === 'string') return usuario;
     return exibirDescricaoDoUsuario(usuario);
   }
 
   exibirMes(mes: MesDto): string {
     return mes ? mes.descricao : '';
+  }
+
+  private filtrarUsuarios(valor: string): UsuarioResponse[] {
+    const filtro = valor.toLowerCase();
+
+    return this.todosUsuarios.filter(usuario =>
+      usuario.codigo?.toLowerCase().includes(filtro) ||
+      usuario.nome?.toLowerCase().includes(filtro) ||
+      usuario.sobrenome?.toLowerCase().includes(filtro) ||
+      `${usuario.nome} ${usuario.sobrenome}`.toLowerCase().includes(filtro)
+    );
+  }
+
+  private sincronizarUsuarioSelecionado(usuario?: UsuarioResponse): void {
+    this.usuarioControl.setValue(usuario || '', { emitEvent: false });
+    this.usuarios = usuario ? [usuario] : this.todosUsuarios;
+  }
+
+  private limparUsuarioSelecionado(restaurarLista: boolean = true): void {
+    if (restaurarLista) {
+      this.usuarios = this.todosUsuarios;
+    }
+
+    this.salarioForm.patchValue({
+      usuarioCodigo: null,
+      usuarioNome: '',
+      cargoDescricao: '',
+      departamentoDescricao: ''
+    }, { emitEvent: false });
   }
 }

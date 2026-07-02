@@ -5,13 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
     /// <summary>  
     /// Controlador para gerenciar entidades de Cargo.  
     /// </summary>       
-    [Authorize(Policy = "Modulo:CRG")]
+    [Authorize(Policy = ModuloPolicies.Cargo)]
     [ApiController]
     [Route("api/[controller]")]
     public class CargoController(ICargoService cargoService) : ControllerBase

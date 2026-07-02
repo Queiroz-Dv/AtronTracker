@@ -22,8 +22,22 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> AtualizarUsuarioAsync(Usuario usuario)
         {
-            _context.Usuarios.Update(usuario);
-            return await _context.SaveChangesAsync() > 0;
+            var usuarioBd = await _context.Usuarios
+                .FirstOrDefaultAsync(usr => usr.Id == usuario.Id && usr.Codigo == usuario.Codigo && !usr.Inativo);
+
+            if (usuarioBd is null)
+                return false;
+
+            usuarioBd.Nome = usuario.Nome;
+            usuarioBd.Sobrenome = usuario.Sobrenome;
+            usuarioBd.Email = usuario.Email;
+            usuarioBd.DataNascimento = usuario.DataNascimento;
+            usuarioBd.SalarioAtual = usuario.SalarioAtual;
+            usuarioBd.ReceberNotificacaoTarefaPorEmail = usuario.ReceberNotificacaoTarefaPorEmail;
+            usuarioBd.CodigoReativacao = usuario.CodigoReativacao;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> AtualizarPreferenciaNotificacaoTarefaPorEmailAsync(string codigo, bool receberNotificacao)
