@@ -21,9 +21,9 @@ export const routes: Routes = [
       { path: 'departamentos', canActivate: [ModuloGuard], data: { moduloCodigo: 'DPT' }, loadChildren: () => import('./features/departamentos/departamento-routing.module').then(m => m.DepartamentoRoutingModule) },
       { path: 'cargos', canActivate: [ModuloGuard], data: { moduloCodigo: 'CRG' }, loadChildren: () => import('./features/cargos/cargo-routing.module').then(m => m.CargoRoutingModule) },
       { path: 'usuarios', canActivate: [ModuloGuard], data: { moduloCodigo: 'USR' }, loadChildren: () => import('./features/usuarios/usuario-routing.module').then(m => m.UsuarioRoutingModule) },
-      { path: 'tarefas', canActivate: [ModuloGuard], data: { moduloCodigo: 'TRF' }, loadChildren: () => import('./features/tarefas/tarefa-routing.module').then(m => m.TarefaRoutingModule) },
+      { path: 'tarefas', canActivate: [ModuloGuard], data: { moduloCodigo: 'TAR' }, loadChildren: () => import('./features/tarefas/tarefa-routing.module').then(m => m.TarefaRoutingModule) },
       { path: 'salarios', canActivate: [ModuloGuard], data: { moduloCodigo: 'SAL' }, loadChildren: () => import('./features/salarios/salario-routing.module').then(m => m.SalarioRoutingModule) },
-      { path: 'perfil-de-acesso', canActivate: [ModuloGuard], data: { moduloCodigo: 'PRF' }, loadChildren: () => import('./features/perfil-de-acesso/perfil-de-acesso.module').then(m => m.PerfilModule) },
+      { path: 'perfil-de-acesso', canActivate: [ModuloGuard], data: { moduloCodigo: 'PERF' }, loadChildren: () => import('./features/perfil-de-acesso/perfil-de-acesso.module').then(m => m.PerfilModule) },
     ]
   },
 

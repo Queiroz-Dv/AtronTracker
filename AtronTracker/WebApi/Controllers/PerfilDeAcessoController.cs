@@ -10,7 +10,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize("Modulo:PERF")]
+    [Authorize(Policy = "Modulo:PERF")]
     public class PerfilDeAcessoController : ApiBaseConfigurationController<PerfilDeAcessoDTO, IPerfilDeAcessoService>
     {
         public PerfilDeAcessoController(

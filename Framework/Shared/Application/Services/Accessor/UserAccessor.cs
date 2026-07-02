@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using System.Security.Claims;
 
@@ -34,6 +35,17 @@ namespace Shared.Application.Services.Accessor
             }
 
             return "Anonimo";
+        }
+
+        public string ObterCodigoUsuarioLogado()
+        {
+            var user = _accessor.HttpContext?.User;
+            if (user?.Identity?.IsAuthenticated != true)
+            {
+                return string.Empty;
+            }
+
+            return user.FindFirst(ClaimCode.CODIGO_USUARIO)?.Value ?? string.Empty;
         }
     }
 }

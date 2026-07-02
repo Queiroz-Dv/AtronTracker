@@ -28,6 +28,8 @@ namespace Application.DTO
 
         public string Senha { get; set; }
 
+        public bool ReceberNotificacaoTarefaPorEmail { get; set; }
+
         public DadosDeTokenComRefreshToken DadosDoToken { get; set; }
 
         public DepartamentoDTO Departamento { get; set; }

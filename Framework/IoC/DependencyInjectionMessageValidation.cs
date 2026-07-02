@@ -54,6 +54,7 @@ namespace IoC
         {
             services.AddScoped<IMessageBaseService, TarefaMessageValidation>();
             services.AddScoped<IValidateModelService<Tarefa>, TarefaMessageValidation>();
+            services.AddScoped<IValidador<TarefaDTO>, TarefaValidador>();
             services.AddScoped<Notifiable, TarefaMessageValidation>();
 
         }

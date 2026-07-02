@@ -32,6 +32,7 @@ namespace Application.Mapping
                 Email = entity.Email,
                 Salario = entity.SalarioAtual,
                 DataNascimento = entity.DataNascimento,
+                ReceberNotificacaoTarefaPorEmail = entity.ReceberNotificacaoTarefaPorEmail,
                 PerfisDeAcesso = []
             };
 
@@ -69,7 +70,8 @@ namespace Application.Mapping
                 Sobrenome = dto.Sobrenome,
                 Email = dto.Email,
                 DataNascimento = dto.DataNascimento,
-                SalarioAtual = dto.Salario
+                SalarioAtual = dto.Salario,
+                ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail
             });
         }
 
@@ -81,6 +83,7 @@ namespace Application.Mapping
             entityToUpdate.Email = dto.Email;
             entityToUpdate.DataNascimento = dto.DataNascimento;
             entityToUpdate.SalarioAtual = dto.Salario;
+            entityToUpdate.ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail;
 
             return Task.CompletedTask;
         }

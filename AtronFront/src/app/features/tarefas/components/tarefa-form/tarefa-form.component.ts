@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { catchError, forkJoin, of } from 'rxjs';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error.component';
 import { UsuarioInformacoesComponent } from '../../../../shared/components/usuario-informacoes/usuario-informacoes.component';
 import { SharedModule } from '../../../../shared/modules/shared.module';
@@ -29,7 +30,11 @@ export class TarefaFormComponent implements OnInit {
   constructor(private service: TarefaService, private usuarioService: UsuarioService,) { }
 
   ngOnInit(): void {
-    this.usuarioService.obterTodosUsuariosInformados().subscribe(usuarios => {
+    forkJoin({
+      usuarios: this.usuarioService.obterTodosUsuariosInformados(),
+      estados: this.service.obterEstados().pipe(catchError(() => of(EstadoTarefa.getEstados())))
+    }).subscribe(({ usuarios, estados }) => {
+      this.estadosDaTarefa = estados;
       this.todosUsuarios = usuarios;
       this.usuarios = this.todosUsuarios;
 
@@ -37,12 +42,7 @@ export class TarefaFormComponent implements OnInit {
       const selecionado = this.todosUsuarios.find(u => u.codigo === usuarioCodigo);
 
       this.usuarioControl.setValue(selecionado || '');
-
-      const estadoId = this.tarefaForm.get('estadoId')?.value;
-      const estadoSelecionado = this.estadosDaTarefa.find(e => e.id === estadoId);
-      if (estadoSelecionado) {
-        this.estadoControl.setValue(estadoSelecionado);
-      }
+      this.sincronizarEstadoSelecionado();
     });
 
     this.usuarioControl.valueChanges.subscribe(value => {
@@ -74,5 +74,13 @@ export class TarefaFormComponent implements OnInit {
 
   exibirEstado(estado: EstadoTarefa): string {
     return estado ? estado.descricao : '';
+  }
+
+  private sincronizarEstadoSelecionado(): void {
+    const estadoId = this.tarefaForm.get('estadoId')?.value;
+    const estadoSelecionado = this.estadosDaTarefa.find(e => e.id === estadoId);
+    if (estadoSelecionado) {
+      this.estadoControl.setValue(estadoSelecionado);
+    }
   }
 }
