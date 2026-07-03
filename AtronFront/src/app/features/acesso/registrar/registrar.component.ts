@@ -14,7 +14,6 @@ import { RegistrarRequest } from '../../../shared/models/request/registrar-reque
   styleUrls: ['./registrar.component.css'],
   standalone: true,
 })
-
 export class RegistrarComponent implements OnInit {
   form!: FormGroup;
   id?: number;
@@ -59,13 +58,11 @@ export class RegistrarComponent implements OnInit {
 
     this.acessoService.registrar(dadosDoUsuario).subscribe({
       next: (mensagens: string[]) => {
-        // Se recebeu resposta 200, o registro foi bem-sucedido
         this.mensagemSucesso = mensagens?.length > 0
           ? mensagens.join(' ')
           : 'Usuário registrado com sucesso! Verifique seu e-mail para confirmar.';
         console.log('Usuário registrado com sucesso!', mensagens);
 
-        // Aguarda 3 segundos para o usuário ler a mensagem antes de redirecionar
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);

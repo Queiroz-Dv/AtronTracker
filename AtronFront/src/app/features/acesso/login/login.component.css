@@ -1,415 +1,203 @@
-/* ===================================
-   Login Component Styles
-   Paleta Unificada: Roxo/Violeta
-   ================================= */
-
-.login-wrapper {
+.auth-page {
+  align-items: center;
+  background: var(--atron-page-bg);
+  color: var(--atron-text);
+  display: flex;
+  justify-content: center;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #1a1c20 0%, #2c2f33 50%, #1a1c20 100%);
-  position: relative;
-  overflow: hidden;
+  padding: 28px;
 }
 
-/* Animated Background Elements */
-.login-wrapper::before,
-.login-wrapper::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.03;
-  animation: float 20s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.login-wrapper::before {
-  width: 600px;
-  height: 600px;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  top: -200px;
-  right: -200px;
-}
-
-.login-wrapper::after {
-  width: 400px;
-  height: 400px;
-  background: linear-gradient(45deg, #f093fb, #f5576c);
-  bottom: -150px;
-  left: -150px;
-  animation-delay: -10s;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  25% {
-    transform: translate(20px, -20px) rotate(5deg);
-  }
-  50% {
-    transform: translate(-20px, 20px) rotate(-5deg);
-  }
-  75% {
-    transform: translate(10px, 10px) rotate(3deg);
-  }
-}
-
-.login-container {
+.auth-shell {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 440px);
+  max-width: 1040px;
   width: 100%;
-  max-width: 420px;
-  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  z-index: 1;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.auth-brand {
+  align-self: center;
+  padding-right: 36px;
 }
 
-/* Header Section */
-.login-header {
-  text-align: center;
-  margin-bottom: 28px;
-}
-
-.logo-container {
-  width: 76px;
-  height: 76px;
-  margin: 0 auto 18px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 20px;
-  display: flex;
+.brand-mark {
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
-  animation: glow 3s ease-in-out infinite;
-}
-
-@keyframes glow {
-  0%, 100% {
-    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
-  }
-  50% {
-    box-shadow: 0 10px 60px rgba(102, 126, 234, 0.6);
-  }
-}
-
-.logo-icon {
-  font-size: 38px !important;
-  width: 38px !important;
-  height: 38px !important;
-  color: white;
-}
-
-.login-title {
-  font-size: 28px;
-  font-weight: 700;
+  background: var(--atron-primary);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-sm);
   color: #ffffff;
-  margin: 0 0 6px;
-  letter-spacing: -0.5px;
+  display: inline-flex;
+  height: 56px;
+  justify-content: center;
+  margin-bottom: 20px;
+  width: 56px;
 }
 
-.login-subtitle {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
+.brand-mark mat-icon {
+  font-size: 30px;
+  height: 30px;
+  width: 30px;
+}
+
+.brand-kicker {
+  color: var(--atron-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.auth-brand h1 {
+  color: var(--atron-text);
+  font-size: 2.35rem;
+  line-height: 1.1;
+  margin: 0 0 12px;
+}
+
+.brand-copy {
+  color: var(--atron-text-muted);
+  font-size: 1.04rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 480px;
+}
+
+.auth-card {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-md);
+  padding: 30px;
+}
+
+.auth-card-header {
+  margin-bottom: 22px;
+}
+
+.auth-card-header h2 {
+  color: var(--atron-text);
+  font-size: 1.45rem;
+  margin: 0 0 6px;
+}
+
+.auth-card-header p {
+  color: var(--atron-text-muted);
   margin: 0;
 }
 
-/* Card Styles */
-.login-card {
-  background: linear-gradient(145deg, #2c2f33 0%, #23262a 100%);
-  border-radius: 20px;
-  padding: 36px 32px;
-  box-shadow: 
-    0 25px 80px rgba(0, 0, 0, 0.4),
-    0 10px 30px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  overflow: hidden;
-}
-
-.login-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
-  background-size: 200% 100%;
-  animation: gradient-flow 3s ease infinite;
-}
-
-@keyframes gradient-flow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Form Styles */
-.login-form {
+.auth-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
-.form-field {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-field mat-form-field {
+.auth-form mat-form-field {
   width: 100%;
 }
 
-/* Override Angular Material styles */
-.form-field ::ng-deep .mat-mdc-text-field-wrapper {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border-radius: 12px !important;
+.auth-form ::ng-deep .mat-mdc-text-field-wrapper {
+  background: #ffffff;
+  border-radius: var(--atron-radius-sm);
 }
 
-.form-field ::ng-deep .mdc-notched-outline__leading,
-.form-field ::ng-deep .mdc-notched-outline__notch,
-.form-field ::ng-deep .mdc-notched-outline__trailing {
-  border-color: rgba(255, 255, 255, 0.15) !important;
-}
-
-.form-field ::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__leading,
-.form-field ::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__notch,
-.form-field ::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__trailing {
-  border-color: rgba(102, 126, 234, 0.4) !important;
-}
-
-.form-field ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
-.form-field ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
-.form-field ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
-  border-color: #667eea !important;
-}
-
-.form-field ::ng-deep .mat-mdc-floating-label,
-.form-field ::ng-deep .mdc-floating-label {
-  color: rgba(255, 255, 255, 0.6) !important;
-}
-
-.form-field ::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-floating-label,
-.form-field ::ng-deep .mat-mdc-form-field.mat-focused .mdc-floating-label {
-  color: #667eea !important;
-}
-
-.form-field ::ng-deep .mat-mdc-input-element {
-  color: #ffffff !important;
-}
-
-.form-field ::ng-deep .mat-mdc-form-field-icon-prefix mat-icon,
-.form-field ::ng-deep [matPrefix] {
-  color: rgba(255, 255, 255, 0.5) !important;
+.auth-form ::ng-deep .mat-mdc-form-field-icon-prefix {
+  color: var(--atron-text-muted);
   margin-right: 8px;
 }
 
-.form-field ::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-icon-prefix mat-icon,
-.form-field ::ng-deep .mat-mdc-form-field.mat-focused [matPrefix] {
-  color: #667eea !important;
+.auth-form ::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-icon-prefix {
+  color: var(--atron-primary);
 }
 
-.form-field ::ng-deep .mat-mdc-form-field-icon-suffix mat-icon,
-.form-field ::ng-deep [matSuffix] {
-  color: rgba(255, 255, 255, 0.5) !important;
+.password-toggle {
+  color: var(--atron-text-muted);
 }
 
-.form-field ::ng-deep .mat-mdc-icon-button {
-  color: rgba(255, 255, 255, 0.5) !important;
-}
-
-.form-field ::ng-deep .mat-mdc-icon-button:hover {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-/* Action Buttons */
-.login-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.btn-login {
-  width: 100%;
-  height: 52px;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
+.primary-action,
+.secondary-action {
   align-items: center;
-  justify-content: center;
+  border-radius: var(--atron-radius-sm);
+  display: inline-flex;
   gap: 8px;
-  cursor: pointer;
-}
-
-.btn-login:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
-}
-
-.btn-login:active {
-  transform: translateY(0);
-}
-
-.btn-login mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-}
-
-.btn-register {
-  width: 100%;
   height: 48px;
-  font-size: 15px;
-  font-weight: 500;
-  border-radius: 12px;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 8px;
-  cursor: pointer;
+  width: 100%;
 }
 
-.btn-register:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(102, 126, 234, 0.5);
-  color: white;
+.primary-action {
+  background: var(--atron-primary) !important;
+  color: #ffffff !important;
+  font-weight: 700;
 }
 
-.btn-register mat-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+.primary-action:hover {
+  background: var(--atron-primary-hover) !important;
 }
 
-/* Divider */
-.divider {
-  display: flex;
+.secondary-action {
+  border-color: var(--atron-border) !important;
+  color: var(--atron-text) !important;
+  font-weight: 700;
+}
+
+.text-action {
+  color: var(--atron-primary) !important;
+  font-weight: 700;
+}
+
+.auth-divider {
   align-items: center;
-  gap: 16px;
-  margin: 6px 0;
+  color: var(--atron-text-muted);
+  display: flex;
+  gap: 12px;
+  margin: 2px 0;
 }
 
-.divider-line {
+.auth-divider span {
+  background: var(--atron-border);
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
 }
 
-.divider-text {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.auth-divider small {
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
-/* Error Messages */
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: rgba(244, 67, 54, 0.1);
-  border: 1px solid rgba(244, 67, 54, 0.3);
-  border-radius: 12px;
-  color: #f44336;
-  font-size: 14px;
-  animation: shake 0.5s ease;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-  20%, 40%, 60%, 80% { transform: translateX(4px); }
-}
-
-.error-message mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-}
-
-/* Footer */
-.login-footer {
-  text-align: center;
-  margin-top: 24px;
-}
-
-.footer-text {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
+.auth-footer {
+  color: var(--atron-text-muted);
+  font-size: 0.8rem;
+  grid-column: 1 / -1;
   margin: 0;
+  text-align: center;
 }
 
-/* Responsive - Mobile */
+@media (max-width: 840px) {
+  .auth-page {
+    padding: 18px;
+  }
+
+  .auth-shell {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+
+  .auth-brand {
+    padding-right: 0;
+    text-align: center;
+  }
+
+  .brand-copy {
+    max-width: none;
+  }
+}
+
 @media (max-width: 480px) {
-  .login-wrapper {
-    padding: 16px;
+  .auth-card {
+    padding: 22px;
   }
 
-  .login-card {
-    padding: 28px 22px;
-    border-radius: 16px;
-  }
-
-  .logo-container {
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
-  }
-
-  .logo-icon {
-    font-size: 32px !important;
-    width: 32px !important;
-    height: 32px !important;
-  }
-
-  .login-title {
-    font-size: 24px;
-  }
-
-  .login-subtitle {
-    font-size: 13px;
-  }
-
-  .btn-login {
-    height: 48px;
-    font-size: 15px;
-  }
-
-  .btn-register {
-    height: 44px;
-    font-size: 14px;
+  .auth-brand h1 {
+    font-size: 1.9rem;
   }
 }
