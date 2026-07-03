@@ -1,57 +1,75 @@
-<mat-card class="container p-10">
-  <mat-card-content>
-    <div class="actions m-10">
-      <button mat-raised-button color="primary" (click)="router.navigate(['atron/cargos/novo'])">
-        Novo Cargo
-      </button>
+<main class="list-page">
+  <section class="list-panel" aria-labelledby="cargos-title">
+    <header class="list-header">
+      <div>
+        <p class="list-eyebrow">Estrutura da empresa</p>
+        <h1 id="cargos-title">Cargos</h1>
+        <p class="list-description">Cadastre funções e vincule cada cargo ao departamento correspondente.</p>
+      </div>
+
+      <div class="list-actions">
+        <button mat-flat-button class="list-primary-action" (click)="router.navigate(['atron/cargos/novo'])">
+          <mat-icon>add</mat-icon>
+          Novo cargo
+        </button>
+      </div>
+    </header>
+
+    <div class="list-toolbar">
+      <mat-form-field class="list-filter" appearance="outline">
+        <mat-label>Buscar cargo</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (keyup)="applyFilter($event)" #input>
+      </mat-form-field>
     </div>
 
-    <mat-form-field>
-      <mat-label>Filtrar</mat-label>
-      <input matInput (keyup)="applyFilter($event)" #input>
-    </mat-form-field>
+    <div class="list-table-wrap">
+      <table class="list-table" mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+          <td mat-cell *matCellDef="let crg">{{ crg.codigo }}</td>
+        </ng-container>
 
-    <table mat-table [dataSource]="dataSource" matSort>
-      <ng-container matColumnDef="codigo">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
-        <td mat-cell *matCellDef="let crg">{{ crg.codigo }}</td>
-      </ng-container>
+        <ng-container matColumnDef="descricao">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Descrição</th>
+          <td mat-cell *matCellDef="let crg">{{ crg.descricao }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="descricao">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Descrição</th>
-        <td mat-cell *matCellDef="let crg">{{ crg.descricao }}</td>
-      </ng-container>
+        <ng-container matColumnDef="departamento">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Departamento</th>
+          <td mat-cell *matCellDef="let crg">
+            {{ crg.departamentoCodigo + ' - ' + crg.departamentoDescricao }}
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="departamento">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Departamento</th>
-        <td mat-cell *matCellDef="let crg">
-          {{ crg.departamentoCodigo + ' - ' + crg.departamentoDescricao }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef>Ações</th>
+          <td mat-cell *matCellDef="let crg">
+            <div class="list-row-actions">
+              <button class="list-icon-action" mat-icon-button title="Editar cargo" (click)="editar(crg.codigo)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="list-icon-action-danger" mat-icon-button title="Excluir cargo" (click)="excluir(crg.codigo)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="acoes">
-        <th mat-header-cell *matHeaderCellDef>Ações</th>
-        <td mat-cell *matCellDef="let crg">
-          <mat-card-actions>
-            <button mat-icon-button color="primary" (click)="editar(crg.codigo)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="excluir(crg.codigo)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </mat-card-actions>
-        </td>
-      </ng-container>
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="list-no-data" [attr.colspan]="colunas.length">Nenhum cargo encontrado.</td>
+        </tr>
+      </table>
+    </div>
 
-      <tr mat-header-row *matHeaderRowDef="colunas"></tr>
-      <tr mat-row *matRowDef="let row; columns: colunas"></tr>
-    </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Selecione a página de cargos">
+    <mat-paginator class="list-paginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+      aria-label="Selecione a página de cargos">
     </mat-paginator>
 
-    <mat-card-actions class="m-10">
+    <footer class="list-footer-actions">
       <c-botao-voltar></c-botao-voltar>
-    </mat-card-actions>
-  </mat-card-content>
-</mat-card>
+    </footer>
+  </section>
+</main>

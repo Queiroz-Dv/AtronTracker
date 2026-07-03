@@ -19,7 +19,7 @@ export const MODULOS_CONFIG: Record<string, ModuloConfig> = {
     descricao: 'Gerencie os cargos da empresa.'
   },
   USR: {
-    titulo: 'Usuarios',
+    titulo: 'Usuários',
     icone: 'group',
     rota: '/atron/usuarios',
     descricao: 'Gerencie os colaboradores da empresa.'
@@ -31,10 +31,10 @@ export const MODULOS_CONFIG: Record<string, ModuloConfig> = {
     descricao: 'Gerencie as tarefas da empresa.'
   },
   SAL: {
-    titulo: 'Salarios',
+    titulo: 'Salários',
     icone: 'attach_money',
     rota: '/atron/salarios',
-    descricao: 'Gerencie os salarios da empresa.'
+    descricao: 'Gerencie os salários da empresa.'
   },
   PERF: {
     titulo: 'Perfil de acesso',
@@ -43,10 +43,10 @@ export const MODULOS_CONFIG: Record<string, ModuloConfig> = {
     descricao: 'Gerencie os perfis de acesso do sistema.'
   },
   RPERFUSR: {
-    titulo: 'Relacionamento de perfil e usuarios',
+    titulo: 'Relacionamento de perfil e usuários',
     icone: 'supervisor_account',
     rota: '/atron/perfil-de-acesso/relacionamento-perfil-usuario/novo',
-    descricao: 'Configure os acessos do usuario de acordo com os perfis do sistema.'
+    descricao: 'Configure os acessos do usuário de acordo com os perfis do sistema.'
   }
 
 };
@@ -56,7 +56,7 @@ function getModuloConfig(codigo: string): ModuloConfig {
     titulo: codigo,
     icone: 'default-icon',
     rota: '/atron/default',
-    descricao: 'Modulo nao reconhecido.'
+    descricao: 'Módulo não reconhecido.'
   };
 }
 

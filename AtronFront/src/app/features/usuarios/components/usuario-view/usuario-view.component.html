@@ -1,62 +1,77 @@
-<mat-card class="container p-10">
-  <mat-card-content>
-    <div class="actions m-10">
-      <button mat-raised-button color="primary" (click)="router.navigate(['atron/usuarios/novo'])">
-        Novo usuário
-      </button>
-      <button mat-raised-button (click)="router.navigate(['atron/usuarios/configuracoes'])">
-        Configurações
-      </button>
+<main class="list-page">
+  <section class="list-panel" aria-labelledby="usuarios-title">
+    <header class="list-header">
+      <div>
+        <p class="list-eyebrow">Pessoas e acesso</p>
+        <h1 id="usuarios-title">Usuários</h1>
+        <p class="list-description">Gerencie colaboradores, vínculos de cargo e configurações de acesso.</p>
+      </div>
+
+      <div class="list-actions">
+        <button mat-flat-button class="list-primary-action" (click)="router.navigate(['atron/usuarios/novo'])">
+          <mat-icon>add</mat-icon>
+          Novo usuário
+        </button>
+        <button mat-stroked-button class="list-secondary-action" (click)="router.navigate(['atron/usuarios/configuracoes'])">
+          <mat-icon>settings</mat-icon>
+          Configurações
+        </button>
+      </div>
+    </header>
+
+    <div class="list-toolbar">
+      <mat-form-field class="list-filter" appearance="outline">
+        <mat-label>Buscar usuário</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (keyup)="applyFilter($event)" #input>
+      </mat-form-field>
     </div>
 
-    <mat-form-field>
-      <mat-label>Filtrar</mat-label>
-      <input matInput (keyup)="applyFilter($event)" #input>
-    </mat-form-field>
+    <div class="list-table-wrap">
+      <table class="list-table" mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Usuário</th>
+          <td mat-cell *matCellDef="let usr">{{ usr.codigo }}</td>
+        </ng-container>
 
-    <table mat-table [dataSource]="dataSource" matSort>
-      <ng-container matColumnDef="codigo">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="">Usuário</th>
-        <td mat-cell *matCellDef="let usr">{{ usr.codigo }}</td>
-      </ng-container>
+        <ng-container matColumnDef="cargo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Cargo</th>
+          <td mat-cell *matCellDef="let usr">{{ usr.cargo }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="cargo">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="">Cargo</th>
-        <td mat-cell *matCellDef="let usr">
-          {{ usr.cargo }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="departamento">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Departamento</th>
+          <td mat-cell *matCellDef="let usr">{{ usr.departamento }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="departamento">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="">Departamento</th>
-        <td mat-cell *matCellDef="let usr">
-          {{ usr.departamento }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef>Ações</th>
+          <td mat-cell *matCellDef="let usr">
+            <div class="list-row-actions">
+              <button class="list-icon-action" mat-icon-button title="Editar usuário" (click)="editar(usr.codigoOriginal)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="list-icon-action-danger" mat-icon-button title="Excluir usuário" (click)="excluir(usr.codigoOriginal)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="acoes">
-        <th mat-header-cell *matHeaderCellDef>Ações</th>
-        <td mat-cell *matCellDef="let usr">
-          <mat-card-actions>
-            <button mat-icon-button color="primary" (click)="editar(usr.codigoOriginal)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="excluir(usr.codigoOriginal)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </mat-card-actions>
-        </td>
-      </ng-container>
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="list-no-data" [attr.colspan]="colunas.length">Nenhum usuário encontrado.</td>
+        </tr>
+      </table>
+    </div>
 
-      <tr mat-header-row *matHeaderRowDef="colunas"></tr>
-      <tr mat-row *matRowDef="let row; columns: colunas"></tr>
-    </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Selecione a página de usuários">
+    <mat-paginator class="list-paginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+      aria-label="Selecione a página de usuários">
     </mat-paginator>
 
-    <mat-card-actions class="m-10">
+    <footer class="list-footer-actions">
       <c-botao-voltar></c-botao-voltar>
-    </mat-card-actions>
-  </mat-card-content>
-</mat-card>
+    </footer>
+  </section>
+</main>

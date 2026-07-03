@@ -1,15 +1,14 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
-import { map } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
 import { DashboardCard } from '../../core/layout/models/dashboardCard';
 import { Router, RouterModule } from '@angular/router';
-import { Observable } from 'rxjs';
 import { MaterialContainerModule } from '../../material-container.module';
 import { SharedModule } from '../../shared/modules/shared.module';
 import { AcessoService } from '../acesso/login/services/acesso.service';
 import { VisualizacaoService } from '../../core/services/visualizacao-service';
 import { ModuloItem } from '../../shared/utils/modulo-functions.util';
 import { ModuloModel } from '../modulos/interfaces/modulo.interface';
+
+const ORDEM_MODULOS_DASHBOARD = ['DPT', 'CRG', 'USR', 'PERF', 'RPERFUSR', 'TAR', 'TRF', 'SAL'];
 
 @Component({
   standalone: true,
@@ -28,7 +27,9 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.acessoService.modulosAcessiveis$.subscribe(modulos => {
-      this.cardsView = modulos.map(m => this.criarCard(m));
+      this.cardsView = [...modulos]
+        .sort((a, b) => this.obterOrdem(a.codigo) - this.obterOrdem(b.codigo))
+        .map(m => this.criarCard(m));
     });
   }
 
@@ -36,33 +37,22 @@ export class DashboardComponent implements OnInit {
     const item = new ModuloItem(m.codigo);
     return {
       code: m.codigo,
-      title: m.descricao,
+      title: item.titulo || m.descricao,
       icon: item.icone || 'default-icon',
-      description: item.descricao || 'Descricao nao disponivel',
+      description: item.descricao || 'Descrição não disponível',
       route: item.rota,
       cols: 1,
       rows: 1
     };
   }
 
+  private obterOrdem(codigo: string): number {
+    const ordem = ORDEM_MODULOS_DASHBOARD.indexOf(codigo);
+    return ordem === -1 ? ORDEM_MODULOS_DASHBOARD.length : ordem;
+  }
+
   navigate(route: string) {
     this.router.navigateByUrl(route);
-  }
-
-  private breakpointObserver = inject(BreakpointObserver);
-
-  setCardsForView() {
-    this.cards.subscribe(cards => {
-      this.cardsView = cards;
-    });
-  }
-
-  cards: Observable<DashboardCard[]> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
-    map(({ matches }) => this.getCards(matches))
-  );
-
-  private getCards(isHandset: boolean): DashboardCard[] {
-    return this.cardsView;
   }
 
   trocarVisualizacao() {

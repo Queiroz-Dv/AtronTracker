@@ -1,3 +1,18 @@
+:root {
+  --atron-page-bg: #f5f7fb;
+  --atron-surface: #ffffff;
+  --atron-surface-muted: #eef4ff;
+  --atron-text: #172033;
+  --atron-text-muted: #667085;
+  --atron-primary: #1d4ed8;
+  --atron-primary-hover: #1e40af;
+  --atron-border: #dbe3ef;
+  --atron-shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --atron-shadow-md: 0 14px 34px rgba(15, 23, 42, 0.12);
+  --atron-radius-sm: 8px;
+  --atron-radius-md: 12px;
+}
+
 /* You can add global styles to this file, and also import other style files */
 /* Adicione estas classes para estilizar o snackbar */
 .snackbar-sucesso { /* Nome da classe alterado */
@@ -34,13 +49,218 @@
 html,
 body {
   height: 100%;
-  background-color: #202124;
-  color: #eee;
+  background-color: var(--atron-page-bg);
+  color: var(--atron-text);
 }
 
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.list-page {
+  background: var(--atron-page-bg);
+  color: var(--atron-text);
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.list-panel {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-sm);
+  margin: 0 auto;
+  max-width: 1180px;
+  overflow: hidden;
+  --mat-paginator-container-background-color: var(--atron-surface);
+  --mat-paginator-container-text-color: var(--atron-text);
+  --mat-paginator-enabled-icon-color: var(--atron-text);
+  --mat-paginator-disabled-icon-color: #98a2b3;
+  --mat-select-enabled-trigger-text-color: var(--atron-text);
+  --mat-select-panel-background-color: var(--atron-surface);
+  --mat-table-background-color: var(--atron-surface);
+  --mat-table-header-headline-color: var(--atron-text-muted);
+  --mat-table-row-item-label-text-color: var(--atron-text);
+  --mat-table-row-item-outline-color: #edf2f7;
+}
+
+.list-header {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--atron-border);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  padding: 24px;
+}
+
+.list-eyebrow {
+  color: var(--atron-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.list-header h1 {
+  color: var(--atron-text);
+  font-size: 1.55rem;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+
+.list-description {
+  color: var(--atron-text-muted);
+  margin: 0;
+}
+
+.list-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.list-primary-action,
+.list-secondary-action {
+  align-items: center;
+  border-radius: var(--atron-radius-sm) !important;
+  display: inline-flex !important;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.list-primary-action {
+  background: var(--atron-primary) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+.list-primary-action:hover {
+  background: var(--atron-primary-hover) !important;
+}
+
+.list-secondary-action {
+  border: 1px solid var(--atron-border) !important;
+  color: var(--atron-text) !important;
+  font-weight: 700;
+}
+
+.list-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 18px 24px 8px;
+}
+
+.list-filter {
+  max-width: 360px;
+  width: 100%;
+  --mdc-outlined-text-field-caret-color: var(--atron-primary);
+  --mdc-outlined-text-field-focus-outline-color: var(--atron-primary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--atron-primary);
+  --mdc-outlined-text-field-input-text-color: var(--atron-text);
+  --mdc-outlined-text-field-label-text-color: var(--atron-text-muted);
+  --mdc-outlined-text-field-outline-color: var(--atron-border);
+  --mdc-outlined-text-field-hover-outline-color: var(--atron-primary);
+}
+
+.list-filter .mat-mdc-text-field-wrapper {
+  background: #ffffff;
+  border-radius: var(--atron-radius-sm);
+}
+
+.list-table-wrap {
+  overflow-x: auto;
+  padding: 0 24px 8px;
+}
+
+.list-table-wrap-spaced {
+  padding-top: 20px;
+}
+
+.list-table,
+.list-panel .mat-mdc-table,
+.list-panel .mdc-data-table__table {
+  background: var(--atron-surface) !important;
+  width: 100%;
+}
+
+.list-table .mat-mdc-header-row,
+.list-table .mdc-data-table__header-row {
+  background: #f8fafc !important;
+}
+
+.list-table .mat-mdc-header-cell,
+.list-table .mdc-data-table__header-cell {
+  background: #f8fafc !important;
+  border-bottom-color: var(--atron-border);
+  color: var(--atron-text-muted) !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.list-table .mat-mdc-row,
+.list-table .mdc-data-table__row {
+  background: var(--atron-surface) !important;
+}
+
+.list-table .mat-mdc-cell,
+.list-table .mdc-data-table__cell {
+  background: var(--atron-surface) !important;
+  border-bottom-color: #edf2f7;
+  color: var(--atron-text) !important;
+}
+
+.list-table .mat-mdc-row:hover,
+.list-table .mat-mdc-row:hover .mat-mdc-cell {
+  background: #f8fbff !important;
+}
+
+.list-row-actions {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  margin: 0;
+  min-height: auto;
+  padding: 0;
+}
+
+.list-icon-action {
+  color: var(--atron-primary) !important;
+}
+
+.list-icon-action-danger {
+  color: #dc2626 !important;
+}
+
+.list-no-data {
+  color: var(--atron-text-muted);
+  padding: 28px 16px !important;
+  text-align: center;
+}
+
+.list-paginator {
+  background: var(--atron-surface) !important;
+  border-top: 1px solid var(--atron-border);
+  color: var(--atron-text) !important;
+}
+
+.list-paginator .mat-mdc-select-value,
+.list-paginator .mat-mdc-paginator-range-label,
+.list-paginator .mat-mdc-paginator-page-size-label {
+  color: var(--atron-text) !important;
+}
+
+.list-footer-actions {
+  border-top: 1px solid var(--atron-border);
+  display: flex;
+  justify-content: flex-start;
+  padding: 16px 24px 20px;
 }
 
 .container {
