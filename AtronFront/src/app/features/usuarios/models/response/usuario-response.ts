@@ -7,7 +7,6 @@ export class UsuarioResponse implements UsuarioModel {
   codigo: string;
   nome: string;
   sobrenome: string;
-  salario?: number;
   dataNascimento?: Date | string;
   email: string;
   senha: string;

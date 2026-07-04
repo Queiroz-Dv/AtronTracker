@@ -10,7 +10,6 @@ namespace Application.DTO.Response
         public string Sobrenome { get; set; }
         public string? DataNascimento { get; set; }
         public string Email { get; set; }
-        public int? Salario { get; set; }
 
         // Cargo
         public string CargoCodigo { get; set; }

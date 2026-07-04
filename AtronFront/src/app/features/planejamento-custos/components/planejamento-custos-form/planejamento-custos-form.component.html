@@ -1,0 +1,115 @@
+<div [formGroup]="planejamentoForm" class="container centered-container">
+  <h2>Cadastro de planejamento de custos</h2>
+
+  <mat-form-field>
+    <mat-label>Codigo</mat-label>
+    <input matInput formControlName="codigo" />
+    <c-control-error [control]="planejamentoForm.get('codigo')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Descricao</mat-label>
+    <input matInput formControlName="descricao" />
+    <c-control-error [control]="planejamentoForm.get('descricao')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Ano</mat-label>
+    <input matInput type="number" formControlName="ano" />
+    <c-control-error [control]="planejamentoForm.get('ano')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Departamento</mat-label>
+    <input type="text" matInput [formControl]="departamentoControl" [matAutocomplete]="auto" />
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="exibirDescricao">
+      @for (dpt of departamentosFiltrados; track dpt.codigo) {
+      <mat-option [value]="dpt">{{ dpt.codigo }} - {{ dpt.descricao }}</mat-option>
+      }
+    </mat-autocomplete>
+    <c-control-error [control]="planejamentoForm.get('departamentoCodigo')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Valor minimo</mat-label>
+    <input matInput type="number" min="0" step="0.01" formControlName="valorMinimo" />
+    <c-control-error [control]="planejamentoForm.get('valorMinimo')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Valor teto</mat-label>
+    <input matInput type="number" min="0.01" step="0.01" formControlName="valorTeto" />
+    <c-control-error [control]="planejamentoForm.get('valorTeto')"></c-control-error>
+  </mat-form-field>
+
+  <mat-checkbox formControlName="apenasDepartamento">
+    Planejamento apenas por departamento
+  </mat-checkbox>
+
+  @if (deveExibirCargos) {
+  <section class="cargo-planning-section">
+    <header class="cargo-planning-header">
+      <div>
+        <h3>Detalhamento por cargo</h3>
+      </div>
+    </header>
+
+    @if (!detalhesCargo.length) {
+    <div class="cargo-planning-empty">
+      Nenhum cargo encontrado para o departamento selecionado.
+    </div>
+    }
+
+    @if (detalhesCargo.length) {
+    <mat-form-field class="cargo-search-field">
+      <mat-label>Buscar cargo</mat-label>
+      <input type="text" matInput [formControl]="cargoControl" [matAutocomplete]="cargoAuto" />
+      <mat-autocomplete #cargoAuto="matAutocomplete" [displayWith]="exibirCargo" (optionSelected)="selecionarCargo($event.option.value)">
+        @for (cargo of cargosFiltrados; track cargo.codigo) {
+        <mat-option [value]="cargo">{{ cargo.codigo }} - {{ cargo.descricao }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (!totalDetalhesSelecionados) {
+    <div class="cargo-planning-empty">
+      Busque e selecione um cargo para detalhar.
+    </div>
+    }
+    }
+
+    <div formArrayName="detalhesCargo" class="cargo-planning-grid">
+      @for (detalhe of detalhesPaginados; track detalhe.control.get('cargoCodigo')?.value) {
+      <div [formGroupName]="detalhe.index" class="cargo-planning-row">
+        <div class="cargo-planning-name">
+          <strong>{{ detalhe.control.get('cargoCodigo')?.value }}</strong>
+          <span>{{ detalhe.control.get('cargoDescricao')?.value }}</span>
+        </div>
+
+        <mat-form-field>
+          <mat-label>Minimo</mat-label>
+          <input matInput type="number" min="0" step="0.01" formControlName="valorMinimo" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Teto</mat-label>
+          <input matInput type="number" min="0.01" step="0.01" formControlName="valorTeto" />
+        </mat-form-field>
+
+        <button mat-button type="button" (click)="removerCargoDetalhado(detalhe.index)">Remover</button>
+      </div>
+      }
+    </div>
+
+    @if (totalDetalhesSelecionados > pageSize) {
+    <mat-paginator
+      [length]="totalDetalhesSelecionados"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="paginaAlterada($event)">
+    </mat-paginator>
+    }
+  </section>
+  }
+</div>

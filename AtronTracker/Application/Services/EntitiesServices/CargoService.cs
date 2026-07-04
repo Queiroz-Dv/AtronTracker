@@ -8,6 +8,7 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,18 +23,21 @@ namespace Application.Services.EntitiesServices
         private readonly ICargoRepository _cargoRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
+        private readonly IPlanejamentoCustoRepository _planejamentoCustoRepository;
         private readonly IValidador<CargoDTO> _validador;
 
         public CargoService(IValidador<CargoDTO> validador,
                             IAsyncMap<CargoDTO, Cargo> asyncMap,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
+                            IPlanejamentoCustoRepository planejamentoCustoRepository,
                             IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         {
             _validador = validador;
             _asyncMap = asyncMap;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
+            _planejamentoCustoRepository = planejamentoCustoRepository;
             _relacionamentoRepository = relacionamentoRepository;
         }
 
@@ -88,6 +92,18 @@ namespace Application.Services.EntitiesServices
                 return Resultado<CargoDTO>.Falha(CargoResource.ErroDepartamentoNaoEncontrado);
             }
 
+            var alterouDepartamento = entidade.DepartamentoId != departamento.Id ||
+                                      entidade.DepartamentoCodigo != departamento.Codigo;
+
+            if (alterouDepartamento)
+            {
+                var possuiPlanejamentoAtualOuFuturo = await _planejamentoCustoRepository
+                    .ExisteCargoEmPlanejamentoAtualOuFuturoAsync(entidade.Id, entidade.Codigo, entidade.DepartamentoId, entidade.DepartamentoCodigo, DateTime.Today.Year);
+
+                if (possuiPlanejamentoAtualOuFuturo)
+                    return Resultado<CargoDTO>.Falha($"O cargo {codigo} possui planejamento de custo atual ou futuro e nao pode ser movido para outro departamento.");
+            }
+
             await _asyncMap.MapToEntityAsync(cargoDTO, entidade);
             entidade.VincularDepartamento(departamento);
 
@@ -109,6 +125,12 @@ namespace Application.Services.EntitiesServices
 
             if (cargo == null)
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+
+            var possuiPlanejamentoAtualOuFuturo = await _planejamentoCustoRepository
+                .ExisteCargoEmPlanejamentoAtualOuFuturoAsync(cargo.Id, cargo.Codigo, cargo.DepartamentoId, cargo.DepartamentoCodigo, DateTime.Today.Year);
+
+            if (possuiPlanejamentoAtualOuFuturo)
+                return Resultado.Falha($"O cargo {codigo} possui planejamento de custo atual ou futuro e nao pode ser removido.");
 
             var relacionamentos = await _relacionamentoRepository.ObterPorCargo(cargo.Id, cargo.Codigo);
 

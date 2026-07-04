@@ -16,8 +16,6 @@ namespace Application.DTO
 
         public DateTime? DataNascimento { get; set; }
 
-        public int? Salario { get; set; }
-
         public string CargoCodigo { get; set; }
 
         public string DepartamentoCodigo { get; set; }

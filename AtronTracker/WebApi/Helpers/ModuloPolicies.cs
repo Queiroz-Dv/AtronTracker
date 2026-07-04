@@ -9,9 +9,9 @@ namespace WebApi.Helpers
         public const string Cargo = "Modulo:CRG";
         public const string Usuario = "Modulo:USR";
         public const string Tarefa = "Modulo:TAR";
-        public const string Salario = "Modulo:SAL";
         public const string PerfilDeAcesso = "Modulo:PERF";
         public const string RelacionamentoPerfilUsuario = "Modulo:RPERFUSR";
+        public const string PlanejamentoCustos = "Modulo:PLC";
 
         public static string Montar(string codigoModulo, string acao = null)
         {

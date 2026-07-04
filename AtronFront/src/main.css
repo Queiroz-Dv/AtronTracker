@@ -148,6 +148,56 @@ body {
   font-weight: 700;
 }
 
+.mat-mdc-raised-button:not(:disabled),
+.mat-mdc-unelevated-button:not(:disabled),
+.mat-mdc-fab:not(:disabled),
+.mat-mdc-mini-fab:not(:disabled),
+.list-primary-action {
+  --mdc-protected-button-container-color: var(--atron-primary);
+  --mdc-protected-button-label-text-color: #ffffff;
+  --mdc-filled-button-container-color: var(--atron-primary);
+  --mdc-filled-button-label-text-color: #ffffff;
+  --mat-protected-button-state-layer-color: #ffffff;
+  --mat-filled-button-state-layer-color: #ffffff;
+}
+
+.mat-mdc-raised-button:not(:disabled):hover,
+.mat-mdc-unelevated-button:not(:disabled):hover,
+.list-primary-action:hover {
+  --mdc-protected-button-container-color: var(--atron-primary-hover);
+  --mdc-filled-button-container-color: var(--atron-primary-hover);
+}
+
+.mat-mdc-button-base {
+  border-radius: var(--atron-radius-sm) !important;
+  font-weight: 700 !important;
+}
+
+.mat-mdc-button-base:disabled {
+  opacity: 0.58;
+}
+
+.mat-mdc-outlined-button:not(:disabled),
+.mat-mdc-button:not(:disabled),
+.list-secondary-action {
+  --mdc-outlined-button-label-text-color: var(--atron-text);
+  --mdc-outlined-button-outline-color: var(--atron-border);
+  --mdc-text-button-label-text-color: var(--atron-primary);
+}
+
+.mat-mdc-checkbox {
+  --mdc-checkbox-selected-checkmark-color: #ffffff;
+  --mdc-checkbox-selected-focus-icon-color: var(--atron-primary);
+  --mdc-checkbox-selected-hover-icon-color: var(--atron-primary-hover);
+  --mdc-checkbox-selected-icon-color: var(--atron-primary);
+  --mdc-checkbox-selected-pressed-icon-color: var(--atron-primary);
+  --mdc-checkbox-unselected-focus-icon-color: var(--atron-text-muted);
+  --mdc-checkbox-unselected-hover-icon-color: var(--atron-primary);
+  --mdc-checkbox-unselected-icon-color: #98a2b3;
+  --mdc-checkbox-unselected-pressed-icon-color: var(--atron-primary);
+  --mat-checkbox-label-text-color: var(--atron-text);
+}
+
 .list-toolbar {
   align-items: center;
   display: flex;
@@ -256,6 +306,83 @@ body {
   color: var(--atron-text) !important;
 }
 
+.planning-detail-panel {
+  --mdc-dialog-container-color: var(--atron-surface);
+  --mdc-dialog-subhead-color: var(--atron-text);
+  --mdc-dialog-supporting-text-color: var(--atron-text);
+  --mat-dialog-container-small-max-width: 96vw;
+}
+
+.planning-detail-panel .mat-mdc-dialog-container,
+.planning-detail-panel .mdc-dialog__surface {
+  background: var(--atron-surface) !important;
+  border-radius: var(--atron-radius-md) !important;
+  color: var(--atron-text) !important;
+}
+
+.planning-detail-panel .mat-mdc-dialog-title,
+.planning-detail-panel .mat-mdc-dialog-content,
+.planning-detail-panel .mat-mdc-dialog-actions {
+  background: var(--atron-surface) !important;
+  color: var(--atron-text) !important;
+}
+
+.planning-detail-dialog {
+  display: grid;
+  min-width: min(640px, 80vw);
+  padding-top: 4px;
+}
+
+.planning-detail-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+}
+
+.planning-detail-grid div {
+  background: #f8fafc;
+  border: 1px solid var(--atron-border, #d9dde7);
+  border-radius: 8px;
+  color: var(--atron-text, #172033);
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+}
+
+.planning-detail-grid span {
+  color: var(--atron-text-muted, #667085);
+}
+
+.planning-detail-grid strong {
+  color: var(--atron-text, #172033);
+}
+
+.planning-detail-cargos {
+  display: grid;
+  gap: 10px;
+}
+
+.planning-detail-cargos h3 {
+  color: var(--atron-text, #172033);
+  font-size: 1rem;
+  margin: 4px 0 0;
+}
+
+.planning-detail-cargos .report-cargo-grid {
+  background: #ffffff;
+  border-color: var(--atron-border, #d9dde7);
+}
+
+.planning-detail-cargos .report-cargo-grid-header {
+  background: #f8fafc;
+  color: var(--atron-text-muted, #667085);
+}
+
+.planning-detail-cargos .report-cargo-grid-row {
+  background: #ffffff;
+  color: var(--atron-text, #172033);
+}
+
 .list-footer-actions {
   border-top: 1px solid var(--atron-border);
   display: flex;
@@ -338,6 +465,113 @@ fieldset legend {
   width: 70%;
   margin-top: 2%;
   margin-left: 15%;
+}
+
+.form-container,
+.form-container-negative-top,
+.form-container-50,
+.form-container-70,
+.form-container-75,
+.full-form-container {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-sm);
+  color: var(--atron-text);
+  padding: 24px;
+}
+
+.form-container .centered-container,
+.form-container-negative-top .centered-container,
+.form-container-50 .centered-container,
+.form-container-70 .centered-container,
+.form-container-75 .centered-container,
+.full-form-container .centered-container {
+  margin-top: 0;
+}
+
+.form-container h2,
+.form-container-negative-top h2,
+.form-container-50 h2,
+.form-container-70 h2,
+.form-container-75 h2,
+.full-form-container h2 {
+  color: var(--atron-text);
+  font-size: 1.45rem;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.form-container mat-form-field,
+.form-container-negative-top mat-form-field,
+.form-container-50 mat-form-field,
+.form-container-70 mat-form-field,
+.form-container-75 mat-form-field,
+.full-form-container mat-form-field {
+  width: 100%;
+  --mdc-filled-text-field-container-color: #ffffff;
+  --mdc-filled-text-field-caret-color: var(--atron-primary);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--atron-primary);
+  --mdc-filled-text-field-focus-label-text-color: var(--atron-primary);
+  --mdc-filled-text-field-hover-active-indicator-color: var(--atron-primary);
+  --mdc-filled-text-field-input-text-color: var(--atron-text);
+  --mdc-filled-text-field-label-text-color: var(--atron-text-muted);
+  --mdc-filled-text-field-active-indicator-color: var(--atron-border);
+  --mdc-filled-text-field-disabled-container-color: #f1f5f9;
+  --mdc-filled-text-field-disabled-input-text-color: #667085;
+  --mdc-filled-text-field-disabled-label-text-color: #667085;
+  --mat-form-field-container-text-line-height: 1.35rem;
+}
+
+.form-container .mat-mdc-text-field-wrapper,
+.form-container-negative-top .mat-mdc-text-field-wrapper,
+.form-container-50 .mat-mdc-text-field-wrapper,
+.form-container-70 .mat-mdc-text-field-wrapper,
+.form-container-75 .mat-mdc-text-field-wrapper,
+.full-form-container .mat-mdc-text-field-wrapper {
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
+}
+
+.form-container .mat-mdc-form-field-focus-overlay,
+.form-container-negative-top .mat-mdc-form-field-focus-overlay,
+.form-container-50 .mat-mdc-form-field-focus-overlay,
+.form-container-70 .mat-mdc-form-field-focus-overlay,
+.form-container-75 .mat-mdc-form-field-focus-overlay,
+.full-form-container .mat-mdc-form-field-focus-overlay {
+  background: transparent;
+}
+
+.form-container mat-card-actions,
+.form-container-negative-top mat-card-actions,
+.form-container-50 mat-card-actions,
+.form-container-70 mat-card-actions,
+.form-container-75 mat-card-actions,
+.full-form-container mat-card-actions {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0 0;
+}
+
+.form-container mat-card-actions button:first-child,
+.form-container-negative-top mat-card-actions button:first-child,
+.form-container-50 mat-card-actions button:first-child,
+.form-container-70 mat-card-actions button:first-child,
+.form-container-75 mat-card-actions button:first-child,
+.full-form-container mat-card-actions button:first-child {
+  background: var(--atron-primary) !important;
+  color: #ffffff !important;
+}
+
+.form-container mat-card-actions button:not(:first-child),
+.form-container-negative-top mat-card-actions button:not(:first-child),
+.form-container-50 mat-card-actions button:not(:first-child),
+.form-container-70 mat-card-actions button:not(:first-child),
+.form-container-75 mat-card-actions button:not(:first-child),
+.full-form-container mat-card-actions button:not(:first-child) {
+  background: #ffffff !important;
+  border: 1px solid var(--atron-border) !important;
+  color: var(--atron-text) !important;
 }
 
 .wrap {
@@ -740,5 +974,76 @@ fieldset legend {
   .container {
     flex-direction: column;
     gap: 5px;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  mat-sidenav,
+  mat-toolbar,
+  .no-print,
+  .list-footer-actions {
+    display: none !important;
+  }
+
+  mat-sidenav-content {
+    margin: 0 !important;
+  }
+
+  .mat-drawer-content,
+  .mat-sidenav-content,
+  .m-10 {
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .list-page {
+    background: #ffffff;
+    color: #172033;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .list-panel {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    max-width: none;
+    overflow: visible;
+  }
+
+  .list-header {
+    border-bottom: 1px solid #dbe3ef;
+    padding: 0 0 14px;
+  }
+
+  .list-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .list-description {
+    font-size: 0.95rem;
+  }
+
+  .report-cargo-grid {
+    break-inside: avoid;
+  }
+}
+
+@media (max-width: 760px) {
+  .planning-detail-dialog {
+    min-width: 0;
+  }
+
+  .planning-detail-grid {
+    grid-template-columns: 1fr;
   }
 }

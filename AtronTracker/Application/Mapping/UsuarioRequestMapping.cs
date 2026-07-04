@@ -22,8 +22,7 @@ namespace Application.Mapping
                 Nome = entity.Nome,
                 Sobrenome = entity.Sobrenome,
                 DataNascimento = entity.DataNascimento,
-                Email = entity.Email,
-                SalarioMensal = entity.SalarioAtual
+                Email = entity.Email
             };
 
             return Task.FromResult(dto);
@@ -41,7 +40,6 @@ namespace Application.Mapping
                 Sobrenome = dto.Sobrenome,
                 DataNascimento = dto.DataNascimento,
                 Email = dto.Email,
-                SalarioAtual = dto.SalarioMensal,
                 ReceberNotificacaoTarefaPorEmail = false
             };
 
@@ -58,7 +56,6 @@ namespace Application.Mapping
             entityToUpdate.Sobrenome = dto.Sobrenome;
             entityToUpdate.DataNascimento = dto.DataNascimento;
             entityToUpdate.Email = dto.Email;
-            entityToUpdate.SalarioAtual = dto.SalarioMensal;
 
             return Task.CompletedTask;
         }

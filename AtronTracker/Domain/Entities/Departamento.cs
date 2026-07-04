@@ -14,5 +14,6 @@ namespace Domain.Entities
 
         public List<Cargo> Cargos { get; set; }
         public List<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
+        public List<PlanejamentoCusto> PlanejamentosCusto { get; set; }
     }
 }

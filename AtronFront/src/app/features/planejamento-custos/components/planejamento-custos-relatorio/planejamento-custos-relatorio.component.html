@@ -1,0 +1,35 @@
+<main class="list-page">
+  <section class="list-panel" aria-labelledby="planejamento-custos-relatorio-title">
+    <header class="list-header">
+      <div>        
+        <h1 id="planejamento-custos-relatorio-title" class="planning-page-title">{{ titulo }}</h1>
+      </div>
+
+      <div class="list-actions">
+        <button mat-stroked-button (click)="router.navigate(['atron/planejamento-custos'])">
+          <mat-icon>arrow_back</mat-icon>
+          Planejamentos
+        </button>
+      </div>
+    </header>
+
+    <section class="report-print-launcher" aria-label="Pesquisar relatorio para impressao">
+      @if (!codigoPlanejamento) {
+      <mat-form-field class="report-search-field" appearance="outline">
+        <mat-label>Pesquisar ano</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput type="number" min="{{ anoAtual }}" [formControl]="anoControl" />
+      </mat-form-field>
+      }
+
+      <button mat-flat-button class="list-primary-action" (click)="imprimir()" [disabled]="carregando">
+        <mat-icon>print</mat-icon>
+        {{ carregando ? 'Gerando relatorio' : 'Imprimir' }}
+      </button>
+    </section>
+
+    <footer class="list-footer-actions">
+      <c-botao-voltar destino="/atron/planejamento-custos"></c-botao-voltar>
+    </footer>
+  </section>
+</main>

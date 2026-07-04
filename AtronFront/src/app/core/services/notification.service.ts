@@ -39,11 +39,39 @@ export class NotificacaoService {
     this.snackBar.open(mensagem, 'Fechar', config);
   }
 
-  exibirMensagens(mensagens: Mensagem[] | null): void {
-    if (!mensagens || mensagens.length === 0) {
+  exibirMensagens(mensagens: unknown): void {
+    const mensagensNormalizadas = this.normalizarMensagens(mensagens);
+
+    if (!mensagensNormalizadas.length) {
       return;
     }
 
+    const mensagemParaExibir = this.obterMensagemPrioritaria(mensagensNormalizadas);
+    if (mensagemParaExibir) {
+      this.exibirMensagem(mensagemParaExibir.descricao, mensagemParaExibir.nivel);
+    }
+  }
+
+  temMensagemDeErro(mensagens: unknown): boolean {
+    return this.normalizarMensagens(mensagens).some(msg => msg.nivel === Nivel.Error);
+  }
+
+  normalizarMensagens(mensagens: unknown): Mensagem[] {
+    if (!mensagens) {
+      return [];
+    }
+
+    const entrada = this.extrairEntradaDeMensagens(mensagens);
+    if (!Array.isArray(entrada)) {
+      return [];
+    }
+
+    return entrada
+      .map(msg => this.normalizarMensagem(msg))
+      .filter((msg): msg is Mensagem => !!msg);
+  }
+
+  private obterMensagemPrioritaria(mensagens: Mensagem[]): Mensagem | null {
     let mensagemParaExibir: Mensagem | null = null;
     let maiorPrioridade = Infinity;
 
@@ -55,10 +83,53 @@ export class NotificacaoService {
       }
     }
 
-    if (mensagemParaExibir) {        
-        this.exibirMensagem(mensagemParaExibir.descricao, mensagemParaExibir.nivel);
-    } 
+    return mensagemParaExibir;
   }
+
+  private extrairEntradaDeMensagens(mensagens: unknown): unknown {
+    if (Array.isArray(mensagens)) {
+      return mensagens;
+    }
+
+    if (typeof mensagens !== 'object') {
+      return null;
+    }
+
+    const objeto = mensagens as Record<string, unknown>;
+    if ((objeto['descricao'] ?? objeto['Descricao']) && (objeto['nivel'] ?? objeto['Nivel'])) {
+      return [objeto];
+    }
+
+    return objeto['mensagensApi']
+      ?? objeto['mensagens']
+      ?? objeto['messages']
+      ?? objeto['Messages']
+      ?? null;
+  }
+
+  private normalizarMensagem(mensagem: unknown): Mensagem | null {
+    if (!mensagem || typeof mensagem !== 'object') {
+      return null;
+    }
+
+    const objeto = mensagem as Record<string, unknown>;
+    const descricao = objeto['descricao'] ?? objeto['Descricao'];
+    const nivel = objeto['nivel'] ?? objeto['Nivel'];
+
+    if (typeof descricao !== 'string' || typeof nivel !== 'string') {
+      return null;
+    }
+
+    if (!Object.values(Nivel).includes(nivel as Nivel)) {
+      return null;
+    }
+
+    return {
+      descricao,
+      nivel: nivel as Nivel
+    };
+  }
+
   private obterClassePainel(nivel: Nivel): string[] {
     switch (nivel) {
       case Nivel.Sucesso: return ['snackbar-sucesso'];

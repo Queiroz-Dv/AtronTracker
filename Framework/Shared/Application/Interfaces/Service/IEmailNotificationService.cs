@@ -19,7 +19,7 @@ namespace Shared.Application.Interfaces.Service
         /// <summary>
         /// Envia e-mail de notificação para superiores sobre uma alteração crítica.
         /// </summary>
-        /// <param name="tipoEvento">Tipo do evento (ex: "Alteração de Salário", "Novo Usuário").</param>
+        /// <param name="tipoEvento">Tipo do evento (ex: "Nova Tarefa", "Novo Usuário").</param>
         /// <param name="descricao">Descrição detalhada do evento.</param>
         /// <param name="entidade">Nome da entidade afetada.</param>
         /// <param name="emailsSuperiores">Lista de e-mails dos superiores.</param>

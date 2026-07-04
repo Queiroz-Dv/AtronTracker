@@ -16,11 +16,12 @@ namespace IoC
             services.AddScoped<IAsyncMap<DepartamentoDTO, Departamento>, DepartamentoMapping>();
             services.AddScoped<IAsyncApplicationMapService<CargoDTO, Cargo>, CargoMapping>();
             services.AddScoped<IAsyncMap<CargoDTO, Cargo>, CargoMapping>();
+            services.AddScoped<IAsyncApplicationMapService<PlanejamentoCustoDTO, PlanejamentoCusto>, PlanejamentoCustoMapping>();
+            services.AddScoped<IAsyncMap<PlanejamentoCustoDTO, PlanejamentoCusto>, PlanejamentoCustoMapping>();
             services.AddScoped<IAsyncApplicationMapService<UsuarioDTO, Usuario>, UsuarioMapping>();
             services.AddScoped<IAsyncMap<UsuarioDTO, Usuario>, UsuarioMapping>();
             services.AddScoped<IAsyncApplicationMapService<UsuarioDTO, UsuarioIdentity>, UsuarioIdentityMapping>();
             services.AddScoped<IAsyncApplicationMapService<TarefaDTO, Tarefa>, TarefaMapping>();
-            services.AddScoped<IAsyncApplicationMapService<SalarioDTO, Salario>, SalarioMapping>();
             services.AddScoped<IAsyncApplicationMapService<ModuloDTO, Modulo>, ModuloMapping>();
             services.AddScoped<IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso>, PerfilDeAcessoMapping>();
             return services;

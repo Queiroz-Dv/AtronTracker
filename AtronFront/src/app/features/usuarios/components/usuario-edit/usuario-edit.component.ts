@@ -28,7 +28,6 @@ export class UsuarioEditComponent implements OnInit {
       nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]],
       sobrenome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
       dataNascimento: [null],
-      salario: [null],
       email: ['', Validators.required],
       senha: ['', Validators.required],
       cargoCodigo: [null, Validators.required],
@@ -55,7 +54,6 @@ export class UsuarioEditComponent implements OnInit {
       dadosForm.senha,
       dadosForm.cargoCodigo,
       dadosForm.departamentoCodigo,
-      dadosForm.salario,
       this.formatarDataParaEnvio(dadosForm.dataNascimento));
 
     const operacao = this.codigo
