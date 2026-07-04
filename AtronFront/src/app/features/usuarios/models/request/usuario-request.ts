@@ -4,13 +4,11 @@ export class UsuarioRequest implements UsuarioModel {
   codigo: string;
   nome: string;
   sobrenome: string;
-  salario?: number;
   dataNascimento?: Date | string;
   email: string;
   senha: string;
   cargoCodigo: string;
   departamentoCodigo: string;
-  salarioMensal?: number;
 
   constructor(
     codigo: string,
@@ -20,7 +18,6 @@ export class UsuarioRequest implements UsuarioModel {
     senha: string,
     cargoCodigo: string,
     departamentoCodigo: string,
-    salario?: number,
     dataNascimento?: Date | string) {
     this.codigo = codigo;
     this.nome = nome;
@@ -29,8 +26,6 @@ export class UsuarioRequest implements UsuarioModel {
     this.senha = senha;
     this.cargoCodigo = cargoCodigo;
     this.departamentoCodigo = departamentoCodigo;
-    this.salario = salario
-    this.salarioMensal = salario
     this.dataNascimento = dataNascimento
   }
 }

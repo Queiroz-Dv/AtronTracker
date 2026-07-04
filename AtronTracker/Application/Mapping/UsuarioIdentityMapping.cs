@@ -32,7 +32,6 @@ namespace Application.Mapping
                 Nome = entity.Nome,
                 Sobrenome = entity.Sobrenome,
                 Email = entity.Email,
-                Salario = entity.SalarioAtual,
                 DataNascimento = entity.DataNascimento,
                 DadosDoToken = new DadosDeTokenComRefreshToken()
                 {
@@ -75,8 +74,7 @@ namespace Application.Mapping
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,
                 Email = dto.Email,
-                DataNascimento = dto.DataNascimento,
-                SalarioAtual = dto.Salario
+                DataNascimento = dto.DataNascimento
             });
         }
     }   

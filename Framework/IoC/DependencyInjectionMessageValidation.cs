@@ -17,9 +17,9 @@ namespace IoC
             ConfigureLoginMessageValidation(services);            
             ConfigureDepartamentoServices(services);
             ConfgureCargoServices(services);
+            ConfigurePlanejamentoCustoServices(services);
             ConfigureUsuarioServices(services);
             ConfigurarTarefaServices(services);
-            ConfigurarSalarioServices(services);
             ConfigureModuloServices(services);
             ConfigurePerfilDeAcessoServices(services);
             return services;
@@ -43,13 +43,6 @@ namespace IoC
         //    services.AddScoped<Notifiable, ApiRegisterMessageValidation>();
         //}
 
-        private static void ConfigurarSalarioServices(IServiceCollection services)
-        {
-            services.AddScoped<IMessageBaseService, SalarioMessageValidation>();
-            services.AddScoped<IValidateModelService<Salario>, SalarioMessageValidation>();
-            services.AddScoped<Notifiable, SalarioMessageValidation>();
-        }
-
         private static void ConfigurarTarefaServices(IServiceCollection services)
         {
             services.AddScoped<IMessageBaseService, TarefaMessageValidation>();
@@ -67,6 +60,11 @@ namespace IoC
         private static void ConfgureCargoServices(IServiceCollection services)
         {
             services.AddScoped<IValidador<CargoDTO>, CargoValidador>();
+        }
+
+        private static void ConfigurePlanejamentoCustoServices(IServiceCollection services)
+        {
+            services.AddScoped<IValidador<PlanejamentoCustoDTO>, PlanejamentoCustoValidador>();
         }
 
         private static void ConfigureUsuarioServices(IServiceCollection services)

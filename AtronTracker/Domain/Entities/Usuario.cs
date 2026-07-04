@@ -25,12 +25,10 @@ namespace Domain.Entities
         public string Sobrenome { get; set; }
         public string Email { get; set; }
         public DateTime? DataNascimento { get; set; }
-        public int? SalarioAtual { get; set; }
         public bool Inativo { get; set; }
         public bool ReceberNotificacaoTarefaPorEmail { get; set; }
         public string CodigoReativacao { get; set; }
 
-        public Salario Salario { get; set; }
         public ICollection<Tarefa> Tarefas { get; set; }
         public ICollection<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
         public ICollection<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario { get; set; }

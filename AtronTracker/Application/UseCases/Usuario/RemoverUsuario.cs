@@ -16,20 +16,17 @@ namespace Application.UseCases.Usuario
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
         private readonly ITarefaRepository _tarefaRepository;
-        private readonly ISalarioRepository _salarioRepository;
         private readonly ICacheUsuarioService _cacheUsuarioService;
 
         public RemoverUsuario(
             IUsuarioRepository usuarioRepository,
             IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
             ITarefaRepository tarefaRepository,
-            ISalarioRepository salarioRepository,
             ICacheUsuarioService cacheUsuarioService)
         {
             _usuarioRepository = usuarioRepository;
             _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
             _tarefaRepository = tarefaRepository;
-            _salarioRepository = salarioRepository;
             _cacheUsuarioService = cacheUsuarioService;
         }
 
@@ -55,19 +52,7 @@ namespace Application.UseCases.Usuario
                 await _tarefaRepository.RemoverRepositoryAsync(tarefa);
             }
 
-            // 3. Remoção do salário do usuário
-            //    DÍVIDA TÉCNICA: Hard delete mantido intencionalmente.
-            //    O módulo de Salários será removido em migração futura planejada.
-            //    Nenhum investimento adicional neste módulo até lá.
-            var salarioDoUsuario = await _salarioRepository
-                .ObterSalarioPorUsuario(usuario.Id, usuario.Codigo);
-
-            if (salarioDoUsuario != null)
-            {
-                await _salarioRepository.RemoverRepositoryAsync(salarioDoUsuario);
-            }
-
-            // 4. Remoção da associação Cargo / Departamento
+            // 3. Remoção da associação Cargo / Departamento
             var associacao = await _usuarioCargoDepartamentoRepository
                 .ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
 
@@ -77,7 +62,7 @@ namespace Application.UseCases.Usuario
                     .RemoverRepositoryAsync(associacao);
             }
 
-            // 5. Remoção do usuário de negócio
+            // 4. Remoção do usuário de negócio
             await _usuarioRepository.RemoverUsuarioAsync(usuario);
             _cacheUsuarioService.RemoverCacheDeAcessoTokenInfo(usuario.Codigo);
 
@@ -86,7 +71,7 @@ namespace Application.UseCases.Usuario
             // Risco aceito: usuário removido do negócio ainda consegue autenticar via Identity
             // até que o Soft Delete seja implementado. Monitorar impacto até resolução.
 
-            // 6. Retorno padronizado
+            // 5. Retorno padronizado
             return Resultado
                 .Sucesso()
                 .AdicionarMensagem("Usuário removido com sucesso.");

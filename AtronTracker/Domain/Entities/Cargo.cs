@@ -23,6 +23,8 @@ namespace Domain.Entities
 
         public List<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
 
+        public List<PlanejamentoCustoCargo> PlanejamentosCustoCargo { get; set; }
+
         public Cargo VincularDepartamento(Departamento departamento)
         {
             DepartamentoId = departamento.Id;

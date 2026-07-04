@@ -32,7 +32,6 @@ namespace Infrastructure.Repositories
             usuarioBd.Sobrenome = usuario.Sobrenome;
             usuarioBd.Email = usuario.Email;
             usuarioBd.DataNascimento = usuario.DataNascimento;
-            usuarioBd.SalarioAtual = usuario.SalarioAtual;
             usuarioBd.ReceberNotificacaoTarefaPorEmail = usuario.ReceberNotificacaoTarefaPorEmail;
             usuarioBd.CodigoReativacao = usuario.CodigoReativacao;
 
@@ -49,14 +48,6 @@ namespace Infrastructure.Repositories
             }
 
             usuario.ReceberNotificacaoTarefaPorEmail = receberNotificacao;
-            return await _context.SaveChangesAsync() > 0;
-        }
-
-        public async Task<bool> AtualizarSalario(int usuarioId, int quantidadeTotal)
-        {
-            var usuario = await _context.Usuarios.FirstAsync(usr => usr.Id == usuarioId);
-            usuario.SalarioAtual = quantidadeTotal;
-            _context.Update(usuario);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -135,7 +126,6 @@ namespace Infrastructure.Repositories
                               Nome = u.Nome,
                               Sobrenome = u.Sobrenome,
                               Email = u.Email,
-                              Salario = u.Salario,
                               DataNascimento = u.DataNascimento,
                               UsuarioCargoDepartamentos = u.UsuarioCargoDepartamentos
                           })

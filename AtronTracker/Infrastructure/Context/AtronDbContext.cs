@@ -29,8 +29,6 @@ namespace AtronTracker.Infrastructure.Context
 
         public DbSet<TarefaEstado> TarefaEstados { get; set; }
 
-        public DbSet<Salario> Salarios { get; set; }
-
         public DbSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
 
         public DbSet<PerfilDeAcesso> PerfisDeAcesso { get; set; }
@@ -40,7 +38,11 @@ namespace AtronTracker.Infrastructure.Context
         public DbSet<PerfilDeAcessoUsuario> PerfilDeAcessoUsuarios { get; set; }
 
         public DbSet<PerfilDeAcessoModulo> PerfilDeAcessoModulos { get; set; }
-        
+
+        public DbSet<PlanejamentoCusto> PlanejamentosCusto { get; set; }
+
+        public DbSet<PlanejamentoCustoCargo> PlanejamentosCustoCargo { get; set; }
+         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

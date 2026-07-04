@@ -36,7 +36,6 @@ namespace IoC
             services.AddScoped<IExternalService<CargoDTO>, ExternalService<CargoDTO>>();
             services.AddScoped<IExternalService<UsuarioDTO>, ExternalService<UsuarioDTO>>();
             services.AddScoped<IExternalService<TarefaDTO>, ExternalService<TarefaDTO>>();
-            services.AddScoped<IExternalService<SalarioDTO>, ExternalService<SalarioDTO>>();
 
             services.AddScoped<IExternalService<ModuloDTO>, ExternalService<ModuloDTO>>();
             services.AddScoped<IExternalService<PerfilDeAcessoDTO>, ExternalService<PerfilDeAcessoDTO>>();

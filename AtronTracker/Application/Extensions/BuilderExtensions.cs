@@ -1,7 +1,6 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.DTO.Request;
 using Application.DTO.Response;
-using System.Linq;
 
 namespace Application.Extensions
 {
@@ -49,39 +48,5 @@ namespace Application.Extensions
             };
         }
         #endregion
-
-        #region Salario 
-        public static SalarioDTO MontarDTO(this SalarioRequest salario)
-        {
-            return new SalarioDTO
-            {
-                UsuarioCodigo = salario.UsuarioCodigo,
-                SalarioMensal = salario.SalarioMensal,
-                MesId = salario.MesId,
-                Ano = salario.Ano,
-            };
-        }
-
-        public static SalarioResponse MontarResponse(this SalarioDTO salario)
-        {
-            return new SalarioResponse
-            {
-                Id = salario.Id,
-                Ano = salario.Ano,
-                SalarioMensal = salario.SalarioMensal,
-                Mes = salario.Mes,
-                Usuario = new UsuarioRecord
-                {
-                    UsuarioCodigo = salario.UsuarioCodigo,
-                    Nome = salario.Usuario?.Nome,
-                    Sobrenome = salario.Usuario?.Sobrenome,
-                    CodigoCargo = salario.Usuario?.CargoCodigo,
-                    DescricaoCargo = salario.Usuario?.Cargo?.Descricao,
-                    CodigoDepartamento = salario.Usuario?.DepartamentoCodigo,
-                    DescricaoDepartamento = salario.Usuario?.Departamento?.Descricao
-                }
-            };
-        }
-        #endregion        
     }
 }

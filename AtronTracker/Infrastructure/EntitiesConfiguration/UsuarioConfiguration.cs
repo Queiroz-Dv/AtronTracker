@@ -16,7 +16,6 @@ namespace Infrastructure.EntitiesConfiguration
             builder.Property(usr => usr.Sobrenome).IsRequired().HasMaxLength(50);
             builder.Property(usr => usr.Email).IsRequired().HasMaxLength(50);
             builder.Property(usr => usr.DataNascimento);
-            builder.Property(usr => usr.SalarioAtual);
             builder.Property(usr => usr.Inativo).IsRequired().HasDefaultValue(false);
             builder.Property(usr => usr.ReceberNotificacaoTarefaPorEmail).IsRequired().HasDefaultValue(false);
             builder.Property(usr => usr.CodigoReativacao).HasMaxLength(6).IsRequired(false);

@@ -17,9 +17,9 @@ namespace IoC
 
         private static void CreateFilterServices(IServiceCollection services)
         {
-            services.AddScoped<IFilterService<SalarioDTO>, FilterService<SalarioDTO>>();
             services.AddScoped<IFilterService<DepartamentoDTO>, FilterService<DepartamentoDTO>>();
             services.AddScoped<IFilterService<CargoDTO>, FilterService<CargoDTO>>();
+            services.AddScoped<IFilterService<PlanejamentoCustoDTO>, FilterService<PlanejamentoCustoDTO>>();
             services.AddScoped<IFilterService<UsuarioDTO>, FilterService<UsuarioDTO>>();
             services.AddScoped<IFilterService<TarefaDTO>, FilterService<TarefaDTO>>();
             services.AddScoped<IFilterService<LoginDTO>, FilterService<LoginDTO>>();
@@ -32,8 +32,8 @@ namespace IoC
         {
             services.AddScoped<IPaginationService<DepartamentoDTO>, PaginationService<DepartamentoDTO>>();
             services.AddScoped<IPaginationService<CargoDTO>, PaginationService<CargoDTO>>();
+            services.AddScoped<IPaginationService<PlanejamentoCustoDTO>, PaginationService<PlanejamentoCustoDTO>>();
             services.AddScoped<IPaginationService<UsuarioDTO>, PaginationService<UsuarioDTO>>();
-            services.AddScoped<IPaginationService<SalarioDTO>, PaginationService<SalarioDTO>>();
             services.AddScoped<IPaginationService<TarefaDTO>, PaginationService<TarefaDTO>>();
             services.AddScoped<IPaginationService<LoginDTO>, PaginationService<LoginDTO>>();
             services.AddScoped<IPaginationService<RegisterDTO>, PaginationService<RegisterDTO>>();

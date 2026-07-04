@@ -123,12 +123,6 @@ namespace Atron.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 5,
-                            Codigo = "SAL",
-                            Descricao = "Salários"
-                        },
-                        new
-                        {
                             Id = 6,
                             Codigo = "PERF",
                             Descricao = "Perfil de acesso"
@@ -138,6 +132,12 @@ namespace Atron.Infrastructure.Migrations
                             Id = 10,
                             Codigo = "RPERFUSR",
                             Descricao = "Relacionamento de perfil e usuários"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Codigo = "PLC",
+                            Descricao = "Planejamento de Custos"
                         });
                 });
 
@@ -213,7 +213,7 @@ namespace Atron.Infrastructure.Migrations
                     b.ToTable("PerfilDeAcessoUsuarios");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Salario", b =>
+            modelBuilder.Entity("Domain.Entities.PlanejamentoCusto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -221,31 +221,88 @@ namespace Atron.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Ano")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
-
-                    b.Property<int>("MesId")
-                        .HasMaxLength(12)
-                        .HasColumnType("int");
-
-                    b.Property<int>("SalarioMensal")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsuarioCodigo")
-                        .IsRequired()
+                    b.Property<string>("Codigo")
+                        .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<int>("UsuarioId")
+                    b.Property<int>("Ano")
                         .HasColumnType("int");
+
+                    b.Property<bool>("ApenasDepartamento")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("DepartamentoCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("DepartamentoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("ValorMinimo")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ValorTeto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id", "Codigo");
+
+                    b.HasIndex("DepartamentoId", "DepartamentoCodigo", "Ano")
+                        .IsUnique();
+
+                    b.ToTable("PlanejamentosCusto");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PlanejamentoCustoCargo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CargoCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("CargoId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Detalhado")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PlanejamentoCustoCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("PlanejamentoCustoId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("ValorMinimo")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("ValorTeto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsuarioId", "UsuarioCodigo")
+                    b.HasIndex("CargoId", "CargoCodigo");
+
+                    b.HasIndex("PlanejamentoCustoId", "PlanejamentoCustoCodigo", "CargoId", "CargoCodigo")
                         .IsUnique();
 
-                    b.ToTable("Salarios");
+                    b.ToTable("PlanejamentosCustoCargo");
                 });
 
             modelBuilder.Entity("Domain.Entities.Tarefa", b =>
@@ -369,9 +426,6 @@ namespace Atron.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
-
-                    b.Property<int?>("SalarioAtual")
-                        .HasColumnType("int");
 
                     b.Property<string>("Sobrenome")
                         .IsRequired()
@@ -686,15 +740,34 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Salario", b =>
+            modelBuilder.Entity("Domain.Entities.PlanejamentoCusto", b =>
                 {
-                    b.HasOne("Domain.Entities.Usuario", "Usuario")
-                        .WithOne("Salario")
-                        .HasForeignKey("Domain.Entities.Salario", "UsuarioId", "UsuarioCodigo")
+                    b.HasOne("Domain.Entities.Departamento", "Departamento")
+                        .WithMany("PlanejamentosCusto")
+                        .HasForeignKey("DepartamentoId", "DepartamentoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Departamento");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PlanejamentoCustoCargo", b =>
+                {
+                    b.HasOne("Domain.Entities.Cargo", "Cargo")
+                        .WithMany("PlanejamentosCustoCargo")
+                        .HasForeignKey("CargoId", "CargoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.PlanejamentoCusto", "PlanejamentoCusto")
+                        .WithMany("DetalhesCargo")
+                        .HasForeignKey("PlanejamentoCustoId", "PlanejamentoCustoCodigo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Usuario");
+                    b.Navigation("Cargo");
+
+                    b.Navigation("PlanejamentoCusto");
                 });
 
             modelBuilder.Entity("Domain.Entities.Tarefa", b =>
@@ -794,12 +867,16 @@ namespace Atron.Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Cargo", b =>
                 {
+                    b.Navigation("PlanejamentosCustoCargo");
+
                     b.Navigation("UsuarioCargoDepartamentos");
                 });
 
             modelBuilder.Entity("Domain.Entities.Departamento", b =>
                 {
                     b.Navigation("Cargos");
+
+                    b.Navigation("PlanejamentosCusto");
 
                     b.Navigation("UsuarioCargoDepartamentos");
                 });
@@ -816,11 +893,14 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("PerfisDeAcessoUsuario");
                 });
 
+            modelBuilder.Entity("Domain.Entities.PlanejamentoCusto", b =>
+                {
+                    b.Navigation("DetalhesCargo");
+                });
+
             modelBuilder.Entity("Domain.Entities.Usuario", b =>
                 {
                     b.Navigation("PerfisDeAcessoUsuario");
-
-                    b.Navigation("Salario");
 
                     b.Navigation("Tarefas");
 

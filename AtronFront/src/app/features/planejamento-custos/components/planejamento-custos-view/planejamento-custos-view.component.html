@@ -1,0 +1,103 @@
+<main class="list-page">
+  <section class="list-panel" aria-labelledby="planejamento-custos-title">
+    <header class="list-header">
+      <div>
+        <h1 id="planejamento-custos-title" class="planning-page-title">Planejamento de Custos</h1>
+      </div>
+
+      <div class="list-actions">
+        <button mat-flat-button class="list-primary-action" (click)="router.navigate(['atron/planejamento-custos/novo'])">
+          <mat-icon>add</mat-icon>
+          Novo planejamento
+        </button>
+        <button mat-stroked-button (click)="router.navigate(['atron/planejamento-custos/relatorio-geral'])">
+          <mat-icon>print</mat-icon>
+          Imprimir planejamentos
+        </button>
+      </div>
+    </header>
+
+    <div class="list-toolbar">
+      <mat-form-field class="list-filter" appearance="outline">
+        <mat-label>Buscar planejamento</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (keyup)="applyFilter($event)" #input>
+      </mat-form-field>
+    </div>
+
+    <div class="list-table-wrap">
+      <table class="list-table" mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+          <td mat-cell *matCellDef="let plc">{{ plc.codigo }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="descricao">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Descrição</th>
+          <td mat-cell *matCellDef="let plc">{{ plc.descricao }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="ano">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Ano</th>
+          <td mat-cell *matCellDef="let plc">{{ plc.ano }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="departamento">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Departamento</th>
+          <td mat-cell *matCellDef="let plc">{{ plc.departamentoCodigo }} - {{ plc.departamentoDescricao }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="valorMinimo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Mínimo</th>
+          <td mat-cell *matCellDef="let plc">{{ formatarMoeda(plc.valorMinimo) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="valorTeto">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Teto</th>
+          <td mat-cell *matCellDef="let plc">{{ formatarMoeda(plc.valorTeto) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="modo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Modo</th>
+          <td mat-cell *matCellDef="let plc">
+            {{ plc.apenasDepartamento ? 'Apenas departamento' : 'Departamento com cargos' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef>Ações</th>
+          <td mat-cell *matCellDef="let plc">
+            <div class="list-row-actions">
+              <button class="list-icon-action" mat-icon-button title="Detalhar planejamento" (click)="detalhar(plc)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button class="list-icon-action" mat-icon-button title="Imprimir planejamento" [disabled]="imprimindoCodigo === plc.codigo" (click)="imprimirPlanejamento(plc.codigo)">
+                <mat-icon>print</mat-icon>
+              </button>
+              <button class="list-icon-action" mat-icon-button title="Editar planejamento" [disabled]="!podeEditar(plc)" (click)="editar(plc.codigo)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="list-icon-action-danger" mat-icon-button title="Excluir planejamento" [disabled]="!podeEditar(plc)" (click)="excluir(plc.codigo)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="list-no-data" [attr.colspan]="colunas.length">Nenhum planejamento encontrado.</td>
+        </tr>
+      </table>
+    </div>
+
+    <mat-paginator class="list-paginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+      aria-label="Selecione a pagina de planejamentos">
+    </mat-paginator>
+
+    <footer class="list-footer-actions">
+      <c-botao-voltar></c-botao-voltar>
+    </footer>
+  </section>
+</main>

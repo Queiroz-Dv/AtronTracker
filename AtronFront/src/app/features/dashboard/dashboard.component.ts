@@ -8,7 +8,7 @@ import { VisualizacaoService } from '../../core/services/visualizacao-service';
 import { ModuloItem } from '../../shared/utils/modulo-functions.util';
 import { ModuloModel } from '../modulos/interfaces/modulo.interface';
 
-const ORDEM_MODULOS_DASHBOARD = ['DPT', 'CRG', 'USR', 'PERF', 'RPERFUSR', 'TAR', 'TRF', 'SAL'];
+const ORDEM_MODULOS_DASHBOARD = ['DPT', 'CRG', 'USR', 'PLC', 'PERF', 'RPERFUSR', 'TAR', 'TRF'];
 
 @Component({
   standalone: true,

@@ -65,13 +65,12 @@ namespace IoC
             services = services.AddEmailServices(configuration);
             ConfigureModuloServices(services);
             ConfigureTarefaServices(services);
-            ConfigureSalarioServices(services);
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
+            ConfigurePlanejamentoCustoServices(services);
             ConfigureUsuarioServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
-            ConfigureSalarioRepositoryServices(services);
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigurePerfilDeAcessoServices(services);
@@ -119,12 +118,6 @@ namespace IoC
             services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
         }
 
-        private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
-        {
-            services.AddScoped<ISalarioRepository, SalarioRepository>();
-            services.AddScoped<ISalarioService, SalarioService>();
-        }
-
         private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ITarefaRepository, TarefaRepository>();
@@ -158,6 +151,12 @@ namespace IoC
             services.AddScoped<ICargoService, CargoService>();
         }
 
+        private static void ConfigurePlanejamentoCustoServices(IServiceCollection services)
+        {
+            services.AddScoped<IPlanejamentoCustoRepository, PlanejamentoCustoRepository>();
+            services.AddScoped<IPlanejamentoCustoService, PlanejamentoCustoService>();
+        }
+
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {
             services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
@@ -174,11 +173,6 @@ namespace IoC
         {
             services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
             services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
-        }
-
-        private static void ConfigureSalarioServices(IServiceCollection services)
-        {
-            services.AddScoped<IRepository<Salario>, Repository<Salario>>();
         }
 
         private static void ConfigureTarefaServices(IServiceCollection services)
