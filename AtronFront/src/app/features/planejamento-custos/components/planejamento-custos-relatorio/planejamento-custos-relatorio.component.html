@@ -22,7 +22,7 @@
       </mat-form-field>
       }
 
-      <button mat-flat-button class="list-primary-action" (click)="imprimir()" [disabled]="carregando">
+      <button mat-flat-button class="list-primary-action" type="button" [disabled]="carregando" (click)="imprimir()">
         <mat-icon>print</mat-icon>
         {{ carregando ? 'Gerando relatorio' : 'Imprimir' }}
       </button>

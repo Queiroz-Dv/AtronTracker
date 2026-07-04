@@ -44,9 +44,9 @@ export class PlanejamentoCustosRelatorioComponent implements OnInit {
     }
 
     this.carregando = true;
-    this.service.obterRelatorioGeral(Number(this.anoControl.value)).subscribe({
-      next: relatorio => {
-        this.impressaoService.imprimir(relatorio);
+    this.service.obterRelatorioGeralImpressao(Number(this.anoControl.value)).subscribe({
+      next: htmlRelatorio => {
+        this.impressaoService.imprimir(htmlRelatorio);
         this.carregando = false;
       },
       error: erro => {
@@ -58,10 +58,9 @@ export class PlanejamentoCustosRelatorioComponent implements OnInit {
 
   private imprimirPlanejamento(codigo: string): void {
     this.carregando = true;
-    this.service.obterRelatorioPorPlanejamento(codigo).subscribe({
-      next: relatorio => {
-        this.anoControl.setValue(relatorio.ano, { emitEvent: false });
-        this.impressaoService.imprimir(relatorio);
+    this.service.obterRelatorioPlanejamentoImpressao(codigo).subscribe({
+      next: htmlRelatorio => {
+        this.impressaoService.imprimir(htmlRelatorio);
         this.carregando = false;
       },
       error: erro => {
