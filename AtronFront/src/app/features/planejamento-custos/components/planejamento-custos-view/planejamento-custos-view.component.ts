@@ -28,7 +28,6 @@ export class PlanejamentoCustosViewComponent implements AfterViewInit {
 
   dataSource: MatTableDataSource<PlanejamentoCustoResponse> = new MatTableDataSource();
   colunas = ['codigo', 'descricao', 'ano', 'departamento', 'valorMinimo', 'valorTeto', 'modo', 'acoes'];
-  anoAtual = new Date().getFullYear();
   imprimindoCodigo?: string;
 
   constructor(
@@ -93,11 +92,6 @@ export class PlanejamentoCustosViewComponent implements AfterViewInit {
 
   excluir(codigo: string): void {
     const planejamento = this.dataSource.data.find(plc => plc.codigo === codigo);
-    if (planejamento && planejamento.ano < this.anoAtual) {
-      this.notificacaoService.exibirMensagem('Planejamento de ano passado não pode ser excluído.', Nivel.Aviso);
-      return;
-    }
-
     const nomePlanejamento = planejamento ? `${planejamento.codigo} - ${planejamento.descricao}` : `o registro ${codigo}`;
 
     const dialogData: ConfirmacaoDialogData = {
@@ -128,10 +122,6 @@ export class PlanejamentoCustosViewComponent implements AfterViewInit {
         }
       }
     });
-  }
-
-  podeEditar(planejamento: PlanejamentoCustoResponse): boolean {
-    return planejamento.ano >= this.anoAtual;
   }
 
   formatarMoeda(valor: number): string {

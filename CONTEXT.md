@@ -37,7 +37,7 @@ Definicao ou acompanhamento de valores previstos para uma parte da organizacao e
 _Avoid_: Salario do usuario, cadastro salarial
 
 **Identificacao do planejamento de custo**:
-Identidade do registro financeiro, contabil ou orcamentario criado pelo usuario para o planejamento. No MVP, o planejamento possui identificacao composta por id, codigo gerado pelo sistema e descricao obrigatoria informada pelo usuario; a descricao nao precisa ser unica e o codigo nao muda depois da criacao.
+Identidade do registro financeiro, contabil ou orcamentario criado pelo usuario para o planejamento. No MVP, o planejamento possui identificacao composta por id, codigo obrigatorio informado pelo usuario e descricao obrigatoria; a descricao nao precisa ser unica e o codigo nao muda depois da criacao.
 _Avoid_: Registro anonimo, planejamento sem codigo, planejamento sem descricao, descricao unica obrigatoria
 
 **Cadastro de planejamento de custo**:
@@ -101,7 +101,7 @@ Valor consolidado usado para acompanhar planejamento ou orcamento sem expor dire
 _Avoid_: Lista salarial individual, detalhe de remuneracao
 
 **Relatorio geral de planejamento**:
-Visao analitica do planejamento de custos por ano, exibindo departamentos, detalhamento por cargos quando aplicavel, valores absolutos, percentual de ocupacao do teto e alertas de planejamento. No MVP, o percentual de ocupacao usa a soma dos tetos dos cargos detalhados sobre o teto do departamento; planejamento apenas por departamento aparece sem ocupacao detalhada.
+Visao analitica do planejamento de custos por ano, exibindo apenas departamentos que possuem planejamento informado para a competencia analisada, detalhamento por cargos quando aplicavel, valores absolutos, percentual de ocupacao do teto e alertas de planejamento. No MVP, o percentual de ocupacao usa a soma dos tetos dos cargos detalhados sobre o teto do departamento; planejamento apenas por departamento aparece sem ocupacao detalhada.
 Plano visual pendente: definir a paleta final do relatorio impresso com roxo, branco e preto, usando preto para fontes.
 _Avoid_: Listagem simples, tela de cadastro
 
@@ -110,7 +110,7 @@ Indicador calculado pela soma dos tetos dos cargos detalhados sobre o teto do de
 _Avoid_: Percentual de salario, uso do minimo como base
 
 **Alerta de planejamento**:
-Indicacao de que um planejamento de custo merece revisao, como departamento sem planejamento no ano, divergencia de minimo ou ausencia de decisao clara sobre detalhamento por cargo. Planejamento apenas por departamento e cargo nao detalhado sao decisoes explicitas e aparecem como informacao neutra, nao como alerta.
+Indicacao de que um planejamento de custo informado merece revisao, como divergencia de minimo ou ausencia de decisao clara sobre detalhamento por cargo. Departamento sem planejamento nao entra no relatorio do MVP. Planejamento apenas por departamento e cargo nao detalhado sao decisoes explicitas e aparecem como informacao neutra, nao como alerta.
 _Avoid_: Erro impeditivo, falha tecnica
 
 **Detalhamento individual de custo**:
@@ -156,6 +156,10 @@ _Avoid_: Regra hardcoded por cargo, usuario especial, if admin, if gerente
 **Front Angular**:
 Interface principal do produto. Para o MVP, o front mantido sera `AtronFront`.
 _Avoid_: Duas estruturas de front ativas
+
+**Validacao de regra de negocio**:
+Mensagem de validacao que explica uma regra do produto ou bloqueia uma acao de negocio deve nascer no backend, especialmente no modulo de planejamento de custos. O front Angular pode manter apenas validacoes de formato, estado visual ou eventos entre componentes necessarios para montar a interacao, mas nao deve decidir a mensagem final de regra de negocio.
+_Avoid_: Mensagem de regra duplicada no front, bloqueio local que impede a API de responder, validacao de negocio espalhada em componente Angular
 
 **Atron.WebViews**:
 Estrutura legada de front MVC/Razor deletada para evitar dois projetos de front diferentes evoluindo em paralelo.

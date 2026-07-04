@@ -23,6 +23,16 @@ Este documento quebra a implementacao do MVP de Planejamento de Custos em fases 
 - Fase 8 concluida: departamento e cargo vinculados a planejamento atual ou futuro passam a ter bloqueios estruturais.
 - Fase 9 em validacao manual: revisao final tecnica concluida; testes manuais ficam a cargo do usuario.
 
+## Etapa atual de aprofundamento tecnico
+
+Depois da validacao manual inicial, a evolucao tecnica passou a ocorrer em ciclos menores para proteger o fluxo ja validado:
+
+- Fase 1 concluida: cadastro de planejamento protegido por testes e regras de preparacao aprofundadas.
+- Fase 2 concluida: relatorio geral protegido por testes, com montagem analitica e impressao HTML separadas.
+- Fase 3 concluida: regra de estrutura planejada concentrada em politica propria.
+- Fase 4 concluida: estado do formulario Angular de planejamento concentrado em modulo proprio.
+- Fase 5 concluida: caminho para permissoes por acao documentado e acoes futuras do `PLC` nomeadas sem alterar o comportamento do MVP.
+
 ## Fase 0 - Preparacao e congelamento do escopo
 
 **Tipo**: HITL  
@@ -133,7 +143,7 @@ Criar a estrutura de dados minima para planejamento anual por departamento, sem 
 ### Escopo
 
 - Criar entidade de planejamento de custo.
-- Usar identificacao por id, codigo gerado e descricao obrigatoria.
+- Usar identificacao por id, codigo obrigatorio informado pelo usuario e descricao obrigatoria.
 - Relacionar planejamento com departamento.
 - Persistir ano, minimo e teto do departamento.
 - Persistir flag de planejamento apenas por departamento.
@@ -148,7 +158,7 @@ Criar a estrutura de dados minima para planejamento anual por departamento, sem 
 - Impedir segundo planejamento para mesmo departamento/ano.
 - Impedir ano passado na criacao.
 - Impedir edicao/exclusao de ano passado.
-- Gerar codigo automaticamente e manter codigo imutavel.
+- Exigir codigo informado pelo usuario e manter codigo imutavel.
 - Permitir editar descricao e valores.
 - Impedir trocar departamento e ano.
 
@@ -285,14 +295,13 @@ Implementar com seguranca a mudanca de modo do planejamento, sem deixar dados es
 
 ### Objetivo
 
-Criar a visao analitica do MVP, separada da manutencao, exibindo cobertura, valores, percentuais e alertas.
+Criar a visao analitica do MVP, separada da manutencao, exibindo valores, percentuais e alertas dos planejamentos informados.
 
 ### Escopo
 
 - Criar endpoint de relatorio geral por ano.
-- Listar todos os departamentos.
+- Listar departamentos com planejamento informado para o ano analisado.
 - Mostrar departamentos com planejamento.
-- Mostrar departamentos sem planejamento como alerta.
 - Mostrar dados do planejamento do departamento.
 - Mostrar cargos detalhados.
 - Nao mostrar cargos nao detalhados como linhas.
@@ -306,14 +315,14 @@ Criar a visao analitica do MVP, separada da manutencao, exibindo cobertura, valo
 ### Criterios de conclusao
 
 - Relatorio permite escolher ano.
-- Relatorio exibe departamentos sem planejamento.
+- Relatorio nao exibe departamentos sem planejamento.
 - Relatorio exibe alertas e informacoes neutras corretamente.
 - Relatorio exibe percentual apenas quando houver base de cargos detalhados.
 
 ### Validacao manual
 
-- Consultar ano com todos os departamentos planejados.
-- Consultar ano com departamento sem planejamento.
+- Consultar ano com departamentos planejados.
+- Consultar ano com departamento sem planejamento e confirmar que ele nao aparece no relatorio.
 - Consultar planejamento apenas por departamento.
 - Consultar planejamento com cargo nao detalhado.
 - Consultar planejamento com cargo pendente.

@@ -41,7 +41,7 @@ Cada planejamento e um registro financeiro, contabil ou orcamentario da empresa.
 No MVP, o planejamento possui:
 
 - `Id`, para controle interno;
-- `Codigo`, gerado pelo sistema;
+- `Codigo`, obrigatorio e informado pelo usuario;
 - `Descricao`, obrigatoria e informada pelo usuario;
 - ano;
 - departamento;
@@ -189,9 +189,7 @@ O relatorio geral deve permitir escolher o ano.
 
 Ele deve exibir:
 
-- todos os departamentos;
-- departamentos com planejamento;
-- departamentos sem planejamento;
+- departamentos com planejamento informado para o ano analisado;
 - dados do planejamento do departamento;
 - cargos detalhados, quando aplicavel;
 - valores absolutos;
@@ -202,7 +200,6 @@ Ele deve exibir:
 
 Alertas esperados:
 
-- departamento sem planejamento no ano;
 - cargo pendente de decisao;
 - divergencias envolvendo minimos;
 - ausencia de decisao clara sobre detalhamento por cargo.

@@ -4,7 +4,6 @@ using Application.Extensions;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

@@ -74,10 +74,10 @@
               <button class="list-icon-action" mat-icon-button title="Imprimir planejamento" [disabled]="imprimindoCodigo === plc.codigo" (click)="imprimirPlanejamento(plc.codigo)">
                 <mat-icon>print</mat-icon>
               </button>
-              <button class="list-icon-action" mat-icon-button title="Editar planejamento" [disabled]="!podeEditar(plc)" (click)="editar(plc.codigo)">
+              <button class="list-icon-action" mat-icon-button title="Editar planejamento" (click)="editar(plc.codigo)">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button class="list-icon-action-danger" mat-icon-button title="Excluir planejamento" [disabled]="!podeEditar(plc)" (click)="excluir(plc.codigo)">
+              <button class="list-icon-action-danger" mat-icon-button title="Excluir planejamento" (click)="excluir(plc.codigo)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>

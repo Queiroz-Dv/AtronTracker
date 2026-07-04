@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using System.Collections.Generic;
 using Application.Interfaces.Services;
+using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -8,7 +9,6 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +20,7 @@ namespace Application.Services.EntitiesServices
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
         private readonly ICargoRepository _cargoRepository;
-        private readonly IPlanejamentoCustoRepository _planejamentoCustoRepository;
+        private readonly EstruturaPlanejadaPolicy _estruturaPlanejadaPolicy;
         private readonly IValidador<DepartamentoDTO> _validador;
 
         public DepartamentoService(IValidador<DepartamentoDTO> validador,
@@ -32,7 +32,7 @@ namespace Application.Services.EntitiesServices
         {
             _departamentoRepository = departamentoRepository;
             _cargoRepository = cargoRepository;
-            _planejamentoCustoRepository = planejamentoCustoRepository;
+            _estruturaPlanejadaPolicy = new EstruturaPlanejadaPolicy(planejamentoCustoRepository);
             _relacionamentoRepository = relacionamentoRepository;
             _validador = validador;
             _asyncMap = asyncMap;
@@ -138,11 +138,9 @@ namespace Application.Services.EntitiesServices
             if (departamento == null)
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            var possuiPlanejamentoAtualOuFuturo = await _planejamentoCustoRepository
-                .ExisteDepartamentoEmPlanejamentoAtualOuFuturoAsync(departamento.Id, departamento.Codigo, DateTime.Today.Year);
-
-            if (possuiPlanejamentoAtualOuFuturo)
-                return Resultado.Falha($"O departamento {codigo} possui planejamento de custo atual ou futuro e nao pode ser removido.");
+            var estruturaPlanejada = await _estruturaPlanejadaPolicy.ValidarRemocaoDepartamentoAsync(departamento);
+            if (estruturaPlanejada.TeveFalha)
+                return estruturaPlanejada;
 
             var relacionamentos = await _relacionamentoRepository
                 .ObterPorDepartamento(departamento.Id, departamento.Codigo);
