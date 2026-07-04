@@ -127,6 +127,23 @@ Possibilidades:
 - consolidar planejamento;
 - acessar dados sensiveis.
 
+Preparo tecnico ja existente:
+
+- a policy dinamica aceita o formato `Modulo:CODIGO:ACAO`;
+- as acoes futuras do `PLC` devem usar nomes estaveis em `ModuloPolicies`;
+- enquanto nao existir modelo de permissao por acao no perfil, `Modulo:PLC:ACAO` continua resolvendo pelo acesso ao modulo `PLC`;
+- controllers do MVP devem continuar usando `Modulo:PLC`, sem trocar para acoes antes da modelagem granular.
+
+Acoes inicialmente reservadas para o `PLC`:
+
+- `Visualizar`;
+- `Criar`;
+- `Editar`;
+- `Excluir`;
+- `AcessarRelatorio`;
+- `Consolidar`;
+- `AcessarDadosSensiveis`.
+
 Motivo para deixar depois: no MVP, o acesso segue a permissao por modulo `PLC`, e o usuario ainda vai testar relacionamento entre perfis de acesso e modulos.
 
 ## Planejamento fixo ou valor-alvo

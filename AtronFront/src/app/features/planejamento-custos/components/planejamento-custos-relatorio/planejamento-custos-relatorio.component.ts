@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BotaoVoltarComponent } from '../../../../core/layout/botao-voltar/botao-voltar.component';
 import { Mensagem, Nivel, NotificacaoService } from '../../../../core/services/notification.service';
@@ -15,8 +15,7 @@ import { PlanejamentoCustoService } from '../../services/planejamento-custo.serv
   styleUrls: ['../../planejamento-custos.component.css']
 })
 export class PlanejamentoCustosRelatorioComponent implements OnInit {
-  anoAtual = new Date().getFullYear();
-  anoControl = new FormControl<number>(this.anoAtual, [Validators.required, Validators.min(this.anoAtual)]);
+  anoControl = new FormControl<number>(new Date().getFullYear());
   carregando = false;
   codigoPlanejamento?: string;
 
@@ -38,13 +37,8 @@ export class PlanejamentoCustosRelatorioComponent implements OnInit {
       return;
     }
 
-    if (this.anoControl.invalid || !this.anoControl.value) {
-      this.notificacaoService.exibirMensagem('Informe um ano atual ou futuro para imprimir o relatorio.', Nivel.Error);
-      return;
-    }
-
     this.carregando = true;
-    this.service.obterRelatorioGeralImpressao(Number(this.anoControl.value)).subscribe({
+    this.service.obterRelatorioGeralImpressao(Number(this.anoControl.value ?? 0)).subscribe({
       next: htmlRelatorio => {
         this.impressaoService.imprimir(htmlRelatorio);
         this.carregando = false;

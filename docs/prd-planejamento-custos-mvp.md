@@ -12,14 +12,14 @@ Criar o modulo **Planejamento de Custos**, com codigo canonico `PLC`, para cadas
 
 O modulo deve substituir completamente o modulo de salarios. Os dados antigos de salario nao devem ser migrados para o novo planejamento. O novo modulo trabalha com custo total planejado, nao com salario individual, custo por pessoa ou custo por vaga.
 
-O MVP deve permitir criar um planejamento anual por departamento, informar minimo e teto do departamento, detalhar custos por cargos vinculados ao departamento quando aplicavel, validar limites, exibir percentual de ocupacao do teto e apresentar um relatorio geral por ano com alertas e lacunas de planejamento.
+O MVP deve permitir criar um planejamento anual por departamento, informar minimo e teto do departamento, detalhar custos por cargos vinculados ao departamento quando aplicavel, validar limites, exibir percentual de ocupacao do teto e apresentar um relatorio geral por ano com alertas dos planejamentos informados.
 
 ## User Stories
 
 1. Como usuario com acesso ao modulo `PLC`, quero visualizar o modulo Planejamento de Custos, para que eu possa acessar os planejamentos da empresa.
 2. Como usuario com acesso ao modulo `PLC`, quero criar um planejamento anual por departamento, para organizar custos previstos por area.
 3. Como usuario com acesso ao modulo `PLC`, quero informar uma descricao obrigatoria no planejamento, para identificar o registro com uma linguagem de negocio.
-4. Como usuario com acesso ao modulo `PLC`, quero que o codigo do planejamento seja gerado pelo sistema, para evitar inconsistencias manuais.
+4. Como usuario com acesso ao modulo `PLC`, quero informar o codigo do planejamento, para identificar o registro conforme a convencao desejada.
 5. Como usuario com acesso ao modulo `PLC`, quero que o codigo do planejamento nao mude depois da criacao, para manter a identidade do registro.
 6. Como usuario com acesso ao modulo `PLC`, quero informar minimo e teto do departamento, para definir a faixa de custo planejado.
 7. Como usuario com acesso ao modulo `PLC`, quero ser impedido de salvar minimo maior ou igual ao teto, para evitar faixas invalidas.
@@ -55,8 +55,8 @@ O MVP deve permitir criar um planejamento anual por departamento, informar minim
 37. Como usuario com acesso ao modulo `PLC`, quero que cargos pendentes aparecam como alerta no relatorio geral, para saber quais cargos precisam de decisao.
 38. Como usuario com acesso ao modulo `PLC`, quero acessar uma tela separada de relatorio geral, para analisar planejamentos sem misturar com cadastro.
 39. Como usuario com acesso ao modulo `PLC`, quero escolher o ano no relatorio geral, para analisar a competencia correta.
-40. Como usuario com acesso ao modulo `PLC`, quero ver todos os departamentos no relatorio geral, para identificar tambem departamentos sem planejamento.
-41. Como usuario com acesso ao modulo `PLC`, quero ver departamentos sem planejamento como alerta, para encontrar lacunas do planejamento anual.
+40. Como usuario com acesso ao modulo `PLC`, quero ver no relatorio geral apenas os departamentos que possuem planejamento informado para o ano analisado, para focar nos registros cadastrados.
+41. Como usuario com acesso ao modulo `PLC`, quero que departamentos sem planejamento fiquem fora do relatorio geral, para nao tratar ausencia de cadastro como alerta nesta etapa.
 42. Como usuario com acesso ao modulo `PLC`, quero ver valores absolutos no relatorio geral, para analisar os limites cadastrados.
 43. Como usuario com acesso ao modulo `PLC`, quero ver percentual de ocupacao do teto no relatorio geral, para comparar rapidamente a saturacao dos departamentos.
 44. Como usuario com acesso ao modulo `PLC`, quero que planejamento apenas por departamento apareca como informacao neutra, para nao tratar uma decisao explicita como pendencia.
@@ -78,7 +78,7 @@ O MVP deve permitir criar um planejamento anual por departamento, informar minim
 - O novo modulo usara o codigo canonico `PLC`.
 - O acesso do MVP seguira permissao por modulo, sem separacao inicial por acoes.
 - O planejamento tera identidade composta por id e codigo, com descricao obrigatoria informada pelo usuario.
-- O codigo do planejamento sera gerado pelo sistema e imutavel depois da criacao.
+- O codigo do planejamento sera informado pelo usuario e imutavel depois da criacao.
 - A descricao sera editavel e nao sera unica.
 - O par departamento/ano define a unicidade do planejamento no MVP.
 - O ano e o departamento nao podem ser alterados depois da criacao.
@@ -108,15 +108,14 @@ O MVP deve permitir criar um planejamento anual por departamento, informar minim
 - Percentual de ocupacao sera exibido no cadastro e no relatorio geral.
 - Percentual acima de 100% bloqueia o planejamento.
 - O relatorio geral sera uma tela separada do cadastro.
-- O relatorio geral listara todos os departamentos, incluindo os sem planejamento.
-- Departamento sem planejamento no ano aparecera como alerta.
+- O relatorio geral listara apenas departamentos com planejamento informado para o ano analisado.
+- Departamento sem planejamento nao aparecera no relatorio geral do MVP.
 - Planejamento apenas por departamento e cargo nao detalhado aparecerao como informacao neutra.
 - Departamento ou cargo usado por planejamento atual ou futuro nao podera ser removido.
 - Quando houver planejamento atual ou futuro, codigo de departamento/cargo e vinculo cargo/departamento nao devem mudar.
 - Descricao de departamento/cargo podera ser ajustada mesmo quando houver planejamento.
 - O backend deve ter um modulo profundo de validacao do planejamento, com interface simples e isolada.
-- O backend deve ter um modulo profundo de relatorio, responsavel por montar alertas, percentuais, departamentos sem planejamento e resumo de cargos.
-- O backend deve ter um servico de geracao de codigo para planejamento, isolado da descricao.
+- O backend deve ter um modulo profundo de relatorio, responsavel por montar alertas, percentuais e resumo de cargos dos planejamentos informados.
 - O backend deve proteger Departamento e Cargo contra alteracoes estruturais que quebrem planejamentos atuais ou futuros.
 - O front Angular tera uma feature `PLC` com tela de cadastro/manutencao e tela de relatorio geral.
 - O menu Angular deve trocar a entrada de salarios por Planejamento de Custos.
