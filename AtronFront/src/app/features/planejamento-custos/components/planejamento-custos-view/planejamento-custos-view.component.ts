@@ -74,9 +74,9 @@ export class PlanejamentoCustosViewComponent implements AfterViewInit {
 
   imprimirPlanejamento(codigo: string): void {
     this.imprimindoCodigo = codigo;
-    this.service.obterRelatorioPorPlanejamento(codigo).subscribe({
-      next: relatorio => {
-        this.impressaoService.imprimir(relatorio);
+    this.service.obterRelatorioPlanejamentoImpressao(codigo).subscribe({
+      next: htmlRelatorio => {
+        this.impressaoService.imprimir(htmlRelatorio);
         this.imprimindoCodigo = undefined;
       },
       error: erro => {

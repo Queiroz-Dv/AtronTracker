@@ -15,7 +15,9 @@ namespace WebApi.Controllers
     [Authorize(Policy = ModuloPolicies.PlanejamentoCustos)]
     [ApiController]
     [Route("api/[controller]")]
-    public class PlanejamentoCustoController(IPlanejamentoCustoService planejamentoCustoService) : ControllerBase
+    public class PlanejamentoCustoController(
+        IPlanejamentoCustoService planejamentoCustoService,
+        IPlanejamentoCustoRelatorioImpressaoService planejamentoCustoRelatorioImpressaoService) : ControllerBase
     {
         [HttpPost]
         public async Task<ActionResult<PlanejamentoCustoResponse>> Post([FromBody] PlanejamentoCustoRequest request)
@@ -48,6 +50,16 @@ namespace WebApi.Controllers
                 : Ok(resultado.Dados.MontarResponse());
         }
 
+        [HttpGet("relatorio-geral/impressao")]
+        public async Task<ActionResult> ObterRelatorioGeralImpressao([FromQuery] int ano)
+        {
+            var resultado = await planejamentoCustoRelatorioImpressaoService.ObterHtmlRelatorioGeralAsync(ano);
+
+            return resultado.TeveFalha
+                ? BadRequest(resultado.Messages)
+                : Content(resultado.Dados, "text/html; charset=utf-8");
+        }
+
         [HttpGet("relatorio/{codigo}")]
         public async Task<ActionResult<PlanejamentoCustoRelatorioGeralResponse>> ObterRelatorioPorCodigo(string codigo)
         {
@@ -56,6 +68,16 @@ namespace WebApi.Controllers
             return resultado.TeveFalha
                 ? BadRequest(resultado.Messages)
                 : Ok(resultado.Dados.MontarResponse());
+        }
+
+        [HttpGet("relatorio/{codigo}/impressao")]
+        public async Task<ActionResult> ObterRelatorioPorCodigoImpressao(string codigo)
+        {
+            var resultado = await planejamentoCustoRelatorioImpressaoService.ObterHtmlRelatorioPorCodigoAsync(codigo);
+
+            return resultado.TeveFalha
+                ? BadRequest(resultado.Messages)
+                : Content(resultado.Dados, "text/html; charset=utf-8");
         }
 
         [HttpGet("{codigo}")]

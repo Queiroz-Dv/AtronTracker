@@ -25,4 +25,16 @@ export class PlanejamentoCustoService extends BaseGenericService<PlanejamentoCus
       .get<PlanejamentoCustoRelatorioGeralResponse>(`${RotasApi.planejamentoCustoEndpoint}/relatorio/${codigo}`)
       .pipe(catchError(this.tratarErro));
   }
+
+  obterRelatorioGeralImpressao(ano: number): Observable<string> {
+    return this.http
+      .get(`${RotasApi.planejamentoCustoEndpoint}/relatorio-geral/impressao?ano=${ano}`, { responseType: 'text' })
+      .pipe(catchError(this.tratarErro));
+  }
+
+  obterRelatorioPlanejamentoImpressao(codigo: string): Observable<string> {
+    return this.http
+      .get(`${RotasApi.planejamentoCustoEndpoint}/relatorio/${codigo}/impressao`, { responseType: 'text' })
+      .pipe(catchError(this.tratarErro));
+  }
 }

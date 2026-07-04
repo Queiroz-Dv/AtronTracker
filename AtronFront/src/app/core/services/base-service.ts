@@ -89,7 +89,7 @@ export abstract class BaseGenericService<TRequest, TResponse = TRequest> {
   }
 
   protected extrairCorpoErro(erro: any): Mensagem[] | null {
-    const corpo = erro?.error;
+    const corpo = this.normalizarCorpoErro(erro?.error);
     const mensagens = Array.isArray(corpo)
       ? corpo
       : corpo?.mensagensApi
@@ -132,6 +132,18 @@ export abstract class BaseGenericService<TRequest, TResponse = TRequest> {
       .filter((mensagem: Mensagem | null): mensagem is Mensagem => !!mensagem);
 
     return mensagensNormalizadas.length ? mensagensNormalizadas : null;
+  }
+
+  private normalizarCorpoErro(corpo: any): any {
+    if (typeof corpo !== 'string') {
+      return corpo;
+    }
+
+    try {
+      return JSON.parse(corpo);
+    } catch {
+      return corpo;
+    }
   }
 
   protected tratarErro = (erro: any): Observable<never> => {

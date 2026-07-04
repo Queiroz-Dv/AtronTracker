@@ -5,6 +5,7 @@ using Application.Mapping;
 using Application.Services;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
+using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
 using Application.UseCases.Usuario;
 using Application.Validador;
@@ -154,6 +155,9 @@ namespace IoC
         private static void ConfigurePlanejamentoCustoServices(IServiceCollection services)
         {
             services.AddScoped<IPlanejamentoCustoRepository, PlanejamentoCustoRepository>();
+            services.AddScoped<IPlanejamentoCustoPreparacaoService, PlanejamentoCustoPreparacaoService>();
+            services.AddScoped<IPlanejamentoCustoRelatorioService, PlanejamentoCustoRelatorioService>();
+            services.AddScoped<IPlanejamentoCustoRelatorioImpressaoService, PlanejamentoCustoRelatorioImpressaoService>();
             services.AddScoped<IPlanejamentoCustoService, PlanejamentoCustoService>();
         }
 
