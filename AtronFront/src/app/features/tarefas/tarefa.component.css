@@ -1,26 +1,112 @@
-.tarefa-edit-container {
-  display: flex;
-  flex-direction: column;
+.tarefa-edit-form {
+  display: grid;
+  gap: 16px;
+  margin: 20px auto 0;
+  max-width: min(1040px, calc(100vw - 72px));
+  width: 100%;
+}
+
+.tarefa-form {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+}
+
+.tarefa-card {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-sm);
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.tarefa-section-header {
   align-items: center;
-  margin-top: 20px;
-}
-
-/* ==========================================================================
-   Fieldset da tarefa
-   ========================================================================== */
-.fieldset-tarefa-content {
   display: flex;
-  flex-direction: column;
-  margin-top: 5px;
+  justify-content: space-between;
 }
 
-/* ==========================================================================
-   Inputs da tarefa
-   ========================================================================== */
-.inpt-tarefa-titulo {
-  margin-top: 1%;
+.tarefa-section-header h2 {
+  color: var(--atron-text);
+  font-size: 1.16rem;
+  font-weight: 700;
+  margin: 0;
 }
 
-.inpt-tarefa {
-  margin-top: 0%;
+.tarefa-eyebrow {
+  color: var(--atron-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+}
+
+.tarefa-usuario-field {
+  width: min(100%, 520px);
+}
+
+.tarefa-fields {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tarefa-title-field,
+.tarefa-content-field {
+  grid-column: 1 / -1;
+}
+
+.tarefa-content-field textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.tarefa-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.tarefa-primary-action {
+  background: var(--atron-primary);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.tarefa-secondary-action {
+  border-color: var(--atron-border);
+  color: var(--atron-text);
+  font-weight: 700;
+}
+
+:host ::ng-deep .tarefa-card > .mat-mdc-card {
+  background: color-mix(in srgb, var(--atron-primary) 4%, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--atron-primary) 18%, var(--atron-border));
+  border-radius: var(--atron-radius-md);
+  box-shadow: none;
+  color: var(--atron-text);
+}
+
+:host ::ng-deep c-usuario-informacoes {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .tarefa-edit-form {
+    margin-top: 16px;
+    max-width: min(100%, calc(100vw - 32px));
+  }
+
+  .tarefa-card {
+    padding: 16px;
+  }
+
+  .tarefa-fields {
+    grid-template-columns: 1fr;
+  }
 }

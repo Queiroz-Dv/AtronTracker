@@ -25,6 +25,6 @@ export class BotaoVoltarComponent {
 
     const modo = this.visualizacaoService.getViewMode();
     return modo === 'menu' ? this.router.navigate(['/atron/home']) :
-      this.router.navigate(['/atron/dashboard']);
+      this.router.navigate(['/atron/dashboard'], { queryParams: { produto: 'tracker' } });
   }
 }

@@ -6,7 +6,8 @@ export class UsuarioRequest implements UsuarioModel {
   sobrenome: string;
   dataNascimento?: Date | string;
   email: string;
-  senha: string;
+  senha?: string;
+  clientUri?: string;
   cargoCodigo: string;
   departamentoCodigo: string;
 
@@ -15,17 +16,17 @@ export class UsuarioRequest implements UsuarioModel {
     nome: string,
     sobrenome: string,
     email: string,
-    senha: string,
     cargoCodigo: string,
     departamentoCodigo: string,
+    clientUri?: string,
     dataNascimento?: Date | string) {
     this.codigo = codigo;
     this.nome = nome;
     this.sobrenome = sobrenome;
     this.email = email;
-    this.senha = senha;
     this.cargoCodigo = cargoCodigo;
     this.departamentoCodigo = departamentoCodigo;
+    this.clientUri = clientUri;
     this.dataNascimento = dataNascimento
   }
 }

@@ -44,11 +44,11 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
 
             var planejamentoComMesmoCodigo = await _planejamentoCustoRepository.ObterPorCodigoAsNoTrackingAsync(planejamentoCustoDTO.Codigo);
             if (planejamentoComMesmoCodigo != null)
-                return Resultado<PlanejamentoCustoPreparado>.Falha("Ja existe planejamento de custo com este codigo.");
+                return Resultado<PlanejamentoCustoPreparado>.Falha("Já existe planejamento de custo com este código.");
 
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(planejamentoCustoDTO.DepartamentoCodigo);
             if (departamento == null)
-                return Resultado<PlanejamentoCustoPreparado>.Falha("Departamento do planejamento de custo nao encontrado.");
+                return Resultado<PlanejamentoCustoPreparado>.Falha("Departamento do planejamento de custo não encontrado.");
 
             var planejamentoExistente = await _planejamentoCustoRepository.ObterPorDepartamentoEAnoAsync(
                 departamento.Id,
@@ -56,7 +56,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 planejamentoCustoDTO.Ano);
 
             if (planejamentoExistente != null)
-                return Resultado<PlanejamentoCustoPreparado>.Falha("Ja existe planejamento de custo para este departamento e ano.");
+                return Resultado<PlanejamentoCustoPreparado>.Falha("Já existe planejamento de custo para este departamento e ano.");
 
             var planejamento = await _asyncMap.MapToEntityAsync(planejamentoCustoDTO);
             planejamento.VincularDepartamento(departamento);
@@ -79,7 +79,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 return Resultado<PlanejamentoCustoPreparado>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             if (planejamento.Ano < DateTime.Today.Year)
-                return Resultado<PlanejamentoCustoPreparado>.Falha("Planejamento de custo de ano passado nao pode ser editado.");
+                return Resultado<PlanejamentoCustoPreparado>.Falha("Planejamento de custo de ano passado não pode ser editado.");
 
             var identidade = _identidadeAtualizacao.Aplicar(planejamento, planejamentoCustoDTO);
             if (identidade.TeveFalha)
@@ -109,7 +109,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 return Resultado<PlanejamentoCusto>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             if (planejamento.Ano < DateTime.Today.Year)
-                return Resultado<PlanejamentoCusto>.Falha("Planejamento de custo de ano passado nao pode ser excluido.");
+                return Resultado<PlanejamentoCusto>.Falha("Planejamento de custo de ano passado não pode ser excluído.");
 
             return Resultado<PlanejamentoCusto>.Sucesso(planejamento);
         }

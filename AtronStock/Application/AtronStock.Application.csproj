@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Infrastructure\AtronStock.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTO\Response\" />
+  </ItemGroup>
+
 </Project>

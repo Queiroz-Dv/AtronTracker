@@ -1,16 +1,16 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SharedModule } from '../../../shared/modules/shared.module';
-import { UsuarioPerfilDTO } from '../models/perfil-usuario.model';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PerfilDeAcessoService } from '../../perfil-de-acesso/services/perfil-de-acesso.service';
-import { PerfilDeAcessoModel } from '../../perfil-de-acesso/interfaces/perfil-de-acesso.interface';
-import { UsuarioService } from '../../usuarios/services/usuario.service';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { BotaoVoltarComponent } from "../../../core/layout/botao-voltar/botao-voltar.component";
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { BotaoVoltarComponent } from '../../../core/layout/botao-voltar/botao-voltar.component';
+import { SharedModule } from '../../../shared/modules/shared.module';
+import { PerfilDeAcessoModel } from '../../perfil-de-acesso/interfaces/perfil-de-acesso.interface';
+import { PerfilDeAcessoService } from '../../perfil-de-acesso/services/perfil-de-acesso.service';
+import { UsuarioService } from '../../usuarios/services/usuario.service';
+import { UsuarioPerfilDTO } from '../models/perfil-usuario.model';
 
 @Component({
   selector: 'c-relacionamento-perfil-usuario-edit',
@@ -19,9 +19,11 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrl: '../relacionamento-perfil-usuario.component.css'
 })
 export class RelacionamentoPerfilUsuarioEditComponent implements OnInit, AfterViewInit {
-  form!: FormGroup
+  form!: FormGroup;
   perfis: PerfilDeAcessoModel[] = [];
+  perfisFiltrados: PerfilDeAcessoModel[] = [];
   usuarios: UsuarioPerfilDTO[] = [];
+  buscaUsuarioControl = new FormControl('');
   datasource = new MatTableDataSource<UsuarioPerfilDTO>([]);
   displayedColumns = ['codigo', 'nome', 'sobrenome'];
 
@@ -33,58 +35,113 @@ export class RelacionamentoPerfilUsuarioEditComponent implements OnInit, AfterVi
     private perfilService: PerfilDeAcessoService,
     private usuarioService: UsuarioService,
     private route: ActivatedRoute,
-    public router: Router) { }
-
+    public router: Router
+  ) { }
 
   ngOnInit(): void {
     this.form = this.fb.group({
       codigoPerfil: [null, Validators.required],
-      usuarios: [[]]    // string[] de códigos
+      usuarios: [[]]
     });
 
-    // carrega dropdown de perfis
-    this.perfilService.obterTodos().subscribe(list => {
-      this.perfis = list;
+    this.datasource.filterPredicate = (usuario, filtro) => {
+      const termo = filtro.trim().toLowerCase();
+      return usuario.codigo?.toLowerCase().includes(termo)
+        || usuario.nome?.toLowerCase().includes(termo)
+        || usuario.sobrenome?.toLowerCase().includes(termo)
+        || `${usuario.nome} ${usuario.sobrenome}`.toLowerCase().includes(termo);
+    };
+
+    this.perfilService.obterTodos().subscribe(perfis => {
+      this.perfis = perfis;
+      this.perfisFiltrados = perfis;
+      this.sincronizarPerfilDaRota();
     });
 
-    // carrega lista de usuários e popula tabela
-    this.usuarioService.obterTodos().subscribe(list => {
-      this.usuarios = list.map(u => ({
-        codigo: u.codigo,
-        nome: u.nome,
-        sobrenome: u.sobrenome
+    this.usuarioService.obterTodosUsuariosInformados().subscribe(usuarios => {
+      this.usuarios = usuarios.map(usuario => ({
+        codigo: usuario.codigo,
+        nome: usuario.nome,
+        sobrenome: usuario.sobrenome
       }));
 
-      this.datasource.data = list;
+      this.datasource.data = this.usuarios;
     });
 
-    // se for edição, pega :codigoPerfil
-    const codigo = this.route.snapshot.paramMap.get('codigoPerfil');
-    if (codigo) {
-      this.form.get('codigoPerfil')!.setValue(codigo);
-      this.loadRelacionamentos(codigo);
-    }
+    this.buscaUsuarioControl.valueChanges.subscribe(valor => this.filtrarUsuarios(valor ?? ''));
 
-    // ao trocar de perfil no select, recarrega marcações
-    this.form.get('codigoPerfil')!.valueChanges.subscribe(sel => {
-      if (sel) this.loadRelacionamentos(sel.codigo);
-      else this.form.get('usuarios')!.setValue([]);
+    this.form.get('codigoPerfil')!.valueChanges.subscribe(valor => {
+      this.perfisFiltrados = this.filtrarPerfis(valor);
+
+      const codigoPerfil = this.obterCodigoPerfilValido(valor);
+      if (codigoPerfil) {
+        this.loadRelacionamentos(codigoPerfil);
+      } else {
+        this.form.get('usuarios')!.setValue([]);
+      }
     });
   }
 
   ngAfterViewInit(): void {
-    // só aqui o paginator e o sort já existem
     this.datasource.paginator = this.paginator;
     this.datasource.sort = this.sort;
   }
 
-  private loadRelacionamentos(codigoPerfil: string) {
+  estaSelecionado(codigoUsuario: string): boolean {
+    return (this.form.value.usuarios as string[]).includes(codigoUsuario);
+  }
+
+  onToggleUsuario(codigoUsuario: string, checked: boolean): void {
+    const ctrl = this.form.get('usuarios')!;
+    const codigosSelecionados = [...ctrl.value as string[]];
+
+    if (checked) {
+      if (!codigosSelecionados.includes(codigoUsuario)) {
+        codigosSelecionados.push(codigoUsuario);
+      }
+
+      ctrl.setValue(codigosSelecionados);
+      return;
+    }
+
+    ctrl.setValue(codigosSelecionados.filter(codigo => codigo !== codigoUsuario));
+  }
+
+  exibirPerfil(perfil?: PerfilDeAcessoModel | string): string {
+    if (!perfil) return '';
+    if (typeof perfil === 'string') return perfil;
+    return `${perfil.codigo} - ${perfil.descricao}`;
+  }
+
+  salvar(): void {
+    const codigoPerfil = this.obterCodigoPerfilValido(this.form.get('codigoPerfil')!.value);
+    const usuariosForm = this.form.get('usuarios')!.value as string[];
+
+    if (!codigoPerfil) {
+      this.form.get('codigoPerfil')?.setErrors({ required: true });
+      return;
+    }
+
+    const payload: PerfilUsuarioRequest = {
+      codigoPerfil,
+      usuarios: usuariosForm.map(codigoUsuario => ({ codigo: codigoUsuario }))
+    };
+
+    this.perfilService
+      .gravarRelacionamento(payload)
+      .subscribe(() => {
+        this.form.reset({ codigoPerfil: null, usuarios: [] });
+        this.buscaUsuarioControl.setValue('');
+        this.router.navigate(['atron/perfil-de-acesso/relacionamento-perfil-usuario/novo']);
+      });
+  }
+
+  private loadRelacionamentos(codigoPerfil: string): void {
     this.perfilService
       .obterRelacionamentoPorCodigoDoPerfil(codigoPerfil)
       .subscribe({
-        next: rel => {
-          console.log(rel);
-          const codigos = rel.usuarios.map(u => u.codigo);
+        next: relacionamento => {
+          const codigos = relacionamento.usuarios?.map(usuario => usuario.codigo) ?? [];
           this.form.get('usuarios')!.setValue(codigos);
         },
         error: () => {
@@ -93,43 +150,42 @@ export class RelacionamentoPerfilUsuarioEditComponent implements OnInit, AfterVi
       });
   }
 
-  // helpers para o checkbox
-  estaSelecionado(codigoUsuario: string): boolean {
-    return (this.form.value.usuarios as string[]).includes(codigoUsuario);
+  private sincronizarPerfilDaRota(): void {
+    const codigo = this.route.snapshot.paramMap.get('codigoPerfil');
+    if (!codigo) return;
+
+    const perfil = this.perfis.find(item => item.codigo === codigo);
+    this.form.get('codigoPerfil')!.setValue(perfil ?? codigo);
+    this.loadRelacionamentos(codigo);
   }
 
-  onToggleUsuario(codigoUsuario: string, checked: boolean) {
-    const ctrl = this.form.get('usuarios')!;
-    const list = [...ctrl.value as string[]];
-    if (checked) {
-      if (!list.includes(codigoUsuario)) list.push(codigoUsuario);
-    } else {
-      ctrl.setValue(list.filter(c => c !== codigoUsuario));
-      return;
+  private filtrarPerfis(valor: PerfilDeAcessoModel | string | null): PerfilDeAcessoModel[] {
+    const termo = typeof valor === 'string'
+      ? valor.trim().toLowerCase()
+      : valor?.codigo?.toLowerCase() ?? '';
+
+    if (!termo) return this.perfis;
+
+    return this.perfis.filter(perfil =>
+      perfil.codigo?.toLowerCase().includes(termo)
+      || perfil.descricao?.toLowerCase().includes(termo)
+    );
+  }
+
+  private filtrarUsuarios(valor: string): void {
+    this.datasource.filter = valor.trim().toLowerCase();
+    this.datasource.paginator?.firstPage();
+  }
+
+  private obterCodigoPerfilValido(valor: PerfilDeAcessoModel | string | null): string | null {
+    if (!valor) return null;
+    if (typeof valor === 'string') {
+      const codigo = valor.trim();
+      const perfil = this.perfis.find(item => item.codigo.toLowerCase() === codigo.toLowerCase());
+      return perfil?.codigo ?? null;
     }
-    ctrl.setValue(list);
-  }
 
-  exibirPerfil(p?: PerfilDeAcessoModel): string {
-    return p ? `${p.codigo} – ${p.descricao}` : '';
-  }
-
-  salvar() {
-    const perfil = this.form.get('codigoPerfil').value;
-    const usuariosForm = this.form.get('usuarios').value;
-
-    const payload: PerfilUsuarioRequest = {
-      codigoPerfil: perfil.codigo,
-      usuarios: (usuariosForm as string[]).map(codigoUsuario => ({ codigo: codigoUsuario }))
-    };
-
-    const operacao = this.perfilService.gravarRelacionamento(payload);
-    this.form.reset({
-      codigoPerfil: null,
-      usuarios: []
-    });
-
-    operacao.subscribe(() => this.router.navigate(['atron/perfil-de-acesso/relacionamento-perfil-usuario/novo']));
+    return valor.codigo;
   }
 }
 

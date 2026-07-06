@@ -18,7 +18,7 @@
 }
 
 .planning-page-title {
-  color: var(--atron-primary, #1d4ed8) !important;
+  color: var(--atron-title, #5b21b6) !important;
 }
 
 .cargo-planning-section {

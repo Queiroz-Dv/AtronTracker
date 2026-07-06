@@ -1,39 +1,53 @@
-<form [formGroup]="form" class="perfil-form container">
-  <fieldset class="perfil-fieldset">
-    <legend>Relacionamento de perfil com usuários</legend>
-    <!-- SELECT de Perfis -->
-    <mat-form-field appearance="fill" class="perfil-container">
+<form [formGroup]="form" class="relacionamento-form">
+  <section class="relacionamento-card">
+    <header class="relacionamento-section-header">
+      <div>
+        <p class="relacionamento-eyebrow">Segurança</p>
+        <h2>Relacionamento de Perfil com Usuários</h2>
+      </div>
+    </header>
+
+    <mat-form-field appearance="outline" class="perfil-container">
       <mat-label>Selecione o perfil</mat-label>
       <input type="text" class="perfil-input" matInput formControlName="codigoPerfil" [matAutocomplete]="autoPrf" />
       <mat-autocomplete #autoPrf="matAutocomplete" [displayWith]="exibirPerfil">
-        @for (prf of perfis; track prf.codigo) {
-        <mat-option [value]="prf">{{ exibirPerfil(prf) }}</mat-option>
+        @for (prf of perfisFiltrados; track prf.codigo) {
+          <mat-option [value]="prf">{{ exibirPerfil(prf) }}</mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>
+  </section>
 
-    <fieldset class="usuario-fieldset">
-      <legend>Usuários</legend>
-      <!-- TABELA de Usuários -->
-      <table mat-table [dataSource]="datasource" matSort>
+  <section class="relacionamento-card">
+    <header class="relacionamento-section-header">
+      <div>
+        <p class="relacionamento-eyebrow">Usuários</p>
+        <h2>Usuários do perfil</h2>
+      </div>
+    </header>
 
-        <!-- coluna de seleção -->
+    <mat-form-field appearance="outline" class="usuario-busca">
+      <mat-label>Buscar usuário</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [formControl]="buscaUsuarioControl" placeholder="Pesquise por código, nome ou sobrenome" />
+    </mat-form-field>
+
+    <div class="usuarios-grid">
+      <table mat-table [dataSource]="datasource" matSort class="usuarios-table" aria-label="Usuários do perfil de acesso">
         <ng-container matColumnDef="codigo">
           <th mat-header-cell *matHeaderCellDef mat-sort-header="codigo">Código</th>
           <td mat-cell *matCellDef="let u">
-            <mat-checkbox [checked]="estaSelecionado(u.codigo)" (change)="onToggleUsuario(u.codigo,$event.checked)">
+            <mat-checkbox [checked]="estaSelecionado(u.codigo)" (change)="onToggleUsuario(u.codigo, $event.checked)">
               {{ u.codigo }}
             </mat-checkbox>
           </td>
         </ng-container>
 
-        <!-- Nome -->
         <ng-container matColumnDef="nome">
           <th mat-header-cell *matHeaderCellDef mat-sort-header="nome">Nome</th>
           <td mat-cell *matCellDef="let u">{{ u.nome }}</td>
         </ng-container>
 
-        <!-- Sobrenome -->
         <ng-container matColumnDef="sobrenome">
           <th mat-header-cell *matHeaderCellDef mat-sort-header="sobrenome">Sobrenome</th>
           <td mat-cell *matCellDef="let u">{{ u.sobrenome }}</td>
@@ -43,14 +57,20 @@
         <tr mat-row *matRowDef="let r; columns: displayedColumns"></tr>
       </table>
 
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Selecione a página de usuários">
+      <mat-paginator
+        class="usuarios-paginator"
+        [pageSizeOptions]="[5, 10, 20]"
+        showFirstLastButtons
+        aria-label="Selecione a página de usuários">
       </mat-paginator>
-    </fieldset>
-    <!-- Ações -->
+    </div>
+  </section>
 
-    <mat-card-actions class="m-10">
-      <button mat-raised-button color="primary" (click)="salvar()" [disabled]="form.invalid"> Salvar </button>
-      <c-botao-voltar></c-botao-voltar>
-    </mat-card-actions>
-  </fieldset>
+  <footer class="relacionamento-actions">
+    <button mat-flat-button class="relacionamento-primary-action" type="button" (click)="salvar()" [disabled]="form.invalid">
+      <mat-icon>save</mat-icon>
+      Salvar
+    </button>
+    <c-botao-voltar></c-botao-voltar>
+  </footer>
 </form>

@@ -1,38 +1,62 @@
 :root {
-  --atron-page-bg: #f5f7fb;
+  --atron-page-bg: #ffffff;
   --atron-surface: #ffffff;
-  --atron-surface-muted: #eef4ff;
-  --atron-text: #172033;
-  --atron-text-muted: #667085;
-  --atron-primary: #1d4ed8;
-  --atron-primary-hover: #1e40af;
-  --atron-border: #dbe3ef;
-  --atron-shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.08);
-  --atron-shadow-md: 0 14px 34px rgba(15, 23, 42, 0.12);
+  --atron-surface-muted: #f8fafc;
+  --atron-surface-tinted: #eef2ff;
+  --atron-surface-container: #f3f4f6;
+  --atron-text: #0f172a;
+  --atron-text-muted: #475569;
+  --atron-text-subtle: #64748b;
+  --atron-primary: #6366f1;
+  --atron-primary-hover: #4f46e5;
+  --atron-primary-soft: #eef2ff;
+  --atron-primary-strong: #1e1b4b;
+  --atron-title: #111827;
+  --atron-border: #e2e8f0;
+  --atron-border-soft: #f1f5f9;
+  --atron-danger: #dc2626;
+  --atron-success: #15803d;
+  --atron-warning: #b45309;
+  --atron-info: #2563eb;
+  --atron-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --atron-shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
   --atron-radius-sm: 8px;
-  --atron-radius-md: 12px;
+  --atron-radius-md: 8px;
+  --atron-radius-lg: 16px;
+  --atron-page-max-width: 1280px;
+  --atron-font-sans: "Segoe UI", Arial, Helvetica, sans-serif;
+  --color-border: var(--atron-border);
+  --color-text-muted: var(--atron-text-muted);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* You can add global styles to this file, and also import other style files */
 /* Adicione estas classes para estilizar o snackbar */
 .snackbar-sucesso { /* Nome da classe alterado */
-  background-color: #4CAF50; /* Verde */
-  color: white;
+  background-color: #ecfdf3;
+  border: 1px solid #bbf7d0;
+  color: var(--atron-success);
 }
 
 .snackbar-erro { /* Nome da classe alterado */
-  background-color: #f44336; /* Vermelho */
-  color: white;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: var(--atron-danger);
 }
 
 .snackbar-aviso { /* Nome da classe alterado */
-  background-color: #ff9800; /* Laranja */
-  color: black;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  color: var(--atron-warning);
 }
 
 .snackbar-info { /* Nome da classe alterado */
-  background-color: #2196F3; /* Azul */
-  color: white;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: var(--atron-info);
 }
 
 /* Ajustes opcionais para garantir que o botão fechar seja visível */
@@ -55,7 +79,101 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: var(--atron-font-sans);
+  font-size: 16px;
+  letter-spacing: 0;
+  --mat-app-background-color: var(--atron-page-bg);
+  --mat-app-text-color: var(--atron-text);
+  --mat-menu-container-color: var(--atron-surface);
+  --mat-autocomplete-background-color: var(--atron-surface);
+  --mat-option-label-text-color: var(--atron-text);
+  --mat-option-selected-state-label-text-color: var(--atron-primary-strong);
+  --mat-option-selected-state-layer-color: var(--atron-primary-soft);
+  --mat-select-enabled-trigger-text-color: var(--atron-text);
+  --mat-select-panel-background-color: var(--atron-surface);
+  --mat-sidenav-container-background-color: var(--atron-surface);
+  --mat-toolbar-container-background-color: var(--atron-surface);
+  --mat-toolbar-container-text-color: var(--atron-text);
+  --mat-card-elevated-container-color: var(--atron-surface);
+  --mat-card-outlined-container-color: var(--atron-surface);
+  --mdc-dialog-container-color: var(--atron-surface);
+  --mdc-dialog-subhead-color: var(--atron-text);
+  --mdc-dialog-supporting-text-color: var(--atron-text-muted);
+  --mdc-filled-text-field-container-color: var(--atron-surface);
+  --mdc-filled-text-field-input-text-color: var(--atron-text);
+  --mdc-filled-text-field-label-text-color: var(--atron-text-muted);
+  --mdc-filled-text-field-caret-color: var(--atron-primary);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--atron-primary);
+  --mdc-filled-text-field-focus-label-text-color: var(--atron-primary);
+  --mdc-outlined-text-field-input-text-color: var(--atron-text);
+  --mdc-outlined-text-field-label-text-color: var(--atron-text-muted);
+  --mdc-outlined-text-field-outline-color: var(--atron-border);
+  --mdc-outlined-text-field-focus-outline-color: var(--atron-primary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--atron-primary);
+  --mdc-outlined-text-field-caret-color: var(--atron-primary);
+}
+
+html,
+body,
+button,
+input,
+textarea,
+select,
+.mat-mdc-card,
+.mat-mdc-button-base,
+.mat-mdc-form-field,
+.mat-mdc-menu-item,
+.mat-mdc-option,
+.mat-mdc-select,
+.mat-mdc-table,
+.mat-mdc-paginator,
+.mdc-list-item__primary-text {
+  font-family: var(--atron-font-sans) !important;
+}
+
+a {
+  color: var(--atron-primary);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel,
+.cdk-overlay-container .mat-mdc-select-panel {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  box-shadow: var(--atron-shadow-md);
+  color: var(--atron-text);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option {
+  background: var(--atron-surface);
+  color: var(--atron-text);
+  --mat-option-label-text-color: var(--atron-text);
+  --mat-option-selected-state-label-text-color: var(--atron-primary-strong);
+  --mat-option-selected-state-layer-color: var(--atron-primary-soft);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option .mdc-list-item__primary-text {
+  color: var(--atron-text);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option:hover,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mdc-list-item--selected,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mat-mdc-option-active,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option:hover,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option.mdc-list-item--selected,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active {
+  background: var(--atron-primary-soft);
+  color: var(--atron-primary-strong);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option:hover .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mat-mdc-option-active .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option:hover .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active .mdc-list-item__primary-text {
+  color: var(--atron-primary-strong);
 }
 
 .list-page {
@@ -71,18 +189,18 @@ body {
   border-radius: var(--atron-radius-md);
   box-shadow: var(--atron-shadow-sm);
   margin: 0 auto;
-  max-width: 1180px;
+  max-width: var(--atron-page-max-width);
   overflow: hidden;
   --mat-paginator-container-background-color: var(--atron-surface);
   --mat-paginator-container-text-color: var(--atron-text);
   --mat-paginator-enabled-icon-color: var(--atron-text);
-  --mat-paginator-disabled-icon-color: #98a2b3;
+  --mat-paginator-disabled-icon-color: var(--atron-text-subtle);
   --mat-select-enabled-trigger-text-color: var(--atron-text);
   --mat-select-panel-background-color: var(--atron-surface);
   --mat-table-background-color: var(--atron-surface);
   --mat-table-header-headline-color: var(--atron-text-muted);
   --mat-table-row-item-label-text-color: var(--atron-text);
-  --mat-table-row-item-outline-color: #edf2f7;
+  --mat-table-row-item-outline-color: var(--atron-border-soft);
 }
 
 .list-header {
@@ -104,8 +222,9 @@ body {
 }
 
 .list-header h1 {
-  color: var(--atron-text);
+  color: var(--atron-title);
   font-size: 1.55rem;
+  font-weight: 700;
   line-height: 1.2;
   margin: 0 0 6px;
 }
@@ -180,6 +299,7 @@ body {
 .mat-mdc-outlined-button:not(:disabled),
 .mat-mdc-button:not(:disabled),
 .list-secondary-action {
+  --mdc-outlined-button-container-color: var(--atron-surface);
   --mdc-outlined-button-label-text-color: var(--atron-text);
   --mdc-outlined-button-outline-color: var(--atron-border);
   --mdc-text-button-label-text-color: var(--atron-primary);
@@ -193,7 +313,7 @@ body {
   --mdc-checkbox-selected-pressed-icon-color: var(--atron-primary);
   --mdc-checkbox-unselected-focus-icon-color: var(--atron-text-muted);
   --mdc-checkbox-unselected-hover-icon-color: var(--atron-primary);
-  --mdc-checkbox-unselected-icon-color: #98a2b3;
+  --mdc-checkbox-unselected-icon-color: var(--atron-text-subtle);
   --mdc-checkbox-unselected-pressed-icon-color: var(--atron-primary);
   --mat-checkbox-label-text-color: var(--atron-text);
 }
@@ -216,10 +336,11 @@ body {
   --mdc-outlined-text-field-label-text-color: var(--atron-text-muted);
   --mdc-outlined-text-field-outline-color: var(--atron-border);
   --mdc-outlined-text-field-hover-outline-color: var(--atron-primary);
+  --mdc-outlined-text-field-container-shape: var(--atron-radius-sm);
 }
 
 .list-filter .mat-mdc-text-field-wrapper {
-  background: #ffffff;
+  background: var(--atron-surface);
   border-radius: var(--atron-radius-sm);
 }
 
@@ -241,16 +362,23 @@ body {
 
 .list-table .mat-mdc-header-row,
 .list-table .mdc-data-table__header-row {
-  background: #f8fafc !important;
+  background: var(--atron-surface-muted) !important;
 }
 
 .list-table .mat-mdc-header-cell,
 .list-table .mdc-data-table__header-cell {
-  background: #f8fafc !important;
+  background: var(--atron-surface-muted) !important;
   border-bottom-color: var(--atron-border);
   color: var(--atron-text-muted) !important;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.list-table .mat-column-acoes,
+.list-panel .mat-column-acoes {
+  text-align: right;
+  white-space: nowrap;
+  width: 1%;
 }
 
 .list-table .mat-mdc-row,
@@ -261,13 +389,13 @@ body {
 .list-table .mat-mdc-cell,
 .list-table .mdc-data-table__cell {
   background: var(--atron-surface) !important;
-  border-bottom-color: #edf2f7;
+  border-bottom-color: var(--atron-border-soft);
   color: var(--atron-text) !important;
 }
 
 .list-table .mat-mdc-row:hover,
 .list-table .mat-mdc-row:hover .mat-mdc-cell {
-  background: #f8fbff !important;
+  background: var(--atron-surface-muted) !important;
 }
 
 .list-row-actions {
@@ -278,6 +406,11 @@ body {
   margin: 0;
   min-height: auto;
   padding: 0;
+  white-space: nowrap;
+}
+
+.list-row-actions .mat-mdc-icon-button {
+  flex: 0 0 40px;
 }
 
 .list-icon-action {
@@ -285,7 +418,7 @@ body {
 }
 
 .list-icon-action-danger {
-  color: #dc2626 !important;
+  color: var(--atron-danger) !important;
 }
 
 .list-no-data {
@@ -340,21 +473,21 @@ body {
 }
 
 .planning-detail-grid div {
-  background: #f8fafc;
-  border: 1px solid var(--atron-border, #d9dde7);
-  border-radius: 8px;
-  color: var(--atron-text, #172033);
+  background: var(--atron-surface-muted);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
+  color: var(--atron-text);
   display: grid;
   gap: 4px;
   padding: 12px;
 }
 
 .planning-detail-grid span {
-  color: var(--atron-text-muted, #667085);
+  color: var(--atron-text-muted);
 }
 
 .planning-detail-grid strong {
-  color: var(--atron-text, #172033);
+  color: var(--atron-text);
 }
 
 .planning-detail-cargos {
@@ -363,30 +496,30 @@ body {
 }
 
 .planning-detail-cargos h3 {
-  color: var(--atron-text, #172033);
+  color: var(--atron-text);
   font-size: 1rem;
   margin: 4px 0 0;
 }
 
 .planning-detail-cargos .report-cargo-grid {
-  background: #ffffff;
-  border-color: var(--atron-border, #d9dde7);
+  background: var(--atron-surface);
+  border-color: var(--atron-border);
 }
 
 .planning-detail-cargos .report-cargo-grid-header {
-  background: #f8fafc;
-  color: var(--atron-text-muted, #667085);
+  background: var(--atron-surface-muted);
+  color: var(--atron-text-muted);
 }
 
 .planning-detail-cargos .report-cargo-grid-row {
-  background: #ffffff;
-  color: var(--atron-text, #172033);
+  background: var(--atron-surface);
+  color: var(--atron-text);
 }
 
 .list-footer-actions {
   border-top: 1px solid var(--atron-border);
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   padding: 16px 24px 20px;
 }
 
@@ -407,8 +540,8 @@ body {
 fieldset {
   padding: 10px;
   margin-bottom: 30px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
 }
 
 fieldset legend {
@@ -433,38 +566,32 @@ fieldset legend {
 
 .full-form-container {
   width: 100%;
-  max-width: 500px; /* Largura máxima do formulário */
-  margin: 5% auto 0 auto; /* Centraliza horizontalmente */
+  max-width: 500px;
 }
 
 .form-container-negative-top {
-  width: 50%;
-  margin-top: 0%;
-  margin-left: 25%;
+  max-width: 720px;
+  width: min(92vw, 720px);
 }
 
 .form-container {
-  width: 50%;
-  margin-top: 5%;
-  margin-left: 25%;
+  max-width: 720px;
+  width: min(92vw, 720px);
 }
 
 .form-container-50 {
-  width: 50%;
-  margin-top: 10%;
-  margin-left: 25%;
+  max-width: 720px;
+  width: min(92vw, 720px);
 }
 
 .form-container-75 {
-  width: 75%;
-  margin-top: 5%;
-  margin-left: 12.5%;
+  max-width: 1040px;
+  width: min(94vw, 1040px);
 }
 
 .form-container-70 {
-  width: 70%;
-  margin-top: 2%;
-  margin-left: 15%;
+  max-width: 960px;
+  width: min(94vw, 960px);
 }
 
 .form-container,
@@ -478,6 +605,7 @@ fieldset legend {
   border-radius: var(--atron-radius-md);
   box-shadow: var(--atron-shadow-sm);
   color: var(--atron-text);
+  margin: clamp(24px, 5vh, 56px) auto;
   padding: 24px;
 }
 
@@ -496,8 +624,9 @@ fieldset legend {
 .form-container-70 h2,
 .form-container-75 h2,
 .full-form-container h2 {
-  color: var(--atron-text);
+  color: var(--atron-title);
   font-size: 1.45rem;
+  font-weight: 700;
   line-height: 1.2;
   margin: 0 0 8px;
 }
@@ -509,7 +638,7 @@ fieldset legend {
 .form-container-75 mat-form-field,
 .full-form-container mat-form-field {
   width: 100%;
-  --mdc-filled-text-field-container-color: #ffffff;
+  --mdc-filled-text-field-container-color: var(--atron-surface);
   --mdc-filled-text-field-caret-color: var(--atron-primary);
   --mdc-filled-text-field-focus-active-indicator-color: var(--atron-primary);
   --mdc-filled-text-field-focus-label-text-color: var(--atron-primary);
@@ -517,9 +646,9 @@ fieldset legend {
   --mdc-filled-text-field-input-text-color: var(--atron-text);
   --mdc-filled-text-field-label-text-color: var(--atron-text-muted);
   --mdc-filled-text-field-active-indicator-color: var(--atron-border);
-  --mdc-filled-text-field-disabled-container-color: #f1f5f9;
-  --mdc-filled-text-field-disabled-input-text-color: #667085;
-  --mdc-filled-text-field-disabled-label-text-color: #667085;
+  --mdc-filled-text-field-disabled-container-color: var(--atron-surface-muted);
+  --mdc-filled-text-field-disabled-input-text-color: var(--atron-text-muted);
+  --mdc-filled-text-field-disabled-label-text-color: var(--atron-text-muted);
   --mat-form-field-container-text-line-height: 1.35rem;
 }
 
@@ -569,7 +698,7 @@ fieldset legend {
 .form-container-70 mat-card-actions button:not(:first-child),
 .form-container-75 mat-card-actions button:not(:first-child),
 .full-form-container mat-card-actions button:not(:first-child) {
-  background: #ffffff !important;
+  background: var(--atron-surface) !important;
   border: 1px solid var(--atron-border) !important;
   color: var(--atron-text) !important;
 }
@@ -1039,6 +1168,41 @@ fieldset legend {
 }
 
 @media (max-width: 760px) {
+  .list-page {
+    padding: 16px;
+  }
+
+  .list-header,
+  .list-toolbar,
+  .list-table-wrap,
+  .list-footer-actions {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .list-header,
+  .list-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .list-actions,
+  .list-actions button,
+  .list-filter {
+    width: 100%;
+  }
+
+  .form-container,
+  .form-container-negative-top,
+  .form-container-50,
+  .form-container-70,
+  .form-container-75,
+  .full-form-container {
+    margin: 24px auto;
+    padding: 18px;
+    width: calc(100vw - 32px);
+  }
+
   .planning-detail-dialog {
     min-width: 0;
   }

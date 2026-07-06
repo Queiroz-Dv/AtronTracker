@@ -3,6 +3,8 @@ export interface DashboardCard {
   title: string;
   icon: string;        // nome do ícone Material ou classe FontAwesome
   description: string;
+  accessLabel: string;
+  disabled?: boolean;
   route: string;       // rota Angular para navegação
   cols: number;
   rows: number;

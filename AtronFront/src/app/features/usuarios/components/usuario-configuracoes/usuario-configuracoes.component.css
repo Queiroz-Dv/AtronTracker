@@ -1,0 +1,63 @@
+:host {
+  background: var(--atron-page-bg);
+  display: block;
+  min-height: 100vh;
+  padding: 1px 0;
+}
+
+.usuario-configuracoes {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-header {
+  border-bottom: 1px solid var(--atron-border);
+  padding-bottom: 18px;
+}
+
+.settings-eyebrow {
+  color: var(--atron-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.settings-description {
+  color: var(--atron-text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.settings-option {
+  background: var(--atron-surface-muted);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
+  color: var(--atron-text);
+  padding: 18px;
+  --mat-checkbox-label-text-color: var(--atron-text);
+  --mdc-checkbox-selected-checkmark-color: #ffffff;
+  --mdc-checkbox-selected-focus-icon-color: var(--atron-primary);
+  --mdc-checkbox-selected-hover-icon-color: var(--atron-primary-hover);
+  --mdc-checkbox-selected-icon-color: var(--atron-primary);
+  --mdc-checkbox-selected-pressed-icon-color: var(--atron-primary);
+  --mdc-checkbox-unselected-focus-icon-color: var(--atron-text-muted);
+  --mdc-checkbox-unselected-hover-icon-color: var(--atron-primary);
+  --mdc-checkbox-unselected-icon-color: var(--atron-text-subtle);
+  --mdc-checkbox-unselected-pressed-icon-color: var(--atron-primary);
+}
+
+.settings-option p {
+  color: var(--atron-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  margin: 8px 0 0 40px;
+}
+
+@media (max-width: 640px) {
+  .settings-option p {
+    margin-left: 0;
+  }
+}

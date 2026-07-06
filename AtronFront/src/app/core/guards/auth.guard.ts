@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
         return sessaoRestaurada;
       }),
       catchError((error) => {
-        console.error('Erro ao validar autenticacao do usuario no guard:', error);
+        console.error('Erro ao validar autenticação do usuário no guard:', error);
         this.router.navigate(['/login']);
         return of(false);
       })

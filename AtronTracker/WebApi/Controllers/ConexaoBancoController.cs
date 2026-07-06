@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace WebApi.Controllers
 {
     /// <summary>
-    /// Controller interna para validar conexoes com bancos distintos.
+    /// Controller interna para validar conexões com bancos distintos.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -30,7 +30,7 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Testa a conexao SQL Server configurada em ConnectionStrings:AtronConnection.
+        /// Testa a conexão SQL Server configurada em ConnectionStrings:AtronConnection.
         /// </summary>
         [HttpGet("sql-server")]
         public async Task<ActionResult<ConexaoBancoTesteResponse>> TestarSqlServer(CancellationToken cancellationToken)
@@ -42,7 +42,7 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Testa a conexao PostgreSQL/Supabase configurada em ConnectionStrings:DefaultConnection.
+        /// Testa a conexão PostgreSQL/Supabase configurada em ConnectionStrings:DefaultConnection.
         /// </summary>
         [HttpGet("supabase")]
         public async Task<ActionResult<ConexaoBancoTesteResponse>> TestarSupabase(CancellationToken cancellationToken)
@@ -65,10 +65,10 @@ namespace WebApi.Controllers
                 return NotFound();
 
             if (request is null)
-                return BadRequest("Informe os dados para teste de conexao.");
+                return BadRequest("Informe os dados para teste de conexão.");
 
             if (!Enum.TryParse<BancoProvider>(request.Provider, true, out var provider))
-                return BadRequest("Provider invalido. Use SqlServer ou PostgreSql.");
+                return BadRequest("Provider inválido. Use SqlServer ou PostgreSql.");
 
             var connectionString = request.ConnectionString;
 
@@ -76,7 +76,7 @@ namespace WebApi.Controllers
                 connectionString = _configuration.GetConnectionString(request.ConnectionStringName);
 
             if (string.IsNullOrWhiteSpace(connectionString))
-                return BadRequest("Connection string nao informada ou nao encontrada.");
+                return BadRequest("Connection string não informada ou não encontrada.");
 
             var nome = string.IsNullOrWhiteSpace(request.ConnectionStringName)
                 ? "InformadaNoRequest"
@@ -94,7 +94,7 @@ namespace WebApi.Controllers
             var connectionString = _configuration.GetConnectionString(connectionStringName);
 
             if (string.IsNullOrWhiteSpace(connectionString))
-                return BadRequest($"Connection string '{connectionStringName}' nao encontrada.");
+                return BadRequest($"Connection string '{connectionStringName}' não encontrada.");
 
             var resultado = await TestarConexao(connectionStringName, provider, connectionString, cancellationToken);
             return resultado.Sucesso ? Ok(resultado) : StatusCode(503, resultado);
@@ -155,7 +155,7 @@ namespace WebApi.Controllers
             {
                 BancoProvider.SqlServer => new SqlConnection(connectionString),
                 BancoProvider.PostgreSql => new NpgsqlConnection(connectionString),
-                _ => throw new NotSupportedException("Provider nao suportado.")
+                _ => throw new NotSupportedException("Provider não suportado.")
             };
         }
     }

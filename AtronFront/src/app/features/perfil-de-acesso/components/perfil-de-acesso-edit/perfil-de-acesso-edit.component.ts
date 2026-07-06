@@ -1,11 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PerfilDeAcessoService } from '../../services/perfil-de-acesso.service';
 import { PerfilDeAcessoFormComponent } from '../perfil-de-acesso-form/perfil-de-acesso-form.component';
 import { ModuloService } from '../../../modulos/services/modulo.service';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 import { ModuloModel } from '../../../modulos/interfaces/modulo.interface';
+import { catchError, debounceTime, distinctUntilChanged, EMPTY, filter } from 'rxjs';
 
 @Component({
   selector: 'c-perfil-de-acesso-edit',
@@ -16,6 +17,11 @@ import { ModuloModel } from '../../../modulos/interfaces/modulo.interface';
 export class PerfilDeAcessoEditComponent implements OnInit {
   codigo?: string;
   form!: FormGroup;
+  todosModulos: ModuloModel[] = [];
+  modulosDoPerfil: ModuloModel[] = [];
+  perfilConsultado = false;
+  perfilEncontrado = false;
+  codigoExistente = false;
 
   constructor(private fb: FormBuilder, private service: PerfilDeAcessoService, private route: ActivatedRoute, public router: Router) { }
 
@@ -32,6 +38,8 @@ export class PerfilDeAcessoEditComponent implements OnInit {
     if (codigo) {
       this.carregarPerfil(codigo);
       this.form.get('codigo')?.disable();
+    } else {
+      this.observarCodigoInformado();
     }
   }
 
@@ -42,6 +50,10 @@ export class PerfilDeAcessoEditComponent implements OnInit {
         descricao: perfil.descricao,
         modulos: perfil.modulos?.map(m => m.codigo) || [],
       });
+      this.modulosDoPerfil = perfil.modulos || [];
+      this.perfilConsultado = true;
+      this.perfilEncontrado = true;
+      this.codigoExistente = false;
     });
   }
 
@@ -53,10 +65,12 @@ export class PerfilDeAcessoEditComponent implements OnInit {
     });
   }
 
-  todosModulos: ModuloModel[] = [];
+  get codigoInformado(): boolean {
+    return !!this.form?.get('codigo')?.value?.toString().trim();
+  }
 
   salvar() {
-    const perfil = this.form.value;
+    const perfil = this.form.getRawValue();
 
     const codigosSelecionados: string[] = perfil.modulos;
 
@@ -88,5 +102,49 @@ export class PerfilDeAcessoEditComponent implements OnInit {
       : this.service.gravar(perfilPayload);
 
     operacao.subscribe(() => this.router.navigate(['atron/perfil-de-acesso']));
+  }
+
+  private observarCodigoInformado(): void {
+    this.form.get('codigo')?.valueChanges.subscribe(codigo => {
+      if (!codigo?.toString().trim()) {
+        this.perfilConsultado = false;
+        this.perfilEncontrado = false;
+        this.codigoExistente = false;
+        this.modulosDoPerfil = [];
+        this.form.patchValue({ descricao: '', modulos: [] }, { emitEvent: false });
+      }
+    });
+
+    this.form.get('codigo')?.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        filter(codigo => !!codigo?.toString().trim())
+      )
+      .subscribe(codigo => this.consultarPerfilPorCodigo(codigo.toString().trim()));
+  }
+
+  private consultarPerfilPorCodigo(codigo: string): void {
+    this.perfilConsultado = false;
+    this.perfilEncontrado = false;
+    this.codigoExistente = false;
+    this.modulosDoPerfil = [];
+    this.form.get('codigo')?.setErrors(null);
+
+    this.service.obterPorCodigo(codigo).pipe(
+      catchError(() => {
+        this.perfilConsultado = true;
+        this.perfilEncontrado = false;
+        this.codigoExistente = false;
+        return EMPTY;
+      })
+    ).subscribe(perfil => {
+      this.perfilConsultado = true;
+      this.perfilEncontrado = false;
+      this.codigoExistente = true;
+      this.modulosDoPerfil = [];
+      this.form.patchValue({ descricao: '', modulos: [] }, { emitEvent: false });
+      this.form.get('codigo')?.setErrors({ codigoExistente: true });
+    });
   }
 }

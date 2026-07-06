@@ -20,9 +20,9 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'departamentos', canActivate: [ModuloGuard], data: { moduloCodigo: 'DPT' }, loadChildren: () => import('./features/departamentos/departamento-routing.module').then(m => m.DepartamentoRoutingModule) },
       { path: 'cargos', canActivate: [ModuloGuard], data: { moduloCodigo: 'CRG' }, loadChildren: () => import('./features/cargos/cargo-routing.module').then(m => m.CargoRoutingModule) },
+      { path: 'planejamento-custos', canActivate: [ModuloGuard], data: { moduloCodigo: 'PLC' }, loadChildren: () => import('./features/planejamento-custos/planejamento-custos.module').then(m => m.PlanejamentoCustosModule) },
       { path: 'usuarios', canActivate: [ModuloGuard], data: { moduloCodigo: 'USR' }, loadChildren: () => import('./features/usuarios/usuario-routing.module').then(m => m.UsuarioRoutingModule) },
       { path: 'tarefas', canActivate: [ModuloGuard], data: { moduloCodigo: 'TAR' }, loadChildren: () => import('./features/tarefas/tarefa-routing.module').then(m => m.TarefaRoutingModule) },
-      { path: 'planejamento-custos', canActivate: [ModuloGuard], data: { moduloCodigo: 'PLC' }, loadChildren: () => import('./features/planejamento-custos/planejamento-custos.module').then(m => m.PlanejamentoCustosModule) },
       { path: 'perfil-de-acesso', canActivate: [ModuloGuard], data: { moduloCodigo: 'PERF' }, loadChildren: () => import('./features/perfil-de-acesso/perfil-de-acesso.module').then(m => m.PerfilModule) },
     ]
   },

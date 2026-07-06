@@ -4,7 +4,8 @@ export interface UsuarioModel {
   sobrenome: string;
   email: string;
   dataNascimento?: Date | string;
-  senha: string;
+  senha?: string;
+  clientUri?: string;
   cargoCodigo: string;
   departamentoCodigo: string;
 }

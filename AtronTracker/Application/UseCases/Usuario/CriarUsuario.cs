@@ -1,4 +1,5 @@
 using Application.DTO.Request;
+using Application.Extensions;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -6,11 +7,13 @@ using Shared.Application.DTOS.Common;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
+using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Application.UseCases.Usuario
 {
@@ -24,9 +27,11 @@ namespace Application.UseCases.Usuario
         private readonly ICargoRepository _cargoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
         private readonly IEmailService _emailService;
+        private readonly ICacheService _cacheService;
         private readonly IAuditoriaService _auditoriaService;
 
         private const string UsuarioContexto = "Usuario";
+        private const int ValidadeConvitePrimeiroAcessoEmHoras = 24;
 
         public CriarUsuario(
             IValidador<UsuarioRequest> validador,
@@ -37,6 +42,7 @@ namespace Application.UseCases.Usuario
             ICargoRepository cargoRepository,
             IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
             IEmailService emailService,
+            ICacheService cacheService,
             IAuditoriaService auditoriaService)
         {
             _validador = validador;
@@ -47,6 +53,7 @@ namespace Application.UseCases.Usuario
             _cargoRepository = cargoRepository;
             _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
             _emailService = emailService;
+            _cacheService = cacheService;
             _auditoriaService = auditoriaService;
         }
 
@@ -56,7 +63,8 @@ namespace Application.UseCases.Usuario
             if (mensagens.Any())
                 return Resultado<UsuarioRequest>.Falhas(mensagens);
 
-            var usuarioExistente = await _usuarioRepository.ObterUsuarioPorCodigoAsync(request.Codigo.ToUpper());
+            var codigoUsuario = request.Codigo.ToUpper();
+            var usuarioExistente = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
             if (usuarioExistente != null)
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
 
@@ -67,14 +75,10 @@ namespace Application.UseCases.Usuario
                     return Resultado<UsuarioRequest>.Falha(EmailResource.ErroEmailUtilizado);
             }
 
-            if (!request.Senha.IsNullOrEmpty())
-            {
-                var contaExiste = await _usuarioIdentityRepository.ContaExisteRepositoryAsync(request.Codigo.ToUpper(), request.Email);
-                if (contaExiste)
-                    return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
-            }
+            var contaExiste = await _usuarioIdentityRepository.ContaExisteRepositoryAsync(codigoUsuario, request.Email);
+            if (contaExiste)
+                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
 
-            // ── NÚCLEO ATÔMICO ────────────────────────────────────────────────
             var usuario = await _mapService.MapToEntityAsync(request);
             var criado = await _usuarioRepository.CriarUsuarioAsync(usuario);
             if (!criado)
@@ -82,18 +86,24 @@ namespace Application.UseCases.Usuario
 
             var usuarioBd = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
 
-            if (!request.Senha.IsNullOrEmpty())
-            {
-                var identityCriado = await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(
-                    request.Codigo.ToUpper(), request.Email, request.Senha);
+            var identityCriado = await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(
+                codigoUsuario,
+                request.Email,
+                GerarSenhaTemporaria());
 
-                if (!identityCriado)
-                {
-                    await _usuarioRepository.RemoverUsuarioAsync(usuarioBd);
-                    return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
-                }
+            if (!identityCriado)
+            {
+                await _usuarioRepository.RemoverUsuarioAsync(usuarioBd);
+                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
             }
-            // ── FIM DO NÚCLEO ATÔMICO ─────────────────────────────────────────
+
+            var conviteEnviado = await EnviarEmailPrimeiroAcessoAsync(usuarioBd, request.ClientUri);
+            if (conviteEnviado.TeveFalha)
+            {
+                await _usuarioIdentityRepository.DeletarContaUserRepositoryAsync(usuarioBd.Codigo);
+                await _usuarioRepository.RemoverUsuarioAsync(usuarioBd);
+                return Resultado<UsuarioRequest>.Falhas(conviteEnviado.Messages);
+            }
 
             if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
             {
@@ -116,28 +126,64 @@ namespace Application.UseCases.Usuario
                 {
                     CodigoRegistro = usuarioBd.Codigo,
                     Contexto = UsuarioContexto,
-                    Descricao = $"Usuário {usuarioBd.Codigo} criado em {DateTime.Now:dd/MM/yyyy HH:mm}."
+                    Descricao = $"Usuario {usuarioBd.Codigo} criado em {DateTime.Now:dd/MM/yyyy HH:mm}."
                 }
             });
 
-            await EnviarEmailBoasVindasAsync(request.Email, request.Nome);
-
             return Resultado<UsuarioRequest>
                 .Sucesso(request)
-                .AdicionarMensagem($"Usuário {request.Nome} {request.Sobrenome} salvo com sucesso.");
+                .AdicionarMensagem($"Usuario {request.Nome} {request.Sobrenome} salvo com sucesso. O link de primeiro acesso foi enviado por e-mail.");
         }
 
-        private async Task EnviarEmailBoasVindasAsync(string destinatario, string nomeUsuario)
+        private async Task<Resultado> EnviarEmailPrimeiroAcessoAsync(Domain.Entities.Usuario usuario, string clientUri)
         {
-            if (string.IsNullOrEmpty(destinatario)) return;
-            try
+            if (string.IsNullOrWhiteSpace(clientUri))
+                return Resultado.Falha("URI da aplicacao nao informada para envio do link de primeiro acesso.");
+
+            var token = await _usuarioIdentityRepository.GerarTokenRecuperacaoSenhaAsync(usuario.Codigo);
+            if (string.IsNullOrWhiteSpace(token))
+                return Resultado.Falha("Nao foi possivel gerar o link de primeiro acesso.");
+
+            var identificadorTemporario = Guid.NewGuid().ToString("N");
+            var dadosTemporarios = new DadosTemporarios
             {
-                await _emailService.EnviarAsync(CriarEmailBoasVindas(destinatario, nomeUsuario));
+                IdentificadorTemporario = identificadorTemporario,
+                UsuarioCodigo = usuario.Codigo,
+                Email = usuario.Email,
+                Token = token,
+                DataAlteracaoSenha = DateTime.UtcNow
+            };
+
+            var cacheInfo = new CacheInfo<DadosTemporarios>(ECacheKeysInfo.DadosTemporarios, identificadorTemporario)
+            {
+                EntityInfo = dadosTemporarios
+            };
+            _cacheService.GravarCache(cacheInfo, TimeSpan.FromHours(ValidadeConvitePrimeiroAcessoEmHoras));
+
+            var identificadorCriptografado = CryptoHelper.EncryptCryptoJsAes(identificadorTemporario);
+            var identificadorUrlEncoded = HttpUtility.UrlEncode(identificadorCriptografado);
+            var link = $"{clientUri.TrimEnd('/')}/trocar-senha?id={identificadorUrlEncoded}";
+
+            var resultadoEmail = await _emailService.EnviarAsync(CriarEmailPrimeiroAcesso(
+                usuario.Email,
+                usuario.Nome,
+                link));
+
+            if (resultadoEmail.TeveFalha)
+            {
+                _cacheService.RemoverCache(ECacheKeysInfo.DadosTemporarios, identificadorTemporario);
+                return Resultado.Falha(resultadoEmail.Messages);
             }
-            catch { }
+
+            return Resultado.Sucesso();
         }
 
-        private static EmailRequest CriarEmailBoasVindas(string destinatario, string nomeUsuario)
+        private static string GerarSenhaTemporaria()
+        {
+            return $"Tmp!{Guid.NewGuid():N}9aA";
+        }
+
+        private static EmailRequest CriarEmailPrimeiroAcesso(string destinatario, string nomeUsuario, string link)
         {
             var corpo = $@"
                             <!DOCTYPE html>
@@ -157,16 +203,19 @@ namespace Application.UseCases.Usuario
                             <body>
                                 <div class='container'>
                                     <div class='header'>
-                                        <h1>🎉 Bem-vindo ao Sistema Atron!</h1>
+                                        <h1>Bem-vindo ao Sistema Atron</h1>
                                     </div>
                                     <div class='content'>
-                                        <p>Olá, <strong>{nomeUsuario}</strong>!</p>
-                                        <p>Sua conta foi criada com sucesso no Sistema Atron.</p>
-                                        <p>Agora você pode acessar o sistema utilizando suas credenciais de login.</p>
-                                        <p>Se você tiver alguma dúvida, entre em contato com o suporte.</p>
+                                        <p>Ola, <strong>{nomeUsuario}</strong>!</p>
+                                        <p>Sua conta foi criada no Sistema Atron.</p>
+                                        <p>Para definir sua senha de acesso, clique no botao abaixo. Este link expira em {ValidadeConvitePrimeiroAcessoEmHoras} horas.</p>
+                                        <p style='text-align: center; margin: 30px 0;'>
+                                            <a href='{link}' style='background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Definir minha senha</a>
+                                        </p>
+                                        <p style='font-size: 12px; color: #999; word-break: break-all;'>Se o botao nao funcionar, copie e cole este link no navegador:<br>{link}</p>
                                     </div>
                                     <div class='footer'>
-                                        <p>Este é um e-mail automático. Por favor, não responda.</p>
+                                        <p>Este e um e-mail automatico. Por favor, nao responda.</p>
                                         <p>&copy; {DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
                                     </div>
                                 </div>
@@ -176,7 +225,7 @@ namespace Application.UseCases.Usuario
             return new EmailRequest
             {
                 EmailsDestino = [destinatario],
-                Assunto = "Bem-vindo ao Sistema Atron!",
+                Assunto = "Defina sua senha de acesso - Sistema Atron",
                 Mensagem = corpo
             };
         }
