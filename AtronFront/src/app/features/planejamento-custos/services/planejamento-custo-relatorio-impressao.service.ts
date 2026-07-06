@@ -28,7 +28,7 @@ export class PlanejamentoCustoRelatorioImpressaoService {
       const janela = iframe.contentWindow;
       if (!janela) {
         iframe.remove();
-        this.notificacaoService.exibirMensagem('Nao foi possivel preparar o relatorio para impressao.', Nivel.Error);
+        this.notificacaoService.exibirMensagem('Não foi possível preparar o relatório para impressão.', Nivel.Error);
         return;
       }
 

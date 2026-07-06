@@ -21,7 +21,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 .ExisteDepartamentoEmPlanejamentoAtualOuFuturoAsync(departamento.Id, departamento.Codigo, DateTime.Today.Year);
 
             return possuiPlanejamentoAtualOuFuturo
-                ? Resultado.Falha($"O departamento {departamento.Codigo} possui planejamento de custo atual ou futuro e nao pode ser removido.")
+                ? Resultado.Falha($"O departamento {departamento.Codigo} possui planejamento de custo atual ou futuro e não pode ser removido.")
                 : Resultado.Sucesso();
         }
 
@@ -30,7 +30,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
             var possuiPlanejamentoAtualOuFuturo = await ExisteCargoPlanejadoAsync(cargo);
 
             return possuiPlanejamentoAtualOuFuturo
-                ? Resultado.Falha($"O cargo {cargo.Codigo} possui planejamento de custo atual ou futuro e nao pode ser removido.")
+                ? Resultado.Falha($"O cargo {cargo.Codigo} possui planejamento de custo atual ou futuro e não pode ser removido.")
                 : Resultado.Sucesso();
         }
 
@@ -45,7 +45,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
             var possuiPlanejamentoAtualOuFuturo = await ExisteCargoPlanejadoAsync(cargo);
 
             return possuiPlanejamentoAtualOuFuturo
-                ? Resultado.Falha($"O cargo {cargo.Codigo} possui planejamento de custo atual ou futuro e nao pode ser movido para outro departamento.")
+                ? Resultado.Falha($"O cargo {cargo.Codigo} possui planejamento de custo atual ou futuro e não pode ser movido para outro departamento.")
                 : Resultado.Sucesso();
         }
 

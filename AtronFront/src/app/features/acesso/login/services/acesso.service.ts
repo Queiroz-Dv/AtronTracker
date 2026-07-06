@@ -104,7 +104,7 @@ export class AcessoService {
   }
 
   private carregarSessaoInfo(token: string): Observable<DadosDoUsuario> {
-    if (!token) return throwError(() => new Error('Token de acesso ausente para carregar a sessao.'));
+    if (!token) return throwError(() => new Error('Token de acesso ausente para carregar a sessão.'));
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 

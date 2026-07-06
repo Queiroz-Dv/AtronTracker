@@ -45,7 +45,7 @@ export class PlanejamentoCustosRelatorioComponent implements OnInit {
       },
       error: erro => {
         this.carregando = false;
-        this.tratarErroRelatorio(erro, 'Nao foi possivel carregar o relatorio geral.');
+        this.tratarErroRelatorio(erro, 'Não foi possível carregar o relatório geral.');
       }
     });
   }
@@ -59,13 +59,13 @@ export class PlanejamentoCustosRelatorioComponent implements OnInit {
       },
       error: erro => {
         this.carregando = false;
-        this.tratarErroRelatorio(erro, 'Nao foi possivel carregar o relatorio do planejamento.');
+        this.tratarErroRelatorio(erro, 'Não foi possível carregar o relatório do planejamento.');
       }
     });
   }
 
   get titulo(): string {
-    return 'Relatorio de Planejamentos';
+    return 'Relatório de Planejamentos';
   }
 
   get descricao(): string {

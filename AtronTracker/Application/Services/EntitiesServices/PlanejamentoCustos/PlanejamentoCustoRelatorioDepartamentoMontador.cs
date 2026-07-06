@@ -27,7 +27,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
             departamentoRelatorio.QuantidadeCargosNaoDetalhados = detalhes.Count(detalhe => !detalhe.Detalhado);
 
             if (departamentoRelatorio.QuantidadeCargosNaoDetalhados > 0)
-                departamentoRelatorio.Informacoes.Add($"{departamentoRelatorio.QuantidadeCargosNaoDetalhados} cargo(s) nao detalhado(s).");
+                departamentoRelatorio.Informacoes.Add($"{departamentoRelatorio.QuantidadeCargosNaoDetalhados} cargo(s) não detalhado(s).");
 
             departamentoRelatorio.CargosDetalhados.AddRange(
                 MontarCargosDetalhados(planejamento, detalhes));

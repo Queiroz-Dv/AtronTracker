@@ -1,21 +1,117 @@
 .sidenav-container {
+  background: var(--atron-page-bg);
   height: 100%;
+  min-height: 100vh;
 }
 
-.sidenav {
-  width: 200px;
+.app-sidenav {
+  background: var(--atron-surface) !important;
+  border-right: 1px solid var(--atron-border);
+  color: var(--atron-text);
+  padding: 20px;
+  width: 292px;
 }
 
-.sidenav .mat-toolbar {
-  background: inherit;
+.side-brand {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
 }
 
-.mat-toolbar.mat-primary {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+.side-brand-icon {
+  align-items: center;
+  background: var(--atron-primary-soft);
+  border: 1px solid #c7d2fe;
+  border-radius: var(--atron-radius-sm);
+  color: var(--atron-primary);
+  display: inline-flex;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
 }
 
-.btn-logout {
-  align-content: end;
+.side-brand strong,
+.side-brand small {
+  display: block;
+}
+
+.side-brand strong {
+  color: var(--atron-text);
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.side-brand small {
+  color: var(--atron-text-muted);
+  font-size: 0.82rem;
+  margin-top: 3px;
+}
+
+.side-actions {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.side-actions button {
+  justify-content: flex-start;
+}
+
+.side-logout {
+  color: var(--atron-danger) !important;
+}
+
+.module-nav-list {
+  display: grid;
+  gap: 4px;
+  padding: 0;
+}
+
+.module-nav-list a {
+  border-radius: var(--atron-radius-sm);
+  color: var(--atron-text) !important;
+}
+
+.module-nav-list a:hover,
+.module-nav-list a:focus-visible {
+  background: var(--atron-surface-muted);
+  color: var(--atron-primary) !important;
+}
+
+.module-nav-list mat-icon {
+  color: var(--atron-primary);
+}
+
+.app-content {
+  background: var(--atron-page-bg);
+}
+
+.app-content-topbar {
+  align-items: center;
+  background: var(--atron-surface);
+  border-bottom: 1px solid var(--atron-border);
+  color: var(--atron-text);
+  display: flex;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 0 28px;
+}
+
+.app-content-topbar span {
+  font-weight: 800;
+}
+
+.app-content-body {
+  padding: 24px;
+}
+
+@media (max-width: 760px) {
+  .app-sidenav {
+    width: 252px;
+  }
+
+  .app-content-body {
+    padding: 14px;
+  }
 }

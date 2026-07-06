@@ -1,1 +1,25 @@
+@if (mostrarNavbarInterna) {
+  <header class="app-form-topbar">
+    <div class="app-form-topbar-inner">
+      <button class="app-form-brand" type="button" (click)="abrirTracker()" aria-label="Voltar para Atron Tracker">
+        <span class="app-form-brand-symbol">
+          <mat-icon>hub</mat-icon>
+        </span>
+        <span>Atron Platform</span>
+      </button>
+
+      <div class="app-form-actions" aria-label="Ações da navegação">
+        <button class="app-form-action" type="button" (click)="abrirTracker()">
+          <mat-icon>analytics</mat-icon>
+        </button>
+
+        <button class="app-form-action app-form-action-danger" type="button" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sair</span>
+        </button>
+      </div>
+    </div>
+  </header>
+}
+
 <router-outlet></router-outlet>

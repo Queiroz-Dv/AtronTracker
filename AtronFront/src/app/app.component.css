@@ -1,3 +1,121 @@
-/* html {
-  background: inherit;
-} */
+.app-form-topbar {
+  background: var(--atron-surface);
+  border-bottom: 1px solid var(--atron-border);
+  color: var(--atron-text);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-form-topbar-inner {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: var(--atron-page-max-width);
+  min-height: 68px;
+  padding: 0 48px;
+}
+
+.app-form-brand {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--atron-text);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 1.28rem;
+  font-weight: 650;
+  gap: 12px;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.app-form-brand-symbol {
+  align-items: center;
+  background: var(--atron-primary-soft);
+  border: 1px solid #c7d2fe;
+  border-radius: var(--atron-radius-sm);
+  color: var(--atron-primary);
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+
+.app-form-product-nav {
+  color: var(--atron-text);
+  display: flex;
+  font-size: 0.92rem;
+  gap: 10px;
+}
+
+.app-form-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.app-form-action {
+  align-items: center;
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
+  color: var(--atron-text);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 600;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+}
+
+.app-form-action:hover,
+.app-form-action:focus-visible,
+.app-form-brand:hover,
+.app-form-brand:focus-visible {
+  color: var(--atron-primary);
+  outline: none;
+}
+
+.app-form-action:hover,
+.app-form-action:focus-visible {
+  background: var(--atron-surface-muted);
+  border-color: var(--atron-primary);
+}
+
+.app-form-action-danger:hover,
+.app-form-action-danger:focus-visible {
+  border-color: var(--atron-danger);
+  color: var(--atron-danger);
+}
+
+.app-form-action mat-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+@media (max-width: 760px) {
+  .app-form-topbar-inner {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .app-form-product-nav {
+    display: none;
+  }
+
+  .app-form-actions {
+    width: 100%;
+  }
+
+  .app-form-action {
+    flex: 1;
+    justify-content: center;
+  }
+}

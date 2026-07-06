@@ -172,6 +172,39 @@
   text-align: center;
 }
 
+.auth-feedback-card {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+}
+
+.auth-feedback-card h2 {
+  color: var(--atron-text);
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.auth-feedback-card p {
+  color: var(--atron-text-muted);
+  margin: 0 0 8px;
+}
+
+.auth-feedback-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+}
+
+.auth-feedback-icon.success {
+  color: #16803c;
+}
+
+.auth-feedback-icon.error {
+  color: #b42318;
+}
+
 @media (max-width: 840px) {
   .auth-page {
     padding: 18px;

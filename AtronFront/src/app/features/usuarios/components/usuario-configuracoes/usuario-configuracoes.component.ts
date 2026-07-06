@@ -10,6 +10,7 @@ import { Nivel, NotificacaoService } from '../../../../core/services/notificatio
   selector: 'c-usuario-configuracoes',
   imports: [ReactiveFormsModule, SharedModule],
   templateUrl: './usuario-configuracoes.component.html',
+  styleUrl: './usuario-configuracoes.component.css',
 })
 export class UsuarioConfiguracoesComponent implements OnInit {
   form!: FormGroup;

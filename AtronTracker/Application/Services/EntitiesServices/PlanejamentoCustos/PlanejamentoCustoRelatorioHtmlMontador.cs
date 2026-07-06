@@ -65,13 +65,13 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                       </head>
                       <body>
                         <header>
-                          <h1>Relatorio de Planejamentos</h1>
+                          <h1>Relatório de Planejamentos</h1>
                           <div class=""header-meta"">
                             <span>Ano analisado: {Escapar(relatorio.Ano.ToString(CulturaPtBr))}</span>
                             <span>Emitido em {Escapar(dataEmissao)}</span>
                           </div>
                         </header>
-                        <section class=""department-list"" aria-label=""Registros do relatorio"">
+                        <section class=""department-list"" aria-label=""Registros do relatório"">
                           {departamentosHtml.NullIfEmpty() ?? "<p>Nenhum planejamento encontrado para o ano informado.</p>"}
                         </section>
                       </body>
@@ -95,7 +95,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
             <h2>{Escapar(departamento.PlanejamentoCodigo)} - {Escapar(departamento.PlanejamentoDescricao)}</h2>
           </div>
           <div class=""values"">
-            <span>Minimo: {FormatarMoeda(departamento.ValorMinimoDepartamento ?? 0)}</span>
+            <span>Mínimo: {FormatarMoeda(departamento.ValorMinimoDepartamento ?? 0)}</span>
             <span>Teto: {FormatarMoeda(departamento.ValorTetoDepartamento ?? 0)}</span>
           </div>
         </div>
@@ -123,7 +123,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
           <thead>
             <tr>
               <th>Cargo</th>
-              <th>Minimo</th>
+              <th>Mínimo</th>
               <th>Teto</th>
               <th>% do teto</th>
             </tr>

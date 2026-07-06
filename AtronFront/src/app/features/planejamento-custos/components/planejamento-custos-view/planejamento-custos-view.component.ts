@@ -85,7 +85,7 @@ export class PlanejamentoCustosViewComponent implements AfterViewInit {
           return;
         }
 
-        this.notificacaoService.exibirMensagem('Nao foi possivel imprimir o relatorio do planejamento.', Nivel.Error);
+        this.notificacaoService.exibirMensagem('Não foi possível imprimir o relatório do planejamento.', Nivel.Error);
       }
     });
   }

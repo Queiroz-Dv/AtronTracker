@@ -99,7 +99,7 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     if (!usuarioCodigo) {
       this.limparSessaoERedirecionar();
-      return throwError(() => new Error('Codigo do usuario ausente para renovar a sessao.'));
+      return throwError(() => new Error('Código do usuário ausente para renovar a sessão.'));
     }
 
     if (!this.isRefreshing) {

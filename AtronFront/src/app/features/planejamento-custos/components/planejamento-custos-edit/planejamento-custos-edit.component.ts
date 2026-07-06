@@ -68,7 +68,7 @@ export class PlanejamentoCustosEditComponent implements OnInit {
           this.sincronizarDetalhesCargo(this.detalhesCarregados);
         },
         error: () => {
-          this.notificacaoService.exibirMensagem('Erro ao carregar dados para edicao.', Nivel.Error);
+          this.notificacaoService.exibirMensagem('Erro ao carregar dados para edição.', Nivel.Error);
           this.router.navigate(['atron/planejamento-custos']);
         }
       });

@@ -11,14 +11,14 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
         {
             if (!dto.Codigo.IsNullOrEmpty() &&
                 dto.Codigo != planejamento.Codigo)
-                return Resultado.Falha("O codigo do planejamento de custo nao pode ser alterado.");
+                return Resultado.Falha("O código do planejamento de custo não pode ser alterado.");
 
             if (dto.Ano != planejamento.Ano)
-                return Resultado.Falha("O ano do planejamento de custo nao pode ser alterado.");
+                return Resultado.Falha("O ano do planejamento de custo não pode ser alterado.");
 
             if (!dto.DepartamentoCodigo.IsNullOrEmpty() &&
                 dto.DepartamentoCodigo != planejamento.DepartamentoCodigo)
-                return Resultado.Falha("O departamento do planejamento de custo nao pode ser alterado.");
+                return Resultado.Falha("O departamento do planejamento de custo não pode ser alterado.");
 
             dto.Codigo = planejamento.Codigo;
             dto.Id = planejamento.Id;
