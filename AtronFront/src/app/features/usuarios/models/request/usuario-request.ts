@@ -10,6 +10,7 @@ export class UsuarioRequest implements UsuarioModel {
   clientUri?: string;
   cargoCodigo: string;
   departamentoCodigo: string;
+  gestorImediatoCodigo?: string;
 
   constructor(
     codigo: string,
@@ -19,7 +20,8 @@ export class UsuarioRequest implements UsuarioModel {
     cargoCodigo: string,
     departamentoCodigo: string,
     clientUri?: string,
-    dataNascimento?: Date | string) {
+    dataNascimento?: Date | string,
+    gestorImediatoCodigo?: string) {
     this.codigo = codigo;
     this.nome = nome;
     this.sobrenome = sobrenome;
@@ -28,5 +30,6 @@ export class UsuarioRequest implements UsuarioModel {
     this.departamentoCodigo = departamentoCodigo;
     this.clientUri = clientUri;
     this.dataNascimento = dataNascimento
+    this.gestorImediatoCodigo = gestorImediatoCodigo;
   }
 }

@@ -19,6 +19,7 @@ public class EstruturaPlanejadaPolicyTests
             new DepartamentoValidador(),
             new DepartamentoMapping(),
             new DepartamentoRepositoryFake(departamentos: [departamento]),
+            new UsuarioRepositoryFake(),
             new CargoRepositoryFake(),
             new PlanejamentoCustoRepositoryFake(possuiDepartamentoPlanejado: true),
             new UsuarioCargoDepartamentoRepositoryFake());
@@ -192,6 +193,58 @@ public class EstruturaPlanejadaPolicyTests
         public Task<bool> RemoverCargoAsync(Cargo cargo) => Task.FromResult(true);
 
         public Task<bool> RemoverRepositoryAsync(Cargo entity) => Task.FromResult(true);
+    }
+
+    private sealed class UsuarioRepositoryFake : IUsuarioRepository
+    {
+        public Task<bool> AtualizarPreferenciaNotificacaoTarefaPorEmailAsync(string codigo, bool receberNotificacao)
+            => Task.FromResult(true);
+
+        public Task<bool> AtualizarRepositoryAsync(Usuario entity) => Task.FromResult(true);
+
+        public Task<bool> AtualizarRepositoryAsync(int id, Usuario entity) => Task.FromResult(true);
+
+        public Task<bool> AtualizarUsuarioAsync(Usuario usuario) => Task.FromResult(true);
+
+        public Task<bool> CriarRepositoryAsync(Usuario entity) => Task.FromResult(true);
+
+        public Task<bool> CriarUsuarioAsync(Usuario usuario) => Task.FromResult(true);
+
+        public Task<Usuario> ObterInativoPorEmailAsync(string email)
+            => Task.FromResult<Usuario>(null!);
+
+        public Task<Usuario> ObterPorCodigoRepositoryAsync(string codigo)
+            => Task.FromResult<Usuario>(null!);
+
+        public Task<Usuario> ObterPorIdRepositoryAsync(int id)
+            => Task.FromResult<Usuario>(null!);
+
+        public Task<IEnumerable<Usuario>> ObterTodosRepositoryAsync()
+            => Task.FromResult<IEnumerable<Usuario>>([]);
+
+        public Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()
+            => Task.FromResult<List<UsuarioIdentity>>([]);
+
+        public Task<Usuario> ObterUsuarioGeralPorCodigoAsync(string codigo)
+            => Task.FromResult<Usuario>(null!);
+
+        public Task<Usuario> ObterUsuarioGeralPorEmailAsync(string email)
+            => Task.FromResult<Usuario>(null!);
+
+        public Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo)
+            => Task.FromResult<Usuario>(null!);
+
+        public Task<Usuario> ObterUsuarioPorIdAsync(int? id)
+            => Task.FromResult<Usuario>(null!);
+
+        public Task<IEnumerable<Usuario>> ObterUsuariosAsync()
+            => Task.FromResult<IEnumerable<Usuario>>([]);
+
+        public Task<bool> RemoverRepositoryAsync(Usuario entity) => Task.FromResult(true);
+
+        public Task<bool> RemoverUsuarioAsync(Usuario usuario) => Task.FromResult(true);
+
+        public Task<bool> VerificarEmailExistenteAsync(string email) => Task.FromResult(false);
     }
 
     private sealed class UsuarioCargoDepartamentoRepositoryFake : IUsuarioCargoDepartamentoRepository

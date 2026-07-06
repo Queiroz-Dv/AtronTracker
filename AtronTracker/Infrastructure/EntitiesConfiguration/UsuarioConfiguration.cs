@@ -19,6 +19,14 @@ namespace Infrastructure.EntitiesConfiguration
             builder.Property(usr => usr.Inativo).IsRequired().HasDefaultValue(false);
             builder.Property(usr => usr.ReceberNotificacaoTarefaPorEmail).IsRequired().HasDefaultValue(false);
             builder.Property(usr => usr.CodigoReativacao).HasMaxLength(6).IsRequired(false);
+            builder.Property(usr => usr.GestorImediatoCodigo).HasMaxLength(10).IsRequired(false);
+
+            builder.HasOne(usr => usr.GestorImediato)
+                   .WithMany(usr => usr.SubordinadosDiretos)
+                   .HasForeignKey(usr => new { usr.GestorImediatoId, usr.GestorImediatoCodigo })
+                   .HasPrincipalKey(usr => new { usr.Id, usr.Codigo })
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
         }
     }
 }

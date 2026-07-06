@@ -34,6 +34,8 @@ namespace Infrastructure.Repositories
             usuarioBd.DataNascimento = usuario.DataNascimento;
             usuarioBd.ReceberNotificacaoTarefaPorEmail = usuario.ReceberNotificacaoTarefaPorEmail;
             usuarioBd.CodigoReativacao = usuario.CodigoReativacao;
+            usuarioBd.GestorImediatoId = usuario.GestorImediatoId;
+            usuarioBd.GestorImediatoCodigo = usuario.GestorImediatoCodigo;
 
             await _context.SaveChangesAsync();
             return true;
@@ -68,6 +70,7 @@ namespace Infrastructure.Repositories
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
                         .ThenInclude(dpt => dpt.Departamento)
+                .Include(usr => usr.GestorImediato)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(usr => usr.Codigo == codigo && !usr.Inativo);
         }
@@ -78,6 +81,7 @@ namespace Infrastructure.Repositories
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
                         .ThenInclude(dpt => dpt.Departamento)
+                .Include(usr => usr.GestorImediato)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(usr => usr.Codigo == codigo );
         }
@@ -102,6 +106,7 @@ namespace Infrastructure.Repositories
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
                         .ThenInclude(dpt => dpt.Departamento)
+                .Include(usr => usr.GestorImediato)
                 .Where(usr => !usr.Inativo)
                 .ToListAsync();
         }

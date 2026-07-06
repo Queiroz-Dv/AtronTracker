@@ -118,8 +118,116 @@ Visao restrita que mostra valores vinculados a pessoas remuneradas quando a anal
 _Avoid_: Dado publico do usuario, campo comum de cadastro
 
 **Tarefa**:
-Responsabilidade registrada no sistema e atribuida a um unico usuario para acompanhamento.
+Responsabilidade registrada no sistema para acompanhamento. Uma tarefa pode estar vinculada diretamente a um usuario responsavel ou a um escopo de responsabilidade por departamento e cargo.
 _Avoid_: Atividade, demanda
+
+**Escopo de responsabilidade da tarefa**:
+Departamento, cargo ou usuario que delimita quem deve visualizar, assumir ou acompanhar uma tarefa. Uma tarefa pode nascer no escopo de uma estrutura funcional e depois ser atribuida a um usuario responsavel; enquanto nao tiver usuario responsavel, pertence a uma fila de triagem da estrutura.
+_Avoid_: Tarefa sempre individual, fila tecnica, responsavel implicito
+
+**Destino inicial da tarefa**:
+Escolha feita na criacao da tarefa para definir se ela nasce atribuida a um usuario, vinculada a departamento e cargo, ou direcionada para equipe do gestor. As opcoes disponiveis devem respeitar as permissoes e a responsabilidade de gestao do usuario logado.
+_Avoid_: Destino unico obrigatorio, tarefa sem escopo, escolha que ignora permissao
+
+**Tarefa estrutural**:
+Tarefa cujo destino inicial e uma estrutura funcional em vez de um usuario responsavel. Pode ser vinculada apenas a departamento ou a departamento e cargo; nao deve existir tarefa vinculada a cargo sem departamento.
+_Avoid_: Cargo sem departamento, tarefa sem usuario e sem estrutura, tarefa de todos
+
+**Identificador da tarefa**:
+Codigo numerico sequencial usado pelos usuarios para localizar uma tarefa no produto. O identificador e global no sistema, independente de departamento ou cargo, e deve ser exibido de forma amigavel com zeros a esquerda quando necessario.
+_Avoid_: Id tecnico, codigo por departamento, prefixo obrigatorio
+
+**Busca por identificador da tarefa**:
+Consulta direta de tarefa pelo identificador numerico, respeitando as permissoes do usuario. A busca pode localizar tarefas ativas, finalizadas, individuais ou estruturais, desde que estejam dentro do acesso permitido ao usuario.
+_Avoid_: Filtro apenas do quadro atual, listagem geral, acesso irrestrito por codigo
+
+**Tarefa finalizada**:
+Tarefa encerrada para operacao e mantida apenas para consulta. Uma tarefa finalizada nao pode ser reaberta, atualizada ou removida.
+_Avoid_: Reabertura de tarefa, edicao pos-finalizacao, exclusao de historico
+
+**Tarefa cancelada**:
+Tarefa encerrada antes da conclusao operacional e mantida apenas para consulta. O cancelamento substitui a exclusao de tarefa para preservar historico e deve impedir atualizacao posterior.
+_Avoid_: Exclusao fisica, apagar tarefa, remover historico
+
+**Cancelar tarefa**:
+Acao em que o usuario responsavel encerra uma tarefa ainda nao finalizada sem conclui-la. O cancelamento nao exige motivo obrigatorio separado; quando houver justificativa, ela deve ser descrita no conteudo da propria tarefa.
+_Avoid_: Deletar tarefa, finalizar sem conclusao, ocultar registro, motivo obrigatorio separado
+
+**Cancelamento de tarefa em fila de triagem**:
+Acao em que um usuario com responsabilidade de gestao sobre o departamento ou cargo da fila encerra uma tarefa estrutural antes de ela ser assumida ou atribuida a um usuario responsavel.
+_Avoid_: Cancelamento por usuario comum, exclusao de fila, tarefa estrutural sem governanca
+
+**Tarefa ativa**:
+Tarefa ainda aberta para acompanhamento ou decisao operacional. Em Meu quadro e Equipe, tarefas iniciadas, em atividade, pendentes de aprovacao ou entregues sao consideradas ativas; tarefas finalizadas e canceladas aparecem somente quando filtradas explicitamente pelo usuario.
+_Avoid_: Tarefa finalizada no carregamento padrao, tarefa cancelada no carregamento padrao, historico misturado com operacao
+
+**Fila de triagem de tarefas**:
+Conjunto de tarefas vinculadas a departamento ou cargo que ainda nao pertencem a Meu quadro de um usuario. A fila deve ser acompanhada por usuarios com responsabilidade de gestao sobre aquela estrutura, evitando distribuir tarefas estruturais para todos os usuarios do escopo.
+_Avoid_: Quadro pessoal compartilhado, listagem geral de tarefas, carga automatica para todos
+
+**Assumir tarefa**:
+Acao em que um usuario com acesso a uma fila de triagem torna uma tarefa estrutural uma tarefa individual propria. Depois de assumida, a tarefa passa a aparecer em Meu quadro desse usuario.
+_Avoid_: Atribuicao automatica, visualizacao sem responsabilidade
+
+**Obter tarefa**:
+Acao em que um usuario solicita ou assume uma tarefa disponivel em uma fila permitida. Quando a tarefa nao exige aprovacao, ela entra diretamente em Meu quadro; quando exige aprovacao, a obtencao gera uma solicitacao ao aprovador. Obter tarefa nunca altera o estado operacional da tarefa.
+_Avoid_: Atribuicao pelo gestor, edicao do responsavel sem regra, tarefa invisivel, mudanca automatica de estado
+
+**Solicitacao de obtencao de tarefa**:
+Pedido feito por um usuario para receber uma tarefa marcada como pendente de aprovacao. A solicitacao deve aparecer para o aprovador na visao Solicitacoes e, quando aprovada, a tarefa passa para Meu quadro do usuario solicitante. Uma tarefa deve ter no maximo uma solicitacao de obtencao pendente por vez.
+_Avoid_: Aprovacao implicita, e-mail como local de decisao, tarefa pendente assumida diretamente, varias solicitacoes pendentes para a mesma tarefa
+
+**Aprovacao para obter tarefa**:
+Exigencia separada do estado operacional da tarefa que define se um usuario pode obter a tarefa diretamente ou se precisa da aprovacao do gestor imediato. Essa exigencia nao deve ser confundida com o estado da tarefa.
+_Avoid_: Estado pendente de aprovacao, bloqueio implicito, aprovacao como andamento da tarefa
+
+**Aprovacao de obtencao**:
+Decisao do aprovador de obtencao de tarefa para aprovar ou recusar uma solicitacao. A aprovacao valida transforma a tarefa solicitada em tarefa individual do usuario solicitante sem alterar seu estado operacional; a recusa encerra a solicitacao e mantem a tarefa disponivel conforme seu escopo.
+_Avoid_: Aprovacao implicita, resposta manual ao e-mail, assumir tarefa sem decisao, mudanca automatica de estado
+
+**Notificacao do sistema**:
+Aviso interno apresentado ao usuario dentro do produto para informar eventos relevantes. No primeiro escopo, notificacoes de tarefas informam aprovacoes ou recusas de solicitacoes e podem levar o usuario ao detalhe da tarefa quando aplicavel; notificacoes devem poder ser controladas como lidas ou nao lidas pelo usuario.
+_Avoid_: E-mail obrigatorio, alerta sem destino, historico invisivel, notificacao sem leitura
+
+**Central de notificacoes**:
+Area do produto onde o usuario acompanha notificacoes do sistema e acessa os detalhes relacionados ao evento notificado. No primeiro escopo, a central atende eventos do modulo de tarefas e deve permitir abrir a tarefa relacionada quando houver uma; no futuro, tende a ser o canal padrao de notificacoes internas do produto.
+_Avoid_: Caixa de e-mail, alerta temporario sem historico, lista sem contexto
+
+**Atualizacao em tempo real**:
+Comportamento em que notificacoes e solicitacoes relevantes aparecem para o usuario sem depender de recarregamento manual da tela. No modulo de tarefas, esse comportamento apoia aprovacoes, recusas e acompanhamento de solicitacoes.
+_Avoid_: Consulta manual constante, e-mail como fonte principal, tela desatualizada
+
+**Notificacao por e-mail**:
+Aviso enviado fora do produto apenas quando o evento exigir comunicacao externa ou acao especifica por e-mail. A direcao do produto e tratar notificacoes internas como padrao e usar e-mail em casos especificos.
+_Avoid_: E-mail para todo evento, e-mail como fonte principal do sistema, duplicacao obrigatoria de notificacao
+
+**Aprovador de obtencao de tarefa**:
+Usuario responsavel por aprovar ou recusar uma solicitacao de obtencao de tarefa. A ordem preferencial e: gestor imediato do solicitante; gestor do departamento da tarefa; gestor do departamento do solicitante; se nenhum aprovador existir, a solicitacao deve ser bloqueada por regra de negocio.
+_Avoid_: Solicitacao sem aprovador, aprovador aleatorio, regra fixa por cargo
+
+**Atribuir tarefa**:
+Acao em que um usuario com responsabilidade de gestao escolhe outro usuario dentro do escopo permitido para ser responsavel por uma tarefa. A atribuicao transforma uma tarefa estrutural em tarefa individual do usuario escolhido.
+_Avoid_: Encaminhamento informal, alteracao de estado, permissao por cargo fixo
+
+**Reatribuir tarefa**:
+Acao explicita em que uma tarefa ja atribuida a um usuario troca de usuario responsavel. A reatribuicao deve respeitar a responsabilidade de gestao sobre o usuario ou estrutura envolvida e nao deve ser tratada como simples edicao silenciosa da tarefa.
+_Avoid_: Troca silenciosa de responsavel, edicao comum, historico perdido
+
+**Meu quadro**:
+Conjunto de tarefas ativas atribuidas diretamente ao usuario logado. Tarefas apenas estruturais entram em Meu quadro somente quando forem assumidas ou atribuidas a esse usuario.
+_Avoid_: Todas as tarefas da empresa, fila de departamento, tarefas de todos os usuarios
+
+**Equipe**:
+Visao separada de tarefas relacionadas aos subordinados diretos do gestor imediato. Pode existir na mesma tela de Meu quadro, mas deve manter filtros e listagem proprios para nao misturar responsabilidade pessoal com responsabilidade de gestao.
+_Avoid_: Quadro unico misturado, tarefas de todos os usuarios, subordinados indiretos automaticos
+
+**Solicitacoes**:
+Visao operacional em que o gestor acompanha solicitacoes pendentes de obtencao de tarefa e decide aprovar ou recusar. O e-mail pode sinalizar a pendencia, mas Solicitacoes deve ser o local de trabalho para decisoes de aprovacao no modulo de tarefas.
+_Avoid_: Aprovacao apenas por e-mail, pendencia invisivel, solicitacao sem acompanhamento
+
+**Destino de equipe**:
+Destino inicial de tarefa limitado aos subordinados diretos do gestor imediato. Pode criar uma tarefa diretamente para um subordinado direto ou para a fila da equipe, sem usuario responsavel inicial.
+_Avoid_: Subordinado indireto automatico, equipe sem gestor, tarefa de toda a empresa
 
 **Atribuicao de tarefa**:
 Vinculo inicial entre uma tarefa e o usuario responsavel por ela. A atribuicao acontece quando a tarefa e criada para aquele usuario, nao quando o estado da tarefa muda.
@@ -140,6 +248,18 @@ _Avoid_: Minhas Preferencias
 **Estrutura funcional**:
 Organizacao configuravel de usuarios em uma cadeia de responsabilidade, usada para decidir quem pode definir preferencias ou regras de acesso de outra pessoa.
 _Avoid_: Cargo fixo, perfil hardcoded, if admin, if gerente
+
+**Gestor imediato**:
+Usuario opcionalmente vinculado a outro usuario como responsavel funcional direto. O gestor imediato pode servir como referencia para regras de tarefas e outros modulos, sem obrigar que todo usuario tenha gestor cadastrado.
+_Avoid_: Cargo gerente, perfil de acesso, relacao obrigatoria
+
+**Gestor do departamento**:
+Usuario opcionalmente definido como responsavel de gestao de um departamento. Quando aplicavel, deve existir no maximo um gestor ativo por departamento e esse gestor pode atuar como aprovador estrutural quando o usuario solicitante nao tiver gestor imediato.
+_Avoid_: Gestor imediato, cargo gerente, varios gestores ativos no mesmo departamento
+
+**Responsabilidade de gestao**:
+Capacidade de atuar sobre tarefas, usuarios ou informacoes de uma estrutura funcional com base no vinculo de gestor imediato, no gestor do departamento e nas permissoes do usuario. No MVP, a responsabilidade de gestao por pessoas considera apenas subordinados diretos; uma visao futura pode ampliar filtros por departamentos, cargos e estruturas de gestao.
+_Avoid_: if gerente, if admin, permissao implicita por texto do cargo, subordinado indireto automatico, gestor unico para todos os contextos
 
 **Perfil de acesso**:
 Modulo responsavel por catalogar perfis de acesso e relacionar quais modulos cada perfil pode acessar. O codigo canonico deste modulo e `PERF`.

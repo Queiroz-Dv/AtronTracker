@@ -8,6 +8,8 @@ namespace Application.DTO.Request
 
         public string Conteudo { get; set; }
 
+        public bool ExigeAprovacaoParaObter { get; set; }
+
         public DateTime DataInicial { get; set; }
 
         public DateTime DataFinal { get; set; }

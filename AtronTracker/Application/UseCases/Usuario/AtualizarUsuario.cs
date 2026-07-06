@@ -63,6 +63,10 @@ namespace Application.UseCases.Usuario
 
             await _mapService.MapToEntityAsync(request, usuario);
 
+            var resultadoGestor = await VincularGestorImediatoAsync(usuario, request.GestorImediatoCodigo);
+            if (resultadoGestor.TeveFalha)
+                return Resultado<UsuarioRequest>.Falhas(resultadoGestor.Messages);
+
             var atualizado = await _usuarioRepository.AtualizarUsuarioAsync(usuario);
             if (!atualizado)
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoAtualizacao);
@@ -136,6 +140,29 @@ namespace Application.UseCases.Usuario
 
             return await _usuarioCargoDepartamentoRepository
                 .GravarAssociacaoUsuarioCargoDepartamento(usuario, cargo, departamento);
+        }
+
+        private async Task<Resultado> VincularGestorImediatoAsync(Domain.Entities.Usuario usuario, string gestorCodigo)
+        {
+            if (gestorCodigo.IsNullOrEmpty())
+            {
+                usuario.GestorImediatoId = null;
+                usuario.GestorImediatoCodigo = null;
+                return Resultado.Sucesso();
+            }
+
+            var codigoGestor = gestorCodigo.ToUpper();
+            if (codigoGestor == usuario.Codigo)
+                return Resultado.Falha("O usuario nao pode ser gestor imediato dele mesmo.");
+
+            var gestor = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoGestor);
+            if (gestor is null)
+                return Resultado.Falha("Gestor imediato nao encontrado.");
+
+            usuario.GestorImediatoId = gestor.Id;
+            usuario.GestorImediatoCodigo = gestor.Codigo;
+
+            return Resultado.Sucesso();
         }
     }
 }

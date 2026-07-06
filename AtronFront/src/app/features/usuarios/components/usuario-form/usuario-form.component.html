@@ -55,4 +55,14 @@
       }
     </mat-autocomplete>
   </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Gestor imediato</mat-label>
+    <input type="text" matInput [formControl]="gestorImediatoControl" [matAutocomplete]="autoGestor" />
+    <mat-autocomplete #autoGestor="matAutocomplete" [displayWith]="exibirGestorDescricao">
+      @for (gestor of gestoresFiltrados; track gestor.codigo) {
+      <mat-option [value]="gestor">{{ gestor.codigo }} - {{ gestor.nome }} {{ gestor.sobrenome }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
 </div>

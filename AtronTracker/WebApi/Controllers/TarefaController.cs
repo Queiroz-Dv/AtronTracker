@@ -21,6 +21,34 @@ namespace WebApi.Controllers
             return Ok(resultado.Dados);
         }
 
+        [HttpGet("MeuQuadro")]
+        public async Task<ActionResult<IEnumerable<TarefaDTO>>> ObterMeuQuadro()
+        {
+            var resultado = await tarefaService.ObterMeuQuadroAsync();
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpGet("Equipe")]
+        public async Task<ActionResult<IEnumerable<TarefaDTO>>> ObterEquipe()
+        {
+            var resultado = await tarefaService.ObterEquipeAsync();
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpGet("Disponiveis")]
+        public async Task<ActionResult<IEnumerable<TarefaDTO>>> ObterDisponiveis()
+        {
+            var resultado = await tarefaService.ObterDisponiveisAsync();
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpGet("Solicitacoes")]
+        public async Task<ActionResult<IEnumerable<SolicitacaoObtencaoTarefaDTO>>> ObterSolicitacoes()
+        {
+            var resultado = await tarefaService.ObterSolicitacoesAsync();
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
         [HttpGet("Estados")]
         public async Task<ActionResult<IEnumerable<TarefaEstadoDTO>>> ObterEstados()
         {
@@ -40,6 +68,34 @@ namespace WebApi.Controllers
         {
             var resultado = await tarefaService.AtualizarAsync(id, tarefa);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        [HttpPost("{id}/Assumir")]
+        public async Task<ActionResult<TarefaDTO>> Assumir(int id)
+        {
+            var resultado = await tarefaService.AssumirAsync(id);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpPost("{id}/SolicitarObtencao")]
+        public async Task<ActionResult<SolicitacaoObtencaoTarefaDTO>> SolicitarObtencao(int id)
+        {
+            var resultado = await tarefaService.SolicitarObtencaoAsync(id);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpPost("Solicitacoes/{id}/Aprovar")]
+        public async Task<ActionResult<SolicitacaoObtencaoTarefaDTO>> AprovarSolicitacao(int id)
+        {
+            var resultado = await tarefaService.AprovarSolicitacaoAsync(id);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpPost("Solicitacoes/{id}/Recusar")]
+        public async Task<ActionResult<SolicitacaoObtencaoTarefaDTO>> RecusarSolicitacao(int id)
+        {
+            var resultado = await tarefaService.RecusarSolicitacaoAsync(id);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         [HttpDelete("{id}")]

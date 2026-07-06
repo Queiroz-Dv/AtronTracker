@@ -11,4 +11,13 @@
     <input matInput formControlName="descricao" />
     <c-control-error [control]="form.get('descricao')"></c-control-error>
   </mat-form-field>
+  <mat-form-field>
+    <mat-label>Gestor do departamento</mat-label>
+    <input type="text" matInput [formControl]="gestorDepartamentoControl" [matAutocomplete]="autoGestorDepartamento" />
+    <mat-autocomplete #autoGestorDepartamento="matAutocomplete" [displayWith]="exibirGestorDescricao">
+      @for (gestor of gestoresFiltrados; track gestor.codigo) {
+      <mat-option [value]="gestor">{{ gestor.codigo }} - {{ gestor.nome }} {{ gestor.sobrenome }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
 </div>

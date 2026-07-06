@@ -11,6 +11,9 @@ namespace Domain.Entities
 
         [MaxLength(10)][NotNull] public string Codigo { get; set; }
         [MaxLength(50)][NotNull] public string Descricao { get; set; }
+        public int? GestorDepartamentoId { get; set; }
+        public string GestorDepartamentoCodigo { get; set; }
+        public Usuario GestorDepartamento { get; set; }
 
         public List<Cargo> Cargos { get; set; }
         public List<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }

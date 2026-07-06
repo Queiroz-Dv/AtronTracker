@@ -14,7 +14,9 @@ namespace Application.Mapping
             {
                 Id = entity.Id,
                 Codigo = entity.Codigo.ToUpper(),
-                Descricao = entity.Descricao.ToUpper()
+                Descricao = entity.Descricao.ToUpper(),
+                GestorDepartamentoCodigo = entity.GestorDepartamentoCodigo,
+                GestorDepartamentoNome = ObterNomeGestor(entity.GestorDepartamento)
             };
 
             return Task.FromResult(dto);
@@ -26,7 +28,8 @@ namespace Application.Mapping
             {
                 Id = dto.Id,
                 Codigo = dto.Codigo.ToUpper(),
-                Descricao = dto.Descricao.ToUpper()
+                Descricao = dto.Descricao.ToUpper(),
+                GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo?.ToUpper()
             };
             return Task.FromResult(entity);
         }
@@ -34,7 +37,18 @@ namespace Application.Mapping
         public Task MapToEntityAsync(DepartamentoDTO dto, Departamento entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao;
+            entityToUpdate.GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo?.ToUpper();
             return Task.CompletedTask;
+        }
+
+        private static string ObterNomeGestor(Usuario gestor)
+        {
+            if (gestor is null)
+            {
+                return null;
+            }
+
+            return $"{gestor.Nome} {gestor.Sobrenome}".Trim();
         }
     }
 }

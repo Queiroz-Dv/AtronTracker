@@ -23,8 +23,6 @@ namespace Application.Services.AuthServices
         private readonly ICookieService _cookieService;
         private readonly IUserIdentityService _userIdentityService;
 
-        private const string ERRO_AUTENTICACAO = "Erro ao autenticar usuário. Verifique as informações e tente novamente.";
-
         public LoginService(
             ILoginRepository loginRepository,
             IUsuarioService usuarioService,
@@ -65,7 +63,7 @@ namespace Application.Services.AuthServices
             });
 
             if (!usuarioAutenticado)
-                return Resultado<DadosDoTokenDTO>.Falha(ERRO_AUTENTICACAO);
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
 
             var token = new DadosDoTokenDTO(dadosDoToken.TokenDTO.Token, dadosDoToken.TokenDTO.Expires);
 
@@ -78,17 +76,17 @@ namespace Application.Services.AuthServices
         public async Task<Resultado<DadosDoTokenDTO>> RefreshAcesso(DadosDoRefreshTokenCookieDTO dadosDoRefreshToken)
         {
             if (dadosDoRefreshToken is null || !dadosDoRefreshToken.IsValid())
-                return Resultado<DadosDoTokenDTO>.Falha("Dados do refresh token inválidos.");
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_DadosRefreshTokenInvalido);
 
             var codigoUsuario = dadosDoRefreshToken.UsuarioCodigo;
 
             var refreshTokenAtual = await _userIdentityService.ObterRefreshTokenPorCodigoUsuarioServiceAsync(codigoUsuario);
             if (refreshTokenAtual.IsNullOrEmpty() || refreshTokenAtual != dadosDoRefreshToken.RefreshToken)
-                return Resultado<DadosDoTokenDTO>.Falha("Refresh token inválido.");
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_DadosRefreshTokenInvalido);
 
             var refreshTokenExpirado = await _userIdentityService.RefreshTokenExpiradoServiceAsync(codigoUsuario);
             if (refreshTokenExpirado)
-                return Resultado<DadosDoTokenDTO>.Falha("Token expirado ou inválido.");
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_TokenExpiradoInvalido);
 
             var usuario = await _usuarioService.ObterPorCodigoAsync(codigoUsuario);
             if (usuario?.Dados == null)
@@ -98,7 +96,7 @@ namespace Application.Services.AuthServices
                 .ObterInformacoesComplementaresDoUsuario(usuario.Dados);
 
             if (dadosComplementares == null)
-                return Resultado<DadosDoTokenDTO>.Falha(ERRO_AUTENTICACAO);
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
 
             var dadosDeToken = await _tokenService.ObterTokenComRefreshToken(dadosComplementares);
 
@@ -111,7 +109,7 @@ namespace Application.Services.AuthServices
             });
 
             if (!autenticado)
-                return Resultado<DadosDoTokenDTO>.Falha(ERRO_AUTENTICACAO);
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
 
             var token = new DadosDoTokenDTO(dadosDeToken.TokenDTO.Token, dadosDeToken.TokenDTO.Expires);
 
@@ -129,10 +127,10 @@ namespace Application.Services.AuthServices
             var refreshTokenRedefinido = await _userIdentityService.RedefinirRefreshTokenServiceAsync(usuarioCodigo);
 
             if (!refreshTokenRedefinido)
-                return Resultado.Falha("Erro ao encerrar sessão.");
+                return Resultado.Falha(AuthResource.Erro_EncerrarSessao);
 
             await _loginRepository.Logout();
-            return Resultado.Sucesso("Sessão encerrada com sucesso.");
-        }        
+            return Resultado.Sucesso(AuthResource.Mensagem_SessaoEncerrada);
+        }
     }
 }

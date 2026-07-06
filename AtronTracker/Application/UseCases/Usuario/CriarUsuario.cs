@@ -80,6 +80,10 @@ namespace Application.UseCases.Usuario
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
 
             var usuario = await _mapService.MapToEntityAsync(request);
+            var resultadoGestor = await VincularGestorImediatoAsync(usuario, request.GestorImediatoCodigo);
+            if (resultadoGestor.TeveFalha)
+                return Resultado<UsuarioRequest>.Falhas(resultadoGestor.Messages);
+
             var criado = await _usuarioRepository.CriarUsuarioAsync(usuario);
             if (!criado)
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
@@ -133,6 +137,29 @@ namespace Application.UseCases.Usuario
             return Resultado<UsuarioRequest>
                 .Sucesso(request)
                 .AdicionarMensagem($"Usuario {request.Nome} {request.Sobrenome} salvo com sucesso. O link de primeiro acesso foi enviado por e-mail.");
+        }
+
+        private async Task<Resultado> VincularGestorImediatoAsync(Domain.Entities.Usuario usuario, string gestorCodigo)
+        {
+            if (gestorCodigo.IsNullOrEmpty())
+            {
+                usuario.GestorImediatoId = null;
+                usuario.GestorImediatoCodigo = null;
+                return Resultado.Sucesso();
+            }
+
+            var codigoGestor = gestorCodigo.ToUpper();
+            if (codigoGestor == usuario.Codigo)
+                return Resultado.Falha("O usuario nao pode ser gestor imediato dele mesmo.");
+
+            var gestor = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoGestor);
+            if (gestor is null)
+                return Resultado.Falha("Gestor imediato nao encontrado.");
+
+            usuario.GestorImediatoId = gestor.Id;
+            usuario.GestorImediatoCodigo = gestor.Codigo;
+
+            return Resultado.Sucesso();
         }
 
         private async Task<Resultado> EnviarEmailPrimeiroAcessoAsync(Domain.Entities.Usuario usuario, string clientUri)

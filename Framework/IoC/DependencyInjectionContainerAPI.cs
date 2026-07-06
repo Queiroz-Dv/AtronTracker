@@ -72,6 +72,7 @@ namespace IoC
             ConfigureUsuarioServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
+            ConfigureNotificacaoInternaServices(services);
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigurePerfilDeAcessoServices(services);
@@ -122,10 +123,17 @@ namespace IoC
         private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ITarefaRepository, TarefaRepository>();
+            services.AddScoped<ISolicitacaoObtencaoTarefaRepository, SolicitacaoObtencaoTarefaRepository>();
             services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
             services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
             services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
             services.AddScoped<ITarefaService, TarefaService>();
+        }
+
+        private static void ConfigureNotificacaoInternaServices(IServiceCollection services)
+        {
+            services.AddScoped<INotificacaoInternaRepository, NotificacaoInternaRepository>();
+            services.AddScoped<INotificacaoInternaService, NotificacaoInternaService>();
         }
 
         private static void ConfigureUsuarioServices(IServiceCollection services)

@@ -8,42 +8,79 @@
     </header>
 
     <mat-form-field appearance="outline" class="tarefa-usuario-field">
-      <mat-label>Selecione o usuário</mat-label>
-      <mat-icon matPrefix>person_search</mat-icon>
-      <input type="text" matInput [formControl]="usuarioControl" [matAutocomplete]="autoUsr" />
-      <c-control-error [control]="tarefaForm.get('usuarioCodigo')"></c-control-error>
-      <mat-autocomplete #autoUsr="matAutocomplete" [displayWith]="exibirUsuario">
-        @for (usr of usuarios; track usr.codigo) {
-          <mat-option [value]="usr">{{ exibirUsuario(usr) }}</mat-option>
+      <mat-label>Destino inicial</mat-label>
+      <mat-icon matPrefix>route</mat-icon>
+      <input type="text" matInput [formControl]="destinoControl" [matAutocomplete]="autoDestino" />
+      <mat-autocomplete #autoDestino="matAutocomplete" [displayWith]="exibirDestino">
+        @for (destino of destinosIniciais; track destino.id) {
+          <mat-option [value]="destino">{{ destino.descricao }}</mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>
 
-    <c-usuario-informacoes
-      [nome]="tarefaForm.get('usuarioNome').value"
-      [cargoDescricao]="tarefaForm.get('cargoDescricao').value"
-      [departamentoDescricao]="tarefaForm.get('departamentoDescricao').value"
-      [totalDeTarefas]="totalDeTarefas">
-    </c-usuario-informacoes>
+    @if (tarefaForm.get('destinoInicial').value === 1) {
+      <mat-form-field appearance="outline" class="tarefa-usuario-field">
+        <mat-label>Selecione o usuario</mat-label>
+        <mat-icon matPrefix>person_search</mat-icon>
+        <input type="text" matInput [formControl]="usuarioControl" [matAutocomplete]="autoUsr" />
+        <c-control-error [control]="tarefaForm.get('usuarioCodigo')"></c-control-error>
+        <mat-autocomplete #autoUsr="matAutocomplete" [displayWith]="exibirUsuario">
+          @for (usr of usuarios; track usr.codigo) {
+            <mat-option [value]="usr">{{ exibirUsuario(usr) }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <c-usuario-informacoes
+        [nome]="tarefaForm.get('usuarioNome').value"
+        [cargoDescricao]="tarefaForm.get('cargoDescricao').value"
+        [departamentoDescricao]="tarefaForm.get('departamentoDescricao').value"
+        [totalDeTarefas]="totalDeTarefas">
+      </c-usuario-informacoes>
+    }
+
+    @if (tarefaForm.get('destinoInicial').value === 2) {
+      <mat-form-field appearance="outline" class="tarefa-usuario-field">
+        <mat-label>Departamento</mat-label>
+        <mat-icon matPrefix>account_tree</mat-icon>
+        <input type="text" matInput [formControl]="departamentoControl" [matAutocomplete]="autoDepartamento" />
+        <mat-autocomplete #autoDepartamento="matAutocomplete" [displayWith]="exibirDepartamento">
+          @for (dep of departamentosFiltrados; track dep.codigo) {
+            <mat-option [value]="dep">{{ dep.codigo }} - {{ dep.descricao }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="tarefa-usuario-field">
+        <mat-label>Cargo opcional</mat-label>
+        <mat-icon matPrefix>badge</mat-icon>
+        <input type="text" matInput [formControl]="cargoControl" [matAutocomplete]="autoCargo" />
+        <mat-autocomplete #autoCargo="matAutocomplete" [displayWith]="exibirCargo">
+          @for (cargo of cargosFiltrados; track cargo.codigo) {
+            <mat-option [value]="cargo">{{ cargo.codigo }} - {{ cargo.descricao }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    }
   </section>
 
   <section class="tarefa-card">
     <header class="tarefa-section-header">
       <div>
         <p class="tarefa-eyebrow">Detalhes</p>
-        <h2>Informações da tarefa</h2>
+        <h2>Informacoes da tarefa</h2>
       </div>
     </header>
 
     <div class="tarefa-fields">
       <mat-form-field appearance="outline" class="tarefa-title-field">
-        <mat-label>Título</mat-label>
+        <mat-label>Titulo</mat-label>
         <input matInput formControlName="titulo" />
         <c-control-error [control]="tarefaForm.get('titulo')"></c-control-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="tarefa-content-field">
-        <mat-label>Conteúdo</mat-label>
+        <mat-label>Conteudo</mat-label>
         <textarea matInput rows="4" formControlName="conteudo"></textarea>
         <c-control-error [control]="tarefaForm.get('conteudo')"></c-control-error>
       </mat-form-field>
@@ -73,6 +110,10 @@
           }
         </mat-autocomplete>
       </mat-form-field>
+
+      <mat-checkbox formControlName="exigeAprovacaoParaObter">
+        Exige aprovacao para obter
+      </mat-checkbox>
     </div>
   </section>
 </div>
