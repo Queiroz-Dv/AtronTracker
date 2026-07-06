@@ -16,6 +16,10 @@
 
         public string Descricao { get; set; }
 
+        public string GestorDepartamentoCodigo { get; set; }
+
+        public string GestorDepartamentoNome { get; set; }
+
         public string ObterCodigoComDescricao()
         {
             return $"{Codigo} - {Descricao}";

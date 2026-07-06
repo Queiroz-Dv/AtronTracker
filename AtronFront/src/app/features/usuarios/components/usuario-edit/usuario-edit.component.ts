@@ -30,7 +30,8 @@ export class UsuarioEditComponent implements OnInit {
       dataNascimento: [null],
       email: ['', Validators.required],
       cargoCodigo: [null, Validators.required],
-      departamentoCodigo: ['', Validators.required]
+      departamentoCodigo: ['', Validators.required],
+      gestorImediatoCodigo: [null]
     });
 
     this.codigo = this.route.snapshot.paramMap.get('codigo');
@@ -53,7 +54,8 @@ export class UsuarioEditComponent implements OnInit {
       dadosForm.cargoCodigo,
       dadosForm.departamentoCodigo,
       window.location.origin,
-      this.formatarDataParaEnvio(dadosForm.dataNascimento));
+      this.formatarDataParaEnvio(dadosForm.dataNascimento),
+      dadosForm.gestorImediatoCodigo);
 
     const operacao = this.codigo
       ? this.service.atualizar(this.codigo, usuarioPayload)

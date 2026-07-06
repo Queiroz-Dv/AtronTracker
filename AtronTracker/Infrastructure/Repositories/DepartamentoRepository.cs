@@ -29,22 +29,33 @@ namespace Infrastructure.Repositories
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
         {
-            return await _context.Departamentos.FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
+            return await _context.Departamentos
+                .Include(dpt => dpt.GestorDepartamento)
+                .FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
         }
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo)
         {
-            return await _context.Departamentos.AsNoTracking().FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
+            return await _context.Departamentos
+                .Include(dpt => dpt.GestorDepartamento)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
         }
 
         public async Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
         {
-            return await _context.Departamentos.AsNoTracking().FirstOrDefaultAsync(dpt => dpt.Id == id);
+            return await _context.Departamentos
+                .Include(dpt => dpt.GestorDepartamento)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(dpt => dpt.Id == id);
         }
 
         public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
         {
-            return await _context.Departamentos.OrderByDescending(order => order.Codigo).ToListAsync();
+            return await _context.Departamentos
+                .Include(dpt => dpt.GestorDepartamento)
+                .OrderByDescending(order => order.Codigo)
+                .ToListAsync();
         }
 
         public async Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento)

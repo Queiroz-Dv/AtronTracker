@@ -28,8 +28,12 @@ namespace Domain.Entities
         public bool Inativo { get; set; }
         public bool ReceberNotificacaoTarefaPorEmail { get; set; }
         public string CodigoReativacao { get; set; }
+        public int? GestorImediatoId { get; set; }
+        public string GestorImediatoCodigo { get; set; }
+        public Usuario GestorImediato { get; set; }
 
         public ICollection<Tarefa> Tarefas { get; set; }
+        public ICollection<Usuario> SubordinadosDiretos { get; set; }
         public ICollection<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
         public ICollection<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario { get; set; }
     }

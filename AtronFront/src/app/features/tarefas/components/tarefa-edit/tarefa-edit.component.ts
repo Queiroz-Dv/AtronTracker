@@ -31,8 +31,12 @@ export class TarefaEditComponent implements OnInit {
       conteudo: ['', [Validators.required, Validators.maxLength(2500)]],
       dataInicial: [null],
       dataFinal: [null],
+      destinoInicial: [1, Validators.required],
+      exigeAprovacaoParaObter: [false],
       estadoId: [null, Validators.required],
-      usuarioCodigo: [null, Validators.required],
+      usuarioCodigo: [null],
+      departamentoCodigo: [null],
+      cargoCodigo: [null],
       usuarioNome: [''],
       cargoDescricao: [''],
       departamentoDescricao: ['']
@@ -51,7 +55,11 @@ export class TarefaEditComponent implements OnInit {
           usuarioNome: trf.usuario?.nome ?? '',
           cargoDescricao: trf.usuario?.cargo?.descricao ?? '',
           departamentoDescricao: trf.usuario?.departamento?.descricao ?? '',
-          estadoId: trf.estadoDaTarefa.id
+          estadoId: trf.estadoDaTarefa.id,
+          destinoInicial: trf.destinoInicial || 1,
+          exigeAprovacaoParaObter: trf.exigeAprovacaoParaObter,
+          departamentoCodigo: trf.departamentoCodigo,
+          cargoCodigo: trf.cargoCodigo
         }
         this.form.patchValue(tarefa);
       }
@@ -64,12 +72,17 @@ export class TarefaEditComponent implements OnInit {
 
     const tarefaPayload: TarefaRequest = {
       id: formValues.id || 0,
+      identificador: formValues.identificador,
+      destinoInicial: formValues.destinoInicial,
+      exigeAprovacaoParaObter: formValues.exigeAprovacaoParaObter,
       titulo: formValues.titulo,
       conteudo: formValues.conteudo,
       dataInicial: this.formatarDataParaEnvio(formValues.dataInicial),
       dataFinal: this.formatarDataParaEnvio(formValues.dataFinal),
       estadoDaTarefa: { id: formValues.estadoId, descricao: '' },
       usuarioCodigo: formValues.usuarioCodigo,
+      departamentoCodigo: formValues.departamentoCodigo,
+      cargoCodigo: formValues.cargoCodigo,
     };
 
     const operacao = this.id

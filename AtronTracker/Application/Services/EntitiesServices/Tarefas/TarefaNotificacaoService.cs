@@ -21,6 +21,11 @@ namespace Application.Services.EntitiesServices.Tarefas
 
         public async Task<Resultado> NotificarAtribuicaoAsync(TarefaDTO tarefa, Usuario usuario)
         {
+            if (usuario is null)
+            {
+                return Resultado.Sucesso();
+            }
+
             if (!usuario.ReceberNotificacaoTarefaPorEmail || usuario.Email.IsNullOrEmpty())
             {
                 return Resultado.Sucesso();

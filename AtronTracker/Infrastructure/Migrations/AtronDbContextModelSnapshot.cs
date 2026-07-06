@@ -70,7 +70,16 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("GestorDepartamentoCodigo")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int?>("GestorDepartamentoId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id", "Codigo");
+
+                    b.HasIndex("GestorDepartamentoId", "GestorDepartamentoCodigo");
 
                     b.ToTable("Departamentos");
                 });
@@ -139,6 +148,69 @@ namespace Atron.Infrastructure.Migrations
                             Codigo = "PLC",
                             Descricao = "Planejamento de Custos"
                         });
+                });
+
+            modelBuilder.Entity("Domain.Entities.NotificacaoInterna", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DataLeitura")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Lida")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Mensagem")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Modulo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("TarefaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TipoEvento")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("UrlDestino")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("UsuarioCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TarefaId");
+
+                    b.HasIndex("UsuarioId", "UsuarioCodigo", "Lida");
+
+                    b.ToTable("NotificacoesInternas");
                 });
 
             modelBuilder.Entity("Domain.Entities.PerfilDeAcesso", b =>
@@ -305,6 +377,53 @@ namespace Atron.Infrastructure.Migrations
                     b.ToTable("PlanejamentosCustoCargo");
                 });
 
+            modelBuilder.Entity("Domain.Entities.SolicitacaoObtencaoTarefa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AprovadorCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("AprovadorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DataDecisao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataSolicitacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SolicitanteCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("SolicitanteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TarefaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SolicitanteId", "SolicitanteCodigo");
+
+                    b.HasIndex("TarefaId", "Status");
+
+                    b.HasIndex("AprovadorId", "AprovadorCodigo", "Status");
+
+                    b.ToTable("SolicitacoesObtencaoTarefa");
+                });
+
             modelBuilder.Entity("Domain.Entities.Tarefa", b =>
                 {
                     b.Property<int>("Id")
@@ -312,6 +431,13 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CargoCodigo")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int?>("CargoId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Conteudo")
                         .HasMaxLength(2500)
@@ -323,6 +449,26 @@ namespace Atron.Infrastructure.Migrations
                     b.Property<DateTime>("DataInicial")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DepartamentoCodigo")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int?>("DepartamentoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DestinoInicial")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<bool>("ExigeAprovacaoParaObter")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int?>("Identificador")
+                        .HasColumnType("int");
+
                     b.Property<int>("TarefaEstadoId")
                         .HasColumnType("int");
 
@@ -332,14 +478,21 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("UsuarioCodigo")
+                        .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<int>("UsuarioId")
+                    b.Property<int?>("UsuarioId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Identificador");
+
                     b.HasIndex("TarefaEstadoId");
+
+                    b.HasIndex("CargoId", "CargoCodigo");
+
+                    b.HasIndex("DepartamentoId", "DepartamentoCodigo");
 
                     b.HasIndex("UsuarioId", "UsuarioCodigo");
 
@@ -412,6 +565,13 @@ namespace Atron.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("GestorImediatoCodigo")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int?>("GestorImediatoId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Inativo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -433,6 +593,8 @@ namespace Atron.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id", "Codigo");
+
+                    b.HasIndex("GestorImediatoId", "GestorImediatoCodigo");
 
                     b.ToTable("Usuarios");
                 });
@@ -693,6 +855,34 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("Departamento");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Departamento", b =>
+                {
+                    b.HasOne("Domain.Entities.Usuario", "GestorDepartamento")
+                        .WithMany()
+                        .HasForeignKey("GestorDepartamentoId", "GestorDepartamentoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("GestorDepartamento");
+                });
+
+            modelBuilder.Entity("Domain.Entities.NotificacaoInterna", b =>
+                {
+                    b.HasOne("Domain.Entities.Tarefa", "Tarefa")
+                        .WithMany()
+                        .HasForeignKey("TarefaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Tarefa");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Domain.Entities.PerfilDeAcesso", b =>
                 {
                     b.HasOne("Domain.Entities.Usuario", "Usuario")
@@ -770,6 +960,33 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("PlanejamentoCusto");
                 });
 
+            modelBuilder.Entity("Domain.Entities.SolicitacaoObtencaoTarefa", b =>
+                {
+                    b.HasOne("Domain.Entities.Tarefa", "Tarefa")
+                        .WithMany("SolicitacoesObtencao")
+                        .HasForeignKey("TarefaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Aprovador")
+                        .WithMany()
+                        .HasForeignKey("AprovadorId", "AprovadorCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Solicitante")
+                        .WithMany()
+                        .HasForeignKey("SolicitanteId", "SolicitanteCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Aprovador");
+
+                    b.Navigation("Solicitante");
+
+                    b.Navigation("Tarefa");
+                });
+
             modelBuilder.Entity("Domain.Entities.Tarefa", b =>
                 {
                     b.HasOne("Domain.Entities.TarefaEstado", "EstadoDaTarefa")
@@ -778,13 +995,38 @@ namespace Atron.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Cargo", "Cargo")
+                        .WithMany()
+                        .HasForeignKey("CargoId", "CargoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.Departamento", "Departamento")
+                        .WithMany()
+                        .HasForeignKey("DepartamentoId", "DepartamentoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Usuario", "Usuario")
                         .WithMany("Tarefas")
-                        .HasForeignKey("UsuarioId", "UsuarioCodigo");
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Cargo");
+
+                    b.Navigation("Departamento");
 
                     b.Navigation("EstadoDaTarefa");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Usuario", b =>
+                {
+                    b.HasOne("Domain.Entities.Usuario", "GestorImediato")
+                        .WithMany("SubordinadosDiretos")
+                        .HasForeignKey("GestorImediatoId", "GestorImediatoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("GestorImediato");
                 });
 
             modelBuilder.Entity("Domain.Entities.UsuarioCargoDepartamento", b =>
@@ -898,9 +1140,16 @@ namespace Atron.Infrastructure.Migrations
                     b.Navigation("DetalhesCargo");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Tarefa", b =>
+                {
+                    b.Navigation("SolicitacoesObtencao");
+                });
+
             modelBuilder.Entity("Domain.Entities.Usuario", b =>
                 {
                     b.Navigation("PerfisDeAcessoUsuario");
+
+                    b.Navigation("SubordinadosDiretos");
 
                     b.Navigation("Tarefas");
 

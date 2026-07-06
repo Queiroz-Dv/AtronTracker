@@ -32,6 +32,8 @@ namespace Application.Mapping
                 Email = entity.Email,
                 DataNascimento = entity.DataNascimento,
                 ReceberNotificacaoTarefaPorEmail = entity.ReceberNotificacaoTarefaPorEmail,
+                GestorImediatoCodigo = entity.GestorImediatoCodigo,
+                GestorImediatoNome = ObterNomeGestor(entity.GestorImediato),
                 PerfisDeAcesso = []
             };
 
@@ -69,6 +71,7 @@ namespace Application.Mapping
                 Sobrenome = dto.Sobrenome,
                 Email = dto.Email,
                 DataNascimento = dto.DataNascimento,
+                GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper(),
                 ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail
             });
         }
@@ -80,9 +83,20 @@ namespace Application.Mapping
             entityToUpdate.Sobrenome = dto.Sobrenome;
             entityToUpdate.Email = dto.Email;
             entityToUpdate.DataNascimento = dto.DataNascimento;
+            entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper();
             entityToUpdate.ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail;
 
             return Task.CompletedTask;
+        }
+
+        private static string ObterNomeGestor(Usuario gestor)
+        {
+            if (gestor is null)
+            {
+                return null;
+            }
+
+            return $"{gestor.Nome} {gestor.Sobrenome}".Trim();
         }
     }
 }

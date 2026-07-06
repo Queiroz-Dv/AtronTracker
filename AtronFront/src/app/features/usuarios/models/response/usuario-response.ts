@@ -14,6 +14,8 @@ export class UsuarioResponse implements UsuarioModel {
   cargoDescricao: string;
   departamentoCodigo: string;
   departamentoDescricao: string;
+  gestorImediatoCodigo?: string;
+  gestorImediatoNome?: string;
 
   cargo: CargoModel
   departamento: Departamento

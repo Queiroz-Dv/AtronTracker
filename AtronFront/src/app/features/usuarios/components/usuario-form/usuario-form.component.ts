@@ -8,6 +8,8 @@ import { Departamento } from '../../../departamentos/models/departamento.model';
 import { CargoModel } from '../../../cargos/models/cargo.model';
 import { CargoResponse } from '../../../cargos/models/response/cargo-response.model';
 import { DateMaskDirective } from '../../../../shared/directives/date-mask.directive';
+import { UsuarioService } from '../../services/usuario.service';
+import { UsuarioResponse, exibirDescricaoDoUsuario } from '../../models/response/usuario-response';
 
 @Component({
   selector: 'c-usuario-form',
@@ -21,6 +23,7 @@ export class UsuarioFormComponent implements OnInit {
   // Controles individuais para autocomplete
   departamentoControl = new FormControl<string | Departamento>('');
   cargoControl = new FormControl<string | CargoResponse | CargoModel>('');
+  gestorImediatoControl = new FormControl<string | UsuarioResponse>('');
 
   // Dados filtrados para os autocompletes
   departamentosFiltrados: Departamento[] = [];
@@ -29,10 +32,13 @@ export class UsuarioFormComponent implements OnInit {
   // Backup dos dados originais
   todosDepartamentos: Departamento[] = [];
   todosCargos: CargoResponse[] = [];
+  todosUsuarios: UsuarioResponse[] = [];
+  gestoresFiltrados: UsuarioResponse[] = [];
 
   constructor(
     private cargoService: CargoService,
-    private departamentoService: DepartamentosService
+    private departamentoService: DepartamentosService,
+    private usuarioService: UsuarioService
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +52,12 @@ export class UsuarioFormComponent implements OnInit {
       this.todosCargos = crgs;
       this.cargosFiltrados = this.todosCargos;
       this.sincronizarCargoSelecionado();
+    });
+
+    this.usuarioService.obterTodosUsuariosInformados().subscribe(usuarios => {
+      this.todosUsuarios = usuarios;
+      this.gestoresFiltrados = this.filtrarGestoresDisponiveis('');
+      this.sincronizarGestorSelecionado();
     });
 
     this.departamentoControl.valueChanges.subscribe(value => {
@@ -81,12 +93,27 @@ export class UsuarioFormComponent implements OnInit {
       }
     });
 
+    this.gestorImediatoControl.valueChanges.subscribe(value => {
+      if (typeof value === 'string') {
+        this.gestoresFiltrados = this.filtrarGestoresDisponiveis(value);
+        this.usuarioForm.patchValue({ gestorImediatoCodigo: null }, { emitEvent: false });
+        return;
+      }
+
+      const gestor = value as UsuarioResponse | null;
+      this.usuarioForm.patchValue({ gestorImediatoCodigo: gestor?.codigo ?? null });
+    });
+
     this.usuarioForm.get('departamentoCodigo')?.valueChanges.subscribe(() => {
       this.sincronizarDepartamentoSelecionado();
     });
 
     this.usuarioForm.get('cargoCodigo')?.valueChanges.subscribe(() => {
       this.sincronizarCargoSelecionado();
+    });
+
+    this.usuarioForm.get('gestorImediatoCodigo')?.valueChanges.subscribe(() => {
+      this.sincronizarGestorSelecionado();
     });
   }
 
@@ -138,6 +165,30 @@ export class UsuarioFormComponent implements OnInit {
     );
   }
 
+  private sincronizarGestorSelecionado(): void {
+    const gestorCodigo = this.usuarioForm.get('gestorImediatoCodigo')?.value;
+    const selecionado = this.todosUsuarios.find(u => u.codigo === gestorCodigo);
+
+    this.gestorImediatoControl.setValue(selecionado || '', { emitEvent: false });
+    this.gestoresFiltrados = selecionado ? [selecionado] : this.filtrarGestoresDisponiveis('');
+  }
+
+  private filtrarGestoresDisponiveis(valor: string): UsuarioResponse[] {
+    const filtro = valor.toLowerCase();
+    const codigoUsuarioAtual = this.usuarioForm.get('codigo')?.value;
+
+    return this.todosUsuarios.filter(usuario =>
+      usuario.codigo !== codigoUsuarioAtual &&
+      (
+        usuario.codigo?.toLowerCase().includes(filtro) ||
+        usuario.nome?.toLowerCase().includes(filtro) ||
+        usuario.sobrenome?.toLowerCase().includes(filtro) ||
+        `${usuario.nome} ${usuario.sobrenome}`.toLowerCase().includes(filtro)
+      )
+    );
+  }
+
   exibirDepartamentoDescricao = (dpt: Departamento | string) => typeof dpt === 'string' ? dpt : dpt?.descricao ?? '';
   exibirCargoDescricao = (crg: CargoModel | CargoResponse | string) => typeof crg === 'string' ? crg : crg?.descricao ?? '';
+  exibirGestorDescricao = (usuario: UsuarioResponse | string) => typeof usuario === 'string' ? usuario : exibirDescricaoDoUsuario(usuario);
 }

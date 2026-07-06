@@ -70,7 +70,16 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<string>("GestorDepartamentoCodigo")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int?>("GestorDepartamentoId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id", "Codigo");
+
+                    b.HasIndex("GestorDepartamentoId", "GestorDepartamentoCodigo");
 
                     b.ToTable("Departamentos");
                 });
@@ -139,6 +148,69 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                             Codigo = "PLC",
                             Descricao = "Planejamento de Custos"
                         });
+                });
+
+            modelBuilder.Entity("Domain.Entities.NotificacaoInterna", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DataLeitura")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("Lida")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Mensagem")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Modulo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("TarefaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TipoEvento")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<string>("UrlDestino")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<string>("UsuarioCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TarefaId");
+
+                    b.HasIndex("UsuarioId", "UsuarioCodigo", "Lida");
+
+                    b.ToTable("NotificacoesInternas");
                 });
 
             modelBuilder.Entity("Domain.Entities.PerfilDeAcesso", b =>
@@ -305,6 +377,53 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                     b.ToTable("PlanejamentosCustoCargo");
                 });
 
+            modelBuilder.Entity("Domain.Entities.SolicitacaoObtencaoTarefa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AprovadorCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int>("AprovadorId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DataDecisao")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("DataSolicitacao")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("SolicitanteCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int>("SolicitanteId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TarefaId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SolicitanteId", "SolicitanteCodigo");
+
+                    b.HasIndex("TarefaId", "Status");
+
+                    b.HasIndex("AprovadorId", "AprovadorCodigo", "Status");
+
+                    b.ToTable("SolicitacoesObtencaoTarefa");
+                });
+
             modelBuilder.Entity("Domain.Entities.Tarefa", b =>
                 {
                     b.Property<int>("Id")
@@ -312,6 +431,13 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CargoCodigo")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int?>("CargoId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Conteudo")
                         .HasMaxLength(2500)
@@ -323,6 +449,26 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                     b.Property<DateTime>("DataInicial")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("DepartamentoCodigo")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int?>("DepartamentoId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DestinoInicial")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.Property<bool>("ExigeAprovacaoParaObter")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<int?>("Identificador")
+                        .HasColumnType("integer");
+
                     b.Property<int>("TarefaEstadoId")
                         .HasColumnType("integer");
 
@@ -332,14 +478,21 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("UsuarioCodigo")
+                        .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
-                    b.Property<int>("UsuarioId")
+                    b.Property<int?>("UsuarioId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Identificador");
+
                     b.HasIndex("TarefaEstadoId");
+
+                    b.HasIndex("CargoId", "CargoCodigo");
+
+                    b.HasIndex("DepartamentoId", "DepartamentoCodigo");
 
                     b.HasIndex("UsuarioId", "UsuarioCodigo");
 
@@ -412,6 +565,13 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<string>("GestorImediatoCodigo")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int?>("GestorImediatoId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("Inativo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -433,6 +593,8 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id", "Codigo");
+
+                    b.HasIndex("GestorImediatoId", "GestorImediatoCodigo");
 
                     b.ToTable("Usuarios");
                 });
@@ -691,6 +853,34 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                     b.Navigation("Departamento");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Departamento", b =>
+                {
+                    b.HasOne("Domain.Entities.Usuario", "GestorDepartamento")
+                        .WithMany()
+                        .HasForeignKey("GestorDepartamentoId", "GestorDepartamentoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("GestorDepartamento");
+                });
+
+            modelBuilder.Entity("Domain.Entities.NotificacaoInterna", b =>
+                {
+                    b.HasOne("Domain.Entities.Tarefa", "Tarefa")
+                        .WithMany()
+                        .HasForeignKey("TarefaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Tarefa");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Domain.Entities.PerfilDeAcesso", b =>
                 {
                     b.HasOne("Domain.Entities.Usuario", "Usuario")
@@ -768,6 +958,33 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                     b.Navigation("PlanejamentoCusto");
                 });
 
+            modelBuilder.Entity("Domain.Entities.SolicitacaoObtencaoTarefa", b =>
+                {
+                    b.HasOne("Domain.Entities.Tarefa", "Tarefa")
+                        .WithMany("SolicitacoesObtencao")
+                        .HasForeignKey("TarefaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Aprovador")
+                        .WithMany()
+                        .HasForeignKey("AprovadorId", "AprovadorCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Solicitante")
+                        .WithMany()
+                        .HasForeignKey("SolicitanteId", "SolicitanteCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Aprovador");
+
+                    b.Navigation("Solicitante");
+
+                    b.Navigation("Tarefa");
+                });
+
             modelBuilder.Entity("Domain.Entities.Tarefa", b =>
                 {
                     b.HasOne("Domain.Entities.TarefaEstado", "EstadoDaTarefa")
@@ -776,13 +993,38 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Cargo", "Cargo")
+                        .WithMany()
+                        .HasForeignKey("CargoId", "CargoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.Departamento", "Departamento")
+                        .WithMany()
+                        .HasForeignKey("DepartamentoId", "DepartamentoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Usuario", "Usuario")
                         .WithMany("Tarefas")
-                        .HasForeignKey("UsuarioId", "UsuarioCodigo");
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Cargo");
+
+                    b.Navigation("Departamento");
 
                     b.Navigation("EstadoDaTarefa");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Usuario", b =>
+                {
+                    b.HasOne("Domain.Entities.Usuario", "GestorImediato")
+                        .WithMany("SubordinadosDiretos")
+                        .HasForeignKey("GestorImediatoId", "GestorImediatoCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("GestorImediato");
                 });
 
             modelBuilder.Entity("Domain.Entities.UsuarioCargoDepartamento", b =>
@@ -896,9 +1138,16 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                     b.Navigation("DetalhesCargo");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Tarefa", b =>
+                {
+                    b.Navigation("SolicitacoesObtencao");
+                });
+
             modelBuilder.Entity("Domain.Entities.Usuario", b =>
                 {
                     b.Navigation("PerfisDeAcessoUsuario");
+
+                    b.Navigation("SubordinadosDiretos");
 
                     b.Navigation("Tarefas");
 
