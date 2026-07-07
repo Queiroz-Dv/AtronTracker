@@ -61,6 +61,33 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirme seu cadastro - Atron Platform.
+        /// </summary>
+        public static string Assunto_ConfirmeCadastro {
+            get {
+                return ResourceManager.GetString("Assunto_ConfirmeCadastro", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-mail confirmado -  Atron Platform.
+        /// </summary>
+        public static string Assunto_EmailConfirmado {
+            get {
+                return ResourceManager.GetString("Assunto_EmailConfirmado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recuperação de Senha - Atron Platform.
+        /// </summary>
+        public static string Assunto_RecuperacaoSenha {
+            get {
+                return ResourceManager.GetString("Assunto_RecuperacaoSenha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configurações não encontradas para o provedor: {0}.
         /// </summary>
         public static string ErroConfiguracoesProvedor {

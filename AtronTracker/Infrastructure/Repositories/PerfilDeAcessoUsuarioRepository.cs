@@ -5,14 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class PerfilDeAcessoUsuarioRepository : IPerfilDeAcessoUsuarioRepository
+    public class PerfilDeAcessoUsuarioRepository(AtronDbContext context) : IPerfilDeAcessoUsuarioRepository
     {
-        private readonly AtronDbContext _context;
-
-        public PerfilDeAcessoUsuarioRepository(AtronDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AtronDbContext _context = context;
 
         public async Task<bool> CriarPerfilRepositoryAsync(PerfilDeAcessoUsuario perfilDeAcesso)
         {
@@ -23,23 +18,23 @@ namespace Infrastructure.Repositories
                 return result > 0;
             }
             catch (Exception ex)
-            {               
+            {
                 throw ex;
             }
         }
 
+        public async Task<bool> CriarRelacionamentoRepositoryAsync(PerfilDeAcessoUsuario perfilDeAcesso)
+        {
+            await _context.PerfilDeAcessoUsuarios.AddAsync(perfilDeAcesso);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
         public async Task DeletarRelacionamento(PerfilDeAcessoUsuario relacionamento)
         {
-            try
-            {
-                _context.PerfilDeAcessoUsuarios.Remove(relacionamento);
-                await _context.SaveChangesAsync();
-                return; // Fixed: Added a valid return statement for the void method
-            }
-            catch (Exception ex)
-            {
-                throw; // No changes needed here
-            }
+            _context.PerfilDeAcessoUsuarios.Remove(relacionamento);
+            await _context.SaveChangesAsync();
+            return;
         }
 
         public async Task<PerfilDeAcessoUsuario> ObterPerfilDeAcessoPorCodigoRepositoryAsync(string codigo)

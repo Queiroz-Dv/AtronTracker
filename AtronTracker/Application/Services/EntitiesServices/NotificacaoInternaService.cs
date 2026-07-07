@@ -67,6 +67,28 @@ namespace Application.Services.EntitiesServices
                 .AdicionarMensagem("Notificacao marcada como lida.");
         }
 
+        public async Task<Resultado<List<NotificacaoInternaDTO>>> MarcarTodasComoLidasAsync()
+        {
+            var usuario = await ObterUsuarioLogadoAsync();
+            if (usuario.TeveFalha)
+                return Resultado<List<NotificacaoInternaDTO>>.Falhas(usuario.Messages);
+
+            var atualizadas = await _notificacaoInternaRepository.MarcarTodasComoLidasAsync(
+                usuario.Dados.Id,
+                usuario.Dados.Codigo);
+
+            if (!atualizadas)
+                return Resultado<List<NotificacaoInternaDTO>>.Falha("Nao foi possivel marcar as notificacoes como lidas.");
+
+            var notificacoes = await _notificacaoInternaRepository.ObterPorUsuarioAsync(
+                usuario.Dados.Id,
+                usuario.Dados.Codigo);
+
+            return Resultado<List<NotificacaoInternaDTO>>
+                .Sucesso(notificacoes.Select(Mapear).ToList())
+                .AdicionarMensagem("Notificacoes marcadas como lidas.");
+        }
+
         public async Task<Resultado<NotificacaoInternaDTO>> CriarAsync(NotificacaoInterna notificacao)
         {
             notificacao.DataCriacao = notificacao.DataCriacao == default

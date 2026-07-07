@@ -61,11 +61,29 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Erro ao atualizar a senha. Token inválido ou expirado..
+        /// </summary>
+        public static string Erro_AtualizarSenha {
+            get {
+                return ResourceManager.GetString("Erro_AtualizarSenha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Erro ao autenticar usuário. Verifique as informações e tente novamente..
         /// </summary>
         public static string Erro_Autenticacao {
             get {
                 return ResourceManager.GetString("Erro_Autenticacao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Solicitação expirada ou inválida. Solicite uma nova recuperação de senha..
+        /// </summary>
+        public static string Erro_CacheExpiradoNaTrocaDeSenha {
+            get {
+                return ResourceManager.GetString("Erro_CacheExpiradoNaTrocaDeSenha", resourceCulture);
             }
         }
         
@@ -88,6 +106,51 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Falha ao confirmar e-mail. Token inválido ou expirado..
+        /// </summary>
+        public static string Erro_FalhaConfirmarEmail {
+            get {
+                return ResourceManager.GetString("Erro_FalhaConfirmarEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Erro na gravação da conta..
+        /// </summary>
+        public static string Erro_GravacaoConta {
+            get {
+                return ResourceManager.GetString("Erro_GravacaoConta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identificador temporário não informado..
+        /// </summary>
+        public static string Erro_IdentificadorTemporario {
+            get {
+                return ResourceManager.GetString("Erro_IdentificadorTemporario", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Senha inválida ou falha na descriptografia da requisição..
+        /// </summary>
+        public static string Erro_SenhaInvalida {
+            get {
+                return ResourceManager.GetString("Erro_SenhaInvalida", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to As senhas informadas não coincidem..
+        /// </summary>
+        public static string Erro_SenhasDivergentes {
+            get {
+                return ResourceManager.GetString("Erro_SenhasDivergentes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Token expirado ou inválido..
         /// </summary>
         public static string Erro_TokenExpiradoInvalido {
@@ -97,11 +160,65 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Usuário inativo. Solicite a um superior ou suporte a reativação desse usuário..
+        /// </summary>
+        public static string Erro_UsuarioInativo {
+            get {
+                return ResourceManager.GetString("Erro_UsuarioInativo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usuário não encontrado com o identificador fornecido..
+        /// </summary>
+        public static string Erro_UsuarioNaoEncontrado {
+            get {
+                return ResourceManager.GetString("Erro_UsuarioNaoEncontrado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-mail confirmado com sucesso!.
+        /// </summary>
+        public static string Mensagem_EmailConfirmado {
+            get {
+                return ResourceManager.GetString("Mensagem_EmailConfirmado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Se o identificador existir em nossa base, um e-mail com as instruções de recuperação foi enviado..
+        /// </summary>
+        public static string Mensagem_EnvioDeEmail {
+            get {
+                return ResourceManager.GetString("Mensagem_EnvioDeEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Senha alterada com sucesso..
+        /// </summary>
+        public static string Mensagem_SenhaAlterada {
+            get {
+                return ResourceManager.GetString("Mensagem_SenhaAlterada", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sessão encerrada com sucesso..
         /// </summary>
         public static string Mensagem_SessaoEncerrada {
             get {
                 return ResourceManager.GetString("Mensagem_SessaoEncerrada", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usuário {0} {1}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar seu acesso..
+        /// </summary>
+        public static string Mensagem_UsuarioRegistrado {
+            get {
+                return ResourceManager.GetString("Mensagem_UsuarioRegistrado", resourceCulture);
             }
         }
     }

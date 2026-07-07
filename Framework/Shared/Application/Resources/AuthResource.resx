@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Erro_AtualizarSenha" xml:space="preserve">
+    <value>Erro ao atualizar a senha. Token inválido ou expirado.</value>
+  </data>
   <data name="Erro_Autenticacao" xml:space="preserve">
     <value>Erro ao autenticar usuário. Verifique as informações e tente novamente.</value>
+  </data>
+  <data name="Erro_CacheExpiradoNaTrocaDeSenha" xml:space="preserve">
+    <value>Solicitação expirada ou inválida. Solicite uma nova recuperação de senha.</value>
   </data>
   <data name="Erro_DadosRefreshTokenInvalido" xml:space="preserve">
     <value>Dados do refresh token inválidos.</value>
@@ -126,10 +132,43 @@
   <data name="Erro_EncerrarSessao" xml:space="preserve">
     <value>Erro ao encerrar sessão.</value>
   </data>
+  <data name="Erro_FalhaConfirmarEmail" xml:space="preserve">
+    <value>Falha ao confirmar e-mail. Token inválido ou expirado.</value>
+  </data>
+  <data name="Erro_GravacaoConta" xml:space="preserve">
+    <value>Erro na gravação da conta.</value>
+  </data>
+  <data name="Erro_IdentificadorTemporario" xml:space="preserve">
+    <value>Identificador temporário não informado.</value>
+  </data>
+  <data name="Erro_SenhaInvalida" xml:space="preserve">
+    <value>Senha inválida ou falha na descriptografia da requisição.</value>
+  </data>
+  <data name="Erro_SenhasDivergentes" xml:space="preserve">
+    <value>As senhas informadas não coincidem.</value>
+  </data>
   <data name="Erro_TokenExpiradoInvalido" xml:space="preserve">
     <value>Token expirado ou inválido.</value>
   </data>
+  <data name="Erro_UsuarioInativo" xml:space="preserve">
+    <value>Usuário inativo. Solicite a um superior ou suporte a reativação desse usuário.</value>
+  </data>
+  <data name="Erro_UsuarioNaoEncontrado" xml:space="preserve">
+    <value>Usuário não encontrado com o identificador fornecido.</value>
+  </data>
+  <data name="Mensagem_EmailConfirmado" xml:space="preserve">
+    <value>E-mail confirmado com sucesso!</value>
+  </data>
+  <data name="Mensagem_EnvioDeEmail" xml:space="preserve">
+    <value>Se o identificador existir em nossa base, um e-mail com as instruções de recuperação foi enviado.</value>
+  </data>
+  <data name="Mensagem_SenhaAlterada" xml:space="preserve">
+    <value>Senha alterada com sucesso.</value>
+  </data>
   <data name="Mensagem_SessaoEncerrada" xml:space="preserve">
     <value>Sessão encerrada com sucesso.</value>
+  </data>
+  <data name="Mensagem_UsuarioRegistrado" xml:space="preserve">
+    <value>Usuário {0} {1}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar seu acesso.</value>
   </data>
 </root>

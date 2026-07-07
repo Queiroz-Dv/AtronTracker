@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, inject, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { TarefaService } from '../../services/tarefa.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../../../shared/modules/shared.module';
@@ -12,6 +13,9 @@ import { MatSort } from '@angular/material/sort';
 import { DestinoInicialTarefa } from '../../models/destino-inicial-tarefa.model';
 import { TarefaResponse } from '../../models/response/tarefa-response.model';
 import { SolicitacaoObtencaoTarefaResponse } from '../../models/response/solicitacao-obtencao-tarefa-response.model';
+import { NotificacaoInternaService } from '../../../notificacoes/services/notificacao-interna.service';
+
+type TarefaVisao = 'meuQuadro' | 'equipe' | 'disponiveis' | 'solicitacoes';
 
 @Component({
   selector: 'c-tarefa-view',
@@ -19,11 +23,12 @@ import { SolicitacaoObtencaoTarefaResponse } from '../../models/response/solicit
   imports: [SharedModule, ReactiveFormsModule, BotaoVoltarComponent],
 })
 
-export class TarefaViewComponent implements AfterViewInit {
+export class TarefaViewComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSource: MatTableDataSource<TarefaViewData>;
-  visaoAtual: 'meuQuadro' | 'equipe' | 'disponiveis' | 'solicitacoes' = 'meuQuadro';
+  visaoAtual: TarefaVisao = 'meuQuadro';
+  private queryParamsSubscription?: Subscription;
 
   route = inject(ActivatedRoute);
   colunas = [
@@ -39,27 +44,37 @@ export class TarefaViewComponent implements AfterViewInit {
     'estado',
     'acoes'];
 
-  constructor(private service: TarefaService, public router: Router) { }
+  constructor(
+    private service: TarefaService,
+    private notificacaoInternaService: NotificacaoInternaService,
+    public router: Router
+  ) { }
 
-  ngAfterViewInit() { this.carregarMeuQuadro(); }
+  ngAfterViewInit() {
+    this.queryParamsSubscription = this.route.queryParamMap.subscribe(params => {
+      this.carregarVisao(this.normalizarVisao(params.get('visao')));
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.queryParamsSubscription?.unsubscribe();
+  }
 
   carregar() {
-    if (this.visaoAtual === 'solicitacoes') {
-      this.carregarSolicitacoes();
+    this.carregarVisao(this.visaoAtual);
+  }
+
+  selecionarVisao(visao: TarefaVisao): void {
+    if (this.visaoAtual === visao) {
+      this.carregarVisao(visao);
       return;
     }
 
-    if (this.visaoAtual === 'disponiveis') {
-      this.carregarDisponiveis();
-      return;
-    }
-
-    if (this.visaoAtual === 'equipe') {
-      this.carregarEquipe();
-      return;
-    }
-
-    this.carregarMeuQuadro();
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { visao },
+      queryParamsHandling: 'merge'
+    });
   }
 
   carregarMeuQuadro() {
@@ -87,12 +102,18 @@ export class TarefaViewComponent implements AfterViewInit {
   }
 
   assumir(id: number): void {
-    this.service.assumir(id).subscribe(() => this.carregarMeuQuadro());
+    this.service.assumir(id).subscribe(() => {
+      this.atualizarNotificacoes();
+      this.carregarMeuQuadro();
+    });
   }
 
   obter(trf: TarefaViewData): void {
     if (trf.exigeAprovacaoParaObter) {
-      this.service.solicitarObtencao(trf.id).subscribe(() => this.carregarDisponiveis());
+      this.service.solicitarObtencao(trf.id).subscribe(() => {
+        this.atualizarNotificacoes();
+        this.carregarDisponiveis();
+      });
       return;
     }
 
@@ -101,12 +122,18 @@ export class TarefaViewComponent implements AfterViewInit {
 
   aprovar(solicitacaoId: number | null): void {
     if (!solicitacaoId) return;
-    this.service.aprovarSolicitacao(solicitacaoId).subscribe(() => this.carregarSolicitacoes());
+    this.service.aprovarSolicitacao(solicitacaoId).subscribe(() => {
+      this.atualizarNotificacoes();
+      this.carregarSolicitacoes();
+    });
   }
 
   recusar(solicitacaoId: number | null): void {
     if (!solicitacaoId) return;
-    this.service.recusarSolicitacao(solicitacaoId).subscribe(() => this.carregarSolicitacoes());
+    this.service.recusarSolicitacao(solicitacaoId).subscribe(() => {
+      this.atualizarNotificacoes();
+      this.carregarSolicitacoes();
+    });
   }
 
   excluir(id: number): void {
@@ -131,6 +158,39 @@ export class TarefaViewComponent implements AfterViewInit {
 
   private obterDestinoDescricao(destinoInicial: number): string {
     return DestinoInicialTarefa.getDestinos().find(destino => destino.id === destinoInicial)?.descricao ?? '-';
+  }
+
+  private carregarVisao(visao: TarefaVisao): void {
+    if (visao === 'solicitacoes') {
+      this.carregarSolicitacoes();
+      return;
+    }
+
+    if (visao === 'disponiveis') {
+      this.carregarDisponiveis();
+      return;
+    }
+
+    if (visao === 'equipe') {
+      this.carregarEquipe();
+      return;
+    }
+
+    this.carregarMeuQuadro();
+  }
+
+  private normalizarVisao(visao: string | null): TarefaVisao {
+    if (visao === 'equipe' || visao === 'disponiveis' || visao === 'solicitacoes') {
+      return visao;
+    }
+
+    return 'meuQuadro';
+  }
+
+  private atualizarNotificacoes(): void {
+    this.notificacaoInternaService.carregar().subscribe({
+      error: () => undefined
+    });
   }
 
   private atualizarTabela(tarefas: TarefaResponse[]): void {

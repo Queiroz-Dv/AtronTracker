@@ -15,6 +15,7 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using Application.Extensions;
+using Shared.Application.Resources;
 
 namespace Application.Services.AuthServices
 {
@@ -59,10 +60,10 @@ namespace Application.Services.AuthServices
             if (notificacoes.TemErros()) return Resultado.Falha(notificacoes);
 
             var contaExiste = await _usuarioIdentityRepository.ContaExisteRepositoryAsync(request.Codigo, request.Email);
-            if (contaExiste) return Resultado.Falha("Usuário já cadastrado.");
+            if (contaExiste) return Resultado.Falha(UsuarioResource.ErroUsuarioExistente);
 
             var registrado = await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(request.Codigo, request.Email, request.Senha);
-            if (!registrado) return Resultado.Falha("Erro na gravação da conta.");
+            if (!registrado) return Resultado.Falha(AuthResource.Erro_GravacaoConta);
 
             var usuario = new Usuario(request.Codigo,
                                       request.Nome,
@@ -71,7 +72,7 @@ namespace Application.Services.AuthServices
                                       request.DataNascimento?.ToDateTime(TimeOnly.MinValue));
 
             var usuarioGravado = await _usuarioRepository.CriarUsuarioAsync(usuario);
-            if (!usuarioGravado) return Resultado.Falha("Erro ao salvar usuário.");
+            if (!usuarioGravado) return Resultado.Falha(UsuarioResource.ErroInesperadoGravacao);
 
             var usuarioBd = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
 
@@ -79,7 +80,7 @@ namespace Application.Services.AuthServices
 
             if (perfilDeAcesso != null)
             {
-                await _perfilDeAcessoUsuarioRepository.CriarPerfilRepositoryAsync(new PerfilDeAcessoUsuario
+                await _perfilDeAcessoUsuarioRepository.CriarRelacionamentoRepositoryAsync(new PerfilDeAcessoUsuario
                 {
                     PerfilDeAcessoId = perfilDeAcesso.Id,
                     PerfilDeAcessoCodigo = perfilDeAcesso.Codigo,
@@ -94,83 +95,76 @@ namespace Application.Services.AuthServices
             {
                 await _emailService.EnviarAsync(new EmailRequest
                 {
-                    Assunto = "Confirme seu cadastro - AtronTracker",
+                    Assunto = EmailResource.Assunto_ConfirmeCadastro,
                     Mensagem = CorpoDoEmailDeCadastro(usuario, link),
                     EmailsDestino = [request.Email]
                 });
             }
             catch { }
 
-            return Resultado.Sucesso($"Usuário {usuario.Nome} {usuario.Sobrenome}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar.");
+            return Resultado.Sucesso(string.Format(AuthResource.Mensagem_UsuarioRegistrado, usuario.Nome, usuario.Sobrenome));
         }
 
         public async Task<Resultado> TrocarSenha(RedefinirSenhaRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.IdentificadorTemporario))
-                return Resultado.Falha("Identificador temporário não informado.");
+                return Resultado.Falha(AuthResource.Erro_IdentificadorTemporario);
 
-            // Buscar DadosTemporarios no cache usando o identificador
             var cacheKey = $"{ECacheKeysInfo.DadosTemporarios.GetDescription()}:{request.IdentificadorTemporario}";
             var dadosTemporarios = _cacheService.ObterCache<DadosTemporarios>(cacheKey);
 
             if (dadosTemporarios == null)
-                return Resultado.Falha("Solicitação expirada ou inválida. Solicite uma nova recuperação de senha.");
+                return Resultado.Falha(AuthResource.Erro_CacheExpiradoNaTrocaDeSenha);
 
             var novaSenha = CryptoHelper.DecryptCryptoJsAes(request.NovaSenha);
             var repetirSenha = CryptoHelper.DecryptCryptoJsAes(request.RepetirSenha);
 
             if (string.IsNullOrEmpty(novaSenha) || string.IsNullOrEmpty(repetirSenha))
-                return Resultado.Falha("Senha inválida ou falha na descriptografia da requisição.");
+                return Resultado.Falha(AuthResource.Erro_SenhaInvalida);
 
             if (novaSenha != repetirSenha)
-                return Resultado.Falha("As senhas informadas não coincidem.");
+                return Resultado.Falha(AuthResource.Erro_SenhasDivergentes);
 
-            // Extrair dados reais do cache (UsuarioCodigo e Token)
             var usuarioCodigo = dadosTemporarios.UsuarioCodigo;
             var token = dadosTemporarios.Token;
 
             var resultado = await _usuarioIdentityRepository.RedefinirSenhaAsync(usuarioCodigo, token, novaSenha);
             if (resultado)
             {
-                // Tenta atualizar no repository de login se necessário
                 var atualizouLogin = await _loginRepository.AtualizarSenhaUsuario(usuarioCodigo, novaSenha);
 
-                // Remover dados temporários do cache após sucesso (evitar reutilização)
+                // Implementar a lógica depois 
+                if (!atualizouLogin)
+                {
+
+                }
+
                 _cacheService.RemoverCache(ECacheKeysInfo.DadosTemporarios, request.IdentificadorTemporario);
 
-                return Resultado.Sucesso("Senha alterada com sucesso.");
+                return Resultado.Sucesso(AuthResource.Mensagem_SenhaAlterada);
             }
 
-            return Resultado.Falha("Erro ao atualizar a senha. Token inválido ou expirado.");
+            return Resultado.Falha(AuthResource.Erro_AtualizarSenha);
         }
 
         public async Task<Resultado> SolicitarRecuperacaoSenha(SolicitarRecuperacaoSenhaRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Identificador)) return Resultado.Falha("Identificador não informado.");
+            if (string.IsNullOrWhiteSpace(request.Identificador)) return Resultado.Falha(AuthResource.Erro_IdentificadorTemporario);
 
-            Usuario usuario = null;
-            // Se tiver mais de 3 chars, regra dictamina como E-mail. Também vamos checar pelo '@'.
-            if (request.Identificador.Length > 3 || request.Identificador.Contains('@'))
-            {
-                usuario = await _usuarioRepository.ObterUsuarioGeralPorEmailAsync(request.Identificador);
-            }
-            else
-            {
-                usuario = await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(request.Identificador);
-            }
+            Usuario usuario = request.Identificador.Length > 3 || request.Identificador.Contains('@')
+                ? await _usuarioRepository.ObterUsuarioGeralPorEmailAsync(request.Identificador)
+                : await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(request.Identificador);
 
             if (usuario == null)
-                return Resultado.Falha("Usuário não encontrado com o identificador fornecido.");
+                return Resultado.Falha(AuthResource.Erro_UsuarioNaoEncontrado);
 
             if (usuario.Inativo)
-                return Resultado.Falha("Usuário inativo. Solicite a um superior ou suporte a reativação desse usuário.");
+                return Resultado.Falha(AuthResource.Erro_UsuarioInativo);
 
             var token = await _usuarioIdentityRepository.GerarTokenRecuperacaoSenhaAsync(usuario.Codigo);
 
-            // Gerar identificador temporário de 9 dígitos com código do usuário embutido
             var identificadorTemporario = CryptoHelper.GerarIdentificadorTemporario(usuario.Codigo);
 
-            // Criar snapshot dos dados temporários
             var dadosTemporarios = new DadosTemporarios
             {
                 IdentificadorTemporario = identificadorTemporario,
@@ -180,37 +174,30 @@ namespace Application.Services.AuthServices
                 DataAlteracaoSenha = DateTime.UtcNow
             };
 
-            // Gravar no cache com TTL de 15 minutos
             var cacheInfo = new CacheInfo<DadosTemporarios>(ECacheKeysInfo.DadosTemporarios, identificadorTemporario)
-            {
-                EntityInfo = dadosTemporarios
-            };
+            { EntityInfo = dadosTemporarios };
+
             _cacheService.GravarCache(cacheInfo, TimeSpan.FromMinutes(15));
 
-            // Criptografar o identificador para o link (não expor dados na URL)
             var identificadorCriptografado = CryptoHelper.EncryptCryptoJsAes(identificadorTemporario);
             var identificadorUrlEncoded = HttpUtility.UrlEncode(identificadorCriptografado);
 
             var baseUri = ObterUri(request.ClientUri);
             var link = $"{baseUri}/trocar-senha?id={identificadorUrlEncoded}";
 
-            try
+            await _emailService.EnviarAsync(new EmailRequest
             {
-                 await _emailService.EnviarAsync(new EmailRequest
-                 {
-                     Assunto = "Recuperação de Senha - AtronTracker",
-                     Mensagem = CorpoDoEmailRecuperacaoSenha(usuario.Nome, link),
-                     EmailsDestino = [usuario.Email]
-                 });
-            }
-            catch { }
+                Assunto = EmailResource.Assunto_RecuperacaoSenha,
+                Mensagem = CorpoDoEmailRecuperacaoSenha(usuario.Nome, link),
+                EmailsDestino = [usuario.Email]
+            });
 
-            return Resultado.Sucesso("Se o identificador existir em nossa base, um e-mail com as instruções de recuperação foi enviado.");
+            return Resultado.Sucesso();
         }
 
         private static string CorpoDoEmailRecuperacaoSenha(string nome, string link)
         {
-             return $@"
+            return $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;'>
                     <h1 style='color: #2c3e50;'>Recuperação de Senha</h1>
                     <p>Olá, <strong>{nome}</strong>!</p>
@@ -245,33 +232,23 @@ namespace Application.Services.AuthServices
             var resultado = await _usuarioIdentityRepository.ConfirmarEmailAsync(codigoUsuario, token);
 
             if (!resultado)
-                return Resultado.Falha("Falha ao confirmar e-mail. Token inválido ou expirado.");
+                return Resultado.Falha(AuthResource.Erro_FalhaConfirmarEmail);
 
-            // Se a confirmação foi bem sucedida, tentar enviar e-mail de notificação ao usuário
-            try
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
+            if (usuario != null && !string.IsNullOrEmpty(usuario.Email))
             {
-                // Obter e-mail do usuário pelo código (não depende do request)
-                var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
-                if (usuario != null && !string.IsNullOrEmpty(usuario.Email))
+                var assunto = EmailResource.Assunto_EmailConfirmado;
+                var mensagem = CorpoEmailConfirmacaoSucesso(usuario.Nome);
+
+                await _emailService.EnviarAsync(new EmailRequest
                 {
-                    var assunto = "E-mail confirmado - AtronTracker";
-                    var mensagem = CorpoEmailConfirmacaoSucesso(usuario.Nome);
-
-                    // Envio best-effort: não interrompe o fluxo se falhar
-                    await _emailService.EnviarAsync(new EmailRequest
-                    {
-                        Assunto = assunto,
-                        Mensagem = mensagem,
-                        EmailsDestino = [usuario.Email]
-                    });
-                }
-            }
-            catch
-            {
-                // Log opcional aqui (não interrompe o fluxo)
+                    Assunto = assunto,
+                    Mensagem = mensagem,
+                    EmailsDestino = [usuario.Email]
+                });
             }
 
-            return Resultado.Sucesso("E-mail confirmado com sucesso!");
+            return Resultado.Sucesso(AuthResource.Mensagem_EmailConfirmado);
         }
 
         private static string CorpoEmailConfirmacaoSucesso(string nomeUsuario)

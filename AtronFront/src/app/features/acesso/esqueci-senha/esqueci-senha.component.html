@@ -1,65 +1,69 @@
-<div class="login-wrapper">
-  <div class="login-container">
-    <!-- Header -->
-    <div class="login-header">
-      <div class="logo-container">
-        <mat-icon class="logo-icon">hub</mat-icon>
-      </div>
-      <h1 class="login-title">Recuperação de Senha</h1>
-      <p class="login-subtitle" *ngIf="!enviado">Informe seu código de usuário ou e-mail</p>
-      <p class="login-subtitle" *ngIf="enviado" style="color: #69f0ae;">{{mensagemEnvio}}</p>
+<main class="auth-page">
+  <section class="auth-shell" aria-labelledby="recuperar-senha-title">
+    <div class="auth-brand">
+      <span class="brand-mark">
+        <mat-icon>lock_reset</mat-icon>
+      </span>
+      <p class="brand-kicker">Acesso seguro</p>
+      <h1 id="recuperar-senha-title">Recuperar senha</h1>
+      <p class="brand-copy" *ngIf="!enviado">
+        Informe seu código de usuário ou e-mail cadastrado para receber as instruções de redefinição.
+      </p>
+      <p class="brand-copy" *ngIf="enviado">
+        Verifique sua caixa de entrada e siga o link enviado para redefinir a senha.
+      </p>
     </div>
 
-    <!-- Login Card -->
-    <div class="login-card" *ngIf="!enviado">
-      <form class="login-form">
-        
-        <!-- Field -->
-        <div class="form-field">
-          <mat-form-field appearance="outline">
-            <mat-label>Código ou E-mail</mat-label>
-            <mat-icon matPrefix>badge</mat-icon>
-            <input matInput [formControl]="identificadorControl" placeholder="Digite seu código ou o e-mail cadastrado" />
-            <c-control-error [control]="identificadorControl"></c-control-error>
-          </mat-form-field>
+    <div class="auth-card" *ngIf="!enviado">
+      <div class="auth-card-header">
+        <h2>Enviar instruções</h2>
+        <p>Use o código de usuário ou o e-mail vinculado à sua conta.</p>
+      </div>
+
+      <form class="auth-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Código ou e-mail</mat-label>
+          <mat-icon matPrefix>badge</mat-icon>
+          <input
+            matInput
+            [formControl]="identificadorControl"
+            placeholder="Digite seu código ou e-mail"
+            autocomplete="username" />
+          <c-control-error [control]="identificadorControl"></c-control-error>
+        </mat-form-field>
+
+        <button mat-flat-button type="button" class="primary-action" (click)="solicitarRecuperacao()">
+          <mat-icon>send</mat-icon>
+          Enviar instruções
+        </button>
+
+        <button mat-button type="button" class="text-action" (click)="voltarLogin()">
+          <mat-icon>arrow_back</mat-icon>
+          Voltar ao login
+        </button>
+
+        <div class="auth-divider">
+          <span></span>
+          <small>ou</small>
+          <span></span>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="login-actions">
-          <button mat-flat-button type="submit" class="btn-login" (click)="solicitarRecuperacao()">
-            <mat-icon>send</mat-icon>
-            Enviar Instruções
-          </button>
-
-          <div class="divider">
-            <span class="divider-line"></span>
-            <span class="divider-text">ou</span>
-            <span class="divider-line"></span>
-          </div>
-
-          <button mat-button type="button" class="btn-register" (click)="voltarLogin()">
-            <mat-icon>arrow_back</mat-icon>
-            Voltar ao Login
-          </button>
-        </div>
-        <div class="login-actions" style="margin-top: 10px; flex-direction: column; text-align: center;">
-          <button mat-button type="button" color="primary" (click)="registrar()" style="width: 100%;">
-            Criar nova conta
-          </button>
-        </div>
+        <button mat-stroked-button type="button" class="secondary-action" (click)="registrar()">
+          <mat-icon>person_add</mat-icon>
+          Criar nova conta
+        </button>
       </form>
     </div>
-    
-    <div class="login-card" *ngIf="enviado" style="text-align: center; padding: 30px;">
-       <mat-icon style="font-size: 48px; height: 48px; width: 48px; color: #69f0ae; margin-bottom: 20px;">mark_email_read</mat-icon>
-       <p>As instruções de recuperação foram enviadas se os dados conferirem. Por favor verifique sua caixa de entrada.</p>
-       <br/>
-       <button mat-flat-button type="button" class="btn-login" (click)="voltarLogin()">Voltar ao Login</button>
+
+    <div class="auth-card auth-feedback-card" *ngIf="enviado">
+      <mat-icon class="auth-feedback-icon success">mark_email_read</mat-icon>
+      <h2>Confira seu e-mail</h2>
+      <p>{{ mensagemEnvio }}</p>
+      <button mat-flat-button type="button" class="primary-action" (click)="voltarLogin()">
+        Voltar ao login
+      </button>
     </div>
 
-    <!-- Footer -->
-    <div class="login-footer">
-      <p class="footer-text">© 2026 Atron Manager. Todos os direitos reservados.</p>
-    </div>
-  </div>
-</div>
+    <p class="auth-footer">&copy; 2026 Atron. Todos os direitos reservados.</p>
+  </section>
+</main>

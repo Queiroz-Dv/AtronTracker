@@ -64,6 +64,7 @@ namespace Application.Extensions
             }
         }
 
+        // DeriveEvpKDF = método que transforma a senha secreta em chave + IV compatíveis com CryptoJS
         private static void DeriveEvpKDF(byte[] password, byte[] salt, out byte[] key, out byte[] iv)
         {
             // EvpKDF using MD5 to generate 32 bytes key and 16 bytes IV
