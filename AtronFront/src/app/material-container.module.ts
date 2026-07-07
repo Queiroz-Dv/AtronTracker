@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { LoadingBarComponent } from './core/layout/loading-bar/loading-bar.component';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatBadgeModule } from '@angular/material/badge';
 import { ControlErrorComponent } from './shared/components/control-error/control-error.component';
 
 @NgModule({
@@ -31,6 +32,7 @@ import { ControlErrorComponent } from './shared/components/control-error/control
     AsyncPipe,
     MatGridListModule,
     MatMenuModule,
+    MatBadgeModule,
     MatTable,
     MatPaginator,
     ControlErrorComponent
@@ -50,6 +52,7 @@ import { ControlErrorComponent } from './shared/components/control-error/control
     AsyncPipe,
     MatGridListModule,
     MatMenuModule,
+    MatBadgeModule,
     MatTable,
     MatPaginator,
     MatSort,

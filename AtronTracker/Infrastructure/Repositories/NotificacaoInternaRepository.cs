@@ -66,5 +66,29 @@ namespace Infrastructure.Repositories
 
             return true;
         }
+
+        public async Task<bool> MarcarTodasComoLidasAsync(int usuarioId, string usuarioCodigo)
+        {
+            var notificacoes = await _context.Set<NotificacaoInterna>()
+                .Where(ntf =>
+                    ntf.UsuarioId == usuarioId &&
+                    ntf.UsuarioCodigo == usuarioCodigo &&
+                    !ntf.Lida)
+                .ToListAsync();
+
+            if (!notificacoes.Any())
+            {
+                return true;
+            }
+
+            var dataLeitura = DateTime.Now;
+            foreach (var notificacao in notificacoes)
+            {
+                notificacao.Lida = true;
+                notificacao.DataLeitura = dataLeitura;
+            }
+
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

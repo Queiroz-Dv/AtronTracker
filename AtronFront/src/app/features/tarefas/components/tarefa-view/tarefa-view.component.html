@@ -15,16 +15,16 @@
 
     <div class="list-toolbar">
       <div class="list-actions">
-        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'meuQuadro'" (click)="carregarMeuQuadro()">
+        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'meuQuadro'" (click)="selecionarVisao('meuQuadro')">
           Meu quadro
         </button>
-        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'equipe'" (click)="carregarEquipe()">
+        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'equipe'" (click)="selecionarVisao('equipe')">
           Equipe
         </button>
-        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'disponiveis'" (click)="carregarDisponiveis()">
+        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'disponiveis'" (click)="selecionarVisao('disponiveis')">
           Disponiveis
         </button>
-        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'solicitacoes'" (click)="carregarSolicitacoes()">
+        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'solicitacoes'" (click)="selecionarVisao('solicitacoes')">
           Solicitacoes
         </button>
       </div>

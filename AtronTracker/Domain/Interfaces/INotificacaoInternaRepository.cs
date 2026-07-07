@@ -13,5 +13,7 @@ namespace Domain.Interfaces
         Task<bool> CriarAsync(NotificacaoInterna notificacao);
 
         Task<bool> MarcarComoLidaAsync(int id, int usuarioId, string usuarioCodigo);
+
+        Task<bool> MarcarTodasComoLidasAsync(int usuarioId, string usuarioCodigo);
     }
 }

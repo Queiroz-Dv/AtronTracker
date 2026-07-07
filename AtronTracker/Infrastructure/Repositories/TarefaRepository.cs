@@ -108,7 +108,8 @@ namespace Infrastructure.Repositories
                     trf.Usuario != null &&
                     trf.Usuario.GestorImediatoId == gestorId &&
                     trf.Usuario.GestorImediatoCodigo == gestorCodigo &&
-                    trf.TarefaEstadoId != EstadoFinalizadaId)
+                    trf.TarefaEstadoId != EstadoFinalizadaId                    
+                    )
                 .OrderByDescending(trf => trf.Identificador)
                 .ToListAsync();
         }

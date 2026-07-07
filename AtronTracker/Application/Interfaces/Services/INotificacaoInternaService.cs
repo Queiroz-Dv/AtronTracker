@@ -12,6 +12,8 @@ namespace Application.Interfaces.Services
 
         Task<Resultado<NotificacaoInternaDTO>> MarcarComoLidaAsync(int id);
 
+        Task<Resultado<List<NotificacaoInternaDTO>>> MarcarTodasComoLidasAsync();
+
         Task<Resultado<NotificacaoInternaDTO>> CriarAsync(NotificacaoInterna notificacao);
     }
 }

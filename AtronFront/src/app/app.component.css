@@ -99,6 +99,105 @@
   width: 20px;
 }
 
+.app-form-icon-action {
+  justify-content: center;
+  min-width: 42px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.app-notifications-panel {
+  background: var(--atron-surface);
+  color: var(--atron-text);
+  min-width: min(380px, 92vw);
+  width: 380px;
+}
+
+.app-notifications-header {
+  align-items: center;
+  border-bottom: 1px solid var(--atron-border);
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 14px;
+}
+
+.app-notifications-header strong {
+  color: var(--atron-title);
+}
+
+.app-notifications-list {
+  display: grid;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.app-notification-item {
+  align-items: center;
+  border-bottom: 1px solid var(--atron-border-soft);
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 10px 12px;
+}
+
+.app-notification-item-unread {
+  background: var(--atron-surface-muted);
+}
+
+.app-notification-content {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.app-notification-content:hover .app-notification-title,
+.app-notification-content:focus-visible .app-notification-title {
+  color: var(--atron-primary);
+}
+
+.app-notification-content:focus-visible {
+  outline: 2px solid var(--atron-primary);
+  outline-offset: 3px;
+}
+
+.app-notification-title {
+  color: var(--atron-title);
+  font-weight: 750;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-notification-message {
+  color: var(--atron-text);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.app-notification-date {
+  color: var(--atron-text-muted);
+  font-size: 0.78rem;
+}
+
+.app-notifications-empty {
+  align-items: center;
+  color: var(--atron-text-muted);
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  padding: 28px 16px;
+}
+
+.app-notifications-empty mat-icon {
+  color: var(--atron-primary);
+}
+
 @media (max-width: 760px) {
   .app-form-topbar-inner {
     align-items: stretch;

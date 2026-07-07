@@ -23,22 +23,20 @@ export class EsqueciSenhaComponent {
   ) { }
 
   async solicitarRecuperacao() {
-    if (this.identificadorControl.invalid) {      
+    if (this.identificadorControl.invalid) {
       return;
     }
 
-    let req = new SolicitarRecuperacaoSenhaRequest();
+    const req = new SolicitarRecuperacaoSenhaRequest();
     req.identificador = this.identificadorControl.value as string;
-    // Pega o origin para criar a base url que vai no link do e-mail
     req.clientUri = window.location.origin;
 
     this.acessoService.solicitarRecuperacaoSenha(req).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.enviado = true;
         this.mensagemEnvio = "Se o código/e-mail estiver correto, enviaremos as instruções para seu e-mail.";
       },
       error: (err: any) => {
-        // Exibir alerta?
         console.error(err);
         this.enviado = true;
         this.mensagemEnvio = "Houve um erro, verifique se o usuário consta em base e não está inativo.";

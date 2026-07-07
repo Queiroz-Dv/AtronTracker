@@ -62,6 +62,8 @@ namespace Application.Services.EntitiesServices
                 .Sucesso(tarefaDTO)
                 .AdicionarMensagem("Tarefa gravada com sucesso.");
 
+            await CriarNotificacaoTarefaAtribuidaAsync(preparacao.Dados.Entidade, preparacao.Dados.Usuario);
+
             var envioEmail = await _tarefaNotificacaoService.NotificarAtribuicaoAsync(tarefaDTO, preparacao.Dados.Usuario);
             if (envioEmail.TeveFalha)
             {
@@ -214,6 +216,7 @@ namespace Application.Services.EntitiesServices
                 return Resultado<TarefaDTO>.Falha("Nao foi possivel assumir a tarefa.");
 
             var tarefaAtualizada = await _tarefaRepository.ObterTarefaPorId(id);
+            await CriarNotificacaoTarefaObtidaAsync(tarefaAtualizada, usuario.Dados);
             var dto = await _map.MapToDTOAsync(tarefaAtualizada);
             return Resultado<TarefaDTO>
                 .Sucesso(dto)
@@ -265,6 +268,7 @@ namespace Application.Services.EntitiesServices
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha("Nao foi possivel criar a solicitacao.");
 
             var solicitacaoGravada = await _solicitacaoObtencaoTarefaRepository.ObterPorIdAsync(solicitacao.Id);
+            await CriarNotificacaoSolicitacaoRecebidaAsync(solicitacaoGravada);
             var dto = await MapearSolicitacaoAsync(solicitacaoGravada);
 
             return Resultado<SolicitacaoObtencaoTarefaDTO>
@@ -396,6 +400,58 @@ namespace Application.Services.EntitiesServices
             return await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
         }
 
+        private async Task CriarNotificacaoTarefaAtribuidaAsync(Tarefa tarefa, Usuario usuario)
+        {
+            if (tarefa is null || usuario is null)
+            {
+                return;
+            }
+
+            await CriarNotificacaoTarefaAsync(
+                usuario.Id,
+                usuario.Codigo,
+                "Nova tarefa atribuida",
+                $"A tarefa {ObterIdentificadorTarefa(tarefa)} foi atribuida a voce.",
+                "TarefaAtribuida",
+                tarefa.Id);
+        }
+
+        private async Task CriarNotificacaoTarefaObtidaAsync(Tarefa tarefa, Usuario usuario)
+        {
+            if (tarefa is null || usuario is null)
+            {
+                return;
+            }
+
+            await CriarNotificacaoTarefaAsync(
+                usuario.Id,
+                usuario.Codigo,
+                "Tarefa adicionada ao seu quadro",
+                $"A tarefa {ObterIdentificadorTarefa(tarefa)} foi adicionada ao seu quadro.",
+                "TarefaObtida",
+                tarefa.Id);
+        }
+
+        private async Task CriarNotificacaoSolicitacaoRecebidaAsync(SolicitacaoObtencaoTarefa solicitacao)
+        {
+            if (solicitacao is null)
+            {
+                return;
+            }
+
+            var identificador = ObterIdentificadorTarefa(solicitacao.Tarefa, solicitacao.TarefaId);
+            var solicitante = ObterNomeUsuario(solicitacao.Solicitante) ?? solicitacao.SolicitanteCodigo;
+
+            await CriarNotificacaoTarefaAsync(
+                solicitacao.AprovadorId,
+                solicitacao.AprovadorCodigo,
+                "Solicitacao de obtencao recebida",
+                $"{solicitante} solicitou obter a tarefa {identificador}.",
+                "SolicitacaoObtencaoRecebida",
+                solicitacao.TarefaId,
+                "/atron/tarefas?visao=solicitacoes");
+        }
+
         private async Task<SolicitacaoObtencaoTarefaDTO> MapearSolicitacaoAsync(SolicitacaoObtencaoTarefa solicitacao)
         {
             return new SolicitacaoObtencaoTarefaDTO
@@ -413,7 +469,7 @@ namespace Application.Services.EntitiesServices
 
         private async Task CriarNotificacaoDecisaoSolicitacaoAsync(SolicitacaoObtencaoTarefa solicitacao, bool aprovada)
         {
-            var identificador = solicitacao.Tarefa?.Identificador?.ToString() ?? solicitacao.TarefaId.ToString();
+            var identificador = ObterIdentificadorTarefa(solicitacao.Tarefa, solicitacao.TarefaId);
             var titulo = aprovada
                 ? "Solicitacao de tarefa aprovada"
                 : "Solicitacao de tarefa recusada";
@@ -421,18 +477,57 @@ namespace Application.Services.EntitiesServices
                 ? $"Sua solicitacao para obter a tarefa {identificador} foi aprovada."
                 : $"Sua solicitacao para obter a tarefa {identificador} foi recusada.";
 
+            await CriarNotificacaoTarefaAsync(
+                solicitacao.SolicitanteId,
+                solicitacao.SolicitanteCodigo,
+                titulo,
+                mensagem,
+                aprovada ? "SolicitacaoObtencaoAprovada" : "SolicitacaoObtencaoRecusada",
+                solicitacao.TarefaId);
+        }
+
+        private async Task CriarNotificacaoTarefaAsync(
+            int usuarioId,
+            string usuarioCodigo,
+            string titulo,
+            string mensagem,
+            string tipoEvento,
+            int tarefaId,
+            string urlDestino = null)
+        {
+            if (usuarioCodigo.IsNullOrEmpty())
+            {
+                return;
+            }
+
             await _notificacaoInternaService.CriarAsync(new NotificacaoInterna
             {
-                UsuarioId = solicitacao.SolicitanteId,
-                UsuarioCodigo = solicitacao.SolicitanteCodigo,
+                UsuarioId = usuarioId,
+                UsuarioCodigo = usuarioCodigo,
                 Titulo = titulo,
                 Mensagem = mensagem,
                 Modulo = "Tarefas",
-                TipoEvento = aprovada ? "SolicitacaoObtencaoAprovada" : "SolicitacaoObtencaoRecusada",
-                TarefaId = solicitacao.TarefaId,
-                UrlDestino = $"/atron/tarefas/editar/{solicitacao.TarefaId}",
+                TipoEvento = tipoEvento,
+                TarefaId = tarefaId,
+                UrlDestino = urlDestino ?? $"/atron/tarefas/editar/{tarefaId}",
                 Lida = false
             });
+        }
+
+        private static string ObterIdentificadorTarefa(Tarefa tarefa, int? tarefaId = null)
+        {
+            return tarefa?.Identificador?.ToString() ?? tarefaId?.ToString() ?? "nao identificada";
+        }
+
+        private static string ObterNomeUsuario(Usuario usuario)
+        {
+            if (usuario is null)
+            {
+                return null;
+            }
+
+            var nome = $"{usuario.Nome} {usuario.Sobrenome}".Trim();
+            return nome.IsNullOrEmpty() ? usuario.Codigo : nome;
         }
 
         private static UsuarioDTO MapearUsuarioResumo(Usuario usuario)

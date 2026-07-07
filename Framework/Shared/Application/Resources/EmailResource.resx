@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Assunto_ConfirmeCadastro" xml:space="preserve">
+    <value>Confirme seu cadastro - Atron Platform</value>
+  </data>
+  <data name="Assunto_EmailConfirmado" xml:space="preserve">
+    <value>E-mail confirmado -  Atron Platform</value>
+  </data>
+  <data name="Assunto_RecuperacaoSenha" xml:space="preserve">
+    <value>Recuperação de Senha - Atron Platform</value>
+  </data>
   <data name="ErroConfiguracoesProvedor" xml:space="preserve">
     <value>Configurações não encontradas para o provedor: {0}</value>
   </data>

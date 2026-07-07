@@ -25,5 +25,12 @@ namespace WebApi.Controllers
             var resultado = await notificacaoInternaService.MarcarComoLidaAsync(id);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
+
+        [HttpPost("MarcarTodasComoLidas")]
+        public async Task<ActionResult<IEnumerable<NotificacaoInternaDTO>>> MarcarTodasComoLidas()
+        {
+            var resultado = await notificacaoInternaService.MarcarTodasComoLidasAsync();
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
     }
 }

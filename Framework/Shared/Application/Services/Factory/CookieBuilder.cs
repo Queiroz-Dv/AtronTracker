@@ -9,25 +9,7 @@ namespace Shared.Application.Services.Factory
         public CookieBuilder(IResponseCookies cookies)
         {
             _cookies = cookies;
-        }
-
-        protected void MontarCookie(string chaveDoCookie, string dado)
-        {
-            try
-            {
-                _cookies.Append(chaveDoCookie, dado, new CookieOptions
-                {
-                    HttpOnly = true,
-                    SameSite = SameSiteMode.None,
-                    Secure = true,
-                    Expires = DateTime.UtcNow.AddDays(31) // Expandi para 31 por padrão o token de acesso difere desse tempo
-                });
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+        }        
 
         protected void MontarCookie(string chaveDoCookie, string dado, DateTime expiracao)
         {

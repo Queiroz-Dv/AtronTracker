@@ -23,6 +23,7 @@ export const routes: Routes = [
       { path: 'planejamento-custos', canActivate: [ModuloGuard], data: { moduloCodigo: 'PLC' }, loadChildren: () => import('./features/planejamento-custos/planejamento-custos.module').then(m => m.PlanejamentoCustosModule) },
       { path: 'usuarios', canActivate: [ModuloGuard], data: { moduloCodigo: 'USR' }, loadChildren: () => import('./features/usuarios/usuario-routing.module').then(m => m.UsuarioRoutingModule) },
       { path: 'tarefas', canActivate: [ModuloGuard], data: { moduloCodigo: 'TAR' }, loadChildren: () => import('./features/tarefas/tarefa-routing.module').then(m => m.TarefaRoutingModule) },
+      { path: 'notificacoes', loadComponent: () => import('./features/notificacoes/components/notificacao-interna-view/notificacao-interna-view.component').then(m => m.NotificacaoInternaViewComponent) },
       { path: 'perfil-de-acesso', canActivate: [ModuloGuard], data: { moduloCodigo: 'PERF' }, loadChildren: () => import('./features/perfil-de-acesso/perfil-de-acesso.module').then(m => m.PerfilModule) },
     ]
   },
