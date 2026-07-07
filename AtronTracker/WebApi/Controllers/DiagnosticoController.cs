@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Shared.Application.DTOS.Requests;
+using Shared.Application.DTOS.Responses;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
@@ -12,6 +14,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -30,19 +33,22 @@ namespace WebApi.Controllers
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
         private readonly ICacheProviderInfoService _cacheProviderInfoService;
+        private readonly IEmailDiagnosticService _emailDiagnosticService;
 
         public DiagnosticoController(
             ICacheService cacheService,
             IDataProtectionProvider dataProtectionProvider,
             IConfiguration configuration,
             IWebHostEnvironment environment,
-            ICacheProviderInfoService cacheProviderInfoService)
+            ICacheProviderInfoService cacheProviderInfoService,
+            IEmailDiagnosticService emailDiagnosticService)
         {
             _cacheService = cacheService;
             _protector = dataProtectionProvider.CreateProtector("DiagnosticoCookieProtector");
             _configuration = configuration;
             _environment = environment;
             _cacheProviderInfoService = cacheProviderInfoService;
+            _emailDiagnosticService = emailDiagnosticService;
         }
 
         [HttpGet("Status")]
@@ -335,6 +341,19 @@ namespace WebApi.Controllers
                 HorarioServidorUtc = DateTime.UtcNow,
                 HorarioServidorLocal = DateTime.Now
             });
+        }
+
+        [HttpPost("Email/Enviar")]
+        public async Task<ActionResult<EmailStatusResponse>> EnviarEmail([FromBody] EmailRequest request)
+        {
+            if (!PodeExecutarDiagnostico())
+                return NotFound();
+
+            var resultado = await _emailDiagnosticService.EnviarDiagnosticoAsync(request);
+
+            return resultado.Sucesso
+                ? Ok(resultado)
+                : BadRequest(resultado);
         }
 
         private bool PodeExecutarDiagnostico()

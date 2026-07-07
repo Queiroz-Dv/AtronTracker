@@ -106,9 +106,17 @@ namespace Infrastructure.Repositories
             return await QueryTarefasComRelacionamentos()
                 .Where(trf =>
                     trf.Usuario != null &&
-                    trf.Usuario.GestorImediatoId == gestorId &&
-                    trf.Usuario.GestorImediatoCodigo == gestorCodigo &&
-                    trf.TarefaEstadoId != EstadoFinalizadaId                    
+                    trf.TarefaEstadoId != EstadoFinalizadaId &&
+                    (
+                        (
+                            trf.Usuario.GestorImediatoId == gestorId &&
+                            trf.Usuario.GestorImediatoCodigo == gestorCodigo
+                        ) ||
+                        trf.Usuario.UsuarioCargoDepartamentos.Any(rel =>
+                            rel.Departamento != null &&
+                            rel.Departamento.GestorDepartamentoId == gestorId &&
+                            rel.Departamento.GestorDepartamentoCodigo == gestorCodigo)
+                    )
                     )
                 .OrderByDescending(trf => trf.Identificador)
                 .ToListAsync();
@@ -185,6 +193,9 @@ namespace Infrastructure.Repositories
                     .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
                     .ThenInclude(dpt => dpt.Departamento)
+                .Include(trf => trf.Usuario)
+                    .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
+                    .ThenInclude(rel => rel.Departamento)
                 .Include(trf => trf.Departamento)
                 .Include(trf => trf.Cargo);
         }

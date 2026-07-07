@@ -1,6 +1,7 @@
 :host {
   display: block;
   font-family: var(--atron-font-sans);
+  min-width: 0;
   width: 100%;
 }
 
@@ -12,6 +13,8 @@
   color: var(--atron-text);
   display: grid;
   gap: 16px;
+  min-width: 0;
+  overflow: hidden;
   padding: 16px;
   width: 100%;
 }
@@ -24,10 +27,10 @@
 
 .usuario-info-icon {
   align-items: center;
-  background: var(--atron-primary-soft);
-  border: 1px solid color-mix(in srgb, var(--atron-primary) 24%, var(--atron-border));
+  background: color-mix(in srgb, var(--atron-primary) 18%, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--atron-primary) 42%, var(--atron-border));
   border-radius: var(--atron-radius-sm);
-  color: var(--atron-primary);
+  color: var(--atron-primary-strong);
   display: inline-flex;
   height: 42px;
   justify-content: center;
@@ -60,7 +63,8 @@
 .usuario-info-grid {
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(180px, 1.1fr) minmax(160px, 0.9fr) minmax(200px, 1fr) minmax(120px, 0.6fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
 }
 
 .usuario-info-item {
@@ -77,6 +81,7 @@
   color: var(--atron-text-muted);
   font-size: 0.78rem;
   font-weight: 700;
+  overflow-wrap: anywhere;
   text-transform: uppercase;
 }
 
@@ -86,18 +91,6 @@
   font-weight: 700;
   line-height: 1.25;
   overflow-wrap: anywhere;
-}
-
-.usuario-info-total {
-  align-content: center;
-  background: var(--atron-primary-soft);
-  border-color: color-mix(in srgb, var(--atron-primary) 22%, var(--atron-border));
-  text-align: center;
-}
-
-.usuario-info-total strong {
-  color: var(--atron-primary-strong);
-  font-size: 1.35rem;
 }
 
 @media (max-width: 980px) {

@@ -1,9 +1,9 @@
 <div [formGroup]="tarefaForm" class="tarefa-form">
-  <section class="tarefa-card">
+  <section class="tarefa-card tarefa-destino-card">
     <header class="tarefa-section-header">
       <div>
         <p class="tarefa-eyebrow">Rotina operacional</p>
-        <h2>Cadastro de Tarefas</h2>
+        <h2>Cadastro de tarefas</h2>
       </div>
     </header>
 
@@ -20,7 +20,7 @@
 
     @if (tarefaForm.get('destinoInicial').value === 1) {
       <mat-form-field appearance="outline" class="tarefa-usuario-field">
-        <mat-label>Selecione o usuario</mat-label>
+        <mat-label>Selecione o usuário</mat-label>
         <mat-icon matPrefix>person_search</mat-icon>
         <input type="text" matInput [formControl]="usuarioControl" [matAutocomplete]="autoUsr" />
         <c-control-error [control]="tarefaForm.get('usuarioCodigo')"></c-control-error>
@@ -34,8 +34,7 @@
       <c-usuario-informacoes
         [nome]="tarefaForm.get('usuarioNome').value"
         [cargoDescricao]="tarefaForm.get('cargoDescricao').value"
-        [departamentoDescricao]="tarefaForm.get('departamentoDescricao').value"
-        [totalDeTarefas]="totalDeTarefas">
+        [departamentoDescricao]="tarefaForm.get('departamentoDescricao').value">
       </c-usuario-informacoes>
     }
 
@@ -52,7 +51,7 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="tarefa-usuario-field">
-        <mat-label>Cargo opcional</mat-label>
+        <mat-label>Cargo</mat-label>
         <mat-icon matPrefix>badge</mat-icon>
         <input type="text" matInput [formControl]="cargoControl" [matAutocomplete]="autoCargo" />
         <mat-autocomplete #autoCargo="matAutocomplete" [displayWith]="exibirCargo">
@@ -68,38 +67,38 @@
     <header class="tarefa-section-header">
       <div>
         <p class="tarefa-eyebrow">Detalhes</p>
-        <h2>Informacoes da tarefa</h2>
+        <h2>Informações da tarefa</h2>
       </div>
     </header>
 
     <div class="tarefa-fields">
       <mat-form-field appearance="outline" class="tarefa-title-field">
-        <mat-label>Titulo</mat-label>
+        <mat-label>Título</mat-label>
         <input matInput formControlName="titulo" />
         <c-control-error [control]="tarefaForm.get('titulo')"></c-control-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="tarefa-content-field">
-        <mat-label>Conteudo</mat-label>
+        <mat-label>Conteúdo</mat-label>
         <textarea matInput rows="4" formControlName="conteudo"></textarea>
         <c-control-error [control]="tarefaForm.get('conteudo')"></c-control-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Data Inicial</mat-label>
+        <mat-label>Data inicial</mat-label>
         <input matInput appDateMask [matDatepicker]="dataInicialPicker" placeholder="dd/MM/yyyy" formControlName="dataInicial" />
         <mat-datepicker-toggle matIconSuffix [for]="dataInicialPicker"></mat-datepicker-toggle>
         <mat-datepicker #dataInicialPicker></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Data Final</mat-label>
+        <mat-label>Data final</mat-label>
         <input matInput appDateMask [matDatepicker]="dataFinalPicker" placeholder="dd/MM/yyyy" formControlName="dataFinal" />
         <mat-datepicker-toggle matIconSuffix [for]="dataFinalPicker"></mat-datepicker-toggle>
         <mat-datepicker #dataFinalPicker></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="tarefa-status-field">
         <mat-label>Estado da tarefa</mat-label>
         <mat-icon matPrefix>task_alt</mat-icon>
         <input type="text" matInput [formControl]="estadoControl" [matAutocomplete]="autoEstado" />
@@ -111,9 +110,11 @@
         </mat-autocomplete>
       </mat-form-field>
 
-      <mat-checkbox formControlName="exigeAprovacaoParaObter">
-        Exige aprovacao para obter
-      </mat-checkbox>
+      @if (exibirAprovacaoParaObter()) {
+        <mat-checkbox class="tarefa-approval-checkbox" formControlName="exigeAprovacaoParaObter">
+          Exigir aprovação
+        </mat-checkbox>
+      }
     </div>
   </section>
 </div>

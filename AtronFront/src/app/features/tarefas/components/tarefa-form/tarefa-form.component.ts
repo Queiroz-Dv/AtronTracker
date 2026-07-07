@@ -17,6 +17,7 @@ import { CargoService } from '../../../cargos/services/cargo.service';
 import { Departamento } from '../../../departamentos/models/departamento.model';
 import { CargoModel } from '../../../cargos/models/cargo.model';
 import { CargoResponse } from '../../../cargos/models/response/cargo-response.model';
+import { SessaoInfoService } from '../../../../shared/services/sessaoInfo.service';
 
 @Component({
   selector: 'c-tarefa-form',
@@ -40,15 +41,18 @@ export class TarefaFormComponent implements OnInit {
   todosDepartamentos: Departamento[] = [];
   cargosFiltrados: CargoResponse[] = [];
   todosCargos: CargoResponse[] = [];
-  totalDeTarefas: number = 0;
+  private usuarioLogadoCodigo: string | null = null;
 
   constructor(
     private service: TarefaService,
     private usuarioService: UsuarioService,
     private departamentoService: DepartamentosService,
-    private cargoService: CargoService) { }
+    private cargoService: CargoService,
+    private sessaoInfoService: SessaoInfoService) { }
 
   ngOnInit(): void {
+    this.usuarioLogadoCodigo = this.sessaoInfoService.obterUsuarioCodigo();
+
     forkJoin({
       usuarios: this.usuarioService.obterTodosUsuariosInformados(),
       departamentos: this.departamentoService.obterTodos(),
@@ -62,6 +66,7 @@ export class TarefaFormComponent implements OnInit {
       this.departamentosFiltrados = this.todosDepartamentos;
       this.todosCargos = cargos;
       this.cargosFiltrados = this.todosCargos;
+      this.atualizarDestinosDisponiveis();
 
       const usuarioCodigo = this.tarefaForm.get('usuarioCodigo')?.value;
       const selecionado = this.todosUsuarios.find(u => u.codigo === usuarioCodigo);
@@ -74,8 +79,13 @@ export class TarefaFormComponent implements OnInit {
     });
 
     this.destinoControl.valueChanges.subscribe(value => {
-      this.tarefaForm.patchValue({ destinoInicial: value?.id ?? DestinoInicialTarefa.Usuario });
-      this.limparEscopoIncompativel(value?.id ?? DestinoInicialTarefa.Usuario);
+      const destinoInicial = value?.id ?? DestinoInicialTarefa.Usuario;
+      this.tarefaForm.patchValue({ destinoInicial });
+      this.limparEscopoIncompativel(destinoInicial);
+      if (destinoInicial === DestinoInicialTarefa.DepartamentoCargo) {
+        this.atualizarCargosDoDepartamento(this.tarefaForm.get('departamentoCodigo')?.value ?? null, true);
+      }
+      this.atualizarAprovacaoParaObter(destinoInicial);
     });
 
     this.usuarioControl.valueChanges.subscribe(value => {
@@ -91,8 +101,6 @@ export class TarefaFormComponent implements OnInit {
         return;
       }
 
-      this.service.obterTodasTarefasRelacionadas().subscribe(tarefas => { this.totalDeTarefas = tarefas.filter(t => t.usuarioCodigo === usuario.codigo).length; });
-
       this.tarefaForm.patchValue({
         usuarioCodigo: usuario.codigo,
         usuarioNome: usuario.nome,
@@ -105,14 +113,14 @@ export class TarefaFormComponent implements OnInit {
       if (typeof value === 'string') {
         this.departamentosFiltrados = this.filtrarDepartamentos(value);
         this.tarefaForm.patchValue({ departamentoCodigo: null }, { emitEvent: false });
+        this.atualizarCargosDoDepartamento(null);
         return;
       }
 
       const departamento = value as Departamento | null;
-      this.tarefaForm.patchValue({ departamentoCodigo: departamento?.codigo ?? null });
-      this.cargosFiltrados = departamento
-        ? this.todosCargos.filter(c => c.departamentoCodigo === departamento.codigo)
-        : this.todosCargos;
+      const departamentoCodigo = departamento?.codigo ?? null;
+      this.tarefaForm.patchValue({ departamentoCodigo });
+      this.atualizarCargosDoDepartamento(departamentoCodigo);
     });
 
     this.cargoControl.valueChanges.subscribe(value => {
@@ -136,6 +144,7 @@ export class TarefaFormComponent implements OnInit {
 
     this.tarefaForm.get('destinoInicial')?.valueChanges.subscribe(() => {
       this.sincronizarDestinoSelecionado();
+      this.atualizarAprovacaoParaObter();
     });
 
     this.tarefaForm.get('departamentoCodigo')?.valueChanges.subscribe(() => {
@@ -190,6 +199,54 @@ export class TarefaFormComponent implements OnInit {
     if (selecionado) {
       this.destinoControl.setValue(selecionado, { emitEvent: false });
     }
+
+    this.atualizarAprovacaoParaObter(destinoInicial);
+  }
+
+  exibirAprovacaoParaObter(): boolean {
+    return this.tarefaForm.get('destinoInicial')?.value !== DestinoInicialTarefa.Usuario;
+  }
+
+  private atualizarDestinosDisponiveis(): void {
+    const podeSelecionarDepartamentoCargo = this.usuarioLogadoEhGestorDepartamento();
+    this.destinosIniciais = DestinoInicialTarefa
+      .getDestinos()
+      .filter(destino =>
+        podeSelecionarDepartamentoCargo ||
+        destino.id !== DestinoInicialTarefa.DepartamentoCargo);
+
+    const destinoAtual = this.tarefaForm.get('destinoInicial')?.value;
+    const destinoPermitido = this.destinosIniciais.some(destino => destino.id === destinoAtual);
+    if (!destinoPermitido) {
+      this.tarefaForm.patchValue({ destinoInicial: DestinoInicialTarefa.Usuario });
+      this.limparEscopoIncompativel(DestinoInicialTarefa.Usuario);
+    }
+
+    this.sincronizarDestinoSelecionado();
+  }
+
+  private usuarioLogadoEhGestorDepartamento(): boolean {
+    if (!this.usuarioLogadoCodigo) {
+      return false;
+    }
+
+    return this.todosDepartamentos.some(departamento =>
+      departamento.gestorDepartamentoCodigo?.toUpperCase() === this.usuarioLogadoCodigo?.toUpperCase());
+  }
+
+  private atualizarAprovacaoParaObter(destinoInicial = this.tarefaForm.get('destinoInicial')?.value): void {
+    const aprovacaoControl = this.tarefaForm.get('exigeAprovacaoParaObter');
+    if (!aprovacaoControl) {
+      return;
+    }
+
+    if (destinoInicial === DestinoInicialTarefa.Usuario) {
+      aprovacaoControl.setValue(false, { emitEvent: false });
+      aprovacaoControl.disable({ emitEvent: false });
+      return;
+    }
+
+    aprovacaoControl.enable({ emitEvent: false });
   }
 
   private filtrarUsuarios(valor: string): UsuarioResponse[] {
@@ -231,7 +288,6 @@ export class TarefaFormComponent implements OnInit {
   }
 
   private limparUsuarioSelecionado(restaurarLista: boolean = true): void {
-    this.totalDeTarefas = 0;
     if (restaurarLista) {
       this.usuarios = this.todosUsuarios;
     }
@@ -249,6 +305,7 @@ export class TarefaFormComponent implements OnInit {
 
     this.departamentoControl.setValue(selecionado || '', { emitEvent: false });
     this.departamentosFiltrados = selecionado ? [selecionado] : this.todosDepartamentos;
+    this.atualizarCargosDoDepartamento(selecionado?.codigo ?? null, true);
   }
 
   private sincronizarCargoSelecionado(): void {
@@ -256,7 +313,36 @@ export class TarefaFormComponent implements OnInit {
     const selecionado = this.todosCargos.find(c => c.codigo === cargoCodigo);
 
     this.cargoControl.setValue(selecionado || '', { emitEvent: false });
-    this.cargosFiltrados = selecionado ? [selecionado] : this.todosCargos;
+    if (selecionado) {
+      this.cargosFiltrados = [selecionado];
+    }
+  }
+
+  private atualizarCargosDoDepartamento(departamentoCodigo: string | null, preservarCargoAtual = false): void {
+    const cargosDoDepartamento = departamentoCodigo
+      ? this.todosCargos.filter(cargo => cargo.departamentoCodigo === departamentoCodigo)
+      : [];
+
+    this.cargosFiltrados = cargosDoDepartamento;
+
+    if (cargosDoDepartamento.length === 0) {
+      this.limparCargoSelecionado();
+      this.cargoControl.disable({ emitEvent: false });
+      return;
+    }
+
+    this.cargoControl.enable({ emitEvent: false });
+
+    const cargoAtual = this.tarefaForm.get('cargoCodigo')?.value;
+    const cargoAtualValido = cargosDoDepartamento.some(cargo => cargo.codigo === cargoAtual);
+    if (!preservarCargoAtual || !cargoAtualValido) {
+      this.limparCargoSelecionado();
+    }
+  }
+
+  private limparCargoSelecionado(): void {
+    this.tarefaForm.patchValue({ cargoCodigo: null }, { emitEvent: false });
+    this.cargoControl.setValue('', { emitEvent: false });
   }
 
   private limparEscopoIncompativel(destinoInicial: number): void {
@@ -271,6 +357,7 @@ export class TarefaFormComponent implements OnInit {
       }, { emitEvent: false });
       this.departamentoControl.setValue('', { emitEvent: false });
       this.cargoControl.setValue('', { emitEvent: false });
+      this.cargoControl.disable({ emitEvent: false });
     }
   }
 }

@@ -65,6 +65,10 @@ namespace Application.Services.EntitiesServices.Tarefas
             if (estrutura.TeveFalha)
                 return Resultado<TarefaPreparada>.Falhas(estrutura.Messages);
 
+            var governanca = ValidarGovernancaTarefaAtribuida(usuario.Dados, estrutura.Dados);
+            if (governanca.TeveFalha)
+                return Resultado<TarefaPreparada>.Falhas(governanca.Messages);
+
             return Resultado<TarefaPreparada>.Sucesso(new TarefaPreparada(tarefaDTO, tarefa, usuario.Dados));
         }
 
@@ -93,7 +97,7 @@ namespace Application.Services.EntitiesServices.Tarefas
             return Resultado<Usuario>.Sucesso(usuario);
         }
 
-        private async Task<Resultado> VincularEstruturaAsync(Tarefa tarefa, TarefaDTO tarefaDTO)
+        private async Task<Resultado<Departamento>> VincularEstruturaAsync(Tarefa tarefa, TarefaDTO tarefaDTO)
         {
             if (tarefaDTO.DepartamentoCodigo.IsNullOrEmpty())
             {
@@ -101,13 +105,13 @@ namespace Application.Services.EntitiesServices.Tarefas
                 tarefa.DepartamentoCodigo = null;
                 tarefa.CargoId = null;
                 tarefa.CargoCodigo = null;
-                return Resultado.Sucesso();
+                return Resultado<Departamento>.Sucesso(null);
             }
 
             var departamento = await _departamentoRepository
                 .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(tarefaDTO.DepartamentoCodigo.ToUpper());
             if (departamento is null)
-                return Resultado.Falha("Departamento da tarefa nao encontrado.");
+                return Resultado<Departamento>.Falha("Departamento da tarefa nao encontrado.");
 
             tarefa.DepartamentoId = departamento.Id;
             tarefa.DepartamentoCodigo = departamento.Codigo;
@@ -116,20 +120,55 @@ namespace Application.Services.EntitiesServices.Tarefas
             {
                 tarefa.CargoId = null;
                 tarefa.CargoCodigo = null;
-                return Resultado.Sucesso();
+                return Resultado<Departamento>.Sucesso(departamento);
             }
 
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(tarefaDTO.CargoCodigo.ToUpper());
             if (cargo is null)
-                return Resultado.Falha("Cargo da tarefa nao encontrado.");
+                return Resultado<Departamento>.Falha("Cargo da tarefa nao encontrado.");
 
             if (cargo.DepartamentoId != departamento.Id || cargo.DepartamentoCodigo != departamento.Codigo)
-                return Resultado.Falha("Cargo informado nao pertence ao departamento da tarefa.");
+                return Resultado<Departamento>.Falha("Cargo informado nao pertence ao departamento da tarefa.");
 
             tarefa.CargoId = cargo.Id;
             tarefa.CargoCodigo = cargo.Codigo;
 
-            return Resultado.Sucesso();
+            return Resultado<Departamento>.Sucesso(departamento);
+        }
+
+        private static Resultado ValidarGovernancaTarefaAtribuida(Usuario usuario, Departamento departamentoTarefa)
+        {
+            if (usuario is null || TemGestorImediato(usuario))
+            {
+                return Resultado.Sucesso();
+            }
+
+            if (TemGestorDepartamento(departamentoTarefa))
+            {
+                return Resultado.Sucesso();
+            }
+
+            var departamentoDoUsuarioComGestor = usuario.UsuarioCargoDepartamentos?
+                .Any(rel => TemGestorDepartamento(rel.Departamento)) == true;
+
+            if (departamentoDoUsuarioComGestor)
+            {
+                return Resultado.Sucesso();
+            }
+
+            return Resultado.Falha("Nao foi possivel criar a tarefa porque o usuario responsavel nao possui gestor imediato e o departamento nao possui gestor definido.");
+        }
+
+        private static bool TemGestorImediato(Usuario usuario)
+        {
+            return usuario.GestorImediatoId.HasValue && !usuario.GestorImediatoCodigo.IsNullOrEmpty();
+        }
+
+        private static bool TemGestorDepartamento(Departamento departamento)
+        {
+            return departamento is not null &&
+                   departamento.GestorDepartamentoId.HasValue &&
+                   !departamento.GestorDepartamentoCodigo.IsNullOrEmpty();
         }
 
         private static TarefaEstadoDTO MapearEstado(TarefaEstado estado)

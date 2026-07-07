@@ -13,5 +13,4 @@ export class UsuarioInformacoesComponent {
   @Input() nome!: string;
   @Input() cargoDescricao!: string;
   @Input() departamentoDescricao!: string;
-  @Input() totalDeTarefas!: number;
 }

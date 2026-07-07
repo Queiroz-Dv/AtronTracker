@@ -22,10 +22,10 @@
           Equipe
         </button>
         <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'disponiveis'" (click)="selecionarVisao('disponiveis')">
-          Disponiveis
+          Disponíveis
         </button>
         <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'solicitacoes'" (click)="selecionarVisao('solicitacoes')">
-          Solicitacoes
+          Solicitações
         </button>
       </div>
 
@@ -95,10 +95,10 @@
               <button *ngIf="visaoAtual === 'disponiveis'" class="list-icon-action" mat-icon-button title="Obter tarefa" (click)="obter(trf)">
                 <mat-icon>assignment_ind</mat-icon>
               </button>
-              <button *ngIf="visaoAtual === 'solicitacoes'" class="list-icon-action" mat-icon-button title="Aprovar solicitacao" (click)="aprovar(trf.solicitacaoId)">
+              <button *ngIf="visaoAtual === 'solicitacoes'" class="list-icon-action" mat-icon-button title="Aprovar solicitação" (click)="aprovar(trf.solicitacaoId)">
                 <mat-icon>check</mat-icon>
               </button>
-              <button *ngIf="visaoAtual === 'solicitacoes'" class="list-icon-action-danger" mat-icon-button title="Recusar solicitacao" (click)="recusar(trf.solicitacaoId)">
+              <button *ngIf="visaoAtual === 'solicitacoes'" class="list-icon-action-danger" mat-icon-button title="Recusar solicitação" (click)="recusar(trf.solicitacaoId)">
                 <mat-icon>close</mat-icon>
               </button>
               <button *ngIf="visaoAtual !== 'disponiveis' && visaoAtual !== 'solicitacoes'" class="list-icon-action" mat-icon-button title="Editar tarefa" (click)="editar(trf.id)">

@@ -5,6 +5,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>bin/IoC.xml</DocumentationFile>
 	  <NoWarn>1591</NoWarn>
+    <UserSecretsId>26ac2834-f43a-4f0e-b344-6766656479a4</UserSecretsId>
   </PropertyGroup> 
 
   <ItemGroup>

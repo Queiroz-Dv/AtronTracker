@@ -22,6 +22,25 @@
   padding: 18px 20px;
 }
 
+.tarefa-destino-card {
+  align-items: start;
+  grid-template-columns: minmax(280px, 520px) minmax(0, 1fr);
+}
+
+.tarefa-destino-card .tarefa-section-header {
+  grid-column: 1 / -1;
+}
+
+.tarefa-destino-card .tarefa-usuario-field {
+  grid-column: 1;
+}
+
+.tarefa-destino-card c-usuario-informacoes {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  min-width: 0;
+}
+
 .tarefa-section-header {
   align-items: center;
   display: flex;
@@ -64,6 +83,16 @@
   resize: vertical;
 }
 
+.tarefa-approval-checkbox {
+  align-self: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tarefa-status-field {
+  min-width: 0;
+}
+
 .tarefa-actions {
   align-items: center;
   display: flex;
@@ -96,6 +125,19 @@
   display: block;
 }
 
+:host ::ng-deep .tarefa-card .mat-mdc-form-field-icon-prefix,
+:host ::ng-deep .tarefa-card .mat-mdc-form-field-icon-suffix,
+:host ::ng-deep .tarefa-card mat-icon {
+  color: var(--atron-primary-strong);
+  opacity: 1;
+}
+
+:host ::ng-deep .tarefa-card .mat-mdc-checkbox .mdc-label {
+  color: var(--atron-text);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
 @media (max-width: 720px) {
   .tarefa-edit-form {
     margin-top: 16px;
@@ -108,5 +150,16 @@
 
   .tarefa-fields {
     grid-template-columns: 1fr;
+  }
+
+  .tarefa-destino-card {
+    grid-template-columns: 1fr;
+  }
+
+  .tarefa-destino-card .tarefa-section-header,
+  .tarefa-destino-card .tarefa-usuario-field,
+  .tarefa-destino-card c-usuario-informacoes {
+    grid-column: 1;
+    grid-row: auto;
   }
 }

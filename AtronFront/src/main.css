@@ -414,10 +414,12 @@ a {
 }
 
 .list-icon-action {
-  color: var(--atron-primary) !important;
+  background: var(--atron-primary-soft) !important;
+  color: var(--atron-primary-strong) !important;
 }
 
 .list-icon-action-danger {
+  background: #fef2f2 !important;
   color: var(--atron-danger) !important;
 }
 

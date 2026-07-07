@@ -9,7 +9,7 @@ using Shared.Extensions;
 namespace Shared.Application.Services.Email
 {
     /// <summary>
-    /// Serviço para diagnóstico de configurações de e-mail.
+    /// Servico para diagnostico de configuracoes de e-mail.
     /// </summary>
     public class EmailDiagnosticService : IEmailDiagnosticService
     {
@@ -40,76 +40,95 @@ namespace Shared.Application.Services.Email
             }
         }
 
-        /// <inheritdoc/>
         public async Task<EmailStatusResponse> EnviarDiagnosticoAsync(EmailRequest request)
         {
-            if (request.EmailsDestino.Count < 0)
+            if (request.EmailsDestino is null || request.EmailsDestino.Count == 0)
             {
                 return EmailStatusResponse.CriarErro(
-                    "E-mail de destino é obrigatório.",
-                    "O campo 'emailDestino' deve ser preenchido.");
+                    "E-mail de destino e obrigatorio.",
+                    "O campo 'emailsDestino' deve ser preenchido.");
             }
 
             var configResult = await VerificarConfiguracaoAsync();
             if (!configResult.Sucesso)
-            {
                 return configResult;
-            }
 
             try
             {
-                var assunto = string.IsNullOrWhiteSpace(request.Assunto)
-                    ? $"[DIAGNÓSTICO] Verificação do serviço de e-mail - {DateTime.Now:dd/MM/yyyy HH:mm}"
+                request.Assunto = string.IsNullOrWhiteSpace(request.Assunto)
+                    ? $"[DIAGNOSTICO] Verificacao do servico de e-mail - {DateTime.Now:dd/MM/yyyy HH:mm}"
                     : request.Assunto;
 
-                var corpo = GerarCorpoEmailDiagnostico(request.Mensagem);
+                request.Mensagem = GerarCorpoEmailDiagnostico(request.Mensagem);
 
-                await _emailService.EnviarAsync(request);
+                var envio = await _emailService.EnviarAsync(request);
+                if (envio.TeveFalha)
+                {
+                    return EmailStatusResponse.CriarErro(
+                        "Falha ao enviar e-mail de diagnostico.",
+                        string.Join(" | ", envio.Messages.Select(mensagem => mensagem.Descricao)));
+                }
 
                 return EmailStatusResponse.CriarSucesso(
-                    _provider.ToString(),
-                    _providerSettings!.SmtpHost,
-                    _providerSettings.SmtpPort,
+                    ObterProviderConfigurado(),
+                    ObterHostStatus(),
+                    ObterPortaStatus(),
                     _settings.FromEmail,
                     request.EmailsDestino);
             }
             catch (Exception ex)
             {
                 return EmailStatusResponse.CriarErro(
-                    "Falha ao enviar e-mail de diagnóstico.",
+                    "Falha ao enviar e-mail de diagnostico.",
                     $"{ex.GetType().Name}: {ex.Message}");
             }
         }
 
-        /// <inheritdoc/>
         public Task<EmailStatusResponse> VerificarConfiguracaoAsync()
         {
             if (string.IsNullOrWhiteSpace(_settings.FromEmail))
             {
                 return Task.FromResult(EmailStatusResponse.CriarErro(
-                    "E-mail do remetente não configurado.",
-                    "Configure 'EmailSettings:FromEmail' no appsettings.json."));
-            }
-
-            if (string.IsNullOrWhiteSpace(_settings.Password))
-            {
-                return Task.FromResult(EmailStatusResponse.CriarErro(
-                    "Senha do remetente não configurada.",
-                    "Configure 'EmailSettings:Password' no appsettings.json."));
+                    "E-mail do remetente nao configurado.",
+                    "Configure 'EmailSettings:FromEmail'."));
             }
 
             if (string.IsNullOrWhiteSpace(_settings.FromName))
             {
                 return Task.FromResult(EmailStatusResponse.CriarErro(
-                    "Nome do remetente não configurado.",
-                    "Configure 'EmailSettings:FromName' no appsettings.json."));
+                    "Nome do remetente nao configurado.",
+                    "Configure 'EmailSettings:FromName'."));
+            }
+
+            if (UsarBrevo())
+            {
+                if (string.IsNullOrWhiteSpace(_settings.Brevo.ApiKey))
+                {
+                    return Task.FromResult(EmailStatusResponse.CriarErro(
+                        "API key da Brevo nao configurada.",
+                        "Configure 'EmailSettings:Brevo:ApiKey' via variavel de ambiente ou secrets."));
+                }
+
+                return Task.FromResult(EmailStatusResponse.CriarStatus(
+                    true,
+                    "Brevo",
+                    ObterHostStatus(),
+                    443,
+                    _settings.FromEmail));
+            }
+
+            if (string.IsNullOrWhiteSpace(_settings.Password))
+            {
+                return Task.FromResult(EmailStatusResponse.CriarErro(
+                    "Senha do remetente nao configurada.",
+                    "Configure 'EmailSettings:Password'."));
             }
 
             if (_provider == EmailProvider.Desconhecido || _providerSettings == null)
             {
                 return Task.FromResult(EmailStatusResponse.CriarErro(
-                    "Provedor de e-mail não suportado.",
-                    $"O domínio do e-mail '{_settings.FromEmail}' não é suportado. " +
+                    "Provedor de e-mail nao suportado.",
+                    $"O dominio do e-mail '{_settings.FromEmail}' nao e suportado. " +
                     "Provedores suportados: Gmail, Outlook (Hotmail/Live/MSN), Yahoo."));
             }
 
@@ -121,14 +140,16 @@ namespace Shared.Application.Services.Email
                 _settings.FromEmail));
         }
 
-        /// <inheritdoc/>
         public Task<EmailStatusResponse> ObterStatusAsync()
         {
             var operacional =
                 !string.IsNullOrWhiteSpace(_settings.FromEmail) &&
-                !string.IsNullOrWhiteSpace(_settings.Password) &&
-                _provider != EmailProvider.Desconhecido &&
-                _providerSettings != null;
+                !string.IsNullOrWhiteSpace(_settings.FromName) &&
+                (UsarBrevo()
+                    ? !string.IsNullOrWhiteSpace(_settings.Brevo.ApiKey)
+                    : !string.IsNullOrWhiteSpace(_settings.Password) &&
+                      _provider != EmailProvider.Desconhecido &&
+                      _providerSettings != null);
 
             if (!operacional)
             {
@@ -136,26 +157,37 @@ namespace Shared.Application.Services.Email
                 {
                     Sucesso = false,
                     ServicoOperacional = false,
-                    Mensagem = "Serviço de e-mail não está configurado corretamente.",
+                    Mensagem = "Servico de e-mail nao esta configurado corretamente.",
                     DataOperacao = DateTime.Now
                 });
             }
 
             return Task.FromResult(EmailStatusResponse.CriarStatus(
                 true,
-                _provider.ToString(),
-                _providerSettings!.SmtpHost,
-                _providerSettings.SmtpPort,
+                ObterProviderConfigurado(),
+                ObterHostStatus(),
+                ObterPortaStatus(),
                 _settings.FromEmail));
         }
 
-        /// <summary>
-        /// Gera o corpo HTML do e-mail de diagnóstico.
-        /// </summary>
+        private bool UsarBrevo()
+            => string.Equals(_settings.Provider, "Brevo", StringComparison.OrdinalIgnoreCase);
+
+        private string ObterProviderConfigurado()
+            => UsarBrevo() ? "Brevo" : _provider.ToString();
+
+        private string ObterHostStatus()
+            => UsarBrevo()
+                ? (string.IsNullOrWhiteSpace(_settings.Brevo.BaseUrl) ? "https://api.brevo.com/v3" : _settings.Brevo.BaseUrl)
+                : _providerSettings?.SmtpHost ?? _settings.SmtpServer ?? string.Empty;
+
+        private int ObterPortaStatus()
+            => UsarBrevo() ? 443 : _providerSettings?.SmtpPort ?? _settings.SmtpPort;
+
         private string GerarCorpoEmailDiagnostico(string? mensagemPersonalizada)
         {
             var mensagem = string.IsNullOrWhiteSpace(mensagemPersonalizada)
-                ? "Este é um e-mail de diagnóstico para validar a configuração de envio do Sistema Atron."
+                ? "Este e um e-mail de diagnostico para validar a configuracao de envio do Sistema Atron."
                 : mensagemPersonalizada;
 
             return $@"
@@ -178,21 +210,20 @@ namespace Shared.Application.Services.Email
 <body>
     <div class='container'>
         <div class='header'>
-            <h1>📧 Diagnóstico de E-mail</h1>
+            <h1>Diagnostico de E-mail</h1>
         </div>
         <div class='content'>
             <p>{mensagem}</p>
             <div class='info-box'>
-                <p><strong>Provedor:</strong> {_provider}</p>
-                <p><strong>SMTP Host:</strong> {_providerSettings?.SmtpHost ?? "N/A"}</p>
-                <p><strong>SMTP Port:</strong> {_providerSettings?.SmtpPort.ToString() ?? "N/A"}</p>
+                <p><strong>Provider:</strong> {ObterProviderConfigurado()}</p>
+                <p><strong>Host:</strong> {ObterHostStatus()}</p>
                 <p><strong>Remetente:</strong> {_settings.FromEmail}</p>
                 <p><strong>Data/Hora:</strong> {DateTime.Now:dd/MM/yyyy HH:mm:ss}</p>
             </div>
-            <p>Se você recebeu este e-mail, o serviço de e-mail está funcionando corretamente!</p>
+            <p>Se voce recebeu este e-mail, o servico de e-mail esta funcionando corretamente.</p>
         </div>
         <div class='footer'>
-            <p>Módulo AtronEmail - Diagnóstico Interno</p>
+            <p>Modulo AtronEmail - Diagnostico Interno</p>
             <p>&copy; {DateTime.Now.Year} Sistema Atron</p>
         </div>
     </div>

@@ -7,7 +7,7 @@ export class DestinoInicialTarefa {
 
   static getDestinos(): DestinoInicialTarefa[] {
     return [
-      { id: DestinoInicialTarefa.Usuario, descricao: 'Usuario' },
+      { id: DestinoInicialTarefa.Usuario, descricao: 'Usuário' },
       { id: DestinoInicialTarefa.DepartamentoCargo, descricao: 'Departamento/Cargo' },
       { id: DestinoInicialTarefa.Equipe, descricao: 'Equipe' }
     ];

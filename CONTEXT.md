@@ -127,6 +127,7 @@ _Avoid_: Tarefa sempre individual, fila tecnica, responsavel implicito
 
 **Destino inicial da tarefa**:
 Escolha feita na criacao da tarefa para definir se ela nasce atribuida a um usuario, vinculada a departamento e cargo, ou direcionada para equipe do gestor. As opcoes disponiveis devem respeitar as permissoes e a responsabilidade de gestao do usuario logado.
+No cadastro de tarefas, o destino `Departamento/Cargo` deve ficar disponivel apenas para usuario que seja gestor de algum departamento. Usuario sem gestao de departamento deve poder escolher apenas `Usuario` e `Equipe` como destino inicial.
 _Avoid_: Destino unico obrigatorio, tarefa sem escopo, escolha que ignora permissao
 
 **Tarefa estrutural**:
