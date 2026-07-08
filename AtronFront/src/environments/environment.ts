@@ -1,3 +1,3 @@
 export const environment = {
-  apiRoute: 'https://atronplatform-api.onrender.com/',
+  apiRoute: 'https://atronplatform.onrender.com/',
 };
