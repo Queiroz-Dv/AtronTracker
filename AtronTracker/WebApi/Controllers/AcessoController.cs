@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Threading.Tasks;
 
@@ -46,7 +47,18 @@ namespace WebApi.Controllers
         [HttpPost(nameof(Login))]
         public async Task<ActionResult<DadosDoTokenDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
-            var resultado = await _service.Autenticar(loginDTO);
+            Resultado<DadosDoTokenDTO> resultado;
+            try
+            {
+                 resultado = await _service.Autenticar(loginDTO);
+            }
+            catch (System.Exception ex)
+            {
+                // create a failure result instead of using the unassigned 'resultado'
+                var resultadoErro = Resultado<DadosDoTokenDTO>.Falha(ex.Message);
+                return BadRequest(resultadoErro.Messages);
+            }
+
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
                 Ok(resultado.Dados);
