@@ -30,9 +30,9 @@ namespace IoC
         internal static DatabaseProviderConfiguration Resolve(IConfiguration configuration)
         {
             var connectionString =
-                configuration["ConnectionString"]
-                ?? configuration["ATRON_CONNECTION_STRING"]
+                configuration["ATRON_CONNECTION_STRING"]
                 ?? configuration.GetConnectionString(DefaultConnectionName)
+                ?? configuration["ConnectionString"]
                 ?? TryReadAtronTrackerConnectionString();
 
             if (string.IsNullOrWhiteSpace(connectionString))
@@ -84,14 +84,14 @@ namespace IoC
             using var document = JsonDocument.Parse(File.ReadAllText(filePath));
             var root = document.RootElement;
 
-            if (TryGetString(root, "ConnectionString", out var plainConnectionString))
-                return plainConnectionString;
-
             if (root.TryGetProperty("ConnectionStrings", out var connectionStrings)
                 && TryGetString(connectionStrings, DefaultConnectionName, out var defaultConnectionString))
             {
                 return defaultConnectionString;
             }
+
+            if (TryGetString(root, "ConnectionString", out var plainConnectionString))
+                return plainConnectionString;
 
             return null;
         }
