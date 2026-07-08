@@ -21,10 +21,6 @@ namespace Application.Interfaces.Services
         /// </summary>
         Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo);
 
-        Task<Resultado<UsuarioConfiguracoesDTO>> ObterConfiguracoesDoUsuarioLogadoAsync();
-
-        Task<Resultado<UsuarioConfiguracoesDTO>> AtualizarConfiguracoesDoUsuarioLogadoAsync(UsuarioConfiguracoesRequest request);
-
         /// <summary>
         /// Cria um novo usuário.
         /// </summary>

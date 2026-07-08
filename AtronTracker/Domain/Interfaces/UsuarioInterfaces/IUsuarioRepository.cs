@@ -15,6 +15,7 @@ namespace Domain.Interfaces.UsuarioInterfaces
         Task<bool> CriarUsuarioAsync(Usuario usuario);
         Task<bool> AtualizarUsuarioAsync(Usuario usuario);
         Task<bool> AtualizarPreferenciaNotificacaoTarefaPorEmailAsync(string codigo, bool receberNotificacao);
+        Task<bool> AtualizarPreferenciasNotificacaoTarefaAsync(string codigo, bool receberNotificacaoInterna, bool receberNotificacaoPorEmail);
         Task<bool> RemoverUsuarioAsync(Usuario usuario);
         Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity();
         Task<bool> VerificarEmailExistenteAsync(string email);

@@ -31,6 +31,7 @@ namespace Application.Mapping
                 Sobrenome = entity.Sobrenome,
                 Email = entity.Email,
                 DataNascimento = entity.DataNascimento,
+                ReceberNotificacaoInternaTarefa = entity.ReceberNotificacaoInternaTarefa,
                 ReceberNotificacaoTarefaPorEmail = entity.ReceberNotificacaoTarefaPorEmail,
                 GestorImediatoCodigo = entity.GestorImediatoCodigo,
                 GestorImediatoNome = ObterNomeGestor(entity.GestorImediato),
@@ -72,6 +73,7 @@ namespace Application.Mapping
                 Email = dto.Email,
                 DataNascimento = dto.DataNascimento,
                 GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper(),
+                ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa,
                 ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail
             });
         }
@@ -84,6 +86,7 @@ namespace Application.Mapping
             entityToUpdate.Email = dto.Email;
             entityToUpdate.DataNascimento = dto.DataNascimento;
             entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper();
+            entityToUpdate.ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa;
             entityToUpdate.ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail;
 
             return Task.CompletedTask;

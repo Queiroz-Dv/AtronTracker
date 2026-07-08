@@ -15,14 +15,9 @@ namespace Application.Services.EntitiesServices
 {
     public class UsuarioService : IUsuarioService
     {
-        // Mapeamento
         private readonly IAsyncMap<UsuarioDTO, Usuario> _asyncMap;
-
-        // Dados
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUserAccessor _userAccessor;
 
-        // Casos de Uso do módulo
         private readonly CriarUsuario _criarUsuario;
         private readonly AtualizarUsuario _atualizarUsuario;
         private readonly RemoverUsuario _removerUsuario;
@@ -30,7 +25,6 @@ namespace Application.Services.EntitiesServices
         private readonly ReativarUsuario _reativarUsuario;
         private readonly SolicitarReativacao _solicitarReativacao;
 
-        // Casos de Uso - E-mail
         private readonly AlterarEmail _alterarEmail;
         private readonly ConfirmarAlteracaoEmail _confirmarAlteracaoEmail;
         private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail;
@@ -38,7 +32,6 @@ namespace Application.Services.EntitiesServices
         public UsuarioService(
             IAsyncMap<UsuarioDTO, Usuario> asyncMap,
             IUsuarioRepository usuarioRepository,
-            IUserAccessor userAccessor,
             CriarUsuario criarUsuario,
             AtualizarUsuario atualizarUsuario,
             RemoverUsuario removerUsuario,
@@ -51,7 +44,6 @@ namespace Application.Services.EntitiesServices
         {
             _asyncMap = asyncMap;
             _usuarioRepository = usuarioRepository;
-            _userAccessor = userAccessor;
             _criarUsuario = criarUsuario;
             _atualizarUsuario = atualizarUsuario;
             _removerUsuario = removerUsuario;
@@ -81,10 +73,10 @@ namespace Application.Services.EntitiesServices
         public async Task<Resultado> SolicitarReativacaoAsync(string email)
             => await _solicitarReativacao.ExecutarAsync(email);
 
-        public async Task<Resultado> AlterarEmailAsync(string codigo, string emailNovo, string clienteUri) 
+        public async Task<Resultado> AlterarEmailAsync(string codigo, string emailNovo, string clienteUri)
             => await _alterarEmail.ExecutarAsync(codigo, emailNovo, clienteUri);
 
-        public async Task<Resultado> ConfirmarAlteracaoEmailAsync(string usuarioCodigo, string emailNovo, string token) 
+        public async Task<Resultado> ConfirmarAlteracaoEmailAsync(string usuarioCodigo, string emailNovo, string token)
             => await _confirmarAlteracaoEmail.ExecutarAsync(usuarioCodigo, emailNovo, token);
 
         public async Task<Resultado> ReenviarConfirmacaoEmailAsync(string codigo, string clientUri)
@@ -108,46 +100,6 @@ namespace Application.Services.EntitiesServices
 
             var dto = await _asyncMap.MapToDTOAsync(entidade);
             return Resultado<UsuarioDTO>.Sucesso(dto);
-        }
-
-        public async Task<Resultado<UsuarioConfiguracoesDTO>> ObterConfiguracoesDoUsuarioLogadoAsync()
-        {
-            var usuarioCodigo = _userAccessor.ObterCodigoUsuarioLogado();
-            if (usuarioCodigo.IsNullOrEmpty())
-                return Resultado<UsuarioConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
-
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioCodigo);
-            if (usuario is null)
-                return Resultado<UsuarioConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
-
-            return Resultado<UsuarioConfiguracoesDTO>.Sucesso(new UsuarioConfiguracoesDTO
-            {
-                ReceberNotificacaoTarefaPorEmail = usuario.ReceberNotificacaoTarefaPorEmail
-            });
-        }
-
-        public async Task<Resultado<UsuarioConfiguracoesDTO>> AtualizarConfiguracoesDoUsuarioLogadoAsync(UsuarioConfiguracoesRequest request)
-        {
-            if (request is null)
-                return Resultado<UsuarioConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNulo);
-
-            var usuarioCodigo = _userAccessor.ObterCodigoUsuarioLogado();
-            if (usuarioCodigo.IsNullOrEmpty())
-                return Resultado<UsuarioConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
-
-            var atualizado = await _usuarioRepository.AtualizarPreferenciaNotificacaoTarefaPorEmailAsync(
-                usuarioCodigo,
-                request.ReceberNotificacaoTarefaPorEmail);
-
-            if (!atualizado)
-                return Resultado<UsuarioConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
-
-            return Resultado<UsuarioConfiguracoesDTO>
-                .Sucesso(new UsuarioConfiguracoesDTO
-                {
-                    ReceberNotificacaoTarefaPorEmail = request.ReceberNotificacaoTarefaPorEmail
-                })
-                .AdicionarMensagem("Configurações do usuário atualizadas com sucesso.");
         }
     }
 }

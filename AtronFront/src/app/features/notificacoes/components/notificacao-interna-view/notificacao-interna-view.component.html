@@ -56,8 +56,11 @@
     <div class="notificacoes-lista">
       @for (notificacao of notificacoesFiltradas; track notificacao.id) {
         <article class="notificacao-item" [class.notificacao-item-unread]="!notificacao.lida">
+          <span class="notificacao-icon" aria-hidden="true">
+            <mat-icon>{{ notificacao.lida ? 'mark_email_read' : 'notifications_active' }}</mat-icon>
+          </span>
+
           <button class="notificacao-main" type="button" (click)="abrir(notificacao)">
-            <span class="notificacao-status" aria-hidden="true"></span>
             <span class="notificacao-content">
               <span class="notificacao-title">{{ notificacao.titulo }}</span>
               <span class="notificacao-message">{{ notificacao.mensagem }}</span>
@@ -73,6 +76,7 @@
             class="notificacao-read-action"
             [disabled]="notificacao.lida"
             (click)="marcarComoLida(notificacao)">
+            <mat-icon>done</mat-icon>
             Marcar como lida
           </button>
         </article>

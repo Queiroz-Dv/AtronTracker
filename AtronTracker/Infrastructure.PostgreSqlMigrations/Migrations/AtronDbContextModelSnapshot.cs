@@ -582,6 +582,11 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("character varying(25)");
 
+                    b.Property<bool>("ReceberNotificacaoInternaTarefa")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<bool>("ReceberNotificacaoTarefaPorEmail")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")

@@ -1,31 +1,34 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
-import { SharedModule } from '../../../../shared/modules/shared.module';
-import { UsuarioService } from '../../services/usuario.service';
 import { Nivel, NotificacaoService } from '../../../../core/services/notification.service';
+import { SharedModule } from '../../../../shared/modules/shared.module';
+import { TarefaService } from '../../services/tarefa.service';
 
 @Component({
-  selector: 'c-usuario-configuracoes',
+  selector: 'c-tarefa-configuracoes',
+  standalone: true,
   imports: [ReactiveFormsModule, SharedModule],
-  templateUrl: './usuario-configuracoes.component.html',
-  styleUrl: './usuario-configuracoes.component.css',
+  templateUrl: './tarefa-configuracoes.component.html',
+  styleUrl: './tarefa-configuracoes.component.css',
 })
-export class UsuarioConfiguracoesComponent implements OnInit {
+export class TarefaConfiguracoesComponent implements OnInit {
   form!: FormGroup;
   carregando = false;
+  salvando = false;
 
   private notificacaoService = inject(NotificacaoService);
 
   constructor(
     private fb: FormBuilder,
-    private service: UsuarioService,
+    private service: TarefaService,
     public router: Router
   ) { }
 
   ngOnInit(): void {
     this.form = this.fb.group({
+      receberNotificacaoInternaTarefa: [true],
       receberNotificacaoTarefaPorEmail: [false]
     });
 
@@ -42,18 +45,28 @@ export class UsuarioConfiguracoesComponent implements OnInit {
       },
       error: erro => {
         this.carregando = false;
-        this.exibirErro(erro, 'Erro ao carregar configurações.');
+        this.exibirErro(erro, 'Erro ao carregar configuracoes de tarefas.');
       }
     });
   }
 
   salvar(): void {
-    const configuracoes = this.form.getRawValue();
+    this.salvando = true;
 
-    this.service.atualizarConfiguracoes(configuracoes).subscribe({
-      next: mensagens => this.notificacaoService.exibirMensagens(mensagens),
-      error: erro => this.exibirErro(erro, 'Erro ao atualizar configurações.')
+    this.service.atualizarConfiguracoes(this.form.getRawValue()).subscribe({
+      next: mensagens => {
+        this.salvando = false;
+        this.notificacaoService.exibirMensagens(mensagens);
+      },
+      error: erro => {
+        this.salvando = false;
+        this.exibirErro(erro, 'Erro ao atualizar configuracoes de tarefas.');
+      }
     });
+  }
+
+  voltar(): void {
+    this.router.navigate(['atron/tarefas']);
   }
 
   private exibirErro(erro: unknown, mensagemPadrao: string): void {

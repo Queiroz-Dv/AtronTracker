@@ -70,6 +70,69 @@
 
 /* ... (restante do seu CSS global) */
 
+.snackbar-sucesso,
+.snackbar-erro,
+.snackbar-aviso,
+.snackbar-info {
+  --mdc-snackbar-container-shape: var(--atron-radius-sm);
+  --mdc-snackbar-supporting-text-font: var(--atron-font-sans);
+  --mat-snack-bar-button-color: currentColor;
+}
+
+.snackbar-sucesso .mdc-snackbar__surface,
+.snackbar-erro .mdc-snackbar__surface,
+.snackbar-aviso .mdc-snackbar__surface,
+.snackbar-info .mdc-snackbar__surface {
+  border: 1px solid;
+  box-shadow: var(--atron-shadow-md);
+  min-width: min(420px, calc(100vw - 32px));
+}
+
+.snackbar-sucesso .mdc-snackbar__label,
+.snackbar-erro .mdc-snackbar__label,
+.snackbar-aviso .mdc-snackbar__label,
+.snackbar-info .mdc-snackbar__label {
+  color: var(--atron-text);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.snackbar-sucesso .mdc-snackbar__surface {
+  background: #ecfdf3;
+  border-color: #bbf7d0;
+}
+
+.snackbar-erro .mdc-snackbar__surface {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.snackbar-aviso .mdc-snackbar__surface {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.snackbar-info .mdc-snackbar__surface {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.snackbar-sucesso .mat-mdc-snack-bar-action {
+  color: var(--atron-success) !important;
+}
+
+.snackbar-erro .mat-mdc-snack-bar-action {
+  color: var(--atron-danger) !important;
+}
+
+.snackbar-aviso .mat-mdc-snack-bar-action {
+  color: var(--atron-warning) !important;
+}
+
+.snackbar-info .mat-mdc-snack-bar-action {
+  color: var(--atron-info) !important;
+}
+
 html,
 body {
   height: 100%;

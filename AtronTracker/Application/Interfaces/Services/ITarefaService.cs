@@ -1,4 +1,5 @@
 using Application.DTO;
+using Application.DTO.Request;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,6 +19,10 @@ namespace Application.Services
         Task<Resultado<List<SolicitacaoObtencaoTarefaDTO>>> ObterSolicitacoesAsync();
 
         Task<Resultado<List<TarefaEstadoDTO>>> ObterEstadosAsync();
+
+        Task<Resultado<TarefaConfiguracoesDTO>> ObterConfiguracoesAsync();
+
+        Task<Resultado<TarefaConfiguracoesDTO>> AtualizarConfiguracoesAsync(TarefaConfiguracoesRequest request);
 
         Task<Resultado<TarefaDTO>> CriarAsync(TarefaDTO tarefaDTO);
 

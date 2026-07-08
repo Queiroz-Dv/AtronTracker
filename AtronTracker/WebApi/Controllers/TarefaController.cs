@@ -1,4 +1,5 @@
 using Application.DTO;
+using Application.DTO.Request;
 using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +55,20 @@ namespace WebApi.Controllers
         {
             var resultado = await tarefaService.ObterEstadosAsync();
             return Ok(resultado.Dados);
+        }
+
+        [HttpGet("Configuracoes")]
+        public async Task<ActionResult<TarefaConfiguracoesDTO>> ObterConfiguracoes()
+        {
+            var resultado = await tarefaService.ObterConfiguracoesAsync();
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpPut("Configuracoes")]
+        public async Task<ActionResult> AtualizarConfiguracoes([FromBody] TarefaConfiguracoesRequest request)
+        {
+            var resultado = await tarefaService.AtualizarConfiguracoesAsync(request);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         [HttpPost]

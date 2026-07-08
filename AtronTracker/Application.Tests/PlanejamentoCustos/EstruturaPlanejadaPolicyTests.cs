@@ -200,6 +200,9 @@ public class EstruturaPlanejadaPolicyTests
         public Task<bool> AtualizarPreferenciaNotificacaoTarefaPorEmailAsync(string codigo, bool receberNotificacao)
             => Task.FromResult(true);
 
+        public Task<bool> AtualizarPreferenciasNotificacaoTarefaAsync(string codigo, bool receberNotificacaoInterna, bool receberNotificacaoPorEmail)
+            => Task.FromResult(true);
+
         public Task<bool> AtualizarRepositoryAsync(Usuario entity) => Task.FromResult(true);
 
         public Task<bool> AtualizarRepositoryAsync(int id, Usuario entity) => Task.FromResult(true);

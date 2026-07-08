@@ -42,6 +42,7 @@ namespace Application.Mapping
                 DataNascimento = dto.DataNascimento,
                 Email = dto.Email,
                 GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper(),
+                ReceberNotificacaoInternaTarefa = true,
                 ReceberNotificacaoTarefaPorEmail = false
             };
 

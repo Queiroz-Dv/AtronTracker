@@ -1,0 +1,40 @@
+<main class="form-page">
+  <form [formGroup]="form" (ngSubmit)="salvar()" class="form-container tarefa-configuracoes">
+    <section class="settings-header">
+      <p class="settings-eyebrow">Preferencias de tarefas</p>
+      <h2>Configuracoes</h2>
+      <p class="settings-description">
+        Defina como deseja receber avisos relacionados ao fluxo de tarefas.
+      </p>
+    </section>
+
+    <section class="settings-grid" aria-label="Preferencias de notificacao de tarefas">
+      <article class="settings-option">
+        <mat-checkbox formControlName="receberNotificacaoInternaTarefa">
+          Notificacoes internas de tarefas
+        </mat-checkbox>
+        <p>
+          Mantem avisos de tarefas na central de notificacoes. Eventos criticos continuam sendo enviados para proteger o fluxo operacional.
+        </p>
+      </article>
+
+      <article class="settings-option">
+        <mat-checkbox formControlName="receberNotificacaoTarefaPorEmail">
+          Notificacoes de tarefas por e-mail
+        </mat-checkbox>
+        <p>
+          Envia e-mails complementares quando uma tarefa for atribuida diretamente a voce.
+        </p>
+      </article>
+    </section>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit" [disabled]="carregando || salvando">
+        Salvar
+      </button>
+      <button mat-raised-button type="button" (click)="voltar()">
+        Voltar
+      </button>
+    </mat-card-actions>
+  </form>
+</main>

@@ -17,6 +17,7 @@ namespace Infrastructure.EntitiesConfiguration
             builder.Property(usr => usr.Email).IsRequired().HasMaxLength(50);
             builder.Property(usr => usr.DataNascimento);
             builder.Property(usr => usr.Inativo).IsRequired().HasDefaultValue(false);
+            builder.Property(usr => usr.ReceberNotificacaoInternaTarefa).IsRequired().HasDefaultValue(true);
             builder.Property(usr => usr.ReceberNotificacaoTarefaPorEmail).IsRequired().HasDefaultValue(false);
             builder.Property(usr => usr.CodigoReativacao).HasMaxLength(6).IsRequired(false);
             builder.Property(usr => usr.GestorImediatoCodigo).HasMaxLength(10).IsRequired(false);

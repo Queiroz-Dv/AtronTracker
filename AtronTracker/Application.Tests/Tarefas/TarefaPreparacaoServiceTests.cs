@@ -186,6 +186,8 @@ public class TarefaPreparacaoServiceTests
 
         public Task<bool> AtualizarPreferenciaNotificacaoTarefaPorEmailAsync(string codigo, bool receberNotificacao) => Task.FromResult(true);
 
+        public Task<bool> AtualizarPreferenciasNotificacaoTarefaAsync(string codigo, bool receberNotificacaoInterna, bool receberNotificacaoPorEmail) => Task.FromResult(true);
+
         public Task<bool> AtualizarUsuarioAsync(Usuario usuario) => Task.FromResult(true);
 
         public Task<bool> CriarRepositoryAsync(Usuario entity) => Task.FromResult(true);

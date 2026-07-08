@@ -100,28 +100,6 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Obtém as configurações do usuário logado.
-        /// </summary>
-        [Authorize]
-        [HttpGet("configuracoes")]
-        public async Task<ActionResult> ObterConfiguracoes()
-        {
-            var resultado = await usuarioService.ObterConfiguracoesDoUsuarioLogadoAsync();
-            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
-        }
-
-        /// <summary>
-        /// Atualiza as configurações do usuário logado.
-        /// </summary>
-        [Authorize]
-        [HttpPut("configuracoes")]
-        public async Task<ActionResult> AtualizarConfiguracoes([FromBody] UsuarioConfiguracoesRequest request)
-        {
-            var resultado = await usuarioService.AtualizarConfiguracoesDoUsuarioLogadoAsync(request);
-            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
-        }
-
-        /// <summary>
         /// Solicita alteração de e-mail para o usuário informado — envia token de confirmação para o novo e-mail.
         /// </summary>
         /// <param name="codigo">Código do usuário cujo e-mail será alterado.</param>

@@ -1,7 +1,8 @@
 namespace Application.DTO
 {
-    public class UsuarioConfiguracoesDTO
+    public class TarefaConfiguracoesDTO
     {
+        public bool ReceberNotificacaoInternaTarefa { get; set; }
         public bool ReceberNotificacaoTarefaPorEmail { get; set; }
     }
 }

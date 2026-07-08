@@ -32,6 +32,7 @@ namespace Infrastructure.Repositories
             usuarioBd.Sobrenome = usuario.Sobrenome;
             usuarioBd.Email = usuario.Email;
             usuarioBd.DataNascimento = usuario.DataNascimento;
+            usuarioBd.ReceberNotificacaoInternaTarefa = usuario.ReceberNotificacaoInternaTarefa;
             usuarioBd.ReceberNotificacaoTarefaPorEmail = usuario.ReceberNotificacaoTarefaPorEmail;
             usuarioBd.CodigoReativacao = usuario.CodigoReativacao;
             usuarioBd.GestorImediatoId = usuario.GestorImediatoId;
@@ -50,6 +51,22 @@ namespace Infrastructure.Repositories
             }
 
             usuario.ReceberNotificacaoTarefaPorEmail = receberNotificacao;
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> AtualizarPreferenciasNotificacaoTarefaAsync(
+            string codigo,
+            bool receberNotificacaoInterna,
+            bool receberNotificacaoPorEmail)
+        {
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(usr => usr.Codigo == codigo && !usr.Inativo);
+            if (usuario is null)
+            {
+                return false;
+            }
+
+            usuario.ReceberNotificacaoInternaTarefa = receberNotificacaoInterna;
+            usuario.ReceberNotificacaoTarefaPorEmail = receberNotificacaoPorEmail;
             return await _context.SaveChangesAsync() > 0;
         }
 

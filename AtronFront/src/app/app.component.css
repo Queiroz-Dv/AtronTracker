@@ -118,7 +118,7 @@
   border-bottom: 1px solid var(--atron-border);
   display: flex;
   justify-content: space-between;
-  padding: 12px 14px;
+  padding: 14px 16px;
 }
 
 .app-notifications-header strong {
@@ -129,19 +129,40 @@
   display: grid;
   max-height: 360px;
   overflow: auto;
+  padding: 8px;
 }
 
 .app-notification-item {
-  align-items: center;
-  border-bottom: 1px solid var(--atron-border-soft);
+  align-items: start;
+  border: 1px solid transparent;
+  border-radius: var(--atron-radius-sm);
   display: grid;
-  gap: 8px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  padding: 10px 12px;
+  gap: 10px;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  padding: 10px;
 }
 
 .app-notification-item-unread {
   background: var(--atron-surface-muted);
+  border-color: var(--atron-border);
+}
+
+.app-notification-status {
+  align-items: center;
+  background: var(--atron-primary-soft);
+  border: 1px solid #c7d2fe;
+  border-radius: var(--atron-radius-sm);
+  color: var(--atron-primary);
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.app-notification-status mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
 }
 
 .app-notification-content {
@@ -169,6 +190,7 @@
 .app-notification-title {
   color: var(--atron-title);
   font-weight: 750;
+  line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

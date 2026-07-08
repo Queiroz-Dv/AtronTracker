@@ -7,6 +7,7 @@ import { TarefaRequest } from '../models/request/tarefa-request.model';
 import { TarefaResponse } from '../models/response/tarefa-response.model';
 import { EstadoTarefa } from '../models/estadoTarefa.model';
 import { SolicitacaoObtencaoTarefaResponse } from '../models/response/solicitacao-obtencao-tarefa-response.model';
+import { TarefaConfiguracoes } from '../models/tarefa-configuracoes.model';
 
 @Injectable({
   providedIn: 'root'
@@ -59,5 +60,13 @@ export class TarefaService extends BaseService<TarefaRequest> {
 
   obterEstados(): Observable<EstadoTarefa[]> {
     return this.http.get<EstadoTarefa[]>(RotasApi.tarefaEstadosEndpoint);
+  }
+
+  obterConfiguracoes(): Observable<TarefaConfiguracoes> {
+    return this.http.get<TarefaConfiguracoes>(`${RotasApi.tarefaEndpoint}/Configuracoes`);
+  }
+
+  atualizarConfiguracoes(configuracoes: TarefaConfiguracoes): Observable<unknown[]> {
+    return this.http.put<unknown[]>(`${RotasApi.tarefaEndpoint}/Configuracoes`, configuracoes);
   }
 }

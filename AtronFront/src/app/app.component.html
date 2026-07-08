@@ -42,10 +42,14 @@
       <div class="app-notifications-list">
         @for (notificacao of notificacoes.slice(0, 5); track notificacao.id) {
           <article class="app-notification-item" [class.app-notification-item-unread]="!notificacao.lida">
+            <span class="app-notification-status" aria-hidden="true">
+              <mat-icon>{{ notificacao.lida ? 'mark_email_read' : 'notifications_active' }}</mat-icon>
+            </span>
+
             <button class="app-notification-content" type="button" (click)="abrirNotificacao(notificacao)">
               <span class="app-notification-title">{{ notificacao.titulo }}</span>
               <span class="app-notification-message">{{ notificacao.mensagem }}</span>
-              <span class="app-notification-date">{{ notificacao.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</span>
+              <span class="app-notification-date">{{ notificacao.modulo }} · {{ notificacao.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</span>
             </button>
 
             <button

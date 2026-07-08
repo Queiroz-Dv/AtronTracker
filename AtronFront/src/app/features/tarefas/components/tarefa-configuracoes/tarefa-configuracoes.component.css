@@ -5,7 +5,7 @@
   padding: 1px 0;
 }
 
-.usuario-configuracoes {
+.tarefa-configuracoes {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -20,7 +20,7 @@
   color: var(--atron-primary);
   font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   margin: 0 0 8px;
   text-transform: uppercase;
 }
@@ -29,6 +29,11 @@
   color: var(--atron-text-muted);
   line-height: 1.5;
   margin: 0;
+}
+
+.settings-grid {
+  display: grid;
+  gap: 12px;
 }
 
 .settings-option {

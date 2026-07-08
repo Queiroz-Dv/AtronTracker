@@ -1,4 +1,5 @@
 using Application.DTO;
+using Application.DTO.Request;
 using Application.Interfaces.Services;
 using Application.Services;
 using Domain.Entities;
@@ -149,6 +150,45 @@ namespace Application.Services.EntitiesServices
         public async Task<Resultado<List<TarefaEstadoDTO>>> ObterEstadosAsync()
         {
             return await _tarefaPreparacaoService.ObterEstadosAsync();
+        }
+
+        public async Task<Resultado<TarefaConfiguracoesDTO>> ObterConfiguracoesAsync()
+        {
+            var usuario = await ObterUsuarioLogadoAsync();
+            if (usuario.TeveFalha)
+                return Resultado<TarefaConfiguracoesDTO>.Falhas(usuario.Messages);
+
+            return Resultado<TarefaConfiguracoesDTO>.Sucesso(new TarefaConfiguracoesDTO
+            {
+                ReceberNotificacaoInternaTarefa = usuario.Dados.ReceberNotificacaoInternaTarefa,
+                ReceberNotificacaoTarefaPorEmail = usuario.Dados.ReceberNotificacaoTarefaPorEmail
+            });
+        }
+
+        public async Task<Resultado<TarefaConfiguracoesDTO>> AtualizarConfiguracoesAsync(TarefaConfiguracoesRequest request)
+        {
+            if (request is null)
+                return Resultado<TarefaConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNulo);
+
+            var usuario = await ObterUsuarioLogadoAsync();
+            if (usuario.TeveFalha)
+                return Resultado<TarefaConfiguracoesDTO>.Falhas(usuario.Messages);
+
+            var atualizado = await _usuarioRepository.AtualizarPreferenciasNotificacaoTarefaAsync(
+                usuario.Dados.Codigo,
+                request.ReceberNotificacaoInternaTarefa,
+                request.ReceberNotificacaoTarefaPorEmail);
+
+            if (!atualizado)
+                return Resultado<TarefaConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+
+            return Resultado<TarefaConfiguracoesDTO>
+                .Sucesso(new TarefaConfiguracoesDTO
+                {
+                    ReceberNotificacaoInternaTarefa = request.ReceberNotificacaoInternaTarefa,
+                    ReceberNotificacaoTarefaPorEmail = request.ReceberNotificacaoTarefaPorEmail
+                })
+                .AdicionarMensagem("Configuracoes de tarefas atualizadas com sucesso.");
         }
 
         public async Task<Resultado<TarefaDTO>> AtualizarAsync(int id, TarefaDTO tarefaDTO)

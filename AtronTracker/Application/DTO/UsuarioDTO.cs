@@ -26,6 +26,7 @@ namespace Application.DTO
 
         public string Senha { get; set; }
 
+        public bool ReceberNotificacaoInternaTarefa { get; set; }
         public bool ReceberNotificacaoTarefaPorEmail { get; set; }
         public string GestorImediatoCodigo { get; set; }
         public string GestorImediatoNome { get; set; }
