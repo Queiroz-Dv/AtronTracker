@@ -133,6 +133,17 @@
   color: var(--atron-info) !important;
 }
 
+.snackbar-sucesso .mdc-snackbar__surface,
+.snackbar-erro .mdc-snackbar__surface,
+.snackbar-aviso .mdc-snackbar__surface,
+.snackbar-info .mdc-snackbar__surface {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  min-width: 0;
+  padding: 0;
+}
+
 html,
 body {
   height: 100%;

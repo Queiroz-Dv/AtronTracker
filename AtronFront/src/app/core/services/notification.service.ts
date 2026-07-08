@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { NotificacaoToastComponent } from '../components/notificacao-toast/notificacao-toast.component';
 
 export interface Mensagem {
   descricao: string;
@@ -34,9 +35,18 @@ export class NotificacaoService {
 
   exibirMensagem(mensagem: string, nivel?: Nivel, duracao?: number): void {
     const config = new MatSnackBarConfig();
-    config.panelClass = this.obterClassePainel(nivel);
-    config.duration = duracao ?? this.configPorNivel.get(nivel)?.duracao;  
-    this.snackBar.open(mensagem, 'Fechar', config);
+    const nivelNormalizado = nivel ?? Nivel.Mensagem;
+
+    config.panelClass = this.obterClassePainel(nivelNormalizado);
+    config.duration = duracao ?? this.configPorNivel.get(nivelNormalizado)?.duracao;
+    config.horizontalPosition = 'right';
+    config.verticalPosition = 'top';
+    config.data = {
+      mensagem,
+      nivel: nivelNormalizado
+    };
+
+    this.snackBar.openFromComponent(NotificacaoToastComponent, config);
   }
 
   exibirMensagens(mensagens: unknown): void {
