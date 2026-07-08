@@ -70,6 +70,8 @@ namespace Infrastructure.Repositories
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
                         .ThenInclude(dpt => dpt.Departamento)
+                .Include(rel => rel.UsuarioCargoDepartamentos)
+                    .ThenInclude(rel => rel.Departamento)
                 .Include(usr => usr.GestorImediato)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(usr => usr.Codigo == codigo && !usr.Inativo);
@@ -81,6 +83,8 @@ namespace Infrastructure.Repositories
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
                         .ThenInclude(dpt => dpt.Departamento)
+                .Include(rel => rel.UsuarioCargoDepartamentos)
+                    .ThenInclude(rel => rel.Departamento)
                 .Include(usr => usr.GestorImediato)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(usr => usr.Codigo == codigo );
@@ -106,6 +110,8 @@ namespace Infrastructure.Repositories
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
                         .ThenInclude(dpt => dpt.Departamento)
+                .Include(rel => rel.UsuarioCargoDepartamentos)
+                    .ThenInclude(rel => rel.Departamento)
                 .Include(usr => usr.GestorImediato)
                 .Where(usr => !usr.Inativo)
                 .ToListAsync();
@@ -123,6 +129,8 @@ namespace Infrastructure.Repositories
                               .Include(r => r.UsuarioCargoDepartamentos)
                                   .ThenInclude(crg => crg.Cargo)
                                       .ThenInclude(dpt => dpt.Departamento)
+                              .Include(r => r.UsuarioCargoDepartamentos)
+                                  .ThenInclude(rel => rel.Departamento)
                           on au.UserName equals u.Codigo
                           where !u.Inativo
                           select new UsuarioIdentity

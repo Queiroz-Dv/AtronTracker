@@ -66,6 +66,28 @@ public class TarefaPreparacaoServiceTests
         Assert.Equal(usuario.Codigo, resultado.Dados.Entidade.UsuarioCodigo);
     }
 
+    [Fact]
+    public async Task PrepararParaPersistenciaAsync_DevePermitirTarefaAtribuidaAoProprioGestorDoDepartamento()
+    {
+        var departamento = new Departamento
+        {
+            Id = 10,
+            Codigo = "DPT",
+            Descricao = "Departamento",
+            GestorDepartamentoId = 20,
+            GestorDepartamentoCodigo = "USR"
+        };
+        var usuario = CriarUsuario(departamento);
+        var service = CriarService(usuario, departamento);
+
+        var resultado = await service.PrepararParaPersistenciaAsync(CriarTarefaDto());
+
+        Assert.True(resultado.TeveSucesso);
+        Assert.NotNull(resultado.Dados);
+        Assert.Equal(usuario.Id, resultado.Dados.Entidade.UsuarioId);
+        Assert.Equal(usuario.Codigo, resultado.Dados.Entidade.UsuarioCodigo);
+    }
+
     private static TarefaPreparacaoService CriarService(Usuario usuario, Departamento departamento)
     {
         return new TarefaPreparacaoService(
