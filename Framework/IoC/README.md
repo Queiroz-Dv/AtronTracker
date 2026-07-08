@@ -9,7 +9,6 @@ O projeto possui resolução centralizada de provider de banco em `DatabaseProvi
 
 Atualmente são suportados:
 
-- `SqlServer`
 - `PostgreSql`
 - `Postgres`
 - `Supabase`
@@ -27,8 +26,4 @@ Exemplo de configuração local:
 }
 ```
 
-Essa configuração permite usar Supabase/PostgreSQL como banco alvo do deploy sem alterar os repositórios, services ou casos de uso.
-
-O SQL Server permanece suportado no código como origem legada e referência de transição, mas o direcionamento atual do projeto é operar com Supabase.
-
-Mais detalhes estão documentados em `Documentacao/Migracao_SQLServer_Supabase.md`.
+Essa configuração usa Supabase/PostgreSQL como banco alvo do deploy sem alterar os repositórios, services ou casos de uso.

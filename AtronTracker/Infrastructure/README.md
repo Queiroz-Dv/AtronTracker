@@ -17,13 +17,11 @@ A pasta `Repositories` contém implementações das interfaces de repositório, 
 
 ### Migrações
 
-A pasta `Migrations` define as migrações do Entity Framework Core para gerenciamento do esquema do banco de dados.
-
-As migrations originais deste projeto continuam representando o SQL Server legado. Para PostgreSQL/Supabase, banco alvo do deploy, foi criado um projeto separado:
+As migrations ativas de Supabase/PostgreSQL ficam no projeto separado:
 
 - `AtronTracker/Infrastructure.PostgreSqlMigrations`
 
-Essa separação evita misturar comandos e tipos específicos de SQL Server com comandos e tipos específicos de PostgreSQL. Ela continua necessária enquanto o histórico SQL Server ainda existir no projeto.
+O projeto `AtronTracker/Infrastructure` mantém o `AtronDbContext`, configurações de entidades e repositórios, mas não mantém migrations próprias para o deploy.
 
 ## Uso
 

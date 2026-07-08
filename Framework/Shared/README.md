@@ -115,10 +115,10 @@ Shared
 ---
 ## Persistência e migrations PostgreSQL
 
-O `SharedDbContext` possui suporte ao provider configurável do projeto.
+O `SharedDbContext` usa Supabase/PostgreSQL como provider de persistência do projeto.
 
-As migrations SQL Server permanecem no projeto original `Framework/Shared` como histórico legado. Para Supabase/PostgreSQL, banco alvo do deploy, foi criado o projeto separado:
+As migrations ativas ficam no projeto separado:
 
 - `Framework/Shared.PostgreSqlMigrations`
 
-Essa separação mantém os scripts de cada provider isolados e evita conflito entre defaults de SQL Server e PostgreSQL.
+O projeto `Framework/Shared` não mantém migrations próprias para o deploy.

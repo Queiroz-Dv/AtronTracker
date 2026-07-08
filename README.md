@@ -17,7 +17,7 @@ O **Atron Tracker** segue os princípios da **Arquitetura Limpa (Clean Architect
 - **Arquitetura Desacoplada**: Facilita a manutenção e a substituição de componentes (ex: ORM, Banco de Dados).
 - **Documentação Automática**: Uso do Swagger e Redoc para uma documentação de API clara e interativa.
 - **Mapeamento Personalizado**: Implementação de um mapeador próprio para DTOs e Entidades.
-- **Flexibilidade**: Banco de dados SQL Server e Supabase/PostgreSQL configuráveis via provider centralizado.
+- **Persistencia**: Banco de dados Supabase/PostgreSQL configurado via provider centralizado.
 
 ---
 
@@ -27,7 +27,6 @@ O **Atron Tracker** segue os princípios da **Arquitetura Limpa (Clean Architect
 | ------------------------- | ---------------------------------------- |
 | **.NET 8**                | Plataforma base para o desenvolvimento.  |
 | **Entity Framework Core** | ORM para manipulação de dados.           |
-| **SQL Server**            | Banco original, mantido como legado/transição. |
 | **Supabase/PostgreSQL**   | Banco alvo para deploy inicial do sistema. |
 | **Swagger / Redoc**       | Documentação da API.                     |
 | **Angular**               | Front principal do MVP em `AtronFront`. |
@@ -45,7 +44,6 @@ Siga os passos abaixo para configurar e rodar o projeto em sua máquina:
    - Visual Studio 2022 ou Visual Studio Code.
    - .NET SDK instalado.
    - Supabase configurado para testes locais e deploy.
-   - SQL Server instalado apenas se for necessário consultar ou migrar dados legados.
 
 2. **Configuração Inicial**:
 
@@ -65,12 +63,9 @@ Siga os passos abaixo para configurar e rodar o projeto em sua máquina:
 
    ![Configuração do PMC](images/ConfigPMC.png)
 
-4. **Migração SQL Server/Supabase**:
+4. **Supabase/PostgreSQL**:
 
-   - O projeto está preparado para operar com Supabase/PostgreSQL como banco alvo do deploy.
-   - As migrations PostgreSQL ficam em projetos separados por contexto.
-   - A carga de dados SQL Server para Supabase é feita por uma ferramenta interna em `Tools/DatabaseMigrator`, usada apenas em necessidades específicas.
-   - Consulte a documentação completa em [Migração SQL Server para Supabase](Documentacao/Migracao_SQLServer_Supabase.md).
+   - O projeto está preparado para operar com Supabase/PostgreSQL como banco alvo do deploy.`n   - As migrations ativas ficam nos projetos `*.PostgreSqlMigrations`.
 
 ---
 

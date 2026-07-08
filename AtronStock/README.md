@@ -74,10 +74,10 @@ O modelo foi desenhado para separar a definição do produto de seu inventário,
 Feito com ❤️ por [Queiroz-Dv](https://github.com/Queiroz-Dv)
 ## Migrations PostgreSQL/Supabase
 
-O `StockDbContext` possui suporte ao provider configurável do projeto.
+O `StockDbContext` usa Supabase/PostgreSQL como provider de persistencia do projeto.
 
-As migrations SQL Server permanecem no projeto original de infraestrutura como histórico legado. Para Supabase/PostgreSQL, banco alvo do deploy, foi criado o projeto separado:
+As migrations ativas ficam no projeto separado:
 
 - `AtronStock/Infrastructure.PostgreSqlMigrations`
 
-Essa separação reduz risco durante a transição e evita misturar migrations incompatíveis entre SQL Server e PostgreSQL.
+O projeto principal de infraestrutura nao mantem migrations proprias para o deploy.

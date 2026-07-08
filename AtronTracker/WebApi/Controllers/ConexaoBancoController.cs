@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
@@ -30,15 +29,16 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Testa a conexão SQL Server configurada em ConnectionStrings:AtronConnection.
+        /// Testa a conexao padrao PostgreSQL/Supabase configurada em ConnectionStrings:DefaultConnection.
         /// </summary>
-        [HttpGet("sql-server")]
-        public async Task<ActionResult<ConexaoBancoTesteResponse>> TestarSqlServer(CancellationToken cancellationToken)
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet("default")]
+        public async Task<ActionResult<ConexaoBancoTesteResponse>> TestarDefault(CancellationToken cancellationToken)
         {
             if (!EndpointHabilitado())
                 return NotFound();
 
-            return await TestarConexaoConfigurada("AtronConnection", BancoProvider.SqlServer, cancellationToken);
+            return await TestarConexaoConfigurada("DefaultConnection", BancoProvider.PostgreSql, cancellationToken);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace WebApi.Controllers
                 return BadRequest("Informe os dados para teste de conexão.");
 
             if (!Enum.TryParse<BancoProvider>(request.Provider, true, out var provider))
-                return BadRequest("Provider inválido. Use SqlServer ou PostgreSql.");
+                return BadRequest("Provider inválido. Use PostgreSql.");
 
             var connectionString = request.ConnectionString;
 
@@ -153,7 +153,6 @@ namespace WebApi.Controllers
         {
             return provider switch
             {
-                BancoProvider.SqlServer => new SqlConnection(connectionString),
                 BancoProvider.PostgreSql => new NpgsqlConnection(connectionString),
                 _ => throw new NotSupportedException("Provider não suportado.")
             };
@@ -182,7 +181,6 @@ namespace WebApi.Controllers
 
     public enum BancoProvider
     {
-        SqlServer,
         PostgreSql
     }
 }
