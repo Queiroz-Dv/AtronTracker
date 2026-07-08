@@ -5,6 +5,7 @@ import { TarefaService } from '../../services/tarefa.service';
 import { TarefaFormComponent } from "../tarefa-form/tarefa-form.component";
 import { SharedModule } from '../../../../shared/modules/shared.module';
 import { TarefaRequest } from '../../models/request/tarefa-request.model';
+import { Nivel, NotificacaoService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'c-tarefa-edit',
@@ -21,6 +22,7 @@ export class TarefaEditComponent implements OnInit {
     private fb: FormBuilder,
     private service: TarefaService,
     private route: ActivatedRoute,
+    private notificacaoService: NotificacaoService,
     public router: Router
   ) { }
 
@@ -68,6 +70,12 @@ export class TarefaEditComponent implements OnInit {
   }
 
   salvar() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.notificacaoService.exibirMensagem('Formulario invalido. Verifique os campos.', Nivel.Error);
+      return;
+    }
+
     const formValues = this.form.getRawValue();
 
     const tarefaPayload: TarefaRequest = {
@@ -89,7 +97,20 @@ export class TarefaEditComponent implements OnInit {
       ? this.service.atualizar(this.id, tarefaPayload)
       : this.service.gravar(tarefaPayload);
 
-    operacao.subscribe(() => this.router.navigate(['atron/tarefas']));
+    operacao.subscribe({
+      next: resposta => {
+        this.notificacaoService.exibirMensagens(resposta);
+        this.router.navigate(['atron/tarefas']);
+      },
+      error: erro => {
+        if (erro?.mensagensApi) {
+          this.notificacaoService.exibirMensagens(erro.mensagensApi);
+          return;
+        }
+
+        this.notificacaoService.exibirMensagem('Nao foi possivel salvar a tarefa.', Nivel.Error);
+      }
+    });
   }
 
   private formatDate(dateString?: any): string | null {

@@ -46,11 +46,74 @@ export abstract class BaseService<T> {
 
   protected handleError(error: any): Observable<never> {
     console.error('[BaseService] Erro detectado:', error);
+    const mensagensErro = extrairCorpoErro(error);
+    if (mensagensErro) {
+      return throwError(() => ({ mensagensApi: mensagensErro, erroOriginal: error }));
+    }
+
     return throwError(() => error);
   }
 }
 
 type RespostaApi = Mensagem[] | any;
+
+function extrairCorpoErro(erro: any): Mensagem[] | null {
+  const corpo = normalizarCorpoErro(erro?.error);
+  const mensagens = Array.isArray(corpo)
+    ? corpo
+    : corpo?.mensagensApi
+      ?? corpo?.mensagens
+      ?? corpo?.messages
+      ?? corpo?.Messages
+      ?? corpo?.errors
+      ?? corpo?.Errors
+      ?? null;
+
+  if (mensagens && typeof mensagens === 'object' && !Array.isArray(mensagens)) {
+    const mensagensValidacao = Object.values(mensagens)
+      .flatMap(valor => Array.isArray(valor) ? valor : [valor])
+      .filter((valor): valor is string => typeof valor === 'string');
+
+    return mensagensValidacao.length
+      ? mensagensValidacao.map(descricao => ({ descricao, nivel: 'Error' } as Mensagem))
+      : null;
+  }
+
+  if (!Array.isArray(mensagens)) {
+    return null;
+  }
+
+  const mensagensNormalizadas = mensagens
+    .map((mensagem: any) => {
+      if (typeof mensagem === 'string') {
+        return { descricao: mensagem, nivel: 'Error' } as Mensagem;
+      }
+
+      const descricao = mensagem?.descricao ?? mensagem?.Descricao ?? mensagem?.message ?? mensagem?.Message;
+      const nivel = mensagem?.nivel ?? mensagem?.Nivel ?? mensagem?.level ?? mensagem?.Level ?? 'Error';
+
+      if (!descricao || !nivel) {
+        return null;
+      }
+
+      return { descricao, nivel } as Mensagem;
+    })
+    .filter((mensagem: Mensagem | null): mensagem is Mensagem => !!mensagem);
+
+  return mensagensNormalizadas.length ? mensagensNormalizadas : null;
+}
+
+function normalizarCorpoErro(corpo: any): any {
+  if (typeof corpo !== 'string') {
+    return corpo;
+  }
+
+  try {
+    return JSON.parse(corpo);
+  } catch {
+    return corpo;
+  }
+}
 
 export abstract class BaseGenericService<TRequest, TResponse = TRequest> {
   constructor(protected http: HttpClient, protected endpoint: string) { }
@@ -89,61 +152,7 @@ export abstract class BaseGenericService<TRequest, TResponse = TRequest> {
   }
 
   protected extrairCorpoErro(erro: any): Mensagem[] | null {
-    const corpo = this.normalizarCorpoErro(erro?.error);
-    const mensagens = Array.isArray(corpo)
-      ? corpo
-      : corpo?.mensagensApi
-        ?? corpo?.mensagens
-        ?? corpo?.messages
-        ?? corpo?.Messages
-        ?? corpo?.errors
-        ?? corpo?.Errors
-        ?? null;
-
-    if (mensagens && typeof mensagens === 'object' && !Array.isArray(mensagens)) {
-      const mensagensValidacao = Object.values(mensagens)
-        .flatMap(valor => Array.isArray(valor) ? valor : [valor])
-        .filter((valor): valor is string => typeof valor === 'string');
-
-      return mensagensValidacao.length
-        ? mensagensValidacao.map(descricao => ({ descricao, nivel: 'Error' } as Mensagem))
-        : null;
-    }
-
-    if (!Array.isArray(mensagens)) {
-      return null;
-    }
-
-    const mensagensNormalizadas = mensagens
-      .map((mensagem: any) => {
-        if (typeof mensagem === 'string') {
-          return { descricao: mensagem, nivel: 'Error' } as Mensagem;
-        }
-
-        const descricao = mensagem?.descricao ?? mensagem?.Descricao ?? mensagem?.message ?? mensagem?.Message;
-        const nivel = mensagem?.nivel ?? mensagem?.Nivel ?? mensagem?.level ?? mensagem?.Level ?? 'Error';
-
-        if (!descricao || !nivel) {
-          return null;
-        }
-
-        return { descricao, nivel } as Mensagem;
-      })
-      .filter((mensagem: Mensagem | null): mensagem is Mensagem => !!mensagem);
-
-    return mensagensNormalizadas.length ? mensagensNormalizadas : null;
-  }
-
-  private normalizarCorpoErro(corpo: any): any {
-    if (typeof corpo !== 'string') {
-      return corpo;
-    }
-
-    try {
-      return JSON.parse(corpo);
-    } catch {
-      return corpo;
-    }
+    return extrairCorpoErro(erro);
   }
 
   protected tratarErro = (erro: any): Observable<never> => {
