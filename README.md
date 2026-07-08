@@ -46,6 +46,7 @@ eventos específicos para o sistema. Adotamos então o Angular que está em `Atr
 
 - [CONTEXT.md](CONTEXT.md): glossário canônico e contratos duráveis de domínio.
 - [docs/visao-produto-atron.md](docs/visao-produto-atron.md): direção de produto da plataforma.
+- [docs/publicacao-render-brevo-supabase.md](docs/publicacao-render-brevo-supabase.md): manual de publicação com Render, Supabase e Brevo.
 - [docs/adr](docs/adr): decisões arquiteturais e de domínio.
 - [docs/planejamento-custos-mvp.md](docs/planejamento-custos-mvp.md): contrato do módulo de planejamento de custos.
 
@@ -83,6 +84,8 @@ O projeto partiu do SQL Server, mas foi reestruturado para usar PostgreSQL como 
 ## Configuração sensível
 
 Credenciais não devem ser commitadas em `appsettings*.json`. Use variáveis de ambiente no Render e, localmente, variáveis de usuário, User Secrets ou `appsettings.Local.json`.
+
+O passo a passo de publicação e o racional dos provedores estão em [docs/publicacao-render-brevo-supabase.md](docs/publicacao-render-brevo-supabase.md).
 
 Variáveis principais:
 
