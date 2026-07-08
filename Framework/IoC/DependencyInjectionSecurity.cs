@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Extensions;
 using System;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -19,9 +20,18 @@ namespace IoC
 
             services.AddCors(options =>
             {
+                var allowedOrigins = configuration
+                    .GetSection("Cors:AllowedOrigins")
+                    .Get<string[]>()
+                    ?.Where(origin => !string.IsNullOrWhiteSpace(origin))
+                    .ToArray();
+
+                if (allowedOrigins is null || allowedOrigins.Length == 0)
+                    allowedOrigins = new[] { "http://localhost:4200" };
+
                 options.AddPolicy("CorsPolicy",
                     builder => builder
-                        .WithOrigins("http://localhost:4200")
+                        .WithOrigins(allowedOrigins)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());

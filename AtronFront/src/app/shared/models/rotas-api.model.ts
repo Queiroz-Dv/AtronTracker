@@ -1,4 +1,4 @@
-import { environment } from "../../../environments/environment.development";
+import { environment } from "../../../environments/environment";
 
 export class RotasApi {
   public static readonly logarEndpoint: string = environment.apiRoute + 'api/Acesso/Login';
