@@ -1,3 +1,4 @@
+using IoC;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -21,11 +22,16 @@ namespace WebApi.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
+        private readonly IAtronConnectionStringProvider _connectionStringProvider;
 
-        public ConexaoBancoController(IConfiguration configuration, IWebHostEnvironment environment)
+        public ConexaoBancoController(
+            IConfiguration configuration,
+            IWebHostEnvironment environment,
+            IAtronConnectionStringProvider connectionStringProvider)
         {
             _configuration = configuration;
             _environment = environment;
+            _connectionStringProvider = connectionStringProvider;
         }
 
         /// <summary>
@@ -73,7 +79,7 @@ namespace WebApi.Controllers
             var connectionString = request.ConnectionString;
 
             if (string.IsNullOrWhiteSpace(connectionString) && !string.IsNullOrWhiteSpace(request.ConnectionStringName))
-                connectionString = _configuration.GetConnectionString(request.ConnectionStringName);
+                connectionString = ResolverConnectionString(request.ConnectionStringName);
 
             if (string.IsNullOrWhiteSpace(connectionString))
                 return BadRequest("Connection string não informada ou não encontrada.");
@@ -91,13 +97,21 @@ namespace WebApi.Controllers
             BancoProvider provider,
             CancellationToken cancellationToken)
         {
-            var connectionString = _configuration.GetConnectionString(connectionStringName);
+            var connectionString = ResolverConnectionString(connectionStringName);
 
             if (string.IsNullOrWhiteSpace(connectionString))
                 return BadRequest($"Connection string '{connectionStringName}' não encontrada.");
 
             var resultado = await TestarConexao(connectionStringName, provider, connectionString, cancellationToken);
             return resultado.Sucesso ? Ok(resultado) : StatusCode(503, resultado);
+        }
+
+        private string ResolverConnectionString(string connectionStringName)
+        {
+            if (string.Equals(connectionStringName, AtronConnectionStringProvider.DefaultConnectionName, StringComparison.OrdinalIgnoreCase))
+                return _connectionStringProvider.ObterDefaultConnection();
+
+            return _configuration.GetConnectionString(connectionStringName);
         }
 
         private bool EndpointHabilitado()
@@ -144,7 +158,9 @@ namespace WebApi.Controllers
                     State = ConnectionState.Closed.ToString(),
                     TempoMs = stopwatch.ElapsedMilliseconds,
                     TestadoEmUtc = DateTime.UtcNow,
-                    Erro = ex.Message
+                    Erro = ex.Message,
+                    ErroTipo = ex.GetType().FullName,
+                    ErroInterno = ex.InnerException?.Message
                 };
             }
         }
@@ -177,6 +193,8 @@ namespace WebApi.Controllers
         public long TempoMs { get; set; }
         public DateTime TestadoEmUtc { get; set; }
         public string Erro { get; set; }
+        public string ErroTipo { get; set; }
+        public string ErroInterno { get; set; }
     }
 
     public enum BancoProvider

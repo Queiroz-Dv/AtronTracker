@@ -1,12 +1,17 @@
 using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.UseCases.Usuario;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
+using System;
 using System.Threading.Tasks;
 
 namespace WebApi.Controllers
@@ -23,6 +28,9 @@ namespace WebApi.Controllers
         private readonly ICookieService _cookieService;
         private readonly SolicitarReativacao _solicitarReativacao;
         private readonly ReativarUsuario _reativarUsuario;
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
+        private readonly ILogger<AcessoController> _logger;
 
         public AcessoController(
             ILoginService loginUserService,
@@ -30,13 +38,19 @@ namespace WebApi.Controllers
             IRegistroUsuarioService registroUsuarioService,
             ICookieService cookieService,
             SolicitarReativacao solicitarReativacao,
-            ReativarUsuario reativarUsuario)
+            ReativarUsuario reativarUsuario,
+            IConfiguration configuration,
+            IWebHostEnvironment environment,
+            ILogger<AcessoController> logger)
         {
             _registroUsuarioService = registroUsuarioService;
             _cookieService = cookieService;
             _solicitarReativacao = solicitarReativacao;
             _reativarUsuario = reativarUsuario;
             _service = loginUserService;
+            _configuration = configuration;
+            _environment = environment;
+            _logger = logger;
         }
 
         /// <summary>
@@ -52,11 +66,14 @@ namespace WebApi.Controllers
             {
                  resultado = await _service.Autenticar(loginDTO);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                // create a failure result instead of using the unassigned 'resultado'
-                var resultadoErro = Resultado<DadosDoTokenDTO>.Falha(ex.Message);
-                return BadRequest(resultadoErro.Messages);
+                _logger.LogError(ex, "Falha nao tratada ao autenticar o usuario {UsuarioCodigo}.", loginDTO?.CodigoDoUsuario);
+
+                if (ExibirDetalhesDiagnostico())
+                    return StatusCode(500, LoginErroDiagnosticoResponse.FromException(ex));
+
+                return StatusCode(500, new[] { "Falha inesperada ao autenticar o usuario." });
             }
 
             return resultado.TeveFalha ?
@@ -169,6 +186,32 @@ namespace WebApi.Controllers
         {
             var resultado = await _reativarUsuario.ExecutarAsync(request.Email, request.CodigoReativacao);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        private bool ExibirDetalhesDiagnostico()
+        {
+            return _environment.IsDevelopment()
+                || _configuration.GetValue<bool>("Diagnostico:Habilitado")
+                || _configuration.GetValue<bool>("ConexaoBancoTeste:Habilitado");
+        }
+    }
+
+    public class LoginErroDiagnosticoResponse
+    {
+        public string Tipo { get; set; }
+        public string Mensagem { get; set; }
+        public string InnerTipo { get; set; }
+        public string InnerMensagem { get; set; }
+
+        public static LoginErroDiagnosticoResponse FromException(Exception ex)
+        {
+            return new LoginErroDiagnosticoResponse
+            {
+                Tipo = ex.GetType().FullName,
+                Mensagem = ex.Message,
+                InnerTipo = ex.InnerException?.GetType().FullName,
+                InnerMensagem = ex.InnerException?.Message
+            };
         }
     }
 }
