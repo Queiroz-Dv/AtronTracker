@@ -9,6 +9,7 @@ using Infrastructure.Repositories.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Shared.Application.Interfaces.Repositories;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services;
@@ -25,6 +26,8 @@ namespace IoC
     {
         public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
+
             var database = DatabaseProviderResolver.Resolve(configuration);
             var migrationsAssembly = "Framework.Shared.PostgreSqlMigrations";
 

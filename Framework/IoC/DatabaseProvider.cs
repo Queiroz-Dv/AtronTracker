@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Data.Common;
 
 namespace IoC
@@ -15,17 +14,7 @@ namespace IoC
     {
         public static DatabaseProviderConfiguration Resolve(IConfiguration configuration)
         {
-            const string connectionStringName = "DefaultConnection";
-            var connectionString = configuration.GetConnectionString(connectionStringName);
-
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new InvalidOperationException($"Connection string '{connectionStringName}' nao encontrada.");
-
-            return new DatabaseProviderConfiguration
-            {
-                ConnectionStringName = connectionStringName,
-                ConnectionString = connectionString
-            };
+            return AtronConnectionStringProvider.Resolve(configuration);
         }
 
         public static void UseConfiguredDatabase(

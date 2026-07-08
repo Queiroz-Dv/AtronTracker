@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
@@ -35,6 +36,8 @@ namespace IoC
     {
         public static IServiceCollection AddInfrastructureAPI(this IServiceCollection services, IConfiguration configuration)
         {
+            services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
+
             var database = DatabaseProviderResolver.Resolve(configuration);
             var migrationsAssembly = "AtronTracker.Infrastructure.PostgreSqlMigrations";
 

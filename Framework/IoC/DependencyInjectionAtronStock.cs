@@ -10,6 +10,7 @@ using AtronStock.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Shared.Application.Interfaces.Service;
 using Shared.Infrastructure.Context;
 using Shared.Infrastructure.Repositories;
@@ -22,6 +23,8 @@ namespace IoC
     {
         public static IServiceCollection AddStockInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
+
             var database = DatabaseProviderResolver.Resolve(configuration);
             var migrationsAssembly = "AtronStock.Infrastructure.PostgreSqlMigrations";
 
