@@ -6,28 +6,20 @@ using System.Text;
 namespace Application.Extensions
 {
     public static class CryptoHelper
-    {
-        // Chave secreta de 32 bytes para o AES-256 (256 bits).
-        // DEVE estar sincronizada com a chave do frontend (CryptoJS).
+    {       
         private static readonly byte[] Key = Encoding.UTF8.GetBytes("AtronTrackerSecretKeyAES256Bits!");
-        // Opcional: Vetor de inicialização (IV) fixo ou lido do prefixo. Aqui usamos um fixo padrão fácil para sincro, ou ler dos primeiros 16 bytes.
-        // Se no front usarmos CryptoJS.AES.encrypt(texto, chave), ele gera um salt e IV aleatório, que fica contido no Base64 resultante e tem o prefixo "Salted__".
-        // Para descriptografar um valor do CryptoJS padrão:
-        
+             
         public static string DecryptCryptoJsAes(string encryptedBase64)
         {
             if (string.IsNullOrWhiteSpace(encryptedBase64)) return encryptedBase64;
             try
             {
                 byte[] cipherBytes = Convert.FromBase64String(encryptedBase64);
-
-                // CryptoJS starts with "Salted__" (8 bytes) + salt (8 bytes) = 16 bytes total prefix
-                // If it doesn't start with "Salted__", consider it plain AES or fallback
+                
                 string prefix = Encoding.ASCII.GetString(cipherBytes, 0, 8);
                 if (prefix != "Salted__")
-                {
-                    // Tratar como outro esquema ou retornar throw.
-                    return encryptedBase64; // fallback para devolver a string
+                {                    
+                    return encryptedBase64; 
                 }
 
                 byte[] salt = new byte[8];
@@ -36,7 +28,6 @@ namespace Application.Extensions
                 byte[] actualCipherText = new byte[cipherBytes.Length - 16];
                 Array.Copy(cipherBytes, 16, actualCipherText, 0, cipherBytes.Length - 16);
 
-                // EvpKDF (simulando a derivação de chave do CryptoJS: MD5 hash)
                 DeriveEvpKDF(Key, salt, out byte[] derivedKey, out byte[] iv);
 
                 using (Aes aes = Aes.Create())
@@ -59,15 +50,12 @@ namespace Application.Extensions
             }
             catch
             {
-                // Se falhar a descriptografia, retorna fallback
                 return string.Empty;
             }
         }
-
-        // DeriveEvpKDF = método que transforma a senha secreta em chave + IV compatíveis com CryptoJS
+        
         private static void DeriveEvpKDF(byte[] password, byte[] salt, out byte[] key, out byte[] iv)
         {
-            // EvpKDF using MD5 to generate 32 bytes key and 16 bytes IV
             byte[] derivedBytes = new byte[48];
             byte[] block = null;
             int offset = 0;
@@ -103,10 +91,7 @@ namespace Application.Extensions
             Buffer.BlockCopy(derivedBytes, 0, key, 0, 32);
             Buffer.BlockCopy(derivedBytes, 32, iv, 0, 16);
         }
-        /// <summary>
-        /// Criptografa uma string utilizando AES-256 compatível com CryptoJS.
-        /// O resultado é um Base64 com prefixo "Salted__" + salt + ciphertext.
-        /// </summary>
+        
         public static string EncryptCryptoJsAes(string plainText)
         {
             if (string.IsNullOrWhiteSpace(plainText)) return plainText;
@@ -132,7 +117,6 @@ namespace Application.Extensions
                     using (ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
                     using (MemoryStream msEncrypt = new MemoryStream())
                     {
-                        // Escrever prefixo "Salted__" + salt
                         msEncrypt.Write(Encoding.ASCII.GetBytes("Salted__"), 0, 8);
                         msEncrypt.Write(salt, 0, 8);
 
@@ -152,24 +136,17 @@ namespace Application.Extensions
                 return string.Empty;
             }
         }
-
-        /// <summary>
-        /// Gera um identificador temporário de 9 dígitos alfanuméricos,
-        /// embutindo o código do usuário (3 caracteres) nas posições 0, 4 e 8.
-        /// As posições 1,2,3,5,6,7 são preenchidas com caracteres aleatórios.
-        /// </summary>
+       
         public static string GerarIdentificadorTemporario(string usuarioCodigo)
         {
             const string chars = "0123456789";
             var resultado = new char[9];
             var random = new Random();
 
-            // Posições fixas para o código do usuário: 0, 4, 8
             resultado[0] = usuarioCodigo[0];
             resultado[4] = usuarioCodigo[1];
             resultado[8] = usuarioCodigo[2];
 
-            // Preencher posições restantes com caracteres aleatórios
             int[] posicoesAleatorias = { 1, 2, 3, 5, 6, 7 };
             foreach (var pos in posicoesAleatorias)
             {
