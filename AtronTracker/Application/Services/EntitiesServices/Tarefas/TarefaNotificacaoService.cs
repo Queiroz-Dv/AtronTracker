@@ -34,7 +34,7 @@ namespace Application.Services.EntitiesServices.Tarefas
             var mensagem = new EmailRequest
             {
                 EmailsDestino = [usuario.Email],
-                Assunto = $"Nova tarefa atribuida: {tarefa.Titulo}",
+                Assunto = $"Nova tarefa atribuída: {tarefa.Titulo}",
                 Mensagem = GerarCorpoEmailTarefa(tarefa, usuario)
             };
 
@@ -67,11 +67,11 @@ namespace Application.Services.EntitiesServices.Tarefas
                     <body>
                         <div class='container'>
                             <div class='header'>
-                                <h1>Nova tarefa atribuida</h1>
+                                <h1>Nova tarefa atribuída</h1>
                             </div>
                             <div class='content'>
                                 <p>Ola, <strong>{nomeUsuario}</strong>.</p>
-                                <p>Uma nova tarefa foi atribuida a você.</p>
+                                <p>Uma nova tarefa foi atribuída a você.</p>
                                 <div class='task-box'>
                                     <p><strong>Titulo:</strong> {titulo}</p>
                                     <p><strong>Conteudo:</strong> {conteudo}</p>

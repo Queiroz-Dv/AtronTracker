@@ -44,6 +44,11 @@
           <c-control-error [control]="form.get('repetirSenha')"></c-control-error>
         </mat-form-field>
 
+        <div class="auth-inline-feedback error" *ngIf="mensagemErro">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ mensagemErro }}</span>
+        </div>
+
         <button mat-flat-button type="button" class="primary-action" (click)="salvarNovaSenha()">
           <mat-icon>save</mat-icon>
           Salvar nova senha

@@ -62,8 +62,8 @@
 
           <button class="notificacao-main" type="button" (click)="abrir(notificacao)">
             <span class="notificacao-content">
-              <span class="notificacao-title">{{ notificacao.titulo }}</span>
-              <span class="notificacao-message">{{ notificacao.mensagem }}</span>
+              <span class="notificacao-title">{{ formatarTextoNotificacao(notificacao.titulo) }}</span>
+              <span class="notificacao-message">{{ formatarTextoNotificacao(notificacao.mensagem) }}</span>
               <span class="notificacao-meta">
                 {{ notificacao.modulo }} · {{ notificacao.dataCriacao | date:'dd/MM/yyyy HH:mm' }}
               </span>

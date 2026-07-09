@@ -64,7 +64,7 @@ namespace Application.Services.EntitiesServices
 
             return Resultado<NotificacaoInternaDTO>
                 .Sucesso(Mapear(notificacao))
-                .AdicionarMensagem("Notificacao marcada como lida.");
+                .AdicionarMensagem("Notificação marcada como lida.");
         }
 
         public async Task<Resultado<List<NotificacaoInternaDTO>>> MarcarTodasComoLidasAsync()
@@ -78,7 +78,7 @@ namespace Application.Services.EntitiesServices
                 usuario.Dados.Codigo);
 
             if (!atualizadas)
-                return Resultado<List<NotificacaoInternaDTO>>.Falha("Nao foi possivel marcar as notificacoes como lidas.");
+                return Resultado<List<NotificacaoInternaDTO>>.Falha("Não foi possível marcar as notificações como lidas.");
 
             var notificacoes = await _notificacaoInternaRepository.ObterPorUsuarioAsync(
                 usuario.Dados.Id,
@@ -86,7 +86,7 @@ namespace Application.Services.EntitiesServices
 
             return Resultado<List<NotificacaoInternaDTO>>
                 .Sucesso(notificacoes.Select(Mapear).ToList())
-                .AdicionarMensagem("Notificacoes marcadas como lidas.");
+                .AdicionarMensagem("Notificações marcadas como lidas.");
         }
 
         public async Task<Resultado<NotificacaoInternaDTO>> CriarAsync(NotificacaoInterna notificacao)
@@ -97,7 +97,7 @@ namespace Application.Services.EntitiesServices
 
             var gravada = await _notificacaoInternaRepository.CriarAsync(notificacao);
             if (!gravada)
-                return Resultado<NotificacaoInternaDTO>.Falha("Nao foi possivel criar a notificacao interna.");
+                return Resultado<NotificacaoInternaDTO>.Falha("Não foi possível criar a notificação interna.");
 
             return Resultado<NotificacaoInternaDTO>.Sucesso(Mapear(notificacao));
         }

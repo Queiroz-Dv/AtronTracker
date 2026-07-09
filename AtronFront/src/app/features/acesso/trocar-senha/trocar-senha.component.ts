@@ -5,6 +5,7 @@ import { AcessoService, RedefinirSenhaRequest } from '../login/services/acesso.s
 import { SharedModule } from '../../../shared/modules/shared.module';
 import { ControlErrorComponent } from '../../../shared/components/control-error/control-error.component';
 import { CryptoService } from '../../../core/services/crypto/crypto.service';
+import { Nivel, NotificacaoService } from '../../../core/services/notification.service';
 
 @Component({
   standalone: true,
@@ -19,6 +20,7 @@ export class TrocarSenhaComponent implements OnInit {
   repeatPasswordType: string = 'password';
   senhaSalva = false;
   mensagemEnvio = '';
+  mensagemErro = '';
   erroLink = false;
 
   private identificadorTemporario = '';
@@ -30,12 +32,13 @@ export class TrocarSenhaComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private acessoService: AcessoService,
-    private cryptoService: CryptoService
+    private cryptoService: CryptoService,
+    private notificacaoService: NotificacaoService
   ) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      const idCriptografado = params['id'] || '';
+      const idCriptografado = this.normalizarIdentificadorDaUrl(params['id'] || '');
 
       if (idCriptografado) {
         // Descriptografar o identificador temporário que veio na URL
@@ -47,7 +50,7 @@ export class TrocarSenhaComponent implements OnInit {
           sessionStorage.setItem(this.SESSION_KEY, this.identificadorTemporario);
         } else {
           // Falha na descriptografia — link inválido ou adulterado
-          this.erroLink = true;
+          this.marcarLinkInvalido();
         }
       } else {
         // Tentar recuperar do sessionStorage (caso de refresh da página)
@@ -55,7 +58,7 @@ export class TrocarSenhaComponent implements OnInit {
         if (idSalvo) {
           this.identificadorTemporario = idSalvo;
         } else {
-          this.erroLink = true;
+          this.marcarLinkInvalido();
         }
       }
     });
@@ -76,16 +79,17 @@ export class TrocarSenhaComponent implements OnInit {
 
   salvarNovaSenha() {
     if (this.form.invalid) return;
+    this.mensagemErro = '';
 
     const pw1 = this.form.get('senha')?.value;
     const pw2 = this.form.get('repetirSenha')?.value;
 
     if (pw1 !== pw2) {
-      alert('As senhas não coincidem!');
+      this.exibirErro('As senhas nao coincidem.');
       return;
     }
 
-    let req = new RedefinirSenhaRequest();
+    const req = new RedefinirSenhaRequest();
     req.identificadorTemporario = this.identificadorTemporario;
 
     // Criptografar senhas na requisição
@@ -93,15 +97,18 @@ export class TrocarSenhaComponent implements OnInit {
     req.repetirSenha = this.cryptoService.encrypt(pw2);
 
     this.acessoService.trocarSenha(req).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.senhaSalva = true;
-        this.mensagemEnvio = "Sua senha foi redefinida com sucesso.";
+        this.mensagemEnvio = 'Sua senha foi redefinida com sucesso.';
+        this.notificacaoService.exibirMensagem(this.mensagemEnvio, Nivel.Sucesso);
         // Limpar sessionStorage após sucesso
         sessionStorage.removeItem(this.SESSION_KEY);
       },
       error: (err: any) => {
         console.error(err);
-        alert('Ocorreu um erro ao redefinir a senha. Verifique se o link expirou.');
+        const mensagem = this.extrairMensagemErro(err)
+          || 'Ocorreu um erro ao redefinir a senha. Verifique se o link expirou.';
+        this.exibirErro(mensagem);
       }
     });
   }
@@ -109,5 +116,36 @@ export class TrocarSenhaComponent implements OnInit {
   voltarLogin() {
     sessionStorage.removeItem(this.SESSION_KEY);
     this.router.navigate(['/login']);
+  }
+
+  private normalizarIdentificadorDaUrl(valor: string): string {
+    if (!valor) return '';
+
+    const valorComMais = valor.replace(/ /g, '+');
+
+    try {
+      return decodeURIComponent(valorComMais).replace(/ /g, '+');
+    } catch {
+      return valorComMais;
+    }
+  }
+
+  private marcarLinkInvalido(): void {
+    this.erroLink = true;
+    this.exibirErro('Link invalido ou expirado. Solicite um novo link para redefinir a senha.');
+  }
+
+  private exibirErro(mensagem: string): void {
+    this.mensagemErro = mensagem;
+    this.notificacaoService.exibirMensagem(mensagem, Nivel.Error, 7000);
+  }
+
+  private extrairMensagemErro(erro: any): string {
+    const mensagens = this.notificacaoService.normalizarMensagens(erro?.error);
+    return mensagens[0]?.descricao
+      || (Array.isArray(erro?.error) ? erro.error.join(' ') : '')
+      || (typeof erro?.error === 'string' ? erro.error : '')
+      || erro?.message
+      || '';
   }
 }

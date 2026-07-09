@@ -30,6 +30,7 @@ namespace Application.Services.AuthServices
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IValidador<UsuarioRegistroRequest> _validador;
         private readonly ICacheService _cacheService;
+        private const int ValidadeRecuperacaoSenhaEmHoras = 24;
 
         public RegistroUsuarioService(
             IAccessorService accessor,
@@ -177,7 +178,7 @@ namespace Application.Services.AuthServices
             var cacheInfo = new CacheInfo<DadosTemporarios>(ECacheKeysInfo.DadosTemporarios, identificadorTemporario)
             { EntityInfo = dadosTemporarios };
 
-            _cacheService.GravarCache(cacheInfo, TimeSpan.FromMinutes(15));
+            _cacheService.GravarCache(cacheInfo, TimeSpan.FromHours(ValidadeRecuperacaoSenhaEmHoras));
 
             var identificadorCriptografado = CryptoHelper.EncryptCryptoJsAes(identificadorTemporario);
             var identificadorUrlEncoded = HttpUtility.UrlEncode(identificadorCriptografado);
@@ -202,7 +203,7 @@ namespace Application.Services.AuthServices
                     <h1 style='color: #2c3e50;'>Recuperação de Senha</h1>
                     <p>Olá, <strong>{nome}</strong>!</p>
                     <p>Recebemos uma solicitação para redefinir a senha da sua conta no Atron.</p>
-                    <p>Para criar uma nova senha, clique no botão abaixo. Este link expira em 15 minutos:</p>
+                    <p>Para criar uma nova senha, clique no botão abaixo. Este link expira em {ValidadeRecuperacaoSenhaEmHoras} horas:</p>
                     <div style='text-align: center; margin: 30px 0;'>
                         <a href='{link}' style='background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Redefinir Minha Senha</a>
                     </div>

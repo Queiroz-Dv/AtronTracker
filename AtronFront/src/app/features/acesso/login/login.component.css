@@ -95,6 +95,28 @@
   width: 100%;
 }
 
+.auth-inline-feedback {
+  align-items: flex-start;
+  border-radius: var(--atron-radius-sm);
+  display: flex;
+  gap: 10px;
+  line-height: 1.4;
+  padding: 12px 14px;
+}
+
+.auth-inline-feedback mat-icon {
+  flex: 0 0 auto;
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.auth-inline-feedback.error {
+  background: #fff4f2;
+  border: 1px solid #f3b8ae;
+  color: #8f1f14;
+}
+
 .auth-form ::ng-deep .mat-mdc-text-field-wrapper {
   background: #ffffff;
   border-radius: var(--atron-radius-sm);

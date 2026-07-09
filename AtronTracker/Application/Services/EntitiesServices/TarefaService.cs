@@ -68,7 +68,7 @@ namespace Application.Services.EntitiesServices
             var envioEmail = await _tarefaNotificacaoService.NotificarAtribuicaoAsync(tarefaDTO, preparacao.Dados.Usuario);
             if (envioEmail.TeveFalha)
             {
-                resultado.AdicionarAviso("Tarefa criada, mas nao foi possivel enviar o e-mail de notificacao.");
+                resultado.AdicionarAviso("Tarefa criada, mas não foi possível enviar o e-mail de notificação.");
             }
 
             return resultado;
@@ -450,8 +450,8 @@ namespace Application.Services.EntitiesServices
             await CriarNotificacaoTarefaAsync(
                 usuario.Id,
                 usuario.Codigo,
-                "Nova tarefa atribuida",
-                $"A tarefa {ObterIdentificadorTarefa(tarefa)} foi atribuida a voce.",
+                "Nova tarefa atribuída",
+                $"A tarefa {ObterIdentificadorTarefa(tarefa)} foi atribuída a você.",
                 "TarefaAtribuida",
                 tarefa.Id);
         }

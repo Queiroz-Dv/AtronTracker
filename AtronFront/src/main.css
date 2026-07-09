@@ -107,6 +107,16 @@
   padding: 0;
 }
 
+.app-notifications-menu.mat-mdc-menu-panel {
+  max-width: none;
+  overflow: hidden;
+  width: min(460px, calc(100vw - 24px));
+}
+
+.app-notifications-menu .mat-mdc-menu-content {
+  padding: 0;
+}
+
 html,
 body {
   height: 100%;

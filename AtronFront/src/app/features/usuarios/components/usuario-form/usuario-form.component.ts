@@ -127,6 +127,8 @@ export class UsuarioFormComponent implements OnInit {
     if (selecionado) {
       this.cargosFiltrados = this.todosCargos.filter(c => c.departamentoCodigo === selecionado.codigo);
     }
+
+    this.sincronizarGestorDoDepartamento();
   }
 
   private sincronizarCargoSelecionado(): void {
@@ -175,10 +177,18 @@ export class UsuarioFormComponent implements OnInit {
 
   private filtrarGestoresDisponiveis(valor: string): UsuarioResponse[] {
     const filtro = valor.toLowerCase();
+    const departamentoCodigo = this.usuarioForm.get('departamentoCodigo')?.value;
     const codigoUsuarioAtual = this.usuarioForm.get('codigo')?.value;
+    const departamento = this.todosDepartamentos.find(d => d.codigo === departamentoCodigo);
+    const gestorDepartamentoCodigo = departamento?.gestorDepartamentoCodigo;
+
+    if (!gestorDepartamentoCodigo) {
+      return [];
+    }
 
     return this.todosUsuarios.filter(usuario =>
       usuario.codigo !== codigoUsuarioAtual &&
+      usuario.codigo === gestorDepartamentoCodigo &&
       (
         usuario.codigo?.toLowerCase().includes(filtro) ||
         usuario.nome?.toLowerCase().includes(filtro) ||
@@ -186,6 +196,25 @@ export class UsuarioFormComponent implements OnInit {
         `${usuario.nome} ${usuario.sobrenome}`.toLowerCase().includes(filtro)
       )
     );
+  }
+
+  private sincronizarGestorDoDepartamento(): void {
+    const departamentoCodigo = this.usuarioForm.get('departamentoCodigo')?.value;
+    const gestorAtual = this.usuarioForm.get('gestorImediatoCodigo')?.value;
+    const codigoUsuarioAtual = this.usuarioForm.get('codigo')?.value;
+    const departamento = this.todosDepartamentos.find(d => d.codigo === departamentoCodigo);
+    const gestorDepartamentoCodigo = departamento?.gestorDepartamentoCodigo;
+    const gestorValido = gestorDepartamentoCodigo && gestorDepartamentoCodigo !== codigoUsuarioAtual
+      ? gestorDepartamentoCodigo
+      : null;
+
+    if (gestorAtual !== gestorValido) {
+      this.usuarioForm.patchValue({ gestorImediatoCodigo: gestorValido }, { emitEvent: false });
+    }
+
+    const gestorSelecionado = this.todosUsuarios.find(u => u.codigo === gestorValido);
+    this.gestorImediatoControl.setValue(gestorSelecionado || '', { emitEvent: false });
+    this.gestoresFiltrados = this.filtrarGestoresDisponiveis('');
   }
 
   exibirDepartamentoDescricao = (dpt: Departamento | string) => typeof dpt === 'string' ? dpt : dpt?.descricao ?? '';

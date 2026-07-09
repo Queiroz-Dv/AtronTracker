@@ -47,8 +47,8 @@
             </span>
 
             <button class="app-notification-content" type="button" (click)="abrirNotificacao(notificacao)">
-              <span class="app-notification-title">{{ notificacao.titulo }}</span>
-              <span class="app-notification-message">{{ notificacao.mensagem }}</span>
+              <span class="app-notification-title">{{ formatarTextoNotificacao(notificacao.titulo) }}</span>
+              <span class="app-notification-message">{{ formatarTextoNotificacao(notificacao.mensagem) }}</span>
               <span class="app-notification-date">{{ notificacao.modulo }} · {{ notificacao.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</span>
             </button>
 

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 import { BotaoVoltarComponent } from '../../../../core/layout/botao-voltar/botao-voltar.component';
-import { NotificacaoInterna } from '../../models/notificacao-interna.model';
+import { NotificacaoInterna, normalizarTextoNotificacao } from '../../models/notificacao-interna.model';
 import { NotificacaoInternaService } from '../../services/notificacao-interna.service';
 
 type FiltroNotificacao = 'todas' | 'naoLidas';
@@ -79,6 +79,10 @@ export class NotificacaoInternaViewComponent implements OnInit {
 
   obterTotalLidas(): number {
     return this.notificacoes.filter(notificacao => notificacao.lida).length;
+  }
+
+  formatarTextoNotificacao(texto: string): string {
+    return normalizarTextoNotificacao(texto);
   }
 
   private atualizarFiltro(): void {

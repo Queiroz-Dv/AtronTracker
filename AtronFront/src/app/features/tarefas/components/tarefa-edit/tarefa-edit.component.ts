@@ -72,7 +72,7 @@ export class TarefaEditComponent implements OnInit {
   salvar() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.notificacaoService.exibirMensagem('Formulario invalido. Verifique os campos.', Nivel.Error);
+      this.notificacaoService.exibirMensagem('Formulário inválido. Verifique os campos.', Nivel.Error);
       return;
     }
 
@@ -108,7 +108,7 @@ export class TarefaEditComponent implements OnInit {
           return;
         }
 
-        this.notificacaoService.exibirMensagem('Nao foi possivel salvar a tarefa.', Nivel.Error);
+        this.notificacaoService.exibirMensagem('Não foi possível salvar a tarefa.', Nivel.Error);
       }
     });
   }
