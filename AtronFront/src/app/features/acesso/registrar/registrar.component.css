@@ -177,32 +177,6 @@
   color: var(--atron-primary);
 }
 
-.feedback-message {
-  align-items: flex-start;
-  border-radius: var(--atron-radius-sm);
-  display: flex;
-  gap: 10px;
-  line-height: 1.45;
-  padding: 12px 14px;
-}
-
-.feedback-success {
-  background: #ecfdf3;
-  border: 1px solid #abefc6;
-  color: #067647;
-}
-
-.feedback-error {
-  background: #fef3f2;
-  border: 1px solid #fecdca;
-  color: #b42318;
-}
-
-.feedback-message mat-icon {
-  flex: 0 0 auto;
-  margin-top: 1px;
-}
-
 .primary-action,
 .secondary-action {
   align-items: center;

@@ -38,7 +38,7 @@ export class NotificacaoService {
 
     config.panelClass = this.obterClassePainel(nivelNormalizado);
     config.duration = duracao ?? this.configPorNivel.get(nivelNormalizado)?.duracao;
-    config.horizontalPosition = 'right';
+    config.horizontalPosition = 'center';
     config.verticalPosition = 'top';
     config.data = {
       mensagem,
@@ -57,7 +57,12 @@ export class NotificacaoService {
 
     const mensagemParaExibir = this.obterMensagemPrioritaria(mensagensNormalizadas);
     if (mensagemParaExibir) {
-      this.exibirMensagem(mensagemParaExibir.descricao, mensagemParaExibir.nivel);
+      const texto = mensagensNormalizadas
+        .map(mensagem => mensagem.descricao)
+        .filter((descricao, index, descricoes) => descricoes.indexOf(descricao) === index)
+        .join('\n');
+
+      this.exibirMensagem(texto, mensagemParaExibir.nivel);
     }
   }
 
@@ -65,7 +70,7 @@ export class NotificacaoService {
     return this.normalizarMensagens(mensagens).some(msg => msg.nivel === Nivel.Error);
   }
 
-  normalizarMensagens(mensagens: unknown): Mensagem[] {
+  normalizarMensagens(mensagens: unknown, nivelPadrao: Nivel = Nivel.Error): Mensagem[] {
     if (!mensagens) {
       return [];
     }
@@ -74,7 +79,7 @@ export class NotificacaoService {
     if (entrada && typeof entrada === 'object' && !Array.isArray(entrada)) {
       return Object.values(entrada as Record<string, unknown>)
         .flatMap(valor => Array.isArray(valor) ? valor : [valor])
-        .map(msg => this.normalizarMensagem(msg))
+        .map(msg => this.normalizarMensagem(msg, nivelPadrao))
         .filter((msg): msg is Mensagem => !!msg);
     }
 
@@ -83,7 +88,7 @@ export class NotificacaoService {
     }
 
     return entrada
-      .map(msg => this.normalizarMensagem(msg))
+      .map(msg => this.normalizarMensagem(msg, nivelPadrao))
       .filter((msg): msg is Mensagem => !!msg);
   }
 
@@ -127,11 +132,11 @@ export class NotificacaoService {
       ?? null;
   }
 
-  private normalizarMensagem(mensagem: unknown): Mensagem | null {
+  private normalizarMensagem(mensagem: unknown, nivelPadrao: Nivel): Mensagem | null {
     if (typeof mensagem === 'string') {
       return {
         descricao: mensagem,
-        nivel: Nivel.Error
+        nivel: nivelPadrao
       };
     }
 

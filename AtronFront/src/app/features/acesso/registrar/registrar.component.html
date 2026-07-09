@@ -50,24 +50,6 @@
       </div>
 
       <form [formGroup]="form" (ngSubmit)="registrarNovoUsuario()" class="auth-form">
-        @if (mensagemSucesso) {
-          <div class="feedback-message feedback-success">
-            <mat-icon>check_circle</mat-icon>
-            <span>{{ mensagemSucesso }}</span>
-          </div>
-        }
-
-        @if (mensagensErro.length) {
-          <div class="feedback-message feedback-error">
-            <mat-icon>error</mat-icon>
-            <ul class="feedback-list">
-              @for (mensagem of mensagensErro; track mensagem) {
-                <li>{{ mensagem }}</li>
-              }
-            </ul>
-          </div>
-        }
-
         <fieldset class="form-section">
           <legend>Dados de acesso</legend>
 

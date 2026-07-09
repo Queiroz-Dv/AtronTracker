@@ -6,7 +6,7 @@ import { SharedModule } from '../../../shared/modules/shared.module';
 import { ControlErrorComponent } from '../../../shared/components/control-error/control-error.component';
 import { senhasIguaisValidator } from '../../../core/validators/senhasIguaisValidator.validator';
 import { RegistrarRequest } from '../../../shared/models/request/registrar-request.model';
-import { NotificacaoService } from '../../../core/services/notification.service';
+import { Nivel, NotificacaoService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'c-registrar',
@@ -18,8 +18,6 @@ import { NotificacaoService } from '../../../core/services/notification.service'
 export class RegistrarComponent implements OnInit {
   form!: FormGroup;
   id?: number;
-  mensagemSucesso = '';
-  mensagensErro: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -42,9 +40,6 @@ export class RegistrarComponent implements OnInit {
   }
 
   registrarNovoUsuario(): void {
-    this.mensagemSucesso = '';
-    this.mensagensErro = [];
-
     const clientUri = window.location.origin;
 
     const dadosDoUsuario = new RegistrarRequest(
@@ -59,10 +54,14 @@ export class RegistrarComponent implements OnInit {
       clientUri || undefined);
 
     this.acessoService.registrar(dadosDoUsuario).subscribe({
-      next: (mensagens: string[]) => {
-        this.mensagemSucesso = mensagens?.length > 0
-          ? mensagens.join(' ')
+      next: (resposta: unknown) => {
+        const mensagens = this.notificacaoService.normalizarMensagens(resposta, Nivel.Sucesso);
+        const mensagemSucesso = mensagens.length
+          ? mensagens.map(mensagem => mensagem.descricao).join('\n')
           : 'Usuário registrado com sucesso! Verifique seu e-mail para confirmar.';
+
+        this.notificacaoService.exibirMensagem(mensagemSucesso, Nivel.Sucesso, 5000);
+
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);
@@ -70,10 +69,13 @@ export class RegistrarComponent implements OnInit {
       error: (error: any) => {
         console.error('Erro ao registrar usuário:', error);
         const mensagens = this.notificacaoService.normalizarMensagens(error);
-        this.mensagensErro = mensagens.length
-          ? mensagens.map(mensagem => mensagem.descricao)
-          : ['Erro ao registrar usuário. Tente novamente.'];
-        this.notificacaoService.exibirMensagens(mensagens);
+
+        if (mensagens.length) {
+          this.notificacaoService.exibirMensagens(mensagens);
+          return;
+        }
+
+        this.notificacaoService.exibirMensagem('Erro ao registrar usuário. Tente novamente.', Nivel.Error);
       }
     });
   }
