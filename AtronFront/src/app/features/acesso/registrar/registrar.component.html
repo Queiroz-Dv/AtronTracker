@@ -9,6 +9,38 @@
       <p class="brand-copy">
         Cadastre seu acesso para organizar a gestão da empresa em um ambiente simples e seguro.
       </p>
+
+      <div class="register-guide" aria-label="Guia rápido de cadastro">
+        <div class="guide-step">
+          <span class="guide-step-icon">
+            <mat-icon>badge</mat-icon>
+          </span>
+          <div>
+            <strong>1. Identifique seu acesso</strong>
+            <p>Use um código único e um e-mail válido.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <span class="guide-step-icon">
+            <mat-icon>person</mat-icon>
+          </span>
+          <div>
+            <strong>2. Complete seus dados</strong>
+            <p>Informe nome, sobrenome e data de nascimento.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <span class="guide-step-icon">
+            <mat-icon>mark_email_read</mat-icon>
+          </span>
+          <div>
+            <strong>3. Confirme pelo e-mail</strong>
+            <p>Depois do envio, abra o link recebido para liberar o acesso.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="auth-card">
@@ -67,7 +99,7 @@
             </mat-form-field>
           </div>
 
-          <div class="form-grid">
+          <div class="form-grid single-column">
             <mat-form-field appearance="outline">
               <mat-label>Data de nascimento</mat-label>
               <mat-icon matPrefix>calendar_today</mat-icon>
@@ -75,11 +107,6 @@
               <c-control-error [control]="form.get('dataNascimento')"></c-control-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Perfil de acesso</mat-label>
-              <mat-icon matPrefix>admin_panel_settings</mat-icon>
-              <input matInput formControlName="codigoPerfilDeAcesso" placeholder="Opcional" />
-            </mat-form-field>
           </div>
         </fieldset>
 
