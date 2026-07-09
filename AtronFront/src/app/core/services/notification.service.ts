@@ -71,6 +71,13 @@ export class NotificacaoService {
     }
 
     const entrada = this.extrairEntradaDeMensagens(mensagens);
+    if (entrada && typeof entrada === 'object' && !Array.isArray(entrada)) {
+      return Object.values(entrada as Record<string, unknown>)
+        .flatMap(valor => Array.isArray(valor) ? valor : [valor])
+        .map(msg => this.normalizarMensagem(msg))
+        .filter((msg): msg is Mensagem => !!msg);
+    }
+
     if (!Array.isArray(entrada)) {
       return [];
     }
@@ -113,10 +120,21 @@ export class NotificacaoService {
       ?? objeto['mensagens']
       ?? objeto['messages']
       ?? objeto['Messages']
+      ?? objeto['error']
+      ?? objeto['Error']
+      ?? objeto['errors']
+      ?? objeto['Errors']
       ?? null;
   }
 
   private normalizarMensagem(mensagem: unknown): Mensagem | null {
+    if (typeof mensagem === 'string') {
+      return {
+        descricao: mensagem,
+        nivel: Nivel.Error
+      };
+    }
+
     if (!mensagem || typeof mensagem !== 'object') {
       return null;
     }

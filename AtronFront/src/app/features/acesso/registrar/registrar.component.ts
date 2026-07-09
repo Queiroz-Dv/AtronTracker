@@ -6,6 +6,7 @@ import { SharedModule } from '../../../shared/modules/shared.module';
 import { ControlErrorComponent } from '../../../shared/components/control-error/control-error.component';
 import { senhasIguaisValidator } from '../../../core/validators/senhasIguaisValidator.validator';
 import { RegistrarRequest } from '../../../shared/models/request/registrar-request.model';
+import { NotificacaoService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'c-registrar',
@@ -18,11 +19,12 @@ export class RegistrarComponent implements OnInit {
   form!: FormGroup;
   id?: number;
   mensagemSucesso = '';
-  mensagemErro = '';
+  mensagensErro: string[] = [];
 
   constructor(
     private fb: FormBuilder,
     private acessoService: AcessoService,
+    private notificacaoService: NotificacaoService,
     public router: Router
   ) { }
 
@@ -41,7 +43,7 @@ export class RegistrarComponent implements OnInit {
 
   registrarNovoUsuario(): void {
     this.mensagemSucesso = '';
-    this.mensagemErro = '';
+    this.mensagensErro = [];
 
     const clientUri = window.location.origin;
 
@@ -67,16 +69,11 @@ export class RegistrarComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Erro ao registrar usuário:', error);
-
-        if (error?.error && Array.isArray(error.error)) {
-          this.mensagemErro = error.error.join(' ');
-        } else if (error?.error?.message) {
-          this.mensagemErro = error.error.message;
-        } else if (typeof error?.error === 'string') {
-          this.mensagemErro = error.error;
-        } else {
-          this.mensagemErro = 'Erro ao registrar usuário. Tente novamente.';
-        }
+        const mensagens = this.notificacaoService.normalizarMensagens(error);
+        this.mensagensErro = mensagens.length
+          ? mensagens.map(mensagem => mensagem.descricao)
+          : ['Erro ao registrar usuário. Tente novamente.'];
+        this.notificacaoService.exibirMensagens(mensagens);
       }
     });
   }

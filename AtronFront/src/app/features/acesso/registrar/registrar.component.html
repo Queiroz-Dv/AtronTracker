@@ -57,10 +57,14 @@
           </div>
         }
 
-        @if (mensagemErro) {
+        @if (mensagensErro.length) {
           <div class="feedback-message feedback-error">
             <mat-icon>error</mat-icon>
-            <span>{{ mensagemErro }}</span>
+            <ul class="feedback-list">
+              @for (mensagem of mensagensErro; track mensagem) {
+                <li>{{ mensagem }}</li>
+              }
+            </ul>
           </div>
         }
 

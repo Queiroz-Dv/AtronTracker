@@ -65,6 +65,8 @@ function extrairCorpoErro(erro: any): Mensagem[] | null {
       ?? corpo?.mensagens
       ?? corpo?.messages
       ?? corpo?.Messages
+      ?? corpo?.error
+      ?? corpo?.Error
       ?? corpo?.errors
       ?? corpo?.Errors
       ?? null;
