@@ -1,33 +1,24 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    /// <summary>
-    /// Controlador para gerenciar entidades de Módulos.
-    /// </summary>
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class ModuloController : ApiBaseConfigurationController<ModuloDTO, IModuloService>
+    public class ModuloController : ControllerBase
     {
-        /// <summary>
-        /// Inicializa uma nova instância da classe <see cref="ModuloController"/>.
-        /// </summary>
-        /// <param name="service">O serviço para gerenciar módulos.</param>
-        /// <param name="messageModel">O modelo de mensagens para lidar com notificações.</param>
-        public ModuloController(IModuloService service, Notifiable messageModel) : base(service, messageModel)
-        { }
+        private readonly IModuloService _service;
 
-        /// <summary>
-        /// Obtém todos os módulos.
-        /// </summary>
-        /// <returns>Lista de módulos.</returns>
+        public ModuloController(IModuloService service)
+        {
+            _service = service;
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ModuloDTO>>> Get()
         {
@@ -35,19 +26,11 @@ namespace WebApi.Controllers
             return Ok(dtos);
         }
 
-        /// <summary>
-        /// Obtém um módulo pelo código.
-        /// </summary>
-        /// <param name="codigo">Código do módulo.</param>
-        /// <returns>Dados do módulo.</returns>
         [HttpGet("{codigo}")]
         public async Task<ActionResult<ModuloDTO>> Get(string codigo)
         {
             var modulo = await _service.ObterPorCodigoService(codigo);
-
-            return modulo is null ?
-                NotFound(ObterNotificacoes()) :
-                Ok(modulo);
+            return modulo is null ? NotFound() : Ok(modulo);
         }
     }
 }

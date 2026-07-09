@@ -33,43 +33,6 @@
   box-sizing: border-box;
 }
 
-/* You can add global styles to this file, and also import other style files */
-/* Adicione estas classes para estilizar o snackbar */
-.snackbar-sucesso { /* Nome da classe alterado */
-  background-color: #ecfdf3;
-  border: 1px solid #bbf7d0;
-  color: var(--atron-success);
-}
-
-.snackbar-erro { /* Nome da classe alterado */
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  color: var(--atron-danger);
-}
-
-.snackbar-aviso { /* Nome da classe alterado */
-  background-color: #fffbeb;
-  border: 1px solid #fde68a;
-  color: var(--atron-warning);
-}
-
-.snackbar-info { /* Nome da classe alterado */
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: var(--atron-info);
-}
-
-/* Ajustes opcionais para garantir que o botão fechar seja visível */
-.snackbar-sucesso button,
-.snackbar-erro button,
-.snackbar-aviso button,
-.snackbar-info button {
-  color: inherit !important; /* Herda a cor do texto do snackbar */
-  opacity: 0.8;
-}
-
-/* ... (restante do seu CSS global) */
-
 .snackbar-sucesso,
 .snackbar-erro,
 .snackbar-aviso,

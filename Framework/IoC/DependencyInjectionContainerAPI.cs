@@ -55,11 +55,9 @@ namespace IoC
 
             services = services.AddSharedInfrastructure(configuration);
 
-            // Evitar o looping infinito 
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             services.AddScoped(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
 
-            // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
             services = services.AddServiceMappings();
             services = services.AddMessageValidationServices();
@@ -80,19 +78,9 @@ namespace IoC
             ConfigurePerfilDeAcessoUsuarioServices(services);
 
 
-            // Registra os serviços essenciais do sistema de proteção de dados (Data Protection) na injeção de dependência.
             services.AddDataProtection()
-
-                // Define um nome de aplicativo exclusivo ("Atron").
-                // Usado para isolar os cookies e tokens da sua aplicação de outras aplicações rodando no mesmo servidor.
                 .SetApplicationName("Atron")
-
-                // Instruiu o sistema a salvar (persistir) as chaves de criptografia em uma pasta local chamada "./keys".
-                // Isso é vital para produção, garantindo que os usuários não sejam deslogados a cada reinício da aplicação.
                 .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
-
-                // Configura o "rodízio de chaves" (key rotation), gerando uma nova chave de criptografia a cada 90 dias.
-                // É uma boa prática de segurança para limitar o tempo de vida de qualquer chave.
                 .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
             return services;
         }

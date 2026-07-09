@@ -36,8 +36,7 @@ export class LoginComponent implements OnInit {
 
     this.form = this.fb.group({
       codigo: ['', Validators.required],
-      senha: ['', Validators.required],
-      //lembrar: ['']
+      senha: ['', Validators.required]
     });
   }
 
@@ -55,9 +54,7 @@ export class LoginComponent implements OnInit {
         const rota = this.getRotaPorVisualizacao();
         this.router.navigate([rota]);
       },
-      error: (error: any) => {
-        console.log(error);
-      }
+      error: () => { }
     });
   }
 

@@ -47,7 +47,6 @@ namespace WebApi.Controllers
                 return NoContent();
             }
 
-            // Tenta obter do cache
             var dadosCache = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription);
 
             var jsonDeRetorno = new
@@ -68,11 +67,9 @@ namespace WebApi.Controllers
 
             if (dadosCache is not null)
             {
-                // Retorna apenas o que o Front precisa
                 return Ok(jsonDeRetorno);
             }
 
-            // Se não havia cache (talvez expirado), busca os dados novamente
             var perfisModulos = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo);
             var dto = new DadosComplementaresDoUsuarioDTO
             {
@@ -84,7 +81,6 @@ namespace WebApi.Controllers
                 }).ToList(),
             };
 
-            // Regrava cache para próxima vez
             _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo)
             {
                 EntityInfo = dto

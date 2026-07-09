@@ -7,7 +7,6 @@ namespace IoC
     {
         public static IServiceCollection AddCustomCookieConfiguration(this IServiceCollection services)
         {
-            // Configuração do cookie de autenticação
             services.ConfigureApplicationCookie(options =>
             {
                 options.AccessDeniedPath = "/";
@@ -25,14 +24,13 @@ namespace IoC
 
             });
 
-            // Configuração da sessão
             services.AddSession(options =>
             {
-                options.Cookie.Name = "AuthSession";                            // Nome do cookie
-                options.Cookie.HttpOnly = true;                             // Impede acesso via JavaScript
-                options.Cookie.IsEssential = true;                         // Necessário para funcionamento essencial
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;  // HTTPS obrigatório
-                options.Cookie.SameSite = SameSiteMode.Strict;           // Restringe envio a origens externas                
+                options.Cookie.Name = "AuthSession";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Strict;
             });
 
             return services;

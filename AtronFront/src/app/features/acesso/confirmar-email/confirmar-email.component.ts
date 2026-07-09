@@ -26,9 +26,6 @@ export class ConfirmarEmailComponent implements OnInit {
     const usuarioCodigo = this.route.snapshot.queryParamMap.get('usuarioCodigo');
     const token = this.route.snapshot.queryParamMap.get('token');
 
-    console.log(usuarioCodigo + " " + token);
-
-
     var confirmarEmailRequest =  new ConfirmarEmailRequest();
     confirmarEmailRequest.usuarioCodigo = usuarioCodigo;
     confirmarEmailRequest.token = token;

@@ -18,7 +18,6 @@ namespace IoC
             ConfigureDepartamentoServices(services);
             ConfgureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
-            ConfigureUsuarioServices(services);
             ConfigurarTarefaServices(services);
             ConfigureModuloServices(services);
             ConfigurePerfilDeAcessoServices(services);
@@ -35,13 +34,6 @@ namespace IoC
             services.AddScoped<IValidateModelService<DadosDoTokenDTO>, InfoTokenMessageValidation>();
             services.AddScoped<Notifiable, InfoTokenMessageValidation>();
         }
-
-        //private static void ConfigureApiRegisterMessageValidation(IServiceCollection services)
-        //{
-        //    services.AddScoped<IMessageBaseService, ApiRegisterMessageValidation>();
-        //    services.AddScoped<IValidateModelService<UsuarioRegistro>, ApiRegisterMessageValidation>();
-        //    services.AddScoped<Notifiable, ApiRegisterMessageValidation>();
-        //}
 
         private static void ConfigurarTarefaServices(IServiceCollection services)
         {
@@ -66,13 +58,6 @@ namespace IoC
         {
             services.AddScoped<IValidador<PlanejamentoCustoDTO>, PlanejamentoCustoValidador>();
         }
-
-        private static void ConfigureUsuarioServices(IServiceCollection services)
-        {
-            // O validador de usuário agora usa o novo padrão IValidador<UsuarioRequest>
-            // registrado em DependencyInjectionContainerAPI.ConfigureUsuarioServices()
-        }
-
 
         private static void ConfigureModuloServices(IServiceCollection services)
         {

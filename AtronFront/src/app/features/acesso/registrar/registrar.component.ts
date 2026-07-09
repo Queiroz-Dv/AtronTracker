@@ -61,8 +61,6 @@ export class RegistrarComponent implements OnInit {
         this.mensagemSucesso = mensagens?.length > 0
           ? mensagens.join(' ')
           : 'Usuário registrado com sucesso! Verifique seu e-mail para confirmar.';
-        console.log('Usuário registrado com sucesso!', mensagens);
-
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);

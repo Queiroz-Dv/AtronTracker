@@ -23,7 +23,6 @@ interface NivelConfig {
 
 export class NotificacaoService {
   
-// Funciona como um dicionário no C#
   private configPorNivel: Map<Nivel, NivelConfig> = new Map([
     [Nivel.Error,    { prioridade: 1, duracao: 6000 }],
     [Nivel.Sucesso,  { prioridade: 2, duracao: 5000 }],

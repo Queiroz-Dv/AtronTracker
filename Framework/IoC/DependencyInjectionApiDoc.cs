@@ -10,7 +10,6 @@ namespace IoC
     {
         public static IServiceCollection AddDependencyInjectionApiDoc(this IServiceCollection services)
         {
-            // Informa que usaremos o Swagger para documentação e testes
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -48,7 +47,6 @@ namespace IoC
                 });
                 c.EnableAnnotations();
 
-                // Ativa o XML para as documentações no Swagger e Redocs
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });

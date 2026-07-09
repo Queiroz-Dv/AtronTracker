@@ -72,8 +72,6 @@ eventos específicos para o sistema. Adotamos então o Angular que está em `Atr
 
 ### Framework
 
-- [Framework/Communication](Framework/Communication/README.md): comunicação HTTP e tokens.
-- [Framework/ExternalServices](Framework/ExternalServices/README.md): abstrações para comunicação externa.
 - [Framework/Shared](Framework/Shared/README.md): utilitários, recursos e componentes compartilhados.
 - [Framework/IoC](Framework/IoC/README.md): injeção de dependência.
 
