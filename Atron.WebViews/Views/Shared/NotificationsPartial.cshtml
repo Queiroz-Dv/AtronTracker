@@ -1,0 +1,39 @@
+﻿@using Shared.Domain.ValueObjects
+@{
+    var notificationsTempData = TempData["Notifications"];
+    List<NotificationMessage> notifications = notificationsTempData is not null
+        ? JsonConvert.DeserializeObject<List<NotificationMessage>>(notificationsTempData.ToString())
+        : null;
+}
+
+@if (notifications != null && notifications.Any())
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Centraliza a configuração do SweetAlert
+            function showNotification(level, description) {
+                const config = {
+                    Error:   { icon: "error",   title: "Erro!",    confirmButton: true },
+                    Warning: { icon: "warning", title: "Aviso!",   confirmButton: true },
+                    Success: { icon: "success", title: "Sucesso!", confirmButton: true },
+                };
+
+                const notification = config[level] || config["Success"];
+                Swal.fire({
+                    icon: notification.icon,
+                    title: notification.title,
+                    text: description,
+                    showConfirmButton: notification.confirmButton
+                });
+            };
+
+            // Recupera mensagens e exibe notificações
+            var messages = @Html.Raw(JsonConvert.SerializeObject(notifications));
+
+            console.log(messages);
+            messages.forEach(function (ntf) {
+                showNotification(ntf.Level, ntf.Description);
+            });
+        });
+    </script>
+}

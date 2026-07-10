@@ -1,0 +1,93 @@
+﻿@{
+    var legendTitle = ViewData["LegendTitle"] as string;
+    var isMultiSelect = ViewData["IsMultiSelect"] as bool?;
+    bool hasChildren = (bool)ViewData["HasChildren"];
+
+    var entitiesColumns = ViewData["EntityColumns"] as string[];
+    var entities = ViewData["Entities"] as IEnumerable<object>;
+
+    bool isChildrenMultiSelect = (bool)ViewData["IsChildrenMultiSelect"];
+    var childrenColumns = ViewData["ChildrenColumns"] as string[];
+    var children = ViewData["ChildrenEntities"] as IEnumerable<object>;
+}
+
+<fieldset>
+    <legend>@legendTitle</legend>
+    <table class="table table-dark table-striped table-hover">
+        <thead>
+            <tr>
+                @if (isMultiSelect.HasValue && isMultiSelect.Value)
+                {
+                    <th colspan="1"></th> <!-- Coluna para os checkboxes -->
+                }
+                @foreach (var column in entitiesColumns)
+                {
+                    <th>@column</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @*Itera sobre as entidades pai*@    
+            @foreach (var entity in entities.Select((value, index) => new { value, index }))
+            {                
+                var entityId = $"entity-{entity.index}";
+                <tr data-bs-toggle="collapse" data-bs-target="#@entityId" class="clickable">
+                    @if (isMultiSelect.HasValue && isMultiSelect.Value)
+                    {
+                        <td>
+                            <input class="form-check-input" type="checkbox" value="@entity.value.GetType().GetProperty(entitiesColumns.First()).GetValue(entity.value, null)" />
+                        </td>
+                    }
+                    @foreach (var column in entitiesColumns)
+                    {
+                        <td>
+                            @entity.value.GetType().GetProperty(column).GetValue(entity.value, null)
+                        </td>
+                    }
+                </tr>
+                @if (hasChildren)
+                {                    
+                    <tr id="@entityId" class="collapse">
+                        <td colspan="@entitiesColumns.Length + (isMultiSelect.HasValue && isMultiSelect.Value ? 1 : 0)">
+                            <table class="table table-dark table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        @if (isChildrenMultiSelect)
+                                        {
+                                            <th class="p-0"></th> <!-- Coluna para os checkboxes dos filhos -->
+                                        }
+                                        @foreach (var column in childrenColumns)
+                                        {
+                                            <th>@column</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @*Itera sobre as entidades filhos*@    
+                                    @foreach (var child in children)
+                                    {
+                                        <tr>
+                                            @if (isChildrenMultiSelect)
+                                            {
+                                                <td class="p-1">
+                                                    <input class="form-check-input" type="checkbox" value="@child.GetType().GetProperty(childrenColumns.First()).GetValue(child, null)" />
+                                                </td>
+                                            }
+                                            @foreach (var column in childrenColumns)
+                                            {
+                                                <td>
+                                                    @child.GetType().GetProperty(column).GetValue(child, null)
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+</fieldset>

@@ -1,0 +1,19 @@
+﻿using Application.DTO;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Application.Interfaces.Services
+{
+    public interface ISalarioService
+    {
+        Task CriarAsync(SalarioDTO salarioDTO);
+
+        Task<List<SalarioDTO>> ObterTodosAsync();
+
+        Task AtualizarServiceAsync(int id, SalarioDTO salarioDTO);
+
+        Task ExcluirAsync(int id);
+
+        Task<SalarioDTO> ObterPorId(int id);
+    }
+}

@@ -1,0 +1,31 @@
+﻿@model SalarioDTO;
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <partial name="Partials/TitleLabel"></partial>
+            <div class="mb-4">
+                <label asp-for="UsuarioCodigo" class="form-label">Usuários</label>
+                <select asp-for="UsuarioCodigo" id="usuarioCodigo"
+                        class="form-select" asp-items="@ViewBag.Usuarios">
+                    <option value="">Selecione um usuário</option>
+                </select>
+                <span asp-validation-for="UsuarioCodigo" class="text-danger"></span>
+            </div>
+
+            <div id="salarioFormContainer">
+                <partial name="Partials/Salario/FormularioSalarioPartial" model="new SalarioDTO()"> </partial>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="module" src="/js/views/cadastrarSalario.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#usuarioCodigo").select2();
+        });
+    </script>
+}
