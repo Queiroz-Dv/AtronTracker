@@ -1,5 +1,5 @@
 <div [formGroup]="form" class="container centered-container">
-  <h2>Cadastro de departamentos</h2>
+  <h2>Cadastro de Departamentos</h2>
   <mat-form-field>
     <mat-label>Código</mat-label>
     <input matInput formControlName="codigo" [maxlength]="10" />
@@ -10,5 +10,14 @@
     <mat-label>Descrição</mat-label>
     <input matInput formControlName="descricao" />
     <c-control-error [control]="form.get('descricao')"></c-control-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Gestor do departamento (opcional)</mat-label>
+    <input type="text" matInput placeholder="Selecione um gestor, se houver" [formControl]="gestorDepartamentoControl" [matAutocomplete]="autoGestorDepartamento" />
+    <mat-autocomplete #autoGestorDepartamento="matAutocomplete" [displayWith]="exibirGestorDescricao">
+      @for (gestor of gestoresFiltrados; track gestor.codigo) {
+      <mat-option [value]="gestor">{{ gestor.codigo }} - {{ gestor.nome }} {{ gestor.sobrenome }}</mat-option>
+      }
+    </mat-autocomplete>
   </mat-form-field>
 </div>

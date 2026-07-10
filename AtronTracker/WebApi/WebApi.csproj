@@ -5,15 +5,16 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>bin/IoC.xml</DocumentationFile>
 	  <NoWarn>1591</NoWarn>
+    <UserSecretsId>26ac2834-f43a-4f0e-b344-6766656479a4</UserSecretsId>
   </PropertyGroup> 
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.32" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.32">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Npgsql" Version="6.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="5.6.3" />
   </ItemGroup>
@@ -22,6 +23,8 @@
 	<ProjectReference Include="..\..\Framework\IoC\IoC.csproj" />	
 	<ProjectReference Include="..\Application\Application.csproj" />    
     <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure.PostgreSqlMigrations\AtronTracker.Infrastructure.PostgreSqlMigrations.csproj" />
+    <ProjectReference Include="..\..\Framework\Shared.PostgreSqlMigrations\Framework.Shared.PostgreSqlMigrations.csproj" />
   </ItemGroup>
 
 </Project>

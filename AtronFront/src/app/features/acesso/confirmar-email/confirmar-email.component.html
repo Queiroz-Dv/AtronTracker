@@ -1,52 +1,67 @@
-<div class="confirmation-wrapper">
-  <div class="confirmation-card" [class.success]="confirmado && sucesso" [class.error]="confirmado && !sucesso">
-    <div class="decoration-circles"></div>
+<main class="auth-page">
+  <section class="auth-shell" aria-labelledby="confirmar-email-title">
+    <div class="auth-brand">
+      <span class="brand-mark">
+        <mat-icon>{{ confirmado && !sucesso ? 'error_outline' : 'mark_email_read' }}</mat-icon>
+      </span>
+      <p class="brand-kicker">Confirmação de acesso</p>
+      <h1 id="confirmar-email-title">Confirmar e-mail</h1>
+      <p class="brand-copy" *ngIf="!confirmado">
+        Informe o código recebido por e-mail para confirmar seu acesso.
+      </p>
+      <p class="brand-copy" *ngIf="confirmado && sucesso">
+        Seu acesso foi confirmado. Você já pode entrar no sistema.
+      </p>
+      <p class="brand-copy" *ngIf="confirmado && !sucesso">
+        Não foi possível confirmar o acesso com o link informado.
+      </p>
+    </div>
 
-    <!-- Loading State -->
-    @if (!confirmado) {
-      <div class="loading-container">
-        <div class="spinner-wrapper">
-          <mat-spinner diameter="64" color="primary"></mat-spinner>
-        </div>
-        <p class="loading-text">Confirmando seu e-mail...</p>
-      </div>
-    }
+    <div class="auth-card auth-feedback-card">
+      <div class="confirmation-status" *ngIf="!confirmado">
+        <h2>Código de confirmação</h2>
+        <p>Digite o identificador temporário enviado para seu e-mail.</p>
 
-    <!-- Success State -->
-    @if (confirmado && sucesso) {
-      <div class="icon-container success-icon-bg">
-        <mat-icon class="status-icon success">check_circle</mat-icon>
-      </div>
-      <h2 class="confirmation-title">E-mail Confirmado!</h2>      
-      <button mat-flat-button (click)="irParaLogin()" class="action-button primary">
-        <mat-icon>login</mat-icon>
-        Ir para Login
-      </button>
-      <div class="email-details">
-        <div class="detail-item">
+        <p class="feedback-message error" *ngIf="mensagem && !sucesso">{{ mensagem }}</p>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Código recebido</mat-label>
+          <mat-icon matPrefix>pin</mat-icon>
+          <input
+            matInput
+            [formControl]="identificadorControl"
+            placeholder="Digite o código"
+            autocomplete="one-time-code" />
+          <c-control-error [control]="identificadorControl"></c-control-error>
+        </mat-form-field>
+
+        <button mat-flat-button type="button" class="primary-action" (click)="confirmarEmail()">
           <mat-icon>verified</mat-icon>
-          <span>Sua conta está pronta para uso</span>
-        </div>
+          Confirmar e-mail
+        </button>
       </div>
-    }
 
-    <!-- Error State -->
-    @if (confirmado && !sucesso) {
-      <div class="icon-container error-icon-bg">
-        <mat-icon class="status-icon error">error_outline</mat-icon>
-      </div>
-      <h2 class="confirmation-title">Falha na Confirmação</h2>
-      <p class="confirmation-message">{{ mensagem }}</p>
-      <button mat-flat-button [routerLink]="['/login']" class="action-button secondary">
-        <mat-icon>arrow_back</mat-icon>
-        Voltar para Login
-      </button>
-      <div class="email-details">
-        <div class="detail-item">
-          <mat-icon>help_outline</mat-icon>
-          <span>Entre em contato se o problema persistir</span>
-        </div>
-      </div>
-    }
-  </div>
-</div>
+      <ng-container *ngIf="confirmado && sucesso">
+        <mat-icon class="auth-feedback-icon success">check_circle</mat-icon>
+        <h2>E-mail confirmado</h2>
+        <p>{{ mensagem }}</p>
+        <button mat-flat-button type="button" class="primary-action" (click)="irParaLogin()">
+          <mat-icon>login</mat-icon>
+          Ir para login
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="confirmado && !sucesso">
+        <mat-icon class="auth-feedback-icon error">error_outline</mat-icon>
+        <h2>Falha na confirmação</h2>
+        <p>{{ mensagem }}</p>
+        <button mat-flat-button type="button" class="primary-action" (click)="irParaLogin()">
+          <mat-icon>arrow_back</mat-icon>
+          Voltar ao login
+        </button>
+      </ng-container>
+    </div>
+
+    <p class="auth-footer">&copy; 2026 Atron. Todos os direitos reservados.</p>
+  </section>
+</main>

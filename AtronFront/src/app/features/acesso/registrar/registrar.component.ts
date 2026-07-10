@@ -6,6 +6,7 @@ import { SharedModule } from '../../../shared/modules/shared.module';
 import { ControlErrorComponent } from '../../../shared/components/control-error/control-error.component';
 import { senhasIguaisValidator } from '../../../core/validators/senhasIguaisValidator.validator';
 import { RegistrarRequest } from '../../../shared/models/request/registrar-request.model';
+import { Nivel, NotificacaoService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'c-registrar',
@@ -14,16 +15,14 @@ import { RegistrarRequest } from '../../../shared/models/request/registrar-reque
   styleUrls: ['./registrar.component.css'],
   standalone: true,
 })
-
 export class RegistrarComponent implements OnInit {
   form!: FormGroup;
   id?: number;
-  mensagemSucesso = '';
-  mensagemErro = '';
 
   constructor(
     private fb: FormBuilder,
     private acessoService: AcessoService,
+    private notificacaoService: NotificacaoService,
     public router: Router
   ) { }
 
@@ -41,9 +40,6 @@ export class RegistrarComponent implements OnInit {
   }
 
   registrarNovoUsuario(): void {
-    this.mensagemSucesso = '';
-    this.mensagemErro = '';
-
     const clientUri = window.location.origin;
 
     const dadosDoUsuario = new RegistrarRequest(
@@ -58,30 +54,28 @@ export class RegistrarComponent implements OnInit {
       clientUri || undefined);
 
     this.acessoService.registrar(dadosDoUsuario).subscribe({
-      next: (mensagens: string[]) => {
-        // Se recebeu resposta 200, o registro foi bem-sucedido
-        this.mensagemSucesso = mensagens?.length > 0
-          ? mensagens.join(' ')
+      next: (resposta: unknown) => {
+        const mensagens = this.notificacaoService.normalizarMensagens(resposta, Nivel.Sucesso);
+        const mensagemSucesso = mensagens.length
+          ? mensagens.map(mensagem => mensagem.descricao).join('\n')
           : 'Usuário registrado com sucesso! Verifique seu e-mail para confirmar.';
-        console.log('Usuário registrado com sucesso!', mensagens);
 
-        // Aguarda 3 segundos para o usuário ler a mensagem antes de redirecionar
+        this.notificacaoService.exibirMensagem(mensagemSucesso, Nivel.Sucesso, 5000);
+
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);
       },
       error: (error: any) => {
         console.error('Erro ao registrar usuário:', error);
+        const mensagens = this.notificacaoService.normalizarMensagens(error);
 
-        if (error?.error && Array.isArray(error.error)) {
-          this.mensagemErro = error.error.join(' ');
-        } else if (error?.error?.message) {
-          this.mensagemErro = error.error.message;
-        } else if (typeof error?.error === 'string') {
-          this.mensagemErro = error.error;
-        } else {
-          this.mensagemErro = 'Erro ao registrar usuário. Tente novamente.';
+        if (mensagens.length) {
+          this.notificacaoService.exibirMensagens(mensagens);
+          return;
         }
+
+        this.notificacaoService.exibirMensagem('Erro ao registrar usuário. Tente novamente.', Nivel.Error);
       }
     });
   }

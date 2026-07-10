@@ -1,4 +1,5 @@
 ﻿using Shared.Application.DTOS.Auth;
+using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
 namespace Application.Interfaces.ApplicationInterfaces
@@ -8,12 +9,10 @@ namespace Application.Interfaces.ApplicationInterfaces
     /// </summary>
     public interface ILoginService
     {
-        Task<DadosDoTokenDTO> Autenticar(LoginRequestDTO login);
+        Task<Resultado<DadosDoTokenDTO>> Autenticar(LoginRequestDTO login);
 
-        Task<bool> Logout(string usuarioCodigo);
+        Task<Resultado> Logout(string usuarioCodigo);
 
-        Task<DadosDoTokenDTO> RefreshAcesso(DadosDoTokenDTO infoToken);
-
-        Task<bool> TrocarSenha(LoginRequestDTO dto);
+        Task<Resultado<DadosDoTokenDTO>> RefreshAcesso(DadosDoRefreshTokenCookieDTO infoToken);        
     }
 }

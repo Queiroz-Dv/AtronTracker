@@ -23,7 +23,7 @@ namespace Application.Mapping
                 Sobrenome = entity.Sobrenome,
                 DataNascimento = entity.DataNascimento,
                 Email = entity.Email,
-                SalarioMensal = entity.SalarioAtual
+                GestorImediatoCodigo = entity.GestorImediatoCodigo
             };
 
             return Task.FromResult(dto);
@@ -41,7 +41,9 @@ namespace Application.Mapping
                 Sobrenome = dto.Sobrenome,
                 DataNascimento = dto.DataNascimento,
                 Email = dto.Email,
-                SalarioAtual = dto.SalarioMensal
+                GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper(),
+                ReceberNotificacaoInternaTarefa = true,
+                ReceberNotificacaoTarefaPorEmail = false
             };
 
             return Task.FromResult(entity);
@@ -57,7 +59,7 @@ namespace Application.Mapping
             entityToUpdate.Sobrenome = dto.Sobrenome;
             entityToUpdate.DataNascimento = dto.DataNascimento;
             entityToUpdate.Email = dto.Email;
-            entityToUpdate.SalarioAtual = dto.SalarioMensal;
+            entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper();
 
             return Task.CompletedTask;
         }

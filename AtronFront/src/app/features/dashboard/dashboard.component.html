@@ -1,37 +1,102 @@
-<mat-toolbar color="primary">
-  <span class="spacer"></span>
-  <button mat-icon-button (click)="trocarVisualizacao()" title="Trocar para menu">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <button mat-icon-button (click)="logout()">
-    <mat-icon>logout</mat-icon>
-  </button>
-</mat-toolbar>
+<main class="dashboard-page">
+  <header class="dashboard-topbar">
+    <div class="dashboard-topbar-inner">
+      <div class="dashboard-brand" aria-label="Atron Platform">
+        <span class="brand-symbol">
+          <mat-icon>hub</mat-icon>
+        </span>
+        <span>Atron Platform</span>
+      </div>
 
-<div class="dashboard-container">
-  <h1>Gerenciador Atron</h1>
-  @if(cards | async )
-  {
-  <ng-container>
-    <mat-grid-list [cols]="cardsView.length < 3 ? cardsView.length : 3" gutterSize="9" rowHeight="1:0.5">
+      <div class="dashboard-actions" aria-label="Ações do painel">
+        <button class="header-action" type="button" (click)="trocarVisualizacao()" title="Trocar para menu">
+          <mat-icon>menu</mat-icon>
+          <span>Menu</span>
+        </button>
 
-      @for (card of cardsView; track $index)
-      {
-      <mat-grid-tile [colspan]="card.cols" [rowspan]="card.rows">
-        <mat-card class="dashboard-card" (click)="navigate(card.route)">
-          <mat-card-content>
-            <mat-icon class="dashboard-icon">{{ card.icon }}</mat-icon>
-            <h3 class="card-title">{{ card.title }}</h3>
-            <p class="card-text">{{ card.description }}</p>
-            <mat-card-actions>
-              <button mat-flat-button color="primary">Acessar</button>
-            </mat-card-actions>
-          </mat-card-content>
-        </mat-card>
-      </mat-grid-tile>
+        <button class="header-action header-action-danger" type="button" (click)="logout()" title="Sair do sistema">
+          <mat-icon>logout</mat-icon>
+          <span>Sair</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="dashboard-content" aria-labelledby="dashboard-title">
+    <div class="dashboard-title-group">
+      @if(visualizacao === 'tracker') {
+        <button class="dashboard-back" type="button" (click)="voltarParaProdutos()">
+          <mat-icon>arrow_back</mat-icon>
+          Voltar aos módulos
+        </button>
       }
+      <h1 id="dashboard-title">{{ visualizacao === 'tracker' ? 'Atron Tracker' : 'Módulos do sistema' }}</h1>
+      <p>{{ visualizacao === 'tracker' ? 'Acesse as rotinas administrativas e operacionais.' : 'Acesse as rotinas centrais da operação.' }}</p>
+    </div>
 
-    </mat-grid-list>
-  </ng-container>
-  }
-</div>
+    @if(visualizacao === 'produtos' && cardsView.length > 0) {
+      <div class="module-grid">
+        @for (card of cardsView; track card.code) {
+          <button
+            class="module-card"
+            type="button"
+            (click)="navigate(card)"
+            [attr.aria-disabled]="card.disabled"
+            [attr.aria-label]="card.accessLabel + ' ' + card.title">
+            <span class="module-card-heading">
+              <span class="module-icon">
+                <mat-icon>{{ card.icon }}</mat-icon>
+              </span>
+              <span class="module-heading-copy">
+                <span class="module-title">{{ card.title }}</span>
+              </span>
+            </span>
+
+            <span class="module-info">
+              <span class="module-description">{{ card.description }}</span>
+            </span>
+
+            <span class="module-access">
+              {{ card.accessLabel }}
+              <mat-icon>arrow_forward</mat-icon>
+            </span>
+          </button>
+        }
+      </div>
+    } @else if(visualizacao === 'tracker' && trackerCardsView.length > 0) {
+      <div class="module-grid tracker-routine-grid">
+        @for (card of trackerCardsView; track card.code) {
+          <button
+            class="module-card tracker-routine-card"
+            type="button"
+            (click)="navigate(card)"
+            [attr.aria-label]="card.accessLabel + ' ' + card.title">
+            <span class="module-card-heading">
+              <span class="module-icon">
+                <mat-icon>{{ card.icon }}</mat-icon>
+              </span>
+              <span class="module-heading-copy">
+                <span class="module-title">{{ card.title }}</span>
+              </span>
+            </span>
+
+            <span class="module-info">
+              <span class="module-description">{{ card.description }}</span>
+            </span>
+
+            <span class="module-access">
+              Acessar
+              <mat-icon>arrow_forward</mat-icon>
+            </span>
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="dashboard-empty">
+        <mat-icon>lock</mat-icon>
+        <h3>Nenhum módulo disponível</h3>
+        <p>Seu usuário ainda não possui módulos liberados para acesso.</p>
+      </div>
+    }
+  </section>
+</main>

@@ -1,0 +1,14 @@
+<div class="notificacao-toast" [class]="'notificacao-toast-' + data.nivel.toLowerCase()">
+  <span class="notificacao-toast-icon" aria-hidden="true">
+    <mat-icon>{{ obterIcone() }}</mat-icon>
+  </span>
+
+  <span class="notificacao-toast-content">
+    <strong>{{ obterTitulo() }}</strong>
+    <span>{{ data.mensagem }}</span>
+  </span>
+
+  <button mat-icon-button type="button" aria-label="Fechar notificacao" (click)="fechar()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>

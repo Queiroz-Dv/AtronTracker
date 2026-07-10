@@ -1,26 +1,29 @@
-<mat-card>
-  <mat-card-title>Informações do Usuário</mat-card-title>
-  <mat-card-content class="usuario-informacoes-content">
-    <mat-form-field class="m-20 inpt-usuario-nome">
-      <mat-label>Nome</mat-label>
-      <input matInput [value]="nome" disabled />
-    </mat-form-field>
+<section class="usuario-info-card">
+  <header class="usuario-info-header">
+    <span class="usuario-info-icon" aria-hidden="true">
+      <mat-icon>badge</mat-icon>
+    </span>
 
-    <mat-form-field class="m-20 inpt-usuario-cargo-descricao">
-      <mat-label>Cargo</mat-label>
-      <input matInput [value]="cargoDescricao" disabled />
-    </mat-form-field>
+    <div>
+      <p class="usuario-info-eyebrow">Usuário responsável</p>
+      <h3>Informações do usuário</h3>
+    </div>
+  </header>
 
-    <mat-form-field class="m-20 inpt-usuario-departamento-descricao">
-      <mat-label>Departamento</mat-label>
-      <input matInput [value]="departamentoDescricao" disabled />
-    </mat-form-field>
+  <div class="usuario-info-grid">
+    <article class="usuario-info-item usuario-info-item-principal">
+      <span>Nome</span>
+      <strong>{{ nome || 'Não informado' }}</strong>
+    </article>
 
-    @if (totalDeTarefas) {
-    <mat-form-field class="m-20 inpt-usuario-total-tarefas">
-      <mat-label>Total de tarefas</mat-label>
-      <input matInput [value]="totalDeTarefas" disabled />
-    </mat-form-field>
-    }
-  </mat-card-content>
-</mat-card>
+    <article class="usuario-info-item">
+      <span>Cargo</span>
+      <strong>{{ cargoDescricao || 'Não informado' }}</strong>
+    </article>
+
+    <article class="usuario-info-item">
+      <span>Departamento</span>
+      <strong>{{ departamentoDescricao || 'Não informado' }}</strong>
+    </article>
+  </div>
+</section>

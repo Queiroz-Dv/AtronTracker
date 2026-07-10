@@ -1,60 +1,120 @@
-<div [formGroup]="tarefaForm" class="container centered-container  m-10">
-  <!-- Select de Usuários -->
-  <mat-form-field>
-    <mat-label>Selecione o usuário</mat-label>
-    <input type="text" matInput [formControl]="usuarioControl" [matAutocomplete]="autoUsr" />
-    <c-control-error [control]="tarefaForm.get('usuarioCodigo')"></c-control-error>
-    <mat-autocomplete #autoUsr="matAutocomplete" [displayWith]="exibirUsuario">
-      @for (usr of usuarios; track usr.codigo) {
-      <mat-option [value]="usr">{{ exibirUsuario(usr) }}</mat-option>
-      }
-    </mat-autocomplete>
-  </mat-form-field>
-  <mat-card>
-    <mat-card-content>
+<div [formGroup]="tarefaForm" class="tarefa-form">
+  <section class="tarefa-card tarefa-destino-card">
+    <header class="tarefa-section-header">
+      <div>
+        <p class="tarefa-eyebrow">Rotina operacional</p>
+        <h2>Cadastro de tarefas</h2>
+      </div>
+    </header>
 
-      <c-usuario-informacoes [nome]="tarefaForm.get('usuarioNome').value"
+    <mat-form-field appearance="outline" class="tarefa-usuario-field">
+      <mat-label>Destino inicial</mat-label>
+      <mat-icon matPrefix>route</mat-icon>
+      <input type="text" matInput [formControl]="destinoControl" [matAutocomplete]="autoDestino" />
+      <mat-autocomplete #autoDestino="matAutocomplete" [displayWith]="exibirDestino">
+        @for (destino of destinosIniciais; track destino.id) {
+          <mat-option [value]="destino">{{ destino.descricao }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (tarefaForm.get('destinoInicial').value === 1) {
+      <mat-form-field appearance="outline" class="tarefa-usuario-field">
+        <mat-label>Selecione o usuário</mat-label>
+        <mat-icon matPrefix>person_search</mat-icon>
+        <input type="text" matInput [formControl]="usuarioControl" [matAutocomplete]="autoUsr" />
+        <c-control-error [control]="tarefaForm.get('usuarioCodigo')"></c-control-error>
+        <mat-autocomplete #autoUsr="matAutocomplete" [displayWith]="exibirUsuario">
+          @for (usr of usuarios; track usr.codigo) {
+            <mat-option [value]="usr">{{ exibirUsuario(usr) }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <c-usuario-informacoes
+        [nome]="tarefaForm.get('usuarioNome').value"
         [cargoDescricao]="tarefaForm.get('cargoDescricao').value"
-        [departamentoDescricao]="tarefaForm.get('departamentoDescricao').value" [totalDeTarefas]="totalDeTarefas">
+        [departamentoDescricao]="tarefaForm.get('departamentoDescricao').value">
       </c-usuario-informacoes>
+    }
 
-      <fieldset>
-        <legend>Informação de tarefa</legend>
-        <div class="fieldset-tarefa-content">
-          <mat-form-field class="m-20 inpt-tarefa-titulo ">
-            <mat-label>Título</mat-label>
-            <input matInput formControlName="titulo" />
-            <c-control-error [control]="tarefaForm.get('titulo')"></c-control-error>
-          </mat-form-field>
+    @if (tarefaForm.get('destinoInicial').value === 2) {
+      <mat-form-field appearance="outline" class="tarefa-usuario-field">
+        <mat-label>Departamento</mat-label>
+        <mat-icon matPrefix>account_tree</mat-icon>
+        <input type="text" matInput [formControl]="departamentoControl" [matAutocomplete]="autoDepartamento" />
+        <mat-autocomplete #autoDepartamento="matAutocomplete" [displayWith]="exibirDepartamento">
+          @for (dep of departamentosFiltrados; track dep.codigo) {
+            <mat-option [value]="dep">{{ dep.codigo }} - {{ dep.descricao }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
 
-          <mat-form-field class="m-20 inpt-tarefa">
-            <mat-label>Conteúdo</mat-label>
-            <textarea matInput formControlName="conteudo"></textarea>
-            <c-control-error [control]="tarefaForm.get('conteudo')"></c-control-error>
-          </mat-form-field>
+      <mat-form-field appearance="outline" class="tarefa-usuario-field">
+        <mat-label>Cargo</mat-label>
+        <mat-icon matPrefix>badge</mat-icon>
+        <input type="text" matInput [formControl]="cargoControl" [matAutocomplete]="autoCargo" />
+        <mat-autocomplete #autoCargo="matAutocomplete" [displayWith]="exibirCargo">
+          @for (cargo of cargosFiltrados; track cargo.codigo) {
+            <mat-option [value]="cargo">{{ cargo.codigo }} - {{ cargo.descricao }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    }
+  </section>
 
-          <mat-form-field class="m-20 inpt-tarefa">
-            <mat-label>Data Inicial</mat-label>
-            <input matInput type="date" formControlName="dataInicial" />
-          </mat-form-field>
+  <section class="tarefa-card">
+    <header class="tarefa-section-header">
+      <div>
+        <p class="tarefa-eyebrow">Detalhes</p>
+        <h2>Informações da tarefa</h2>
+      </div>
+    </header>
 
-          <mat-form-field class="m-20 inpt-tarefa">
-            <mat-label>Data Final</mat-label>
-            <input matInput type="date" formControlName="dataFinal" />
-          </mat-form-field>
+    <div class="tarefa-fields">
+      <mat-form-field appearance="outline" class="tarefa-title-field">
+        <mat-label>Título</mat-label>
+        <input matInput formControlName="titulo" />
+        <c-control-error [control]="tarefaForm.get('titulo')"></c-control-error>
+      </mat-form-field>
 
-          <mat-form-field class="m-20 inpt-tarefa">
-            <mat-label>Estado da tarefa</mat-label>
-            <input type="text" matInput [formControl]="estadoControl" [matAutocomplete]="autoEstado" />
-            <c-control-error [control]="tarefaForm.get('estadoId')"></c-control-error>
-            <mat-autocomplete #autoEstado="matAutocomplete" [displayWith]="exibirEstado">
-              @for (est of estadosDaTarefa; track est.id) {
-              <mat-option [value]="est">{{ est.descricao }}</mat-option>
-              }
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-      </fieldset>
-    </mat-card-content>
-  </mat-card>
+      <mat-form-field appearance="outline" class="tarefa-content-field">
+        <mat-label>Conteúdo</mat-label>
+        <textarea matInput rows="4" formControlName="conteudo"></textarea>
+        <c-control-error [control]="tarefaForm.get('conteudo')"></c-control-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Data inicial</mat-label>
+        <input matInput appDateMask [matDatepicker]="dataInicialPicker" placeholder="dd/MM/yyyy" formControlName="dataInicial" />
+        <mat-datepicker-toggle matIconSuffix [for]="dataInicialPicker"></mat-datepicker-toggle>
+        <mat-datepicker #dataInicialPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Data final</mat-label>
+        <input matInput appDateMask [matDatepicker]="dataFinalPicker" placeholder="dd/MM/yyyy" formControlName="dataFinal" />
+        <mat-datepicker-toggle matIconSuffix [for]="dataFinalPicker"></mat-datepicker-toggle>
+        <mat-datepicker #dataFinalPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="tarefa-status-field">
+        <mat-label>Estado da tarefa</mat-label>
+        <mat-icon matPrefix>task_alt</mat-icon>
+        <input type="text" matInput [formControl]="estadoControl" [matAutocomplete]="autoEstado" />
+        <c-control-error [control]="tarefaForm.get('estadoId')"></c-control-error>
+        <mat-autocomplete #autoEstado="matAutocomplete" [displayWith]="exibirEstado">
+          @for (est of estadosDaTarefa; track est.id) {
+            <mat-option [value]="est">{{ est.descricao }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      @if (exibirAprovacaoParaObter()) {
+        <mat-checkbox class="tarefa-approval-checkbox" formControlName="exigeAprovacaoParaObter">
+          Exigir aprovação
+        </mat-checkbox>
+      }
+    </div>
+  </section>
 </div>

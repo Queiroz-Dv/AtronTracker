@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.Services;
+using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +14,11 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
+    /// <summary>
+    /// Controller de informações da sessão do usuário autenticado.
+    /// Retorna dados complementares do usuário e seus perfis de acesso a partir do token JWT ou do cache.
+    /// Requer autorização (Bearer token).
+    /// </summary>
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]
@@ -30,6 +35,12 @@ namespace WebApi.Controllers
             _serviceAccessor = serviceAccessor;
         }
 
+        /// <summary>
+        /// Retorna as informações da sessão atual do usuário autenticado.
+        /// Inclui código, nome, e-mail, cargo, departamento e perfis de acesso com seus módulos.
+        /// Utiliza cache para melhorar performance; popula o cache caso não exista entrada.
+        /// </summary>
+        /// <returns>200 OK com os dados da sessão, 204 NoContent se o usuário não puder ser identificado.</returns>
         [HttpGet("Info")]
         public async Task<ActionResult> SesssaoInfoAsync()
         {
@@ -47,7 +58,6 @@ namespace WebApi.Controllers
                 return NoContent();
             }
 
-            // Tenta obter do cache
             var dadosCache = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription);
 
             var jsonDeRetorno = new
@@ -68,11 +78,9 @@ namespace WebApi.Controllers
 
             if (dadosCache is not null)
             {
-                // Retorna apenas o que o Front precisa
                 return Ok(jsonDeRetorno);
             }
 
-            // Se não havia cache (talvez expirado), busca os dados novamente
             var perfisModulos = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo);
             var dto = new DadosComplementaresDoUsuarioDTO
             {
@@ -84,10 +92,22 @@ namespace WebApi.Controllers
                 }).ToList(),
             };
 
-            // Regrava cache para próxima vez            
-            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo));
+            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo)
+            {
+                EntityInfo = dto
+            });
 
-            return Ok(jsonDeRetorno);
+            var jsonAtualizado = new
+            {
+                codigoDoUsuario = usuarioCodigo,
+                nomeDoUsuario = dto.DadosDoUsuario.NomeDoUsuario,
+                emailDoUsuario = dto.DadosDoUsuario.Email,
+                codigoDoCargo = dto.DadosDoUsuario.CodigoDoCargo,
+                codigoDoDepartamento = dto.DadosDoUsuario.CodigoDoDepartamento,
+                perfisDeAcesso = dto.DadosDoPerfil
+            };
+
+            return Ok(jsonAtualizado);
         }
     }
 }

@@ -25,9 +25,15 @@ namespace AtronTracker.Infrastructure.Context
 
         public DbSet<Usuario> Usuarios { get; set; }
 
+        public DbSet<ConfirmacaoEmail> ConfirmacoesEmail { get; set; }
+
         public DbSet<Tarefa> Tarefas { get; set; }
 
-        public DbSet<Salario> Salarios { get; set; }
+        public DbSet<SolicitacaoObtencaoTarefa> SolicitacoesObtencaoTarefa { get; set; }
+
+        public DbSet<NotificacaoInterna> NotificacoesInternas { get; set; }
+
+        public DbSet<TarefaEstado> TarefaEstados { get; set; }
 
         public DbSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
 
@@ -38,11 +44,26 @@ namespace AtronTracker.Infrastructure.Context
         public DbSet<PerfilDeAcessoUsuario> PerfilDeAcessoUsuarios { get; set; }
 
         public DbSet<PerfilDeAcessoModulo> PerfilDeAcessoModulos { get; set; }
-        
+
+        public DbSet<PlanejamentoCusto> PlanejamentosCusto { get; set; }
+
+        public DbSet<PlanejamentoCustoCargo> PlanejamentosCustoCargo { get; set; }
+         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AtronDbContext).Assembly);
+
+            if (Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL")
+            {
+                foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(entity => entity.GetProperties()))
+                {
+                    var propertyType = Nullable.GetUnderlyingType(property.ClrType) ?? property.ClrType;
+
+                    if (propertyType == typeof(DateTime))
+                        property.SetColumnType("timestamp without time zone");
+                }
+            }
         }
     }
 }

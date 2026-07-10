@@ -18,6 +18,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [],
@@ -40,6 +41,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatInputModule,
     MatCardModule,
     MatSnackBarModule,
+    MatCheckboxModule,
     MatError,
     MatProgressSpinnerModule
   ],
@@ -62,6 +64,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatInputModule,
     MatCardModule,
     MatSnackBarModule,
+    MatCheckboxModule,
     MatError,
     MatProgressSpinnerModule
   ]

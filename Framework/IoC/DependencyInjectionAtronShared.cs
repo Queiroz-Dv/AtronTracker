@@ -9,11 +9,11 @@ using Infrastructure.Repositories.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Shared.Application.Interfaces.Repositories;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services;
 using Shared.Application.Services.Accessor;
-using Shared.Application.Services.Caching;
 using Shared.Application.Services.Contexts;
 using Shared.Application.Services.Factory;
 using Shared.Infrastructure.Context;
@@ -26,14 +26,16 @@ namespace IoC
     {
         public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            string sqlConnection = configuration.GetConnectionString("AtronConnection");
+            services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
+
+            var database = DatabaseProviderResolver.Resolve(configuration);
+            var migrationsAssembly = "Framework.Shared.PostgreSqlMigrations";
 
             services.AddDbContext<SharedDbContext>(options =>
-            options.UseSqlServer(sqlConnection,
-            b => b.MigrationsAssembly(typeof(SharedDbContext).Assembly.FullName)));
+                options.UseConfiguredDatabase(database, migrationsAssembly));
 
             services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
-
+            services.AddScoped<ITransactionManager, TransactionManager>();
             services.AddScoped<IAccessorService, ServiceAccessor>();
             services.AddScoped<ILoginContext, LoginContext>();
             services.AddScoped<IUsuarioContext, UsuarioContext>();
@@ -45,7 +47,6 @@ namespace IoC
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenFactoryService, TokenFactory>();
 
-            services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<ICacheUsuarioService, CacheUsuarioService>();
             services.AddScoped<IDadosComplementaresDoUsuarioService, DadosComplementaresDoUsuarioService>();
 

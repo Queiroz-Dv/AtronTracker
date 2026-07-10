@@ -10,6 +10,7 @@ using AtronStock.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Shared.Application.Interfaces.Service;
 using Shared.Infrastructure.Context;
 using Shared.Infrastructure.Repositories;
@@ -22,9 +23,12 @@ namespace IoC
     {
         public static IServiceCollection AddStockInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            string sqlConnection = configuration.GetConnectionString("AtronConnection");
+            services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
 
-            services.AddDbContext<StockDbContext>(options => options.UseSqlServer(sqlConnection, b => b.MigrationsAssembly(typeof(StockDbContext).Assembly.FullName)));
+            var database = DatabaseProviderResolver.Resolve(configuration);
+            var migrationsAssembly = "AtronStock.Infrastructure.PostgreSqlMigrations";
+
+            services.AddDbContext<StockDbContext>(options => options.UseConfiguredDatabase(database, migrationsAssembly));
             services = services.AddSharedInfrastructure(configuration);
             services.AddScoped<ITransactionManager, TransactionManager>();
 
@@ -37,7 +41,7 @@ namespace IoC
                 var connection = stockContext.Database.GetDbConnection();
 
                 var optionsBuilder = new DbContextOptionsBuilder<SharedDbContext>();
-                optionsBuilder.UseSqlServer(connection);
+                optionsBuilder.UseConfiguredDatabase(database, connection);
 
                 return new SharedDbContext(optionsBuilder.Options);
             });

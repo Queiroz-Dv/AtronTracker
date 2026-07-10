@@ -8,6 +8,8 @@ import { Departamento } from '../../../departamentos/models/departamento.model';
 import { CargoModel } from '../../../cargos/models/cargo.model';
 import { CargoResponse } from '../../../cargos/models/response/cargo-response.model';
 import { DateMaskDirective } from '../../../../shared/directives/date-mask.directive';
+import { UsuarioService } from '../../services/usuario.service';
+import { UsuarioResponse, exibirDescricaoDoUsuario } from '../../models/response/usuario-response';
 
 @Component({
   selector: 'c-usuario-form',
@@ -21,6 +23,7 @@ export class UsuarioFormComponent implements OnInit {
   // Controles individuais para autocomplete
   departamentoControl = new FormControl<string | Departamento>('');
   cargoControl = new FormControl<string | CargoResponse | CargoModel>('');
+  gestorImediatoControl = new FormControl<string | UsuarioResponse>('');
 
   // Dados filtrados para os autocompletes
   departamentosFiltrados: Departamento[] = [];
@@ -29,29 +32,32 @@ export class UsuarioFormComponent implements OnInit {
   // Backup dos dados originais
   todosDepartamentos: Departamento[] = [];
   todosCargos: CargoResponse[] = [];
+  todosUsuarios: UsuarioResponse[] = [];
+  gestoresFiltrados: UsuarioResponse[] = [];
 
   constructor(
     private cargoService: CargoService,
-    private departamentoService: DepartamentosService
+    private departamentoService: DepartamentosService,
+    private usuarioService: UsuarioService
   ) { }
 
   ngOnInit(): void {
     this.departamentoService.obterTodos().subscribe(deps => {
       this.todosDepartamentos = deps;
       this.departamentosFiltrados = this.todosDepartamentos;
-
-      const dptCodigo = this.usuarioForm.get('departamentoCodigo')?.value;
-      const selecionado = this.todosDepartamentos.find(d => d.codigo === dptCodigo);
-      this.departamentoControl.setValue(selecionado || '');
+      this.sincronizarDepartamentoSelecionado();
     });
 
     this.cargoService.obterTodos().subscribe(crgs => {
       this.todosCargos = crgs;
       this.cargosFiltrados = this.todosCargos;
+      this.sincronizarCargoSelecionado();
+    });
 
-      const cargoCodigo = this.usuarioForm.get('cargoCodigo')?.value;
-      const selecionado = this.todosCargos.find(c => c.codigo === cargoCodigo);
-      this.cargoControl.setValue(selecionado || '');
+    this.usuarioService.obterTodosUsuariosInformados().subscribe(usuarios => {
+      this.todosUsuarios = usuarios;
+      this.gestoresFiltrados = this.filtrarGestoresDisponiveis('');
+      this.sincronizarGestorSelecionado();
     });
 
     this.departamentoControl.valueChanges.subscribe(value => {
@@ -77,12 +83,72 @@ export class UsuarioFormComponent implements OnInit {
         // Usuário selecionou um item
         const cargo = value as CargoModel;
         this.departamentosFiltrados = this.todosDepartamentos.filter(d => d.codigo === cargo.departamentoCodigo);
-        this.usuarioForm.patchValue({ cargoCodigo: cargo.codigo });
+        this.usuarioForm.patchValue({
+          cargoCodigo: cargo.codigo,
+          departamentoCodigo: cargo.departamentoCodigo
+        });
       } else {
         this.usuarioForm.patchValue({ cargoCodigo: null });
         this.departamentosFiltrados = this.todosDepartamentos;
       }
     });
+
+    this.gestorImediatoControl.valueChanges.subscribe(value => {
+      if (typeof value === 'string') {
+        this.gestoresFiltrados = this.filtrarGestoresDisponiveis(value);
+        this.usuarioForm.patchValue({ gestorImediatoCodigo: null }, { emitEvent: false });
+        return;
+      }
+
+      const gestor = value as UsuarioResponse | null;
+      this.usuarioForm.patchValue({ gestorImediatoCodigo: gestor?.codigo ?? null });
+    });
+
+    this.usuarioForm.get('departamentoCodigo')?.valueChanges.subscribe(() => {
+      this.sincronizarDepartamentoSelecionado();
+    });
+
+    this.usuarioForm.get('cargoCodigo')?.valueChanges.subscribe(() => {
+      this.sincronizarCargoSelecionado();
+    });
+
+    this.usuarioForm.get('gestorImediatoCodigo')?.valueChanges.subscribe(() => {
+      this.sincronizarGestorSelecionado();
+    });
+  }
+
+  private sincronizarDepartamentoSelecionado(): void {
+    const departamentoCodigo = this.usuarioForm.get('departamentoCodigo')?.value;
+    const selecionado = this.todosDepartamentos.find(d => d.codigo === departamentoCodigo);
+
+    this.departamentoControl.setValue(selecionado || '', { emitEvent: false });
+    this.departamentosFiltrados = selecionado ? [selecionado] : this.todosDepartamentos;
+
+    if (selecionado) {
+      this.cargosFiltrados = this.todosCargos.filter(c => c.departamentoCodigo === selecionado.codigo);
+    }
+
+    this.sincronizarGestorDoDepartamento();
+  }
+
+  private sincronizarCargoSelecionado(): void {
+    const cargoCodigo = this.usuarioForm.get('cargoCodigo')?.value;
+    const selecionado = this.todosCargos.find(c => c.codigo === cargoCodigo);
+
+    this.cargoControl.setValue(selecionado || '', { emitEvent: false });
+
+    if (!selecionado) {
+      this.cargosFiltrados = this.todosCargos;
+      return;
+    }
+
+    this.cargosFiltrados = [selecionado];
+
+    const departamentoSelecionado = this.todosDepartamentos.find(d => d.codigo === selecionado.departamentoCodigo);
+    if (departamentoSelecionado) {
+      this.departamentoControl.setValue(departamentoSelecionado, { emitEvent: false });
+      this.departamentosFiltrados = [departamentoSelecionado];
+    }
   }
 
   private _filtrarDepartamentos(valor: string): Departamento[] {
@@ -101,6 +167,57 @@ export class UsuarioFormComponent implements OnInit {
     );
   }
 
-  exibirDepartamentoDescricao = (dpt: Departamento) => dpt?.descricao ?? '';
-  exibirCargoDescricao = (crg: CargoModel) => crg?.descricao ?? '';
+  private sincronizarGestorSelecionado(): void {
+    const gestorCodigo = this.usuarioForm.get('gestorImediatoCodigo')?.value;
+    const selecionado = this.todosUsuarios.find(u => u.codigo === gestorCodigo);
+
+    this.gestorImediatoControl.setValue(selecionado || '', { emitEvent: false });
+    this.gestoresFiltrados = selecionado ? [selecionado] : this.filtrarGestoresDisponiveis('');
+  }
+
+  private filtrarGestoresDisponiveis(valor: string): UsuarioResponse[] {
+    const filtro = valor.toLowerCase();
+    const departamentoCodigo = this.usuarioForm.get('departamentoCodigo')?.value;
+    const codigoUsuarioAtual = this.usuarioForm.get('codigo')?.value;
+    const departamento = this.todosDepartamentos.find(d => d.codigo === departamentoCodigo);
+    const gestorDepartamentoCodigo = departamento?.gestorDepartamentoCodigo;
+
+    if (!gestorDepartamentoCodigo) {
+      return [];
+    }
+
+    return this.todosUsuarios.filter(usuario =>
+      usuario.codigo !== codigoUsuarioAtual &&
+      usuario.codigo === gestorDepartamentoCodigo &&
+      (
+        usuario.codigo?.toLowerCase().includes(filtro) ||
+        usuario.nome?.toLowerCase().includes(filtro) ||
+        usuario.sobrenome?.toLowerCase().includes(filtro) ||
+        `${usuario.nome} ${usuario.sobrenome}`.toLowerCase().includes(filtro)
+      )
+    );
+  }
+
+  private sincronizarGestorDoDepartamento(): void {
+    const departamentoCodigo = this.usuarioForm.get('departamentoCodigo')?.value;
+    const gestorAtual = this.usuarioForm.get('gestorImediatoCodigo')?.value;
+    const codigoUsuarioAtual = this.usuarioForm.get('codigo')?.value;
+    const departamento = this.todosDepartamentos.find(d => d.codigo === departamentoCodigo);
+    const gestorDepartamentoCodigo = departamento?.gestorDepartamentoCodigo;
+    const gestorValido = gestorDepartamentoCodigo && gestorDepartamentoCodigo !== codigoUsuarioAtual
+      ? gestorDepartamentoCodigo
+      : null;
+
+    if (gestorAtual !== gestorValido) {
+      this.usuarioForm.patchValue({ gestorImediatoCodigo: gestorValido }, { emitEvent: false });
+    }
+
+    const gestorSelecionado = this.todosUsuarios.find(u => u.codigo === gestorValido);
+    this.gestorImediatoControl.setValue(gestorSelecionado || '', { emitEvent: false });
+    this.gestoresFiltrados = this.filtrarGestoresDisponiveis('');
+  }
+
+  exibirDepartamentoDescricao = (dpt: Departamento | string) => typeof dpt === 'string' ? dpt : dpt?.descricao ?? '';
+  exibirCargoDescricao = (crg: CargoModel | CargoResponse | string) => typeof crg === 'string' ? crg : crg?.descricao ?? '';
+  exibirGestorDescricao = (usuario: UsuarioResponse | string) => typeof usuario === 'string' ? usuario : exibirDescricaoDoUsuario(usuario);
 }

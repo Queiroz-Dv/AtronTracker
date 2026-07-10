@@ -10,7 +10,7 @@ namespace Shared.Application.Validacoes
         {
             var context = new NotificationBag();
 
-            if (entity.EmailsDestino.Count < 0)
+            if (entity.EmailsDestino is null || entity.EmailsDestino.Count == 0)
             {
                 context.AdicionarErroCampoObrigatorio(nameof(entity.EmailsDestino));
             }

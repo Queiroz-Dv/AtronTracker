@@ -1,37 +1,83 @@
-<div [formGroup]="form" class="container perfil-form">
-  <fieldset class="perfil-fieldset">
-    <legend>Perfil de acesso</legend>
-    <mat-form-field appearance="fill" class="perfil-codigo-input">
-      <mat-label>Código</mat-label>
-      <input matInput formControlName="codigo" />
-    </mat-form-field>
-    <mat-form-field class="perfil-descricao-input" appearance="fill">
-      <mat-label>Descrição</mat-label>
-      <input matInput formControlName="descricao" />
-    </mat-form-field>
+<div [formGroup]="form" class="perfil-form">
+  <section class="perfil-card">
+    <header class="perfil-section-header">
+      <div>
+        <p class="perfil-eyebrow">Segurança</p>
+        <h2>Cadastro de Perfil de Acesso</h2>
+      </div>
+    </header>
 
-    <fieldset class="modulo-fieldset">
-      <legend>Módulos</legend>
-      <!-- tabela de módulos -->
-      <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
-        <!-- coluna de seleção + código -->
-        <ng-container matColumnDef="moduloCodigo">
-          <th mat-header-cell *matHeaderCellDef>Código</th>
-          <td mat-cell *matCellDef="let mod">
-            <mat-checkbox [checked]="estaSelecionado(mod.codigo)" (change)="onToggleModulo(mod.codigo, $event.checked)">
-              {{ mod.codigo }}
-            </mat-checkbox>
-          </td>
-        </ng-container>
+    <div class="perfil-fields">
+      <mat-form-field appearance="outline" class="perfil-codigo-input">
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="codigo" autocomplete="off" />
+        <mat-error *ngIf="form.get('codigo')?.hasError('codigoExistente')">
+          O código informado já existe.
+        </mat-error>
+      </mat-form-field>
 
-        <!-- coluna descrição -->
-        <ng-container matColumnDef="moduloDescricao">
-          <th mat-header-cell *matHeaderCellDef>Descrição</th>
-          <td mat-cell *matCellDef="let mod">{{ mod.descricao }}</td>
-        </ng-container>
+      <mat-form-field class="perfil-descricao-input" appearance="outline">
+        <mat-label>Descrição</mat-label>
+        <input matInput formControlName="descricao" />
+      </mat-form-field>
+    </div>
+  </section>
 
-        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
-      </table>
-    </fieldset>
-  </fieldset>
+  <section class="perfil-card perfil-modulos-card">
+    <header class="perfil-section-header">
+      <div>
+        <p class="perfil-eyebrow">Módulos</p>
+        <h2>Módulos do perfil</h2>
+      </div>
+    </header>
+
+    @if (deveExibirBusca) {
+      <mat-form-field appearance="outline" class="perfil-busca-modulo">
+        <mat-label>Buscar módulo</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="buscaModuloControl" placeholder="Pesquise por código ou descrição" />
+      </mat-form-field>
+    }
+
+    @if (deveExibirGrid) {
+      <div class="perfil-modulos-grid">
+        <table mat-table [dataSource]="dataSource" matSort class="perfil-modulos-table" aria-label="Módulos do perfil de acesso">
+          <ng-container matColumnDef="selecionar">
+            <th mat-header-cell *matHeaderCellDef>Selecionar</th>
+            <td mat-cell *matCellDef="let mod">
+              <mat-checkbox [checked]="estaSelecionado(mod.codigo)" (change)="onToggleModulo(mod.codigo, $event.checked)">
+              </mat-checkbox>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="moduloCodigo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+            <td mat-cell *matCellDef="let mod">{{ mod.codigo }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="moduloDescricao">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Descrição</th>
+            <td mat-cell *matCellDef="let mod">{{ mod.descricao }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+        </table>
+
+        <mat-paginator
+          class="perfil-modulos-paginator"
+          [length]="dataSource.filteredData.length"
+          [pageIndex]="0"
+          [pageSize]="5"
+          [pageSizeOptions]="[5, 10, 20]"
+          aria-label="Selecione a página de módulos">
+        </mat-paginator>
+      </div>
+    } @else {
+      <div class="perfil-modulos-empty">
+        <mat-icon>manage_search</mat-icon>
+        <p>{{ mensagemEstado }}</p>
+      </div>
+    }
+  </section>
+</div>

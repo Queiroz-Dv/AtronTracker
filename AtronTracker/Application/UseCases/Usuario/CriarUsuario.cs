@@ -1,23 +1,22 @@
 using Application.DTO.Request;
+using Application.Extensions;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.DTOS.Common;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
+using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Application.UseCases.Usuario
 {
-    /// <summary>
-    /// Caso de uso responsável pela criação de um novo usuário.
-    /// Encapsula o núcleo atômico (Usuário de Negócio + Identity) e as operações
-    /// best-effort (Cargo/Departamento e e-mail de boas-vindas).
-    /// </summary>
     public class CriarUsuario
     {
         private readonly IValidador<UsuarioRequest> _validador;
@@ -28,6 +27,11 @@ namespace Application.UseCases.Usuario
         private readonly ICargoRepository _cargoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
         private readonly IEmailService _emailService;
+        private readonly ICacheService _cacheService;
+        private readonly IAuditoriaService _auditoriaService;
+
+        private const string UsuarioContexto = "Usuario";
+        private const int ValidadeConvitePrimeiroAcessoEmHoras = 24;
 
         public CriarUsuario(
             IValidador<UsuarioRequest> validador,
@@ -37,7 +41,9 @@ namespace Application.UseCases.Usuario
             IDepartamentoRepository departamentoRepository,
             ICargoRepository cargoRepository,
             IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
-            IEmailService emailService)
+            IEmailService emailService,
+            ICacheService cacheService,
+            IAuditoriaService auditoriaService)
         {
             _validador = validador;
             _mapService = mapService;
@@ -47,133 +53,165 @@ namespace Application.UseCases.Usuario
             _cargoRepository = cargoRepository;
             _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
             _emailService = emailService;
+            _cacheService = cacheService;
+            _auditoriaService = auditoriaService;
         }
 
         public async Task<Resultado<UsuarioRequest>> ExecutarAsync(UsuarioRequest request)
         {
-            // 1. Validação
             var mensagens = _validador.Validar(request);
             if (mensagens.Any())
                 return Resultado<UsuarioRequest>.Falhas(mensagens);
 
-            // 2. Verificações de existência
-            var usuarioExistente = await _usuarioRepository
-                .ObterUsuarioPorCodigoAsync(request.Codigo.ToUpper());
-
+            var codigoUsuario = request.Codigo.ToUpper();
+            var usuarioExistente = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
             if (usuarioExistente != null)
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
 
             if (!request.Email.IsNullOrEmpty())
             {
-                var emailExiste = await _usuarioRepository
-                    .VerificarEmailExistenteAsync(request.Email);
-
+                var emailExiste = await _usuarioRepository.VerificarEmailExistenteAsync(request.Email);
                 if (emailExiste)
                     return Resultado<UsuarioRequest>.Falha(EmailResource.ErroEmailUtilizado);
             }
 
-            // 2.1 Verificação de conta Identity duplicada antes de persistir qualquer coisa.
-            //     Evita criar o usuário de negócio e só então descobrir que o Identity já existe.
-            if (!request.Senha.IsNullOrEmpty())
-            {
-                var contaExiste = await _usuarioIdentityRepository
-                    .ContaExisteRepositoryAsync(request.Codigo.ToUpper(), request.Email);
+            var contaExiste = await _usuarioIdentityRepository.ContaExisteRepositoryAsync(codigoUsuario, request.Email);
+            if (contaExiste)
+                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
 
-                if (contaExiste)
-                    return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
-            }
-
-            // ── NÚCLEO ATÔMICO ────────────────────────────────────────────────────────
-            // Os passos 3 e 4 formam a unidade indivisível: Usuário de Negócio + Identity.
-            // Se o Identity falhar após o usuário de negócio ser gravado, o usuário de
-            // negócio é removido manualmente (rollback explícito).
-            // Motivação: UserManager do ASP.NET Identity não participa de TransactionScope
-            // nem de IDbContextTransaction, portanto a atomicidade precisa ser garantida
-            // de forma manual nesta camada.
-
-            // 3. Criação do usuário de negócio
             var usuario = await _mapService.MapToEntityAsync(request);
+            var resultadoGestor = await VincularGestorImediatoAsync(usuario, request.GestorImediatoCodigo);
+            if (resultadoGestor.TeveFalha)
+                return Resultado<UsuarioRequest>.Falhas(resultadoGestor.Messages);
 
             var criado = await _usuarioRepository.CriarUsuarioAsync(usuario);
             if (!criado)
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
 
-            var usuarioBd = await _usuarioRepository
-                .ObterUsuarioPorCodigoAsync(usuario.Codigo);
+            var usuarioBd = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
 
-            // 4. Criação da conta Identity
-            if (!request.Senha.IsNullOrEmpty())
+            var identityCriado = await _usuarioIdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(
+                codigoUsuario,
+                request.Email,
+                GerarSenhaTemporaria());
+
+            if (!identityCriado)
             {
-                var identityCriado = await _usuarioIdentityRepository
-                    .RegistrarContaDeUsuarioRepositoryAsync(
-                        request.Codigo.ToUpper(),
-                        request.Email,
-                        request.Senha);
-
-                if (!identityCriado)
-                {
-                    // Rollback manual: remove o usuário de negócio já persistido
-                    // para não deixar um registro órfão sem acesso ao sistema.
-                    await _usuarioRepository.RemoverUsuarioAsync(usuarioBd);
-                    return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
-                }
+                await _usuarioRepository.RemoverUsuarioAsync(usuarioBd);
+                return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
             }
 
-            // ── FIM DO NÚCLEO ATÔMICO ─────────────────────────────────────────────────
+            var conviteEnviado = await EnviarEmailPrimeiroAcessoAsync(usuarioBd, request.ClientUri);
+            if (conviteEnviado.TeveFalha)
+            {
+                await _usuarioIdentityRepository.DeletarContaUserRepositoryAsync(usuarioBd.Codigo);
+                await _usuarioRepository.RemoverUsuarioAsync(usuarioBd);
+                return Resultado<UsuarioRequest>.Falhas(conviteEnviado.Messages);
+            }
 
-            // 5. Associação Cargo / Departamento (fora do núcleo atômico)
-            //    Opcional: falha aqui não desfaz a criação do usuário.
-            //    Decisão: Cargo/Departamento serão substituídos por RBAC em versão futura.
-            if (!request.DepartamentoCodigo.IsNullOrEmpty() &&
-                !request.CargoCodigo.IsNullOrEmpty())
+            if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
             {
                 var departamento = await _departamentoRepository
-                    .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(
-                        request.DepartamentoCodigo);
-
-                var cargo = await _cargoRepository
-                    .ObterCargoPorCodigoAsync(request.CargoCodigo);
+                    .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
+                var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(request.CargoCodigo);
 
                 if (departamento != null && cargo != null)
                 {
                     await _usuarioCargoDepartamentoRepository
-                        .GravarAssociacaoUsuarioCargoDepartamento(
-                            usuarioBd,
-                            cargo,
-                            departamento);
+                        .GravarAssociacaoUsuarioCargoDepartamento(usuarioBd, cargo, departamento);
                 }
             }
 
-            // 6. E-mail de boas-vindas (best-effort, fora do núcleo atômico)
-            //    Falha no envio não interrompe nem desfaz a criação do usuário.
-            await EnviarEmailBoasVindasAsync(request.Email, request.Nome);
+            await _auditoriaService.RegistrarServiceAsync(new AuditoriaDTO
+            {
+                CodigoRegistro = usuarioBd.Codigo,
+                Contexto = UsuarioContexto,
+                Historico = new HistoricoDTO
+                {
+                    CodigoRegistro = usuarioBd.Codigo,
+                    Contexto = UsuarioContexto,
+                    Descricao = $"Usuario {usuarioBd.Codigo} criado em {DateTime.Now:dd/MM/yyyy HH:mm}."
+                }
+            });
 
-            // 7. Retorno padronizado
             return Resultado<UsuarioRequest>
                 .Sucesso(request)
-                .AdicionarMensagem($"Usuário {request.Nome} {request.Sobrenome} salvo com sucesso.");
+                .AdicionarMensagem($"Usuario {request.Nome} {request.Sobrenome} salvo com sucesso. O link de primeiro acesso foi enviado por e-mail.");
         }
 
-        #region Métodos Privados
-
-        private async Task EnviarEmailBoasVindasAsync(string destinatario, string nomeUsuario)
+        private async Task<Resultado> VincularGestorImediatoAsync(Domain.Entities.Usuario usuario, string gestorCodigo)
         {
-            if (string.IsNullOrEmpty(destinatario)) return;
+            if (gestorCodigo.IsNullOrEmpty())
+            {
+                usuario.GestorImediatoId = null;
+                usuario.GestorImediatoCodigo = null;
+                return Resultado.Sucesso();
+            }
 
-            try
-            {
-                var emailRequest = CriarEmailBoasVindas(destinatario, nomeUsuario);
-                await _emailService.EnviarAsync(emailRequest);
-            }
-            catch
-            {
-                // Falha no envio não interrompe o fluxo de criação do usuário.
-            }
+            var codigoGestor = gestorCodigo.ToUpper();
+            if (codigoGestor == usuario.Codigo)
+                return Resultado.Falha("O usuario nao pode ser gestor imediato dele mesmo.");
+
+            var gestor = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoGestor);
+            if (gestor is null)
+                return Resultado.Falha("Gestor imediato nao encontrado.");
+
+            usuario.GestorImediatoId = gestor.Id;
+            usuario.GestorImediatoCodigo = gestor.Codigo;
+
+            return Resultado.Sucesso();
         }
 
-        private static EmailRequest CriarEmailBoasVindas(string destinatario, string nomeUsuario)
+        private async Task<Resultado> EnviarEmailPrimeiroAcessoAsync(Domain.Entities.Usuario usuario, string clientUri)
         {
-            var assunto = "Bem-vindo ao Sistema Atron!";
+            if (string.IsNullOrWhiteSpace(clientUri))
+                return Resultado.Falha("URI da aplicacao nao informada para envio do link de primeiro acesso.");
+
+            var token = await _usuarioIdentityRepository.GerarTokenRecuperacaoSenhaAsync(usuario.Codigo);
+            if (string.IsNullOrWhiteSpace(token))
+                return Resultado.Falha("Nao foi possivel gerar o link de primeiro acesso.");
+
+            var identificadorTemporario = Guid.NewGuid().ToString("N");
+            var dadosTemporarios = new DadosTemporarios
+            {
+                IdentificadorTemporario = identificadorTemporario,
+                UsuarioCodigo = usuario.Codigo,
+                Email = usuario.Email,
+                Token = token,
+                DataAlteracaoSenha = DateTime.UtcNow
+            };
+
+            var cacheInfo = new CacheInfo<DadosTemporarios>(ECacheKeysInfo.DadosTemporarios, identificadorTemporario)
+            {
+                EntityInfo = dadosTemporarios
+            };
+            _cacheService.GravarCache(cacheInfo, TimeSpan.FromHours(ValidadeConvitePrimeiroAcessoEmHoras));
+
+            var identificadorCriptografado = CryptoHelper.EncryptCryptoJsAes(identificadorTemporario);
+            var identificadorUrlEncoded = HttpUtility.UrlEncode(identificadorCriptografado);
+            var link = $"{clientUri.TrimEnd('/')}/trocar-senha?id={identificadorUrlEncoded}";
+
+            var resultadoEmail = await _emailService.EnviarAsync(CriarEmailPrimeiroAcesso(
+                usuario.Email,
+                usuario.Nome,
+                link));
+
+            if (resultadoEmail.TeveFalha)
+            {
+                _cacheService.RemoverCache(ECacheKeysInfo.DadosTemporarios, identificadorTemporario);
+                return Resultado.Falha(resultadoEmail.Messages);
+            }
+
+            return Resultado.Sucesso();
+        }
+
+        private static string GerarSenhaTemporaria()
+        {
+            return $"Tmp!{Guid.NewGuid():N}9aA";
+        }
+
+        private static EmailRequest CriarEmailPrimeiroAcesso(string destinatario, string nomeUsuario, string link)
+        {
             var corpo = $@"
                             <!DOCTYPE html>
                             <html>
@@ -192,16 +230,19 @@ namespace Application.UseCases.Usuario
                             <body>
                                 <div class='container'>
                                     <div class='header'>
-                                        <h1>🎉 Bem-vindo ao Sistema Atron!</h1>
+                                        <h1>Bem-vindo ao Sistema Atron</h1>
                                     </div>
                                     <div class='content'>
-                                        <p>Olá, <strong>{nomeUsuario}</strong>!</p>
-                                        <p>Sua conta foi criada com sucesso no Sistema Atron.</p>
-                                        <p>Agora você pode acessar o sistema utilizando suas credenciais de login.</p>
-                                        <p>Se você tiver alguma dúvida, entre em contato com o suporte.</p>
+                                        <p>Ola, <strong>{nomeUsuario}</strong>!</p>
+                                        <p>Sua conta foi criada no Sistema Atron.</p>
+                                        <p>Para definir sua senha de acesso, clique no botao abaixo. Este link expira em {ValidadeConvitePrimeiroAcessoEmHoras} horas.</p>
+                                        <p style='text-align: center; margin: 30px 0;'>
+                                            <a href='{link}' style='background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Definir minha senha</a>
+                                        </p>
+                                        <p style='font-size: 12px; color: #999; word-break: break-all;'>Se o botao nao funcionar, copie e cole este link no navegador:<br>{link}</p>
                                     </div>
                                     <div class='footer'>
-                                        <p>Este é um e-mail automático. Por favor, não responda.</p>
+                                        <p>Este e um e-mail automatico. Por favor, nao responda.</p>
                                         <p>&copy; {DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
                                     </div>
                                 </div>
@@ -211,11 +252,9 @@ namespace Application.UseCases.Usuario
             return new EmailRequest
             {
                 EmailsDestino = [destinatario],
-                Assunto = assunto,
+                Assunto = "Defina sua senha de acesso - Sistema Atron",
                 Mensagem = corpo
             };
         }
-
-        #endregion
     }
 }

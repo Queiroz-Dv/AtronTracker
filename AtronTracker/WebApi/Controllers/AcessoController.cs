@@ -1,125 +1,181 @@
-﻿using Application.DTO.ApiDTO;
+using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
-using Domain.ApiEntities;
+using Application.UseCases.Usuario;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
+using System;
 using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
     /// <summary>
-    /// Controller para gerenciar o login de usuários na aplicação.
+    /// Controller de acesso e autenticação de usuários.
+    /// Contém endpoints para login, refresh de token, logout, troca de senha, registro e confirmação de e-mail.
+    /// Os endpoints de recuperação de senha, confirmação de e-mail e reativação de conta são públicos (AllowAnonymous).
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class AcessoController : ApiBaseConfigurationController<ApiLogin, ILoginService>
+    public class AcessoController : ControllerBase
     {
+        private readonly IRegistroUsuarioService _registroUsuarioService;
+        private readonly ILoginService _service;
+        private readonly ICookieService _cookieService;
+        private readonly SolicitarReativacao _solicitarReativacao;
+        private readonly ReativarUsuario _reativarUsuario;
+        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail;
+        private readonly ILogger<AcessoController> _logger;
+
         public AcessoController(
-             Notifiable messageModel,
-             ILoginService loginUserService,
-             IAccessorService serviceAccessor)
-             : base(loginUserService, messageModel, serviceAccessor)
-        { }
+            ILoginService loginUserService,
+            IRegistroUsuarioService registroUsuarioService,
+            ICookieService cookieService,
+            SolicitarReativacao solicitarReativacao,
+            ReativarUsuario reativarUsuario,
+            ReenviarConfirmacaoEmail reenviarConfirmacaoEmail,
+            ILogger<AcessoController> logger)
+        {
+            _registroUsuarioService = registroUsuarioService;
+            _cookieService = cookieService;
+            _solicitarReativacao = solicitarReativacao;
+            _reativarUsuario = reativarUsuario;
+            _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
+            _service = loginUserService;
+            _logger = logger;
+        }
 
         /// <summary>
-        /// Endpoint para logar um usuário no sistema
+        /// Autentica o usuário e retorna um token JWT.
         /// </summary>
-        /// <param name="loginDTO">DTO que será autenticado </param>
-        /// <returns>O resultado do processamento</returns>
+        /// <param name="loginDTO">Credenciais de acesso (código do usuário e senha).</param>
+        /// <returns>200 OK com dados do token ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost(nameof(Login))]
         public async Task<ActionResult<DadosDoTokenDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
-            var dto = await _service.Autenticar(loginDTO);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-             BadRequest(ObterNotificacoes()) :
-             Ok(dto);
+            var resultado = await _service.Autenticar(loginDTO);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         /// <summary>
-        /// Endpoint para atualizar o token de acesso do usuário
-        /// </summary>        
+        /// Renova o token de acesso usando o refresh token armazenado em cookie.
+        /// </summary>
+        /// <returns>200 OK com novos dados de token ou 400 BadRequest com mensagens de erro.</returns>
         [HttpGet("RefreshToken")]
         public async Task<IActionResult> Refresh()
         {
-            var cookieService = ObterService<ICookieService>();
+            var dadosDoRefreshToken = await _cookieService.ObterRefreshTokenPorRequest(Request);
+            var resultado = await _service.RefreshAcesso(dadosDoRefreshToken);
 
-            var dadosDeToken = await cookieService.ObterTokenRefreshTokenPorRequest(Request);
-            
-            var novoToken = await _service.RefreshAcesso(dadosDeToken);
-            if (novoToken is null) return Unauthorized();
-
-            return _messageModel.Notificacoes.HasErrors() ?
-              BadRequest(ObterNotificacoes()) :
-              Ok(dadosDeToken);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         /// <summary>
-        /// Endpoint para desconectar o usuário do sistema
+        /// Encerra a sessão do usuário autenticado, invalidando o token.
         /// </summary>
+        /// <returns>200 OK com mensagens de confirmação ou 400 BadRequest com mensagens de erro.</returns>
         [HttpGet("Desconectar")]
         public async Task<ActionResult<bool>> Logout()
         {
             var usuarioCodigo = HttpContext.Request.Headers.ExtrairCodigoUsuarioDoRequest();
-
-            var deslogado = await _service.Logout(usuarioCodigo);
-            return deslogado ? Ok(deslogado) : BadRequest(deslogado);
+            var resultado = await _service.Logout(usuarioCodigo);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         /// <summary>
-        /// Endpoint de trocar a senha do usuário autenticado no sistema
+        /// Reenvia o link de confirmacao de e-mail para usuarios que ainda nao confirmaram o acesso.
         /// </summary>
-        /// <param name="dto"></param>
+        /// <param name="request">Objeto com codigo ou e-mail do usuario e a clientUri para construcao do link.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
+        [HttpPost("ReenviarConfirmacaoEmail")]
+        [AllowAnonymous]
+        public async Task<ActionResult> ReenviarConfirmacaoEmail([FromBody] ReenviarConfirmacaoEmailRequest request)
+        {
+            var resultado = await _reenviarConfirmacaoEmail.ExecutarPorIdentificadorAsync(request.Identificador, request.ClientUri);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        /// <summary>
+        /// Redefine a senha do usuário usando um token de recuperação previamente solicitado.
+        /// </summary>
+        /// <param name="request">Objeto com o código do usuário, token de recuperação e nova senha.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost(nameof(TrocarSenha))]
-        public async Task<ActionResult<bool>> TrocarSenha([FromBody] LoginRequestDTO dto)
+        [AllowAnonymous]
+        public async Task<ActionResult<bool>> TrocarSenha([FromBody] RedefinirSenhaRequest request)
         {
-            var result = await _service.TrocarSenha(dto);
-            return Ok(result);
+            var resultado = await _registroUsuarioService.TrocarSenha(request);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         /// <summary>
-        /// Endpoint de registro de conta de usuário
+        /// Solicita o envio de e-mail de recuperação de senha para o usuário informado.
         /// </summary>
-        /// <param name="registerDTO"></param>        
-        [HttpPost("Registrar")]
-        public async Task<ActionResult> Post([FromBody] UsuarioRegistroDTO registerDTO)
+        /// <param name="request">Objeto com o e-mail do usuário e a clientUri para construção do link de redefinição.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
+        [HttpPost("RecuperarSenha")]
+        [AllowAnonymous]
+        public async Task<ActionResult> RecuperarSenha([FromBody] SolicitarRecuperacaoSenhaRequest request)
         {
-            var _registroUsuarioService = ObterService<IRegistroUsuarioService>();
-            await _registroUsuarioService.RegistrarUsuario(registerDTO);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                BadRequest(ObterNotificacoes()) :
-                Ok(ObterNotificacoes());
+            var resultado = await _registroUsuarioService.SolicitarRecuperacaoSenha(request);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
-      
+        /// <summary>
+        /// Registra um novo usuário no sistema. Requer autorização.
+        /// </summary>
+        /// <param name="registroRequest">Dados do usuário a ser registrado.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
+        [HttpPost("Registrar")]
+        public async Task<ActionResult> Post([FromBody] UsuarioRegistroRequest registroRequest)
+        {
+            var resultado = await _registroUsuarioService.RegistrarUsuario(registroRequest);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        /// <summary>
+        /// Confirma o e-mail do usuário usando o token enviado por e-mail após o registro.
+        /// </summary>
+        /// <param name="request">Objeto com o código do usuário e o token de confirmação.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("ConfirmarEmail")]
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmarEmail([FromBody] ConfirmarEmailRequest request)
         {
-            var usuarioCodigo = request.usuarioCodigo;
-            var token = request.token;
+            if (string.IsNullOrWhiteSpace(request.UsuarioCodigo) || string.IsNullOrWhiteSpace(request.Identificador))
+                return BadRequest("Usuario e codigo de confirmacao sao obrigatorios.");
 
-            if (string.IsNullOrWhiteSpace(usuarioCodigo) || string.IsNullOrWhiteSpace(token))
-                return BadRequest("Usuário e Token são obrigatórios.");
-
-            var _registroUsuarioService = ObterService<IRegistroUsuarioService>();
-            _ = await _registroUsuarioService.ConfirmarEmail(usuarioCodigo, token);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                BadRequest(ObterNotificacoes()) :
-                Ok(ObterNotificacoes());
+            var resultado = await _registroUsuarioService.ConfirmarEmail(request.UsuarioCodigo, request.Identificador);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
-        public class ConfirmarEmailRequest
+        /// <summary>
+        /// Solicita o envio de e-mail com link para reativação de uma conta desativada.
+        /// </summary>
+        /// <param name="request">Objeto com o e-mail da conta a ser reativada.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
+        [HttpPost("SolicitarReativacao")]
+        [AllowAnonymous]
+        public async Task<ActionResult> SolicitarReativacao([FromBody] SolicitarReativacaoRequest request)
         {
-            public string usuarioCodigo { get; set; }
-            public string token { get; set; }
+            var resultado = await _solicitarReativacao.ExecutarAsync(request.Email);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        /// <summary>
+        /// Reativa uma conta de usuário desativada usando o código de reativação recebido por e-mail.
+        /// </summary>
+        /// <param name="request">Objeto com o e-mail e o código de reativação.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
+        [HttpPost("ReativarConta")]
+        [AllowAnonymous]
+        public async Task<ActionResult> ReativarConta([FromBody] ReativarContaRequest request)
+        {
+            var resultado = await _reativarUsuario.ExecutarAsync(request.Email, request.CodigoReativacao);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
     }
 }

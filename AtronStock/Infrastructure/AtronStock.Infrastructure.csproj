@@ -4,13 +4,18 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>    
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
+  </ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="MailKit" Version="4.13.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.32" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.32" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.32" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.32">
 			<PrivateAssets>none</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,9 +31,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Domain\AtronStock.Domain.csproj" />
 	</ItemGroup>
-	
-	<ItemGroup>
-	  <Folder Include="Migrations\" />
-	</ItemGroup>
-	
+
 </Project>

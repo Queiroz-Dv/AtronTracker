@@ -16,8 +16,6 @@ namespace Application.DTO
 
         public DateTime? DataNascimento { get; set; }
 
-        public int? Salario { get; set; }
-
         public string CargoCodigo { get; set; }
 
         public string DepartamentoCodigo { get; set; }
@@ -26,7 +24,14 @@ namespace Application.DTO
 
         public string Email { get; set; }
 
+        public bool EmailConfirmado { get; set; }
+
         public string Senha { get; set; }
+
+        public bool ReceberNotificacaoInternaTarefa { get; set; }
+        public bool ReceberNotificacaoTarefaPorEmail { get; set; }
+        public string GestorImediatoCodigo { get; set; }
+        public string GestorImediatoNome { get; set; }
 
         public DadosDeTokenComRefreshToken DadosDoToken { get; set; }
 

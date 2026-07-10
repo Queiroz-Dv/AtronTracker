@@ -1,0 +1,339 @@
+# AtronRC
+
+Este contexto descreve a linguagem de domínio usada no AtronRC para alinhar regras de negócio, documentação e implementação entre os módulos da plataforma Atron.
+
+## Product Direction
+
+O Atron é uma plataforma comercial simples para negócios locais e pequenos empresários que desejam centralizar a gestão com custo inicial reduzido e tecnologia suficiente para lidar com fluxos reais da empresa.
+
+O produto deve crescer como uma plataforma modular, não como um conjunto solto de cadastros. A documentação deve diferenciar o que já existe, o que está em planejamento e o que é direção futura. Quando uma regra de negócio virar contrato durável, ela deve aparecer neste contexto ou em documento específico em `docs/`. Quando uma decisão mudar a arquitetura ou o domínio, ela deve ser registrada em ADR.
+
+Os módulos de produto são:
+
+- `Atron Tracker`: gestão interna, estrutura organizacional, usuários, departamentos, cargos, tarefas, notificações, planejamentos e outras rotinas administrativas.
+- `Atron Stock`: cadeia de suprimentos, estoque, patrimônio, bens, movimentações, fornecedores, produtos e rotinas físicas da empresa.
+- `Atron Sales`: módulo planejado para comercial e financeiro, incluindo vendas, recebimentos, contas e relatórios comerciais ou financeiros.
+
+O objetivo de evolução do projeto também é formar repertório real de arquitetura de software: escalar, manter, corrigir e documentar um sistema com qualidade e compromisso.
+
+## Language
+
+**Atron**:
+Plataforma comercial simples para centralizar a gestão de negócios locais e pequenos empresários, com custo inicial reduzido, arquitetura modular e foco em fluxos reais da empresa.
+_Avoid_: Projeto apenas acadêmico, CRUD isolado, ERP complexo de alto custo
+
+**Plataforma comercial simples**:
+Produto de gestão com cobertura suficiente para operar rotinas administrativas, operacionais, comerciais e financeiras de uma empresa pequena, sem assumir complexidade ou custo inicial de uma implantação corporativa pesada.
+_Avoid_: Sistema experimental sem uso real, ERP completo corporativo, coleção de telas sem unidade
+
+**Negócio local**:
+Empresa pequena ou operação regional que precisa controlar pessoas, tarefas, estoque, suprimentos, vendas ou financeiro com processo mais organizado do que planilhas soltas.
+_Avoid_: Grande corporação, operação sem rotina de gestão
+
+**Atron Tracker**:
+Módulo de gestão interna do Atron. Concentra estrutura organizacional, usuários, departamentos, cargos, perfis de acesso, tarefas, notificações internas, planejamento de custos e rotinas administrativas.
+_Avoid_: Apenas módulo de tarefas, apenas cadastro de usuário
+
+**Atron Stock**:
+Módulo de suprimentos, estoque, patrimônio e bens do Atron. Deve proteger a rastreabilidade de produtos, fornecedores, entradas, saídas, movimentações, saldos e controles físicos ou patrimoniais da empresa.
+_Avoid_: Apenas cadastro de produto, controle manual sem rastreabilidade, estoque desconectado da empresa
+
+**Atron Sales**:
+Módulo planejado para centralizar o comercial e o financeiro do Atron. Deve ser tratado como direção futura até ter escopo formalizado em documentação própria.
+_Avoid_: Funcionalidade já implementada sem evidência, financeiro misturado sem fronteira, venda improvisada dentro de outro módulo
+
+**Usuário**:
+Pessoa cadastrada no sistema que pode receber responsabilidades, acessar módulos e estar vinculada a cargo e departamento.
+_Avoid_: Conta, colaborador
+
+**Pessoa remunerada**:
+Pessoa vinculada a custos de trabalho ou prestação de serviço que podem ser planejados, acompanhados ou considerados em orçamento. Nem todo usuário do sistema precisa ser uma pessoa remunerada.
+_Avoid_: Usuário, conta, colaborador genérico
+
+**Informação remuneratória sensível**:
+Dado financeiro associado a uma pessoa remunerada, como salário ou valor equivalente de remuneração, que exige controle de acesso mais restrito do que os dados cadastrais de usuário.
+_Avoid_: Campo comum do usuário, dado cadastral simples
+
+**Departamento**:
+Área organizacional usada para agrupar cargos, usuários e custos planejados dentro da empresa.
+_Avoid_: Centro de custo, setor genérico
+
+**Cargo**:
+Função vinculada a um departamento e usada para organizar responsabilidades, usuários e custos planejados por tipo de trabalho.
+_Avoid_: Perfil de acesso, permissão, papel técnico
+
+**Estrutura planejada**:
+Departamento ou cargo usado por um planejamento de custo atual ou futuro. No MVP, uma estrutura planejada não pode ser removida enquanto estiver vinculada a planejamento, para evitar divergencia entre cadastro e planejamento.
+_Avoid_: Remocao livre de departamento, remoção livre de cargo
+
+**Edição de estrutura planejada**:
+Alteração permitida em uma estrutura planejada apenas quando não muda sua identidade ou seu vínculo estrutural. No MVP, descrição pode ser ajustada, mas código e vínculo entre cargo e departamento não devem ser alterados quando houver planejamento atual ou futuro.
+_Avoid_: Alteração retroativa de código, mover cargo planejado para outro departamento
+
+**Planejamento de custo**:
+Definição ou acompanhamento de valores previstos para uma parte da organização em uma competência. No MVP, cada departamento possui no máximo um planejamento por ano; cargos detalham esse planejamento quando existem cargos vinculados ao departamento, mas não são obrigatórios para criar o planejamento.
+_Avoid_: Salário do usuário, cadastro salarial
+
+**Identificação do planejamento de custo**:
+Identidade do registro financeiro, contábil ou orçamentário criado pelo usuário para o planejamento. No MVP, o planejamento possui identificação composta por id, código obrigatório informado pelo usuário e descrição obrigatória; a descrição não precisa ser única e o código não muda depois da criação.
+_Avoid_: Registro anônimo, planejamento sem código, planejamento sem descrição, descrição única obrigatória
+
+**Cadastro de planejamento de custo**:
+Fluxo em que o usuário escolhe ano e departamento, informa os limites de custo do departamento e, quando existirem cargos vinculados, visualiza os cargos do departamento para detalhar limites no mesmo planejamento.
+_Avoid_: Cadastro por cargo isolado, cadastro salarial
+
+**Edição de planejamento de custo**:
+Alteração do corpo de um planejamento existente, preservando sua identidade, departamento e ano. No MVP, a edição permite ajustar descrição, valores e detalhamento por cargo, incluindo informar custos para cargos novos vinculados ao departamento depois da criação do planejamento.
+_Avoid_: Troca de departamento, troca de ano, recriação disfarçada
+
+**Planejamento apenas por departamento**:
+Forma de planejamento em que o usuário decide explicitamente não detalhar custos por cargo, mesmo quando o departamento possui cargos vinculados. No MVP, essa opção faz parte do cadastro e deixa o detalhamento por cargo desabilitado ou oculto para aquele planejamento; enquanto o planejamento for editável, o usuário pode alternar entre planejamento apenas por departamento e detalhamento por cargo. Ao mudar para apenas por departamento, os detalhes por cargo são removidos definitivamente após confirmação. Cargos novos no departamento não geram pendência enquanto esta opção estiver ativa.
+_Avoid_: Esquecimento de preencher cargos, planejamento incompleto acidental
+
+**Cargo não detalhado**:
+Cargo exibido no cadastro do planejamento do departamento, mas marcado explicitamente como fora do detalhamento de custos daquele planejamento. No MVP, cargo não detalhado não entra na soma dos cargos e não aparece como linha no relatório geral; o relatório pode exibir um resumo neutro da quantidade de cargos não detalhados.
+_Avoid_: Campo vazio sem intenção, erro de cadastro, valor zero
+
+**Cargo detalhado**:
+Cargo que participa do detalhamento de custos de um planejamento e possui mínimo e teto informados. No MVP, cargo detalhado sem mínimo ou sem teto é considerado incompleto; ao sair de planejamento apenas por departamento para detalhamento por cargo, cada cargo começa sem valores e exige decisão explícita.
+_Avoid_: Cargo parcial, valor isolado de cargo
+
+**Cargo pendente de decisão**:
+Cargo vinculado ao departamento de um planejamento detalhado, mas ainda sem decisão explícita de detalhar ou não detalhar. No MVP, cargos novos em departamentos já planejados aparecem como pendentes até receberem mínimo e teto ou serem marcados como não detalhados; se o usuário abrir e salvar o planejamento, pendências de cargo bloqueiam o salvamento. No relatório geral, cargos pendentes aparecem como alerta identificando o cargo.
+_Avoid_: Cargo invisível, cargo ignorado automaticamente
+
+**Planejamento consolidado**:
+Planejamento de custo marcado como efetivado para uma competência, deixando de ser tratado como versão em edição. No MVP, consolidação de planejamento fica fora do escopo.
+_Avoid_: Rascunho, edição comum, histórico técnico
+
+**Cópia de planejamento**:
+Ação opcional e explícita em que o usuário usa um planejamento existente como base para preencher um novo planejamento. Um novo planejamento não copia valores anteriores automaticamente; no MVP, a cópia de planejamento fica fora do escopo.
+_Avoid_: Herança automática de valores, reaproveitamento implícito
+
+**Módulo de planejamento de custos**:
+Módulo responsável por cadastrar e acompanhar planejamentos de custo por departamento e por cargos vinculados ao departamento. O código canônico deste módulo e `PLC`; no MVP, o acesso segue a permissão por módulo e as telas de cadastro e relatório geral são separadas. Ele substitui o módulo de salários como capacidade de negócio, mas não reaproveita o conceito de cadastro salarial.
+_Avoid_: Módulo de salários, cadastro de salário, salário de usuário
+
+**Limite de custo planejado**:
+Faixa esperada para o custo total planejado de um departamento ou de um cargo dentro de um departamento em uma competência, composta por valor mínimo e valor teto. No MVP, mínimo e teto do departamento são obrigatórios.
+_Avoid_: Salário mínimo, salário máximo, custo por pessoa, custo por vaga, valor livre sem competência
+
+**Teto de custo planejado**:
+Valor máximo que o custo total planejado pode atingir em um departamento ou cargo dentro de um departamento. No MVP, cada cargo pode ter teto próprio, a soma dos tetos dos cargos não pode ultrapassar o teto do departamento, e teto menor ou igual ao mínimo bloqueia o planejamento.
+_Avoid_: Valor sugerido, limite ignoravel
+
+**Mínimo de custo planejado**:
+Valor de referência inferior para o custo total planejado em um departamento ou cargo dentro de um departamento. No MVP, cada cargo pode ter mínimo próprio; mínimo maior ou igual ao teto bloqueia o planejamento, enquanto divergências entre a soma dos mínimos dos cargos e os limites do departamento geram alerta.
+_Avoid_: Obrigacao de gasto, bloqueio de cadastro
+
+**Competência de planejamento**:
+Período ao qual um planejamento de custo se aplica. No MVP, a competência de planejamento é anual; novos planejamentos usam o ano atual ou anos futuros, enquanto anos passados ficam restritos a consulta e não podem ser editados. O relatório geral permite escolher o ano analisado; bimestre, trimestre e semestre são expansões futuras do mesmo conceito.
+_Avoid_: Data solta, mes avulso sem planejamento
+
+**Exclusão de planejamento**:
+Remoção definitiva de um planejamento de custo ainda alterável, incluindo seus detalhes por cargo. No MVP, planejamentos do ano atual ou futuro podem ser excluídos; anos passados ficam restritos a consulta.
+_Avoid_: Exclusão retroativa, limpeza automática
+
+**Custo agregado**:
+Valor consolidado usado para acompanhar planejamento ou orçamento sem expor diretamente a informação remuneratória sensível de cada pessoa.
+_Avoid_: Lista salarial individual, detalhe de remuneração
+
+**Relatório geral de planejamento**:
+Visão analítica do planejamento de custos por ano, exibindo apenas departamentos que possuem planejamento informado para a competência analisada, detalhamento por cargos quando aplicável, valores absolutos, percentual de ocupação do teto e alertas de planejamento. No MVP, o percentual de ocupação usa a soma dos tetos dos cargos detalhados sobre o teto do departamento; planejamento apenas por departamento aparece sem ocupação detalhada.
+Plano visual pendente: definir a paleta final do relatório impresso com roxo, branco e preto, usando preto para fontes.
+_Avoid_: Listagem simples, tela de cadastro
+
+**Percentual de ocupação do teto**:
+Indicador calculado pela soma dos tetos dos cargos detalhados sobre o teto do departamento. No MVP, aparece no cadastro durante o preenchimento e no relatório geral de planejamento; 100% é válido, acima de 100% bloqueia o planejamento.
+_Avoid_: Percentual de salário, uso do mínimo como base
+
+**Alerta de planejamento**:
+Indicação de que um planejamento de custo informado merece revisão, como divergência de mínimo ou ausência de decisão clara sobre detalhamento por cargo. Departamento sem planejamento não entra no relatório do MVP. Planejamento apenas por departamento e cargo não detalhado são decisões explícitas e aparecem como informação neutra, não como alerta.
+_Avoid_: Erro impeditivo, falha técnica
+
+**Detalhamento individual de custo**:
+Visão restrita que mostra valores vinculados a pessoas remuneradas quando a análise precisa explicar ou confrontar o custo agregado.
+_Avoid_: Dado público do usuário, campo comum de cadastro
+
+**Tarefa**:
+Responsabilidade registrada no sistema para acompanhamento. Uma tarefa pode estar vinculada diretamente a um usuário responsável ou a um escopo de responsabilidade por departamento e cargo.
+_Avoid_: Atividade, demanda
+
+**Escopo de responsabilidade da tarefa**:
+Departamento, cargo ou usuário que delimita quem deve visualizar, assumir ou acompanhar uma tarefa. Uma tarefa pode nascer no escopo de uma estrutura funcional e depois ser atribuída a um usuário responsável; enquanto não tiver usuário responsável, pertence a uma fila de triagem da estrutura.
+_Avoid_: Tarefa sempre individual, fila técnica, responsável implícito
+
+**Destino inicial da tarefa**:
+Escolha feita na criação da tarefa para definir se ela nasce atribuída a um usuário, vinculada a departamento e cargo, ou direcionada para equipe do gestor. As opções disponíveis devem respeitar as permissões e a responsabilidade de gestão do usuário logado.
+No cadastro de tarefas, o destino `Departamento/Cargo` deve ficar disponível apenas para usuário que seja gestor de algum departamento. Usuário sem gestão de departamento deve poder escolher apenas `Usuario` e `Equipe` como destino inicial.
+_Avoid_: Destino único obrigatório, tarefa sem escopo, escolha que ignora permissão
+
+**Tarefa estrutural**:
+Tarefa cujo destino inicial é uma estrutura funcional em vez de um usuário responsável. Pode ser vinculada apenas a departamento ou a departamento e cargo; não deve existir tarefa vinculada a cargo sem departamento.
+_Avoid_: Cargo sem departamento, tarefa sem usuário e sem estrutura, tarefa de todos
+
+**Identificador da tarefa**:
+Código numérico sequencial usado pelos usuários para localizar uma tarefa no produto. O identificador é global no sistema, independente de departamento ou cargo, e deve ser exibido de forma amigável com zeros a esquerda quando necessário.
+_Avoid_: Id técnico, código por departamento, prefixo obrigatório
+
+**Busca por identificador da tarefa**:
+Consulta direta de tarefa pelo identificador numérico, respeitando as permissões do usuário. A busca pode localizar tarefas ativas, finalizadas, individuais ou estruturais, desde que estejam dentro do acesso permitido ao usuário.
+_Avoid_: Filtro apenas do quadro atual, listagem geral, acesso irrestrito por código
+
+**Tarefa finalizada**:
+Tarefa encerrada para operação e mantida apenas para consulta. Uma tarefa finalizada não pode ser reaberta, atualizada ou removida.
+_Avoid_: Reabertura de tarefa, edição pós-finalização, exclusão de histórico
+
+**Tarefa cancelada**:
+Tarefa encerrada antes da conclusão operacional e mantida apenas para consulta. O cancelamento substitui a exclusão de tarefa para preservar histórico e deve impedir atualização posterior.
+_Avoid_: Exclusão física, apagar tarefa, remover histórico
+
+**Cancelar tarefa**:
+Ação em que o usuário responsável encerra uma tarefa ainda não finalizada sem concluí-la. O cancelamento não exige motivo obrigatório separado; quando houver justificativa, ela deve ser descrita no conteúdo da própria tarefa.
+_Avoid_: Deletar tarefa, finalizar sem conclusão, ocultar registro, motivo obrigatório separado
+
+**Cancelamento de tarefa em fila de triagem**:
+Ação em que um usuário com responsabilidade de gestão sobre o departamento ou cargo da fila encerra uma tarefa estrutural antes de ela ser assumida ou atribuída a um usuário responsável.
+_Avoid_: Cancelamento por usuário comum, exclusão de fila, tarefa estrutural sem governança
+
+**Tarefa ativa**:
+Tarefa ainda aberta para acompanhamento ou decisão operacional. Em Meu quadro e Equipe, tarefas iniciadas, em atividade, pendentes de aprovação ou entregues são consideradas ativas; tarefas finalizadas e canceladas aparecem somente quando filtradas explicitamente pelo usuário.
+_Avoid_: Tarefa finalizada no carregamento padrão, tarefa cancelada no carregamento padrão, histórico misturado com operação
+
+**Fila de triagem de tarefas**:
+Conjunto de tarefas vinculadas a departamento ou cargo que ainda não pertencem a Meu quadro de um usuário. A fila deve ser acompanhada por usuários com responsabilidade de gestão sobre aquela estrutura, evitando distribuir tarefas estruturais para todos os usuários do escopo.
+_Avoid_: Quadro pessoal compartilhado, listagem geral de tarefas, carga automática para todos
+
+**Assumir tarefa**:
+Ação em que um usuário com acesso a uma fila de triagem torna uma tarefa estrutural uma tarefa individual própria. Depois de assumida, a tarefa passa a aparecer em Meu quadro desse usuário.
+_Avoid_: Atribuição automática, visualização sem responsabilidade
+
+**Obter tarefa**:
+Ação em que um usuário solicita ou assume uma tarefa disponível em uma fila permitida. Quando a tarefa não exige aprovação, ela entra diretamente em Meu quadro; quando exige aprovação, a obtenção gera uma solicitação ao aprovador. Obter tarefa nunca altera o estado operacional da tarefa.
+_Avoid_: Atribuição pelo gestor, edição do responsável sem regra, tarefa invisível, mudança automática de estado
+
+**Solicitação de obtenção de tarefa**:
+Pedido feito por um usuário para receber uma tarefa marcada como pendente de aprovação. A solicitação deve aparecer para o aprovador na visão Solicitações e, quando aprovada, a tarefa passa para Meu quadro do usuário solicitante. Uma tarefa deve ter no máximo uma solicitação de obtenção pendente por vez.
+_Avoid_: Aprovação implícita, e-mail como local de decisão, tarefa pendente assumida diretamente, várias solicitações pendentes para a mesma tarefa
+
+**Aprovação para obter tarefa**:
+Exigência separada do estado operacional da tarefa que define se um usuário pode obter a tarefa diretamente ou se precisa da aprovação do gestor imediato. Essa exigência não deve ser confundida com o estado da tarefa.
+_Avoid_: Estado pendente de aprovação, bloqueio implícito, aprovação como andamento da tarefa
+
+**Aprovação de obtenção**:
+Decisão do aprovador de obtenção de tarefa para aprovar ou recusar uma solicitação. A aprovação válida transforma a tarefa solicitada em tarefa individual do usuário solicitante sem alterar seu estado operacional; a recusa encerra a solicitação e mantém a tarefa disponível conforme seu escopo.
+_Avoid_: Aprovação implícita, resposta manual ao e-mail, assumir tarefa sem decisão, mudança automática de estado
+
+**Notificação do sistema**:
+Aviso interno apresentado ao usuário dentro do produto para informar eventos relevantes. No primeiro escopo, notificações de tarefas informam aprovações ou recusas de solicitações e podem levar o usuário ao detalhe da tarefa quando aplicável; notificações devem poder ser controladas como lidas ou não lidas pelo usuário.
+_Avoid_: E-mail obrigatório, alerta sem destino, histórico invisível, notificação sem leitura
+
+**Central de notificações**:
+Área do produto onde o usuário acompanha notificações do sistema e acessa os detalhes relacionados ao evento notificado. No primeiro escopo, a central atende eventos do módulo de tarefas e deve permitir abrir a tarefa relacionada quando houver uma; no futuro, tende a ser o canal padrão de notificações internas do produto.
+_Avoid_: Caixa de e-mail, alerta temporário sem histórico, lista sem contexto
+
+**Atualização em tempo real**:
+Comportamento em que notificações e solicitações relevantes aparecem para o usuário sem depender de recarregamento manual da tela. No módulo de tarefas, esse comportamento apoia aprovações, recusas e acompanhamento de solicitações.
+_Avoid_: Consulta manual constante, e-mail como fonte principal, tela desatualizada
+
+**Notificação por e-mail**:
+Aviso enviado fora do produto apenas quando o evento exigir comunicação externa ou ação específica por e-mail. A direção do produto é tratar notificações internas como padrão e usar e-mail em casos específicos.
+_Avoid_: E-mail para todo evento, e-mail como fonte principal do sistema, duplicação obrigatória de notificação
+
+**Aprovador de obtenção de tarefa**:
+Usuário responsável por aprovar ou recusar uma solicitação de obtenção de tarefa. A ordem preferencial é: gestor imediato do solicitante; gestor do departamento da tarefa; gestor do departamento do solicitante; se nenhum aprovador existir, a solicitação deve ser bloqueada por regra de negócio.
+_Avoid_: Solicitação sem aprovador, aprovador aleatório, regra fixa por cargo
+
+**Atribuir tarefa**:
+Ação em que um usuário com responsabilidade de gestão escolhe outro usuário dentro do escopo permitido para ser responsável por uma tarefa. A atribuição transforma uma tarefa estrutural em tarefa individual do usuário escolhido.
+_Avoid_: Encaminhamento informal, alteração de estado, permissão por cargo fixo
+
+**Reatribuir tarefa**:
+Ação explícita em que uma tarefa já atribuída a um usuário troca de usuário responsável. A reatribuição deve respeitar a responsabilidade de gestão sobre o usuário ou estrutura envolvida e não deve ser tratada como simples edição silenciosa da tarefa.
+_Avoid_: Troca silenciosa de responsável, edição comum, histórico perdido
+
+**Meu quadro**:
+Conjunto de tarefas ativas atribuídas diretamente ao usuário logado. Tarefas apenas estruturais entram em Meu quadro somente quando forem assumidas ou atribuídas a esse usuário.
+_Avoid_: Todas as tarefas da empresa, fila de departamento, tarefas de todos os usuários
+
+**Equipe**:
+Visão separada de tarefas relacionadas aos subordinados diretos do gestor imediato. Pode existir na mesma tela de Meu quadro, mas deve manter filtros e listagem próprios para não misturar responsabilidade pessoal com responsabilidade de gestão.
+_Avoid_: Quadro único misturado, tarefas de todos os usuários, subordinados indiretos automáticos
+
+**Solicitações**:
+Visão operacional em que o gestor acompanha solicitações pendentes de obtenção de tarefa e decide aprovar ou recusar. O e-mail pode sinalizar a pendência, mas Solicitações deve ser o local de trabalho para decisões de aprovação no módulo de tarefas.
+_Avoid_: Aprovação apenas por e-mail, pendência invisível, solicitação sem acompanhamento
+
+**Destino de equipe**:
+Destino inicial de tarefa limitado aos subordinados diretos do gestor imediato. Pode criar uma tarefa diretamente para um subordinado direto ou para a fila da equipe, sem usuário responsável inicial.
+_Avoid_: Subordinado indireto automático, equipe sem gestor, tarefa de toda a empresa
+
+**Atribuição de tarefa**:
+Vínculo inicial entre uma tarefa e o usuário responsável por ela. A atribuição acontece quando a tarefa é criada para aquele usuário, não quando o estado da tarefa muda.
+_Avoid_: Alteração de estado, movimentação de tarefa
+
+**Notificação de tarefa por e-mail**:
+Aviso enviado ao usuário responsável quando uma tarefa é atribuída a ele, respeitando a preferência individual de recebimento. Para usuários novos, essa preferência inicia desativada.
+_Avoid_: Notificação de estado, alerta de checklist
+
+**Preferência de notificação do usuário**:
+Escolha feita pelo usuário logado sobre receber ou não e-mails quando tarefas forem atribuídas a ele.
+_Avoid_: Configuração administrativa, regra global
+
+**Configurações do usuário**:
+Área do módulo de usuário onde o usuário logado ajusta preferências próprias, como o recebimento de notificações de tarefa por e-mail.
+_Avoid_: Minhas Preferências
+
+**Estrutura funcional**:
+Organização configurável de usuários em uma cadeia de responsabilidade, usada para decidir quem pode definir preferências ou regras de acesso de outra pessoa.
+_Avoid_: Cargo fixo, perfil hardcoded, if admin, if gerente
+
+**Gestor imediato**:
+Usuário opcionalmente vinculado a outro usuário como responsável funcional direto. O gestor imediato pode servir como referência para regras de tarefas e outros módulos, sem obrigar que todo usuário tenha gestor cadastrado.
+_Avoid_: Cargo gerente, perfil de acesso, relação obrigatória
+
+**Gestor do departamento**:
+Usuário opcionalmente definido como responsável de gestão de um departamento. Quando aplicável, deve existir no máximo um gestor ativo por departamento e esse gestor pode atuar como aprovador estrutural quando o usuário solicitante não tiver gestor imediato.
+_Avoid_: Gestor imediato, cargo gerente, vários gestores ativos no mesmo departamento
+
+**Responsabilidade de gestão**:
+Capacidade de atuar sobre tarefas, usuários ou informações de uma estrutura funcional com base no vínculo de gestor imediato, no gestor do departamento e nas permissões do usuário. No MVP, a responsabilidade de gestão por pessoas considera apenas subordinados diretos; uma visão futura pode ampliar filtros por departamentos, cargos e estruturas de gestão.
+_Avoid_: if gerente, if admin, permissão implícita por texto do cargo, subordinado indireto automático, gestor único para todos os contextos
+
+**Perfil de acesso**:
+Módulo responsável por catalogar perfis de acesso e relacionar quais módulos cada perfil pode acessar. O código canônico deste módulo e `PERF`.
+_Avoid_: PAC, PRF, módulo paralelo para perfis
+
+**Relacionamento de perfil e usuários**:
+Módulo responsável por vincular usuários aos perfis de acesso já cadastrados. O código canônico deste módulo e `RPERFUSR`.
+_Avoid_: Regra fixa por cargo, if admin, if gerente
+
+**Política de acesso por módulo**:
+Regra de autorização baseada no catálogo de módulos e nos perfis vinculados ao usuário. A policy técnica usa o formato `Modulo:CODIGO` e já aceita a forma futura `Modulo:CODIGO:ACAO`, mantendo a regra atual por módulo até que permissões granulares sejam modeladas.
+_Avoid_: Regra hardcoded por cargo, usuário especial, if admin, if gerente
+
+**Front Angular**:
+Interface principal do produto. Para o MVP, o front mantido será `AtronFront`.
+_Avoid_: Duas estruturas de front ativas
+
+**Validação de regra de negócio**:
+Mensagem de validação que explica uma regra do produto ou bloqueia uma ação de negócio deve nascer no backend, especialmente no módulo de planejamento de custos. O front Angular pode manter apenas validações de formato, estado visual ou eventos entre componentes necessários para montar a interação, mas não deve decidir a mensagem final de regra de negócio.
+_Avoid_: Mensagem de regra duplicada no front, bloqueio local que impede a API de responder, validação de negocio espalhada em componente Angular
+
+**Atron.WebViews**:
+Estrutura legada de front MVC/Razor deletada para evitar dois projetos de front diferentes evoluindo em paralelo.
+_Avoid_: Front secundário, duplicação de tela
+
+## Example Dialogue
+
+Dev: Quando crio uma tarefa para a Maria, isso conta como atribuição de tarefa?
+Especialista: Sim. A tarefa nasceu vinculada a ela, então ela deve receber a notificação se a preferência dela permitir.
+
+Dev: Se eu mudar a tarefa de "Aberta" para "Em andamento", envio outro e-mail?
+Especialista: Não. Mudança de estado terá regras próprias no futuro, especialmente quando houver checklists.
+
+Dev: Quem altera a preferência de notificação da Maria agora?
+Especialista: A própria Maria, como usuário logado. No futuro, isso pode respeitar a estrutura funcional dela.
+
+Dev: Onde a Maria altera essa preferência no front?
+Especialista: Em Configurações, dentro do módulo de usuário.

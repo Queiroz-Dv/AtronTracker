@@ -1,115 +1,107 @@
-# 🚀 Projeto Atron Tracker
+# Atron Platform
 
-Bem-vindo ao **Atron Tracker**! Este projeto é um protótipo robusto projetado para demonstrar o ciclo completo de desenvolvimento de software, aplicando práticas modernas de arquitetura e design.
+O Atron é uma plataforma comercial simples para negócios locais e pequenos empresários que desejam centralizar a gestão da empresa com custo inicial reduzido.
+
+O projeto busca entregar tecnologia suficiente para fluxos reais de uma empresa pequena, mantendo arquitetura modular, documentação viva e capacidade de manutenção contínua. <br>
+Ele também é uma trilha prática de formação em arquitetura de software, com foco em escalar, manter, corrigir e documentar um sistema com qualidade.
 
 ![Status do Projeto](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow)
-![Licença](https://img.shields.io/badge/Licença-MIT-blue)
+![Licença](https://img.shields.io/badge/Licenca-MIT-blue)
 ![.NET](https://img.shields.io/badge/.NET-8.0-purple)
 
----
+## Visão de produto
 
-## 📖 Sobre o Projeto
+A direção de produto está documentada em [docs/visao-produto-atron.md](docs/visao-produto-atron.md).
 
-O **Atron Tracker** segue os princípios da **Arquitetura Limpa (Clean Architecture)**, com aplicação parcial de **Domain-Driven Design (DDD)** e **MVC**. Embora as bases tenham sido desenvolvidas inicialmente para desktop, o sistema está em constante evolução, incorporando novos conhecimentos e refatorações para garantir qualidade e escalabilidade.
+O Atron deve crescer como uma plataforma de gestão comercial de porte enxuto: simples para rodar em um negócio pequeno, mas estruturada o suficiente para evoluir sem virar uma coleção de telas desconectadas.
 
-### 🌟 Destaques
+## Módulos
 
-- **Arquitetura Desacoplada**: Facilita a manutenção e a substituição de componentes (ex: ORM, Banco de Dados).
-- **Documentação Automática**: Uso do Swagger e Redoc para uma documentação de API clara e interativa.
-- **Mapeamento Personalizado**: Implementação de um mapeador próprio para DTOs e Entidades.
-- **Flexibilidade**: Banco de dados SQL Server e ORM Entity Framework Core configurados, mas facilmente substituíveis.
+### Atron Tracker
 
----
+Módulo de gestão interna e estrutura organizacional. Cobre usuários, departamentos, cargos, perfis de acesso, tarefas, notificações internas, planejamento de custos e rotinas administrativas.
 
-## 🛠️ Tecnologias Utilizadas
+### Atron Stock
 
-| Tecnologia                | Descrição                                |
-| ------------------------- | ---------------------------------------- |
-| **.NET 8**                | Plataforma base para o desenvolvimento.  |
-| **Entity Framework Core** | ORM para manipulação de dados.           |
-| **SQL Server**            | Banco de dados relacional.               |
-| **Swagger / Redoc**       | Documentação da API.                     |
-| **Angular**               | Framework para o Web View (em migração). |
+Módulo destinado a suprimentos, estoque, patrimônio e bens da empresa. Cobre produtos, fornecedores, clientes ligados ao fluxo de estoque, entradas, saídas, movimentações, saldos e rastreabilidade.
 
-> **Nota**: O projeto Web View está sendo migrado para Angular. Confira o repositório aqui: [Atron Tracker Web View](https://github.com/Queiroz-Dv/AtronTracker-WebView)
+### Atron Sales
 
----
+Módulo planejado para comercial e financeiro. Deve concentrar vendas, recebimentos, contas, formas de pagamento e relatórios comerciais ou financeiros quando seu escopo for formalizado.
 
-## ⚙️ Como Configurar
+## Tecnologias
 
-Siga os passos abaixo para configurar e rodar o projeto em sua máquina:
+| Tecnologia | Uso |
+| ---------- | --- |
+| .NET 8 | Backend e APIs |
+| Entity Framework Core | Persistência |
+| Supabase/PostgreSQL | Banco alvo para deploy inicial |
+| Angular | Front principal em `AtronFront` |
+| Swagger / Redoc | Documentação das APIs |
 
-1. **Pré-requisitos**:
+O front MVC/Razor legado foi removido do MVP pois não atendia às necessidades com
+eventos específicos para o sistema. Adotamos então o Angular que está em `AtronFront`.
 
-   - Visual Studio 2022 ou Visual Studio Code.
-   - .NET SDK instalado.
-   - SQL Server instalado.
+## Documentação principal
 
-2. **Configuração Inicial**:
+- [CONTEXT.md](CONTEXT.md): glossário canônico e contratos duráveis de domínio.
+- [docs/visao-produto-atron.md](docs/visao-produto-atron.md): direção de produto da plataforma.
+- [docs/publicacao-render-brevo-supabase.md](docs/publicacao-render-brevo-supabase.md): manual de publicação com Render, Supabase e Brevo.
+- [docs/adr](docs/adr): decisões arquiteturais e de domínio.
+- [docs/planejamento-custos-mvp.md](docs/planejamento-custos-mvp.md): contrato do módulo de planejamento de custos.
 
-   - Abra a solução no Visual Studio.
-   - Defina o projeto **Atron.WebApi** como projeto de inicialização.
+## Estrutura dos projetos
 
-   ![Configuração do Projeto Inicial](images/ProjetoInicialConfig.png)
+### Front
 
-3. **Banco de Dados**:
+- `AtronFront`: interface Angular principal do produto.
 
-   - Abra o **Package Manager Console (PMC)**.
-   - Defina o projeto padrão como `Atron.Infrastructure`.
-   - Execute o comando:
-     ```powershell
-     update-database
-     ```
+### Tracker
 
-   ![Configuração do PMC](images/ConfigPMC.png)
+- `AtronTracker/Domain`: entidades, contratos e regras centrais do Tracker.
+- `AtronTracker/Application`: casos de uso, DTOs, validações e orquestração.
+- `AtronTracker/Infrastructure`: persistência e repositórios.
+- `AtronTracker/WebApi`: API do módulo Tracker.
 
----
+### Stock
 
-## 🧩 Como Funciona?
+- `AtronStock/Domain`: domínio de estoque, suprimentos e bens.
+- `AtronStock/Application`: serviços e validações do Stock.
+- `AtronStock/Infrastructure`: persistência e repositórios.
+- `AtronStock/WebApi`: API do módulo Stock.
 
-O sistema é dividido em módulos principais:
+### Framework
 
-### 🌐 Web Api
+- [Framework/Shared](Framework/Shared/README.md): utilitários, recursos e componentes compartilhados.
+- [Framework/IoC](Framework/IoC/README.md): injeção de dependência.
 
-A espinha dorsal do sistema. Centraliza as regras de negócio, validações e endpoints.
+## Persistência
 
-- **Independência**: Pode ser utilizado isoladamente.
-- **Segurança**: Gerencia autenticação e autorização.
+O projeto partiu do SQL Server, mas foi reestruturado para usar PostgreSQL como banco alvo do deploy. As migrations ativas ficam nos projetos `*.PostgreSqlMigrations`.
 
-![Módulo Atron Web Api](images/AtronWebApi.png)
+## Configuração sensível
 
-### 💻 Web View (Razor Pages / Angular)
+Credenciais não devem ser commitadas em `appsettings*.json`. Use variáveis de ambiente no Render e, localmente, variáveis de usuário, User Secrets ou `appsettings.Local.json`.
 
-A interface do usuário. Responsável pela apresentação e interação com o usuário.
+O passo a passo de publicação e o racional dos provedores estão em [docs/publicacao-render-brevo-supabase.md](docs/publicacao-render-brevo-supabase.md).
 
-- **Comunicação**: Consome a API para exibir e enviar dados.
-- **Dependência**: Necessita da API rodando para funcionar plenamente.
+Variáveis principais:
 
-![Módulo Atron Web View](images/AtronWebView.png)
+- `ConnectionStrings__DefaultConnection`: string de conexão do PostgreSQL/Supabase.
+- `ConnectionString`: fallback legado para a mesma conexão, quando necessário.
+- `Jwt__SecretKey`: chave de assinatura dos tokens.
+- `EmailSettings__Brevo__ApiKey`: chave da Brevo, se o provedor de e-mail estiver ativo.
+- `EmailSettings__Password`: senha SMTP, se o provedor SMTP estiver ativo.
 
----
+## Execução local
 
-## 🏗️ Estrutura dos Projetos
+1. Instale o .NET SDK e as dependências do Angular.
+2. Configure as strings de conexão e ambientes conforme o módulo desejado.
+3. Rode a WebApi correspondente ao módulo.
+4. Entre em `AtronFront` e execute:
 
-Abaixo, uma visão geral dos módulos e suas responsabilidades:
-
-### 📂 Framework
-
-Núcleo compartilhado e utilitários do sistema.
-
-- **[Communication](/Framework/Communication/README.md)**: Gerencia chamadas HTTP e tokens.
-- **[External Services](/Framework/ExternalServices/README.md)**: Abstração para comunicação com a API.
-- **[Shared](/Framework/Shared/README.md)**: Utilitários e helpers globais.
-
-### 📂 Camadas da Aplicação
-
-- **[Atron.Application](/Atron.Application/README.md)**: Orquestração de tarefas e casos de uso.
-- **[Atron.Domain](/Atron.Domain/README.md)**: O coração do sistema. Entidades, interfaces e regras de negócio.
-- **[Atron.Infrastructure](/Atron.Infrastructure/README.md)**: Implementação de repositórios e acesso a dados.
-- **[Atron.Infra.IoC](/Atron.Infra.IoC/README.md)**: Configuração de Injeção de Dependência.
-- **Atron.WebApi**: Interface RESTful.
-- **Atron.WebViews**: Interface de Usuário.
-
----
-
-Feito com ❤️ por [Queiroz-Dv](https://github.com/Queiroz-Dv)
+```powershell
+cd AtronFront
+npm install
+npm run start
+```

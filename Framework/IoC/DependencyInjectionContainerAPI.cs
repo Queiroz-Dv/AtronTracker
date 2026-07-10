@@ -5,6 +5,8 @@ using Application.Mapping;
 using Application.Services;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
+using Application.Services.EntitiesServices.PlanejamentoCustos;
+using Application.Services.EntitiesServices.Tarefas;
 using Application.UseCases.Usuario;
 using Application.Validador;
 using AtronTracker.Infrastructure.Context;
@@ -19,13 +21,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Entities.Identity;
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
-
 
 namespace IoC
 {
@@ -33,23 +36,28 @@ namespace IoC
     {
         public static IServiceCollection AddInfrastructureAPI(this IServiceCollection services, IConfiguration configuration)
         {
-            string sqlConnection = configuration.GetConnectionString("AtronConnection");
+            services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
+
+            var database = DatabaseProviderResolver.Resolve(configuration);
+            var migrationsAssembly = "AtronTracker.Infrastructure.PostgreSqlMigrations";
 
             services.AddDbContext<AtronDbContext>(options =>
-                options.UseSqlServer(sqlConnection,
-                b => b.MigrationsAssembly(typeof(AtronDbContext).Assembly.FullName)));
+                options.UseConfiguredDatabase(database, migrationsAssembly));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                     .AddEntityFrameworkStores<AtronDbContext>()
                     .AddDefaultTokenProviders();
 
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(24);
+            });
+
             services = services.AddSharedInfrastructure(configuration);
 
-            // Evitar o looping infinito 
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             services.AddScoped(provider => provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.Response.Cookies);
 
-            // Registra os repositories e services da API
             services = services.AddDependencyInjectionApiDoc();
             services = services.AddServiceMappings();
             services = services.AddMessageValidationServices();
@@ -57,32 +65,22 @@ namespace IoC
             services = services.AddEmailServices(configuration);
             ConfigureModuloServices(services);
             ConfigureTarefaServices(services);
-            ConfigureSalarioServices(services);
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
+            ConfigurePlanejamentoCustoServices(services);
             ConfigureUsuarioServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
-            ConfigureSalarioRepositoryServices(services);
+            ConfigureNotificacaoInternaServices(services);
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigurePerfilDeAcessoServices(services);
             ConfigurePerfilDeAcessoUsuarioServices(services);
 
 
-            // Registra os serviços essenciais do sistema de proteção de dados (Data Protection) na injeção de dependência.
             services.AddDataProtection()
-
-                // Define um nome de aplicativo exclusivo ("Atron").
-                // Usado para isolar os cookies e tokens da sua aplicação de outras aplicações rodando no mesmo servidor.
                 .SetApplicationName("Atron")
-
-                // Instruiu o sistema a salvar (persistir) as chaves de criptografia em uma pasta local chamada "./keys".
-                // Isso é vital para produção, garantindo que os usuários não sejam deslogados a cada reinício da aplicação.
                 .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
-
-                // Configura o "rodízio de chaves" (key rotation), gerando uma nova chave de criptografia a cada 90 dias.
-                // É uma boa prática de segurança para limitar o tempo de vida de qualquer chave.
                 .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
             return services;
         }
@@ -102,6 +100,9 @@ namespace IoC
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
+            services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
+            services.AddScoped<IValidador<DadosDoTokenDTO>, DadosDoTokenValidador>();
+            services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidador>();
         }
 
         private static void ConfigureDefaultUserRoleServices(IServiceCollection services)
@@ -109,16 +110,20 @@ namespace IoC
             services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
         }
 
-        private static void ConfigureSalarioRepositoryServices(IServiceCollection services)
-        {
-            services.AddScoped<ISalarioRepository, SalarioRepository>();
-            services.AddScoped<ISalarioService, SalarioService>();
-        }
-
         private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ITarefaRepository, TarefaRepository>();
+            services.AddScoped<ISolicitacaoObtencaoTarefaRepository, SolicitacaoObtencaoTarefaRepository>();
+            services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
+            services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
+            services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
             services.AddScoped<ITarefaService, TarefaService>();
+        }
+
+        private static void ConfigureNotificacaoInternaServices(IServiceCollection services)
+        {
+            services.AddScoped<INotificacaoInternaRepository, NotificacaoInternaRepository>();
+            services.AddScoped<INotificacaoInternaService, NotificacaoInternaService>();
         }
 
         private static void ConfigureUsuarioServices(IServiceCollection services)
@@ -127,19 +132,32 @@ namespace IoC
             services.AddScoped<CriarUsuario>();
             services.AddScoped<AtualizarUsuario>();
             services.AddScoped<RemoverUsuario>();
+            services.AddScoped<DesativarUsuario>();
+            services.AddScoped<SolicitarReativacao>();
+            services.AddScoped<ReativarUsuario>();
+            services.AddScoped<AlterarEmail>();
+            services.AddScoped<ConfirmarAlteracaoEmail>();
+            services.AddScoped<ReenviarConfirmacaoEmail>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            services.AddScoped(typeof(IRepository<Usuario>), typeof(Repository<Usuario>));
-
-            // Validador e Mapeamento para UsuarioRequest (padrão CategoriaService)
-            services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
+            services.AddScoped<IConfirmacaoEmailRepository, ConfirmacaoEmailRepository>();
+            services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
+            services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();            
             services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();
         }
-
 
         private static void ConfigureCargoServices(IServiceCollection services)
         {
             services.AddScoped<ICargoRepository, CargoRepository>();
             services.AddScoped<ICargoService, CargoService>();
+        }
+
+        private static void ConfigurePlanejamentoCustoServices(IServiceCollection services)
+        {
+            services.AddScoped<IPlanejamentoCustoRepository, PlanejamentoCustoRepository>();
+            services.AddScoped<IPlanejamentoCustoPreparacaoService, PlanejamentoCustoPreparacaoService>();
+            services.AddScoped<IPlanejamentoCustoRelatorioService, PlanejamentoCustoRelatorioService>();
+            services.AddScoped<IPlanejamentoCustoRelatorioImpressaoService, PlanejamentoCustoRelatorioImpressaoService>();
+            services.AddScoped<IPlanejamentoCustoService, PlanejamentoCustoService>();
         }
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)
@@ -158,11 +176,6 @@ namespace IoC
         {
             services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
             services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
-        }
-
-        private static void ConfigureSalarioServices(IServiceCollection services)
-        {
-            services.AddScoped<IRepository<Salario>, Repository<Salario>>();
         }
 
         private static void ConfigureTarefaServices(IServiceCollection services)

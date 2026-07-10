@@ -16,7 +16,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.32" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.32" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.32" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.32">
 			<PrivateAssets>none</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -29,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Migrations\" />
+	  <Compile Remove="Migrations\**\*.cs" />
 	</ItemGroup>
 
 </Project>

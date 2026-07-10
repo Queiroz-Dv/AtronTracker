@@ -14,5 +14,7 @@
         /// Senha do usuário que será autenticado.
         /// </summary>
         public string Senha { get; set; } = string.Empty;
+
+        public string ClientUri { get; set; } = string.Empty;
     }
 }

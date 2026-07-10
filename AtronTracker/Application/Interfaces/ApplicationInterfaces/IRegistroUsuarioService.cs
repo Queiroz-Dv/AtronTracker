@@ -1,11 +1,16 @@
-﻿using Application.DTO.ApiDTO;
+using Application.DTO.Request;
+using Shared.Application.DTOS.Auth;
+using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
 namespace Application.Interfaces.ApplicationInterfaces
 {
     public interface IRegistroUsuarioService
     {
-        Task RegistrarUsuario(UsuarioRegistroDTO register);
-        Task<bool> ConfirmarEmail(string codigoUsuario, string token);
+        Task<Resultado> RegistrarUsuario(UsuarioRegistroRequest registroRequest);
+        Task<Resultado> ConfirmarEmail(string codigoUsuario, string identificador);
+
+        Task<Resultado> SolicitarRecuperacaoSenha(SolicitarRecuperacaoSenhaRequest request);
+        Task<Resultado> TrocarSenha(RedefinirSenhaRequest request);
     }
 }

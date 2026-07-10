@@ -7,7 +7,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.32" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
@@ -20,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Migrations\**\*.cs" />
 	  <Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -44,6 +44,11 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ClienteResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Application\Resources\AuthResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AuthResource.resx</DependentUpon>
 	  </Compile>
 	  <Compile Update="Application\Resources\DepartamentoResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
@@ -92,6 +97,10 @@
 	  <EmbeddedResource Update="Application\Resources\AtronStock\ClienteResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ClienteResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\AuthResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>AuthResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\DepartamentoResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>

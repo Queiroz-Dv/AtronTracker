@@ -113,3 +113,12 @@ Shared
 - Mantenha o projeto simples e focado.
 
 ---
+## Persistência e migrations PostgreSQL
+
+O `SharedDbContext` usa Supabase/PostgreSQL como provider de persistência do projeto.
+
+As migrations ativas ficam no projeto separado:
+
+- `Framework/Shared.PostgreSqlMigrations`
+
+O projeto `Framework/Shared` não mantém migrations próprias para o deploy.

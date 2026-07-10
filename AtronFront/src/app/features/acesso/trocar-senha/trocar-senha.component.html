@@ -1,0 +1,80 @@
+<main class="auth-page">
+  <section class="auth-shell" aria-labelledby="trocar-senha-title">
+    <div class="auth-brand">
+      <span class="brand-mark">
+        <mat-icon>lock_reset</mat-icon>
+      </span>
+      <p class="brand-kicker">Acesso seguro</p>
+      <h1 id="trocar-senha-title">Redefinir senha</h1>
+      <p class="brand-copy" *ngIf="!senhaSalva && !erroLink">
+        Escolha uma nova senha para acessar a plataforma.
+      </p>
+      <p class="brand-copy" *ngIf="senhaSalva">
+        Sua senha foi atualizada. Volte ao login para acessar com a nova senha.
+      </p>
+      <p class="brand-copy" *ngIf="erroLink">
+        O link informado não está disponível para redefinição de senha.
+      </p>
+    </div>
+
+    <div class="auth-card" *ngIf="!senhaSalva && !erroLink">
+      <div class="auth-card-header">
+        <h2>Nova senha</h2>
+        <p>Informe e confirme sua nova senha.</p>
+      </div>
+
+      <form [formGroup]="form" class="auth-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Nova senha</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input matInput [type]="passwordType" formControlName="senha" placeholder="Digite a nova senha" autocomplete="new-password" />
+          <button class="password-toggle" mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()" aria-label="Alternar visibilidade da senha">
+            <mat-icon>{{ passwordType === 'password' ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <c-control-error [control]="form.get('senha')"></c-control-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Repetir nova senha</mat-label>
+          <mat-icon matPrefix>lock_reset</mat-icon>
+          <input matInput [type]="repeatPasswordType" formControlName="repetirSenha" placeholder="Repita a nova senha" autocomplete="new-password" />
+          <button class="password-toggle" mat-icon-button matSuffix type="button" (click)="toggleRepeatPasswordVisibility()" aria-label="Alternar visibilidade da repetição da senha">
+            <mat-icon>{{ repeatPasswordType === 'password' ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <c-control-error [control]="form.get('repetirSenha')"></c-control-error>
+        </mat-form-field>
+
+        <div class="auth-inline-feedback error" *ngIf="mensagemErro">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ mensagemErro }}</span>
+        </div>
+
+        <button mat-flat-button type="button" class="primary-action" (click)="salvarNovaSenha()">
+          <mat-icon>save</mat-icon>
+          Salvar nova senha
+        </button>
+
+        <button mat-button type="button" class="text-action" (click)="voltarLogin()">
+          <mat-icon>arrow_back</mat-icon>
+          Voltar ao login
+        </button>
+      </form>
+    </div>
+
+    <div class="auth-card auth-feedback-card" *ngIf="senhaSalva">
+      <mat-icon class="auth-feedback-icon success">check_circle</mat-icon>
+      <h2>Senha atualizada</h2>
+      <p>{{ mensagemEnvio }}</p>
+      <button mat-flat-button type="button" class="primary-action" (click)="voltarLogin()">Ir para o login</button>
+    </div>
+
+    <div class="auth-card auth-feedback-card" *ngIf="erroLink">
+      <mat-icon class="auth-feedback-icon error">error_outline</mat-icon>
+      <h2>Link inválido ou expirado</h2>
+      <p>Solicite uma nova recuperação de senha para receber outro link.</p>
+      <button mat-flat-button type="button" class="primary-action" (click)="voltarLogin()">Voltar ao login</button>
+    </div>
+
+    <p class="auth-footer">&copy; 2026 Atron. Todos os direitos reservados.</p>
+  </section>
+</main>

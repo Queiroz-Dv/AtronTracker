@@ -1,0 +1,184 @@
+.empty-state {
+  display: grid;
+  gap: 16px;
+  padding: 28px;
+  border: 1px solid var(--color-border, #d9dde7);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.empty-state h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--color-text-muted, #5f6675);
+}
+
+.planning-page-title {
+  color: var(--atron-title, #5b21b6) !important;
+}
+
+.cargo-planning-section {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.cargo-planning-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.cargo-planning-header h3,
+.cargo-planning-header p {
+  margin: 0;
+}
+
+.cargo-planning-header p,
+.cargo-planning-empty,
+.cargo-planning-alert {
+  color: var(--color-text-muted, #5f6675);
+}
+
+.cargo-planning-summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  font-size: 0.9rem;
+}
+
+.cargo-planning-summary span {
+  padding: 6px 10px;
+  border: 1px solid var(--color-border, #d9dde7);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.cargo-search-field {
+  width: min(100%, 520px);
+}
+
+.cargo-planning-alert,
+.cargo-planning-empty {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border, #d9dde7);
+  background: #ffffff;
+}
+
+.cargo-planning-alert-error {
+  color: #9f1239;
+  border-color: #fecdd3;
+  background: #fff1f2;
+}
+
+.cargo-planning-alert-neutral {
+  color: #52525b;
+  background: #f8fafc;
+}
+
+.cargo-planning-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.cargo-planning-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(120px, 160px) minmax(120px, 160px) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--color-border, #d9dde7);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.cargo-planning-name {
+  display: grid;
+  gap: 2px;
+}
+
+.cargo-planning-name span {
+  color: var(--color-text-muted, #5f6675);
+}
+
+.cargo-planning-row mat-form-field {
+  width: 100%;
+}
+
+.report-print-launcher {
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid var(--atron-border, #d9dde7);
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px;
+  padding: 18px;
+}
+
+.report-search-field {
+  flex: 1 1 260px;
+  max-width: 360px;
+  --mdc-outlined-text-field-caret-color: var(--atron-primary);
+  --mdc-outlined-text-field-focus-outline-color: var(--atron-primary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--atron-primary);
+  --mdc-outlined-text-field-input-text-color: var(--atron-text);
+  --mdc-outlined-text-field-label-text-color: var(--atron-text-muted);
+  --mdc-outlined-text-field-outline-color: var(--atron-border);
+  --mdc-outlined-text-field-hover-outline-color: var(--atron-primary);
+}
+
+.report-search-field .mat-mdc-text-field-wrapper {
+  background: #ffffff;
+  border-radius: 8px;
+}
+
+.report-cargo-grid {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--color-border, #d9dde7);
+  border-radius: 8px;
+}
+
+.report-cargo-grid-header,
+.report-cargo-grid-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(120px, 160px) minmax(120px, 160px) minmax(90px, 120px);
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.report-cargo-grid-header {
+  font-weight: 700;
+  background: #f8fafc;
+}
+
+.report-cargo-grid-row + .report-cargo-grid-row {
+  border-top: 1px solid var(--color-border, #d9dde7);
+}
+
+@media (max-width: 760px) {
+  .cargo-planning-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cargo-planning-summary {
+    justify-content: flex-start;
+  }
+
+  .report-cargo-grid-header,
+  .report-cargo-grid-row {
+    grid-template-columns: 1fr;
+  }
+}

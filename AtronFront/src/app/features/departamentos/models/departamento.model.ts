@@ -4,7 +4,9 @@ export class Departamento implements DepartamentoItem {
 
   constructor(
     public codigo: string,
-    public descricao: string
+    public descricao: string,
+    public gestorDepartamentoCodigo?: string,
+    public gestorDepartamentoNome?: string
   ) { }
 
   estaValido(): boolean {

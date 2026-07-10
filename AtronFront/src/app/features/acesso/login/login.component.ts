@@ -7,6 +7,7 @@ import { ControlErrorComponent } from '../../../shared/components/control-error/
 import { LoginRequest } from '../../../shared/models/request/login-request.model';
 import { VisualizacaoService } from '../../../core/services/visualizacao-service';
 import { SessaoInfoService } from '../../../shared/services/sessaoInfo.service';
+import { NotificacaoService } from '../../../core/services/notification.service';
 
 @Component({
   standalone: true,
@@ -24,20 +25,20 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private loginService: AcessoService,
     private sessaoService: SessaoInfoService,
+    private notificacaoService: NotificacaoService,
     public router: Router,
     public visualizacaoService: VisualizacaoService
   ) { }
 
   ngOnInit(): void {
-    var codigoDeUsuarioLogado = this.sessaoService.getUsuarioCodigoLocalStorage();
+    var codigoDeUsuarioLogado = this.sessaoService.obterUsuarioCodigo();
     if (codigoDeUsuarioLogado) {
      this.sessaoService.clearSessionInfo();
     }
 
     this.form = this.fb.group({
       codigo: ['', Validators.required],
-      senha: ['', Validators.required],
-      //lembrar: ['']
+      senha: ['', Validators.required]
     });
   }
 
@@ -49,15 +50,21 @@ export class LoginComponent implements OnInit {
     let loginPayload = new LoginRequest();
     loginPayload.codigoDoUsuario = this.form.value.codigo;
     loginPayload.senha = this.form.value.senha;
-    //loginPayload.lembrar = this.form.value.lembrar;
+    loginPayload.clientUri = window.location.origin;
 
     this.loginService.autenticar(loginPayload).subscribe({
       next: () => {
         const rota = this.getRotaPorVisualizacao();
         this.router.navigate([rota]);
       },
-      error: (error: any) => {
-        console.log(error);
+      error: (erro: any) => {
+        const mensagens = this.notificacaoService.normalizarMensagens(erro?.error);
+        if (mensagens.length) {
+          this.notificacaoService.exibirMensagens(mensagens);
+          return;
+        }
+
+        this.notificacaoService.exibirMensagem('Não foi possível realizar o login.', undefined, 6000);
       }
     });
   }
@@ -70,5 +77,13 @@ export class LoginComponent implements OnInit {
 
   registrar() {
     this.router.navigate(['/registrar']);
+  }
+
+  esqueciSenha() {
+    this.router.navigate(['/esqueci-senha']);
+  }
+
+  reenviarConfirmacao() {
+    this.router.navigate(['/reenviar-confirmacao']);
   }
 }

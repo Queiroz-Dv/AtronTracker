@@ -12,8 +12,6 @@ namespace Application.DTO.Request
 
         public DateTime? DataNascimento { get; set; }
 
-        public int? SalarioMensal { get; set; }
-
         public string CargoCodigo { get; set; }
 
         public string DepartamentoCodigo { get; set; }
@@ -23,5 +21,9 @@ namespace Application.DTO.Request
         public string Email { get; set; }
 
         public string Senha { get; set; }
+
+        public string ClientUri { get; set; }
+
+        public string GestorImediatoCodigo { get; set; }
     }
 }

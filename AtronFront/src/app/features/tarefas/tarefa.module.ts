@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { SharedModule } from "../../shared/modules/shared.module";
+import { TarefaConfiguracoesComponent } from "./components/tarefa-configuracoes/tarefa-configuracoes.component";
 import { TarefaEditComponent } from "./components/tarefa-edit/tarefa-edit.component";
 import { TarefaViewComponent } from "./components/tarefa-view/tarefa-view.component";
 import { TarefaRoutingModule } from "./tarefa-routing.module";
@@ -10,6 +11,7 @@ import { TarefaRoutingModule } from "./tarefa-routing.module";
   imports: [
     SharedModule,
     ReactiveFormsModule,
+    TarefaConfiguracoesComponent,
     TarefaEditComponent,
     TarefaViewComponent,
     TarefaRoutingModule

@@ -13,9 +13,6 @@ using System.Threading.Tasks;
 
 namespace WebApi.Helpers
 {
-    /// <summary>
-    /// Handler para verificar se o usuário tem acesso a um módulo específico.
-    /// </summary>
     public class ModuloHandler : AuthorizationHandler<ModuloRequirement>
     {
         private readonly ICacheService _cacheService;
@@ -36,7 +33,6 @@ namespace WebApi.Helpers
             AuthorizationHandlerContext context,
             ModuloRequirement requirement)
         {
-            // Extract the userId from the claim  
             var usuarioCodigo = context.User.Claims.FirstOrDefault(usr => usr.Type == ClaimCode.CODIGO_USUARIO)?.Value;
 
             if (usuarioCodigo.IsNullOrEmpty() && context.Resource is AuthorizationFilterContext mvcContext)
@@ -46,21 +42,17 @@ namespace WebApi.Helpers
 
             if (usuarioCodigo.IsNullOrEmpty())
             {
-                // Não está autenticado — deixa o pipeline de authorization resolver (401)
                 return;
             }
 
-            // Attempt to retrieve from cache: List<PerfilComModulos>  
             var dados = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription)
             ?? await RecarregarSessaoNoCacheAsync(usuarioCodigo);
 
-            // 4. Verifique o módulo
             var perfis = dados?.DadosDoPerfil;
             var modulosDosPerfis = perfis?.SelectMany(p => p.Modulos).ToList();
 
             if (modulosDosPerfis is null || modulosDosPerfis.Count == 0)
             {
-                // Não tem perfis ou módulos — deixa o pipeline de authorization resolver (403)
                 return;
             }
 
@@ -70,18 +62,19 @@ namespace WebApi.Helpers
             }
             else
             {
-                // Não tem o módulo requerido — deixa o pipeline de authorization resolver (403)
                 return;
             }
         }
 
-        // Método auxiliar
         private async Task<DadosComplementaresDoUsuarioDTO> RecarregarSessaoNoCacheAsync(string userId)
         {
             var dadosComplementaresService = _serviceAccessor.ObterService<IDadosComplementaresDoUsuarioService>();
             var userDto = await _usuarioService.ObterPorCodigoAsync(userId);
             var dadosDto = await dadosComplementaresService.ObterInformacoesComplementaresDoUsuario(userDto.Dados);
-            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, userId));
+            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, userId)
+            {
+                EntityInfo = dadosDto
+            });
             return dadosDto;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using System.Collections.Generic;
 using Application.Interfaces.Services;
+using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -22,18 +23,21 @@ namespace Application.Services.EntitiesServices
         private readonly ICargoRepository _cargoRepository;
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
+        private readonly EstruturaPlanejadaPolicy _estruturaPlanejadaPolicy;
         private readonly IValidador<CargoDTO> _validador;
 
         public CargoService(IValidador<CargoDTO> validador,
                             IAsyncMap<CargoDTO, Cargo> asyncMap,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
+                            IPlanejamentoCustoRepository planejamentoCustoRepository,
                             IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         {
             _validador = validador;
             _asyncMap = asyncMap;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
+            _estruturaPlanejadaPolicy = new EstruturaPlanejadaPolicy(planejamentoCustoRepository);
             _relacionamentoRepository = relacionamentoRepository;
         }
 
@@ -88,6 +92,10 @@ namespace Application.Services.EntitiesServices
                 return Resultado<CargoDTO>.Falha(CargoResource.ErroDepartamentoNaoEncontrado);
             }
 
+            var estruturaPlanejada = await _estruturaPlanejadaPolicy.ValidarMovimentacaoCargoAsync(entidade, departamento);
+            if (estruturaPlanejada.TeveFalha)
+                return Resultado<CargoDTO>.Falhas(estruturaPlanejada.Messages);
+
             await _asyncMap.MapToEntityAsync(cargoDTO, entidade);
             entidade.VincularDepartamento(departamento);
 
@@ -109,6 +117,10 @@ namespace Application.Services.EntitiesServices
 
             if (cargo == null)
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+
+            var estruturaPlanejada = await _estruturaPlanejadaPolicy.ValidarRemocaoCargoAsync(cargo);
+            if (estruturaPlanejada.TeveFalha)
+                return estruturaPlanejada;
 
             var relacionamentos = await _relacionamentoRepository.ObterPorCargo(cargo.Id, cargo.Codigo);
 

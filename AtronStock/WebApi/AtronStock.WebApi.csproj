@@ -10,7 +10,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.32" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.32">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,7 +20,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\IoC\IoC.csproj" />
+    <ProjectReference Include="..\..\Framework\Shared.PostgreSqlMigrations\Framework.Shared.PostgreSqlMigrations.csproj" />
     <ProjectReference Include="..\Application\AtronStock.Application.csproj" />
+    <ProjectReference Include="..\Infrastructure.PostgreSqlMigrations\AtronStock.Infrastructure.PostgreSqlMigrations.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

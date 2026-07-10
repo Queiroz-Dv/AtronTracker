@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Extensions;
 using System;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -19,28 +20,34 @@ namespace IoC
 
             services.AddCors(options =>
             {
+                var allowedOrigins = configuration
+                    .GetSection("Cors:AllowedOrigins")
+                    .Get<string[]>()
+                    ?.Where(origin => !string.IsNullOrWhiteSpace(origin))
+                    .ToArray();
+
+                if (allowedOrigins is null || allowedOrigins.Length == 0)
+                    allowedOrigins = new[] { "http://localhost:4200" };
+
                 options.AddPolicy("CorsPolicy",
                     builder => builder
-                        .WithOrigins("http://localhost:4200")
+                        .WithOrigins(allowedOrigins)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
             });
 
-            // informar o tipo de autenticacao JWTBearer    
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            // Validar token
             .AddJwtBearer(options =>
             {
                 options.Events = new JwtBearerEvents
                 {
                     OnForbidden = context =>
                     {
-                        // Personaliza a resposta quando o usuário está autenticado, mas não tem permissão para acessar o recurso
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
                         context.Response.ContentType = "application/json; charset=utf-8";
                         var result = JsonSerializer.Serialize(new
@@ -53,8 +60,7 @@ namespace IoC
 
                     OnAuthenticationFailed = async context =>
                     {
-                        // Optional: log, mas não escreva no response aqui
-                        context.NoResult(); // Cancela a resposta padrão
+                        context.NoResult();
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Response.ContentType = "application/json";
                         await context.Response.WriteAsync(
@@ -76,7 +82,7 @@ namespace IoC
                     ValidIssuer = configuration.GetIssuer(),
                     ValidAudience = configuration.GetAudience(),
                     IssuerSigningKey = issueSigniKey,
-                    ClockSkew = TimeSpan.Zero // Zerando os cinco minutos de tempo de vida do token
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 

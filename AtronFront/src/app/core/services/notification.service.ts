@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { NotificacaoToastComponent } from '../components/notificacao-toast/notificacao-toast.component';
 
 export interface Mensagem {
   descricao: string;
@@ -22,7 +23,6 @@ interface NivelConfig {
 
 export class NotificacaoService {
   
-// Funciona como um dicionário no C#
   private configPorNivel: Map<Nivel, NivelConfig> = new Map([
     [Nivel.Error,    { prioridade: 1, duracao: 6000 }],
     [Nivel.Sucesso,  { prioridade: 2, duracao: 5000 }],
@@ -34,16 +34,65 @@ export class NotificacaoService {
 
   exibirMensagem(mensagem: string, nivel?: Nivel, duracao?: number): void {
     const config = new MatSnackBarConfig();
-    config.panelClass = this.obterClassePainel(nivel);
-    config.duration = duracao ?? this.configPorNivel.get(nivel)?.duracao;  
-    this.snackBar.open(mensagem, 'Fechar', config);
+    const nivelNormalizado = nivel ?? Nivel.Mensagem;
+
+    config.panelClass = this.obterClassePainel(nivelNormalizado);
+    config.duration = duracao ?? this.configPorNivel.get(nivelNormalizado)?.duracao;
+    config.horizontalPosition = 'center';
+    config.verticalPosition = 'top';
+    config.data = {
+      mensagem,
+      nivel: nivelNormalizado
+    };
+
+    this.snackBar.openFromComponent(NotificacaoToastComponent, config);
   }
 
-  exibirMensagens(mensagens: Mensagem[] | null): void {
-    if (!mensagens || mensagens.length === 0) {
+  exibirMensagens(mensagens: unknown): void {
+    const mensagensNormalizadas = this.normalizarMensagens(mensagens);
+
+    if (!mensagensNormalizadas.length) {
       return;
     }
 
+    const mensagemParaExibir = this.obterMensagemPrioritaria(mensagensNormalizadas);
+    if (mensagemParaExibir) {
+      const texto = mensagensNormalizadas
+        .map(mensagem => mensagem.descricao)
+        .filter((descricao, index, descricoes) => descricoes.indexOf(descricao) === index)
+        .join('\n');
+
+      this.exibirMensagem(texto, mensagemParaExibir.nivel);
+    }
+  }
+
+  temMensagemDeErro(mensagens: unknown): boolean {
+    return this.normalizarMensagens(mensagens).some(msg => msg.nivel === Nivel.Error);
+  }
+
+  normalizarMensagens(mensagens: unknown, nivelPadrao: Nivel = Nivel.Error): Mensagem[] {
+    if (!mensagens) {
+      return [];
+    }
+
+    const entrada = this.extrairEntradaDeMensagens(mensagens);
+    if (entrada && typeof entrada === 'object' && !Array.isArray(entrada)) {
+      return Object.values(entrada as Record<string, unknown>)
+        .flatMap(valor => Array.isArray(valor) ? valor : [valor])
+        .map(msg => this.normalizarMensagem(msg, nivelPadrao))
+        .filter((msg): msg is Mensagem => !!msg);
+    }
+
+    if (!Array.isArray(entrada)) {
+      return [];
+    }
+
+    return entrada
+      .map(msg => this.normalizarMensagem(msg, nivelPadrao))
+      .filter((msg): msg is Mensagem => !!msg);
+  }
+
+  private obterMensagemPrioritaria(mensagens: Mensagem[]): Mensagem | null {
     let mensagemParaExibir: Mensagem | null = null;
     let maiorPrioridade = Infinity;
 
@@ -55,10 +104,64 @@ export class NotificacaoService {
       }
     }
 
-    if (mensagemParaExibir) {        
-        this.exibirMensagem(mensagemParaExibir.descricao, mensagemParaExibir.nivel);
-    } 
+    return mensagemParaExibir;
   }
+
+  private extrairEntradaDeMensagens(mensagens: unknown): unknown {
+    if (Array.isArray(mensagens)) {
+      return mensagens;
+    }
+
+    if (typeof mensagens !== 'object') {
+      return null;
+    }
+
+    const objeto = mensagens as Record<string, unknown>;
+    if ((objeto['descricao'] ?? objeto['Descricao']) && (objeto['nivel'] ?? objeto['Nivel'])) {
+      return [objeto];
+    }
+
+    return objeto['mensagensApi']
+      ?? objeto['mensagens']
+      ?? objeto['messages']
+      ?? objeto['Messages']
+      ?? objeto['error']
+      ?? objeto['Error']
+      ?? objeto['errors']
+      ?? objeto['Errors']
+      ?? null;
+  }
+
+  private normalizarMensagem(mensagem: unknown, nivelPadrao: Nivel): Mensagem | null {
+    if (typeof mensagem === 'string') {
+      return {
+        descricao: mensagem,
+        nivel: nivelPadrao
+      };
+    }
+
+    if (!mensagem || typeof mensagem !== 'object') {
+      return null;
+    }
+
+    const objeto = mensagem as Record<string, unknown>;
+    const descricao = objeto['descricao'] ?? objeto['Descricao'];
+    const nivel = objeto['nivel'] ?? objeto['Nivel'];
+
+    if (typeof descricao !== 'string' || typeof nivel !== 'string') {
+      return null;
+    }
+
+    if (!Object.values(Nivel).includes(nivel as Nivel)) {
+      return null;
+    }
+
+    return {
+      descricao,
+      nivel: nivel as Nivel
+    };
+  }
+
   private obterClassePainel(nivel: Nivel): string[] {
     switch (nivel) {
       case Nivel.Sucesso: return ['snackbar-sucesso'];

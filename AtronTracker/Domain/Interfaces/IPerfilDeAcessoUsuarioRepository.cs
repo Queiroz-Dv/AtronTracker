@@ -7,6 +7,8 @@ namespace Domain.Interfaces
     {
         Task<bool> CriarPerfilRepositoryAsync(PerfilDeAcessoUsuario perfilDeAcesso);
 
+        Task<bool> CriarRelacionamentoRepositoryAsync(PerfilDeAcessoUsuario perfilDeAcesso);
+
         Task<PerfilDeAcessoUsuario> ObterPerfilDeAcessoPorCodigoRepositoryAsync(string codigo);
 
         Task DeletarRelacionamento(PerfilDeAcessoUsuario relacionamento);

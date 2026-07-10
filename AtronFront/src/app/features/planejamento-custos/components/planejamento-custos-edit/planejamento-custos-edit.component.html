@@ -1,0 +1,7 @@
+<form [formGroup]="form" (ngSubmit)="salvar()" class="form-container">
+  <c-planejamento-custos-form [planejamentoForm]="form" [cargosDisponiveis]="todosCargos"></c-planejamento-custos-form>
+  <mat-card-actions>
+    <button mat-raised-button type="submit">Salvar</button>
+    <button mat-raised-button type="button" (click)="router.navigate(['atron/planejamento-custos'])">Voltar</button>
+  </mat-card-actions>
+</form>

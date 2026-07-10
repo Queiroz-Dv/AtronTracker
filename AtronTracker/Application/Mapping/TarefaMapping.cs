@@ -1,20 +1,25 @@
-﻿using Application.DTO;
-using Shared.Extensions;
+using Application.DTO;
 using Domain.Entities;
-using System.Linq;
-using System.Threading.Tasks;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services.Mapper;
+using System.Threading.Tasks;
 
 namespace Application.Mapping
 {
     public class TarefaMapping : AsyncApplicationMapService<TarefaDTO, Tarefa>
     {
         private readonly IAsyncApplicationMapService<UsuarioDTO, Usuario> _usuarioMap;
+        private readonly IAsyncApplicationMapService<DepartamentoDTO, Departamento> _departamentoMap;
+        private readonly IAsyncApplicationMapService<CargoDTO, Cargo> _cargoMap;
 
-        public TarefaMapping(IAsyncApplicationMapService<UsuarioDTO, Usuario> usuarioMap) : base()
+        public TarefaMapping(
+            IAsyncApplicationMapService<UsuarioDTO, Usuario> usuarioMap,
+            IAsyncApplicationMapService<DepartamentoDTO, Departamento> departamentoMap,
+            IAsyncApplicationMapService<CargoDTO, Cargo> cargoMap) : base()
         {
             _usuarioMap = usuarioMap;
+            _departamentoMap = departamentoMap;
+            _cargoMap = cargoMap;
         }
 
         public override async Task<TarefaDTO> MapToDTOAsync(Tarefa entity)
@@ -22,17 +27,28 @@ namespace Application.Mapping
             var dto = new TarefaDTO
             {
                 Id = entity.Id,
+                Identificador = entity.Identificador,
+                DestinoInicial = entity.DestinoInicial,
+                ExigeAprovacaoParaObter = entity.ExigeAprovacaoParaObter,
                 Titulo = entity.Titulo,
                 Conteudo = entity.Conteudo,
                 DataInicial = entity.DataInicial,
                 DataFinal = entity.DataFinal,
                 UsuarioCodigo = entity.UsuarioCodigo,
-                Usuario = await MapChildAsync(entity.Usuario, _usuarioMap)
+                DepartamentoCodigo = entity.DepartamentoCodigo,
+                CargoCodigo = entity.CargoCodigo,
+                Usuario = await MapChildAsync(entity.Usuario, _usuarioMap),
+                Departamento = await MapChildAsync(entity.Departamento, _departamentoMap),
+                Cargo = await MapChildAsync(entity.Cargo, _cargoMap)
             };
 
-            if (!entity.TarefaEstadoId.ToString().IsNullOrEmpty())
+            if (entity.TarefaEstadoId > 0)
             {
-                dto.EstadoDaTarefa = new TarefaEstadoDTO() { Id = entity.TarefaEstadoId, Descricao = TarefaEstadoDTO.TarefasEstados().FirstOrDefault(trf => trf.Id == entity.TarefaEstadoId).Descricao };
+                dto.EstadoDaTarefa = new TarefaEstadoDTO
+                {
+                    Id = entity.TarefaEstadoId,
+                    Descricao = entity.EstadoDaTarefa?.Descricao
+                };
             }
 
             return dto;
@@ -42,7 +58,13 @@ namespace Application.Mapping
         {
             return Task.FromResult(new Tarefa
             {
-                UsuarioCodigo = dto.UsuarioCodigo,
+                Id = dto.Id,
+                Identificador = dto.Identificador,
+                DestinoInicial = dto.DestinoInicial,
+                ExigeAprovacaoParaObter = dto.ExigeAprovacaoParaObter,
+                UsuarioCodigo = dto.UsuarioCodigo?.ToUpper(),
+                DepartamentoCodigo = dto.DepartamentoCodigo?.ToUpper(),
+                CargoCodigo = dto.CargoCodigo?.ToUpper(),
                 Titulo = dto.Titulo,
                 Conteudo = dto.Conteudo,
                 DataInicial = dto.DataInicial,

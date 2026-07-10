@@ -3,11 +3,16 @@ import { TarefaModel } from "../tarefa.model";
 
 export class TarefaRequest implements TarefaModel {
   id: number;
+  identificador?: number;
+  destinoInicial: number;
+  exigeAprovacaoParaObter: boolean;
   titulo: string;
   conteudo: string;
-  dataInicial: Date;
-  dataFinal: Date;
-  usuarioCodigo: string;
+  dataInicial: Date | string;
+  dataFinal: Date | string;
+  usuarioCodigo?: string;
+  departamentoCodigo?: string;
+  cargoCodigo?: string;
 
   estadoDaTarefa: EstadoTarefa;
 }

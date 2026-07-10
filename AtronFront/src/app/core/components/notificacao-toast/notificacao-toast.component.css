@@ -1,0 +1,115 @@
+:host {
+  display: block;
+}
+
+.notificacao-toast {
+  align-items: start;
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-left-width: 4px;
+  border-radius: var(--atron-radius-sm);
+  box-shadow: var(--atron-shadow-md);
+  color: var(--atron-text);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 36px minmax(0, 1fr) 32px;
+  min-width: min(440px, calc(100vw - 32px));
+  padding: 12px;
+}
+
+.notificacao-toast-icon {
+  align-items: center;
+  border-radius: var(--atron-radius-sm);
+  display: inline-flex;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+}
+
+.notificacao-toast-icon mat-icon {
+  font-size: 21px;
+  height: 21px;
+  width: 21px;
+}
+
+.notificacao-toast-content {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.notificacao-toast-content strong {
+  color: var(--atron-title);
+  font-size: 0.92rem;
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.notificacao-toast-content span {
+  color: var(--atron-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.notificacao-toast button {
+  color: var(--atron-text-muted);
+  height: 32px;
+  width: 32px;
+}
+
+.notificacao-toast button mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.notificacao-toast-sucesso {
+  border-left-color: var(--atron-success);
+}
+
+.notificacao-toast-sucesso .notificacao-toast-icon {
+  background: #ecfdf3;
+  color: var(--atron-success);
+}
+
+.notificacao-toast-error {
+  border-left-color: var(--atron-danger);
+}
+
+.notificacao-toast-error .notificacao-toast-icon {
+  background: #fef2f2;
+  color: var(--atron-danger);
+}
+
+.notificacao-toast-aviso {
+  border-left-color: var(--atron-warning);
+}
+
+.notificacao-toast-aviso .notificacao-toast-icon {
+  background: #fffbeb;
+  color: var(--atron-warning);
+}
+
+.notificacao-toast-mensagem {
+  border-left-color: var(--atron-info);
+}
+
+.notificacao-toast-mensagem .notificacao-toast-icon {
+  background: #eff6ff;
+  color: var(--atron-info);
+}
+
+@media (max-width: 520px) {
+  .notificacao-toast {
+    grid-template-columns: 32px minmax(0, 1fr) 32px;
+    min-width: 0;
+  }
+
+  .notificacao-toast-icon {
+    height: 32px;
+    width: 32px;
+  }
+}

@@ -1,46 +1,575 @@
-/* You can add global styles to this file, and also import other style files */
-/* Adicione estas classes para estilizar o snackbar */
-.snackbar-sucesso { /* Nome da classe alterado */
-  background-color: #4CAF50; /* Verde */
-  color: white;
+:root {
+  --atron-page-bg: #ffffff;
+  --atron-surface: #ffffff;
+  --atron-surface-muted: #f8fafc;
+  --atron-surface-tinted: #eef2ff;
+  --atron-surface-container: #f3f4f6;
+  --atron-text: #0f172a;
+  --atron-text-muted: #475569;
+  --atron-text-subtle: #64748b;
+  --atron-primary: #6366f1;
+  --atron-primary-hover: #4f46e5;
+  --atron-primary-soft: #eef2ff;
+  --atron-primary-strong: #1e1b4b;
+  --atron-title: #111827;
+  --atron-border: #e2e8f0;
+  --atron-border-soft: #f1f5f9;
+  --atron-danger: #dc2626;
+  --atron-success: #15803d;
+  --atron-warning: #b45309;
+  --atron-info: #2563eb;
+  --atron-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --atron-shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --atron-radius-sm: 8px;
+  --atron-radius-md: 8px;
+  --atron-radius-lg: 16px;
+  --atron-page-max-width: 1280px;
+  --atron-font-sans: "Segoe UI", Arial, Helvetica, sans-serif;
+  --color-border: var(--atron-border);
+  --color-text-muted: var(--atron-text-muted);
 }
 
-.snackbar-erro { /* Nome da classe alterado */
-  background-color: #f44336; /* Vermelho */
-  color: white;
+* {
+  box-sizing: border-box;
 }
 
-.snackbar-aviso { /* Nome da classe alterado */
-  background-color: #ff9800; /* Laranja */
-  color: black;
+.snackbar-sucesso,
+.snackbar-erro,
+.snackbar-aviso,
+.snackbar-info {
+  --mdc-snackbar-container-shape: var(--atron-radius-sm);
+  --mdc-snackbar-supporting-text-font: var(--atron-font-sans);
+  --mat-snack-bar-button-color: currentColor;
 }
 
-.snackbar-info { /* Nome da classe alterado */
-  background-color: #2196F3; /* Azul */
-  color: white;
+.snackbar-sucesso .mdc-snackbar__surface,
+.snackbar-erro .mdc-snackbar__surface,
+.snackbar-aviso .mdc-snackbar__surface,
+.snackbar-info .mdc-snackbar__surface {
+  border: 1px solid;
+  box-shadow: var(--atron-shadow-md);
+  min-width: min(420px, calc(100vw - 32px));
 }
 
-/* Ajustes opcionais para garantir que o botão fechar seja visível */
-.snackbar-sucesso button,
-.snackbar-erro button,
-.snackbar-aviso button,
-.snackbar-info button {
-  color: inherit !important; /* Herda a cor do texto do snackbar */
-  opacity: 0.8;
+.snackbar-sucesso .mdc-snackbar__label,
+.snackbar-erro .mdc-snackbar__label,
+.snackbar-aviso .mdc-snackbar__label,
+.snackbar-info .mdc-snackbar__label {
+  color: var(--atron-text);
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
-/* ... (restante do seu CSS global) */
+.snackbar-sucesso .mdc-snackbar__surface {
+  background: #ecfdf3;
+  border-color: #bbf7d0;
+}
+
+.snackbar-erro .mdc-snackbar__surface {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.snackbar-aviso .mdc-snackbar__surface {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.snackbar-info .mdc-snackbar__surface {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.snackbar-sucesso .mat-mdc-snack-bar-action {
+  color: var(--atron-success) !important;
+}
+
+.snackbar-erro .mat-mdc-snack-bar-action {
+  color: var(--atron-danger) !important;
+}
+
+.snackbar-aviso .mat-mdc-snack-bar-action {
+  color: var(--atron-warning) !important;
+}
+
+.snackbar-info .mat-mdc-snack-bar-action {
+  color: var(--atron-info) !important;
+}
+
+.snackbar-sucesso .mdc-snackbar__surface,
+.snackbar-erro .mdc-snackbar__surface,
+.snackbar-aviso .mdc-snackbar__surface,
+.snackbar-info .mdc-snackbar__surface {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  min-width: 0;
+  padding: 0;
+}
+
+.app-notifications-menu.mat-mdc-menu-panel {
+  max-width: none;
+  overflow: hidden;
+  width: min(460px, calc(100vw - 24px));
+}
+
+.app-notifications-menu .mat-mdc-menu-content {
+  padding: 0;
+}
 
 html,
 body {
   height: 100%;
-  background-color: #202124;
-  color: #eee;
+  background-color: var(--atron-page-bg);
+  color: var(--atron-text);
 }
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: var(--atron-font-sans);
+  font-size: 16px;
+  letter-spacing: 0;
+  --mat-app-background-color: var(--atron-page-bg);
+  --mat-app-text-color: var(--atron-text);
+  --mat-menu-container-color: var(--atron-surface);
+  --mat-autocomplete-background-color: var(--atron-surface);
+  --mat-option-label-text-color: var(--atron-text);
+  --mat-option-selected-state-label-text-color: var(--atron-primary-strong);
+  --mat-option-selected-state-layer-color: var(--atron-primary-soft);
+  --mat-select-enabled-trigger-text-color: var(--atron-text);
+  --mat-select-panel-background-color: var(--atron-surface);
+  --mat-sidenav-container-background-color: var(--atron-surface);
+  --mat-toolbar-container-background-color: var(--atron-surface);
+  --mat-toolbar-container-text-color: var(--atron-text);
+  --mat-card-elevated-container-color: var(--atron-surface);
+  --mat-card-outlined-container-color: var(--atron-surface);
+  --mdc-dialog-container-color: var(--atron-surface);
+  --mdc-dialog-subhead-color: var(--atron-text);
+  --mdc-dialog-supporting-text-color: var(--atron-text-muted);
+  --mdc-filled-text-field-container-color: var(--atron-surface);
+  --mdc-filled-text-field-input-text-color: var(--atron-text);
+  --mdc-filled-text-field-label-text-color: var(--atron-text-muted);
+  --mdc-filled-text-field-caret-color: var(--atron-primary);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--atron-primary);
+  --mdc-filled-text-field-focus-label-text-color: var(--atron-primary);
+  --mdc-outlined-text-field-input-text-color: var(--atron-text);
+  --mdc-outlined-text-field-label-text-color: var(--atron-text-muted);
+  --mdc-outlined-text-field-outline-color: var(--atron-border);
+  --mdc-outlined-text-field-focus-outline-color: var(--atron-primary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--atron-primary);
+  --mdc-outlined-text-field-caret-color: var(--atron-primary);
+}
+
+html,
+body,
+button,
+input,
+textarea,
+select,
+.mat-mdc-card,
+.mat-mdc-button-base,
+.mat-mdc-form-field,
+.mat-mdc-menu-item,
+.mat-mdc-option,
+.mat-mdc-select,
+.mat-mdc-table,
+.mat-mdc-paginator,
+.mdc-list-item__primary-text {
+  font-family: var(--atron-font-sans) !important;
+}
+
+a {
+  color: var(--atron-primary);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel,
+.cdk-overlay-container .mat-mdc-select-panel {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  box-shadow: var(--atron-shadow-md);
+  color: var(--atron-text);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option {
+  background: var(--atron-surface);
+  color: var(--atron-text);
+  --mat-option-label-text-color: var(--atron-text);
+  --mat-option-selected-state-label-text-color: var(--atron-primary-strong);
+  --mat-option-selected-state-layer-color: var(--atron-primary-soft);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option .mdc-list-item__primary-text {
+  color: var(--atron-text);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option:hover,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mdc-list-item--selected,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mat-mdc-option-active,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option:hover,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option.mdc-list-item--selected,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active {
+  background: var(--atron-primary-soft);
+  color: var(--atron-primary-strong);
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option:hover .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mat-mdc-option-active .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option:hover .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text,
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active .mdc-list-item__primary-text {
+  color: var(--atron-primary-strong);
+}
+
+.list-page {
+  background: var(--atron-page-bg);
+  color: var(--atron-text);
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.list-panel {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-sm);
+  margin: 0 auto;
+  max-width: var(--atron-page-max-width);
+  overflow: hidden;
+  --mat-paginator-container-background-color: var(--atron-surface);
+  --mat-paginator-container-text-color: var(--atron-text);
+  --mat-paginator-enabled-icon-color: var(--atron-text);
+  --mat-paginator-disabled-icon-color: var(--atron-text-subtle);
+  --mat-select-enabled-trigger-text-color: var(--atron-text);
+  --mat-select-panel-background-color: var(--atron-surface);
+  --mat-table-background-color: var(--atron-surface);
+  --mat-table-header-headline-color: var(--atron-text-muted);
+  --mat-table-row-item-label-text-color: var(--atron-text);
+  --mat-table-row-item-outline-color: var(--atron-border-soft);
+}
+
+.list-header {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--atron-border);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  padding: 24px;
+}
+
+.list-eyebrow {
+  color: var(--atron-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.list-header h1 {
+  color: var(--atron-title);
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+
+.list-description {
+  color: var(--atron-text-muted);
+  margin: 0;
+}
+
+.list-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.list-primary-action,
+.list-secondary-action {
+  align-items: center;
+  border-radius: var(--atron-radius-sm) !important;
+  display: inline-flex !important;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.list-primary-action {
+  background: var(--atron-primary) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+.list-primary-action:hover {
+  background: var(--atron-primary-hover) !important;
+}
+
+.list-secondary-action {
+  border: 1px solid var(--atron-border) !important;
+  color: var(--atron-text) !important;
+  font-weight: 700;
+}
+
+.mat-mdc-raised-button:not(:disabled),
+.mat-mdc-unelevated-button:not(:disabled),
+.mat-mdc-fab:not(:disabled),
+.mat-mdc-mini-fab:not(:disabled),
+.list-primary-action {
+  --mdc-protected-button-container-color: var(--atron-primary);
+  --mdc-protected-button-label-text-color: #ffffff;
+  --mdc-filled-button-container-color: var(--atron-primary);
+  --mdc-filled-button-label-text-color: #ffffff;
+  --mat-protected-button-state-layer-color: #ffffff;
+  --mat-filled-button-state-layer-color: #ffffff;
+}
+
+.mat-mdc-raised-button:not(:disabled):hover,
+.mat-mdc-unelevated-button:not(:disabled):hover,
+.list-primary-action:hover {
+  --mdc-protected-button-container-color: var(--atron-primary-hover);
+  --mdc-filled-button-container-color: var(--atron-primary-hover);
+}
+
+.mat-mdc-button-base {
+  border-radius: var(--atron-radius-sm) !important;
+  font-weight: 700 !important;
+}
+
+.mat-mdc-button-base:disabled {
+  opacity: 0.58;
+}
+
+.mat-mdc-outlined-button:not(:disabled),
+.mat-mdc-button:not(:disabled),
+.list-secondary-action {
+  --mdc-outlined-button-container-color: var(--atron-surface);
+  --mdc-outlined-button-label-text-color: var(--atron-text);
+  --mdc-outlined-button-outline-color: var(--atron-border);
+  --mdc-text-button-label-text-color: var(--atron-primary);
+}
+
+.mat-mdc-checkbox {
+  --mdc-checkbox-selected-checkmark-color: #ffffff;
+  --mdc-checkbox-selected-focus-icon-color: var(--atron-primary);
+  --mdc-checkbox-selected-hover-icon-color: var(--atron-primary-hover);
+  --mdc-checkbox-selected-icon-color: var(--atron-primary);
+  --mdc-checkbox-selected-pressed-icon-color: var(--atron-primary);
+  --mdc-checkbox-unselected-focus-icon-color: var(--atron-text-muted);
+  --mdc-checkbox-unselected-hover-icon-color: var(--atron-primary);
+  --mdc-checkbox-unselected-icon-color: var(--atron-text-subtle);
+  --mdc-checkbox-unselected-pressed-icon-color: var(--atron-primary);
+  --mat-checkbox-label-text-color: var(--atron-text);
+}
+
+.list-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 18px 24px 8px;
+}
+
+.list-filter {
+  max-width: 360px;
+  width: 100%;
+  --mdc-outlined-text-field-caret-color: var(--atron-primary);
+  --mdc-outlined-text-field-focus-outline-color: var(--atron-primary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--atron-primary);
+  --mdc-outlined-text-field-input-text-color: var(--atron-text);
+  --mdc-outlined-text-field-label-text-color: var(--atron-text-muted);
+  --mdc-outlined-text-field-outline-color: var(--atron-border);
+  --mdc-outlined-text-field-hover-outline-color: var(--atron-primary);
+  --mdc-outlined-text-field-container-shape: var(--atron-radius-sm);
+}
+
+.list-filter .mat-mdc-text-field-wrapper {
+  background: var(--atron-surface);
+  border-radius: var(--atron-radius-sm);
+}
+
+.list-table-wrap {
+  overflow-x: auto;
+  padding: 0 24px 8px;
+}
+
+.list-table-wrap-spaced {
+  padding-top: 20px;
+}
+
+.list-table,
+.list-panel .mat-mdc-table,
+.list-panel .mdc-data-table__table {
+  background: var(--atron-surface) !important;
+  width: 100%;
+}
+
+.list-table .mat-mdc-header-row,
+.list-table .mdc-data-table__header-row {
+  background: var(--atron-surface-muted) !important;
+}
+
+.list-table .mat-mdc-header-cell,
+.list-table .mdc-data-table__header-cell {
+  background: var(--atron-surface-muted) !important;
+  border-bottom-color: var(--atron-border);
+  color: var(--atron-text-muted) !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.list-table .mat-column-acoes,
+.list-panel .mat-column-acoes {
+  text-align: right;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.list-table .mat-mdc-row,
+.list-table .mdc-data-table__row {
+  background: var(--atron-surface) !important;
+}
+
+.list-table .mat-mdc-cell,
+.list-table .mdc-data-table__cell {
+  background: var(--atron-surface) !important;
+  border-bottom-color: var(--atron-border-soft);
+  color: var(--atron-text) !important;
+}
+
+.list-table .mat-mdc-row:hover,
+.list-table .mat-mdc-row:hover .mat-mdc-cell {
+  background: var(--atron-surface-muted) !important;
+}
+
+.list-row-actions {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  margin: 0;
+  min-height: auto;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.list-row-actions .mat-mdc-icon-button {
+  flex: 0 0 40px;
+}
+
+.list-icon-action {
+  background: var(--atron-primary-soft) !important;
+  color: var(--atron-primary-strong) !important;
+}
+
+.list-icon-action-danger {
+  background: #fef2f2 !important;
+  color: var(--atron-danger) !important;
+}
+
+.list-no-data {
+  color: var(--atron-text-muted);
+  padding: 28px 16px !important;
+  text-align: center;
+}
+
+.list-paginator {
+  background: var(--atron-surface) !important;
+  border-top: 1px solid var(--atron-border);
+  color: var(--atron-text) !important;
+}
+
+.list-paginator .mat-mdc-select-value,
+.list-paginator .mat-mdc-paginator-range-label,
+.list-paginator .mat-mdc-paginator-page-size-label {
+  color: var(--atron-text) !important;
+}
+
+.planning-detail-panel {
+  --mdc-dialog-container-color: var(--atron-surface);
+  --mdc-dialog-subhead-color: var(--atron-text);
+  --mdc-dialog-supporting-text-color: var(--atron-text);
+  --mat-dialog-container-small-max-width: 96vw;
+}
+
+.planning-detail-panel .mat-mdc-dialog-container,
+.planning-detail-panel .mdc-dialog__surface {
+  background: var(--atron-surface) !important;
+  border-radius: var(--atron-radius-md) !important;
+  color: var(--atron-text) !important;
+}
+
+.planning-detail-panel .mat-mdc-dialog-title,
+.planning-detail-panel .mat-mdc-dialog-content,
+.planning-detail-panel .mat-mdc-dialog-actions {
+  background: var(--atron-surface) !important;
+  color: var(--atron-text) !important;
+}
+
+.planning-detail-dialog {
+  display: grid;
+  min-width: min(640px, 80vw);
+  padding-top: 4px;
+}
+
+.planning-detail-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+}
+
+.planning-detail-grid div {
+  background: var(--atron-surface-muted);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
+  color: var(--atron-text);
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+}
+
+.planning-detail-grid span {
+  color: var(--atron-text-muted);
+}
+
+.planning-detail-grid strong {
+  color: var(--atron-text);
+}
+
+.planning-detail-cargos {
+  display: grid;
+  gap: 10px;
+}
+
+.planning-detail-cargos h3 {
+  color: var(--atron-text);
+  font-size: 1rem;
+  margin: 4px 0 0;
+}
+
+.planning-detail-cargos .report-cargo-grid {
+  background: var(--atron-surface);
+  border-color: var(--atron-border);
+}
+
+.planning-detail-cargos .report-cargo-grid-header {
+  background: var(--atron-surface-muted);
+  color: var(--atron-text-muted);
+}
+
+.planning-detail-cargos .report-cargo-grid-row {
+  background: var(--atron-surface);
+  color: var(--atron-text);
+}
+
+.list-footer-actions {
+  border-top: 1px solid var(--atron-border);
+  display: flex;
+  justify-content: center;
+  padding: 16px 24px 20px;
 }
 
 .container {
@@ -60,8 +589,8 @@ body {
 fieldset {
   padding: 10px;
   margin-bottom: 30px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
 }
 
 fieldset legend {
@@ -86,38 +615,141 @@ fieldset legend {
 
 .full-form-container {
   width: 100%;
-  max-width: 500px; /* Largura máxima do formulário */
-  margin: 5% auto 0 auto; /* Centraliza horizontalmente */
+  max-width: 500px;
 }
 
 .form-container-negative-top {
-  width: 50%;
-  margin-top: 0%;
-  margin-left: 25%;
+  max-width: 720px;
+  width: min(92vw, 720px);
 }
 
 .form-container {
-  width: 50%;
-  margin-top: 5%;
-  margin-left: 25%;
+  max-width: 720px;
+  width: min(92vw, 720px);
 }
 
 .form-container-50 {
-  width: 50%;
-  margin-top: 10%;
-  margin-left: 25%;
+  max-width: 720px;
+  width: min(92vw, 720px);
 }
 
 .form-container-75 {
-  width: 75%;
-  margin-top: 5%;
-  margin-left: 12.5%;
+  max-width: 1040px;
+  width: min(94vw, 1040px);
 }
 
 .form-container-70 {
-  width: 70%;
-  margin-top: 2%;
-  margin-left: 15%;
+  max-width: 960px;
+  width: min(94vw, 960px);
+}
+
+.form-container,
+.form-container-negative-top,
+.form-container-50,
+.form-container-70,
+.form-container-75,
+.full-form-container {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-sm);
+  color: var(--atron-text);
+  margin: clamp(24px, 5vh, 56px) auto;
+  padding: 24px;
+}
+
+.form-container .centered-container,
+.form-container-negative-top .centered-container,
+.form-container-50 .centered-container,
+.form-container-70 .centered-container,
+.form-container-75 .centered-container,
+.full-form-container .centered-container {
+  margin-top: 0;
+}
+
+.form-container h2,
+.form-container-negative-top h2,
+.form-container-50 h2,
+.form-container-70 h2,
+.form-container-75 h2,
+.full-form-container h2 {
+  color: var(--atron-title);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.form-container mat-form-field,
+.form-container-negative-top mat-form-field,
+.form-container-50 mat-form-field,
+.form-container-70 mat-form-field,
+.form-container-75 mat-form-field,
+.full-form-container mat-form-field {
+  width: 100%;
+  --mdc-filled-text-field-container-color: var(--atron-surface);
+  --mdc-filled-text-field-caret-color: var(--atron-primary);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--atron-primary);
+  --mdc-filled-text-field-focus-label-text-color: var(--atron-primary);
+  --mdc-filled-text-field-hover-active-indicator-color: var(--atron-primary);
+  --mdc-filled-text-field-input-text-color: var(--atron-text);
+  --mdc-filled-text-field-label-text-color: var(--atron-text-muted);
+  --mdc-filled-text-field-active-indicator-color: var(--atron-border);
+  --mdc-filled-text-field-disabled-container-color: var(--atron-surface-muted);
+  --mdc-filled-text-field-disabled-input-text-color: var(--atron-text-muted);
+  --mdc-filled-text-field-disabled-label-text-color: var(--atron-text-muted);
+  --mat-form-field-container-text-line-height: 1.35rem;
+}
+
+.form-container .mat-mdc-text-field-wrapper,
+.form-container-negative-top .mat-mdc-text-field-wrapper,
+.form-container-50 .mat-mdc-text-field-wrapper,
+.form-container-70 .mat-mdc-text-field-wrapper,
+.form-container-75 .mat-mdc-text-field-wrapper,
+.full-form-container .mat-mdc-text-field-wrapper {
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
+}
+
+.form-container .mat-mdc-form-field-focus-overlay,
+.form-container-negative-top .mat-mdc-form-field-focus-overlay,
+.form-container-50 .mat-mdc-form-field-focus-overlay,
+.form-container-70 .mat-mdc-form-field-focus-overlay,
+.form-container-75 .mat-mdc-form-field-focus-overlay,
+.full-form-container .mat-mdc-form-field-focus-overlay {
+  background: transparent;
+}
+
+.form-container mat-card-actions,
+.form-container-negative-top mat-card-actions,
+.form-container-50 mat-card-actions,
+.form-container-70 mat-card-actions,
+.form-container-75 mat-card-actions,
+.full-form-container mat-card-actions {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0 0;
+}
+
+.form-container mat-card-actions button:first-child,
+.form-container-negative-top mat-card-actions button:first-child,
+.form-container-50 mat-card-actions button:first-child,
+.form-container-70 mat-card-actions button:first-child,
+.form-container-75 mat-card-actions button:first-child,
+.full-form-container mat-card-actions button:first-child {
+  background: var(--atron-primary) !important;
+  color: #ffffff !important;
+}
+
+.form-container mat-card-actions button:not(:first-child),
+.form-container-negative-top mat-card-actions button:not(:first-child),
+.form-container-50 mat-card-actions button:not(:first-child),
+.form-container-70 mat-card-actions button:not(:first-child),
+.form-container-75 mat-card-actions button:not(:first-child),
+.full-form-container mat-card-actions button:not(:first-child) {
+  background: var(--atron-surface) !important;
+  border: 1px solid var(--atron-border) !important;
+  color: var(--atron-text) !important;
 }
 
 .wrap {
@@ -520,5 +1152,111 @@ fieldset legend {
   .container {
     flex-direction: column;
     gap: 5px;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  mat-sidenav,
+  mat-toolbar,
+  .no-print,
+  .list-footer-actions {
+    display: none !important;
+  }
+
+  mat-sidenav-content {
+    margin: 0 !important;
+  }
+
+  .mat-drawer-content,
+  .mat-sidenav-content,
+  .m-10 {
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .list-page {
+    background: #ffffff;
+    color: #172033;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .list-panel {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    max-width: none;
+    overflow: visible;
+  }
+
+  .list-header {
+    border-bottom: 1px solid #dbe3ef;
+    padding: 0 0 14px;
+  }
+
+  .list-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .list-description {
+    font-size: 0.95rem;
+  }
+
+  .report-cargo-grid {
+    break-inside: avoid;
+  }
+}
+
+@media (max-width: 760px) {
+  .list-page {
+    padding: 16px;
+  }
+
+  .list-header,
+  .list-toolbar,
+  .list-table-wrap,
+  .list-footer-actions {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .list-header,
+  .list-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .list-actions,
+  .list-actions button,
+  .list-filter {
+    width: 100%;
+  }
+
+  .form-container,
+  .form-container-negative-top,
+  .form-container-50,
+  .form-container-70,
+  .form-container-75,
+  .full-form-container {
+    margin: 24px auto;
+    padding: 18px;
+    width: calc(100vw - 32px);
+  }
+
+  .planning-detail-dialog {
+    min-width: 0;
+  }
+
+  .planning-detail-grid {
+    grid-template-columns: 1fr;
   }
 }

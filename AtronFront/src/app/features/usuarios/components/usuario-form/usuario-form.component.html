@@ -1,4 +1,6 @@
 <div [formGroup]="usuarioForm" class="container centered-container m-10">
+  <h2>Cadastro de Usuários</h2>
+
   <mat-form-field>
     <mat-label>Código</mat-label>
     <input matInput formControlName="codigo" />
@@ -19,24 +21,15 @@
 
   <mat-form-field>
     <mat-label>Data de Nascimento</mat-label>
-    <input matInput appDateMask placeholder="dd/MM/yyyy" formControlName="dataNascimento" />
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Salário</mat-label>
-    <input matInput type="number" formControlName="salario" />
+    <input matInput appDateMask [matDatepicker]="dataNascimentoPicker" placeholder="dd/MM/yyyy" formControlName="dataNascimento" />
+    <mat-datepicker-toggle matIconSuffix [for]="dataNascimentoPicker"></mat-datepicker-toggle>
+    <mat-datepicker #dataNascimentoPicker></mat-datepicker>
   </mat-form-field>
 
   <mat-form-field>
     <mat-label>Email</mat-label>
     <input matInput type="email" formControlName="email" />
     <c-control-error [control]="usuarioForm.get('email')"></c-control-error>
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Senha</mat-label>
-    <input matInput type="password" formControlName="senha" />
-    <c-control-error [control]="usuarioForm.get('senha')"></c-control-error>
   </mat-form-field>
 
   <!-- Select de Departamento (controlado pelos cargos) -->
@@ -59,6 +52,16 @@
     <mat-autocomplete #autoCrg="matAutocomplete" [displayWith]="exibirCargoDescricao">
       @for (crg of cargosFiltrados; track crg.codigo) {
       <mat-option [value]="crg">{{ crg.descricao }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Gestor imediato</mat-label>
+    <input type="text" matInput [formControl]="gestorImediatoControl" [matAutocomplete]="autoGestor" />
+    <mat-autocomplete #autoGestor="matAutocomplete" [displayWith]="exibirGestorDescricao">
+      @for (gestor of gestoresFiltrados; track gestor.codigo) {
+      <mat-option [value]="gestor">{{ gestor.codigo }} - {{ gestor.nome }} {{ gestor.sobrenome }}</mat-option>
       }
     </mat-autocomplete>
   </mat-form-field>

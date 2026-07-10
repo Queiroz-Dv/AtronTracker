@@ -100,7 +100,6 @@
       <li><strong><code>modulos</code>:</strong> (Pode conter interfaces/modelos relacionados aos módulos do sistema).</li>
       <li><strong><code>perfil-de-acesso</code>:</strong> CRUD e listagem de Perfis de Acesso.</li>
       <li><strong><code>relacionamento-perfil-usuario</code>:</strong> Gerencia a associação entre Usuários e Perfis de Acesso.</li>
-      <li><strong><code>salarios</code>:</strong> CRUD e listagem de Salários.</li>
       <li><strong><code>tarefas</code>:</strong> CRUD e listagem de Tarefas.</li>
       <li><strong><code>usuarios</code>:</strong> CRUD e listagem de Usuários.</li>
     </ul>

@@ -61,6 +61,24 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Usuário inativo..
+        /// </summary>
+        public static string Erro_UsuarioInativo {
+            get {
+                return ResourceManager.GetString("Erro_UsuarioInativo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usuário não encontrado..
+        /// </summary>
+        public static string Erro_UsuarioNaoEncontrado {
+            get {
+                return ResourceManager.GetString("Erro_UsuarioNaoEncontrado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O código informado é muito longo. Tamanho máximo permitido de até 10 caracteres..
         /// </summary>
         public static string ErroCodigoLongo {

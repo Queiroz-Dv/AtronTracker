@@ -31,7 +31,8 @@ export class DepartamentoEditComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       codigo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(10)]],
-      descricao: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]]
+      descricao: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      gestorDepartamentoCodigo: [null]
     });
 
     this.codigo = this.route.snapshot.paramMap.get('codigo');
@@ -56,7 +57,10 @@ export class DepartamentoEditComponent implements OnInit {
     const dadosForm = this.form.getRawValue();
 
     const codigoParaSalvar = this.codigo ? this.codigo : dadosForm.codigo;
-    const departamentoPayload = new Departamento(codigoParaSalvar, dadosForm.descricao);
+    const departamentoPayload = new Departamento(
+      codigoParaSalvar,
+      dadosForm.descricao,
+      dadosForm.gestorDepartamentoCodigo);
 
     const request = this.codigo
       ? this.service.atualizar(this.codigo, departamentoPayload)

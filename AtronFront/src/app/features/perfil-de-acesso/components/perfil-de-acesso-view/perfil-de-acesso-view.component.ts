@@ -38,7 +38,7 @@ export class PerfilDeAcessoViewComponent implements AfterViewInit {
 
       this.dataSource = new MatTableDataSource(perfilViewItem);
       this.dataSource.paginator = this.paginator;
-      this.table.dataSource = this.dataSource;
+      this.dataSource.sort = this.sort;
     });
   }
 

@@ -35,5 +35,13 @@ namespace Application.Interfaces.Services
         /// Remove um usuário pelo código.
         /// </summary>
         Task<Resultado> RemoverAsync(string codigo);
+
+        Task<Resultado> DesativarAsync(string codigo);
+
+        Task<Resultado> AlterarEmailAsync(string codigo, string emailNovo, string clienteUri);
+
+        Task<Resultado> ConfirmarAlteracaoEmailAsync(string usuarioCodigo, string emailNovo, string token);
+
+        Task<Resultado> ReenviarConfirmacaoEmailAsync(string codigo, string clientUri);
     }
 }

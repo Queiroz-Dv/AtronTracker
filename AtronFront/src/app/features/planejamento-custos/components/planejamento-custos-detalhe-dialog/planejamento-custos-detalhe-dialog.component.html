@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>Detalhe do planejamento</h2>
+
+<mat-dialog-content class="planning-detail-dialog">
+  <section class="planning-detail-grid">
+    <div>
+      <span>Código</span>
+      <strong>{{ planejamento.codigo }}</strong>
+    </div>
+    <div>
+      <span>Descrição</span>
+      <strong>{{ planejamento.descricao }}</strong>
+    </div>
+    <div>
+      <span>Ano</span>
+      <strong>{{ planejamento.ano }}</strong>
+    </div>
+    <div>
+      <span>Departamento</span>
+      <strong>{{ planejamento.departamentoCodigo }} - {{ planejamento.departamentoDescricao }}</strong>
+    </div>
+    <div>
+      <span>Valor mínimo</span>
+      <strong>{{ planejamento.valorMinimo | currency:'BRL':'symbol':'1.2-2' }}</strong>
+    </div>
+    <div>
+      <span>Valor teto</span>
+      <strong>{{ planejamento.valorTeto | currency:'BRL':'symbol':'1.2-2' }}</strong>
+    </div>
+    <div>
+      <span>Modo</span>
+      <strong>{{ planejamento.apenasDepartamento ? 'Apenas departamento' : 'Departamento com cargos' }}</strong>
+    </div>
+  </section>
+
+  @if (cargosDetalhados.length) {
+  <section class="planning-detail-cargos">
+    <h3>Cargos detalhados</h3>
+    <div class="report-cargo-grid">
+      <div class="report-cargo-grid-header">
+        <span>Cargo</span>
+        <span>Mínimo</span>
+        <span>Teto</span>
+      </div>
+
+      @for (cargo of cargosDetalhados; track cargo.cargoCodigo) {
+      <div class="report-cargo-grid-row">
+        <span>{{ cargo.cargoCodigo }} - {{ cargo.cargoDescricao }}</span>
+        <span>{{ cargo.valorMinimo | currency:'BRL':'symbol':'1.2-2' }}</span>
+        <span>{{ cargo.valorTeto | currency:'BRL':'symbol':'1.2-2' }}</span>
+      </div>
+      }
+    </div>
+  </section>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button type="button" (click)="fechar()">Fechar</button>
+</mat-dialog-actions>

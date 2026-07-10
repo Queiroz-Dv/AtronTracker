@@ -1,0 +1,16 @@
+.git
+.gitignore
+.vs
+.vscode
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.angular
+artifacts
+*.user
+*.suo
+*.nupkg
+*.snupkg
+Dockerfile
+README.md

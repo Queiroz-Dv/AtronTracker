@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using System.Collections.Generic;
 using Application.Interfaces.Services;
+using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -17,18 +18,24 @@ namespace Application.Services.EntitiesServices
     {
         private readonly IAsyncMap<DepartamentoDTO, Departamento> _asyncMap;
         private readonly IDepartamentoRepository _departamentoRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
         private readonly ICargoRepository _cargoRepository;
+        private readonly EstruturaPlanejadaPolicy _estruturaPlanejadaPolicy;
         private readonly IValidador<DepartamentoDTO> _validador;
 
         public DepartamentoService(IValidador<DepartamentoDTO> validador,
                                    IAsyncMap<DepartamentoDTO, Departamento> asyncMap,
                                    IDepartamentoRepository departamentoRepository,
+                                   IUsuarioRepository usuarioRepository,
                                    ICargoRepository cargoRepository,
+                                   IPlanejamentoCustoRepository planejamentoCustoRepository,
                                    IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         {
             _departamentoRepository = departamentoRepository;
+            _usuarioRepository = usuarioRepository;
             _cargoRepository = cargoRepository;
+            _estruturaPlanejadaPolicy = new EstruturaPlanejadaPolicy(planejamentoCustoRepository);
             _relacionamentoRepository = relacionamentoRepository;
             _validador = validador;
             _asyncMap = asyncMap;
@@ -49,6 +56,10 @@ namespace Application.Services.EntitiesServices
                 return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             await _asyncMap.MapToEntityAsync(departamentoDTO, entidade);
+
+            var resultadoGestor = await VincularGestorDepartamentoAsync(entidade, departamentoDTO.GestorDepartamentoCodigo);
+            if (resultadoGestor.TeveFalha)
+                return Resultado<DepartamentoDTO>.Falhas(resultadoGestor.Messages);
 
             var atualizado = await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(entidade);
             if (!atualizado)
@@ -74,6 +85,10 @@ namespace Application.Services.EntitiesServices
             }
 
             var departamento = await _asyncMap.MapToEntityAsync(departamentoDTO);
+
+            var resultadoGestor = await VincularGestorDepartamentoAsync(departamento, departamentoDTO.GestorDepartamentoCodigo);
+            if (resultadoGestor.TeveFalha)
+                return Resultado<DepartamentoDTO>.Falhas(resultadoGestor.Messages);
 
             var foiCriado = await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
             if (!foiCriado)
@@ -134,6 +149,10 @@ namespace Application.Services.EntitiesServices
             if (departamento == null)
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
+            var estruturaPlanejada = await _estruturaPlanejadaPolicy.ValidarRemocaoDepartamentoAsync(departamento);
+            if (estruturaPlanejada.TeveFalha)
+                return estruturaPlanejada;
+
             var relacionamentos = await _relacionamentoRepository
                 .ObterPorDepartamento(departamento.Id, departamento.Codigo);
 
@@ -156,6 +175,25 @@ namespace Application.Services.EntitiesServices
             return Resultado
                 .Sucesso(departamento)
                 .AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
+        }
+
+        private async Task<Resultado> VincularGestorDepartamentoAsync(Departamento departamento, string gestorCodigo)
+        {
+            if (gestorCodigo.IsNullOrEmpty())
+            {
+                departamento.GestorDepartamentoId = null;
+                departamento.GestorDepartamentoCodigo = null;
+                return Resultado.Sucesso();
+            }
+
+            var gestor = await _usuarioRepository.ObterUsuarioPorCodigoAsync(gestorCodigo.ToUpper());
+            if (gestor is null)
+                return Resultado.Falha("Gestor do departamento nao encontrado.");
+
+            departamento.GestorDepartamentoId = gestor.Id;
+            departamento.GestorDepartamentoCodigo = gestor.Codigo;
+
+            return Resultado.Sucesso();
         }
     }
 }

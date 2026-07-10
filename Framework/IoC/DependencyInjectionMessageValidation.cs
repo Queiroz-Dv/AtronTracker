@@ -14,13 +14,11 @@ namespace IoC
     {
         public static IServiceCollection AddMessageValidationServices(this IServiceCollection services)
         {
-            ConfigureLoginMessageValidation(services);
-            ConfigureApiRegisterMessageValidation(services);
+            ConfigureLoginMessageValidation(services);            
             ConfigureDepartamentoServices(services);
             ConfgureCargoServices(services);
-            ConfigureUsuarioServices(services);
+            ConfigurePlanejamentoCustoServices(services);
             ConfigurarTarefaServices(services);
-            ConfigurarSalarioServices(services);
             ConfigureModuloServices(services);
             ConfigurePerfilDeAcessoServices(services);
             return services;
@@ -37,24 +35,11 @@ namespace IoC
             services.AddScoped<Notifiable, InfoTokenMessageValidation>();
         }
 
-        private static void ConfigureApiRegisterMessageValidation(IServiceCollection services)
-        {
-            services.AddScoped<IMessageBaseService, ApiRegisterMessageValidation>();
-            services.AddScoped<IValidateModelService<UsuarioRegistro>, ApiRegisterMessageValidation>();
-            services.AddScoped<Notifiable, ApiRegisterMessageValidation>();
-        }
-
-        private static void ConfigurarSalarioServices(IServiceCollection services)
-        {
-            services.AddScoped<IMessageBaseService, SalarioMessageValidation>();
-            services.AddScoped<IValidateModelService<Salario>, SalarioMessageValidation>();
-            services.AddScoped<Notifiable, SalarioMessageValidation>();
-        }
-
         private static void ConfigurarTarefaServices(IServiceCollection services)
         {
             services.AddScoped<IMessageBaseService, TarefaMessageValidation>();
             services.AddScoped<IValidateModelService<Tarefa>, TarefaMessageValidation>();
+            services.AddScoped<IValidador<TarefaDTO>, TarefaValidador>();
             services.AddScoped<Notifiable, TarefaMessageValidation>();
 
         }
@@ -69,12 +54,10 @@ namespace IoC
             services.AddScoped<IValidador<CargoDTO>, CargoValidador>();
         }
 
-        private static void ConfigureUsuarioServices(IServiceCollection services)
+        private static void ConfigurePlanejamentoCustoServices(IServiceCollection services)
         {
-            // O validador de usuário agora usa o novo padrão IValidador<UsuarioRequest>
-            // registrado em DependencyInjectionContainerAPI.ConfigureUsuarioServices()
+            services.AddScoped<IValidador<PlanejamentoCustoDTO>, PlanejamentoCustoValidador>();
         }
-
 
         private static void ConfigureModuloServices(IServiceCollection services)
         {

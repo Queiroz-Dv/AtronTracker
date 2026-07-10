@@ -61,6 +61,78 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirme seu cadastro - Atron Platform.
+        /// </summary>
+        public static string Assunto_ConfirmeCadastro {
+            get {
+                return ResourceManager.GetString("Assunto_ConfirmeCadastro", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-mail confirmado -  Atron Platform.
+        /// </summary>
+        public static string Assunto_EmailConfirmado {
+            get {
+                return ResourceManager.GetString("Assunto_EmailConfirmado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recuperação de Senha - Atron Platform.
+        /// </summary>
+        public static string Assunto_RecuperacaoSenha {
+            get {
+                return ResourceManager.GetString("Assunto_RecuperacaoSenha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Não foi possível gerar o código de confirmação..
+        /// </summary>
+        public static string Erro_CriarCodigoDeConfirmacao {
+            get {
+                return ResourceManager.GetString("Erro_CriarCodigoDeConfirmacao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O e-mail desta conta já foi confirmado..
+        /// </summary>
+        public static string Erro_EmailConfirmado {
+            get {
+                return ResourceManager.GetString("Erro_EmailConfirmado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-mail ainda não confirmado. Enviamos um novo código de confirmacao para o e-mail cadastrado..
+        /// </summary>
+        public static string Erro_EmailNaoConfirmado {
+            get {
+                return ResourceManager.GetString("Erro_EmailNaoConfirmado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Não foi possível reenviar o e-mail de confirmação:  {0}.
+        /// </summary>
+        public static string Erro_ExcesaoEnvioEmail {
+            get {
+                return ResourceManager.GetString("Erro_ExcesaoEnvioEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Informe o código ou e-mail do usuário..
+        /// </summary>
+        public static string Erro_InformeEmailCodigo {
+            get {
+                return ResourceManager.GetString("Erro_InformeEmailCodigo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configurações não encontradas para o provedor: {0}.
         /// </summary>
         public static string ErroConfiguracoesProvedor {
@@ -138,6 +210,15 @@ namespace Shared.Application.Resources {
         public static string LiveProvider {
             get {
                 return ResourceManager.GetString("LiveProvider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enviamos um novo codigo de confirmacao para seu e-mail..
+        /// </summary>
+        public static string Mensagem_EnvioConfirmacaoEmail {
+            get {
+                return ResourceManager.GetString("Mensagem_EnvioConfirmacaoEmail", resourceCulture);
             }
         }
         

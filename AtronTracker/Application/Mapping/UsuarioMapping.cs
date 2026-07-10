@@ -30,8 +30,12 @@ namespace Application.Mapping
                 Nome = entity.Nome,
                 Sobrenome = entity.Sobrenome,
                 Email = entity.Email,
-                Salario = entity.SalarioAtual,
+                EmailConfirmado = entity.EmailConfirmado,
                 DataNascimento = entity.DataNascimento,
+                ReceberNotificacaoInternaTarefa = entity.ReceberNotificacaoInternaTarefa,
+                ReceberNotificacaoTarefaPorEmail = entity.ReceberNotificacaoTarefaPorEmail,
+                GestorImediatoCodigo = entity.GestorImediatoCodigo,
+                GestorImediatoNome = ObterNomeGestor(entity.GestorImediato),
                 PerfisDeAcesso = []
             };
 
@@ -68,8 +72,11 @@ namespace Application.Mapping
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,
                 Email = dto.Email,
+                EmailConfirmado = dto.EmailConfirmado,
                 DataNascimento = dto.DataNascimento,
-                SalarioAtual = dto.Salario
+                GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper(),
+                ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa,
+                ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail
             });
         }
 
@@ -79,10 +86,23 @@ namespace Application.Mapping
             entityToUpdate.Nome = dto.Nome;
             entityToUpdate.Sobrenome = dto.Sobrenome;
             entityToUpdate.Email = dto.Email;
+            entityToUpdate.EmailConfirmado = dto.EmailConfirmado;
             entityToUpdate.DataNascimento = dto.DataNascimento;
-            entityToUpdate.SalarioAtual = dto.Salario;
+            entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper();
+            entityToUpdate.ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa;
+            entityToUpdate.ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail;
 
             return Task.CompletedTask;
+        }
+
+        private static string ObterNomeGestor(Usuario gestor)
+        {
+            if (gestor is null)
+            {
+                return null;
+            }
+
+            return $"{gestor.Nome} {gestor.Sobrenome}".Trim();
         }
     }
 }

@@ -1,98 +1,148 @@
-﻿using Application.DTO;
+using Application.DTO;
+using Application.DTO.Request;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Extensions;
-using System.Threading.Tasks;
 using Shared.Domain.ValueObjects;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Controller para gerenciamento de perfis de acesso e seus relacionamentos com usuários.
+    /// Perfis de acesso agrupam módulos e são atribuídos aos usuários para controle de permissões.
+    /// </summary>
+    [Authorize]
     [ApiController]
-    [Authorize("Modulo:PERF")]
-    public class PerfilDeAcessoController : ApiBaseConfigurationController<PerfilDeAcessoDTO, IPerfilDeAcessoService>
+    [Route("api/[controller]")]
+    public class PerfilDeAcessoController(IPerfilDeAcessoService perfilDeAcessoService) : ControllerBase
     {
-        public PerfilDeAcessoController(
-            IPerfilDeAcessoService service,
-            Notifiable messageModel) : base(service, messageModel)
-        {
-        }
-
+        /// <summary>
+        /// Cria um novo perfil de acesso.
+        /// </summary>
+        /// <param name="perfilDeAcessoDTO">Dados do perfil de acesso a ser criado, incluindo código, descrição e módulos associados.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost]
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Post([FromBody] PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
-            return !await _service.CriarPerfilServiceAsync(perfilDeAcessoDTO) ?
-                     BadRequest(ObterNotificacoes()) :
-                     Ok(ObterNotificacoes());
+            var resultado = await perfilDeAcessoService.CriarAsync(perfilDeAcessoDTO);
+
+            return resultado.TeveFalha ?
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
+        /// <summary>
+        /// Atualiza um perfil de acesso existente identificado pelo código.
+        /// </summary>
+        /// <param name="codigo">Código do perfil de acesso a ser atualizado.</param>
+        /// <param name="perfilDeAcessoDTO">Dados atualizados do perfil de acesso.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPut("{codigo}")]
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Put(string codigo, [FromBody] PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
-            return !await _service.AtualizarPerfilServiceAsync(codigo, perfilDeAcessoDTO) ?
-                     BadRequest(ObterNotificacoes()) :
-                     Ok(ObterNotificacoes());
+            if (perfilDeAcessoDTO is null)
+                return BadRequest(Resultado<object>.Falha("O perfil de acesso está inválido para gravação.").Messages);
+
+            if (codigo != perfilDeAcessoDTO.Codigo)
+                return BadRequest(Resultado<object>.Falha("O código na URL não corresponde ao código no corpo da requisição.").Messages);
+
+            var resultado = await perfilDeAcessoService.AtualizarAsync(codigo, perfilDeAcessoDTO);
+
+            return resultado.TeveFalha ?
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
+        /// <summary>
+        /// Obtém todos os perfis de acesso cadastrados no sistema.
+        /// </summary>
+        /// <returns>200 OK com a coleção de perfis de acesso.</returns>
         [HttpGet]
-        public async Task<ActionResult> Get()
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
+        public async Task<ActionResult<ICollection<PerfilDeAcessoDTO>>> Get()
         {
-            var perfis = await _service.ObterTodosPerfisServiceAsync();
-            return Ok(perfis);
+            var resultado = await perfilDeAcessoService.ObterTodosAsync();
+            return Ok(resultado.Dados);
         }
 
+        /// <summary>
+        /// Obtém um perfil de acesso pelo código.
+        /// </summary>
+        /// <param name="codigo">Código do perfil de acesso.</param>
+        /// <returns>200 OK com os dados do perfil ou 404 NotFound se não encontrado.</returns>
         [HttpGet("{codigo}")]
-        public async Task<ActionResult> Get(string codigo)
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
+        public async Task<ActionResult<PerfilDeAcessoDTO>> Get(string codigo)
         {
-            var perfil = await _service.ObterPerfilPorCodigoServiceAsync(codigo);
-            return Ok(perfil);
+            var resultado = await perfilDeAcessoService.ObterPorCodigoAsync(codigo);
+
+            return resultado.TeveFalha ?
+                NotFound(resultado.Messages) :
+                Ok(resultado.Dados);
         }
 
+        /// <summary>
+        /// Remove um perfil de acesso pelo código.
+        /// </summary>
+        /// <param name="codigo">Código do perfil de acesso a ser removido.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpDelete("{codigo}")]
+        [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Delete(string codigo)
         {
-            await _service.DeletarPerfilServiceAsync(codigo);
+            var resultado = await perfilDeAcessoService.RemoverAsync(codigo);
 
-            return _messageModel.Notificacoes.HasErrors() ?
-                    BadRequest(ObterNotificacoes()) :
-                    Ok(ObterNotificacoes());
+            return resultado.TeveFalha ?
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
-        [HttpPost]
-        [Route("RelacionamentoPerfilUsuario")]
-        public async Task<ActionResult> RelacionamentoPerfilUsuario(PerfilUsuarioRequest request)
+        /// <summary>
+        /// Cria ou atualiza o relacionamento entre um perfil de acesso e uma lista de usuários.
+        /// Substitui os usuários atuais do perfil pelos informados na requisição.
+        /// </summary>
+        /// <param name="request">Objeto com o código do perfil e a lista de usuários a serem associados.</param>
+        /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
+        [HttpPost("RelacionamentoPerfilUsuario")]
+        [Authorize(Policy = ModuloPolicies.RelacionamentoPerfilUsuario)]
+        public async Task<ActionResult> RelacionamentoPerfilUsuario([FromBody] PerfilUsuarioRequest request)
         {
-            var dto = new PerfilDeAcessoUsuarioDTO();
-            dto.PerfilDeAcesso.Codigo = request.CodigoPerfil;
-            foreach (var usr in request.Usuarios)
+            if (request is null)
+                return BadRequest(Resultado<object>.Falha("O relacionamento de perfil de acesso está inválido para gravação.").Messages);
+
+            var dto = new PerfilDeAcessoUsuarioDTO
             {
-                dto.Usuarios.Add(new UsuarioDTO() { Codigo = usr.Codigo });
-            }
+                PerfilDeAcesso = new PerfilDeAcessoDTO { Codigo = request.CodigoPerfil },
+                Usuarios = (request.Usuarios ?? []).Select(usuario => new UsuarioDTO { Codigo = usuario.Codigo }).ToList()
+            };
 
+            var resultado = await perfilDeAcessoService.RelacionarPerfilDeAcessoUsuarioAsync(dto);
 
-            return !await _service.RelacionarPerfilDeAcessoUsuarioServiceAsync(dto) ?
-                      BadRequest(ObterNotificacoes()) :
-                      Ok(ObterNotificacoes());
+            return resultado.TeveFalha ?
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
-        [HttpGet]
-        [Route("ObterRelacionamentoPerfilUsuario/{codigo}")]
-        public async Task<ActionResult> ObterRelacionamentosPerfilUsuario([FromRoute] string codigo)
+        /// <summary>
+        /// Obtém os usuários associados a um perfil de acesso pelo código do perfil.
+        /// </summary>
+        /// <param name="codigo">Código do perfil de acesso cujos relacionamentos serão consultados.</param>
+        /// <returns>200 OK com o DTO do relacionamento ou 404 NotFound se não encontrado.</returns>
+        [HttpGet("ObterRelacionamentoPerfilUsuario/{codigo}")]
+        [Authorize(Policy = ModuloPolicies.RelacionamentoPerfilUsuario)]
+        public async Task<ActionResult<PerfilDeAcessoUsuarioDTO>> ObterRelacionamentosPerfilUsuario([FromRoute] string codigo)
         {
-            var perfil = await _service.ObterRelacionamentoDePerfilUsuarioPorCodigoServiceAsync(codigo);
-            return Ok(perfil);
+            var resultado = await perfilDeAcessoService.ObterRelacionamentoDePerfilUsuarioPorCodigoAsync(codigo);
+
+            return resultado.TeveFalha ?
+                NotFound(resultado.Messages) :
+                Ok(resultado.Dados);
         }
-    }
-
-    public class UsuarioPerfilRequest
-    {
-        public string Codigo { get; set; }
-    }
-
-    public class PerfilUsuarioRequest
-    {
-        public string CodigoPerfil { get; set; }
-        public UsuarioPerfilRequest[] Usuarios { get; set; }
     }
 }

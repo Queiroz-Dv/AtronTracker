@@ -7,14 +7,15 @@ export class UsuarioResponse implements UsuarioModel {
   codigo: string;
   nome: string;
   sobrenome: string;
-  salario?: number;
-  dataNascimento?: Date;
+  dataNascimento?: Date | string;
   email: string;
   senha: string;
   cargoCodigo: string;
   cargoDescricao: string;
   departamentoCodigo: string;
   departamentoDescricao: string;
+  gestorImediatoCodigo?: string;
+  gestorImediatoNome?: string;
 
   cargo: CargoModel
   departamento: Departamento

@@ -3,9 +3,9 @@ export interface UsuarioModel {
   nome: string;
   sobrenome: string;
   email: string;
-  salario?: number;
-  dataNascimento?: Date;
-  senha: string;
+  dataNascimento?: Date | string;
+  senha?: string;
+  clientUri?: string;
   cargoCodigo: string;
   departamentoCodigo: string;
 }

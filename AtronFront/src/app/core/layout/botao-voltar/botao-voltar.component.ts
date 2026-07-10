@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { VisualizacaoService } from '../../services/visualizacao-service';
 import { Router } from '@angular/router';
 import { SharedModule } from '../../../shared/modules/shared.module';
@@ -10,12 +10,21 @@ import { SharedModule } from '../../../shared/modules/shared.module';
   templateUrl: './botao-voltar.component.html',
 })
 export class BotaoVoltarComponent {
+  @Input() destino?: string | any[];
 
   constructor(private router: Router, private visualizacaoService: VisualizacaoService) { }
 
   onVoltar() {
+    if (Array.isArray(this.destino)) {
+      return this.router.navigate(this.destino);
+    }
+
+    if (this.destino) {
+      return this.router.navigateByUrl(this.destino);
+    }
+
     const modo = this.visualizacaoService.getViewMode();
     return modo === 'menu' ? this.router.navigate(['/atron/home']) :
-      this.router.navigate(['/atron/dashboard']);
+      this.router.navigate(['/atron/dashboard'], { queryParams: { produto: 'tracker' } });
   }
 }

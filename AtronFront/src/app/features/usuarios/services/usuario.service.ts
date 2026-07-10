@@ -18,4 +18,5 @@ export class UsuarioService extends BaseService<UsuarioModel> {
   obterTodosUsuariosInformados(): Observable<UsuarioResponse[]> {
     return this.http.get<UsuarioResponse[]>(RotasApi.usuarioEndpoint);
   }
+
 }
