@@ -40,9 +40,15 @@
           Entrar
         </button>
 
-        <button mat-button type="button" class="text-action" (click)="esqueciSenha()">
-          Esqueci minha senha
-        </button>
+        <div class="auth-link-actions">
+          <button mat-button type="button" class="text-action" (click)="esqueciSenha()">
+            Esqueci minha senha
+          </button>
+
+          <button mat-button type="button" class="text-action" (click)="reenviarConfirmacao()">
+            Reenviar confirmação
+          </button>
+        </div>
 
         <div class="auth-divider">
           <span></span>

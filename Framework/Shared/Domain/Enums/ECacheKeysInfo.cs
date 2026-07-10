@@ -11,6 +11,6 @@ namespace Shared.Domain.Enums
         [Description("tokenInfo")]
         TokenInfo,
         [Description("dadosTemporarios")]
-        DadosTemporarios
+        DadosTemporarios,
     }
 }

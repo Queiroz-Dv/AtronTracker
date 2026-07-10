@@ -24,6 +24,8 @@ namespace Application.DTO
 
         public string Email { get; set; }
 
+        public bool EmailConfirmado { get; set; }
+
         public string Senha { get; set; }
 
         public bool ReceberNotificacaoInternaTarefa { get; set; }

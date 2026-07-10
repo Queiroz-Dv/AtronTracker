@@ -1,5 +1,6 @@
 using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
+using Application.Interfaces.Services;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
@@ -22,6 +23,8 @@ namespace Application.Services.AuthServices
     public class RegistroUsuarioService : IRegistroUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IConfirmacaoEmailRepository _confirmacaoEmailRepository;
+        private readonly IConfirmacaoEmailCodigoService _confirmacaoEmailCodigoService;
         private readonly ILoginRepository _loginRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
         private readonly IEmailService _emailService;
@@ -42,9 +45,13 @@ namespace Application.Services.AuthServices
             IValidador<UsuarioRegistroRequest> validador,
             IHttpContextAccessor httpContextAccessor,
             ILoginRepository loginRepository,
-            ICacheService cacheService)
+            ICacheService cacheService,
+            IConfirmacaoEmailRepository confirmacaoEmailRepository,
+            IConfirmacaoEmailCodigoService confirmacaoEmailCodigoService)
         {
             _usuarioRepository = usuarioRepository;
+            _confirmacaoEmailRepository = confirmacaoEmailRepository;
+            _confirmacaoEmailCodigoService = confirmacaoEmailCodigoService;
             _perfilDeAcessoUsuarioRepository = perfilDeAcessoUsuarioRepository;
             _perfilDeAcessoRepository = perfilDeAcessoRepository;
             _usuarioIdentityRepository = usuarioIdentityRepository;
@@ -90,14 +97,16 @@ namespace Application.Services.AuthServices
                 });
             }
 
-            string link = await ObterUrlDeConfirmacao(request.ClientUri, request.Codigo);
+            var confirmacao = await ObterDadosConfirmacaoEmail(request.ClientUri, usuarioBd.Codigo);
+            if (!confirmacao.Gravado)
+                return Resultado.Falha("Nao foi possivel gerar o codigo de confirmacao do e-mail.");
 
             try
             {
                 await _emailService.EnviarAsync(new EmailRequest
                 {
                     Assunto = EmailResource.Assunto_ConfirmeCadastro,
-                    Mensagem = CorpoDoEmailDeCadastro(usuario, link),
+                    Mensagem = CorpoDoEmailDeCadastro(usuario, confirmacao.Link, confirmacao.Identificador),
                     EmailsDestino = [request.Email]
                 });
             }
@@ -152,9 +161,10 @@ namespace Application.Services.AuthServices
         {
             if (string.IsNullOrWhiteSpace(request.Identificador)) return Resultado.Falha(AuthResource.Erro_IdentificadorTemporario);
 
-            Usuario usuario = request.Identificador.Length > 3 || request.Identificador.Contains('@')
-                ? await _usuarioRepository.ObterUsuarioGeralPorEmailAsync(request.Identificador)
-                : await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(request.Identificador);
+            var identificador = request.Identificador.NormalizeIdentifier();
+            var usuario = identificador.IdentifierIsEmail()
+                ? await _usuarioRepository.ObterUsuarioGeralPorEmailAsync(identificador)
+                : await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificador.NormalizeUserCodeIdentifier());
 
             if (usuario == null)
                 return Resultado.Falha(AuthResource.Erro_UsuarioNaoEncontrado);
@@ -186,12 +196,15 @@ namespace Application.Services.AuthServices
             var baseUri = ObterUri(request.ClientUri);
             var link = $"{baseUri}/trocar-senha?id={identificadorUrlEncoded}";
 
-            await _emailService.EnviarAsync(new EmailRequest
+            var resultadoEnvio = await _emailService.EnviarAsync(new EmailRequest
             {
                 Assunto = EmailResource.Assunto_RecuperacaoSenha,
                 Mensagem = CorpoDoEmailRecuperacaoSenha(usuario.Nome, link),
                 EmailsDestino = [usuario.Email]
             });
+
+            if (resultadoEnvio.TeveFalha)
+                return Resultado.Falha(resultadoEnvio.Messages);
 
             return Resultado.Sucesso();
         }
@@ -212,12 +225,13 @@ namespace Application.Services.AuthServices
                 </div>";
         }
 
-        private async Task<string> ObterUrlDeConfirmacao(string uri, string codigoUsuario)
+        private async Task<(string Link, string Identificador, bool Gravado)> ObterDadosConfirmacaoEmail(string uri, string codigoUsuario)
         {
-            var token = await _usuarioIdentityRepository.GerarTokenConfirmacaoEmailAsync(codigoUsuario);
-            var tokenEncoded = HttpUtility.UrlEncode(token); // <-- importante
+            var confirmacao = _confirmacaoEmailCodigoService.CriarDadosConfirmacao(codigoUsuario, ValidadeRecuperacaoSenhaEmHoras);
+            var gravado = await _confirmacaoEmailRepository.GravarOuSubstituirAsync(confirmacao.ConfirmacaoEmail);
+
             var baseUri = ObterUri(uri);
-            return $"{baseUri}/confirmar-email?usuarioCodigo={codigoUsuario}&token={token}";
+            return ($"{baseUri}/confirmar-email?usuarioCodigo={codigoUsuario}", confirmacao.Identificador, gravado);
         }
 
         private string ObterUri(string uri)
@@ -228,25 +242,45 @@ namespace Application.Services.AuthServices
             return !string.IsNullOrEmpty(uri) ? uri : uriContext;
         }
 
-        public async Task<Resultado> ConfirmarEmail(string codigoUsuario, string token)
+        public async Task<Resultado> ConfirmarEmail(string codigoUsuario, string identificador)
         {
-            var resultado = await _usuarioIdentityRepository.ConfirmarEmailAsync(codigoUsuario, token);
+            var codigoNormalizado = codigoUsuario.NormalizeUserCodeIdentifier();
+            var identificadorNormalizado = identificador.NormalizeIdentifier();
 
-            if (!resultado)
+            if (string.IsNullOrWhiteSpace(codigoNormalizado) || string.IsNullOrWhiteSpace(identificadorNormalizado))
+                return Resultado.Falha("Usuario e codigo de confirmacao sao obrigatorios.");
+
+            var confirmacaoEmail = await _confirmacaoEmailRepository.ObterAtivaPorUsuarioAsync(codigoNormalizado);
+            if (confirmacaoEmail is null)
                 return Resultado.Falha(AuthResource.Erro_FalhaConfirmarEmail);
 
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
+            if (!_confirmacaoEmailCodigoService.ConfirmacaoValida(confirmacaoEmail, codigoNormalizado, identificadorNormalizado))
+                return Resultado.Falha(AuthResource.Erro_FalhaConfirmarEmail);
+
+            var confirmado = await _usuarioRepository.ConfirmarEmailAsync(codigoNormalizado);
+            if (!confirmado)
+                return Resultado.Falha(AuthResource.Erro_FalhaConfirmarEmail);
+
+            await _confirmacaoEmailRepository.MarcarConfirmadaAsync(confirmacaoEmail.Id);
+
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoNormalizado);
             if (usuario != null && !string.IsNullOrEmpty(usuario.Email))
             {
                 var assunto = EmailResource.Assunto_EmailConfirmado;
                 var mensagem = CorpoEmailConfirmacaoSucesso(usuario.Nome);
 
-                await _emailService.EnviarAsync(new EmailRequest
+                try
                 {
-                    Assunto = assunto,
-                    Mensagem = mensagem,
-                    EmailsDestino = [usuario.Email]
-                });
+                    await _emailService.EnviarAsync(new EmailRequest
+                    {
+                        Assunto = assunto,
+                        Mensagem = mensagem,
+                        EmailsDestino = [usuario.Email]
+                    });
+                }
+                catch
+                {
+                }
             }
 
             return Resultado.Sucesso(AuthResource.Mensagem_EmailConfirmado);
@@ -288,18 +322,19 @@ namespace Application.Services.AuthServices
                     </html>";
         }
 
-        private static string CorpoDoEmailDeCadastro(Usuario usuario, string link)
+        private static string CorpoDoEmailDeCadastro(Usuario usuario, string link, string identificador)
         {
             return $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;'>
                     <h1 style='color: #2c3e50;'>Bem-vindo(a) ao Atron!</h1>
-                    <p>Olá, <strong>{usuario.Nome}</strong>!</p>
-                    <p>Seu cadastro foi recebido. Para confirmar seu e-mail, clique no botão abaixo:</p>
+                    <p>Ola, <strong>{usuario.Nome}</strong>!</p>
+                    <p>Seu cadastro foi recebido. Para confirmar seu e-mail, use o codigo abaixo:</p>
+                    <p style='text-align:center; font-size: 28px; font-weight: 700; letter-spacing: 6px; color: #1f2937; margin: 24px 0;'>{identificador}</p>
                     <div style='text-align: center; margin: 30px 0;'>
-                        <a href='{link}' style='background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Confirmar meu E-mail</a>
+                        <a href='{link}' style='background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Informar codigo</a>
                     </div>
                     <p style='font-size: 12px; color: #999; word-break: break-all;'>{link}</p>
-                    <p style='font-size: 12px; color: #aaa;'>Se você não criou esta conta, ignore este e-mail.</p>
+                    <p style='font-size: 12px; color: #aaa;'>Se voce nao criou esta conta, ignore este e-mail.</p>
                 </div>";
         }
     }

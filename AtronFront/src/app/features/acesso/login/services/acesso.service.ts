@@ -124,15 +124,22 @@ export class AcessoService {
     );
   }
 
-  confirmarEmail(confirmarEmailRequest: ConfirmarEmailRequest): Observable<string> {
-    return this.http.post<string>(RotasApi.confirmarEmailEndpoint, confirmarEmailRequest).pipe(
-      map(response => response),
+  confirmarEmail(confirmarEmailRequest: ConfirmarEmailRequest): Observable<string[]> {
+    return this.http.post<string[]>(RotasApi.confirmarEmailEndpoint, confirmarEmailRequest).pipe(
+      map(response => response || []),
       catchError((error) => throwError(() => error))
     );
   }
 
   solicitarRecuperacaoSenha(request: SolicitarRecuperacaoSenhaRequest): Observable<string[]> {
     return this.http.post<string[]>(RotasApi.recuperarSenhaEndpoint, request).pipe(
+      map(response => response || []),
+      catchError(error => throwError(() => error))
+    );
+  }
+
+  reenviarConfirmacaoEmail(request: ReenviarConfirmacaoEmailRequest): Observable<string[]> {
+    return this.http.post<string[]>(RotasApi.reenviarConfirmacaoEmailEndpoint, request).pipe(
       map(response => response || []),
       catchError(error => throwError(() => error))
     );
@@ -148,10 +155,15 @@ export class AcessoService {
 
 export class ConfirmarEmailRequest {
   public usuarioCodigo: string;
-  public token: string;
+  public identificador: string;
 }
 
 export class SolicitarRecuperacaoSenhaRequest {
+  public identificador: string;
+  public clientUri: string;
+}
+
+export class ReenviarConfirmacaoEmailRequest {
   public identificador: string;
   public clientUri: string;
 }

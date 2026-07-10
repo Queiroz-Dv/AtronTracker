@@ -1,6 +1,7 @@
-﻿using Application.Interfaces.ApplicationInterfaces;
+using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
+using Application.UseCases.Usuario;
 using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
 using Shared.Application.DTOS.Auth;
@@ -22,6 +23,7 @@ namespace Application.Services.AuthServices
         private readonly ICacheUsuarioService _cacheUsuarioService;
         private readonly ICookieService _cookieService;
         private readonly IUserIdentityService _userIdentityService;
+        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail;
 
         public LoginService(
             ILoginRepository loginRepository,
@@ -30,7 +32,8 @@ namespace Application.Services.AuthServices
             ITokenService tokenService,
             ICacheUsuarioService cacheUsuarioService,
             ICookieService cookieService,
-            IUserIdentityService userIdentityService)
+            IUserIdentityService userIdentityService,
+            ReenviarConfirmacaoEmail reenviarConfirmacaoEmail)
         {
             _loginRepository = loginRepository;
             _usuarioService = usuarioService;
@@ -39,6 +42,7 @@ namespace Application.Services.AuthServices
             _cacheUsuarioService = cacheUsuarioService;
             _cookieService = cookieService;
             _userIdentityService = userIdentityService;
+            _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
         }
 
         public async Task<Resultado<DadosDoTokenDTO>> Autenticar(LoginRequestDTO loginRequest)
@@ -64,6 +68,18 @@ namespace Application.Services.AuthServices
 
             if (!usuarioAutenticado)
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
+
+            if (!resultadoUsuario.Dados.EmailConfirmado)
+            {
+                var resultadoReenvio = await _reenviarConfirmacaoEmail.ExecutarAsync(
+                    resultadoUsuario.Dados.Codigo,
+                    loginRequest.ClientUri);
+
+                if (resultadoReenvio.TeveFalha)
+                    return Resultado<DadosDoTokenDTO>.Falhas(resultadoReenvio.Messages);
+
+                return Resultado<DadosDoTokenDTO>.Falha(EmailResource.Erro_EmailNaoConfirmado);
+            }
 
             var token = new DadosDoTokenDTO(dadosDoToken.TokenDTO.Token, dadosDoToken.TokenDTO.Expires);
 

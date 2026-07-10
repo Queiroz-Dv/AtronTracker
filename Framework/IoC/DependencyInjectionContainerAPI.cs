@@ -100,6 +100,7 @@ namespace IoC
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
+            services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
             services.AddScoped<IValidador<DadosDoTokenDTO>, DadosDoTokenValidador>();
             services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidador>();
         }
@@ -138,6 +139,7 @@ namespace IoC
             services.AddScoped<ConfirmarAlteracaoEmail>();
             services.AddScoped<ReenviarConfirmacaoEmail>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<IConfirmacaoEmailRepository, ConfirmacaoEmailRepository>();
             services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
             services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();            
             services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();

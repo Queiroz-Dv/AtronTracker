@@ -4,6 +4,7 @@ export class RotasApi {
   public static readonly logarEndpoint: string = environment.apiRoute + 'api/Acesso/Login';
   public static readonly registrarEndpoint: string = environment.apiRoute + 'api/Acesso/Registrar';
   public static readonly confirmarEmailEndpoint: string = environment.apiRoute + 'api/Acesso/ConfirmarEmail';
+  public static readonly reenviarConfirmacaoEmailEndpoint: string = environment.apiRoute + 'api/Acesso/ReenviarConfirmacaoEmail';
   public static readonly desconectarEndpoint: string = environment.apiRoute + 'api/Acesso/Desconectar';
   public static readonly refreshTokenEndpoint: string = environment.apiRoute + 'api/Acesso/RefreshToken';
   public static readonly sessionInfoEndpoint: string = environment.apiRoute + 'api/Sessao/Info';

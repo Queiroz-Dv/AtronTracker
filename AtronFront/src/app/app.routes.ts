@@ -9,6 +9,7 @@ export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./features/acesso/login/login.component').then(m => m.LoginComponent) },
   { path: 'registrar', loadComponent: () => import('./features/acesso/registrar/registrar.component').then(m => m.RegistrarComponent) },
   { path: 'confirmar-email', loadComponent: () => import('./features/acesso/confirmar-email/confirmar-email.component').then(m => m.ConfirmarEmailComponent) },
+  { path: 'reenviar-confirmacao', loadComponent: () => import('./features/acesso/reenviar-confirmacao/reenviar-confirmacao.component').then(m => m.ReenviarConfirmacaoComponent) },
   { path: 'esqueci-senha', loadComponent: () => import('./features/acesso/esqueci-senha/esqueci-senha.component').then(m => m.EsqueciSenhaComponent) },
   { path: 'trocar-senha', loadComponent: () => import('./features/acesso/trocar-senha/trocar-senha.component').then(m => m.TrocarSenhaComponent) },
   // Aplica o guard a tudo abaixo de 'atron'

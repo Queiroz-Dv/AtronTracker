@@ -3,6 +3,7 @@ using System;
 using AtronTracker.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260710015251_IncluindoConfirmacaoEmailUsuario")]
+    partial class IncluindoConfirmacaoEmailUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,40 +53,6 @@ namespace AtronTracker.Infrastructure.PostgreSqlMigrations.Migrations
                     b.HasIndex("DepartamentoId", "DepartamentoCodigo");
 
                     b.ToTable("Cargos");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ConfirmacaoEmail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("ConfirmadoEm")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime>("ExpiraEm")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("IdentificadorHash")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.Property<string>("UsuarioCodigo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioCodigo", "ExpiraEm", "ConfirmadoEm");
-
-                    b.ToTable("ConfirmacoesEmail");
                 });
 
             modelBuilder.Entity("Domain.Entities.Departamento", b =>

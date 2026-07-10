@@ -78,7 +78,7 @@ namespace AtronStock.WebApi
             app.UseReDoc(c =>
             {
                 c.RoutePrefix = "docs"; // Acessível em /docs
-                c.DocumentTitle = "Atron WebApi Doc"; // Título da aba
+                c.DocumentTitle = "Atron Platform Doc"; // Título da aba
                 c.SpecUrl = "/swagger/v1/swagger.json"; // Localização do JSON de especificação
                 c.ExpandResponses("200,201"); // Expande respostas 200 e 201 por padrão
             });
@@ -121,7 +121,7 @@ namespace AtronStock.WebApi
         {
             app.UseSwagger(); // Gera o JSON com a especificação da API
             app.UseSwaggerUI(c =>
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron WebApi Doc v1")); // Interface Swagger UI
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron Platform Doc v1")); // Interface Swagger UI
         }
     }
 }

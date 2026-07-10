@@ -135,6 +135,21 @@
   <data name="ErroProvedorDesconhecido" xml:space="preserve">
     <value>Provedor de e-mail não suportado. Os provedores suportados são: Gmail, Outlook (Hotmail/Live/MSN) e Yahoo.</value>
   </data>
+  <data name="Erro_CriarCodigoDeConfirmacao" xml:space="preserve">
+    <value>Não foi possível gerar o código de confirmação.</value>
+  </data>
+  <data name="Erro_EmailConfirmado" xml:space="preserve">
+    <value>O e-mail desta conta já foi confirmado.</value>
+  </data>
+  <data name="Erro_EmailNaoConfirmado" xml:space="preserve">
+    <value>E-mail ainda não confirmado. Enviamos um novo código de confirmacao para o e-mail cadastrado.</value>
+  </data>
+  <data name="Erro_ExcesaoEnvioEmail" xml:space="preserve">
+    <value>Não foi possível reenviar o e-mail de confirmação:  {0}</value>
+  </data>
+  <data name="Erro_InformeEmailCodigo" xml:space="preserve">
+    <value>Informe o código ou e-mail do usuário.</value>
+  </data>
   <data name="GmailProvider" xml:space="preserve">
     <value>gmail.com</value>
   </data>
@@ -152,6 +167,9 @@
   </data>
   <data name="LiveProvider" xml:space="preserve">
     <value>live.com</value>
+  </data>
+  <data name="Mensagem_EnvioConfirmacaoEmail" xml:space="preserve">
+    <value>Enviamos um novo codigo de confirmacao para seu e-mail.</value>
   </data>
   <data name="MsnProvider" xml:space="preserve">
     <value>msn.com</value>

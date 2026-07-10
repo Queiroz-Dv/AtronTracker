@@ -194,6 +194,8 @@ public class TarefaPreparacaoServiceTests
 
         public Task<bool> CriarUsuarioAsync(Usuario usuario) => Task.FromResult(true);
 
+        public Task<bool> ConfirmarEmailAsync(string codigo) => Task.FromResult(true);
+
         public Task<Usuario> ObterInativoPorEmailAsync(string email) => Task.FromResult<Usuario>(null!);
 
         public Task<Usuario> ObterPorCodigoRepositoryAsync(string codigo) => Task.FromResult(codigo == usuario.Codigo ? usuario : null!);

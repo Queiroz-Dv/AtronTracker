@@ -8,7 +8,7 @@ namespace Application.Interfaces.ApplicationInterfaces
     public interface IRegistroUsuarioService
     {
         Task<Resultado> RegistrarUsuario(UsuarioRegistroRequest registroRequest);
-        Task<Resultado> ConfirmarEmail(string codigoUsuario, string token);
+        Task<Resultado> ConfirmarEmail(string codigoUsuario, string identificador);
 
         Task<Resultado> SolicitarRecuperacaoSenha(SolicitarRecuperacaoSenhaRequest request);
         Task<Resultado> TrocarSenha(RedefinirSenhaRequest request);

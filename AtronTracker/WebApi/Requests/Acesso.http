@@ -25,14 +25,14 @@ Content-Type: application/json
 }
 
 ### Fluxo 2: confirma o e-mail do usuario
-# Substitua o token pelo valor recebido no e-mail de confirmacao.
-@tokenConfirmacaoEmail = INFORME_O_TOKEN_DE_CONFIRMACAO
+# Substitua o codigo pelo valor recebido no e-mail de confirmacao.
+@identificadorConfirmacaoEmail = INFORME_O_CODIGO_DE_CONFIRMACAO
 POST {{baseUrl}}/confirmarEmail
 Content-Type: application/json
 
 {
   "usuarioCodigo": "{{usuarioCodigo}}",
-  "token": "{{tokenConfirmacaoEmail}}"
+  "identificador": "{{identificadorConfirmacaoEmail}}"
 }
 
 ### Fluxo 3: realiza login e captura o access token

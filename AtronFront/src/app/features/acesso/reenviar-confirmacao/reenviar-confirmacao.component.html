@@ -1,0 +1,69 @@
+<main class="auth-page">
+  <section class="auth-shell" aria-labelledby="reenviar-confirmacao-title">
+    <div class="auth-brand">
+      <span class="brand-mark">
+        <mat-icon>outgoing_mail</mat-icon>
+      </span>
+      <p class="brand-kicker">Confirmação de acesso</p>
+      <h1 id="reenviar-confirmacao-title">Reenviar link</h1>
+      <p class="brand-copy" *ngIf="!enviado">
+        Informe seu código de usuário ou e-mail cadastrado para receber um novo link de confirmação.
+      </p>
+      <p class="brand-copy" *ngIf="enviado">
+        Verifique sua caixa de entrada e siga o link enviado para confirmar seu acesso.
+      </p>
+    </div>
+
+    <div class="auth-card" *ngIf="!enviado">
+      <div class="auth-card-header">
+        <h2>Enviar novo link</h2>
+        <p>Use o código de usuário ou o e-mail vinculado à sua conta.</p>
+      </div>
+
+      <form class="auth-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Código ou e-mail</mat-label>
+          <mat-icon matPrefix>badge</mat-icon>
+          <input
+            matInput
+            [formControl]="identificadorControl"
+            placeholder="Digite seu código ou e-mail"
+            autocomplete="username" />
+          <c-control-error [control]="identificadorControl"></c-control-error>
+        </mat-form-field>
+
+        <button mat-flat-button type="button" class="primary-action" (click)="solicitarReenvio()">
+          <mat-icon>send</mat-icon>
+          Reenviar link
+        </button>
+
+        <button mat-button type="button" class="text-action" (click)="voltarLogin()">
+          <mat-icon>arrow_back</mat-icon>
+          Voltar ao login
+        </button>
+
+        <div class="auth-divider">
+          <span></span>
+          <small>ou</small>
+          <span></span>
+        </div>
+
+        <button mat-stroked-button type="button" class="secondary-action" (click)="esqueciSenha()">
+          <mat-icon>lock_reset</mat-icon>
+          Esqueci minha senha
+        </button>
+      </form>
+    </div>
+
+    <div class="auth-card auth-feedback-card" *ngIf="enviado">
+      <mat-icon class="auth-feedback-icon success">mark_email_read</mat-icon>
+      <h2>Confira seu e-mail</h2>
+      <p>{{ mensagemEnvio }}</p>
+      <button mat-flat-button type="button" class="primary-action" (click)="voltarLogin()">
+        Voltar ao login
+      </button>
+    </div>
+
+    <p class="auth-footer">&copy; 2026 Atron. Todos os direitos reservados.</p>
+  </section>
+</main>

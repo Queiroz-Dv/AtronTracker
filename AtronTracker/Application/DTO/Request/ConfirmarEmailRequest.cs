@@ -3,6 +3,6 @@
     public class ConfirmarEmailRequest
     {
         public string UsuarioCodigo { get; set; }
-        public string Token { get; set; }
+        public string Identificador { get; set; }
     }
 }

@@ -26,6 +26,7 @@ namespace Domain.Entities
         public string Email { get; set; }
         public DateTime? DataNascimento { get; set; }
         public bool Inativo { get; set; }
+        public bool EmailConfirmado { get; set; }
         public bool ReceberNotificacaoInternaTarefa { get; set; }
         public bool ReceberNotificacaoTarefaPorEmail { get; set; }
         public string CodigoReativacao { get; set; }

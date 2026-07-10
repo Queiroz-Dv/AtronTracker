@@ -42,6 +42,18 @@ namespace Infrastructure.Repositories
             return true;
         }
 
+        public async Task<bool> ConfirmarEmailAsync(string codigo)
+        {
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(usr => usr.Codigo == codigo && !usr.Inativo);
+            if (usuario is null)
+            {
+                return false;
+            }
+
+            usuario.EmailConfirmado = true;
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         public async Task<bool> AtualizarPreferenciaNotificacaoTarefaPorEmailAsync(string codigo, bool receberNotificacao)
         {
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(usr => usr.Codigo == codigo && !usr.Inativo);
@@ -95,7 +107,7 @@ namespace Infrastructure.Repositories
         }
 
         public async Task<Usuario> ObterUsuarioGeralPorCodigoAsync(string codigo)
-        {
+        {            
             return await _context.Usuarios
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
@@ -104,7 +116,7 @@ namespace Infrastructure.Repositories
                     .ThenInclude(rel => rel.Departamento)
                 .Include(usr => usr.GestorImediato)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(usr => usr.Codigo == codigo );
+                .FirstOrDefaultAsync(usr => usr.Codigo == codigo);
         }
 
         public async Task<Usuario> ObterInativoPorEmailAsync(string email)
@@ -118,7 +130,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.Usuarios
                 .AsNoTracking()
-                .FirstOrDefaultAsync(usr => usr.Email == email);
+                .FirstOrDefaultAsync(usr => usr.Email.ToUpper() == email);
         }
 
         public async Task<IEnumerable<Usuario>> ObterUsuariosAsync()
@@ -136,7 +148,7 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> VerificarEmailExistenteAsync(string email)
         {
-            return await _context.Usuarios.AnyAsync(u => u.Email == email);
+            return await _context.Usuarios.AnyAsync(u => u.Email.ToUpper() == email);
         }
 
         public async Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()

@@ -49,6 +49,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const rotasPublicas = [
       RotasApi.logarEndpoint,
       RotasApi.registrarEndpoint,
+      RotasApi.reenviarConfirmacaoEmailEndpoint,
       RotasApi.recuperarSenhaEndpoint,
       RotasApi.trocarSenhaEndpoint,
       RotasApi.confirmarEmailEndpoint

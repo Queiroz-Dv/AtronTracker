@@ -167,6 +167,17 @@
   font-weight: 700;
 }
 
+.auth-link-actions {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.auth-link-actions .text-action {
+  min-width: 0;
+  white-space: normal;
+}
+
 .auth-divider {
   align-items: center;
   color: var(--atron-text-muted);
@@ -254,5 +265,9 @@
 
   .auth-brand h1 {
     font-size: 1.9rem;
+  }
+
+  .auth-link-actions {
+    grid-template-columns: 1fr;
   }
 }

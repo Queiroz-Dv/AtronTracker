@@ -162,4 +162,10 @@
   <data name="ErroUsuarioNulo" xml:space="preserve">
     <value>Registro inválido ou não preenchido.</value>
   </data>
+  <data name="Erro_UsuarioInativo" xml:space="preserve">
+    <value>Usuário inativo.</value>
+  </data>
+  <data name="Erro_UsuarioNaoEncontrado" xml:space="preserve">
+    <value>Usuário não encontrado.</value>
+  </data>
 </root>

@@ -30,6 +30,7 @@ namespace Application.Mapping
                 Nome = entity.Nome,
                 Sobrenome = entity.Sobrenome,
                 Email = entity.Email,
+                EmailConfirmado = entity.EmailConfirmado,
                 DataNascimento = entity.DataNascimento,
                 ReceberNotificacaoInternaTarefa = entity.ReceberNotificacaoInternaTarefa,
                 ReceberNotificacaoTarefaPorEmail = entity.ReceberNotificacaoTarefaPorEmail,
@@ -71,6 +72,7 @@ namespace Application.Mapping
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,
                 Email = dto.Email,
+                EmailConfirmado = dto.EmailConfirmado,
                 DataNascimento = dto.DataNascimento,
                 GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper(),
                 ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa,
@@ -84,6 +86,7 @@ namespace Application.Mapping
             entityToUpdate.Nome = dto.Nome;
             entityToUpdate.Sobrenome = dto.Sobrenome;
             entityToUpdate.Email = dto.Email;
+            entityToUpdate.EmailConfirmado = dto.EmailConfirmado;
             entityToUpdate.DataNascimento = dto.DataNascimento;
             entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper();
             entityToUpdate.ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa;

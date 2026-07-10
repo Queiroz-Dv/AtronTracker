@@ -47,7 +47,7 @@ namespace WebApi
             app.UseReDoc(c =>
             {
                 c.RoutePrefix = "docs";
-                c.DocumentTitle = "Atron WebApi Doc";
+                c.DocumentTitle = "Atron Platform Doc";
                 c.SpecUrl = "/swagger/v1/swagger.json";
                 c.ExpandResponses("200,201");
             });
