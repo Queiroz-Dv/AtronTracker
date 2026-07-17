@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.Interfaces.Services;
+using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -54,32 +55,32 @@ namespace Application.Services.EntitiesServices
             var perfil = await ObterPerfilPorCodigoServiceAsync(codigo);
 
             return perfil is null ?
-                Resultado<PerfilDeAcessoDTO>.Falha("Registro Perfil de acesso não encontrado.") :
+                Resultado<PerfilDeAcessoDTO>.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado) :
                 Resultado<PerfilDeAcessoDTO>.Sucesso(perfil);
         }
 
         public async Task<Resultado<PerfilDeAcessoDTO>> CriarAsync(PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
             var criado = await CriarPerfilServiceAsync(perfilDeAcessoDTO);
-            return MontarResultado(criado, perfilDeAcessoDTO, "Não foi possível criar o perfil de acesso.");
+            return MontarResultado(criado, perfilDeAcessoDTO, PerfilDeAcessoResource.Erro_CriarPerfil);
         }
 
         public async Task<Resultado<PerfilDeAcessoDTO>> AtualizarAsync(string codigo, PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
             var atualizado = await AtualizarPerfilServiceAsync(codigo, perfilDeAcessoDTO);
-            return MontarResultado(atualizado, perfilDeAcessoDTO, "Não foi possível atualizar o perfil de acesso.");
+            return MontarResultado(atualizado, perfilDeAcessoDTO, PerfilDeAcessoResource.Erro_AtualizarPerfil);
         }
 
         public async Task<Resultado> RemoverAsync(string codigo)
         {
             var removido = await DeletarPerfilServiceAsync(codigo);
-            return MontarResultado(removido, "Não foi possível remover o perfil de acesso.");
+            return MontarResultado(removido, PerfilDeAcessoResource.Erro_RemoverPerfil);
         }
 
         public async Task<Resultado<PerfilDeAcessoUsuarioDTO>> RelacionarPerfilDeAcessoUsuarioAsync(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuario)
         {
             var relacionado = await RelacionarPerfilDeAcessoUsuarioServiceAsync(perfilDeAcessoUsuario);
-            return MontarResultado(relacionado, perfilDeAcessoUsuario, "Não foi possível relacionar o perfil de acesso aos usuários.");
+            return MontarResultado(relacionado, perfilDeAcessoUsuario, PerfilDeAcessoResource.Erro_RelacionarUsuarios);
         }
 
         public async Task<Resultado<PerfilDeAcessoUsuarioDTO>> ObterRelacionamentoDePerfilUsuarioPorCodigoAsync(string codigo)
@@ -117,13 +118,13 @@ namespace Application.Services.EntitiesServices
         {
             if (perfilDeAcessoDTO is null)
             {
-                _messageModel.AdicionarErro("O perfil de acesso está inválido para gravação.");
+                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_PerfilInvalido);
                 return;
             }
 
             if (perfilDeAcessoDTO.Modulos is null || !perfilDeAcessoDTO.Modulos.Any())
             {
-                _messageModel.AdicionarErro("Não contém nenhum módulo para relacionar ao perfil criado.");
+                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_SemModulos);
             }
         }
 
@@ -146,7 +147,7 @@ namespace Application.Services.EntitiesServices
                     var prf = await _perfilDeAcessoRepository.AtualizarPerfilRepositoryAsync(codigo, perfilDeAcesso);
                     if (prf)
                     {
-                        _messageModel.AdicionarMensagem($"Perfil de acesso {perfilDeAcesso.Codigo} atualizado com sucesso.");
+                        _messageModel.AdicionarMensagem(string.Format(PerfilDeAcessoResource.Mensagem_PerfilAtualizado, perfilDeAcesso.Codigo));
                         InvalidarCacheDosUsuarios(usuariosAfetados);
 
                         return prf;
@@ -200,7 +201,7 @@ namespace Application.Services.EntitiesServices
                     var prf = await _perfilDeAcessoRepository.CriarPerfilRepositoryAsync(perfilDeAcesso);
                     if (prf)
                     {
-                        _messageModel.AdicionarMensagem($"Perfil de acesso {perfilDeAcesso.Codigo} criado com sucesso.");
+                        _messageModel.AdicionarMensagem(string.Format(PerfilDeAcessoResource.Mensagem_PerfilCriado, perfilDeAcesso.Codigo));
 
                         return prf;
                     }
@@ -215,13 +216,13 @@ namespace Application.Services.EntitiesServices
             var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
             if (perfil is null)
             {
-                _messageModel.MensagemRegistroNaoEncontrado("Perfil de acesso");
+                _messageModel.MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_PerfilDeAcesso);
             }
             else
             {
                 var usuariosAfetados = ObterCodigosDosUsuarios(perfil);
                 var result = await _perfilDeAcessoRepository.DeletarPerfilRepositoryAsync(perfil);
-                _messageModel.AdicionarMensagem("Perfil removido com sucesso");
+                _messageModel.AdicionarMensagem(PerfilDeAcessoResource.Mensagem_PerfilRemovido);
 
                 if (result)
                     InvalidarCacheDosUsuarios(usuariosAfetados);
@@ -262,7 +263,7 @@ namespace Application.Services.EntitiesServices
 
                 if (perfilRelacionado is null)
                 {
-                    _messageModel.MensagemRegistroNaoEncontrado("Perfil de acesso");
+                    _messageModel.MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_PerfilDeAcesso);
                     return false;
                 }
 
@@ -286,7 +287,7 @@ namespace Application.Services.EntitiesServices
                     var usuarioRepo = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioDTO.Codigo);
                     if (usuarioRepo is null)
                     {
-                        _messageModel.MensagemRegistroNaoEncontrado("Usuário");
+                        _messageModel.MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_Usuario);
                         return false;
                     }
 
@@ -326,13 +327,13 @@ namespace Application.Services.EntitiesServices
         {
             if (perfilDeAcessoUsuario is null || perfilDeAcessoUsuario.PerfilDeAcesso is null)
             {
-                _messageModel.AdicionarErro("O perfil de acesso está inválido para gravação.");
+                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_PerfilInvalido);
                 return;
             }
 
             if (perfilDeAcessoUsuario.Usuarios is null || !perfilDeAcessoUsuario.Usuarios.Any())
             {
-                _messageModel.AdicionarErro("Não contém nenhum usuário para relacionar ao perfil criado.");
+                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_SemUsuarios);
             }
         }
 
@@ -346,7 +347,7 @@ namespace Application.Services.EntitiesServices
             var perfilDeAcesso = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
             if (perfilDeAcesso is null)
             {
-                _messageModel.MensagemRegistroNaoEncontrado("Perfil de acesso");
+                _messageModel.MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_PerfilDeAcesso);
                 return new PerfilDeAcessoUsuarioDTO();
             }
 

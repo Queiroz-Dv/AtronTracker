@@ -3,7 +3,7 @@ using AtronStock.Application.Interfaces;
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
-using Shared.Application.Resources.AtronStock;
+using AtronStock.Application.Resources;
 using Shared.Domain.ValueObjects;
 
 namespace AtronStock.Application.Services
@@ -34,7 +34,7 @@ namespace AtronStock.Application.Services
             Fornecedor fornecedorExistente = await _fornecedorRepository.ObterPorCodigoAsync(request.Codigo);
             if (fornecedorExistente != null)
             {
-                return Resultado.Falha(FornecedoResource.ErroCodigoFornecedorExistente);
+                return Resultado.Falha(FornecedorResource.ErroCodigoFornecedorExistente);
             }
 
             Fornecedor fornecedor = await _map.MapToEntityAsync(request);
@@ -60,7 +60,7 @@ namespace AtronStock.Application.Services
 
             if (fornecedor == null)
             {
-                return Resultado<FornecedorRequest>.Falha(FornecedoResource.ErroFornecedorNaoEncontrado);
+                return Resultado<FornecedorRequest>.Falha(FornecedorResource.ErroFornecedorNaoEncontrado);
             }
 
             FornecedorRequest dto = await _map.MapToDTOAsync(fornecedor);

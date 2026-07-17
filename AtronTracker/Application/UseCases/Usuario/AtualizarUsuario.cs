@@ -108,7 +108,7 @@ namespace Application.UseCases.Usuario
 
             return Resultado<UsuarioRequest>
                 .Sucesso(request)
-                .AdicionarMensagem("Usuário atualizado com sucesso.");
+                .AdicionarMensagem(UsuarioResource.MensagemUsuarioAtualizado);
         }
 
         private async Task<bool> AtualizarRelacionamentoCargoDepartamentoAsync(
@@ -153,11 +153,11 @@ namespace Application.UseCases.Usuario
 
             var codigoGestor = gestorCodigo.ToUpper();
             if (codigoGestor == usuario.Codigo)
-                return Resultado.Falha("O usuario nao pode ser gestor imediato dele mesmo.");
+                return Resultado.Falha(UsuarioResource.ErroGestorProprio);
 
             var gestor = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoGestor);
             if (gestor is null)
-                return Resultado.Falha("Gestor imediato nao encontrado.");
+                return Resultado.Falha(UsuarioResource.ErroGestorNaoEncontrado);
 
             usuario.GestorImediatoId = gestor.Id;
             usuario.GestorImediatoCodigo = gestor.Codigo;

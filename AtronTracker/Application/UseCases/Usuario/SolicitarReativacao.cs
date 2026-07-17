@@ -1,5 +1,5 @@
 ﻿using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Application.DTOS.Requests;
+using Application.Email.Compositores;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -12,13 +12,16 @@ namespace Application.UseCases.Usuario
     {
         private readonly IUsuarioRepository _usuarioRepository;        
         private readonly IEmailService _emailService;
+        private readonly IAcessoEmailCompositor _emailCompositor;
 
         public SolicitarReativacao(
             IUsuarioRepository usuarioRepository,
-            IEmailService emailService)
+            IEmailService emailService,
+            IAcessoEmailCompositor emailCompositor)
         {
             _usuarioRepository = usuarioRepository;
             _emailService = emailService;
+            _emailCompositor = emailCompositor;
         }
 
         public async Task<Resultado> ExecutarAsync(string email)
@@ -28,34 +31,24 @@ namespace Application.UseCases.Usuario
 
             var usuario = await _usuarioRepository.ObterInativoPorEmailAsync(email);
             if (usuario is null)
-                return Resultado.Falha("Usuário não encontrado");
+                return Resultado.Falha(UsuarioResource.Erro_UsuarioNaoEncontrado);
 
-            await EnviarCodigoPorEmailAsync(usuario.Email, usuario.Nome, usuario.CodigoReativacao);
-
-            return Resultado.Sucesso().AdicionarMensagem("Código de reativação enviado para o e-mail cadastrado.");
-        }
-
-        private async Task EnviarCodigoPorEmailAsync(string destinatario, string nome, string codigo)
-        {
             try
             {
-                var corpo = $@"
-                    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;'>
-                        <h2>Reativação de Conta — Sistema Atron</h2>
-                        <p>Olá, <strong>{nome}</strong>.</p>
-                        <p>Seu código de reativação é:</p>
-                        <h1 style='letter-spacing: 8px; color: #007bff;'>{codigo}</h1>
-                        <p>Informe este código junto ao seu e-mail para reativar sua conta.</p>
-                    </div>";
-
-                await _emailService.EnviarAsync(new EmailRequest
-                {
-                    EmailsDestino = [destinatario],
-                    Assunto = "Código de reativação — Atron",
-                    Mensagem = corpo
-                });
+                var emailReativacao = _emailCompositor.ComporReativacaoConta(
+                    usuario.Email,
+                    usuario.Nome,
+                    usuario.CodigoReativacao);
+                var envio = await _emailService.EnviarAsync(emailReativacao);
+                if (envio.TeveFalha)
+                    return Resultado.Falha(envio.Messages);
             }
-            catch { }
+            catch
+            {
+                return Resultado.Falha(AuthResource.Erro_EnvioEmailObrigatorio);
+            }
+
+            return Resultado.Sucesso().AdicionarMensagem(UsuarioResource.MensagemCodigoReativacaoEnviado);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AtronStock.Application.DTO.Request;
 using Shared.Application.Interfaces.Service;
-using Shared.Application.Resources.AtronStock;
+using AtronStock.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 

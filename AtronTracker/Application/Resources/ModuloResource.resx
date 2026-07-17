@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Erro_ModuloNaoEncontrado" xml:space="preserve"><value>Módulo não encontrado.</value></data>
+  <data name="Mensagem_ModuloVinculado" xml:space="preserve"><value>Módulo {0} vinculado ao perfil {1}.</value></data>
+  <data name="Erro_DadosObrigatorios" xml:space="preserve"><value>O código ou a descrição não estão preenchidos.</value></data>
+  <data name="Erro_CodigoLongo" xml:space="preserve"><value>O código informado é muito longo.</value></data>
+  <data name="Erro_CodigoPequeno" xml:space="preserve"><value>O código informado é muito pequeno.</value></data>
+  <data name="Erro_DescricaoPequena" xml:space="preserve"><value>A descricao é muito pequena.</value></data>
+  <data name="Erro_DescricaoLonga" xml:space="preserve"><value>A descricao é muito longa.</value></data>
+</root>

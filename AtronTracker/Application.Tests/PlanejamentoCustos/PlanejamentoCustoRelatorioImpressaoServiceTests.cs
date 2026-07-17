@@ -49,7 +49,7 @@ public class PlanejamentoCustoRelatorioImpressaoServiceTests
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(resultado.Dados);
         Assert.Contains("<html lang=\"pt-BR\">", resultado.Dados);
-        Assert.Contains("Relatorio de Planejamentos", resultado.Dados);
+        Assert.Contains("Relatório de Planejamentos", resultado.Dados);
         Assert.Contains($"Ano analisado: {relatorio.Ano}", resultado.Dados);
         Assert.Contains("DPT - Departamento &lt;Operacional&gt;", resultado.Dados);
         Assert.Contains("PLC001 - Planejamento &amp; Revisao", resultado.Dados);

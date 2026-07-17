@@ -4,7 +4,7 @@ using AtronStock.Domain.Entities;
 using AtronStock.Domain.Interfaces;
 using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Service;
-using Shared.Application.Resources.AtronStock;
+using AtronStock.Application.Resources;
 using Shared.Domain.ValueObjects;
 
 namespace AtronStock.Application.Services

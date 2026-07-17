@@ -1,6 +1,7 @@
 using Application.DTO;
 using Application.DTO.Request;
 using Application.Interfaces.Services;
+using Application.Resources;
 using Application.Services;
 using Domain.Entities;
 using Domain.Enums;
@@ -10,6 +11,7 @@ using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -55,20 +57,20 @@ namespace Application.Services.EntitiesServices
 
             var gravado = await _tarefaRepository.CriarTarefaAsync(preparacao.Dados.Entidade);
             if (!gravado)
-                return Resultado<TarefaDTO>.Falha("Erro ao gravar a tarefa.");
+                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_GravarTarefa);
 
             tarefaDTO.Id = preparacao.Dados.Entidade.Id;
             tarefaDTO.Identificador = preparacao.Dados.Entidade.Identificador;
             var resultado = Resultado<TarefaDTO>
                 .Sucesso(tarefaDTO)
-                .AdicionarMensagem("Tarefa gravada com sucesso.");
+                .AdicionarMensagem(TarefaResource.Mensagem_TarefaCriada);
 
             await CriarNotificacaoTarefaAtribuidaAsync(preparacao.Dados.Entidade, preparacao.Dados.Usuario);
 
             var envioEmail = await _tarefaNotificacaoService.NotificarAtribuicaoAsync(tarefaDTO, preparacao.Dados.Usuario);
             if (envioEmail.TeveFalha)
             {
-                resultado.AdicionarAviso("Tarefa criada, mas não foi possível enviar o e-mail de notificação.");
+                resultado.AdicionarAviso(TarefaResource.Aviso_EmailNotificacaoNaoEnviado);
             }
 
             return resultado;
@@ -188,7 +190,7 @@ namespace Application.Services.EntitiesServices
                     ReceberNotificacaoInternaTarefa = request.ReceberNotificacaoInternaTarefa,
                     ReceberNotificacaoTarefaPorEmail = request.ReceberNotificacaoTarefaPorEmail
                 })
-                .AdicionarMensagem("Configuracoes de tarefas atualizadas com sucesso.");
+                .AdicionarMensagem(TarefaResource.Mensagem_ConfiguracoesAtualizadas);
         }
 
         public async Task<Resultado<TarefaDTO>> AtualizarAsync(int id, TarefaDTO tarefaDTO)
@@ -203,12 +205,12 @@ namespace Application.Services.EntitiesServices
 
             var atualizado = await _tarefaRepository.AtualizarTarefaAsync(id, preparacao.Dados.Entidade);
             if (!atualizado)
-                return Resultado<TarefaDTO>.Falha("Erro ao atualizar a tarefa.");
+                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_AtualizarTarefa);
 
             tarefaDTO.Id = id;
             return Resultado<TarefaDTO>
                 .Sucesso(tarefaDTO)
-                .AdicionarMensagem("Tarefa atualizada com sucesso.");
+                .AdicionarMensagem(TarefaResource.Mensagem_TarefaAtualizada);
         }
 
         public async Task<Resultado> ExcluirAsync(string id)
@@ -222,11 +224,11 @@ namespace Application.Services.EntitiesServices
 
             var deletado = await _tarefaRepository.RemoverRepositoryAsync(tarefa);
             if (!deletado)
-                return Resultado.Falha("Erro ao remover a tarefa.");
+                return Resultado.Falha(TarefaResource.Erro_RemoverTarefa);
 
             return Resultado
                 .Sucesso()
-                .AdicionarMensagem("Tarefa removida com sucesso.");
+                .AdicionarMensagem(TarefaResource.Mensagem_TarefaRemovida);
         }
 
         public async Task<Resultado<TarefaDTO>> AssumirAsync(int id)
@@ -240,27 +242,27 @@ namespace Application.Services.EntitiesServices
                 return Resultado<TarefaDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             if (tarefa.UsuarioId.HasValue)
-                return Resultado<TarefaDTO>.Falha("Tarefa ja possui usuario responsavel.");
+                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_TarefaJaPossuiUsuarioResponsavel);
 
             if (tarefa.TarefaEstadoId == EstadoFinalizadaId)
-                return Resultado<TarefaDTO>.Falha("Tarefa finalizada nao pode ser assumida.");
+                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_TarefaFinalizadaNaoPodeSerAssumida);
 
             if (!UsuarioPodeAssumir(usuario.Dados, tarefa))
-                return Resultado<TarefaDTO>.Falha("Usuario nao possui acesso para assumir esta tarefa.");
+                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_UsuarioSemAcessoParaAssumir);
 
             if (tarefa.ExigeAprovacaoParaObter)
-                return Resultado<TarefaDTO>.Falha("Esta tarefa exige solicitacao de obtencao.");
+                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_TarefaExigeSolicitacaoObtencao);
 
             var assumida = await _tarefaRepository.AssumirTarefaAsync(id, usuario.Dados.Id, usuario.Dados.Codigo);
             if (!assumida)
-                return Resultado<TarefaDTO>.Falha("Nao foi possivel assumir a tarefa.");
+                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_AssumirTarefa);
 
             var tarefaAtualizada = await _tarefaRepository.ObterTarefaPorId(id);
             await CriarNotificacaoTarefaObtidaAsync(tarefaAtualizada, usuario.Dados);
             var dto = await _map.MapToDTOAsync(tarefaAtualizada);
             return Resultado<TarefaDTO>
                 .Sucesso(dto)
-                .AdicionarMensagem("Tarefa assumida com sucesso.");
+                .AdicionarMensagem(TarefaResource.Mensagem_TarefaAssumida);
         }
 
         public async Task<Resultado<SolicitacaoObtencaoTarefaDTO>> SolicitarObtencaoAsync(int id)
@@ -274,23 +276,23 @@ namespace Application.Services.EntitiesServices
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             if (tarefa.UsuarioId.HasValue)
-                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha("Tarefa ja possui usuario responsavel.");
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_TarefaJaPossuiUsuarioResponsavel);
 
             if (tarefa.TarefaEstadoId == EstadoFinalizadaId)
-                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha("Tarefa finalizada nao pode ser solicitada.");
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_TarefaFinalizadaNaoPodeSerSolicitada);
 
             if (!tarefa.ExigeAprovacaoParaObter)
-                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha("Esta tarefa nao exige aprovacao para obtencao.");
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_TarefaNaoExigeAprovacao);
 
             if (!UsuarioPodeAssumir(usuario.Dados, tarefa))
-                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha("Usuario nao possui acesso para solicitar esta tarefa.");
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_UsuarioSemAcessoParaSolicitar);
 
             if (await _solicitacaoObtencaoTarefaRepository.ExisteSolicitacaoPendenteParaTarefaAsync(id))
-                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha("Ja existe solicitacao pendente para esta tarefa.");
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_SolicitacaoPendenteExistente);
 
             var aprovador = await ResolverAprovadorObtencaoAsync(usuario.Dados, tarefa);
             if (aprovador is null)
-                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha("Nenhum aprovador disponivel para esta solicitacao.");
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_AprovadorIndisponivel);
 
             var solicitacao = new SolicitacaoObtencaoTarefa
             {
@@ -305,7 +307,7 @@ namespace Application.Services.EntitiesServices
 
             var gravada = await _solicitacaoObtencaoTarefaRepository.CriarAsync(solicitacao);
             if (!gravada)
-                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha("Nao foi possivel criar a solicitacao.");
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_CriarSolicitacao);
 
             var solicitacaoGravada = await _solicitacaoObtencaoTarefaRepository.ObterPorIdAsync(solicitacao.Id);
             await CriarNotificacaoSolicitacaoRecebidaAsync(solicitacaoGravada);
@@ -313,7 +315,7 @@ namespace Application.Services.EntitiesServices
 
             return Resultado<SolicitacaoObtencaoTarefaDTO>
                 .Sucesso(dto)
-                .AdicionarMensagem("Solicitacao enviada com sucesso.");
+                .AdicionarMensagem(TarefaResource.Mensagem_SolicitacaoEnviada);
         }
 
         public async Task<Resultado<SolicitacaoObtencaoTarefaDTO>> AprovarSolicitacaoAsync(int id)
@@ -397,12 +399,14 @@ namespace Application.Services.EntitiesServices
                 : await _solicitacaoObtencaoTarefaRepository.RecusarAsync(id, usuario.Dados.Id, usuario.Dados.Codigo);
 
             if (!atualizado)
-                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha("Nao foi possivel decidir a solicitacao.");
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_DecidirSolicitacao);
 
             var solicitacao = await _solicitacaoObtencaoTarefaRepository.ObterPorIdAsync(id);
             var dto = await MapearSolicitacaoAsync(solicitacao);
             await CriarNotificacaoDecisaoSolicitacaoAsync(solicitacao, aprovar);
-            var mensagem = aprovar ? "Solicitacao aprovada com sucesso." : "Solicitacao recusada com sucesso.";
+            var mensagem = aprovar
+                ? TarefaResource.Mensagem_SolicitacaoAprovada
+                : TarefaResource.Mensagem_SolicitacaoRecusada;
 
             return Resultado<SolicitacaoObtencaoTarefaDTO>
                 .Sucesso(dto)
@@ -450,8 +454,8 @@ namespace Application.Services.EntitiesServices
             await CriarNotificacaoTarefaAsync(
                 usuario.Id,
                 usuario.Codigo,
-                "Nova tarefa atribuída",
-                $"A tarefa {ObterIdentificadorTarefa(tarefa)} foi atribuída a você.",
+                TarefaResource.Titulo_TarefaAtribuida,
+                Formatar(TarefaResource.Mensagem_TarefaAtribuidaUsuario, ObterIdentificadorTarefa(tarefa)),
                 "TarefaAtribuida",
                 tarefa.Id);
         }
@@ -466,8 +470,8 @@ namespace Application.Services.EntitiesServices
             await CriarNotificacaoTarefaAsync(
                 usuario.Id,
                 usuario.Codigo,
-                "Tarefa adicionada ao seu quadro",
-                $"A tarefa {ObterIdentificadorTarefa(tarefa)} foi adicionada ao seu quadro.",
+                TarefaResource.Titulo_TarefaObtida,
+                Formatar(TarefaResource.Mensagem_TarefaObtida, ObterIdentificadorTarefa(tarefa)),
                 "TarefaObtida",
                 tarefa.Id);
         }
@@ -485,8 +489,8 @@ namespace Application.Services.EntitiesServices
             await CriarNotificacaoTarefaAsync(
                 solicitacao.AprovadorId,
                 solicitacao.AprovadorCodigo,
-                "Solicitacao de obtencao recebida",
-                $"{solicitante} solicitou obter a tarefa {identificador}.",
+                TarefaResource.Titulo_SolicitacaoRecebida,
+                Formatar(TarefaResource.Mensagem_SolicitacaoRecebida, solicitante, identificador),
                 "SolicitacaoObtencaoRecebida",
                 solicitacao.TarefaId,
                 "/atron/tarefas?visao=solicitacoes");
@@ -511,11 +515,11 @@ namespace Application.Services.EntitiesServices
         {
             var identificador = ObterIdentificadorTarefa(solicitacao.Tarefa, solicitacao.TarefaId);
             var titulo = aprovada
-                ? "Solicitacao de tarefa aprovada"
-                : "Solicitacao de tarefa recusada";
+                ? TarefaResource.Titulo_SolicitacaoAprovada
+                : TarefaResource.Titulo_SolicitacaoRecusada;
             var mensagem = aprovada
-                ? $"Sua solicitacao para obter a tarefa {identificador} foi aprovada."
-                : $"Sua solicitacao para obter a tarefa {identificador} foi recusada.";
+                ? Formatar(TarefaResource.Mensagem_NotificacaoSolicitacaoAprovada, identificador)
+                : Formatar(TarefaResource.Mensagem_NotificacaoSolicitacaoRecusada, identificador);
 
             await CriarNotificacaoTarefaAsync(
                 solicitacao.SolicitanteId,
@@ -546,7 +550,7 @@ namespace Application.Services.EntitiesServices
                 UsuarioCodigo = usuarioCodigo,
                 Titulo = titulo,
                 Mensagem = mensagem,
-                Modulo = "Tarefas",
+                Modulo = TarefaResource.Descricao_ModuloTarefas,
                 TipoEvento = tipoEvento,
                 TarefaId = tarefaId,
                 UrlDestino = urlDestino ?? $"/atron/tarefas/editar/{tarefaId}",
@@ -556,7 +560,12 @@ namespace Application.Services.EntitiesServices
 
         private static string ObterIdentificadorTarefa(Tarefa tarefa, int? tarefaId = null)
         {
-            return tarefa?.Identificador?.ToString() ?? tarefaId?.ToString() ?? "nao identificada";
+            return tarefa?.Identificador?.ToString() ?? tarefaId?.ToString() ?? TarefaResource.Descricao_TarefaNaoIdentificada;
+        }
+
+        private static string Formatar(string formato, params object[] argumentos)
+        {
+            return string.Format(CultureInfo.GetCultureInfo("pt-BR"), formato, argumentos);
         }
 
         private static string ObterNomeUsuario(Usuario usuario)

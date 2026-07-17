@@ -1,4 +1,5 @@
 ﻿using Application.DTO.Request;
+using Application.Email.Compositores;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
 using Application.Mapping;
@@ -100,6 +101,7 @@ namespace IoC
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
+            services.AddScoped<IAcessoEmailCompositor, AcessoEmailCompositor>();
             services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
             services.AddScoped<IValidador<DadosDoTokenDTO>, DadosDoTokenValidador>();
             services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidador>();
@@ -116,6 +118,7 @@ namespace IoC
             services.AddScoped<ISolicitacaoObtencaoTarefaRepository, SolicitacaoObtencaoTarefaRepository>();
             services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
             services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
+            services.AddScoped<ITarefaEmailCompositor, TarefaEmailCompositor>();
             services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
             services.AddScoped<ITarefaService, TarefaService>();
         }

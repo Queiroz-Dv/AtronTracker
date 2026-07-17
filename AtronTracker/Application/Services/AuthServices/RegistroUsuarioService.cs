@@ -1,4 +1,5 @@
 using Application.DTO.Request;
+using Application.Email.Compositores;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
 using Domain.Entities;
@@ -7,7 +8,6 @@ using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.AspNetCore.Http;
-using Shared.Application.DTOS.Requests;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
@@ -28,6 +28,7 @@ namespace Application.Services.AuthServices
         private readonly ILoginRepository _loginRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
         private readonly IEmailService _emailService;
+        private readonly IAcessoEmailCompositor _emailCompositor;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository;
         private readonly IPerfilDeAcessoUsuarioRepository _perfilDeAcessoUsuarioRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -36,12 +37,12 @@ namespace Application.Services.AuthServices
         private const int ValidadeRecuperacaoSenhaEmHoras = 24;
 
         public RegistroUsuarioService(
-            IAccessorService accessor,
             IUsuarioRepository usuarioRepository,
             IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
             IPerfilDeAcessoRepository perfilDeAcessoRepository,
             IUsuarioIdentityRepository usuarioIdentityRepository,
             IEmailService emailService,
+            IAcessoEmailCompositor emailCompositor,
             IValidador<UsuarioRegistroRequest> validador,
             IHttpContextAccessor httpContextAccessor,
             ILoginRepository loginRepository,
@@ -56,6 +57,7 @@ namespace Application.Services.AuthServices
             _perfilDeAcessoRepository = perfilDeAcessoRepository;
             _usuarioIdentityRepository = usuarioIdentityRepository;
             _emailService = emailService;
+            _emailCompositor = emailCompositor;
             _validador = validador;
             _httpContextAccessor = httpContextAccessor;
             _loginRepository = loginRepository;
@@ -99,20 +101,29 @@ namespace Application.Services.AuthServices
 
             var confirmacao = await ObterDadosConfirmacaoEmail(request.ClientUri, usuarioBd.Codigo);
             if (!confirmacao.Gravado)
-                return Resultado.Falha("Nao foi possivel gerar o codigo de confirmacao do e-mail.");
+                return Resultado.Falha(AuthResource.Erro_GerarCodigoConfirmacao);
+
+            var resultado = Resultado.Sucesso(
+                string.Format(AuthResource.Mensagem_UsuarioRegistrado, usuario.Nome, usuario.Sobrenome));
 
             try
             {
-                await _emailService.EnviarAsync(new EmailRequest
-                {
-                    Assunto = EmailResource.Assunto_ConfirmeCadastro,
-                    Mensagem = CorpoDoEmailDeCadastro(usuario, confirmacao.Link, confirmacao.Identificador),
-                    EmailsDestino = [request.Email]
-                });
+                var email = _emailCompositor.ComporConfirmacaoCadastro(
+                    request.Email,
+                    usuario.Nome,
+                    confirmacao.Identificador,
+                    confirmacao.Link,
+                    ValidadeRecuperacaoSenhaEmHoras);
+                var envio = await _emailService.EnviarAsync(email);
+                if (envio.TeveFalha)
+                    resultado.AdicionarAviso(AuthResource.Aviso_CadastroCriadoEmailNaoEnviado);
             }
-            catch { }
+            catch
+            {
+                resultado.AdicionarAviso(AuthResource.Aviso_CadastroCriadoEmailNaoEnviado);
+            }
 
-            return Resultado.Sucesso(string.Format(AuthResource.Mensagem_UsuarioRegistrado, usuario.Nome, usuario.Sobrenome));
+            return resultado;
         }
 
         public async Task<Resultado> TrocarSenha(RedefinirSenhaRequest request)
@@ -196,33 +207,25 @@ namespace Application.Services.AuthServices
             var baseUri = ObterUri(request.ClientUri);
             var link = $"{baseUri}/trocar-senha?id={identificadorUrlEncoded}";
 
-            var resultadoEnvio = await _emailService.EnviarAsync(new EmailRequest
+            Resultado resultadoEnvio;
+            try
             {
-                Assunto = EmailResource.Assunto_RecuperacaoSenha,
-                Mensagem = CorpoDoEmailRecuperacaoSenha(usuario.Nome, link),
-                EmailsDestino = [usuario.Email]
-            });
+                var email = _emailCompositor.ComporRecuperacaoSenha(
+                    usuario.Email,
+                    usuario.Nome,
+                    link,
+                    ValidadeRecuperacaoSenhaEmHoras);
+                resultadoEnvio = await _emailService.EnviarAsync(email);
+            }
+            catch
+            {
+                return Resultado.Falha(AuthResource.Erro_EnvioEmailObrigatorio);
+            }
 
             if (resultadoEnvio.TeveFalha)
                 return Resultado.Falha(resultadoEnvio.Messages);
 
             return Resultado.Sucesso();
-        }
-
-        private static string CorpoDoEmailRecuperacaoSenha(string nome, string link)
-        {
-            return $@"
-                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;'>
-                    <h1 style='color: #2c3e50;'>Recuperação de Senha</h1>
-                    <p>Olá, <strong>{nome}</strong>!</p>
-                    <p>Recebemos uma solicitação para redefinir a senha da sua conta no Atron.</p>
-                    <p>Para criar uma nova senha, clique no botão abaixo. Este link expira em {ValidadeRecuperacaoSenhaEmHoras} horas:</p>
-                    <div style='text-align: center; margin: 30px 0;'>
-                        <a href='{link}' style='background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Redefinir Minha Senha</a>
-                    </div>
-                    <p style='font-size: 12px; color: #999; word-break: break-all;'>Se o botão não funcionar, copie e cole este link no navegador: <br>{link}</p>
-                    <p style='font-size: 12px; color: #aaa;'>Se você não solicitou a alteração de senha, pode ignorar e excluir este e-mail com segurança.</p>
-                </div>";
         }
 
         private async Task<(string Link, string Identificador, bool Gravado)> ObterDadosConfirmacaoEmail(string uri, string codigoUsuario)
@@ -248,7 +251,7 @@ namespace Application.Services.AuthServices
             var identificadorNormalizado = identificador.NormalizeIdentifier();
 
             if (string.IsNullOrWhiteSpace(codigoNormalizado) || string.IsNullOrWhiteSpace(identificadorNormalizado))
-                return Resultado.Falha("Usuario e codigo de confirmacao sao obrigatorios.");
+                return Resultado.Falha(AuthResource.Erro_DadosConfirmacaoObrigatorios);
 
             var confirmacaoEmail = await _confirmacaoEmailRepository.ObterAtivaPorUsuarioAsync(codigoNormalizado);
             if (confirmacaoEmail is null)
@@ -263,79 +266,24 @@ namespace Application.Services.AuthServices
 
             await _confirmacaoEmailRepository.MarcarConfirmadaAsync(confirmacaoEmail.Id);
 
+            var resultado = Resultado.Sucesso(AuthResource.Mensagem_EmailConfirmado);
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoNormalizado);
             if (usuario != null && !string.IsNullOrEmpty(usuario.Email))
             {
-                var assunto = EmailResource.Assunto_EmailConfirmado;
-                var mensagem = CorpoEmailConfirmacaoSucesso(usuario.Nome);
-
                 try
                 {
-                    await _emailService.EnviarAsync(new EmailRequest
-                    {
-                        Assunto = assunto,
-                        Mensagem = mensagem,
-                        EmailsDestino = [usuario.Email]
-                    });
+                    var email = _emailCompositor.ComporConfirmacaoConcluida(usuario.Email, usuario.Nome);
+                    var envio = await _emailService.EnviarAsync(email);
+                    if (envio.TeveFalha)
+                        resultado.AdicionarAviso(AuthResource.Aviso_ConfirmacaoConcluidaEmailNaoEnviado);
                 }
                 catch
                 {
+                    resultado.AdicionarAviso(AuthResource.Aviso_ConfirmacaoConcluidaEmailNaoEnviado);
                 }
             }
 
-            return Resultado.Sucesso(AuthResource.Mensagem_EmailConfirmado);
-        }
-
-        private static string CorpoEmailConfirmacaoSucesso(string nomeUsuario)
-        {
-            return $@"
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset='utf-8'>
-                        <style>
-                            body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }}
-                            .container {{ max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-                            .header {{ text-align: center; padding-bottom: 20px; border-bottom: 2px solid #007bff; }}
-                            .header h1 {{ color: #007bff; margin: 0; }}
-                            .content {{ padding: 20px 0; }}
-                            .content p {{ color: #333; line-height: 1.6; }}
-                            .footer {{ text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; }}
-                        </style>
-                    </head>
-                    <body>
-                        <div class='container'>
-                            <div class='header'>
-                                <h1>✔️ E-mail confirmado</h1>
-                            </div>
-                            <div class='content'>
-                                <p>Olá, <strong>{nomeUsuario}</strong>!</p>
-                                <p>Seu e-mail foi confirmado com sucesso. Agora você pode acessar sua conta normalmente.</p>
-                                <p>Se você não realizou essa ação, entre em contato com o suporte imediatamente.</p>
-                            </div>
-                            <div class='footer'>
-                                <p>Este é um e-mail automático. Por favor, não responda.</p>
-                                <p>&copy; {DateTime.Now.Year} Sistema Atron. Todos os direitos reservados.</p>
-                            </div>
-                        </div>
-                    </body>
-                    </html>";
-        }
-
-        private static string CorpoDoEmailDeCadastro(Usuario usuario, string link, string identificador)
-        {
-            return $@"
-                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;'>
-                    <h1 style='color: #2c3e50;'>Bem-vindo(a) ao Atron!</h1>
-                    <p>Ola, <strong>{usuario.Nome}</strong>!</p>
-                    <p>Seu cadastro foi recebido. Para confirmar seu e-mail, use o codigo abaixo:</p>
-                    <p style='text-align:center; font-size: 28px; font-weight: 700; letter-spacing: 6px; color: #1f2937; margin: 24px 0;'>{identificador}</p>
-                    <div style='text-align: center; margin: 30px 0;'>
-                        <a href='{link}' style='background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Informar codigo</a>
-                    </div>
-                    <p style='font-size: 12px; color: #999; word-break: break-all;'>{link}</p>
-                    <p style='font-size: 12px; color: #aaa;'>Se voce nao criou esta conta, ignore este e-mail.</p>
-                </div>";
+            return resultado;
         }
     }
 }

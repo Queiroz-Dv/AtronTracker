@@ -19,16 +19,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="Application\Email\Templates\pt-BR\base.html">
+	    <LogicalName>Shared.Application.Email.Templates.pt-BR.base.html</LogicalName>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Application\Email\Templates\pt-BR\fundacao.html">
+	    <LogicalName>Shared.Application.Email.Templates.pt-BR.fundacao.html</LogicalName>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Application\Email\Templates\pt-BR\diagnostico.html">
+	    <LogicalName>Shared.Application.Email.Templates.pt-BR.diagnostico.html</LogicalName>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Compile Remove="Migrations\**\*.cs" />
 	  <Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>CategoriaResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\AtronStock\FornecedoResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>FornecedoResource.resx</DependentUpon>
 	  </Compile>
 	  <Compile Update="Application\Resources\AtronStock\ProdutoResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
@@ -60,6 +67,11 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>EmailResource.resx</DependentUpon>
 	  </Compile>
+	  <Compile Update="Application\Resources\EmailDiagnosticResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>EmailDiagnosticResource.resx</DependentUpon>
+	  </Compile>
 	  <Compile Update="Application\Resources\HistoricoResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -81,10 +93,6 @@
 	  <EmbeddedResource Update="Application\Resources\AtronStock\CategoriaResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>CategoriaResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\AtronStock\FornecedoResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>FornecedoResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\AtronStock\ProdutoResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
@@ -109,6 +117,10 @@
 	  <EmbeddedResource Update="Application\Resources\EmailResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>EmailResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\EmailDiagnosticResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>EmailDiagnosticResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\HistoricoResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>

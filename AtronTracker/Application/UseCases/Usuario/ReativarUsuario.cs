@@ -35,10 +35,10 @@ namespace Application.UseCases.Usuario
 
             var usuario = await _usuarioRepository.ObterInativoPorEmailAsync(email);
             if (usuario is null)
-                return Resultado.Falha("Usuário não encontrado.");
+                return Resultado.Falha(UsuarioResource.Erro_UsuarioNaoEncontrado);
 
             if (usuario.CodigoReativacao != codigoReativacao.ToUpper())
-                return Resultado.Falha("Código de reativação inválido.");
+                return Resultado.Falha(UsuarioResource.ErroCodigoReativacaoInvalido);
 
             usuario.Inativo = false;
             usuario.CodigoReativacao = null;
@@ -58,7 +58,7 @@ namespace Application.UseCases.Usuario
                 }
             });
 
-            return Resultado.Sucesso().AdicionarMensagem("Conta reativada com sucesso.");
+            return Resultado.Sucesso().AdicionarMensagem(UsuarioResource.MensagemContaReativada);
         }
     }
 }

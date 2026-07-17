@@ -1,5 +1,6 @@
 ﻿using Domain.ApiEntities;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 
@@ -11,13 +12,13 @@ namespace Application.Validations
         {
             if (entity.UserName.IsNullOrEmpty())
             {
-                AdicionarErro("E-mail vazio");
+                AdicionarErro(AuthResource.Erro_EmailVazio);
             }
 
 
             if (entity.Password.IsNullOrEmpty())
             {
-                AdicionarErro("Senha vazia.");
+                AdicionarErro(AuthResource.Erro_SenhaVazia);
             }
         }
     }

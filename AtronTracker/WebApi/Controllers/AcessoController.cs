@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
-using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
 using System.Threading.Tasks;
 
 namespace WebApi.Controllers

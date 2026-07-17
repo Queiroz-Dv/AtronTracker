@@ -188,7 +188,7 @@ namespace Application.Services.EntitiesServices
 
             var gestor = await _usuarioRepository.ObterUsuarioPorCodigoAsync(gestorCodigo.ToUpper());
             if (gestor is null)
-                return Resultado.Falha("Gestor do departamento nao encontrado.");
+                return Resultado.Falha(DepartamentoResource.ErroGestorNaoEncontrado);
 
             departamento.GestorDepartamentoId = gestor.Id;
             departamento.GestorDepartamentoCodigo = gestor.Codigo;

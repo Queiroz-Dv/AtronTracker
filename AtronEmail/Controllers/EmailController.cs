@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.DTOS.Responses;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 
 namespace AtronEmail.Controllers
 {
@@ -83,8 +84,8 @@ namespace AtronEmail.Controllers
 
             var request = new EmailRequest
             {
-                Assunto = "[AUTO-DIAGNÓSTICO] Validação de configuração de e-mail",
-                Mensagem = "Este e-mail foi enviado automaticamente para validar que as configurações estão funcionando corretamente.",
+                Assunto = EmailDiagnosticResource.Assunto_AutoDiagnostico,
+                Mensagem = EmailDiagnosticResource.Mensagem_AutoDiagnostico,
                 EmailsDestino = [configResult.EmailRemetente!]
             };
 

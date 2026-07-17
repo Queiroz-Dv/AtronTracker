@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Application.Resources;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using System.Linq;
@@ -12,32 +13,32 @@ namespace Application.Validations
             if (string.IsNullOrEmpty(entity.Descricao) ||
                  string.IsNullOrEmpty(entity.Codigo))
             {
-                AdicionarErro("O código ou a descrição não estão preenchidos.");
+                AdicionarErro(PerfilDeAcessoResource.Erro_DadosObrigatorios);
             }
 
             if (entity.Codigo.Length > 10)
             {
-                AdicionarErro("O código informado é muito longo.");
+                AdicionarErro(PerfilDeAcessoResource.Erro_CodigoLongo);
             }
 
             if (entity.Codigo.Length < 3)
             {
-                AdicionarErro("O código informado é muito pequeno.");
+                AdicionarErro(PerfilDeAcessoResource.Erro_CodigoPequeno);
             }
 
             if (entity.Descricao.Length < 3)
             {
-                AdicionarErro("A descricao é muito pequena.");
+                AdicionarErro(PerfilDeAcessoResource.Erro_DescricaoPequena);
             }
 
             if (entity.Descricao.Length > 50)
             {
-                AdicionarErro("A descricao é muito longa.");
+                AdicionarErro(PerfilDeAcessoResource.Erro_DescricaoLonga);
             }
 
             if (!entity.PerfilDeAcessoModulos.Any())
             {
-                AdicionarErro("Não contém nenhum módulo para relacionar ao perfil criado.");
+                AdicionarErro(PerfilDeAcessoResource.Erro_SemModulos);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Application.Resources;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 
@@ -10,32 +11,32 @@ namespace Application.Validations
         {
             if (entity.UsuarioId <= 0)
             {
-                AdicionarErro("Identificador de usuário é inválido.");
+                AdicionarErro(TarefaResource.Erro_IdentificadorUsuarioInvalido);
             }
 
             if (entity.UsuarioCodigo.Length < 3)
             {
-                AdicionarErro("O código de usuário informado é inválido. Quantidade de caracteres menor que 3 digítos, tente novamente.");
+                AdicionarErro(string.Format(TarefaResource.Erro_CodigoTamanhoMinimo, TarefaResource.Campo_Usuario));
             }
 
             if (entity.UsuarioCodigo.Length > 10)
             {
-                AdicionarErro("O código de usuário informado é inválido. Quantidade de caracteres maior que 10 digítos, tente novamente.");
+                AdicionarErro(string.Format(TarefaResource.Erro_CodigoTamanhoMaximo, TarefaResource.Campo_Usuario));
             }
 
             if (entity.Titulo.Length > 50)
             {
-                AdicionarErro("O título da tarefa informada é inválido. Quantidade de caracteres maior que 50 digítos, tente novamente.");
+                AdicionarErro(TarefaResource.Erro_TituloTamanhoMaximo);
             }
 
             if (entity.Conteudo.Length > 2500)
             {
-                AdicionarErro("O título da tarefa informada é inválido. Quantidade de caracteres maior que 50 digítos, tente novamente.");
+                AdicionarErro(TarefaResource.Erro_ConteudoTamanhoMaximo);
             }
 
             if (entity.DataInicial > entity.DataFinal)
             {
-                AdicionarErro("Data inicial da tarefa é maior que a data final. Tente novamente.");
+                AdicionarErro(TarefaResource.Erro_PeriodoInvalido);
             }
         }
     }

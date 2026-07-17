@@ -1,4 +1,5 @@
 using Application.DTO;
+using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
@@ -33,12 +34,12 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 .ToList();
 
             if (!cargosDepartamento.Any())
-                return Resultado.Falha("O departamento não possui cargos. Use planejamento apenas por departamento.");
+                return Resultado.Falha(PlanejamentoCustoResource.Erro_DepartamentoSemCargos);
 
             var detalhesRecebidos = dto.DetalhesCargo ?? [];
 
             if (detalhesRecebidos.Any(detalhe => detalhe.CargoCodigo.IsNullOrEmpty()))
-                return Resultado.Falha("Todos os detalhes de cargo devem informar o código do cargo.");
+                return Resultado.Falha(PlanejamentoCustoResource.Erro_CodigoCargoObrigatorio);
 
             var cargosDuplicados = detalhesRecebidos
                 .GroupBy(detalhe => detalhe.CargoCodigo)
@@ -47,7 +48,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 .ToList();
 
             if (cargosDuplicados.Any())
-                return Resultado.Falha($"Existem cargos duplicados no planejamento: {string.Join(", ", cargosDuplicados)}.");
+                return Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_CargosDuplicados, string.Join(", ", cargosDuplicados)));
 
             var codigosRecebidos = detalhesRecebidos
                 .Select(d => d.CargoCodigo)
@@ -62,7 +63,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 .ToList();
 
             if (cargosPendentes.Any())
-                return Resultado.Falha($"Existem cargos pendentes de decisão no planejamento: {string.Join(", ", cargosPendentes)}.");
+                return Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_CargosPendentes, string.Join(", ", cargosPendentes)));
 
             var cargosInvalidos = detalhesRecebidos
                 .Where(detalhe => !detalhe.CargoCodigo.IsNullOrEmpty() && !cargosPorCodigo.ContainsKey(detalhe.CargoCodigo))
@@ -71,10 +72,10 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 .ToList();
 
             if (cargosInvalidos.Any())
-                return Resultado.Falha($"Existem cargos que não pertencem ao departamento do planejamento: {string.Join(", ", cargosInvalidos)}.");
+                return Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_CargosDeOutroDepartamento, string.Join(", ", cargosInvalidos)));
 
             if (!detalhesRecebidos.Any(detalhe => detalhe.Detalhado))
-                return Resultado.Falha("Todos os cargos foram marcados como não detalhados. Use planejamento apenas por departamento.");
+                return Resultado.Falha(PlanejamentoCustoResource.Erro_TodosCargosNaoDetalhados);
 
             decimal somaMinimos = 0;
             decimal somaTetos = 0;
@@ -87,16 +88,16 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 if (detalhe.Detalhado)
                 {
                     if (!detalhe.ValorMinimo.HasValue || !detalhe.ValorTeto.HasValue)
-                        return Resultado.Falha($"Informe valor mínimo e teto para o cargo {cargo.Codigo}.");
+                        return Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_ValoresCargoObrigatorios, cargo.Codigo));
 
                     if (detalhe.ValorMinimo.Value < 0)
-                        return Resultado.Falha($"O valor mínimo do cargo {cargo.Codigo} não pode ser negativo.");
+                        return Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_ValorMinimoCargoNegativo, cargo.Codigo));
 
                     if (detalhe.ValorTeto.Value <= 0)
-                        return Resultado.Falha($"O valor teto do cargo {cargo.Codigo} deve ser maior que zero.");
+                        return Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_ValorTetoCargoInvalido, cargo.Codigo));
 
                     if (detalhe.ValorMinimo.Value >= detalhe.ValorTeto.Value)
-                        return Resultado.Falha($"O valor mínimo do cargo {cargo.Codigo} deve ser menor que o teto.");
+                        return Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_ValorMinimoCargoMaiorTeto, cargo.Codigo));
 
                     somaMinimos += detalhe.ValorMinimo.Value;
                     somaTetos += detalhe.ValorTeto.Value;
@@ -113,7 +114,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
             }
 
             if (somaTetos > planejamento.ValorTeto)
-                return Resultado.Falha("A soma dos tetos dos cargos não pode ultrapassar o teto do departamento.");
+                return Resultado.Falha(PlanejamentoCustoResource.Erro_SomaTetosUltrapassaDepartamento);
 
             planejamento.DetalhesCargo.Clear();
             foreach (var detalhe in detalhesPreparados)
@@ -121,7 +122,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
 
             var resultado = Resultado.Sucesso();
             if (somaMinimos != planejamento.ValorMinimo)
-                resultado.AdicionarAviso("A soma dos mínimos dos cargos detalhados diverge do mínimo do departamento.");
+                resultado.AdicionarAviso(PlanejamentoCustoResource.Aviso_SomaMinimosDivergente);
 
             return resultado;
         }

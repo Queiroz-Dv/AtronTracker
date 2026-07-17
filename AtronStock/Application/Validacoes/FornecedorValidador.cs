@@ -1,6 +1,6 @@
 ﻿using AtronStock.Application.DTO.Request;
+using AtronStock.Application.Resources;
 using Shared.Application.Interfaces.Service;
-using Shared.Application.Resources.AtronStock;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Net.Mail;
@@ -33,13 +33,13 @@ namespace AtronStock.Application.Validacoes
                 {
                     if (!DocumentoValidator.IsValidCnpj(entity.CNPJ))
                     {
-                        context.AdicionarErro("O formato do CNPJ é inválido.");
+                        context.AdicionarErro(FornecedorResource.ErroCnpjInvalido);
                     }
                 }
             }
             else
             {
-                context.AdicionarErro("O formato do CNPJ é inválido.");
+                context.AdicionarErro(FornecedorResource.ErroCnpjInvalido);
             }
         }
 
@@ -49,27 +49,27 @@ namespace AtronStock.Application.Validacoes
             {
                 if (!entity.EnderecoVO.Logradouro.IsNullOrEmpty() && entity.EnderecoVO.Logradouro.Length > 100)
                 {
-                    context.AdicionarErro("O Logradouro excede o limite de 100 caracteres.");
+                    context.AdicionarErro(FornecedorResource.ErroLogradouroTamanho);
                 }
 
                 if (!entity.EnderecoVO.Numero.IsNullOrEmpty() && entity.EnderecoVO.Numero.Length > 10)
                 {
-                    context.AdicionarErro("O Número do endereço excede o limite de 10 caracteres.");
+                    context.AdicionarErro(FornecedorResource.ErroNumeroEnderecoTamanho);
                 }
 
                 if (!entity.EnderecoVO.Cidade.IsNullOrEmpty() && entity.EnderecoVO.Cidade.Length > 50)
                 {
-                    context.AdicionarErro("A Cidade excede o limite de 50 caracteres.");
+                    context.AdicionarErro(FornecedorResource.ErroCidadeTamanho);
                 }
 
                 if (!entity.EnderecoVO.UF.IsNullOrEmpty() && entity.EnderecoVO.UF.Length != 2)
                 {
-                    context.AdicionarErro("A UF deve conter exatamente 2 caracteres.");
+                    context.AdicionarErro(FornecedorResource.ErroUfTamanho);
                 }
 
                 if (!entity.EnderecoVO.CEP.IsNullOrEmpty() && entity.EnderecoVO.CEP.Length != 9)
                 {
-                    context.AdicionarErro("O CEP deve conter exatamente 9 caracteres (ex: 12345-678).");
+                    context.AdicionarErro(FornecedorResource.ErroCepTamanho);
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace AtronStock.Application.Validacoes
             {
                 if (entity.Telefone.Length > 15 || entity.Telefone.Length < 8)
                 {
-                    context.AdicionarErro("O tamanho do Telefone está inválido (min 8, max 15).");
+                    context.AdicionarErro(FornecedorResource.ErroTelefoneTamanho);
                 }
             }
         }
@@ -89,11 +89,11 @@ namespace AtronStock.Application.Validacoes
         {
             if (entity.Email.IsNullOrEmpty())
             {
-                context.AdicionarErro("O Email é obrigatório.");
+                context.AdicionarErro(FornecedorResource.ErroEmailObrigatorio);
             }
             else if (entity.Email.Length > 50)
             {
-                context.AdicionarErro("O Email excede o limite de 50 caracteres.");
+                context.AdicionarErro(FornecedorResource.ErroEmailTamanho);
             }
             else
             {
@@ -103,7 +103,7 @@ namespace AtronStock.Application.Validacoes
                 }
                 catch (FormatException)
                 {
-                    context.AdicionarErro("O formato do Email é inválido.");
+                    context.AdicionarErro(FornecedorResource.ErroEmailInvalido);
                 }
             }
         }
@@ -112,30 +112,30 @@ namespace AtronStock.Application.Validacoes
         {
             if (entity.Codigo.IsNullOrEmpty())
             {
-                context.AdicionarErro(FornecedoResource.ErroCodigoObrigatorio);
+                context.AdicionarErro(FornecedorResource.ErroCodigoObrigatorio);
             }
             else if (entity.Codigo.Length > 20)
             {
-                context.AdicionarErro(FornecedoResource.ErroCodigoLimiteMaximoDeCaractere);
+                context.AdicionarErro(FornecedorResource.ErroCodigoLimiteMaximoDeCaractere);
             }
             else if (entity.Codigo.Length < 3)
             {
-                context.AdicionarErro(FornecedoResource.ErroCodigoLimiteMinimoDeCaractere);
+                context.AdicionarErro(FornecedorResource.ErroCodigoLimiteMinimoDeCaractere);
             }
         }
         private static void ValidaNome(FornecedorRequest entity, NotificationBag context)
         {
             if (entity.Nome.IsNullOrEmpty())
             {
-                context.AdicionarErro(FornecedoResource.ErroNomeObrigatorio);
+                context.AdicionarErro(FornecedorResource.ErroNomeObrigatorio);
             }
             else if (entity.Nome.Length > 100)
             {
-                context.AdicionarErro(FornecedoResource.ErroNomeLimiteMaximoDeCaractere);
+                context.AdicionarErro(FornecedorResource.ErroNomeLimiteMaximoDeCaractere);
             }
             else if (entity.Nome.Length < 5)
             {
-                context.AdicionarErro(FornecedoResource.ErroNomeLimiteMinimoDeCaractere);
+                context.AdicionarErro(FornecedorResource.ErroNomeLimiteMinimoDeCaractere);
             }
         }
     }

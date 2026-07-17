@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Erro_CategoriaNaoEncontrada" xml:space="preserve"><value>Categoria não encontrada.</value></data>
+  <data name="Mensagem_CategoriaCriada" xml:space="preserve"><value>Categoria {0} criada com sucesso.</value></data>
+  <data name="ErroCodigoObrigatorio" xml:space="preserve"><value>O Código é obrigatório.</value></data>
+  <data name="ErroCodigoTamanho" xml:space="preserve"><value>O tamanho do código excede o limite de 25 caracteres.</value></data>
+  <data name="ErroDescricaoObrigatoria" xml:space="preserve"><value>A Descrição é obrigatória.</value></data>
+  <data name="ErroDescricaoTamanho" xml:space="preserve"><value>A Descrição excede o limite de 50 caracteres.</value></data>
+  <data name="ErroStatusObrigatorio" xml:space="preserve"><value>O status da categoria deve ser informado.</value></data>
+  <data name="ErroCategoriaJaExiste" xml:space="preserve"><value>Já existe uma categoria cadastrada com o código {0}.</value></data>
+  <data name="ErroCategoriaNaoEncontrada" xml:space="preserve"><value>Categoria não encontrada para o código {0}.</value></data>
+  <data name="ErroInesperadoAtualizar" xml:space="preserve"><value>Ocorreu um erro inesperado ao atualizar a categoria.</value></data>
+  <data name="SucessoCadastro" xml:space="preserve"><value>Categoria</value></data>
+  <data name="HistoricoCriacao" xml:space="preserve"><value>Categoria {0} criada em {1}.</value></data>
+  <data name="HistoricoAtualizacao" xml:space="preserve"><value>Categoria {0} atualizada em {1}. Descrição: {2}, Status: {3}.</value></data>
+  <data name="HistoricoStatusAlterado" xml:space="preserve"><value>Status da categoria {0} alterado para {1} em {2}.</value></data>
+</root>

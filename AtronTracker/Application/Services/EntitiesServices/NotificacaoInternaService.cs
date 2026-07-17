@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Interfaces.Services;
+using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -64,7 +65,7 @@ namespace Application.Services.EntitiesServices
 
             return Resultado<NotificacaoInternaDTO>
                 .Sucesso(Mapear(notificacao))
-                .AdicionarMensagem("Notificação marcada como lida.");
+                .AdicionarMensagem(NotificacaoInternaResource.Mensagem_NotificacaoMarcadaComoLida);
         }
 
         public async Task<Resultado<List<NotificacaoInternaDTO>>> MarcarTodasComoLidasAsync()
@@ -78,7 +79,7 @@ namespace Application.Services.EntitiesServices
                 usuario.Dados.Codigo);
 
             if (!atualizadas)
-                return Resultado<List<NotificacaoInternaDTO>>.Falha("Não foi possível marcar as notificações como lidas.");
+                return Resultado<List<NotificacaoInternaDTO>>.Falha(NotificacaoInternaResource.Erro_MarcarNotificacoesComoLidas);
 
             var notificacoes = await _notificacaoInternaRepository.ObterPorUsuarioAsync(
                 usuario.Dados.Id,
@@ -86,7 +87,7 @@ namespace Application.Services.EntitiesServices
 
             return Resultado<List<NotificacaoInternaDTO>>
                 .Sucesso(notificacoes.Select(Mapear).ToList())
-                .AdicionarMensagem("Notificações marcadas como lidas.");
+                .AdicionarMensagem(NotificacaoInternaResource.Mensagem_NotificacoesMarcadasComoLidas);
         }
 
         public async Task<Resultado<NotificacaoInternaDTO>> CriarAsync(NotificacaoInterna notificacao)
@@ -97,7 +98,7 @@ namespace Application.Services.EntitiesServices
 
             var gravada = await _notificacaoInternaRepository.CriarAsync(notificacao);
             if (!gravada)
-                return Resultado<NotificacaoInternaDTO>.Falha("Não foi possível criar a notificação interna.");
+                return Resultado<NotificacaoInternaDTO>.Falha(NotificacaoInternaResource.Erro_CriarNotificacaoInterna);
 
             return Resultado<NotificacaoInternaDTO>.Sucesso(Mapear(notificacao));
         }

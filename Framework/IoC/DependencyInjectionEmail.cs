@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Application.DTOS.Email;
 using Shared.Application.DTOS.Requests;
+using Shared.Application.Email.Rendering;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services.Email;
 using Shared.Application.Validacoes;
@@ -16,7 +17,7 @@ namespace IoC
             services.AddScoped<IEmailService, SharedEmailService>();
             services.AddScoped<IValidador<EmailRequest>, EmailValidador>();
             services.AddScoped<IEmailDiagnosticService, EmailDiagnosticService>();
-            services.AddScoped<IEmailNotificationService, EmailNotificationService>();
+            services.AddSingleton<IEmailTemplateRenderer, EmailTemplateRenderer>();
             return services;
         }
     }

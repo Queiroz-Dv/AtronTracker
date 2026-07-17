@@ -32,9 +32,6 @@ Camada responsável pelos casos de uso relacionados a e-mail.
 - **SharedEmailService**  
   Serviço principal de envio de e-mails. Implementa `IEmailService`. Suporta envio via SMTP e é responsável por autenticação, montagem e envio da mensagem.
 
-- **EmailNotificationService**  
-  Serviço de alto nível para envio de notificações. Encapsula a criação de e-mails padronizados e é utilizado por outros módulos da aplicação.
-
 - **EmailDiagnosticService**  
   Serviço voltado para diagnóstico e verificação de configuração. Permite validar credenciais, servidor SMTP e status do serviço.
 
@@ -46,9 +43,6 @@ Define os contratos que isolam a aplicação da implementação técnica:
 
 - **IEmailService**  
   Interface base para envio de e-mails. Permite múltiplas implementações (SMTP, API, mock, etc.).
-
-- **IEmailNotificationService**  
-  Contrato para envio de notificações de sistema.
 
 - **IEmailDiagnosticService**  
   Contrato para validações e diagnósticos do serviço de e-mail.
@@ -114,10 +108,14 @@ Exemplo de configuração via `appsettings.json`:
 ## 🔄 Fluxo de Envio de E-mail
 
 1. Um evento da aplicação dispara o envio  
-2. O serviço de notificação constrói o e-mail  
+2. O compositor do contexto constrói o e-mail a partir de template incorporado
 3. O `IEmailService` é acionado  
 4. O serviço concreto (SMTP ou API) envia a mensagem  
 5. O resultado é retornado com sucesso ou falha
+
+### Proteção arquitetural
+
+Os compositores usam templates HTML incorporados e entregam um `EmailRequest` pronto ao `IEmailService`. O teste arquitetural em `AtronTracker/Application.Resources.Tests` impede novos literais em `Resultado.Falha`, `AdicionarErro`, `AdicionarAviso`, assuntos de `EmailRequest` e HTML dentro de serviços ou casos de uso. As exceções permitidas estão registradas no ADR 0003.
 
 ---
 
@@ -154,5 +152,3 @@ Exemplo de configuração via `appsettings.json`:
 ## 🧠 Observação Final
 
 O **Atron.Email** foi pensado para refletir como sistemas profissionais tratam comunicação por e-mail, respeitando segurança, reputação e arquitetura limpa.
-
-> *E-mail não é apenas envio de mensagem — é infraestrutura, confiança e responsabilidade.*

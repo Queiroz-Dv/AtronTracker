@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Erro_PerfilNaoEncontrado" xml:space="preserve"><value>Perfil de acesso não encontrado.</value></data>
+  <data name="Mensagem_PerfilCriado" xml:space="preserve"><value>Perfil de acesso {0} criado com sucesso.</value></data>
+  <data name="Mensagem_PerfilAtualizado" xml:space="preserve"><value>Perfil de acesso {0} atualizado com sucesso.</value></data>
+  <data name="Erro_CriarPerfil" xml:space="preserve"><value>Não foi possível criar o perfil de acesso.</value></data>
+  <data name="Erro_AtualizarPerfil" xml:space="preserve"><value>Não foi possível atualizar o perfil de acesso.</value></data>
+  <data name="Erro_RemoverPerfil" xml:space="preserve"><value>Não foi possível remover o perfil de acesso.</value></data>
+  <data name="Erro_RelacionarUsuarios" xml:space="preserve"><value>Não foi possível relacionar o perfil de acesso aos usuários.</value></data>
+  <data name="Erro_RegistroNaoEncontrado" xml:space="preserve"><value>Registro Perfil de acesso não encontrado.</value></data>
+  <data name="Erro_PerfilInvalido" xml:space="preserve"><value>O perfil de acesso está inválido para gravação.</value></data>
+  <data name="Erro_SemModulos" xml:space="preserve"><value>Não contém nenhum módulo para relacionar ao perfil criado.</value></data>
+  <data name="Erro_SemUsuarios" xml:space="preserve"><value>Não contém nenhum usuário para relacionar ao perfil criado.</value></data>
+  <data name="Erro_RelacionamentoInvalido" xml:space="preserve"><value>O relacionamento de perfil de acesso está inválido para gravação.</value></data>
+  <data name="Mensagem_PerfilRemovido" xml:space="preserve"><value>Perfil removido com sucesso</value></data>
+  <data name="Descricao_PerfilDeAcesso" xml:space="preserve"><value>Perfil de acesso</value></data>
+  <data name="Descricao_Usuario" xml:space="preserve"><value>Usuário</value></data>
+  <data name="Erro_DadosObrigatorios" xml:space="preserve"><value>O código ou a descrição não estão preenchidos.</value></data>
+  <data name="Erro_CodigoLongo" xml:space="preserve"><value>O código informado é muito longo.</value></data>
+  <data name="Erro_CodigoPequeno" xml:space="preserve"><value>O código informado é muito pequeno.</value></data>
+  <data name="Erro_DescricaoPequena" xml:space="preserve"><value>A descricao é muito pequena.</value></data>
+  <data name="Erro_DescricaoLonga" xml:space="preserve"><value>A descricao é muito longa.</value></data>
+</root>

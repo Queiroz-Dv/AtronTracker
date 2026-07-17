@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Application.Interfaces.Services;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
@@ -25,25 +26,25 @@ namespace Application.UseCases.Usuario
         public async Task<Resultado> ExecutarAsync(string codigoUsuario, string emailNovo, string token)
         {
             if (string.IsNullOrWhiteSpace(emailNovo) || string.IsNullOrWhiteSpace(token))
-                return Resultado.Falha("Dados inválidos para confirmação.");
+                return Resultado.Falha(UsuarioResource.ErroDadosConfirmacaoAlteracaoEmail);
 
             var emailJaExiste = await _usuarioRepository.VerificarEmailExistenteAsync(emailNovo);
             if (emailJaExiste)
-                return Resultado.Falha("Este e-mail já está em uso por outro usuário.");
+                return Resultado.Falha(UsuarioResource.ErroEmailEmUso);
 
             var confirmado = await _usuarioIdentityRepository.ConfirmarAlteracaoEmailAsync(codigoUsuario, emailNovo, token);
             if (!confirmado)
-                return Resultado.Falha("Falha ao confirmar alteração. Token inválido ou expirado.");
+                return Resultado.Falha(UsuarioResource.ErroConfirmacaoAlteracaoEmail);
 
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
             if (usuario == null)
-                return Resultado.Falha("Usuário não encontrado.");
+                return Resultado.Falha(UsuarioResource.Erro_UsuarioNaoEncontrado);
 
             usuario.Email = emailNovo;
             await _usuarioRepository.AtualizarUsuarioAsync(usuario);
             _cacheUsuarioService.RemoverCacheDeAcessoTokenInfo(usuario.Codigo);
 
-            return Resultado.Sucesso("E-mail alterado com sucesso.");
+            return Resultado.Sucesso(UsuarioResource.MensagemEmailAlterado);
         }
     }
 }

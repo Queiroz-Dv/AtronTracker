@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.Entities;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -23,7 +24,7 @@ namespace AtronAuditoria.Controllers
         {
             if (codigoRegistro.IsNullOrEmpty() || contexto.IsNullOrEmpty())
             {
-                return BadRequest("Código ou contexto estão vazios ou nulos");
+                return BadRequest(AuditoriaResource.ErroCodigoOuContextoObrigatorio);
             }
 
             IAuditoriaDTO auditoria = new AuditoriaDTO() { CodigoRegistro = codigoRegistro, Contexto = contexto };

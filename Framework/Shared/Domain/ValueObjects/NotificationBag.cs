@@ -50,40 +50,43 @@ namespace Shared.Domain.ValueObjects
 
         public void MensagemRegistroSalvo(string registro)
         {
-            AddNotification($"{registro} salvo com sucesso.", ENotificationType.Sucesso);
+            AddNotification(string.Format(ObterResource("Mensagem_EntidadeSalva"), registro), ENotificationType.Sucesso);
         }
 
         public void MensagemRegistroAtualizado(string registro)
         {
-            AddNotification($"{registro} atualizado com sucesso.", ENotificationType.Sucesso);
+            AddNotification(string.Format(ObterResource("Mensagem_RegistroAtualizado"), registro), ENotificationType.Sucesso);
         }
 
         public void MensagemRegistroNaoEncontrado(string key = "")
         {
-            AdicionarErro($"Registro {key} não encontrado.");
+            AdicionarErro(string.Format(ObterResource("Erro_RegistroComDescricaoNaoEncontrado"), key));
         }
 
         public void MensagemRegistroRemovido(string registro = "")
         {
             if (registro.IsNullOrEmpty())
             {
-                AdicionarMensagem($"Removido com sucesso");
+                AdicionarMensagem(ObterResource("Mensagem_RemocaoSucessoSemRegistro"));
             }
             else
             {
-                AdicionarMensagem($"{registro} removido com sucesso");
+                AdicionarMensagem(string.Format(ObterResource("Mensagem_RegistroRemovido"), registro));
             }
 
         }
 
         public void MensagemRegistroInvalido(string key = "")
         {
-            AdicionarErro($"Registro {key} inválido");
+            AdicionarErro(string.Format(ObterResource("Erro_RegistroComDescricaoInvalido"), key));
         }
 
         public void MensagemRegistroNaoExiste(string key)
         {
-            AdicionarErro($"Registro {key} já existe.");
+            AdicionarErro(string.Format(ObterResource("Erro_RegistroComDescricaoExistente"), key));
         }
+
+        private static string ObterResource(string chave)
+            => NotificacoesPadronizadas.ResourceManager.GetString(chave) ?? throw new System.Resources.MissingManifestResourceException($"Resource não encontrado: {chave}");
     }
 }

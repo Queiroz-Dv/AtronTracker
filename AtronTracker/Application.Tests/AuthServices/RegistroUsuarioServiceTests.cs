@@ -1,4 +1,5 @@
 using Application.DTO.Request;
+using Application.Email.Compositores;
 using Application.Extensions;
 using Application.Interfaces.Services;
 using Application.Services.AuthServices;
@@ -10,7 +11,9 @@ using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.AspNetCore.Http;
 using Shared.Application.DTOS.Requests;
+using Shared.Application.Email.Rendering;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 using Xunit;
@@ -89,7 +92,31 @@ public class RegistroUsuarioServiceTests
         Assert.Equal("USR001", confirmacaoRepository.UltimaConfirmacaoGravada.UsuarioCodigo);
     }
 
-    private static RegistroUsuarioService CriarService(UsuarioRepositoryFake usuarioRepository)
+    [Fact]
+    public async Task RegistrarUsuario_DeveManterCadastroEAdicionarAvisoQuandoEmailFalha()
+    {
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var service = CriarService(usuarioRepository, Resultado.Falha("falha de transporte"));
+
+        var resultado = await service.RegistrarUsuario(new UsuarioRegistroRequest
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com",
+            Senha = "Senha@123",
+            ConfirmaSenha = "Senha@123",
+            ClientUri = "http://localhost:4200"
+        });
+
+        Assert.True(resultado.TeveSucesso);
+        Assert.Contains(resultado.Messages, mensagem =>
+            mensagem.Descricao == AuthResource.Aviso_CadastroCriadoEmailNaoEnviado);
+    }
+
+    private static RegistroUsuarioService CriarService(
+        UsuarioRepositoryFake usuarioRepository,
+        Resultado? resultadoEmail = null)
     {
         var httpContextAccessor = new HttpContextAccessor
         {
@@ -99,12 +126,12 @@ public class RegistroUsuarioServiceTests
         httpContextAccessor.HttpContext.Request.Host = new HostString("localhost:5000");
 
         return new RegistroUsuarioService(
-            new AccessorServiceFake(),
             usuarioRepository,
             new PerfilDeAcessoUsuarioRepositoryFake(),
             new PerfilDeAcessoRepositoryFake(),
             new UsuarioIdentityRepositoryFake(),
-            new EmailServiceFake(),
+            new EmailServiceFake(resultadoEmail),
+            new AcessoEmailCompositor(new EmailTemplateRenderer()),
             new ValidadorFake(),
             httpContextAccessor,
             new LoginRepositoryFake(),
@@ -129,6 +156,7 @@ public class RegistroUsuarioServiceTests
             confirmacaoRepository,
             new ConfirmacaoEmailCodigoService(),
             new EmailServiceFake(),
+            new AcessoEmailCompositor(new EmailTemplateRenderer()),
             httpContextAccessor);
     }
 
@@ -167,9 +195,9 @@ public class RegistroUsuarioServiceTests
         public Task<bool> RemoverRepositoryAsync(Usuario entity) => Task.FromResult(false);
         public Task<IEnumerable<Usuario>> ObterUsuariosAsync() => Task.FromResult(Enumerable.Empty<Usuario>());
         public Task<Usuario> ObterUsuarioPorIdAsync(int? id) => Task.FromResult<Usuario>(null);
-        public Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo) => Task.FromResult<Usuario>(null);
+        public Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo) => Task.FromResult(codigo == _usuario.Codigo ? _usuario : null);
         public Task<Usuario> ObterInativoPorEmailAsync(string email) => Task.FromResult<Usuario>(null);
-        public Task<bool> CriarUsuarioAsync(Usuario usuario) => Task.FromResult(false);
+        public Task<bool> CriarUsuarioAsync(Usuario usuario) => Task.FromResult(true);
         public Task<bool> AtualizarUsuarioAsync(Usuario usuario) => Task.FromResult(false);
         public Task<bool> AtualizarPreferenciaNotificacaoTarefaPorEmailAsync(string codigo, bool receberNotificacao) => Task.FromResult(false);
         public Task<bool> AtualizarPreferenciasNotificacaoTarefaAsync(string codigo, bool receberNotificacaoInterna, bool receberNotificacaoPorEmail) => Task.FromResult(false);
@@ -202,9 +230,9 @@ public class RegistroUsuarioServiceTests
         public Task<bool> EmailConfirmadoAsync(string codigoUsuario) => Task.FromResult(false);
     }
 
-    private sealed class EmailServiceFake : IEmailService
+    private sealed class EmailServiceFake(Resultado? resultado = null) : IEmailService
     {
-        public Task<Resultado> EnviarAsync(EmailRequest message) => Task.FromResult(Resultado.Sucesso());
+        public Task<Resultado> EnviarAsync(EmailRequest message) => Task.FromResult(resultado ?? Resultado.Sucesso());
     }
 
     private sealed class CacheServiceFake : ICacheService

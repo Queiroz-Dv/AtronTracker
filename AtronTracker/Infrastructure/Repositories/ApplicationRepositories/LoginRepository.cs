@@ -29,44 +29,19 @@ namespace Infrastructure.Repositories.ApplicationRepositories
             var usuario = await _authManager.UserManager.FindByNameAsync(usuarioIdentity.Codigo);
             if (usuario != null)
             {
-                _logger.LogInformation(
-                    "[DEBUG-AUTH-LOGIN] Usuario Identity encontrado. Codigo={Codigo}, EmailConfirmado={EmailConfirmado}, LockoutEnabled={LockoutEnabled}, LockoutEnd={LockoutEnd}.",
-                    usuarioIdentity.Codigo,
-                    usuario.EmailConfirmed,
-                    usuario.LockoutEnabled,
-                    usuario.LockoutEnd);
-
                 var refreshTokenAtualizado = await _userIdentityRepo.AtualizarRefreshTokenUsuarioRepositoryAsync(
                     usuario.UserName,
                     usuarioIdentity.RefreshToken,
                     usuarioIdentity.RefreshTokenExpireTime);
 
-                _logger.LogInformation(
-                    "[DEBUG-AUTH-LOGIN] Resultado da atualizacao do refresh token. Codigo={Codigo}, Atualizado={Atualizado}.",
-                    usuarioIdentity.Codigo,
-                    refreshTokenAtualizado);
-
                 if (refreshTokenAtualizado && !usuarioIdentity.Senha.IsNullOrEmpty())
                 {
                     var signInResult = await _authManager.SignInManager.PasswordSignInAsync(usuarioIdentity.Codigo, usuarioIdentity.Senha, true, false);
-
-                    _logger.LogInformation(
-                        "[DEBUG-AUTH-LOGIN] Resultado do PasswordSignInAsync. Codigo={Codigo}, Succeeded={Succeeded}, IsLockedOut={IsLockedOut}, IsNotAllowed={IsNotAllowed}, RequiresTwoFactor={RequiresTwoFactor}.",
-                        usuarioIdentity.Codigo,
-                        signInResult.Succeeded,
-                        signInResult.IsLockedOut,
-                        signInResult.IsNotAllowed,
-                        signInResult.RequiresTwoFactor);
-
                     return signInResult.Succeeded;
                 }
 
                 return refreshTokenAtualizado;
             }
-
-            _logger.LogWarning(
-                "[DEBUG-AUTH-LOGIN] Usuario Identity nao encontrado. Codigo={Codigo}.",
-                usuarioIdentity.Codigo);
 
             return false;
         }

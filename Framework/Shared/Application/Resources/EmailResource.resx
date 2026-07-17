@@ -150,49 +150,16 @@
   <data name="Erro_InformeEmailCodigo" xml:space="preserve">
     <value>Informe o código ou e-mail do usuário.</value>
   </data>
-  <data name="GmailProvider" xml:space="preserve">
-    <value>gmail.com</value>
-  </data>
-  <data name="GoogleMailProvider" xml:space="preserve">
-    <value>googlemail.com</value>
-  </data>
-  <data name="GoogleSmtp" xml:space="preserve">
-    <value>smtp.gmail.com</value>
-  </data>
-  <data name="HotmailBrProvider" xml:space="preserve">
-    <value>hotmail.com.br</value>
-  </data>
-  <data name="HotmailProvider" xml:space="preserve">
-    <value>hotmail.com</value>
-  </data>
-  <data name="LiveProvider" xml:space="preserve">
-    <value>live.com</value>
-  </data>
   <data name="Mensagem_EnvioConfirmacaoEmail" xml:space="preserve">
     <value>Enviamos um novo codigo de confirmacao para seu e-mail.</value>
   </data>
-  <data name="MsnProvider" xml:space="preserve">
-    <value>msn.com</value>
-  </data>
-  <data name="OutlookBrProvider" xml:space="preserve">
-    <value>outlook.com.br</value>
-  </data>
-  <data name="OutlookProvider" xml:space="preserve">
-    <value>outlook.com</value>
-  </data>
-  <data name="OutlookSmtp" xml:space="preserve">
-    <value>smtp-mail.outlook.com</value>
-  </data>
-  <data name="YahooBrProvider" xml:space="preserve">
-    <value>yahoo.com.br</value>
-  </data>
-  <data name="YahooMailProvider" xml:space="preserve">
-    <value>ymail.com</value>
-  </data>
-  <data name="YahooProvider" xml:space="preserve">
-    <value>yahoo.com</value>
-  </data>
-  <data name="YahooSmtp" xml:space="preserve">
-    <value>smtp.mail.yahoo.com</value>
-  </data>
+  <data name="Assunto_PrimeiroAcesso" xml:space="preserve"><value>Defina sua senha de acesso - Sistema Atron</value></data>
+  <data name="Assunto_AlteracaoEmail" xml:space="preserve"><value>Confirme a alteração do seu e-mail - AtronTracker</value></data>
+  <data name="Assunto_ReativacaoConta" xml:space="preserve"><value>Código de reativação — Atron</value></data>
+  <data name="Titulo_ConfirmacaoCadastro" xml:space="preserve"><value>Confirme seu e-mail</value></data>
+  <data name="Titulo_RecuperacaoSenha" xml:space="preserve"><value>Recuperação de Senha</value></data>
+  <data name="Titulo_EmailConfirmado" xml:space="preserve"><value>E-mail confirmado</value></data>
+  <data name="Titulo_PrimeiroAcesso" xml:space="preserve"><value>Bem-vindo ao Sistema Atron</value></data>
+  <data name="Titulo_AlteracaoEmail" xml:space="preserve"><value>Alteração de E-mail</value></data>
+  <data name="Titulo_ReativacaoConta" xml:space="preserve"><value>Reativação de Conta — Sistema Atron</value></data>
 </root>

@@ -1,5 +1,6 @@
 ﻿using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System;
@@ -14,7 +15,7 @@ namespace Application.Validations
             {
                 if (entity.Token.IsNullOrEmpty())
                 {
-                    AdicionarErro($"Token não preenchido para processamento");
+                    AdicionarErro(AuthResource.Erro_TokenNaoPreenchido);
                 }
 
                 //if (entity.InfoRefreshToken.IsNullOrEmpty())
@@ -24,12 +25,12 @@ namespace Application.Validations
 
                 if (entity.Expires <= DateTime.Now)
                 {
-                    AdicionarErro("Refresh token inválido ou expirado.");
+                    AdicionarErro(AuthResource.Erro_RefreshTokenInvalido);
                 }
             }
             else
             {
-                AdicionarErro("Informações do token inválidas para processamento.");
+                AdicionarErro(AuthResource.Erro_InformacoesTokenInvalidas);
 
             }
 

@@ -1,4 +1,5 @@
 using Application.DTO;
+using Application.Resources;
 using Domain.Entities;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -11,14 +12,14 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
         {
             if (!dto.Codigo.IsNullOrEmpty() &&
                 dto.Codigo != planejamento.Codigo)
-                return Resultado.Falha("O código do planejamento de custo não pode ser alterado.");
+                return Resultado.Falha(PlanejamentoCustoResource.Erro_CodigoNaoPodeSerAlterado);
 
             if (dto.Ano != planejamento.Ano)
-                return Resultado.Falha("O ano do planejamento de custo não pode ser alterado.");
+                return Resultado.Falha(PlanejamentoCustoResource.Erro_AnoNaoPodeSerAlterado);
 
             if (!dto.DepartamentoCodigo.IsNullOrEmpty() &&
                 dto.DepartamentoCodigo != planejamento.DepartamentoCodigo)
-                return Resultado.Falha("O departamento do planejamento de custo não pode ser alterado.");
+                return Resultado.Falha(PlanejamentoCustoResource.Erro_DepartamentoNaoPodeSerAlterado);
 
             dto.Codigo = planejamento.Codigo;
             dto.Id = planejamento.Id;

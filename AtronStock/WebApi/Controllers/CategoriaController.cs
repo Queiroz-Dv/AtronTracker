@@ -1,6 +1,7 @@
 ﻿using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Infrastructure.Filters;
 
@@ -31,7 +32,7 @@ namespace AtronStock.WebApi.Controllers
         {
             if (codigo != dto.Codigo)
             {
-                return BadRequest(Resultado.Falha("O código na URL não corresponde ao código no corpo da requisição."));
+                return BadRequest(Resultado.Falha(NotificacoesPadronizadas.ErroCodigoRotaDivergente));
             }
 
             var resultado = await _service.AtualizarAsync(dto);

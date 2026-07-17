@@ -1,4 +1,5 @@
-﻿using Shared.Domain.Enums;
+﻿using Shared.Application.Resources;
+using Shared.Domain.Enums;
 using System.Text.Json.Serialization;
 
 namespace Shared.Domain.ValueObjects
@@ -69,7 +70,7 @@ namespace Shared.Domain.ValueObjects
 
         public Resultado<T> ComMensagemRegistroSalvo(string codigo)
         {
-            AdicionarMensagem($"Registro {codigo} salvo com sucesso.");
+            AdicionarMensagem(string.Format(NotificacoesPadronizadas.ResourceManager.GetString("Mensagem_RegistroSalvo")!, codigo));
             return this;
         }
 
@@ -168,8 +169,5 @@ namespace Shared.Domain.ValueObjects
             AddNotification(mensagem, ENotificationType.Sucesso);
             return this;
         }
-
-        // Adicionar(NotificationMessage) já existe em NotificationBag (via minha alteração anterior) ou eu adiciono aqui se não estiver lá
-        // NotificationBag tem Adicionar(NotificationMessage) agora.
     }
 }

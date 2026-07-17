@@ -36,7 +36,7 @@ namespace Application.UseCases.Usuario
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             if (usuario.Inativo)
-                return Resultado.Falha("Usuário já está inativo");
+                return Resultado.Falha(UsuarioResource.ErroUsuarioJaInativo);
 
             usuario.Inativo = true;
             usuario.CodigoReativacao = GerarCodigoReativacao();
@@ -56,7 +56,7 @@ namespace Application.UseCases.Usuario
                 }
             });
 
-            return Resultado.Sucesso().AdicionarMensagem("Usuário desativado com sucesso.");
+            return Resultado.Sucesso().AdicionarMensagem(UsuarioResource.MensagemUsuarioDesativado);
         }
 
         private static string GerarCodigoReativacao()

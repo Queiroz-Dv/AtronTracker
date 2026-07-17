@@ -96,7 +96,7 @@ public class PlanejamentoCustoRelatorioServiceTests
                 Assert.Equal(1, departamento.QuantidadeCargosNaoDetalhados);
                 Assert.Contains(
                     departamento.Informacoes,
-                    informacao => informacao == "1 cargo(s) nao detalhado(s).");
+                    informacao => informacao == "1 cargo(s) não detalhado(s).");
 
                 var cargo = Assert.Single(departamento.CargosDetalhados);
                 Assert.Equal("CRG2", cargo.CargoCodigo);

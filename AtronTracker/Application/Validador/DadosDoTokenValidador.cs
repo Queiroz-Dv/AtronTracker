@@ -21,7 +21,7 @@ namespace Application.Validador
             {
                 if (entity.UsuarioCodigo.IsNullOrEmpty())
                 {
-                    context.AdicionarErro(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, "Código do Usuário"));
+                context.AdicionarErro(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, AuthResource.Campo_CodigoUsuario));
                     return [.. context.Messages];
                 }
 

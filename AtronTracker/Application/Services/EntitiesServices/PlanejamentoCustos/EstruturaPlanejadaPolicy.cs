@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Interfaces;
+using Application.Resources;
 using Shared.Domain.ValueObjects;
 using System;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 .ExisteDepartamentoEmPlanejamentoAtualOuFuturoAsync(departamento.Id, departamento.Codigo, DateTime.Today.Year);
 
             return possuiPlanejamentoAtualOuFuturo
-                ? Resultado.Falha($"O departamento {departamento.Codigo} possui planejamento de custo atual ou futuro e não pode ser removido.")
+                ? Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_DepartamentoComPlanejamento, departamento.Codigo))
                 : Resultado.Sucesso();
         }
 
@@ -30,7 +31,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
             var possuiPlanejamentoAtualOuFuturo = await ExisteCargoPlanejadoAsync(cargo);
 
             return possuiPlanejamentoAtualOuFuturo
-                ? Resultado.Falha($"O cargo {cargo.Codigo} possui planejamento de custo atual ou futuro e não pode ser removido.")
+                ? Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_CargoComPlanejamentoRemocao, cargo.Codigo))
                 : Resultado.Sucesso();
         }
 
@@ -45,7 +46,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
             var possuiPlanejamentoAtualOuFuturo = await ExisteCargoPlanejadoAsync(cargo);
 
             return possuiPlanejamentoAtualOuFuturo
-                ? Resultado.Falha($"O cargo {cargo.Codigo} possui planejamento de custo atual ou futuro e não pode ser movido para outro departamento.")
+                ? Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_CargoComPlanejamentoMovimentacao, cargo.Codigo))
                 : Resultado.Sucesso();
         }
 

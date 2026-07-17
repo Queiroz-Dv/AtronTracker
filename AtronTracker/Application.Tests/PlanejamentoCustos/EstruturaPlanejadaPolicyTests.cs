@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Mapping;
+using Application.Resources;
 using Application.Services.EntitiesServices;
 using Application.Validador;
 using Domain.Entities;
@@ -29,7 +30,7 @@ public class EstruturaPlanejadaPolicyTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "O departamento DPT possui planejamento de custo atual ou futuro e nao pode ser removido.");
+            mensagem => mensagem.Descricao == string.Format(PlanejamentoCustoResource.Erro_DepartamentoComPlanejamento, "DPT"));
     }
 
     [Fact]
@@ -56,7 +57,7 @@ public class EstruturaPlanejadaPolicyTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "O cargo CRG possui planejamento de custo atual ou futuro e nao pode ser removido.");
+            mensagem => mensagem.Descricao == string.Format(PlanejamentoCustoResource.Erro_CargoComPlanejamentoRemocao, "CRG"));
     }
 
     [Fact]
@@ -94,7 +95,7 @@ public class EstruturaPlanejadaPolicyTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "O cargo CRG possui planejamento de custo atual ou futuro e nao pode ser movido para outro departamento.");
+            mensagem => mensagem.Descricao == string.Format(PlanejamentoCustoResource.Erro_CargoComPlanejamentoMovimentacao, "CRG"));
     }
 
     private sealed class PlanejamentoCustoRepositoryFake(

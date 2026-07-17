@@ -2,6 +2,7 @@
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -53,7 +54,7 @@ namespace WebApi.Controllers
         public async Task<ActionResult> Put(string codigo, [FromBody] DepartamentoDTO departamento)
         {
             if (codigo != departamento.Codigo)
-                return BadRequest(Resultado<object>.Falha("O código na URL não corresponde ao código no corpo da requisição.").Messages);
+                return BadRequest(Resultado<object>.Falha(NotificacoesPadronizadas.ErroCodigoRotaDivergente).Messages);
 
             var resultado = await departamentoService.AtualizarAsync(codigo, departamento);
 

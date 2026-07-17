@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Mapping;
+using Application.Resources;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Validador;
 using Domain.Entities;
@@ -75,7 +76,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
 
         Assert.Contains(
             resultado.Dados.ResultadoDetalhes.Messages,
-            mensagem => mensagem.Descricao == "A soma dos minimos dos cargos detalhados diverge do minimo do departamento.");
+            mensagem => mensagem.Descricao == PlanejamentoCustoResource.Aviso_SomaMinimosDivergente);
     }
 
     [Fact]
@@ -189,7 +190,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "Ja existe planejamento de custo para este departamento e ano.");
+            mensagem => mensagem.Descricao == PlanejamentoCustoResource.Erro_DepartamentoAnoExistente);
     }
 
     [Fact]
@@ -260,7 +261,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "Planejamento de custo de ano passado nao pode ser editado.");
+            mensagem => mensagem.Descricao == PlanejamentoCustoResource.Erro_AnoPassadoNaoPodeSerEditado);
     }
 
     [Fact]
@@ -291,7 +292,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "Planejamento de custo de ano passado nao pode ser excluido.");
+            mensagem => mensagem.Descricao == PlanejamentoCustoResource.Erro_AnoPassadoNaoPodeSerExcluido);
     }
 
     [Fact]
@@ -373,7 +374,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "A soma dos tetos dos cargos nao pode ultrapassar o teto do departamento.");
+            mensagem => mensagem.Descricao == PlanejamentoCustoResource.Erro_SomaTetosUltrapassaDepartamento);
     }
 
     [Fact]
@@ -419,7 +420,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "Existem cargos pendentes de decisao no planejamento: CRG2.");
+            mensagem => mensagem.Descricao == string.Format(PlanejamentoCustoResource.Erro_CargosPendentes, "CRG2"));
     }
 
     [Fact]
@@ -464,7 +465,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "O valor minimo do cargo CRG1 deve ser menor que o teto.");
+            mensagem => mensagem.Descricao == string.Format(PlanejamentoCustoResource.Erro_ValorMinimoCargoMaiorTeto, "CRG1"));
     }
 
     [Fact]
@@ -506,7 +507,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == "O codigo do planejamento de custo nao pode ser alterado.");
+            mensagem => mensagem.Descricao == PlanejamentoCustoResource.Erro_CodigoNaoPodeSerAlterado);
     }
 
     private sealed class PlanejamentoCustoRepositoryFake(PlanejamentoCusto? planejamentoExistente = null) : IPlanejamentoCustoRepository

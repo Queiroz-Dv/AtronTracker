@@ -20,7 +20,7 @@ namespace Application.Validador
 
             if (entity == null)
             {
-                context.AdicionarErro("Registro nulo");
+                context.AdicionarErro(UsuarioResource.ErroRegistroNulo);
                 return [.. context.Messages];
             }
 
@@ -110,7 +110,7 @@ namespace Application.Validador
         {
             if (entity.Senha.IsNullOrEmpty())
             {
-                context.AdicionarErro("Senha vazia ou não informada.");
+                context.AdicionarErro(UsuarioResource.ErroSenhaNula);
             }
             else
             {
@@ -118,22 +118,22 @@ namespace Application.Validador
 
                 if (entity.Senha.Length < 9)
                 {
-                    context.AdicionarErro("A senha deve conter mais de 8 caracteres");
+                context.AdicionarErro(UsuarioResource.ErroSenhaTamanhoMinimo);
                 }
 
                 if (!Regex.IsMatch(senha, @"[a-z]") || !Regex.IsMatch(senha, @"[A-Z]") || !Regex.IsMatch(senha, @"[0-9]"))
                 {
-                    context.AdicionarErro("A senha deve conter letras maiúsculas, minúsculas e pelo menos um número.");
+                context.AdicionarErro(UsuarioResource.ErroSenhaComposicao);
                 }
 
                 if (!Regex.IsMatch(senha, @"[!@#$%^&*(),.?""{}|<>]"))
                 {
-                    context.AdicionarErro("A senha deve conter pelo menos um caractere especial.");
+                context.AdicionarErro(UsuarioResource.ErroSenhaCaractereEspecial);
                 }
 
                 if (!entity.Senha.Equals(entity.ConfirmaSenha))
                 {
-                    context.AdicionarErro("As senhas não são iguais");
+                context.AdicionarErro(UsuarioResource.ErroSenhasDiferentes);
                 }
             }
         }

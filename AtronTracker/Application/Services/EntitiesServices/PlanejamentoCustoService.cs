@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Interfaces.Services;
+using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
@@ -39,7 +40,7 @@ namespace Application.Services.EntitiesServices
 
             var criado = await _planejamentoCustoRepository.CriarAsync(preparacao.Dados.Entidade);
             if (!criado)
-                return Resultado<PlanejamentoCustoDTO>.Falha("Nao foi possivel criar o planejamento de custo.");
+                return Resultado<PlanejamentoCustoDTO>.Falha(PlanejamentoCustoResource.Erro_CriarPlanejamento);
 
             var dto = await _asyncMap.MapToDTOAsync(preparacao.Dados.Entidade);
             var resultado = Resultado<PlanejamentoCustoDTO>.Sucesso(dto).ComMensagemRegistroSalvo(preparacao.Dados.Entidade.Codigo);
@@ -56,7 +57,7 @@ namespace Application.Services.EntitiesServices
 
             var atualizado = await _planejamentoCustoRepository.AtualizarAsync(preparacao.Dados.Entidade);
             if (!atualizado)
-                return Resultado<PlanejamentoCustoDTO>.Falha(string.Format("Nao foi possivel atualizar o planejamento de custo {0}.", codigo));
+                return Resultado<PlanejamentoCustoDTO>.Falha(string.Format(PlanejamentoCustoResource.Erro_AtualizarPlanejamento, codigo));
 
             var dto = await _asyncMap.MapToDTOAsync(preparacao.Dados.Entidade);
             var resultado = Resultado<PlanejamentoCustoDTO>
@@ -75,7 +76,7 @@ namespace Application.Services.EntitiesServices
 
             var removido = await _planejamentoCustoRepository.RemoverAsync(preparacao.Dados);
             if (!removido)
-                return Resultado.Falha(string.Format("Nao foi possivel remover o planejamento de custo {0}.", codigo));
+                return Resultado.Falha(string.Format(PlanejamentoCustoResource.Erro_RemoverPlanejamento, codigo));
 
             return Resultado.Sucesso().AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
         }

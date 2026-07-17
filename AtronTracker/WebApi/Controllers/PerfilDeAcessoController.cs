@@ -1,8 +1,10 @@
 using Application.DTO;
 using Application.DTO.Request;
 using Application.Interfaces.Services;
+using Application.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,10 +49,10 @@ namespace WebApi.Controllers
         public async Task<ActionResult> Put(string codigo, [FromBody] PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
             if (perfilDeAcessoDTO is null)
-                return BadRequest(Resultado<object>.Falha("O perfil de acesso está inválido para gravação.").Messages);
+                return BadRequest(Resultado<object>.Falha(PerfilDeAcessoResource.Erro_PerfilInvalido).Messages);
 
             if (codigo != perfilDeAcessoDTO.Codigo)
-                return BadRequest(Resultado<object>.Falha("O código na URL não corresponde ao código no corpo da requisição.").Messages);
+                return BadRequest(Resultado<object>.Falha(NotificacoesPadronizadas.ErroCodigoRotaDivergente).Messages);
 
             var resultado = await perfilDeAcessoService.AtualizarAsync(codigo, perfilDeAcessoDTO);
 
@@ -114,7 +116,7 @@ namespace WebApi.Controllers
         public async Task<ActionResult> RelacionamentoPerfilUsuario([FromBody] PerfilUsuarioRequest request)
         {
             if (request is null)
-                return BadRequest(Resultado<object>.Falha("O relacionamento de perfil de acesso está inválido para gravação.").Messages);
+                return BadRequest(Resultado<object>.Falha(PerfilDeAcessoResource.Erro_RelacionamentoInvalido).Messages);
 
             var dto = new PerfilDeAcessoUsuarioDTO
             {

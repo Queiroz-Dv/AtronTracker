@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Interfaces.Services;
+using Application.Resources;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
@@ -52,7 +53,7 @@ namespace Application.Services.EntitiesServices.Tarefas
 
             var estado = await _tarefaEstadoRepository.ObterPorIdAsync(tarefaDTO.EstadoDaTarefa.Id);
             if (estado is null)
-                return Resultado<TarefaPreparada>.Falha("Estado da tarefa nao encontrado.");
+                return Resultado<TarefaPreparada>.Falha(TarefaResource.Erro_EstadoNaoEncontrado);
 
             tarefaDTO.EstadoDaTarefa = MapearEstado(estado);
 
@@ -111,7 +112,7 @@ namespace Application.Services.EntitiesServices.Tarefas
             var departamento = await _departamentoRepository
                 .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(tarefaDTO.DepartamentoCodigo.ToUpper());
             if (departamento is null)
-                return Resultado<Departamento>.Falha("Departamento da tarefa nao encontrado.");
+                return Resultado<Departamento>.Falha(TarefaResource.Erro_DepartamentoNaoEncontrado);
 
             tarefa.DepartamentoId = departamento.Id;
             tarefa.DepartamentoCodigo = departamento.Codigo;
@@ -125,10 +126,10 @@ namespace Application.Services.EntitiesServices.Tarefas
 
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(tarefaDTO.CargoCodigo.ToUpper());
             if (cargo is null)
-                return Resultado<Departamento>.Falha("Cargo da tarefa nao encontrado.");
+                return Resultado<Departamento>.Falha(TarefaResource.Erro_CargoNaoEncontrado);
 
             if (cargo.DepartamentoId != departamento.Id || cargo.DepartamentoCodigo != departamento.Codigo)
-                return Resultado<Departamento>.Falha("Cargo informado nao pertence ao departamento da tarefa.");
+                return Resultado<Departamento>.Falha(TarefaResource.Erro_CargoNaoPertenceDepartamento);
 
             tarefa.CargoId = cargo.Id;
             tarefa.CargoCodigo = cargo.Codigo;
@@ -156,7 +157,7 @@ namespace Application.Services.EntitiesServices.Tarefas
                 return Resultado.Sucesso();
             }
 
-            return Resultado.Falha("Nao foi possivel criar a tarefa porque o usuario responsavel nao possui gestor imediato e o departamento nao possui gestor definido.");
+            return Resultado.Falha(TarefaResource.Erro_AprovadorObrigatorio);
         }
 
         private static bool TemGestorImediato(Usuario usuario)

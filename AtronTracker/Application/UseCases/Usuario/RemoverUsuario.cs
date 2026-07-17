@@ -74,7 +74,7 @@ namespace Application.UseCases.Usuario
             // 5. Retorno padronizado
             return Resultado
                 .Sucesso()
-                .AdicionarMensagem("Usuário removido com sucesso.");
+                .AdicionarMensagem(UsuarioResource.MensagemUsuarioRemovido);
         }
     }
 }

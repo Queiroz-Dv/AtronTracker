@@ -1,4 +1,5 @@
 using Application.DTO;
+using Application.Resources;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -21,31 +22,31 @@ namespace Application.Validador
             }
 
             if (entity.Codigo.IsNullOrEmpty())
-                notificacoes.AdicionarErro("O código do planejamento de custo é obrigatório.");
+                notificacoes.AdicionarErro(PlanejamentoCustoResource.Erro_CodigoObrigatorio);
 
             if (!entity.Codigo.IsNullOrEmpty() && entity.Codigo.Length > 10)
-                notificacoes.AdicionarErro("O código do planejamento de custo deve ter no máximo 10 caracteres.");
+                notificacoes.AdicionarErro(PlanejamentoCustoResource.Erro_CodigoTamanhoMaximo);
 
             if (entity.Descricao.IsNullOrEmpty())
-                notificacoes.AdicionarErro("A descrição do planejamento de custo é obrigatória.");
+                notificacoes.AdicionarErro(PlanejamentoCustoResource.Erro_DescricaoObrigatoria);
 
             if (!entity.Descricao.IsNullOrEmpty() && entity.Descricao.Length > 100)
-                notificacoes.AdicionarErro("A descrição do planejamento de custo deve ter no máximo 100 caracteres.");
+                notificacoes.AdicionarErro(PlanejamentoCustoResource.Erro_DescricaoTamanhoMaximo);
 
             if (entity.DepartamentoCodigo.IsNullOrEmpty())
-                notificacoes.AdicionarErro("O departamento do planejamento de custo é obrigatório.");
+                notificacoes.AdicionarErro(PlanejamentoCustoResource.Erro_DepartamentoObrigatorio);
 
             if (entity.Ano < DateTime.Today.Year)
-                notificacoes.AdicionarErro("Não é permitido criar ou alterar planejamento de custo para ano passado.");
+                notificacoes.AdicionarErro(PlanejamentoCustoResource.Erro_AnoPassadoNaoPermitido);
 
             if (entity.ValorMinimo < 0)
-                notificacoes.AdicionarErro("O valor mínimo do planejamento de custo não pode ser negativo.");
+                notificacoes.AdicionarErro(PlanejamentoCustoResource.Erro_ValorMinimoNegativo);
 
             if (entity.ValorTeto <= 0)
-                notificacoes.AdicionarErro("O valor teto do planejamento de custo deve ser maior que zero.");
+                notificacoes.AdicionarErro(PlanejamentoCustoResource.Erro_ValorTetoInvalido);
 
             if (entity.ValorMinimo >= entity.ValorTeto)
-                notificacoes.AdicionarErro("O valor mínimo deve ser menor que o valor teto do planejamento de custo.");
+                notificacoes.AdicionarErro(PlanejamentoCustoResource.Erro_ValorMinimoMaiorTeto);
 
             return [.. notificacoes.Messages];
         }

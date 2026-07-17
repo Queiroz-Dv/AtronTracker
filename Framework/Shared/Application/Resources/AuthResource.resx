@@ -171,4 +171,33 @@
   <data name="Mensagem_UsuarioRegistrado" xml:space="preserve">
     <value>Usuário {0} {1}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar seu acesso.</value>
   </data>
+  <data name="Erro_GerarCodigoConfirmacao" xml:space="preserve">
+    <value>Nao foi possivel gerar o codigo de confirmacao do e-mail.</value>
+  </data>
+  <data name="Erro_DadosConfirmacaoObrigatorios" xml:space="preserve">
+    <value>Usuario e codigo de confirmacao sao obrigatorios.</value>
+  </data>
+  <data name="Erro_EnvioEmailObrigatorio" xml:space="preserve">
+    <value>Não foi possível enviar o e-mail. Tente novamente.</value>
+  </data>
+  <data name="Erro_UriPrimeiroAcessoObrigatoria" xml:space="preserve">
+    <value>URI da aplicacao nao informada para envio do link de primeiro acesso.</value>
+  </data>
+  <data name="Erro_GerarLinkPrimeiroAcesso" xml:space="preserve">
+    <value>Nao foi possivel gerar o link de primeiro acesso.</value>
+  </data>
+  <data name="Aviso_CadastroCriadoEmailNaoEnviado" xml:space="preserve">
+    <value>Cadastro realizado, mas não foi possível enviar o e-mail de confirmação. Solicite um novo código.</value>
+  </data>
+  <data name="Aviso_ConfirmacaoConcluidaEmailNaoEnviado" xml:space="preserve">
+    <value>E-mail confirmado, mas não foi possível enviar a mensagem de conclusão.</value>
+  </data>
+  <data name="Campo_CodigoUsuario" xml:space="preserve">
+    <value>Código do Usuário</value>
+  </data>
+  <data name="Erro_RefreshTokenInvalido" xml:space="preserve"><value>Refresh token inválido ou expirado.</value></data>
+  <data name="Erro_TokenNaoPreenchido" xml:space="preserve"><value>Token não preenchido para processamento.</value></data>
+  <data name="Erro_InformacoesTokenInvalidas" xml:space="preserve"><value>Informações do token inválidas para processamento.</value></data>
+  <data name="Erro_EmailVazio" xml:space="preserve"><value>E-mail vazio</value></data>
+  <data name="Erro_SenhaVazia" xml:space="preserve"><value>Senha vazia.</value></data>
 </root>

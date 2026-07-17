@@ -132,4 +132,29 @@
   <data name="MensagemRemocaoSucesso" xml:space="preserve">
     <value>Registro removido com sucesso.</value>
   </data>
+  <data name="Mensagem_EntidadeSalva" xml:space="preserve">
+    <value>{0} salvo com sucesso.</value>
+  </data>
+  <data name="Mensagem_RegistroSalvo" xml:space="preserve">
+    <value>Registro {0} salvo com sucesso.</value>
+  </data>
+  <data name="Mensagem_RegistroAtualizado" xml:space="preserve">
+    <value>Registro {0} atualizado com sucesso.</value>
+  </data>
+  <data name="Erro_RegistroComDescricaoNaoEncontrado" xml:space="preserve">
+    <value>Registro {0} não encontrado.</value>
+  </data>
+  <data name="Mensagem_RegistroRemovido" xml:space="preserve">
+    <value>Registro {0} removido com sucesso</value>
+  </data>
+  <data name="Mensagem_RemocaoSucessoSemRegistro" xml:space="preserve">
+    <value>Removido com sucesso</value>
+  </data>
+  <data name="Erro_RegistroComDescricaoInvalido" xml:space="preserve">
+    <value>Registro {0} inválido</value>
+  </data>
+  <data name="Erro_RegistroComDescricaoExistente" xml:space="preserve">
+    <value>Registro {0} já existe.</value>
+  </data>
+  <data name="ErroCodigoRotaDivergente" xml:space="preserve"><value>O código na URL não corresponde ao código no corpo da requisição.</value></data>
 </root>
