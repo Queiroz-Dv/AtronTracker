@@ -39,7 +39,10 @@ namespace Application.UseCases.Usuario
                     usuario.Email,
                     usuario.Nome,
                     usuario.CodigoReativacao);
-                var envio = await _emailService.EnviarAsync(emailReativacao);
+                if (emailReativacao.TeveFalha)
+                    return Resultado.Falha(emailReativacao.Messages);
+
+                var envio = await _emailService.EnviarAsync(emailReativacao.Dados);
                 if (envio.TeveFalha)
                     return Resultado.Falha(envio.Messages);
             }

@@ -2,6 +2,7 @@ using Application.Email.Models;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
 using Shared.Application.Resources;
+using Shared.Domain.ValueObjects;
 using System.Globalization;
 
 namespace Application.Email.Compositores;
@@ -17,96 +18,103 @@ public sealed class AcessoEmailCompositor : IAcessoEmailCompositor
         _renderer = renderer;
     }
 
-    public EmailRequest ComporConfirmacaoCadastro(string destinatario, string nome, string codigo, string link, int validadeHoras)
+    public Resultado<EmailRequest> ComporConfirmacaoCadastro(ConfirmacaoCadastroEmailParametros parametros)
     {
         return Renderizar(
-            "confirmacao-cadastro.html",
-            EmailResource.Assunto_ConfirmeCadastro,
-            EmailResource.Titulo_ConfirmacaoCadastro,
+            CriarTemplate(
+                "confirmacao-cadastro.html",
+                EmailResource.Assunto_ConfirmeCadastro,
+                EmailResource.Titulo_ConfirmacaoCadastro),
             new ConfirmacaoCadastroEmailModel
             {
-                Nome = nome,
-                Codigo = codigo,
-                Link = link,
-                ValidadeHoras = validadeHoras.ToString(CulturaPtBr)
+                Nome = parametros.Nome,
+                Codigo = parametros.Codigo,
+                Link = parametros.Link,
+                ValidadeHoras = parametros.ValidadeHoras.ToString(CulturaPtBr)
             },
-            destinatario);
+            parametros.Destinatario);
     }
 
-    public EmailRequest ComporRecuperacaoSenha(string destinatario, string nome, string link, int validadeHoras)
+    public Resultado<EmailRequest> ComporRecuperacaoSenha(RecuperacaoSenhaEmailParametros parametros)
     {
         return Renderizar(
-            "recuperacao-senha.html",
-            EmailResource.Assunto_RecuperacaoSenha,
-            EmailResource.Titulo_RecuperacaoSenha,
+            CriarTemplate(
+                "recuperacao-senha.html",
+                EmailResource.Assunto_RecuperacaoSenha,
+                EmailResource.Titulo_RecuperacaoSenha),
             new RecuperacaoSenhaEmailModel
             {
-                Nome = nome,
-                Link = link,
-                ValidadeHoras = validadeHoras.ToString(CulturaPtBr)
+                Nome = parametros.Nome,
+                Link = parametros.Link,
+                ValidadeHoras = parametros.ValidadeHoras.ToString(CulturaPtBr)
             },
-            destinatario);
+            parametros.Destinatario);
     }
 
-    public EmailRequest ComporConfirmacaoConcluida(string destinatario, string nome)
+    public Resultado<EmailRequest> ComporConfirmacaoConcluida(string destinatario, string nome)
     {
         return Renderizar(
-            "confirmacao-concluida.html",
-            EmailResource.Assunto_EmailConfirmado,
-            EmailResource.Titulo_EmailConfirmado,
+            CriarTemplate(
+                "confirmacao-concluida.html",
+                EmailResource.Assunto_EmailConfirmado,
+                EmailResource.Titulo_EmailConfirmado),
             new ConfirmacaoConcluidaEmailModel { Nome = nome },
             destinatario);
     }
 
-    public EmailRequest ComporPrimeiroAcesso(string destinatario, string nome, string link, int validadeHoras)
+    public Resultado<EmailRequest> ComporPrimeiroAcesso(PrimeiroAcessoEmailParametros parametros)
     {
         return Renderizar(
-            "primeiro-acesso.html",
-            EmailResource.Assunto_PrimeiroAcesso,
-            EmailResource.Titulo_PrimeiroAcesso,
+            CriarTemplate(
+                "primeiro-acesso.html",
+                EmailResource.Assunto_PrimeiroAcesso,
+                EmailResource.Titulo_PrimeiroAcesso),
             new PrimeiroAcessoEmailModel
             {
-                Nome = nome,
-                Link = link,
-                ValidadeHoras = validadeHoras.ToString(CulturaPtBr)
+                Nome = parametros.Nome,
+                Link = parametros.Link,
+                ValidadeHoras = parametros.ValidadeHoras.ToString(CulturaPtBr)
             },
+            parametros.Destinatario);
+    }
+
+    public Resultado<EmailRequest> ComporAlteracaoEmail(string destinatario, string nome, string link)
+    {
+        return Renderizar(
+            CriarTemplate(
+                "alteracao-email.html",
+                EmailResource.Assunto_AlteracaoEmail,
+                EmailResource.Titulo_AlteracaoEmail),
+            new AlteracaoEmailModel { Nome = nome, Link = link },
             destinatario);
     }
 
-    public EmailRequest ComporAlteracaoEmail(string destinatario, string nome, string link)
+    public Resultado<EmailRequest> ComporReativacaoConta(string destinatario, string nome, string codigo)
     {
         return Renderizar(
-            "alteracao-email.html",
-            EmailResource.Assunto_AlteracaoEmail,
-            EmailResource.Titulo_AlteracaoEmail,
-            new AlteracaoEmailEmailModel { Nome = nome, Link = link },
-            destinatario);
-    }
-
-    public EmailRequest ComporReativacaoConta(string destinatario, string nome, string codigo)
-    {
-        return Renderizar(
-            "reativacao-conta.html",
-            EmailResource.Assunto_ReativacaoConta,
-            EmailResource.Titulo_ReativacaoConta,
+            CriarTemplate(
+                "reativacao-conta.html",
+                EmailResource.Assunto_ReativacaoConta,
+                EmailResource.Titulo_ReativacaoConta),
             new ReativacaoContaEmailModel { Nome = nome, Codigo = codigo },
             destinatario);
     }
 
-    private EmailRequest Renderizar<TModel>(
-        string arquivo,
-        string assunto,
-        string titulo,
-        TModel model,
-        string destinatario)
-        where TModel : class
+    private static EmailTemplateDefinition CriarTemplate(string arquivo, string assunto, string titulo)
     {
-        var template = new EmailTemplateDefinition(
+        return new EmailTemplateDefinition(
             typeof(AcessoEmailCompositor).Assembly,
             $"{PrefixoTemplate}{arquivo}",
             assunto,
             titulo);
+    }
 
+    private Resultado<EmailRequest> Renderizar<TModel>(
+        EmailTemplateDefinition template,
+        TModel model,
+        string destinatario)
+        where TModel : class
+    {
         return _renderer.Renderizar(template, model, [destinatario]);
     }
 }

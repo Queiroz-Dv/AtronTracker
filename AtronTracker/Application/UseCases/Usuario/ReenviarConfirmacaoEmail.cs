@@ -1,15 +1,15 @@
-using Domain.Entities;
 using Application.Email.Compositores;
+using Application.Email.Models;
 using Application.Extensions;
 using Application.Interfaces.Services;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.AspNetCore.Http;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 using UsuarioEntity = Domain.Entities.Usuario;
-using Shared.Application.Resources;
 
 namespace Application.UseCases.Usuario
 {
@@ -80,13 +80,16 @@ namespace Application.UseCases.Usuario
 
             try
             {
-                var email = _emailCompositor.ComporConfirmacaoCadastro(
+                var email = _emailCompositor.ComporConfirmacaoCadastro(new ConfirmacaoCadastroEmailParametros(
                     usuario.Email,
                     usuario.Nome,
                     confirmacao.Identificador,
                     link,
-                    ValidadeConfirmacaoEmailEmHoras);
-                var resultado = await _emailService.EnviarAsync(email);
+                    ValidadeConfirmacaoEmailEmHoras));
+                if (email.TeveFalha)
+                    return Resultado.Falha(email.Messages);
+
+                var resultado = await _emailService.EnviarAsync(email.Dados);
 
                 return resultado.TeveFalha
                     ? Resultado.Falha(resultado.Messages)

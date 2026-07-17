@@ -16,12 +16,13 @@ public class EmailTemplateRendererTests
             CriarModelo(),
             ["pessoa@exemplo.com"]);
 
-        Assert.Equal("Validação da infraestrutura", request.Assunto);
-        Assert.Equal(["pessoa@exemplo.com"], request.EmailsDestino);
-        Assert.Contains("<!DOCTYPE html>", request.Mensagem);
-        Assert.Contains("Atron", request.Mensagem);
-        Assert.Contains("Infraestrutura de templates", request.Mensagem);
-        Assert.Contains("https://atron.exemplo.com/continuar", request.Mensagem);
+        Assert.True(request.TeveSucesso);
+        Assert.Equal("Validação da infraestrutura", request.Dados.Assunto);
+        Assert.Equal(["pessoa@exemplo.com"], request.Dados.EmailsDestino);
+        Assert.Contains("<!DOCTYPE html>", request.Dados.Mensagem);
+        Assert.Contains("Atron", request.Dados.Mensagem);
+        Assert.Contains("Infraestrutura de templates", request.Dados.Mensagem);
+        Assert.Contains("https://atron.exemplo.com/continuar", request.Dados.Mensagem);
     }
 
     [Fact]
@@ -29,10 +30,10 @@ public class EmailTemplateRendererTests
     {
         var model = CriarModelo() with { Nome = "" };
 
-        var exception = Assert.Throws<EmailTemplateException>(() =>
-            _renderer.Renderizar(CriarDefinicao(), model, ["pessoa@exemplo.com"]));
+        var resultado = _renderer.Renderizar(CriarDefinicao(), model, ["pessoa@exemplo.com"]);
 
-        Assert.Contains("Nome", exception.Message);
+        Assert.True(resultado.TeveFalha);
+        Assert.Contains(resultado.Messages, mensagem => mensagem.Descricao.Contains("Nome"));
     }
 
     [Fact]
@@ -46,9 +47,10 @@ public class EmailTemplateRendererTests
 
         var request = _renderer.Renderizar(CriarDefinicao(), model, ["pessoa@exemplo.com"]);
 
-        Assert.Contains("&lt;Jo&#227;o &amp; Maria&gt;", request.Mensagem);
-        Assert.Contains("&lt;script&gt;alert(&#39;x&#39;)&lt;/script&gt;", request.Mensagem);
-        Assert.DoesNotContain("<script>", request.Mensagem);
+        Assert.True(request.TeveSucesso);
+        Assert.Contains("&lt;Jo&#227;o &amp; Maria&gt;", request.Dados.Mensagem);
+        Assert.Contains("&lt;script&gt;alert(&#39;x&#39;)&lt;/script&gt;", request.Dados.Mensagem);
+        Assert.DoesNotContain("<script>", request.Dados.Mensagem);
     }
 
     [Fact]
@@ -56,10 +58,10 @@ public class EmailTemplateRendererTests
     {
         var model = CriarModelo() with { Link = "javascript:alert('x')" };
 
-        var exception = Assert.Throws<EmailTemplateException>(() =>
-            _renderer.Renderizar(CriarDefinicao(), model, ["pessoa@exemplo.com"]));
+        var resultado = _renderer.Renderizar(CriarDefinicao(), model, ["pessoa@exemplo.com"]);
 
-        Assert.Contains("HTTP ou HTTPS", exception.Message);
+        Assert.True(resultado.TeveFalha);
+        Assert.Contains(resultado.Messages, mensagem => mensagem.Descricao.Contains("HTTP ou HTTPS"));
     }
 
     [Fact]
@@ -70,10 +72,10 @@ public class EmailTemplateRendererTests
             TemplateResourceName = "Shared.Application.Email.Templates.pt-BR.inexistente.html"
         };
 
-        var exception = Assert.Throws<EmailTemplateException>(() =>
-            _renderer.Renderizar(definition, CriarModelo(), ["pessoa@exemplo.com"]));
+        var resultado = _renderer.Renderizar(definition, CriarModelo(), ["pessoa@exemplo.com"]);
 
-        Assert.Contains("não encontrado", exception.Message);
+        Assert.True(resultado.TeveFalha);
+        Assert.Contains(resultado.Messages, mensagem => mensagem.Descricao.Contains("não encontrado"));
     }
 
     [Fact]
@@ -95,9 +97,10 @@ public class EmailTemplateRendererTests
             },
             ["pessoa@exemplo.com"]);
 
-        Assert.Contains("Diagnóstico de e-mail", request.Mensagem);
-        Assert.Contains("&lt;configura&#231;&#227;o&gt;", request.Mensagem);
-        Assert.DoesNotContain("<configuração>", request.Mensagem);
+        Assert.True(request.TeveSucesso);
+        Assert.Contains("Diagnóstico de e-mail", request.Dados.Mensagem);
+        Assert.Contains("&lt;configura&#231;&#227;o&gt;", request.Dados.Mensagem);
+        Assert.DoesNotContain("<configuração>", request.Dados.Mensagem);
     }
 
     private static EmailTemplateDefinition CriarDefinicao()

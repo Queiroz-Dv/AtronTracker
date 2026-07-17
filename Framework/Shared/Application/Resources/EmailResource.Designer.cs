@@ -158,6 +158,32 @@ namespace Shared.Application.Resources {
                 return ResourceManager.GetString("Erro_InformeEmailCodigo", resourceCulture);
             }
         }
+
+        public static string Erro_TemplateAssuntoObrigatorio => ResourceManager.GetString("Erro_TemplateAssuntoObrigatorio", resourceCulture);
+
+        public static string Erro_TemplateBaseCamposNaoRenderizados => ResourceManager.GetString("Erro_TemplateBaseCamposNaoRenderizados", resourceCulture);
+
+        public static string Erro_TemplateCampoObrigatorio => ResourceManager.GetString("Erro_TemplateCampoObrigatorio", resourceCulture);
+
+        public static string Erro_TemplateCamposNaoRenderizados => ResourceManager.GetString("Erro_TemplateCamposNaoRenderizados", resourceCulture);
+
+        public static string Erro_TemplateDefinicaoObrigatoria => ResourceManager.GetString("Erro_TemplateDefinicaoObrigatoria", resourceCulture);
+
+        public static string Erro_TemplateDestinatarioObrigatorio => ResourceManager.GetString("Erro_TemplateDestinatarioObrigatorio", resourceCulture);
+
+        public static string Erro_TemplateModeloObrigatorio => ResourceManager.GetString("Erro_TemplateModeloObrigatorio", resourceCulture);
+
+        public static string Erro_TemplateModeloSemCampo => ResourceManager.GetString("Erro_TemplateModeloSemCampo", resourceCulture);
+
+        public static string Erro_TemplateNaoEncontrado => ResourceManager.GetString("Erro_TemplateNaoEncontrado", resourceCulture);
+
+        public static string Erro_TemplateNomeInvalido => ResourceManager.GetString("Erro_TemplateNomeInvalido", resourceCulture);
+
+        public static string Erro_TemplateRenderizacao => ResourceManager.GetString("Erro_TemplateRenderizacao", resourceCulture);
+
+        public static string Erro_TemplateTituloObrigatorio => ResourceManager.GetString("Erro_TemplateTituloObrigatorio", resourceCulture);
+
+        public static string Erro_TemplateUrlInvalida => ResourceManager.GetString("Erro_TemplateUrlInvalida", resourceCulture);
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Configurações não encontradas para o provedor: {0}.

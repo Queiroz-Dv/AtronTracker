@@ -1,5 +1,6 @@
 using Application.DTO.Request;
 using Application.Email.Compositores;
+using Application.Email.Models;
 using Application.Extensions;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
@@ -200,12 +201,15 @@ namespace Application.UseCases.Usuario
             Resultado resultadoEmail;
             try
             {
-                var email = _emailCompositor.ComporPrimeiroAcesso(
+                var email = _emailCompositor.ComporPrimeiroAcesso(new PrimeiroAcessoEmailParametros(
                     usuario.Email,
                     usuario.Nome,
                     link,
-                    ValidadeConvitePrimeiroAcessoEmHoras);
-                resultadoEmail = await _emailService.EnviarAsync(email);
+                    ValidadeConvitePrimeiroAcessoEmHoras));
+                if (email.TeveFalha)
+                    return Resultado.Falha(email.Messages);
+
+                resultadoEmail = await _emailService.EnviarAsync(email.Dados);
             }
             catch
             {

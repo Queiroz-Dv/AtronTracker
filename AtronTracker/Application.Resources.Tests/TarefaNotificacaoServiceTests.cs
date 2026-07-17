@@ -19,13 +19,14 @@ public class TarefaNotificacaoServiceTests
 
         var email = compositor.ComporAtribuicao(CriarTarefa("Revisar <contrato>"), CriarUsuario(true));
 
-        Assert.Equal("Nova tarefa atribuída: Revisar <contrato>", email.Assunto);
-        Assert.Equal(["usuario@teste.com"], email.EmailsDestino);
-        Assert.Contains("<!DOCTYPE html>", email.Mensagem);
-        Assert.Contains("Revisar &lt;contrato&gt;", email.Mensagem);
-        Assert.Contains("Conteudo &amp; detalhes", email.Mensagem);
-        Assert.Contains("10/07/2026", email.Mensagem);
-        Assert.Contains("Aberta", email.Mensagem);
+        Assert.True(email.TeveSucesso);
+        Assert.Equal("Nova tarefa atribuída: Revisar <contrato>", email.Dados.Assunto);
+        Assert.Equal(["usuario@teste.com"], email.Dados.EmailsDestino);
+        Assert.Contains("<!DOCTYPE html>", email.Dados.Mensagem);
+        Assert.Contains("Revisar &lt;contrato&gt;", email.Dados.Mensagem);
+        Assert.Contains("Conteudo &amp; detalhes", email.Dados.Mensagem);
+        Assert.Contains("10/07/2026", email.Dados.Mensagem);
+        Assert.Contains("Aberta", email.Dados.Mensagem);
     }
 
     [Fact]
@@ -37,7 +38,8 @@ public class TarefaNotificacaoServiceTests
 
         var email = compositor.ComporAtribuicao(tarefa, CriarUsuario(true));
 
-        Assert.Contains("<strong>Conteudo:</strong> </td>", email.Mensagem);
+        Assert.True(email.TeveSucesso);
+        Assert.Contains("<strong>Conteudo:</strong> </td>", email.Dados.Mensagem);
     }
 
     [Fact]
@@ -118,15 +120,15 @@ public class TarefaNotificacaoServiceTests
     {
         public int QuantidadeChamadas { get; private set; }
 
-        public EmailRequest ComporAtribuicao(TarefaDTO tarefa, Usuario usuario)
+        public Resultado<EmailRequest> ComporAtribuicao(TarefaDTO tarefa, Usuario usuario)
         {
             QuantidadeChamadas++;
-            return new EmailRequest
+            return Resultado<EmailRequest>.Sucesso(new EmailRequest
             {
                 EmailsDestino = [usuario.Email],
                 Assunto = "Assunto",
                 Mensagem = "Mensagem"
-            };
+            });
         }
     }
 }

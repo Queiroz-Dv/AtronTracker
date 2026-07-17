@@ -47,7 +47,10 @@ namespace Application.UseCases.Usuario
             try
             {
                 var email = _emailCompositor.ComporAlteracaoEmail(emailNovo, usuario.Nome, link);
-                var envio = await _emailService.EnviarAsync(email);
+                if (email.TeveFalha)
+                    return Resultado.Falha(email.Messages);
+
+                var envio = await _emailService.EnviarAsync(email.Dados);
                 if (envio.TeveFalha)
                     return Resultado.Falha(envio.Messages);
             }

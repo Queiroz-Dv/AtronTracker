@@ -1,5 +1,6 @@
 using Application.DTO.Request;
 using Application.Email.Compositores;
+using Application.Email.Models;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
 using Domain.Entities;
@@ -13,6 +14,7 @@ using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Application.Extensions;
@@ -108,14 +110,15 @@ namespace Application.Services.AuthServices
 
             try
             {
-                var email = _emailCompositor.ComporConfirmacaoCadastro(
+                var email = _emailCompositor.ComporConfirmacaoCadastro(new ConfirmacaoCadastroEmailParametros(
                     request.Email,
                     usuario.Nome,
                     confirmacao.Identificador,
                     confirmacao.Link,
-                    ValidadeRecuperacaoSenhaEmHoras);
-                var envio = await _emailService.EnviarAsync(email);
-                if (envio.TeveFalha)
+                    ValidadeRecuperacaoSenhaEmHoras));
+                if (email.TeveFalha)
+                    resultado.AdicionarAviso(string.Join(" | ", email.Messages.Select(mensagem => mensagem.Descricao)));
+                else if ((await _emailService.EnviarAsync(email.Dados)).TeveFalha)
                     resultado.AdicionarAviso(AuthResource.Aviso_CadastroCriadoEmailNaoEnviado);
             }
             catch
@@ -152,13 +155,7 @@ namespace Application.Services.AuthServices
             var resultado = await _usuarioIdentityRepository.RedefinirSenhaAsync(usuarioCodigo, token, novaSenha);
             if (resultado)
             {
-                var atualizouLogin = await _loginRepository.AtualizarSenhaUsuario(usuarioCodigo, novaSenha);
-
-                // Implementar a lógica depois 
-                if (!atualizouLogin)
-                {
-
-                }
+                var atualizouLogin = await _loginRepository.AtualizarSenhaUsuario(usuarioCodigo, novaSenha);              
 
                 _cacheService.RemoverCache(ECacheKeysInfo.DadosTemporarios, request.IdentificadorTemporario);
 
@@ -210,12 +207,15 @@ namespace Application.Services.AuthServices
             Resultado resultadoEnvio;
             try
             {
-                var email = _emailCompositor.ComporRecuperacaoSenha(
+                var email = _emailCompositor.ComporRecuperacaoSenha(new RecuperacaoSenhaEmailParametros(
                     usuario.Email,
                     usuario.Nome,
                     link,
-                    ValidadeRecuperacaoSenhaEmHoras);
-                resultadoEnvio = await _emailService.EnviarAsync(email);
+                    ValidadeRecuperacaoSenhaEmHoras));
+                if (email.TeveFalha)
+                    return Resultado.Falha(email.Messages);
+
+                resultadoEnvio = await _emailService.EnviarAsync(email.Dados);
             }
             catch
             {
@@ -273,8 +273,9 @@ namespace Application.Services.AuthServices
                 try
                 {
                     var email = _emailCompositor.ComporConfirmacaoConcluida(usuario.Email, usuario.Nome);
-                    var envio = await _emailService.EnviarAsync(email);
-                    if (envio.TeveFalha)
+                    if (email.TeveFalha)
+                        resultado.AdicionarAviso(string.Join(" | ", email.Messages.Select(mensagem => mensagem.Descricao)));
+                    else if ((await _emailService.EnviarAsync(email.Dados)).TeveFalha)
                         resultado.AdicionarAviso(AuthResource.Aviso_ConfirmacaoConcluidaEmailNaoEnviado);
                 }
                 catch

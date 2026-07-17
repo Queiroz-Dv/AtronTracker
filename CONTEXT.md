@@ -320,6 +320,14 @@ _Avoid_: Duas estruturas de front ativas
 Mensagem de validação que explica uma regra do produto ou bloqueia uma ação de negócio deve nascer no backend, especialmente no módulo de planejamento de custos. O front Angular pode manter apenas validações de formato, estado visual ou eventos entre componentes necessários para montar a interação, mas não deve decidir a mensagem final de regra de negócio.
 _Avoid_: Mensagem de regra duplicada no front, bloqueio local que impede a API de responder, validação de negocio espalhada em componente Angular
 
+**Serviço de aplicação**:
+Orquestrador de um caso de uso. Coordena interfaces de domínio, persistência e efeitos externos, mantendo visível a sequência do fluxo. Não é o dono de invariantes, mapeamentos, criação de objetos de negócio ou blocos extensos de validação; essas responsabilidades pertencem aos conceitos e colaboradores especializados que o serviço consome.
+_Avoid_: Serviço concentrador, regra de domínio espalhada em orquestração, classe de passagem sem responsabilidade clara
+
+**Validador de aplicação**:
+Colaborador que valida a entrada e as condições de um fluxo de aplicação, especialmente quando essas verificações tornariam o serviço difícil de ler. Complementa, mas não substitui, as invariantes e validações do objeto de domínio.
+_Avoid_: Validador que permite entidade inválida, bloco de validação centralizado no serviço, duplicação sem propósito de invariante
+
 **Atron.WebViews**:
 Estrutura legada de front MVC/Razor deletada para evitar dois projetos de front diferentes evoluindo em paralelo.
 _Avoid_: Front secundário, duplicação de tela

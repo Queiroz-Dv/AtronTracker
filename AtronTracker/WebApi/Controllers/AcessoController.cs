@@ -25,8 +25,7 @@ namespace WebApi.Controllers
         private readonly ICookieService _cookieService;
         private readonly SolicitarReativacao _solicitarReativacao;
         private readonly ReativarUsuario _reativarUsuario;
-        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail;
-        private readonly ILogger<AcessoController> _logger;
+        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail;        
 
         public AcessoController(
             ILoginService loginUserService,
@@ -43,7 +42,6 @@ namespace WebApi.Controllers
             _reativarUsuario = reativarUsuario;
             _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
             _service = loginUserService;
-            _logger = logger;
         }
 
         /// <summary>

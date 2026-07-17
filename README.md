@@ -48,6 +48,7 @@ eventos específicos para o sistema. Adotamos então o Angular que está em `Atr
 - [docs/visao-produto-atron.md](docs/visao-produto-atron.md): direção de produto da plataforma.
 - [docs/publicacao-render-brevo-supabase.md](docs/publicacao-render-brevo-supabase.md): manual de publicação com Render, Supabase e Brevo.
 - [docs/adr](docs/adr): decisões arquiteturais e de domínio.
+- [docs/padrao-responsabilidades-servicos.md](docs/padrao-responsabilidades-servicos.md): critérios SOLID e distribuição de responsabilidades nos serviços de aplicação.
 - [docs/planejamento-custos-mvp.md](docs/planejamento-custos-mvp.md): contrato do módulo de planejamento de custos.
 
 ## Estrutura dos projetos
