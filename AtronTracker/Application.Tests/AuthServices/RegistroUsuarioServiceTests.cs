@@ -3,6 +3,7 @@ using Application.Email.Compositores;
 using Application.Extensions;
 using Application.Interfaces.Services;
 using Application.Services.AuthServices;
+using Application.Services.AuthServices.Bases;
 using Application.UseCases.Usuario;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -22,6 +23,23 @@ namespace Application.Tests.AuthServices;
 
 public class RegistroUsuarioServiceTests
 {
+    [Theory]
+    [InlineData("", "http://localhost:5000")]
+    [InlineData("http://localhost:4200", "http://localhost:4200")]
+    public void ObterUri_DeveUsarClientUriOuUriDaRequisicao(string clientUri, string esperado)
+    {
+        var httpContextAccessor = new HttpContextAccessor
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        httpContextAccessor.HttpContext.Request.Scheme = "http";
+        httpContextAccessor.HttpContext.Request.Host = new HostString("localhost:5000");
+
+        var service = new AuthUriBaseServiceFake(httpContextAccessor);
+
+        Assert.Equal(esperado, service.Obter(clientUri));
+    }
+
     [Fact]
     public async Task SolicitarRecuperacaoSenha_DeveBuscarPorCodigoQuandoIdentificadorNaoForEmail()
     {
@@ -125,19 +143,30 @@ public class RegistroUsuarioServiceTests
         httpContextAccessor.HttpContext.Request.Scheme = "http";
         httpContextAccessor.HttpContext.Request.Host = new HostString("localhost:5000");
 
-        return new RegistroUsuarioService(
+        var identidade = new UsuarioIdentityRepositoryFake();
+        var email = new EmailServiceFake(resultadoEmail);
+        var compositor = new AcessoEmailCompositor(new EmailTemplateRenderer());
+        var cadastro = new CadastroUsuarioService(new CadastroUsuarioContext(
             usuarioRepository,
             new PerfilDeAcessoUsuarioRepositoryFake(),
             new PerfilDeAcessoRepositoryFake(),
-            new UsuarioIdentityRepositoryFake(),
-            new EmailServiceFake(resultadoEmail),
-            new AcessoEmailCompositor(new EmailTemplateRenderer()),
+            identidade,
+            email,
+            compositor,
             new ValidadorFake(),
             httpContextAccessor,
+            new ConfirmacaoEmailRepositoryFake(),
+            new ConfirmacaoEmailCodigoService()));
+        var recuperacao = new RecuperacaoSenhaService(new RecuperacaoSenhaContext(
+            usuarioRepository,
+            identidade,
             new LoginRepositoryFake(),
             new CacheServiceFake(),
-            new ConfirmacaoEmailRepositoryFake(),
-            new ConfirmacaoEmailCodigoService());
+            email,
+            compositor,
+            httpContextAccessor));
+
+        return new RegistroUsuarioService(cadastro, recuperacao);
     }
 
     private static ReenviarConfirmacaoEmail CriarReenviarConfirmacaoEmail(
@@ -239,9 +268,8 @@ public class RegistroUsuarioServiceTests
     {
         public void GravarCache<T>(CacheInfo<T> cacheInfo) { }
         public void GravarCache<T>(CacheInfo<T> cacheInfo, TimeSpan expiracao) { }
-        public T ObterCache<T>(string cacheKey) => default;
-        public void RemoverCache(ECacheKeysInfo chave) { }
-        public void RemoverCache(ECacheKeysInfo chave, string codigoDaEntidade) { }
+        public T ObterCache<T>(ChaveCache chaveCache) => default;
+        public void RemoverCache(ChaveCache chaveCache) { }
     }
 
     private sealed class ConfirmacaoEmailRepositoryFake : IConfirmacaoEmailRepository
@@ -298,5 +326,11 @@ public class RegistroUsuarioServiceTests
         public Task<bool> CriarRelacionamentoRepositoryAsync(PerfilDeAcessoUsuario perfilDeAcesso) => Task.FromResult(false);
         public Task<PerfilDeAcessoUsuario> ObterPerfilDeAcessoPorCodigoRepositoryAsync(string codigo) => Task.FromResult<PerfilDeAcessoUsuario>(null);
         public Task DeletarRelacionamento(PerfilDeAcessoUsuario relacionamento) => Task.CompletedTask;
+    }
+
+    private sealed class AuthUriBaseServiceFake(IHttpContextAccessor httpContextAccessor)
+        : AuthUriBaseService(httpContextAccessor)
+    {
+        public string Obter(string clientUri) => ObterUri(clientUri);
     }
 }

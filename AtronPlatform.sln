@@ -33,17 +33,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronAuditoria", "AtronAudi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronEmail", "AtronEmail\AtronEmail.csproj", "{88D721BF-F246-4251-9AD2-DC97F4EA01FE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure.PostgreSqlMigrations", "Infrastructure.PostgreSqlMigrations", "{72813753-13B8-B457-21B9-AA4E6068109A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure.Migrations", "Infrastructure.Migrations", "{72813753-13B8-B457-21B9-AA4E6068109A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronTracker.Infrastructure.PostgreSqlMigrations", "AtronTracker\Infrastructure.PostgreSqlMigrations\AtronTracker.Infrastructure.PostgreSqlMigrations.csproj", "{FFE2CE83-980C-4D66-871F-76BE7058E332}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronTracker.Infrastructure.Migrations", "AtronTracker\Infrastructure.Migrations\AtronTracker.Infrastructure.Migrations.csproj", "{FFE2CE83-980C-4D66-871F-76BE7058E332}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared.PostgreSqlMigrations", "Shared.PostgreSqlMigrations", "{14B1026C-81B2-6184-F7E9-FB5E18F801D2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared.Migrations", "Shared.Migrations", "{14B1026C-81B2-6184-F7E9-FB5E18F801D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Shared.PostgreSqlMigrations", "Framework\Shared.PostgreSqlMigrations\Framework.Shared.PostgreSqlMigrations.csproj", "{CDCDC044-E836-444B-AB7B-277B8903BB43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Shared.Migrations", "Framework\Shared.Migrations\Framework.Shared.Migrations.csproj", "{CDCDC044-E836-444B-AB7B-277B8903BB43}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure.PostgreSqlMigrations", "Infrastructure.PostgreSqlMigrations", "{AAF0169B-CC63-272D-A304-839416ABD88F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure.Migrations", "Infrastructure.Migrations", "{AAF0169B-CC63-272D-A304-839416ABD88F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronStock.Infrastructure.PostgreSqlMigrations", "AtronStock\Infrastructure.PostgreSqlMigrations\AtronStock.Infrastructure.PostgreSqlMigrations.csproj", "{C40C6648-1079-45EC-9161-3636E8688837}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtronStock.Infrastructure.Migrations", "AtronStock\Infrastructure.Migrations\AtronStock.Infrastructure.Migrations.csproj", "{C40C6648-1079-45EC-9161-3636E8688837}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Tests", "AtronTracker\Application.Tests\Application.Tests.csproj", "{506392FD-2371-4ED1-A588-61420D286DDD}"
 EndProject

@@ -29,16 +29,28 @@ namespace Application.Services.EntitiesServices
                                    IDepartamentoRepository departamentoRepository,
                                    IUsuarioRepository usuarioRepository,
                                    ICargoRepository cargoRepository,
-                                   IPlanejamentoCustoRepository planejamentoCustoRepository,
+                                   EstruturaPlanejadaPolicy estruturaPlanejadaPolicy,
                                    IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         {
             _departamentoRepository = departamentoRepository;
             _usuarioRepository = usuarioRepository;
             _cargoRepository = cargoRepository;
-            _estruturaPlanejadaPolicy = new EstruturaPlanejadaPolicy(planejamentoCustoRepository);
+            _estruturaPlanejadaPolicy = estruturaPlanejadaPolicy;
             _relacionamentoRepository = relacionamentoRepository;
             _validador = validador;
             _asyncMap = asyncMap;
+        }
+
+        public DepartamentoService(IValidador<DepartamentoDTO> validador,
+                                   IAsyncMap<DepartamentoDTO, Departamento> asyncMap,
+                                   IDepartamentoRepository departamentoRepository,
+                                   IUsuarioRepository usuarioRepository,
+                                   ICargoRepository cargoRepository,
+                                   IPlanejamentoCustoRepository planejamentoCustoRepository,
+                                   IUsuarioCargoDepartamentoRepository relacionamentoRepository)
+            : this(validador, asyncMap, departamentoRepository, usuarioRepository, cargoRepository,
+                new EstruturaPlanejadaPolicy(planejamentoCustoRepository), relacionamentoRepository)
+        {
         }
 
         public async Task<Resultado<DepartamentoDTO>> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)

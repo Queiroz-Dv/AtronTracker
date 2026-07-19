@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.PlanejamentoCustos
 {
-    internal sealed class EstruturaPlanejadaPolicy
+    public sealed class EstruturaPlanejadaPolicy
     {
         private readonly IPlanejamentoCustoRepository _planejamentoCustoRepository;
 

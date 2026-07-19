@@ -62,11 +62,12 @@ public class TarefaServiceNotificacaoTests
         var tarefaRepository = new Mock<ITarefaRepository>();
         tarefaRepository.Setup(repository => repository.CriarTarefaAsync(entidade)).ReturnsAsync(true);
 
-        var notificacao = new Mock<INotificacaoInternaService>();
-        notificacao
+        var notificacaoPersistencia = new Mock<INotificacaoInternaService>();
+        notificacaoPersistencia
             .Setup(service => service.CriarAsync(It.IsAny<NotificacaoInterna>()))
             .Callback<NotificacaoInterna>(valor => capturarNotificacao?.Invoke(valor))
             .ReturnsAsync(Resultado<NotificacaoInternaDTO>.Sucesso(new NotificacaoInternaDTO()));
+        var notificacao = new TarefaNotificacaoInternaService(notificacaoPersistencia.Object);
 
         var email = new Mock<ITarefaNotificacaoService>();
         email
@@ -76,12 +77,12 @@ public class TarefaServiceNotificacaoTests
         return new TarefaService(
             Mock.Of<IAsyncApplicationMapService<TarefaDTO, Tarefa>>(),
             tarefaRepository.Object,
-            Mock.Of<ISolicitacaoObtencaoTarefaRepository>(),
-            notificacao.Object,
             preparacao.Object,
             email.Object,
-            Mock.Of<IUsuarioRepository>(),
-            Mock.Of<IUserAccessor>());
+            notificacao,
+            Mock.Of<ITarefaObtencaoService>(),
+            Mock.Of<ITarefaUsuarioAtualService>(),
+            Mock.Of<ITarefaConfiguracoesService>());
     }
 
     private static TarefaDTO CriarTarefaDto()

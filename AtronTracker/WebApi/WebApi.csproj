@@ -23,8 +23,8 @@
 	<ProjectReference Include="..\..\Framework\IoC\IoC.csproj" />	
 	<ProjectReference Include="..\Application\Application.csproj" />    
     <ProjectReference Include="..\Domain\Domain.csproj" />
-    <ProjectReference Include="..\Infrastructure.PostgreSqlMigrations\AtronTracker.Infrastructure.PostgreSqlMigrations.csproj" />
-    <ProjectReference Include="..\..\Framework\Shared.PostgreSqlMigrations\Framework.Shared.PostgreSqlMigrations.csproj" />
+    <ProjectReference Include="..\Infrastructure.Migrations\AtronTracker.Infrastructure.Migrations.csproj" />
+    <ProjectReference Include="..\..\Framework\Shared.Migrations\Framework.Shared.Migrations.csproj" />
   </ItemGroup>
 
 </Project>

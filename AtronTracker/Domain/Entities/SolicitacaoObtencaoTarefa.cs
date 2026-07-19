@@ -25,5 +25,19 @@ namespace Domain.Entities
         public Usuario Solicitante { get; set; }
 
         public Usuario Aprovador { get; set; }
+
+        public static SolicitacaoObtencaoTarefa CriarPendente(Tarefa tarefa, Usuario solicitante, Usuario aprovador)
+        {
+            return new SolicitacaoObtencaoTarefa
+            {
+                TarefaId = tarefa.Id,
+                SolicitanteId = solicitante.Id,
+                SolicitanteCodigo = solicitante.Codigo,
+                AprovadorId = aprovador.Id,
+                AprovadorCodigo = aprovador.Codigo,
+                Status = (int)Enums.StatusSolicitacaoObtencaoTarefa.Pendente,
+                DataSolicitacao = DateTime.Now
+            };
+        }
     }
 }

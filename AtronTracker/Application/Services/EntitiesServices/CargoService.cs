@@ -30,16 +30,16 @@ namespace Application.Services.EntitiesServices
                             IAsyncMap<CargoDTO, Cargo> asyncMap,
                             ICargoRepository cargoRepository,
                             IDepartamentoRepository departamentoRepository,
-                            IPlanejamentoCustoRepository planejamentoCustoRepository,
+                            EstruturaPlanejadaPolicy estruturaPlanejadaPolicy,
                             IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         {
             _validador = validador;
             _asyncMap = asyncMap;
             _cargoRepository = cargoRepository;
             _departamentoRepository = departamentoRepository;
-            _estruturaPlanejadaPolicy = new EstruturaPlanejadaPolicy(planejamentoCustoRepository);
+            _estruturaPlanejadaPolicy = estruturaPlanejadaPolicy;
             _relacionamentoRepository = relacionamentoRepository;
-        }
+        }       
 
         public async Task<Resultado<CargoDTO>> CriarAsync(CargoDTO cargoDTO)
         {
@@ -136,7 +136,6 @@ namespace Application.Services.EntitiesServices
                 .Sucesso(cargo)
                 .AdicionarMensagem(NotificacoesPadronizadas.MensagemRemocaoSucesso);
         }
-
 
         public async Task<Resultado<CargoDTO>> ObterPorCodigoAsync(string codigo)
         {

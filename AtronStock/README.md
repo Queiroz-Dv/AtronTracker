@@ -78,6 +78,6 @@ O `StockDbContext` usa Supabase/PostgreSQL como provider de persistência do pro
 
 As migrations ativas ficam no projeto separado:
 
-- `AtronStock/Infrastructure.PostgreSqlMigrations`
+- `AtronStock/Infrastructure.Migrations`
 
 O projeto principal de infraestrutura não mantém migrations próprias para o deploy.

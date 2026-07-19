@@ -188,7 +188,8 @@ namespace Application.UseCases.Usuario
                 DataAlteracaoSenha = DateTime.UtcNow
             };
 
-            var cacheInfo = new CacheInfo<DadosTemporarios>(ECacheKeysInfo.DadosTemporarios, identificadorTemporario)
+            var chaveCache = new ChaveCache(ECacheKeysInfo.DadosTemporarios, identificadorTemporario);
+            var cacheInfo = new CacheInfo<DadosTemporarios>(chaveCache)
             {
                 EntityInfo = dadosTemporarios
             };
@@ -213,13 +214,13 @@ namespace Application.UseCases.Usuario
             }
             catch
             {
-                _cacheService.RemoverCache(ECacheKeysInfo.DadosTemporarios, identificadorTemporario);
+                _cacheService.RemoverCache(chaveCache);
                 return Resultado.Falha(AuthResource.Erro_EnvioEmailObrigatorio);
             }
 
             if (resultadoEmail.TeveFalha)
             {
-                _cacheService.RemoverCache(ECacheKeysInfo.DadosTemporarios, identificadorTemporario);
+                _cacheService.RemoverCache(chaveCache);
                 return Resultado.Falha(resultadoEmail.Messages);
             }
 

@@ -26,7 +26,7 @@ namespace IoC
             services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
 
             var database = DatabaseProviderResolver.Resolve(configuration);
-            var migrationsAssembly = "AtronStock.Infrastructure.PostgreSqlMigrations";
+            var migrationsAssembly = "AtronStock.Infrastructure.Migrations";
 
             services.AddDbContext<StockDbContext>(options => options.UseConfiguredDatabase(database, migrationsAssembly));
             services = services.AddSharedInfrastructure(configuration);

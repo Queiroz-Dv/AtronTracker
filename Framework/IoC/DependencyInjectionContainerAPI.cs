@@ -13,6 +13,7 @@ using Application.Validador;
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Interfaces.Identity;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Infrastructure.Repositories;
@@ -40,7 +41,7 @@ namespace IoC
             services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
 
             var database = DatabaseProviderResolver.Resolve(configuration);
-            var migrationsAssembly = "AtronTracker.Infrastructure.PostgreSqlMigrations";
+            var migrationsAssembly = "AtronTracker.Infrastructure.Migrations";
 
             services.AddDbContext<AtronDbContext>(options =>
                 options.UseConfiguredDatabase(database, migrationsAssembly));
@@ -100,6 +101,27 @@ namespace IoC
         {
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
+            services.AddScoped<CadastroUsuarioContext>(provider => new CadastroUsuarioContext(
+                provider.GetRequiredService<IUsuarioRepository>(),
+                provider.GetRequiredService<IPerfilDeAcessoUsuarioRepository>(),
+                provider.GetRequiredService<IPerfilDeAcessoRepository>(),
+                provider.GetRequiredService<IUsuarioIdentityRepository>(),
+                provider.GetRequiredService<IEmailService>(),
+                provider.GetRequiredService<IAcessoEmailCompositor>(),
+                provider.GetRequiredService<IValidador<UsuarioRegistroRequest>>(),
+                provider.GetRequiredService<IHttpContextAccessor>(),
+                provider.GetRequiredService<IConfirmacaoEmailRepository>(),
+                provider.GetRequiredService<IConfirmacaoEmailCodigoService>()));
+            services.AddScoped<RecuperacaoSenhaContext>(provider => new RecuperacaoSenhaContext(
+                provider.GetRequiredService<IUsuarioRepository>(),
+                provider.GetRequiredService<IUsuarioIdentityRepository>(),
+                provider.GetRequiredService<ILoginRepository>(),
+                provider.GetRequiredService<ICacheService>(),
+                provider.GetRequiredService<IEmailService>(),
+                provider.GetRequiredService<IAcessoEmailCompositor>(),
+                provider.GetRequiredService<IHttpContextAccessor>()));
+            services.AddScoped<ICadastroUsuarioService, CadastroUsuarioService>();
+            services.AddScoped<IRecuperacaoSenhaService, RecuperacaoSenhaService>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
             services.AddScoped<IAcessoEmailCompositor, AcessoEmailCompositor>();
             services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
@@ -118,6 +140,13 @@ namespace IoC
             services.AddScoped<ISolicitacaoObtencaoTarefaRepository, SolicitacaoObtencaoTarefaRepository>();
             services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
             services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
+            services.AddScoped<ITarefaObtencaoValidador, TarefaObtencaoValidador>();
+            services.AddScoped<IAprovadorObtencaoTarefaResolver, AprovadorObtencaoTarefaResolver>();
+            services.AddScoped<ISolicitacaoObtencaoTarefaMapeador, SolicitacaoObtencaoTarefaMapeador>();
+            services.AddScoped<ITarefaNotificacaoInternaService, TarefaNotificacaoInternaService>();
+            services.AddScoped<ITarefaUsuarioAtualService, TarefaUsuarioAtualService>();
+            services.AddScoped<ITarefaConfiguracoesService, TarefaConfiguracoesService>();
+            services.AddScoped<ITarefaObtencaoService, TarefaObtencaoService>();
             services.AddScoped<ITarefaEmailCompositor, TarefaEmailCompositor>();
             services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
             services.AddScoped<ITarefaService, TarefaService>();
@@ -157,6 +186,7 @@ namespace IoC
         private static void ConfigurePlanejamentoCustoServices(IServiceCollection services)
         {
             services.AddScoped<IPlanejamentoCustoRepository, PlanejamentoCustoRepository>();
+            services.AddScoped<EstruturaPlanejadaPolicy>();
             services.AddScoped<IPlanejamentoCustoPreparacaoService, PlanejamentoCustoPreparacaoService>();
             services.AddScoped<IPlanejamentoCustoRelatorioService, PlanejamentoCustoRelatorioService>();
             services.AddScoped<IPlanejamentoCustoRelatorioImpressaoService, PlanejamentoCustoRelatorioImpressaoService>();
@@ -178,6 +208,9 @@ namespace IoC
         private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
         {
             services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
+            services.AddScoped<IPerfilDeAcessoPreparacaoService, PerfilDeAcessoPreparacaoService>();
+            services.AddScoped<IPerfilDeAcessoCacheInvalidator, PerfilDeAcessoCacheInvalidator>();
+            services.AddScoped<IPerfilDeAcessoUsuarioSincronizacaoService, PerfilDeAcessoUsuarioSincronizacaoService>();
             services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
         }
 

@@ -106,6 +106,7 @@ namespace Application.Services.EntitiesServices.Tarefas
                 tarefa.DepartamentoCodigo = null;
                 tarefa.CargoId = null;
                 tarefa.CargoCodigo = null;
+
                 return Resultado<Departamento>.Sucesso(null);
             }
 

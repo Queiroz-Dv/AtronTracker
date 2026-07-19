@@ -19,7 +19,7 @@ A pasta `Repositories` contém implementações das interfaces de repositório, 
 
 As migrations ativas de Supabase/PostgreSQL ficam no projeto separado:
 
-- `AtronTracker/Infrastructure.PostgreSqlMigrations`
+- `AtronTracker/Infrastructure.Migrations`
 
 O projeto `AtronTracker/Infrastructure` mantém o `AtronDbContext`, configurações de entidades e repositórios, mas não mantém migrations próprias para o deploy.
 

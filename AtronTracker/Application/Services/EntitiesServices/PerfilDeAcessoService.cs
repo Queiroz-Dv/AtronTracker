@@ -1,12 +1,10 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
-using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,31 +15,22 @@ namespace Application.Services.EntitiesServices
     {
         private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository;
-        private readonly IPerfilDeAcessoUsuarioRepository _perfilDeAcessoUsuarioRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IModuloRepository _moduloRepository;
-        private readonly IValidateModelService<PerfilDeAcesso> _validateModel;
-        private readonly ICacheUsuarioService _cacheUsuarioService;
-        private readonly Notifiable _messageModel;
+        private readonly IPerfilDeAcessoPreparacaoService _preparacaoService;
+        private readonly IPerfilDeAcessoUsuarioSincronizacaoService _sincronizacaoService;
+        private readonly IPerfilDeAcessoCacheInvalidator _cacheInvalidator;
 
         public PerfilDeAcessoService(
-            IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
-            IUsuarioRepository usuarioRepository,
             IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
-            IPerfilDeAcessoRepository perfilDeAcessoRepository,          
-            IModuloRepository moduloRepository,
-            IValidateModelService<PerfilDeAcesso> validateModel,
-            ICacheUsuarioService cacheUsuarioService,
-            Notifiable messageModel)
+            IPerfilDeAcessoRepository perfilDeAcessoRepository,
+            IPerfilDeAcessoPreparacaoService preparacaoService,
+            IPerfilDeAcessoUsuarioSincronizacaoService sincronizacaoService,
+            IPerfilDeAcessoCacheInvalidator cacheInvalidator)
         {
             _map = map;
-            _usuarioRepository = usuarioRepository;
-            _perfilDeAcessoUsuarioRepository = perfilDeAcessoUsuarioRepository;
             _perfilDeAcessoRepository = perfilDeAcessoRepository;
-            _moduloRepository = moduloRepository;
-            _validateModel = validateModel;
-            _cacheUsuarioService = cacheUsuarioService;
-            _messageModel = messageModel;
+            _preparacaoService = preparacaoService;
+            _sincronizacaoService = sincronizacaoService;
+            _cacheInvalidator = cacheInvalidator;
         }
 
         public async Task<Resultado<List<PerfilDeAcessoDTO>>> ObterTodosAsync()
@@ -53,196 +42,68 @@ namespace Application.Services.EntitiesServices
         public async Task<Resultado<PerfilDeAcessoDTO>> ObterPorCodigoAsync(string codigo)
         {
             var perfil = await ObterPerfilPorCodigoServiceAsync(codigo);
-
-            return perfil is null ?
-                Resultado<PerfilDeAcessoDTO>.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado) :
-                Resultado<PerfilDeAcessoDTO>.Sucesso(perfil);
+            return perfil is null
+                ? Resultado<PerfilDeAcessoDTO>.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado)
+                : Resultado<PerfilDeAcessoDTO>.Sucesso(perfil);
         }
 
         public async Task<Resultado<PerfilDeAcessoDTO>> CriarAsync(PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
-            var criado = await CriarPerfilServiceAsync(perfilDeAcessoDTO);
-            return MontarResultado(criado, perfilDeAcessoDTO, PerfilDeAcessoResource.Erro_CriarPerfil);
+            var preparacao = await _preparacaoService.PrepararAsync(perfilDeAcessoDTO);
+            if (preparacao.TeveFalha)
+                return Resultado<PerfilDeAcessoDTO>.Falhas(preparacao.Messages);
+
+            var criado = await _perfilDeAcessoRepository.CriarPerfilRepositoryAsync(preparacao.Dados);
+            return criado
+                ? Resultado<PerfilDeAcessoDTO>.Sucesso(perfilDeAcessoDTO)
+                    .AdicionarMensagem(string.Format(PerfilDeAcessoResource.Mensagem_PerfilCriado, preparacao.Dados.Codigo))
+                : Resultado<PerfilDeAcessoDTO>.Falha(PerfilDeAcessoResource.Erro_CriarPerfil);
         }
 
         public async Task<Resultado<PerfilDeAcessoDTO>> AtualizarAsync(string codigo, PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
-            var atualizado = await AtualizarPerfilServiceAsync(codigo, perfilDeAcessoDTO);
-            return MontarResultado(atualizado, perfilDeAcessoDTO, PerfilDeAcessoResource.Erro_AtualizarPerfil);
+            var preparacao = await _preparacaoService.PrepararAsync(perfilDeAcessoDTO);
+            if (preparacao.TeveFalha)
+                return Resultado<PerfilDeAcessoDTO>.Falhas(preparacao.Messages);
+
+            var perfilAtual = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
+            var atualizado = await _perfilDeAcessoRepository.AtualizarPerfilRepositoryAsync(codigo, preparacao.Dados);
+            if (!atualizado)
+                return Resultado<PerfilDeAcessoDTO>.Falha(PerfilDeAcessoResource.Erro_AtualizarPerfil);
+
+            _cacheInvalidator.InvalidarUsuariosDoPerfil(perfilAtual);
+            return Resultado<PerfilDeAcessoDTO>.Sucesso(perfilDeAcessoDTO)
+                .AdicionarMensagem(string.Format(PerfilDeAcessoResource.Mensagem_PerfilAtualizado, preparacao.Dados.Codigo));
         }
 
         public async Task<Resultado> RemoverAsync(string codigo)
         {
-            var removido = await DeletarPerfilServiceAsync(codigo);
-            return MontarResultado(removido, PerfilDeAcessoResource.Erro_RemoverPerfil);
+            var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
+            if (perfil is null)
+                return Resultado.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado);
+
+            var removido = await _perfilDeAcessoRepository.DeletarPerfilRepositoryAsync(perfil);
+            if (!removido)
+                return Resultado.Falha(PerfilDeAcessoResource.Erro_RemoverPerfil);
+
+            _cacheInvalidator.InvalidarUsuariosDoPerfil(perfil);
+            return Resultado.Sucesso(PerfilDeAcessoResource.Mensagem_PerfilRemovido);
         }
 
         public async Task<Resultado<PerfilDeAcessoUsuarioDTO>> RelacionarPerfilDeAcessoUsuarioAsync(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuario)
         {
-            var relacionado = await RelacionarPerfilDeAcessoUsuarioServiceAsync(perfilDeAcessoUsuario);
-            return MontarResultado(relacionado, perfilDeAcessoUsuario, PerfilDeAcessoResource.Erro_RelacionarUsuarios);
+            var resultado = await _sincronizacaoService.SincronizarAsync(perfilDeAcessoUsuario);
+            return resultado.TeveFalha
+                ? Resultado<PerfilDeAcessoUsuarioDTO>.Falhas(resultado.Messages)
+                : Resultado<PerfilDeAcessoUsuarioDTO>.Sucesso(perfilDeAcessoUsuario);
         }
 
         public async Task<Resultado<PerfilDeAcessoUsuarioDTO>> ObterRelacionamentoDePerfilUsuarioPorCodigoAsync(string codigo)
         {
             var relacionamento = await ObterRelacionamentoDePerfilUsuarioPorCodigoServiceAsync(codigo);
-
-            return _messageModel.Notificacoes.HasErrors() ?
-                Resultado<PerfilDeAcessoUsuarioDTO>.Falhas(_messageModel.Notificacoes) :
-                Resultado<PerfilDeAcessoUsuarioDTO>.Sucesso(relacionamento);
-        }
-
-        private Resultado<T> MontarResultado<T>(bool teveSucesso, T dados, string mensagemErroPadrao)
-        {
-            if (teveSucesso)
-                return Resultado<T>.Sucesso(dados, _messageModel.Notificacoes);
-
-            if (!_messageModel.Notificacoes.HasErrors())
-                _messageModel.AdicionarErro(mensagemErroPadrao);
-
-            return Resultado<T>.Falhas(_messageModel.Notificacoes);
-        }
-
-        private Resultado MontarResultado(bool teveSucesso, string mensagemErroPadrao)
-        {
-            if (teveSucesso)
-                return Resultado.Sucesso(_messageModel.Notificacoes);
-
-            if (!_messageModel.Notificacoes.HasErrors())
-                _messageModel.AdicionarErro(mensagemErroPadrao);
-
-            return Resultado.Falha(_messageModel.Notificacoes);
-        }
-
-        private void ChecarPerfilModulo(PerfilDeAcessoDTO perfilDeAcessoDTO)
-        {
-            if (perfilDeAcessoDTO is null)
-            {
-                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_PerfilInvalido);
-                return;
-            }
-
-            if (perfilDeAcessoDTO.Modulos is null || !perfilDeAcessoDTO.Modulos.Any())
-            {
-                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_SemModulos);
-            }
-        }
-
-
-        public async Task<bool> AtualizarPerfilServiceAsync(string codigo, PerfilDeAcessoDTO perfilDeAcessoDTO)
-        {
-            ChecarPerfilModulo(perfilDeAcessoDTO);
-
-            if (!_messageModel.Notificacoes.HasErrors())
-            {
-                var usuariosAfetados = await ObterCodigosDosUsuariosPorPerfil(codigo);
-                var perfilDeAcesso = await _map.MapToEntityAsync(perfilDeAcessoDTO);
-
-                await PreencherInformacoesDaEntidade(perfilDeAcessoDTO, perfilDeAcesso);
-
-                _validateModel.Validate(perfilDeAcesso);
-
-                if (!_messageModel.Notificacoes.HasErrors())
-                {
-                    var prf = await _perfilDeAcessoRepository.AtualizarPerfilRepositoryAsync(codigo, perfilDeAcesso);
-                    if (prf)
-                    {
-                        _messageModel.AdicionarMensagem(string.Format(PerfilDeAcessoResource.Mensagem_PerfilAtualizado, perfilDeAcesso.Codigo));
-                        InvalidarCacheDosUsuarios(usuariosAfetados);
-
-                        return prf;
-                    }
-                }
-
-                return false;
-            }
-
-            return false;
-        }
-
-        private async Task PreencherInformacoesDaEntidade(PerfilDeAcessoDTO perfilDeAcessoDTO, PerfilDeAcesso perfilDeAcesso)
-        {
-            // Aqui preciso obter o id de cada módulo para relacionar ao perfil e as propriedades
-            foreach (var moduloDTO in perfilDeAcessoDTO.Modulos)
-            {
-                // Cria o objeto global do foreach
-                var perfilDeAcessoModulo = new PerfilDeAcessoModulo();
-
-                // Obtém o módulo por código para preencher o id
-                var modulo = await _moduloRepository.ObterPorCodigoRepository(moduloDTO.Codigo);
-
-                // Preenche a entidade principal
-                perfilDeAcessoModulo.PerfilDeAcessoId = perfilDeAcesso.Id;
-                perfilDeAcessoModulo.PerfilDeAcessoCodigo = perfilDeAcesso.Codigo;
-                perfilDeAcessoModulo.ModuloId = modulo.Id;
-                perfilDeAcessoModulo.ModuloCodigo = modulo.Codigo;
-
-                // Inclui a entidade totalmente preenchida na lista
-                perfilDeAcesso.PerfilDeAcessoModulos.Add(perfilDeAcessoModulo);
-            }
-        }
-
-        // Para criar um perfil eu preciso pelo menos ter um módulo relacionado a ele
-        public async Task<bool> CriarPerfilServiceAsync(PerfilDeAcessoDTO perfilDeAcessoDTO)
-        {
-            ChecarPerfilModulo(perfilDeAcessoDTO);
-
-            if (!_messageModel.Notificacoes.HasErrors())
-            {
-                var perfilDeAcesso = await _map.MapToEntityAsync(perfilDeAcessoDTO);
-
-                await PreencherInformacoesDaEntidade(perfilDeAcessoDTO, perfilDeAcesso);
-
-                // Lembrar de validar o módulo de acordo com as regras de negócio
-                _validateModel.Validate(perfilDeAcesso);
-
-                if (!_messageModel.Notificacoes.HasErrors())
-                {
-                    var prf = await _perfilDeAcessoRepository.CriarPerfilRepositoryAsync(perfilDeAcesso);
-                    if (prf)
-                    {
-                        _messageModel.AdicionarMensagem(string.Format(PerfilDeAcessoResource.Mensagem_PerfilCriado, perfilDeAcesso.Codigo));
-
-                        return prf;
-                    }
-                }
-                return false;
-            }
-            return false;
-        }
-
-        public async Task<bool> DeletarPerfilServiceAsync(string codigo)
-        {
-            var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
-            if (perfil is null)
-            {
-                _messageModel.MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_PerfilDeAcesso);
-            }
-            else
-            {
-                var usuariosAfetados = ObterCodigosDosUsuarios(perfil);
-                var result = await _perfilDeAcessoRepository.DeletarPerfilRepositoryAsync(perfil);
-                _messageModel.AdicionarMensagem(PerfilDeAcessoResource.Mensagem_PerfilRemovido);
-
-                if (result)
-                    InvalidarCacheDosUsuarios(usuariosAfetados);
-
-                return result;
-            }
-
-            return false;
-        }
-
-        public async Task<PerfilDeAcessoDTO> ObterPerfilPorCodigoServiceAsync(string codigo)
-        {
-            var entidade = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
-            return entidade is null ? null : await _map.MapToDTOAsync(entidade);
-        }
-
-        public async Task<PerfilDeAcessoDTO> ObterPerfilPorIdServiceAsync(int id)
-        {
-            var entidade = await _perfilDeAcessoRepository.ObterPerfilPorIdRepositoryAsync(id);
-            return entidade is null ? null : await _map.MapToDTOAsync(entidade);
+            return relacionamento is null
+                ? Resultado<PerfilDeAcessoUsuarioDTO>.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado)
+                : Resultado<PerfilDeAcessoUsuarioDTO>.Sucesso(relacionamento);
         }
 
         public async Task<ICollection<PerfilDeAcessoDTO>> ObterTodosPerfisServiceAsync()
@@ -251,162 +112,75 @@ namespace Application.Services.EntitiesServices
             return await _map.MapToListDTOAsync(entities.ToList());
         }
 
-        public async Task<bool> RelacionarPerfilDeAcessoUsuarioServiceAsync(PerfilDeAcessoUsuarioDTO dto)
+        public async Task<PerfilDeAcessoDTO> ObterPerfilPorIdServiceAsync(int id)
         {
-            ChecarPerfilDeAcessoUsuario(dto);
-
-            if (!_messageModel.Notificacoes.HasErrors())
-            {
-                // Preciso remover antes pois não terei o Update diretamente, basta remover os registros e refazer a gravação
-                var perfilRelacionado = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(dto.PerfilDeAcesso.Codigo);
-                var usuariosAfetados = new List<string>();
-
-                if (perfilRelacionado is null)
-                {
-                    _messageModel.MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_PerfilDeAcesso);
-                    return false;
-                }
-
-                if (perfilRelacionado.PerfisDeAcessoUsuario.Any())
-                {
-                    usuariosAfetados.AddRange(ObterCodigosDosUsuarios(perfilRelacionado));
-
-                    foreach (var item in perfilRelacionado.PerfisDeAcessoUsuario)
-                    {
-                        await _perfilDeAcessoUsuarioRepository.DeletarRelacionamento(item);
-                    }
-                }
-
-                var perfilDeAcesso = await _map.MapToEntityAsync(dto.PerfilDeAcesso);
-                perfilDeAcesso.PerfisDeAcessoUsuario = new List<PerfilDeAcessoUsuario>();
-                foreach (var usuarioDTO in dto.Usuarios)
-                {
-                    usuariosAfetados.Add(usuarioDTO.Codigo);
-                    var perfilDeAcessoUsuario = new PerfilDeAcessoUsuario();
-
-                    var usuarioRepo = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioDTO.Codigo);
-                    if (usuarioRepo is null)
-                    {
-                        _messageModel.MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_Usuario);
-                        return false;
-                    }
-
-                    perfilDeAcessoUsuario.UsuarioId = usuarioRepo.Id;
-                    perfilDeAcessoUsuario.UsuarioCodigo = usuarioRepo.Codigo;
-
-                    var perfilRepo = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(perfilDeAcesso.Codigo);
-                    perfilDeAcessoUsuario.PerfilDeAcessoId = perfilRepo.Id;
-                    perfilDeAcessoUsuario.PerfilDeAcessoCodigo = perfilRepo.Codigo;
-
-                    perfilDeAcesso.PerfisDeAcessoUsuario.Add(perfilDeAcessoUsuario);
-                }
-
-
-                // Só pra testar a gravação a partir desse ponto
-                int salvos = 0;
-                foreach (var perfil in perfilDeAcesso.PerfisDeAcessoUsuario)
-                {
-                    var result = await _perfilDeAcessoUsuarioRepository.CriarPerfilRepositoryAsync(perfil);
-                    if (result)
-                    {
-                        salvos++;
-                    }
-                }
-
-                var relacionou = salvos > 0;
-                if (relacionou)
-                    InvalidarCacheDosUsuarios(usuariosAfetados);
-
-                return relacionou;
-            }
-
-            return false;
+            var entidade = await _perfilDeAcessoRepository.ObterPerfilPorIdRepositoryAsync(id);
+            return entidade is null ? null : await _map.MapToDTOAsync(entidade);
         }
 
-        private void ChecarPerfilDeAcessoUsuario(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuario)
+        public async Task<PerfilDeAcessoDTO> ObterPerfilPorCodigoServiceAsync(string codigo)
         {
-            if (perfilDeAcessoUsuario is null || perfilDeAcessoUsuario.PerfilDeAcesso is null)
-            {
-                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_PerfilInvalido);
-                return;
-            }
-
-            if (perfilDeAcessoUsuario.Usuarios is null || !perfilDeAcessoUsuario.Usuarios.Any())
-            {
-                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_SemUsuarios);
-            }
-        }
-
-        public async Task<PerfilDeAcessoUsuarioDTO> ObterRelacionamentoDePerfilUsuarioPorCodigoServiceAsync(string codigo)
-        {
-            if (codigo.IsNullOrEmpty())
-            {
-                return await Task.FromResult(new PerfilDeAcessoUsuarioDTO());
-            }
-
-            var perfilDeAcesso = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
-            if (perfilDeAcesso is null)
-            {
-                _messageModel.MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_PerfilDeAcesso);
-                return new PerfilDeAcessoUsuarioDTO();
-            }
-
-            var perfilDeAcessoDTO = await _map.MapToDTOAsync(perfilDeAcesso);
-
-            var dto = new PerfilDeAcessoUsuarioDTO();
-
-            dto.PerfilDeAcesso.Codigo = perfilDeAcessoDTO.Codigo;
-            dto.PerfilDeAcesso.Descricao = perfilDeAcessoDTO.Descricao;
-
-            foreach (var relacionamento in perfilDeAcesso.PerfisDeAcessoUsuario)
-            {
-                var usuarioDto = new UsuarioDTO
-                {
-                    Codigo = relacionamento.Usuario.Codigo,
-                    Nome = relacionamento.Usuario.Nome,
-                    Sobrenome = relacionamento.Usuario.Sobrenome
-                };
-
-                dto.Usuarios.Add(usuarioDto);
-            }
-
-            foreach (var modulo in perfilDeAcessoDTO.Modulos)
-            {
-                dto.PerfilDeAcesso.Modulos.Add(modulo);
-            }
-
-            return dto;
-
+            var entidade = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
+            return entidade is null ? null : await _map.MapToDTOAsync(entidade);
         }
 
         public async Task<List<PerfilDeAcessoDTO>> ObterPerfisPorCodigoUsuarioServiceAsync(string usuarioCodigo)
         {
             var perfis = await _perfilDeAcessoRepository.ObterPerfisPorCodigoDeUsuarioRepositoryAsync(usuarioCodigo);
-
-            return perfis != null ? await _map.MapToListDTOAsync(perfis) : null;
+            return perfis is null ? null : await _map.MapToListDTOAsync(perfis);
         }
 
-        private async Task<List<string>> ObterCodigosDosUsuariosPorPerfil(string codigoPerfil)
+        public async Task<bool> CriarPerfilServiceAsync(PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
-            var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigoPerfil);
-            return ObterCodigosDosUsuarios(perfil);
+            return (await CriarAsync(perfilDeAcessoDTO)).TeveSucesso;
         }
 
-        private static List<string> ObterCodigosDosUsuarios(PerfilDeAcesso perfil)
+        public async Task<bool> AtualizarPerfilServiceAsync(string codigo, PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
-            return perfil?.PerfisDeAcessoUsuario?
-                .Select(relacionamento => relacionamento.UsuarioCodigo ?? relacionamento.Usuario?.Codigo)
-                .Where(codigo => !codigo.IsNullOrEmpty())
-                .Distinct()
-                .ToList() ?? [];
+            return (await AtualizarAsync(codigo, perfilDeAcessoDTO)).TeveSucesso;
         }
 
-        private void InvalidarCacheDosUsuarios(IEnumerable<string> codigosUsuarios)
+        public async Task<bool> DeletarPerfilServiceAsync(string codigo)
         {
-            foreach (var codigoUsuario in codigosUsuarios.Where(codigo => !codigo.IsNullOrEmpty()).Distinct())
+            return (await RemoverAsync(codigo)).TeveSucesso;
+        }
+
+        public async Task<bool> RelacionarPerfilDeAcessoUsuarioServiceAsync(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuario)
+        {
+            return (await RelacionarPerfilDeAcessoUsuarioAsync(perfilDeAcessoUsuario)).TeveSucesso;
+        }
+
+        public async Task<PerfilDeAcessoUsuarioDTO> ObterRelacionamentoDePerfilUsuarioPorCodigoServiceAsync(string codigo)
+        {
+            if (string.IsNullOrEmpty(codigo))
+                return new PerfilDeAcessoUsuarioDTO();
+
+            var perfilDeAcesso = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
+            if (perfilDeAcesso is null)
+                return null;
+
+            var perfilDeAcessoDTO = await _map.MapToDTOAsync(perfilDeAcesso);
+            var dto = new PerfilDeAcessoUsuarioDTO
             {
-                _cacheUsuarioService.RemoverCacheDeAcessoTokenInfo(codigoUsuario);
+                PerfilDeAcesso = new PerfilDeAcessoDTO
+                {
+                    Codigo = perfilDeAcessoDTO.Codigo,
+                    Descricao = perfilDeAcessoDTO.Descricao,
+                    Modulos = perfilDeAcessoDTO.Modulos.ToList()
+                }
+            };
+
+            foreach (var relacionamento in perfilDeAcesso.PerfisDeAcessoUsuario ?? [])
+            {
+                dto.Usuarios.Add(new UsuarioDTO
+                {
+                    Codigo = relacionamento.Usuario.Codigo,
+                    Nome = relacionamento.Usuario.Nome,
+                    Sobrenome = relacionamento.Usuario.Sobrenome
+                });
             }
+
+            return dto;
         }
     }
 }

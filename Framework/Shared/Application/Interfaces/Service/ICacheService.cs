@@ -1,4 +1,3 @@
-using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 
 namespace Shared.Application.Interfaces.Service
@@ -8,9 +7,8 @@ namespace Shared.Application.Interfaces.Service
         void GravarCache<T>(CacheInfo<T> cacheInfo);
         void GravarCache<T>(CacheInfo<T> cacheInfo, TimeSpan expiracao);
 
-        T ObterCache<T>(string cacheKey);
+        T ObterCache<T>(ChaveCache chaveCache);
 
-        void RemoverCache(ECacheKeysInfo chave);
-        void RemoverCache(ECacheKeysInfo chave, string codigoDaEntidade);
+        void RemoverCache(ChaveCache chaveCache);
     }
 }

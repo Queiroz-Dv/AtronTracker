@@ -119,6 +119,6 @@ O `SharedDbContext` usa Supabase/PostgreSQL como provider de persistência do pr
 
 As migrations ativas ficam no projeto separado:
 
-- `Framework/Shared.PostgreSqlMigrations`
+- `Framework/Shared.Migrations`
 
 O projeto `Framework/Shared` não mantém migrations próprias para o deploy.

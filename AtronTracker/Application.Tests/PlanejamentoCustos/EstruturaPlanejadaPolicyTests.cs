@@ -2,6 +2,7 @@ using Application.DTO;
 using Application.Mapping;
 using Application.Resources;
 using Application.Services.EntitiesServices;
+using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Validador;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -49,7 +50,7 @@ public class EstruturaPlanejadaPolicyTests
             new CargoMapping(),
             new CargoRepositoryFake(cargos: [cargo]),
             new DepartamentoRepositoryFake(),
-            new PlanejamentoCustoRepositoryFake(possuiCargoPlanejado: true),
+            new EstruturaPlanejadaPolicy(new PlanejamentoCustoRepositoryFake(possuiCargoPlanejado: true)),
             new UsuarioCargoDepartamentoRepositoryFake());
 
         var resultado = await service.RemoverAsync("CRG");
@@ -80,7 +81,7 @@ public class EstruturaPlanejadaPolicyTests
             new CargoMapping(),
             new CargoRepositoryFake(cargos: [cargo]),
             new DepartamentoRepositoryFake(departamentos: [departamentoAtual, novoDepartamento]),
-            new PlanejamentoCustoRepositoryFake(possuiCargoPlanejado: true),
+            new EstruturaPlanejadaPolicy(new PlanejamentoCustoRepositoryFake(possuiCargoPlanejado: true)),
             new UsuarioCargoDepartamentoRepositoryFake());
 
         var dto = new CargoDTO

@@ -1,0 +1,125 @@
+using Application.DTO.Request;
+using Application.Email.Models;
+using Application.Extensions;
+using Application.Interfaces.Services;
+using Application.Services.AuthServices.Bases;
+using Domain.Entities;
+using Shared.Application.Resources;
+using Shared.Domain.ValueObjects;
+using Shared.Extensions;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Application.Services.AuthServices
+{
+    public class CadastroUsuarioService(CadastroUsuarioContext context)
+        : AuthUriBaseService(context.HttpContextAccessor), ICadastroUsuarioService
+    {
+        private const int ValidadeConfirmacaoEmHoras = 24;
+
+        public async Task<Resultado> RegistrarAsync(UsuarioRegistroRequest request)
+        {
+            var notificacoes = context.Validador.Validar(request);
+            if (notificacoes.TemErros())
+                return Resultado.Falha(notificacoes);
+
+            if (await context.IdentityRepository.ContaExisteRepositoryAsync(request.Codigo, request.Email))
+                return Resultado.Falha(UsuarioResource.ErroUsuarioExistente);
+
+            if (!await context.IdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(request.Codigo, request.Email, request.Senha))
+                return Resultado.Falha(AuthResource.Erro_GravacaoConta);
+
+            var usuario = new Usuario(request.Codigo, request.Nome, request.Sobrenome, request.Email,
+                request.DataNascimento?.ToDateTime(TimeOnly.MinValue));
+
+            if (!await context.UsuarioRepository.CriarUsuarioAsync(usuario))
+                return Resultado.Falha(UsuarioResource.ErroInesperadoGravacao);
+
+            var usuarioGravado = await context.UsuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
+            var perfil = await context.PerfilRepository.ObterPerfilPorCodigoRepositoryAsync(request.CodigoPerfilDeAcesso);
+            if (perfil != null)
+            {
+                var relacionamento = new PerfilDeAcessoUsuario
+                {
+                    PerfilDeAcessoId = perfil.Id,
+                    PerfilDeAcessoCodigo = perfil.Codigo,
+                    UsuarioId = usuarioGravado.Id,
+                    UsuarioCodigo = usuarioGravado.Codigo
+                };
+
+                await context.PerfilUsuarioRepository.CriarRelacionamentoRepositoryAsync(relacionamento);
+            }
+
+            var confirmacao = await CriarConfirmacaoAsync(request.ClientUri, usuarioGravado.Codigo);
+            if (!confirmacao.Gravado)
+                return Resultado.Falha(AuthResource.Erro_GerarCodigoConfirmacao);
+
+            var resultado = Resultado.Sucesso(string.Format(AuthResource.Mensagem_UsuarioRegistrado, usuario.Nome, usuario.Sobrenome));
+            try
+            {
+                var confirmacaoDeCadastrao = new ConfirmacaoCadastroEmailParametros(
+                    request.Email, usuario.Nome, confirmacao.Identificador, confirmacao.Link, ValidadeConfirmacaoEmHoras);
+
+                var email = context.EmailCompositor.ComporConfirmacaoCadastro(confirmacaoDeCadastrao);
+
+                if (email.TeveFalha)
+                    resultado.AdicionarAviso(string.Join(" | ", email.Messages.Select(m => m.Descricao)));
+
+                if ((await context.EmailService.EnviarAsync(email.Dados)).TeveFalha)
+                    resultado.AdicionarAviso(AuthResource.Aviso_CadastroCriadoEmailNaoEnviado);
+            }
+            catch
+            {
+                resultado.AdicionarAviso(AuthResource.Aviso_CadastroCriadoEmailNaoEnviado);
+            }
+            return resultado;
+        }
+
+        public async Task<Resultado> ConfirmarEmailAsync(string codigoUsuario, string identificador)
+        {
+            var codigo = codigoUsuario.NormalizeUserCodeIdentifier();
+            var id = identificador.NormalizeIdentifier();
+
+            if (string.IsNullOrWhiteSpace(codigo) || string.IsNullOrWhiteSpace(id))
+                return Resultado.Falha(AuthResource.Erro_DadosConfirmacaoObrigatorios);
+
+            var confirmacao = await context.ConfirmacaoRepository.ObterAtivaPorUsuarioAsync(codigo);
+            if (confirmacao is null || !context.ConfirmacaoCodigoService.ConfirmacaoValida(confirmacao, codigo, id))
+                return Resultado.Falha(AuthResource.Erro_FalhaConfirmarEmail);
+
+            if (!await context.UsuarioRepository.ConfirmarEmailAsync(codigo))
+                return Resultado.Falha(AuthResource.Erro_FalhaConfirmarEmail);
+
+            await context.ConfirmacaoRepository.MarcarConfirmadaAsync(confirmacao.Id);
+
+            var resultado = Resultado.Sucesso(AuthResource.Mensagem_EmailConfirmado);
+            var usuario = await context.UsuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
+
+            if (usuario != null && !string.IsNullOrEmpty(usuario.Email))
+            {
+                try
+                {
+                    var email = context.EmailCompositor.ComporConfirmacaoConcluida(usuario.Email, usuario.Nome);
+                    if (email.TeveFalha)
+                        resultado.AdicionarAviso(string.Join(" | ", email.Messages.Select(m => m.Descricao)));
+
+                    if ((await context.EmailService.EnviarAsync(email.Dados)).TeveFalha)
+                        resultado.AdicionarAviso(AuthResource.Aviso_ConfirmacaoConcluidaEmailNaoEnviado);
+                }
+                catch
+                {
+                    resultado.AdicionarAviso(AuthResource.Aviso_ConfirmacaoConcluidaEmailNaoEnviado);
+                }
+            }
+            return resultado;
+        }
+
+        private async Task<(string Link, string Identificador, bool Gravado)> CriarConfirmacaoAsync(string clientUri, string codigo)
+        {
+            var dados = context.ConfirmacaoCodigoService.CriarDadosConfirmacao(codigo, ValidadeConfirmacaoEmHoras);
+            var gravado = await context.ConfirmacaoRepository.GravarOuSubstituirAsync(dados.ConfirmacaoEmail);
+            return ($"{ObterUri(clientUri)}/confirmar-email?usuarioCodigo={codigo}", dados.Identificador, gravado);
+        }
+    }
+}

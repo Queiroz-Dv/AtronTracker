@@ -1,14 +1,18 @@
 ﻿using Shared.Domain.Enums;
-using Shared.Extensions;
 
 namespace Shared.Domain.ValueObjects
 {
     public class CacheInfo<T>
     {
         public CacheInfo(ECacheKeysInfo keyInfo, string value)
+            : this(new ChaveCache(keyInfo, value))
         {
-            Key = keyInfo;
-            KeyDescription = string.Format($"{Key.GetDescription()}:{value}");
+        }
+
+        public CacheInfo(ChaveCache chaveCache)
+        {
+            Key = chaveCache.Chave;
+            KeyDescription = chaveCache.Descricao;
         }
 
         public ECacheKeysInfo Key { get; set; }
