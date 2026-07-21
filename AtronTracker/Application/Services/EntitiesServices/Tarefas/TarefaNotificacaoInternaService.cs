@@ -1,7 +1,9 @@
 using Application.Interfaces.Services;
 using Application.Resources;
+using AtronNotificacoes.Contracts;
 using Domain.Entities;
 using Shared.Extensions;
+using System;
 using System.Globalization;
 using System.Threading.Tasks;
 
@@ -9,11 +11,11 @@ namespace Application.Services.EntitiesServices.Tarefas
 {
     public class TarefaNotificacaoInternaService : ITarefaNotificacaoInternaService
     {
-        private readonly INotificacaoInternaService _notificacaoInternaService;
+        private readonly INotificacoesInternasPublisher _publisher;
 
-        public TarefaNotificacaoInternaService(INotificacaoInternaService notificacaoInternaService)
+        public TarefaNotificacaoInternaService(INotificacoesInternasPublisher publisher)
         {
-            _notificacaoInternaService = notificacaoInternaService;
+            _publisher = publisher;
         }
 
         public Task NotificarAtribuicaoAsync(Tarefa tarefa, Usuario usuario)
@@ -21,7 +23,6 @@ namespace Application.Services.EntitiesServices.Tarefas
             return tarefa is null || usuario is null
                 ? Task.CompletedTask
                 : CriarAsync(
-                    usuario.Id,
                     usuario.Codigo,
                     TarefaResource.Titulo_TarefaAtribuida,
                     Formatar(TarefaResource.Mensagem_TarefaAtribuidaUsuario, ObterIdentificador(tarefa)),
@@ -34,7 +35,6 @@ namespace Application.Services.EntitiesServices.Tarefas
             return tarefa is null || usuario is null
                 ? Task.CompletedTask
                 : CriarAsync(
-                    usuario.Id,
                     usuario.Codigo,
                     TarefaResource.Titulo_TarefaObtida,
                     Formatar(TarefaResource.Mensagem_TarefaObtida, ObterIdentificador(tarefa)),
@@ -48,7 +48,6 @@ namespace Application.Services.EntitiesServices.Tarefas
                 return Task.CompletedTask;
 
             return CriarAsync(
-                solicitacao.AprovadorId,
                 solicitacao.AprovadorCodigo,
                 TarefaResource.Titulo_SolicitacaoRecebida,
                 Formatar(
@@ -67,7 +66,6 @@ namespace Application.Services.EntitiesServices.Tarefas
 
             var identificador = ObterIdentificador(solicitacao.Tarefa, solicitacao.TarefaId);
             return CriarAsync(
-                solicitacao.SolicitanteId,
                 solicitacao.SolicitanteCodigo,
                 aprovada ? TarefaResource.Titulo_SolicitacaoAprovada : TarefaResource.Titulo_SolicitacaoRecusada,
                 aprovada
@@ -77,23 +75,29 @@ namespace Application.Services.EntitiesServices.Tarefas
                 solicitacao.TarefaId);
         }
 
-        private async Task CriarAsync(int usuarioId, string usuarioCodigo, string titulo, string mensagem, string tipoEvento, int tarefaId, string urlDestino = null)
+        private async Task CriarAsync(string usuarioCodigo, string titulo, string mensagem, string tipoEvento, int tarefaId, string urlDestino = null)
         {
             if (usuarioCodigo.IsNullOrEmpty())
                 return;
 
-            await _notificacaoInternaService.CriarAsync(new NotificacaoInterna
+            try
             {
-                UsuarioId = usuarioId,
-                UsuarioCodigo = usuarioCodigo,
-                Titulo = titulo,
-                Mensagem = mensagem,
-                Modulo = TarefaResource.Descricao_ModuloTarefas,
-                TipoEvento = tipoEvento,
-                TarefaId = tarefaId,
-                UrlDestino = urlDestino ?? $"/atron/tarefas/editar/{tarefaId}",
-                Lida = false
-            });
+                await _publisher.PublicarAsync(new PublicarNotificacaoInternaRequest(
+                    usuarioCodigo,
+                    "Tracker",
+                    tipoEvento,
+                    titulo,
+                    mensagem,
+                    urlDestino ?? $"/atron/tarefas/editar/{tarefaId}",
+                    $"tarefa:{tarefaId}",
+                    DateTimeOffset.UtcNow,
+                    $"tracker:tarefa:{tarefaId}:{tipoEvento}:{usuarioCodigo}",
+                    $"tracker:{tipoEvento}:tarefa:{tarefaId}"));
+            }
+            catch
+            {
+                // A publicação é consultiva e não pode interromper o fluxo principal da tarefa.
+            }
         }
 
         private static string ObterIdentificador(Tarefa tarefa, int? tarefaId = null)

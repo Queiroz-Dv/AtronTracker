@@ -48,7 +48,7 @@ namespace Application.Mapping
                 return null;
             }
 
-            return $"{gestor.Nome} {gestor.Sobrenome}".Trim();
+            return $"{gestor.Nome} {gestor.Sobrenome}";
         }
     }
 }

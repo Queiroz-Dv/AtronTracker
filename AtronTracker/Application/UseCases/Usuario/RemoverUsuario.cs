@@ -6,29 +6,17 @@ using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.Usuario
-{
-    /// <summary>
-    /// Caso de uso responsável pela remoção de um usuário.
-    /// A conta Identity NÃO é removida — dívida técnica aceita conscientemente.
-    /// </summary>
-    public class RemoverUsuario
+{    
+    public class RemoverUsuario(
+        IUsuarioRepository usuarioRepository,
+        IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
+        ITarefaRepository tarefaRepository,
+        ICacheUsuarioService cacheUsuarioService)
     {
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
-        private readonly ITarefaRepository _tarefaRepository;
-        private readonly ICacheUsuarioService _cacheUsuarioService;
-
-        public RemoverUsuario(
-            IUsuarioRepository usuarioRepository,
-            IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
-            ITarefaRepository tarefaRepository,
-            ICacheUsuarioService cacheUsuarioService)
-        {
-            _usuarioRepository = usuarioRepository;
-            _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
-            _tarefaRepository = tarefaRepository;
-            _cacheUsuarioService = cacheUsuarioService;
-        }
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
+        private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
+        private readonly ICacheUsuarioService _cacheUsuarioService = cacheUsuarioService;
 
         public async Task<Resultado> ExecutarAsync(string codigo)
         {

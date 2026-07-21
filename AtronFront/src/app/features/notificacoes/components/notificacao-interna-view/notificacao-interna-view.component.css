@@ -150,11 +150,17 @@
   font-size: 0.86rem;
 }
 
+.notificacao-actions,
 .notificacao-read-action {
   align-items: center;
   display: inline-flex;
   gap: 8px;
   white-space: nowrap;
+}
+
+.notificacao-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .notificacao-read-action mat-icon {
@@ -206,7 +212,7 @@
     grid-template-columns: 44px minmax(0, 1fr);
   }
 
-  .notificacao-read-action {
+  .notificacao-actions {
     grid-column: 1 / -1;
     justify-self: stretch;
   }

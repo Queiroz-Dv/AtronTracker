@@ -91,6 +91,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.notificacaoInternaService.marcarComoLida(notificacao.id).subscribe();
   }
 
+  excluirNotificacao(notificacao: NotificacaoInterna): void {
+    this.notificacaoInternaService.excluir(notificacao.id).subscribe();
+  }
+
   formatarTextoNotificacao(texto: string): string {
     return normalizarTextoNotificacao(texto);
   }

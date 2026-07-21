@@ -2,21 +2,13 @@
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class UsuarioCargoDepartamentoRepository : Repository<UsuarioCargoDepartamento>, IUsuarioCargoDepartamentoRepository
+    public class UsuarioCargoDepartamentoRepository(AtronDbContext context) :
+        Repository<UsuarioCargoDepartamento>(context), IUsuarioCargoDepartamentoRepository
     {
-        private readonly AtronDbContext _context;
-
-        public UsuarioCargoDepartamentoRepository(AtronDbContext context) : base(context)
-        {
-            _context = context;
-        }
+        private readonly AtronDbContext _context = context;
 
         public async Task<UsuarioCargoDepartamento> ObterPorChaveDoUsuario(int usuarioId, string usuarioCodigo)
         {
@@ -39,17 +31,10 @@ namespace Infrastructure.Repositories
                 CargoCodigo = cargo.Codigo
             };
 
-            try
-            {
-                await _context.UsuarioCargoDepartamentos.AddAsync(associacao);
-                await _context.SaveChangesAsync();
+            await _context.UsuarioCargoDepartamentos.AddAsync(associacao);
+            await _context.SaveChangesAsync();
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return true;
         }
 
         public async Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorDepartamento(int id, string codigo)

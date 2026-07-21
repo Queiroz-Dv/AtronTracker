@@ -20,9 +20,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\IoC\IoC.csproj" />
-    <ProjectReference Include="..\..\Framework\Shared.Migrations\Framework.Shared.Migrations.csproj" />
+    <ProjectReference Include="..\..\Framework\Shared\Migrations\Framework.Shared.Migrations.csproj" />
     <ProjectReference Include="..\Application\AtronStock.Application.csproj" />
-    <ProjectReference Include="..\Infrastructure.Migrations\AtronStock.Infrastructure.Migrations.csproj" />
+    <ProjectReference Include="..\Infrastructure\AtronStock.Infrastructure.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

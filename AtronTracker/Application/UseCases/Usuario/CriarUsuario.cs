@@ -18,48 +18,33 @@ using System.Web;
 
 namespace Application.UseCases.Usuario
 {
-    public class CriarUsuario
+    public class CriarUsuario(
+        IValidador<UsuarioRequest> validador,
+        IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> mapService,
+        IUsuarioRepository usuarioRepository,
+        IUsuarioIdentityRepository usuarioIdentityRepository,
+        IDepartamentoRepository departamentoRepository,
+        ICargoRepository cargoRepository,
+        IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
+        IEmailService emailService,
+        IAcessoEmailCompositor emailCompositor,
+        ICacheService cacheService,
+        IAuditoriaService auditoriaService)
     {
-        private readonly IValidador<UsuarioRequest> _validador;
-        private readonly IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> _mapService;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly ICargoRepository _cargoRepository;
-        private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
-        private readonly IEmailService _emailService;
-        private readonly IAcessoEmailCompositor _emailCompositor;
-        private readonly ICacheService _cacheService;
-        private readonly IAuditoriaService _auditoriaService;
+        private readonly IValidador<UsuarioRequest> _validador = validador;
+        private readonly IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> _mapService = mapService;
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
+        private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
+        private readonly ICargoRepository _cargoRepository = cargoRepository;
+        private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
+        private readonly IEmailService _emailService = emailService;
+        private readonly IAcessoEmailCompositor _emailCompositor = emailCompositor;
+        private readonly ICacheService _cacheService = cacheService;
+        private readonly IAuditoriaService _auditoriaService = auditoriaService;
 
-        private const string UsuarioContexto = "Usuario";
+        private const string UsuarioContexto = nameof(Usuario);
         private const int ValidadeConvitePrimeiroAcessoEmHoras = 24;
-
-        public CriarUsuario(
-            IValidador<UsuarioRequest> validador,
-            IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> mapService,
-            IUsuarioRepository usuarioRepository,
-            IUsuarioIdentityRepository usuarioIdentityRepository,
-            IDepartamentoRepository departamentoRepository,
-            ICargoRepository cargoRepository,
-            IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
-            IEmailService emailService,
-            IAcessoEmailCompositor emailCompositor,
-            ICacheService cacheService,
-            IAuditoriaService auditoriaService)
-        {
-            _validador = validador;
-            _mapService = mapService;
-            _usuarioRepository = usuarioRepository;
-            _usuarioIdentityRepository = usuarioIdentityRepository;
-            _departamentoRepository = departamentoRepository;
-            _cargoRepository = cargoRepository;
-            _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
-            _emailService = emailService;
-            _emailCompositor = emailCompositor;
-            _cacheService = cacheService;
-            _auditoriaService = auditoriaService;
-        }
 
         public async Task<Resultado<UsuarioRequest>> ExecutarAsync(UsuarioRequest request)
         {
@@ -189,10 +174,9 @@ namespace Application.UseCases.Usuario
             };
 
             var chaveCache = new ChaveCache(ECacheKeysInfo.DadosTemporarios, identificadorTemporario);
-            var cacheInfo = new CacheInfo<DadosTemporarios>(chaveCache)
-            {
-                EntityInfo = dadosTemporarios
-            };
+            var cacheInfo = new CacheInfo<DadosTemporarios>(chaveCache);
+            cacheInfo.VincularDadosTemporarios(dadosTemporarios);
+
             _cacheService.GravarCache(cacheInfo, TimeSpan.FromHours(ValidadeConvitePrimeiroAcessoEmHoras));
 
             var identificadorCriptografado = CryptoHelper.EncryptCryptoJsAes(identificadorTemporario);
@@ -207,6 +191,7 @@ namespace Application.UseCases.Usuario
                     usuario.Nome,
                     link,
                     ValidadeConvitePrimeiroAcessoEmHoras));
+
                 if (email.TeveFalha)
                     return Resultado.Falha(email.Messages);
 

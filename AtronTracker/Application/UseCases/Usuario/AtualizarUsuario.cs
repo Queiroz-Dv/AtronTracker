@@ -15,41 +15,28 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Usuario
 {
-    public class AtualizarUsuario
+    public class AtualizarUsuario(
+        IValidador<UsuarioRequest> validador,
+        IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> mapService,
+        IUsuarioRepository usuarioRepository,
+        IUsuarioIdentityRepository usuarioIdentityRepository,
+        IDepartamentoRepository departamentoRepository,
+        ICargoRepository cargoRepository,
+        IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
+        IAuditoriaService auditoriaService,
+        ICacheUsuarioService cacheUsuarioService)
     {
-        private readonly IValidador<UsuarioRequest> _validador;
-        private readonly IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> _mapService;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly ICargoRepository _cargoRepository;
-        private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository;
-        private readonly IAuditoriaService _auditoriaService;
-        private readonly ICacheUsuarioService _cacheUsuarioService;
+        private readonly IValidador<UsuarioRequest> _validador = validador;
+        private readonly IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> _mapService = mapService;
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
+        private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
+        private readonly ICargoRepository _cargoRepository = cargoRepository;
+        private readonly IUsuarioCargoDepartamentoRepository _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
+        private readonly IAuditoriaService _auditoriaService = auditoriaService;
+        private readonly ICacheUsuarioService _cacheUsuarioService = cacheUsuarioService;
 
         private const string UsuarioContexto = "Usuario";
-
-        public AtualizarUsuario(
-            IValidador<UsuarioRequest> validador,
-            IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> mapService,
-            IUsuarioRepository usuarioRepository,
-            IUsuarioIdentityRepository usuarioIdentityRepository,
-            IDepartamentoRepository departamentoRepository,
-            ICargoRepository cargoRepository,
-            IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
-            IAuditoriaService auditoriaService,
-            ICacheUsuarioService cacheUsuarioService)
-        {
-            _validador = validador;
-            _mapService = mapService;
-            _usuarioRepository = usuarioRepository;
-            _usuarioIdentityRepository = usuarioIdentityRepository;
-            _departamentoRepository = departamentoRepository;
-            _cargoRepository = cargoRepository;
-            _usuarioCargoDepartamentoRepository = usuarioCargoDepartamentoRepository;
-            _auditoriaService = auditoriaService;
-            _cacheUsuarioService = cacheUsuarioService;
-        }
 
         public async Task<Resultado<UsuarioRequest>> ExecutarAsync(UsuarioRequest request)
         {

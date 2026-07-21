@@ -35,7 +35,7 @@ namespace Application.Services.EntitiesServices
             };
 
             // Obtém os perfis associados
-            var perfisAssociados = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioDTO.Codigo);
+            var perfisAssociados = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioAsync(usuarioDTO.Codigo);
 
             foreach (var perf in perfisAssociados)
             {

@@ -10,26 +10,28 @@ using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
 using Application.UseCases.Usuario;
 using Application.Validador;
+using AtronNotificacoes.Client;
+using AtronNotificacoes.Contracts;
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
-using Domain.Interfaces.Identity;
 using Domain.Interfaces.ApplicationInterfaces;
+using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.ApplicationRepositories;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Entities.Identity;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Text.Json.Serialization;
 
 namespace IoC
@@ -41,7 +43,7 @@ namespace IoC
             services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
 
             var database = DatabaseProviderResolver.Resolve(configuration);
-            var migrationsAssembly = "AtronTracker.Infrastructure.Migrations";
+            var migrationsAssembly = typeof(AtronDbContext).Assembly.GetName().Name!;
 
             services.AddDbContext<AtronDbContext>(options =>
                 options.UseConfiguredDatabase(database, migrationsAssembly));
@@ -65,6 +67,7 @@ namespace IoC
             services = services.AddMessageValidationServices();
             services = services.AddInfrastructureSecurity(configuration);
             services = services.AddEmailServices(configuration);
+            ConfigureNotificacoesTransversais(services, configuration);
             ConfigureModuloServices(services);
             ConfigureTarefaServices(services);
             ConfigureDepartamentoServices(services);
@@ -73,7 +76,6 @@ namespace IoC
             ConfigureUsuarioServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
-            ConfigureNotificacaoInternaServices(services);
             ConfigureDefaultUserRoleServices(services);
             ConfigureAuthenticationServices(services);
             ConfigurePerfilDeAcessoServices(services);
@@ -101,7 +103,8 @@ namespace IoC
         {
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
-            services.AddScoped<CadastroUsuarioContext>(provider => new CadastroUsuarioContext(
+
+            services.AddScoped(provider => new CadastroUsuarioContext(
                 provider.GetRequiredService<IUsuarioRepository>(),
                 provider.GetRequiredService<IPerfilDeAcessoUsuarioRepository>(),
                 provider.GetRequiredService<IPerfilDeAcessoRepository>(),
@@ -112,7 +115,8 @@ namespace IoC
                 provider.GetRequiredService<IHttpContextAccessor>(),
                 provider.GetRequiredService<IConfirmacaoEmailRepository>(),
                 provider.GetRequiredService<IConfirmacaoEmailCodigoService>()));
-            services.AddScoped<RecuperacaoSenhaContext>(provider => new RecuperacaoSenhaContext(
+
+            services.AddScoped(provider => new RecuperacaoSenhaContext(
                 provider.GetRequiredService<IUsuarioRepository>(),
                 provider.GetRequiredService<IUsuarioIdentityRepository>(),
                 provider.GetRequiredService<ILoginRepository>(),
@@ -120,6 +124,7 @@ namespace IoC
                 provider.GetRequiredService<IEmailService>(),
                 provider.GetRequiredService<IAcessoEmailCompositor>(),
                 provider.GetRequiredService<IHttpContextAccessor>()));
+
             services.AddScoped<ICadastroUsuarioService, CadastroUsuarioService>();
             services.AddScoped<IRecuperacaoSenhaService, RecuperacaoSenhaService>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
@@ -152,10 +157,46 @@ namespace IoC
             services.AddScoped<ITarefaService, TarefaService>();
         }
 
-        private static void ConfigureNotificacaoInternaServices(IServiceCollection services)
+        private static void ConfigureNotificacoesTransversais(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<INotificacaoInternaRepository, NotificacaoInternaRepository>();
-            services.AddScoped<INotificacaoInternaService, NotificacaoInternaService>();
+            services.AddHttpClient("AtronNotificacoes");
+
+            if (!Uri.TryCreate(configuration["NotificacoesInternas:BaseUrl"], UriKind.Absolute, out var baseAddress))
+            {
+                services.AddScoped<INotificacoesInternasPublisher, NotificacoesInternasPublisherIndisponivel>();
+                services.AddScoped<INotificacoesInternasConsultaClient, NotificacoesInternasConsultaIndisponivel>();
+                return;
+            }
+
+            var baseAddressNormalizado = new Uri($"{baseAddress.ToString().TrimEnd('/')}/");
+
+            services.AddScoped<INotificacoesInternasConsultaClient>(provider =>
+                new NotificacoesInternasHttpConsultaClient(
+                    provider.GetRequiredService<IHttpClientFactory>().CreateClient("AtronNotificacoes"),
+                    baseAddressNormalizado));
+
+            var secretKey = configuration["NotificacoesInternas:Servico:SecretKey"];
+            var issuer = configuration["NotificacoesInternas:Servico:Issuer"];
+            var audience = configuration["NotificacoesInternas:Servico:Audience"];
+            var nomeDoServico = configuration["NotificacoesInternas:Servico:Nome"];
+
+            if (string.IsNullOrWhiteSpace(secretKey) || string.IsNullOrWhiteSpace(issuer) ||
+                string.IsNullOrWhiteSpace(audience) || string.IsNullOrWhiteSpace(nomeDoServico))
+            {
+                services.AddScoped<INotificacoesInternasPublisher, NotificacoesInternasPublisherIndisponivel>();
+                return;
+            }
+
+            var options = new NotificacoesInternasServiceOptions(
+                baseAddressNormalizado,
+                issuer,
+                audience,
+                secretKey,
+                nomeDoServico);
+            services.AddScoped<INotificacoesInternasPublisher>(provider =>
+                new NotificacoesInternasHttpPublisher(
+                    provider.GetRequiredService<IHttpClientFactory>().CreateClient("AtronNotificacoes"),
+                    options));
         }
 
         private static void ConfigureUsuarioServices(IServiceCollection services)
@@ -167,13 +208,14 @@ namespace IoC
             services.AddScoped<DesativarUsuario>();
             services.AddScoped<SolicitarReativacao>();
             services.AddScoped<ReativarUsuario>();
+            services.AddScoped<ObterUsuario>();
             services.AddScoped<AlterarEmail>();
             services.AddScoped<ConfirmarAlteracaoEmail>();
             services.AddScoped<ReenviarConfirmacaoEmail>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IConfirmacaoEmailRepository, ConfirmacaoEmailRepository>();
             services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
-            services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();            
+            services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
             services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();
         }
 

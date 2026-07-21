@@ -232,6 +232,22 @@ _Avoid_: E-mail obrigatório, alerta sem destino, histórico invisível, notific
 Área do produto onde o usuário acompanha notificações do sistema e acessa os detalhes relacionados ao evento notificado. No primeiro escopo, a central atende eventos do módulo de tarefas e deve permitir abrir a tarefa relacionada quando houver uma; no futuro, tende a ser o canal padrão de notificações internas do produto.
 _Avoid_: Caixa de e-mail, alerta temporário sem histórico, lista sem contexto
 
+**Módulo de notificações internas**:
+Capacidade transversal planejada que centraliza a publicação, consulta e marcação de leitura das notificações internas do Atron. Deve atender Tracker, Stock e Sales sem depender das entidades de domínio de qualquer um desses módulos. Cada produtor informa destinatário, evento, conteúdo final em pt-BR e destino de navegação; o módulo mantém o histórico e o estado de leitura.
+_Avoid_: Controller deslocada sem serviços e dados próprios, chave estrangeira para Tarefa ou outra entidade de módulo produtor, regra de negócio de Tracker dentro da central, e-mail como substituto obrigatório da notificação interna
+
+**Destinatário de notificação**:
+Identificador transversal e estável de uma pessoa que pode receber notificações do sistema. É informado pelo módulo produtor e validado pelo mecanismo compartilhado de identidade, sem exigir que a central de notificações consulte o repositório de usuários de Tracker, Stock ou Sales.
+_Avoid_: Dependência direta de IUsuarioRepository do Tracker, cópia da entidade Usuario em cada módulo, destinatário implícito por tela
+
+**Publicação de notificação interna**:
+Contrato pelo qual um módulo produtor registra uma notificação para um destinatário. O contrato carrega origem, tipo de evento, título, mensagem, URL de destino e referência externa opcional. A publicação não recebe entidades de domínio do produtor e não altera o fluxo de negócio de origem quando a política daquele evento for somente consultiva.
+_Avoid_: Passar Tarefa, Pedido ou Produto para a central, montar texto de produto dentro da infraestrutura compartilhada, acoplamento de transação distribuída
+
+**Identificador de notificação interna**:
+Chave numérica longa gerada por sequence da persistência própria do módulo de notificações. A sequence pode iniciar em valor aleatório definido uma única vez ao criar o ambiente, mas cada novo identificador é sequencial. O identificador não autoriza consulta nem alteração, que sempre dependem do destinatário autenticado.
+_Avoid_: GUID como chave primária, número aleatório por registro sujeito a colisão, usar o identificador como prova de acesso
+
 **Atualização em tempo real**:
 Comportamento em que notificações e solicitações relevantes aparecem para o usuário sem depender de recarregamento manual da tela. No módulo de tarefas, esse comportamento apoia aprovações, recusas e acompanhamento de solicitações.
 _Avoid_: Consulta manual constante, e-mail como fonte principal, tela desatualizada

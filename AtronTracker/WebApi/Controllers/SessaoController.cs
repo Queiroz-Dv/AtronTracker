@@ -60,28 +60,20 @@ namespace WebApi.Controllers
 
             var dadosCache = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, usuarioCodigo));
 
-            var jsonDeRetorno = new
-            {
-                codigoDoUsuario = usuarioCodigo,
-                nomeDoUsuario = dadosCache?.DadosDoUsuario.NomeDoUsuario ?? user.FindFirst(ClaimTypes.Name)?.Value,
-                emailDoUsuario = dadosCache?.DadosDoUsuario.Email ?? user.FindFirst(ClaimTypes.Email)?.Value,
-                codigoDoCargo = dadosCache?.DadosDoUsuario.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
-                codigoDoDepartamento = dadosCache?.DadosDoUsuario.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,
-
-                perfisDeAcesso = dadosCache?.DadosDoPerfil ??
-                    _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo).Result.Select(p => new DadosDoPerfilDTO
-                    {
-                        CodigoPerfil = p.Codigo,
-                        Modulos = p.Modulos.Select(x => new DadosDoModuloDTO(x.Codigo, x.Descricao)).ToList()
-                    }).ToList()
-            };
-
             if (dadosCache is not null)
             {
-                return Ok(jsonDeRetorno);
+                return Ok(new
+                {
+                    codigoDoUsuario = usuarioCodigo,
+                    nomeDoUsuario = dadosCache.DadosDoUsuario.NomeDoUsuario ?? user.FindFirst(ClaimTypes.Name)?.Value,
+                    emailDoUsuario = dadosCache.DadosDoUsuario.Email ?? user.FindFirst(ClaimTypes.Email)?.Value,
+                    codigoDoCargo = dadosCache.DadosDoUsuario.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
+                    codigoDoDepartamento = dadosCache.DadosDoUsuario.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,
+                    perfisDeAcesso = dadosCache.DadosDoPerfil
+                });
             }
 
-            var perfisModulos = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioServiceAsync(usuarioCodigo);
+            var perfisModulos = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioAsync(usuarioCodigo);
             var dto = new DadosComplementaresDoUsuarioDTO
             {
                 DadosDoUsuario = new DadosDoUsuarioDTO() { CodigoDoUsuario = usuarioCodigo, NomeDoUsuario = user.FindFirst(ClaimTypes.Name)?.Value },

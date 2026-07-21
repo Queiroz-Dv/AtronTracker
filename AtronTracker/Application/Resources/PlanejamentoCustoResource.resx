@@ -1,44 +1,234 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
-  <resheader name="version"><value>2.0</value></resheader>
-  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="Erro_PlanejamentoNaoEncontrado" xml:space="preserve"><value>Planejamento de custo não encontrado.</value></data>
-  <data name="Erro_AnoPassadoNaoPodeSerEditado" xml:space="preserve"><value>Planejamento de custo de ano passado não pode ser editado.</value></data>
-  <data name="Mensagem_PlanejamentoCriado" xml:space="preserve"><value>Planejamento de custo {0} criado com sucesso.</value></data>
-  <data name="Erro_CriarPlanejamento" xml:space="preserve"><value>Nao foi possivel criar o planejamento de custo.</value></data>
-  <data name="Erro_AtualizarPlanejamento" xml:space="preserve"><value>Nao foi possivel atualizar o planejamento de custo {0}.</value></data>
-  <data name="Erro_RemoverPlanejamento" xml:space="preserve"><value>Nao foi possivel remover o planejamento de custo {0}.</value></data>
-  <data name="Erro_DepartamentoSemCargos" xml:space="preserve"><value>O departamento não possui cargos. Use planejamento apenas por departamento.</value></data>
-  <data name="Erro_CodigoCargoObrigatorio" xml:space="preserve"><value>Todos os detalhes de cargo devem informar o código do cargo.</value></data>
-  <data name="Erro_CargosDuplicados" xml:space="preserve"><value>Existem cargos duplicados no planejamento: {0}.</value></data>
-  <data name="Erro_CargosPendentes" xml:space="preserve"><value>Existem cargos pendentes de decisão no planejamento: {0}.</value></data>
-  <data name="Erro_CargosDeOutroDepartamento" xml:space="preserve"><value>Existem cargos que não pertencem ao departamento do planejamento: {0}.</value></data>
-  <data name="Erro_TodosCargosNaoDetalhados" xml:space="preserve"><value>Todos os cargos foram marcados como não detalhados. Use planejamento apenas por departamento.</value></data>
-  <data name="Erro_SomaTetosUltrapassaDepartamento" xml:space="preserve"><value>A soma dos tetos dos cargos não pode ultrapassar o teto do departamento.</value></data>
-  <data name="Aviso_SomaMinimosDivergente" xml:space="preserve"><value>A soma dos mínimos dos cargos detalhados diverge do mínimo do departamento.</value></data>
-  <data name="Erro_ValoresCargoObrigatorios" xml:space="preserve"><value>Informe valor mínimo e teto para o cargo {0}.</value></data>
-  <data name="Erro_ValorMinimoCargoNegativo" xml:space="preserve"><value>O valor mínimo do cargo {0} não pode ser negativo.</value></data>
-  <data name="Erro_ValorTetoCargoInvalido" xml:space="preserve"><value>O valor teto do cargo {0} deve ser maior que zero.</value></data>
-  <data name="Erro_ValorMinimoCargoMaiorTeto" xml:space="preserve"><value>O valor mínimo do cargo {0} deve ser menor que o teto.</value></data>
-  <data name="Erro_DepartamentoComPlanejamento" xml:space="preserve"><value>O departamento {0} possui planejamento de custo atual ou futuro e não pode ser removido.</value></data>
-  <data name="Erro_CargoComPlanejamentoRemocao" xml:space="preserve"><value>O cargo {0} possui planejamento de custo atual ou futuro e não pode ser removido.</value></data>
-  <data name="Erro_CargoComPlanejamentoMovimentacao" xml:space="preserve"><value>O cargo {0} possui planejamento de custo atual ou futuro e não pode ser movido para outro departamento.</value></data>
-  <data name="Erro_CodigoNaoPodeSerAlterado" xml:space="preserve"><value>O código do planejamento de custo não pode ser alterado.</value></data>
-  <data name="Erro_AnoNaoPodeSerAlterado" xml:space="preserve"><value>O ano do planejamento de custo não pode ser alterado.</value></data>
-  <data name="Erro_DepartamentoNaoPodeSerAlterado" xml:space="preserve"><value>O departamento do planejamento de custo não pode ser alterado.</value></data>
-  <data name="Erro_CodigoExistente" xml:space="preserve"><value>Já existe planejamento de custo com este código.</value></data>
-  <data name="Erro_DepartamentoNaoEncontrado" xml:space="preserve"><value>Departamento do planejamento de custo não encontrado.</value></data>
-  <data name="Erro_DepartamentoAnoExistente" xml:space="preserve"><value>Já existe planejamento de custo para este departamento e ano.</value></data>
-  <data name="Erro_AnoPassadoNaoPodeSerExcluido" xml:space="preserve"><value>Planejamento de custo de ano passado não pode ser excluído.</value></data>
-  <data name="Erro_CodigoObrigatorio" xml:space="preserve"><value>O código do planejamento de custo é obrigatório.</value></data>
-  <data name="Erro_CodigoTamanhoMaximo" xml:space="preserve"><value>O código do planejamento de custo deve ter no máximo 10 caracteres.</value></data>
-  <data name="Erro_DescricaoObrigatoria" xml:space="preserve"><value>A descrição do planejamento de custo é obrigatória.</value></data>
-  <data name="Erro_DescricaoTamanhoMaximo" xml:space="preserve"><value>A descrição do planejamento de custo deve ter no máximo 100 caracteres.</value></data>
-  <data name="Erro_DepartamentoObrigatorio" xml:space="preserve"><value>O departamento do planejamento de custo é obrigatório.</value></data>
-  <data name="Erro_AnoPassadoNaoPermitido" xml:space="preserve"><value>Não é permitido criar ou alterar planejamento de custo para ano passado.</value></data>
-  <data name="Erro_ValorMinimoNegativo" xml:space="preserve"><value>O valor mínimo do planejamento de custo não pode ser negativo.</value></data>
-  <data name="Erro_ValorTetoInvalido" xml:space="preserve"><value>O valor teto do planejamento de custo deve ser maior que zero.</value></data>
-  <data name="Erro_ValorMinimoMaiorTeto" xml:space="preserve"><value>O valor mínimo deve ser menor que o valor teto do planejamento de custo.</value></data>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Erro_PlanejamentoNaoEncontrado" xml:space="preserve">
+    <value>Planejamento de custo não encontrado.</value>
+  </data>
+  <data name="Erro_AnoPassadoNaoPodeSerEditado" xml:space="preserve">
+    <value>Planejamento de custo de ano passado não pode ser editado.</value>
+  </data>
+  <data name="Mensagem_PlanejamentoCriado" xml:space="preserve">
+    <value>Planejamento de custo {0} criado com sucesso.</value>
+  </data>
+  <data name="Erro_CriarPlanejamento" xml:space="preserve">
+    <value>Nao foi possivel criar o planejamento de custo.</value>
+  </data>
+  <data name="Erro_AtualizarPlanejamento" xml:space="preserve">
+    <value>Nao foi possivel atualizar o planejamento de custo {0}.</value>
+  </data>
+  <data name="Erro_RemoverPlanejamento" xml:space="preserve">
+    <value>Nao foi possivel remover o planejamento de custo {0}.</value>
+  </data>
+  <data name="Erro_DepartamentoSemCargos" xml:space="preserve">
+    <value>O departamento não possui cargos. Use planejamento apenas por departamento.</value>
+  </data>
+  <data name="Erro_CodigoCargoObrigatorio" xml:space="preserve">
+    <value>Todos os detalhes de cargo devem informar o código do cargo.</value>
+  </data>
+  <data name="Erro_CargosDuplicados" xml:space="preserve">
+    <value>Existem cargos duplicados no planejamento: {0}.</value>
+  </data>
+  <data name="Erro_CargosPendentes" xml:space="preserve">
+    <value>Existem cargos pendentes de decisão no planejamento: {0}.</value>
+  </data>
+  <data name="Erro_CargosDeOutroDepartamento" xml:space="preserve">
+    <value>Existem cargos que não pertencem ao departamento do planejamento: {0}.</value>
+  </data>
+  <data name="Erro_TodosCargosNaoDetalhados" xml:space="preserve">
+    <value>Todos os cargos foram marcados como não detalhados. Use planejamento apenas por departamento.</value>
+  </data>
+  <data name="Erro_SomaTetosUltrapassaDepartamento" xml:space="preserve">
+    <value>A soma dos tetos dos cargos não pode ultrapassar o teto do departamento.</value>
+  </data>
+  <data name="Aviso_SomaMinimosDivergente" xml:space="preserve">
+    <value>A soma dos mínimos dos cargos detalhados diverge do mínimo do departamento.</value>
+  </data>
+  <data name="Erro_ValoresCargoObrigatorios" xml:space="preserve">
+    <value>Informe valor mínimo e teto para o cargo {0}.</value>
+  </data>
+  <data name="Erro_ValorMinimoCargoNegativo" xml:space="preserve">
+    <value>O valor mínimo do cargo {0} não pode ser negativo.</value>
+  </data>
+  <data name="Erro_ValorTetoCargoInvalido" xml:space="preserve">
+    <value>O valor teto do cargo {0} deve ser maior que zero.</value>
+  </data>
+  <data name="Erro_ValorMinimoCargoMaiorTeto" xml:space="preserve">
+    <value>O valor mínimo do cargo {0} deve ser menor que o teto.</value>
+  </data>
+  <data name="Erro_DepartamentoComPlanejamento" xml:space="preserve">
+    <value>O departamento {0} possui planejamento de custo atual ou futuro e não pode ser removido.</value>
+  </data>
+  <data name="Erro_CargoComPlanejamentoRemocao" xml:space="preserve">
+    <value>O cargo {0} possui planejamento de custo atual ou futuro e não pode ser removido.</value>
+  </data>
+  <data name="Erro_CargoComPlanejamentoMovimentacao" xml:space="preserve">
+    <value>O cargo {0} possui planejamento de custo atual ou futuro e não pode ser movido para outro departamento.</value>
+  </data>
+  <data name="Erro_CodigoNaoPodeSerAlterado" xml:space="preserve">
+    <value>O código do planejamento de custo não pode ser alterado.</value>
+  </data>
+  <data name="Erro_AnoNaoPodeSerAlterado" xml:space="preserve">
+    <value>O ano do planejamento de custo não pode ser alterado.</value>
+  </data>
+  <data name="Erro_DepartamentoNaoPodeSerAlterado" xml:space="preserve">
+    <value>O departamento do planejamento de custo não pode ser alterado.</value>
+  </data>
+  <data name="Erro_CodigoExistente" xml:space="preserve">
+    <value>Já existe planejamento de custo com este código.</value>
+  </data>
+  <data name="Erro_DepartamentoNaoEncontrado" xml:space="preserve">
+    <value>Departamento do planejamento de custo não encontrado.</value>
+  </data>
+  <data name="Erro_DepartamentoAnoExistente" xml:space="preserve">
+    <value>Já existe planejamento de custo para este departamento e ano.</value>
+  </data>
+  <data name="Erro_AnoPassadoNaoPodeSerExcluido" xml:space="preserve">
+    <value>Planejamento de custo de ano passado não pode ser excluído.</value>
+  </data>
+  <data name="Erro_CodigoObrigatorio" xml:space="preserve">
+    <value>O código do planejamento de custo é obrigatório.</value>
+  </data>
+  <data name="Erro_CodigoTamanhoMaximo" xml:space="preserve">
+    <value>O código do planejamento de custo deve ter no máximo 10 caracteres.</value>
+  </data>
+  <data name="Erro_DescricaoObrigatoria" xml:space="preserve">
+    <value>A descrição do planejamento de custo é obrigatória.</value>
+  </data>
+  <data name="Erro_DescricaoTamanhoMaximo" xml:space="preserve">
+    <value>A descrição do planejamento de custo deve ter no máximo 100 caracteres.</value>
+  </data>
+  <data name="Erro_DepartamentoObrigatorio" xml:space="preserve">
+    <value>O departamento do planejamento de custo é obrigatório.</value>
+  </data>
+  <data name="Erro_AnoPassadoNaoPermitido" xml:space="preserve">
+    <value>Não é permitido criar ou alterar planejamento de custo para ano passado.</value>
+  </data>
+  <data name="Erro_ValorMinimoNegativo" xml:space="preserve">
+    <value>O valor mínimo do planejamento de custo não pode ser negativo.</value>
+  </data>
+  <data name="Erro_ValorTetoInvalido" xml:space="preserve">
+    <value>O valor teto do planejamento de custo deve ser maior que zero.</value>
+  </data>
+  <data name="Erro_ValorMinimoMaiorTeto" xml:space="preserve">
+    <value>O valor mínimo deve ser menor que o valor teto do planejamento de custo.</value>
+  </data>
+  <data name="Mensagem_PlanejamentoAtualizado" xml:space="preserve">
+    <value>Planejamento de custo {0} atualizado com sucesso.</value>
+  </data>
 </root>

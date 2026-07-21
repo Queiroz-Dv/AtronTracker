@@ -31,8 +31,6 @@ namespace AtronTracker.Infrastructure.Context
 
         public DbSet<SolicitacaoObtencaoTarefa> SolicitacoesObtencaoTarefa { get; set; }
 
-        public DbSet<NotificacaoInterna> NotificacoesInternas { get; set; }
-
         public DbSet<TarefaEstado> TarefaEstados { get; set; }
 
         public DbSet<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }

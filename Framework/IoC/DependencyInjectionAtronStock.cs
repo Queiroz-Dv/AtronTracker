@@ -26,7 +26,7 @@ namespace IoC
             services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
 
             var database = DatabaseProviderResolver.Resolve(configuration);
-            var migrationsAssembly = "AtronStock.Infrastructure.Migrations";
+            var migrationsAssembly = typeof(StockDbContext).Assembly.GetName().Name!;
 
             services.AddDbContext<StockDbContext>(options => options.UseConfiguredDatabase(database, migrationsAssembly));
             services = services.AddSharedInfrastructure(configuration);
@@ -58,8 +58,6 @@ namespace IoC
 
             services.AddScoped<IProdutoService, ProdutoService>();
             services.AddScoped<IFornecedorService, FornecedorService>();
-            services.AddScoped<IEstoqueService, EstoqueService>();
-
             services = services.AddStockMapping();
             services = services.AddStockValidador();
             return services;

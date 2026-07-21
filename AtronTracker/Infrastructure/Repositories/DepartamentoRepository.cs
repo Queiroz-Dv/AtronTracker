@@ -5,14 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class DepartamentoRepository : IDepartamentoRepository
+    public class DepartamentoRepository(AtronDbContext context) : IDepartamentoRepository
     {
-        private AtronDbContext _context;
-
-        public DepartamentoRepository(AtronDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AtronDbContext _context = context;
 
         public async Task<bool> AtualizarDepartamentoRepositoryAsync(Departamento departamento)
         {
