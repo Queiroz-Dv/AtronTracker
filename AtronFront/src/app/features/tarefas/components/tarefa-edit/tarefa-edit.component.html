@@ -1,6 +1,10 @@
 <form [formGroup]="form" (ngSubmit)="salvar()" class="tarefa-edit-form">
   <c-tarefa-form [tarefaForm]="form"></c-tarefa-form>
 
+  @if (id) {
+    <c-tarefa-historico [tarefaId]="id"></c-tarefa-historico>
+  }
+
   <footer class="tarefa-actions">
     <button mat-flat-button class="tarefa-primary-action" type="submit" [disabled]="form.invalid">
       <mat-icon>save</mat-icon>

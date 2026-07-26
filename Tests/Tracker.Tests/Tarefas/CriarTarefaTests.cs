@@ -74,11 +74,23 @@ public class CriarTarefaTests
             .Setup(service => service.NotificarAtribuicaoAsync(It.IsAny<TarefaDTO>(), usuario))
             .ReturnsAsync(resultadoEmail);
 
+        var movimentacao = new Mock<ITarefaMovimentacaoService>();
+        movimentacao
+            .Setup(service => service.RegistrarCriacaoAsync(entidade, usuario))
+            .ReturnsAsync(Resultado.Sucesso());
+
+        var usuarioAtual = new Mock<ITarefaUsuarioAtualService>();
+        usuarioAtual
+            .Setup(service => service.ObterAsync())
+            .ReturnsAsync(Resultado<Usuario>.Sucesso(usuario));
+
         return new CriarTarefa(
             tarefaRepository.Object,
             preparacao.Object,
             email.Object,
-            notificacao);
+            notificacao,
+            movimentacao.Object,
+            usuarioAtual.Object);
     }
 
     private static TarefaDTO CriarTarefaDto()

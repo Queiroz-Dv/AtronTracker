@@ -17,7 +17,25 @@ namespace IoC
         public static IServiceCollection AddInfrastructureSecurity(this IServiceCollection services, IConfiguration configuration)
         {
             var secretKey = configuration.GetSecretKey();
-            var issueSigniKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+            // If no secret is configured, fall back to a generated temporary key in Development only.
+            // This avoids startup failure in local dev, but prevents accidental use in production.
+            byte[] keyBytes;
+            if (string.IsNullOrWhiteSpace(secretKey))
+            {
+                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                if (!string.Equals(env, "Development", StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException("JWT signing secret is not configured. Set the secret (e.g. Jwt:Secret) in configuration.");
+
+                // Development fallback: generate a 256-bit random key
+                keyBytes = System.Security.Cryptography.RandomNumberGenerator.GetBytes(32);
+            }
+            else
+            {
+                keyBytes = Encoding.UTF8.GetBytes(secretKey);
+            }
+
+            var issueSigniKey = new SymmetricSecurityKey(keyBytes);
 
             services.AddCors(options =>
             {

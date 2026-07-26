@@ -1,0 +1,88 @@
+<section class="tarefa-historico">
+  <button
+    type="button"
+    class="tarefa-historico-trigger"
+    [attr.aria-expanded]="aberto"
+    aria-controls="tarefa-historico-conteudo"
+    (click)="alternar()">
+    <span class="tarefa-historico-trigger-label">
+      <mat-icon>history</mat-icon>
+      <span>
+        <strong>Histórico de movimentações</strong>
+        <small>Acompanhe as ações e alterações realizadas nesta tarefa</small>
+      </span>
+    </span>
+
+    <mat-icon class="tarefa-historico-chevron" [class.aberto]="aberto">
+      expand_more
+    </mat-icon>
+  </button>
+
+  @if (aberto) {
+    <div id="tarefa-historico-conteudo" class="tarefa-historico-conteudo">
+      @if (carregando) {
+        <div class="tarefa-historico-estado" role="status">
+          <mat-spinner diameter="32"></mat-spinner>
+          <span>Carregando movimentações...</span>
+        </div>
+      } @else if (erroAoCarregar) {
+        <div class="tarefa-historico-estado tarefa-historico-erro" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>Não foi possível carregar o histórico.</span>
+          <button mat-stroked-button type="button" (click)="tentarNovamente()">
+            Tentar novamente
+          </button>
+        </div>
+      } @else if (dataSource.data.length === 0) {
+        <div class="tarefa-historico-estado">
+          <mat-icon>history_toggle_off</mat-icon>
+          <span>Nenhuma movimentação registrada para esta tarefa.</span>
+        </div>
+      } @else {
+        <div class="tarefa-historico-grid">
+          <table mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="movimento">
+              <th mat-header-cell *matHeaderCellDef>Movimentação</th>
+              <td mat-cell *matCellDef="let item">
+                <span class="tarefa-historico-movimento">{{ item.movimento }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="detalhes">
+              <th mat-header-cell *matHeaderCellDef>Detalhes</th>
+              <td mat-cell *matCellDef="let item">{{ item.detalhes }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="responsavel">
+              <th mat-header-cell *matHeaderCellDef>Responsável</th>
+              <td mat-cell *matCellDef="let item">
+                <span class="tarefa-historico-responsavel">{{ item.responsavelNome }}</span>
+                <small>{{ item.responsavelCodigo }}</small>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="dataOcorrencia">
+              <th mat-header-cell *matHeaderCellDef>Data e hora</th>
+              <td mat-cell *matCellDef="let item">
+                {{ item.dataOcorrencia | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+            <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+          </table>
+        </div>
+
+        <mat-paginator
+          class="tarefa-historico-paginador"
+          [length]="totalItens"
+          [pageIndex]="paginaAtual"
+          [pageSize]="tamanhoPagina"
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+          (page)="alterarPagina($event)">
+        </mat-paginator>
+      }
+    </div>
+  }
+</section>

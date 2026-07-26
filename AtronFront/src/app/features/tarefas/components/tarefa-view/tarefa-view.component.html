@@ -22,13 +22,13 @@
         <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'meuQuadro'" (click)="selecionarVisao('meuQuadro')">
           Meu quadro
         </button>
-        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'equipe'" (click)="selecionarVisao('equipe')">
+        <button *ngIf="possuiResponsabilidadeGestao" mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'equipe'" (click)="selecionarVisao('equipe')">
           Equipe
         </button>
         <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'disponiveis'" (click)="selecionarVisao('disponiveis')">
           Disponíveis
         </button>
-        <button mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'solicitacoes'" (click)="selecionarVisao('solicitacoes')">
+        <button *ngIf="possuiResponsabilidadeGestao" mat-stroked-button type="button" [class.list-primary-action]="visaoAtual === 'solicitacoes'" (click)="selecionarVisao('solicitacoes')">
           Solicitações
         </button>
       </div>
@@ -42,21 +42,6 @@
 
     <div class="list-table-wrap">
       <table class="list-table" mat-table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="identificador">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="identificador">Identificador</th>
-          <td mat-cell *matCellDef="let trf">{{ trf.identificador || '-' }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="destino">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="destinoDescricao">Destino</th>
-          <td mat-cell *matCellDef="let trf">{{ trf.destinoDescricao }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="solicitante">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="nomeDoSolicitante">Solicitante</th>
-          <td mat-cell *matCellDef="let trf">{{ trf.nomeDoSolicitante }}</td>
-        </ng-container>
-
         <ng-container matColumnDef="usuario">
           <th mat-header-cell *matHeaderCellDef mat-sort-header="nomeDoUsuario">Usuário</th>
           <td mat-cell *matCellDef="let trf">{{ trf.nomeDoUsuario }}</td>

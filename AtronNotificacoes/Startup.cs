@@ -111,10 +111,11 @@ public class Startup
     {
         var secretKeyUsuario = Configuration["Jwt:SecretKey"];
         var secretKeyServico = Configuration["Servico:SecretKey"];
-        if (string.IsNullOrWhiteSpace(secretKeyUsuario) || string.IsNullOrWhiteSpace(secretKeyServico))
-        {
+        if (string.IsNullOrWhiteSpace(secretKeyUsuario))
             throw new InvalidOperationException("Jwt:SecretKey deve ser configurada para iniciar o módulo de notificações.");
-        }
+
+        if (string.IsNullOrWhiteSpace(secretKeyServico))
+            throw new InvalidOperationException("Servico:SecretKey deve ser configurada para iniciar o módulo de notificações.");
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

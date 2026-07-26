@@ -1,11 +1,15 @@
 ﻿using System;
 
 using System.Collections.Generic;
+using Domain.Enums;
 
 namespace Domain.Entities
 {
     public class Tarefa : EntityBase
     {
+        private const int EstadoPendenteAprovacaoId = 2;
+        private const int EstadoIniciadaId = 5;
+
         public int? Identificador { get; set; }
 
         public int DestinoInicial { get; set; }
@@ -43,5 +47,28 @@ namespace Domain.Entities
         public Cargo Cargo { get; set; }
 
         public ICollection<SolicitacaoObtencaoTarefa> SolicitacoesObtencao { get; set; }
+
+        public ICollection<TarefaMovimentacao> Movimentacoes { get; set; }
+
+        public void AprovarObtencao(int usuarioId, string usuarioCodigo)
+        {
+            UsuarioId = usuarioId;
+            UsuarioCodigo = usuarioCodigo;
+            DestinoInicial = (int)DestinoInicialTarefa.Usuario;
+            DepartamentoId = null;
+            DepartamentoCodigo = null;
+            Departamento = null;
+            CargoId = null;
+            CargoCodigo = null;
+            Cargo = null;
+
+            if (TarefaEstadoId != EstadoPendenteAprovacaoId)
+            {
+                return;
+            }
+
+            TarefaEstadoId = EstadoIniciadaId;
+            ExigeAprovacaoParaObter = false;
+        }
     }
 }

@@ -201,28 +201,32 @@ Tarefa ainda aberta para acompanhamento ou decisão operacional. Em Meu quadro e
 _Avoid_: Tarefa finalizada no carregamento padrão, tarefa cancelada no carregamento padrão, histórico misturado com operação
 
 **Fila de triagem de tarefas**:
-Conjunto de tarefas vinculadas a departamento ou cargo que ainda não pertencem a Meu quadro de um usuário. A fila deve ser acompanhada por usuários com responsabilidade de gestão sobre aquela estrutura, evitando distribuir tarefas estruturais para todos os usuários do escopo.
-_Avoid_: Quadro pessoal compartilhado, listagem geral de tarefas, carga automática para todos
+Conjunto de tarefas ativas sem usuário responsável que ainda não pertencem a Meu quadro. A fila aparece em Disponíveis para qualquer usuário com acesso ao módulo de tarefas; a responsabilidade de gestão determina se a obtenção pode ser direta ou precisa de aprovação.
+_Avoid_: Quadro pessoal compartilhado, tarefa disponível invisível, obtenção direta por usuário sem responsabilidade de gestão
 
 **Assumir tarefa**:
-Ação em que um usuário com acesso a uma fila de triagem torna uma tarefa estrutural uma tarefa individual própria. Depois de assumida, a tarefa passa a aparecer em Meu quadro desse usuário.
-_Avoid_: Atribuição automática, visualização sem responsabilidade
+Ação em que um usuário com responsabilidade de gestão torna uma tarefa disponível, que não exige aprovação, uma tarefa individual própria. Depois de assumida, a tarefa passa a aparecer em Meu quadro desse usuário.
+_Avoid_: Atribuição automática, assunção direta por usuário sem responsabilidade de gestão
 
 **Obter tarefa**:
-Ação em que um usuário solicita ou assume uma tarefa disponível em uma fila permitida. Quando a tarefa não exige aprovação, ela entra diretamente em Meu quadro; quando exige aprovação, a obtenção gera uma solicitação ao aprovador. Obter tarefa nunca altera o estado operacional da tarefa.
-_Avoid_: Atribuição pelo gestor, edição do responsável sem regra, tarefa invisível, mudança automática de estado
+Ação em que um usuário solicita ou assume uma tarefa exibida em Disponíveis. Usuário sem responsabilidade de gestão sempre gera uma solicitação ao aprovador. Usuário com responsabilidade de gestão pode assumir diretamente quando a tarefa não exige aprovação; quando exige, também gera solicitação. A solicitação, a obtenção direta e a recusa não alteram o estado operacional da tarefa. Na aprovação, uma tarefa em Pendente de aprovação passa para Iniciada e deixa de exigir aprovação para obtenção.
+_Avoid_: Atribuição pelo gestor, edição do responsável sem regra, tarefa invisível, mudança de qualquer estado fora da transição aprovada
 
 **Solicitação de obtenção de tarefa**:
 Pedido feito por um usuário para receber uma tarefa marcada como pendente de aprovação. A solicitação deve aparecer para o aprovador na visão Solicitações e, quando aprovada, a tarefa passa para Meu quadro do usuário solicitante. Uma tarefa deve ter no máximo uma solicitação de obtenção pendente por vez.
 _Avoid_: Aprovação implícita, e-mail como local de decisão, tarefa pendente assumida diretamente, várias solicitações pendentes para a mesma tarefa
 
 **Aprovação para obter tarefa**:
-Exigência separada do estado operacional da tarefa que define se um usuário pode obter a tarefa diretamente ou se precisa da aprovação do gestor imediato. Essa exigência não deve ser confundida com o estado da tarefa.
-_Avoid_: Estado pendente de aprovação, bloqueio implícito, aprovação como andamento da tarefa
+Exigência separada do estado operacional da tarefa. Usuário sem responsabilidade de gestão sempre precisa de aprovação; para gestores, a configuração da tarefa define se a obtenção pode ser direta ou também precisa de aprovação. Essa exigência não deve ser confundida com o estado da tarefa.
+_Avoid_: Bloqueio implícito, usar qualquer estado como substituto do flag, manter o flag marcado após aprovar uma tarefa pendente
 
 **Aprovação de obtenção**:
-Decisão do aprovador de obtenção de tarefa para aprovar ou recusar uma solicitação. A aprovação válida transforma a tarefa solicitada em tarefa individual do usuário solicitante sem alterar seu estado operacional; a recusa encerra a solicitação e mantém a tarefa disponível conforme seu escopo.
-_Avoid_: Aprovação implícita, resposta manual ao e-mail, assumir tarefa sem decisão, mudança automática de estado
+Decisão do aprovador de obtenção de tarefa para aprovar ou recusar uma solicitação. A aprovação válida transforma a tarefa solicitada em tarefa individual do usuário solicitante. Quando a tarefa estiver em Pendente de aprovação, a aprovação também altera seu estado para Iniciada e desmarca a exigência de aprovação para obtenção. Para os demais estados, a aprovação preserva o estado e o flag. A recusa encerra a solicitação e mantém a tarefa disponível conforme seu escopo.
+_Avoid_: Aprovação implícita, resposta manual ao e-mail, assumir tarefa sem decisão, alterar estados diferentes de Pendente de aprovação
+
+**Histórico de movimentações da tarefa**:
+Registro cronológico e imutável das movimentações relevantes da tarefa. Inclui criação, atualização, obtenção direta, solicitação de obtenção, aprovação e recusa; mudanças de estado como início, entrega e finalização aparecem nos detalhes da atualização. Cada registro preserva o evento, o código e o nome do responsável no momento da ação, a data e hora e as mudanças relevantes. A consulta é paginada, carregada sob demanda no detalhe da tarefa e limitada ao usuário responsável, às equipes e aos gestores autorizados.
+_Avoid_: Sobrescrever eventos anteriores, inferir histórico apenas pelo estado atual, expor movimentações fora do escopo de acesso
 
 **Notificação do sistema**:
 Aviso interno apresentado ao usuário dentro do produto para informar eventos relevantes. No primeiro escopo, notificações de tarefas informam aprovações ou recusas de solicitações e podem levar o usuário ao detalhe da tarefa quando aplicável; notificações devem poder ser controladas como lidas ou não lidas pelo usuário.
@@ -272,12 +276,16 @@ _Avoid_: Troca silenciosa de responsável, edição comum, histórico perdido
 Conjunto de tarefas ativas atribuídas diretamente ao usuário logado. Tarefas apenas estruturais entram em Meu quadro somente quando forem assumidas ou atribuídas a esse usuário.
 _Avoid_: Todas as tarefas da empresa, fila de departamento, tarefas de todos os usuários
 
+**Disponíveis**:
+Visão das tarefas ativas que ainda não possuem usuário responsável. Todo usuário com acesso ao módulo pode consultar essa visão; a ação de obter respeita a exigência de aprovação conforme a responsabilidade de gestão do usuário e a configuração da tarefa.
+_Avoid_: Fila visível apenas para gestor, tarefa já atribuída, assunção sem autorização
+
 **Equipe**:
-Visão separada de tarefas relacionadas aos subordinados diretos do gestor imediato. Pode existir na mesma tela de Meu quadro, mas deve manter filtros e listagem próprios para não misturar responsabilidade pessoal com responsabilidade de gestão.
+Visão separada de tarefas relacionadas aos subordinados diretos do gestor imediato, visível apenas para usuário com responsabilidade de gestão. Pode existir na mesma tela de Meu quadro, mas deve manter filtros e listagem próprios para não misturar responsabilidade pessoal com responsabilidade de gestão.
 _Avoid_: Quadro único misturado, tarefas de todos os usuários, subordinados indiretos automáticos
 
 **Solicitações**:
-Visão operacional em que o gestor acompanha solicitações pendentes de obtenção de tarefa e decide aprovar ou recusar. O e-mail pode sinalizar a pendência, mas Solicitações deve ser o local de trabalho para decisões de aprovação no módulo de tarefas.
+Visão operacional, visível apenas para usuário com responsabilidade de gestão, em que o gestor acompanha solicitações pendentes de obtenção de tarefa e decide aprovar ou recusar. O e-mail pode sinalizar a pendência, mas Solicitações deve ser o local de trabalho para decisões de aprovação no módulo de tarefas.
 _Avoid_: Aprovação apenas por e-mail, pendência invisível, solicitação sem acompanhamento
 
 **Destino de equipe**:

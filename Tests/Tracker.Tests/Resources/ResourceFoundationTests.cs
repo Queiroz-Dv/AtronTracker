@@ -12,6 +12,7 @@ public class ResourceFoundationTests
         var casos = new[]
         {
             (TarefaResource.ResourceManager, "Erro_TarefaNaoEncontrada", "Tarefa não encontrada."),
+            (TarefaResource.ResourceManager, "Historico_Movimento_Criacao", "Criação"),
             (PlanejamentoCustoResource.ResourceManager, "Erro_PlanejamentoNaoEncontrado", "Planejamento de custo não encontrado."),
             (PerfilDeAcessoResource.ResourceManager, "Erro_PerfilNaoEncontrado", "Perfil de acesso não encontrado."),
             (ModuloResource.ResourceManager, "Erro_ModuloNaoEncontrado", "Módulo não encontrado.")

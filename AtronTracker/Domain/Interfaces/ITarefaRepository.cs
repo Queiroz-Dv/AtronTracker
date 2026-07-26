@@ -16,7 +16,11 @@ namespace Domain.Interfaces
 
         Task<IEnumerable<Tarefa>> ObterTarefasAtivasPorSubordinadosDiretosAsync(int gestorId, string gestorCodigo);       
 
-        Task<IEnumerable<Tarefa>> ObterTarefasAtivasDisponiveisParaUsuarioAsync(Usuario usuario);
+        Task<IEnumerable<Tarefa>> ObterTarefasAtivasDisponiveisAsync();
+
+        Task<bool> PossuiResponsabilidadeGestaoAsync(int usuarioId, string usuarioCodigo);
+
+        Task<bool> PodeAcessarHistoricoAsync(int tarefaId, int usuarioId, string usuarioCodigo);
 
         Task<bool> AssumirTarefaAsync(int tarefaId, int usuarioId, string usuarioCodigo);
 

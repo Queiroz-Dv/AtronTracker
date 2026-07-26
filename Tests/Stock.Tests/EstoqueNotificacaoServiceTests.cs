@@ -12,7 +12,9 @@ public sealed class EstoqueNotificacaoServiceTests
     public async Task NotificarSaidaRegistradaAsync_publica_evento_do_stock_para_o_responsavel_configurado()
     {
         var publisher = new PublisherCapturador();
-        var service = new EstoqueNotificacaoService(publisher, new ResponsavelFixo("USR_ESTOQUE"));
+        var service = new EstoqueNotificacaoService(
+            publisher,
+            new ResponsavelNotificacaoEstoqueResolver("USR_ESTOQUE"));
 
         await service.NotificarSaidaRegistradaAsync(
             new Venda { Id = 12 },
@@ -33,7 +35,9 @@ public sealed class EstoqueNotificacaoServiceTests
     public async Task NotificarSaidaRegistradaAsync_nao_publica_sem_responsavel_configurado()
     {
         var publisher = new PublisherCapturador();
-        var service = new EstoqueNotificacaoService(publisher, new ResponsavelFixo(null));
+        var service = new EstoqueNotificacaoService(
+            publisher,
+            new ResponsavelNotificacaoEstoqueResolver(string.Empty));
 
         await service.NotificarSaidaRegistradaAsync(
             new Venda { Id = 12 },
@@ -42,11 +46,6 @@ public sealed class EstoqueNotificacaoServiceTests
             17);
 
         Assert.Empty(publisher.Requests);
-    }
-
-    private sealed class ResponsavelFixo(string? codigo) : IResponsavelNotificacaoEstoqueResolver
-    {
-        public string? ObterCodigoResponsavel() => codigo;
     }
 
     private sealed class PublisherCapturador : INotificacoesInternasPublisher

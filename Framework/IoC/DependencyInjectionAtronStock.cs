@@ -55,9 +55,14 @@ namespace IoC
             services.AddScoped<IFornecedorRepository, FornecedorRepository>();
             services.AddScoped<IProdutoRepository, ProdutoRepository>();
             services.AddScoped<IEstoqueRepository, EstoqueRepository>();
-
             services.AddScoped<IProdutoService, ProdutoService>();
+            services.AddScoped<IEstoqueService, EstoqueService>();
             services.AddScoped<IFornecedorService, FornecedorService>();
+
+            services.AddScoped<IResponsavelNotificacaoEstoqueResolver>(_ =>
+                new ResponsavelNotificacaoEstoqueResolver(
+                    configuration["NotificacoesEstoque:ResponsavelCodigo"]));
+            services.AddScoped<IEstoqueNotificacaoService, EstoqueNotificacaoService>();
             services = services.AddStockMapping();
             services = services.AddStockValidador();
             return services;

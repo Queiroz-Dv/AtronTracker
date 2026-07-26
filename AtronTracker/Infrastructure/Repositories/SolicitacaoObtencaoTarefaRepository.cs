@@ -57,8 +57,9 @@ namespace Infrastructure.Repositories
 
             solicitacao.Status = (int)StatusSolicitacaoObtencaoTarefa.Aprovada;
             solicitacao.DataDecisao = DateTime.Now;
-            solicitacao.Tarefa.UsuarioId = solicitacao.SolicitanteId;
-            solicitacao.Tarefa.UsuarioCodigo = solicitacao.SolicitanteCodigo;
+            solicitacao.Tarefa.AprovarObtencao(
+                solicitacao.SolicitanteId,
+                solicitacao.SolicitanteCodigo);
 
             return await _context.SaveChangesAsync() > 0;
         }

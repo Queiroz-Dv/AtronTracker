@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>AtronNotificacoes</RootNamespace>
+    <UserSecretsId>1362c72a-085e-4f99-945b-69465c4c51ce</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

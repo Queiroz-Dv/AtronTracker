@@ -144,6 +144,7 @@ namespace IoC
         private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
         {
             services.AddScoped<ITarefaRepository, TarefaRepository>();
+            services.AddScoped<ITarefaMovimentacaoRepository, TarefaMovimentacaoRepository>();
             services.AddScoped<ISolicitacaoObtencaoTarefaRepository, SolicitacaoObtencaoTarefaRepository>();
             services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
             services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
@@ -154,6 +155,7 @@ namespace IoC
             services.AddScoped<ITarefaUsuarioAtualService, TarefaUsuarioAtualService>();
             services.AddScoped<ITarefaConfiguracoesService, TarefaConfiguracoesService>();
             services.AddScoped<ITarefaObtencaoService, TarefaObtencaoService>();
+            services.AddScoped<ITarefaMovimentacaoService, TarefaMovimentacaoService>();
             services.AddScoped<ITarefaEmailCompositor, TarefaEmailCompositor>();
             services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
             services.AddScoped<CriarTarefa>();

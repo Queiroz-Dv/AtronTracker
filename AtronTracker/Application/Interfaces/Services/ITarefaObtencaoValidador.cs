@@ -5,8 +5,8 @@ namespace Application.Interfaces.Services
 {
     public interface ITarefaObtencaoValidador
     {
-        Resultado ValidarAssuncao(Usuario usuario, Tarefa tarefa);
+        Resultado ValidarAssuncao(Tarefa tarefa, bool possuiResponsabilidadeGestao);
 
-        Resultado ValidarSolicitacao(Usuario usuario, Tarefa tarefa);
+        Resultado ValidarSolicitacao(Tarefa tarefa, bool possuiResponsabilidadeGestao);
     }
 }

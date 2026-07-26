@@ -1,0 +1,142 @@
+.tarefa-historico {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-sm);
+  overflow: hidden;
+}
+
+.tarefa-historico-trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--atron-text);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  justify-content: space-between;
+  padding: 18px 20px;
+  text-align: left;
+  width: 100%;
+}
+
+.tarefa-historico-trigger:hover {
+  background: color-mix(in srgb, var(--atron-primary) 5%, transparent);
+}
+
+.tarefa-historico-trigger:focus-visible {
+  outline: 2px solid var(--atron-primary);
+  outline-offset: -2px;
+}
+
+.tarefa-historico-trigger-label {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tarefa-historico-trigger-label > mat-icon {
+  color: var(--atron-primary-strong);
+}
+
+.tarefa-historico-trigger-label span {
+  display: grid;
+  gap: 2px;
+}
+
+.tarefa-historico-trigger-label strong {
+  font-size: 1rem;
+}
+
+.tarefa-historico-trigger-label small {
+  color: var(--atron-text-subtle);
+  font-size: 0.82rem;
+}
+
+.tarefa-historico-chevron {
+  color: var(--atron-text-subtle);
+  transition: transform 180ms ease;
+}
+
+.tarefa-historico-chevron.aberto {
+  transform: rotate(180deg);
+}
+
+.tarefa-historico-conteudo {
+  border-top: 1px solid var(--atron-border);
+}
+
+.tarefa-historico-grid {
+  overflow-x: auto;
+}
+
+.tarefa-historico-grid table {
+  background: var(--atron-surface);
+  min-width: 760px;
+  width: 100%;
+}
+
+.tarefa-historico-grid th {
+  background: color-mix(in srgb, var(--atron-primary) 7%, #ffffff);
+  color: var(--atron-text);
+  font-weight: 700;
+}
+
+.tarefa-historico-grid td {
+  color: var(--atron-text);
+}
+
+.tarefa-historico-grid th,
+.tarefa-historico-grid td {
+  border-bottom-color: var(--atron-border);
+  padding: 14px 16px;
+}
+
+.tarefa-historico-movimento {
+  color: var(--atron-primary-strong);
+  font-weight: 700;
+}
+
+.tarefa-historico-responsavel {
+  display: block;
+  font-weight: 600;
+}
+
+.tarefa-historico-grid td small {
+  color: var(--atron-text-subtle);
+  display: block;
+  margin-top: 2px;
+}
+
+.tarefa-historico-estado {
+  align-items: center;
+  color: var(--atron-text-subtle);
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  min-height: 120px;
+  padding: 24px;
+  text-align: center;
+}
+
+.tarefa-historico-erro {
+  color: var(--atron-danger, #b42318);
+  flex-wrap: wrap;
+}
+
+.tarefa-historico-paginador {
+  --mat-paginator-container-background-color: var(--atron-surface);
+  --mat-paginator-container-text-color: var(--atron-text);
+  border-top: 1px solid var(--atron-border);
+}
+
+@media (max-width: 720px) {
+  .tarefa-historico-trigger {
+    padding: 16px;
+  }
+
+  .tarefa-historico-trigger-label small {
+    display: none;
+  }
+}

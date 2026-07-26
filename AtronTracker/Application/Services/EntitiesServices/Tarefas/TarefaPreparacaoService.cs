@@ -46,6 +46,7 @@ namespace Application.Services.EntitiesServices.Tarefas
             tarefaDTO.EstadoDaTarefa = MapearEstado(estado);
 
             var tarefa = await _map.MapToEntityAsync(tarefaDTO);
+            tarefa.EstadoDaTarefa = estado;
             var usuarioResultado = await VincularUsuarioAsync(tarefa, tarefaDTO);
             if (usuarioResultado.TeveFalha)
                 return Resultado<TarefaPreparada>.Falhas(usuarioResultado.Messages);

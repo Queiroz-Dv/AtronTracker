@@ -11,12 +11,16 @@ namespace Application.UseCases.TarefaCases
         ITarefaRepository tarefaRepository,
         ITarefaPreparacaoService tarefaPreparacaoService,
         ITarefaNotificacaoService tarefaNotificacaoService,
-        ITarefaNotificacaoInternaService notificacaoInternaService)
+        ITarefaNotificacaoInternaService notificacaoInternaService,
+        ITarefaMovimentacaoService tarefaMovimentacaoService,
+        ITarefaUsuarioAtualService usuarioAtualService)
     {
         private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
         private readonly ITarefaPreparacaoService _tarefaPreparacaoService = tarefaPreparacaoService;
         private readonly ITarefaNotificacaoService _tarefaNotificacaoService = tarefaNotificacaoService;
         private readonly ITarefaNotificacaoInternaService _notificacaoInternaService = notificacaoInternaService;
+        private readonly ITarefaMovimentacaoService _tarefaMovimentacaoService = tarefaMovimentacaoService;
+        private readonly ITarefaUsuarioAtualService _usuarioAtualService = usuarioAtualService;
 
         public async Task<Resultado<TarefaDTO>> ExecutarAsync(TarefaDTO tarefaDTO)
         {
@@ -27,8 +31,16 @@ namespace Application.UseCases.TarefaCases
             var tarefaPreparada = preparacaoResultado.Dados;
             var tarefa = tarefaPreparada.Tarefa;
 
+            var responsavel = await _usuarioAtualService.ObterAsync();
+            if (responsavel.TeveFalha)
+                return Resultado<TarefaDTO>.Falhas(responsavel.Messages);
+
             if (!await _tarefaRepository.CriarTarefaAsync(tarefa))
                 return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_GravarTarefa);
+
+            var movimentacao = await _tarefaMovimentacaoService.RegistrarCriacaoAsync(tarefa, responsavel.Dados);
+            if (movimentacao.TeveFalha)
+                return Resultado<TarefaDTO>.Falhas(movimentacao.Messages);
 
             tarefaDTO.Id = tarefa.Id;
             tarefaDTO.Identificador = tarefa.Identificador;

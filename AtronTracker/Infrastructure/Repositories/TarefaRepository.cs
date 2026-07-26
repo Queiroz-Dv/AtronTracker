@@ -1,4 +1,3 @@
-using Application.Extensions;
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -100,22 +99,53 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Tarefa>> ObterTarefasAtivasDisponiveisParaUsuarioAsync(Usuario usuario)
+        public async Task<IEnumerable<Tarefa>> ObterTarefasAtivasDisponiveisAsync()
         {
             return await QueryTarefasComRelacionamentos()
                 .Where(trf =>
                     trf.UsuarioId == null &&
-                    trf.TarefaEstadoId != EstadoFinalizadaId &&
-                    trf.DepartamentoId.HasValue &&
-                    ((usuario.ObterDepartamentoIdsParaTarefas().Contains(trf.DepartamentoId.Value) &&
-                        (!trf.CargoId.HasValue || usuario.ObterCargoIdsParaTarefas().Contains(trf.CargoId.Value))) ||
-
-                        (trf.Departamento != null &&
-                          trf.Departamento.GestorDepartamentoId == usuario.Id &&
-                          trf.Departamento.GestorDepartamentoCodigo == usuario.Codigo
-                        )))
+                    trf.TarefaEstadoId != EstadoFinalizadaId)
                 .OrderByDescending(trf => trf.Identificador)
                 .ToListAsync();
+        }
+
+        public async Task<bool> PossuiResponsabilidadeGestaoAsync(int usuarioId, string usuarioCodigo)
+        {
+            var possuiSubordinadoDireto = await _context.Usuarios.AnyAsync(usuario =>
+                !usuario.Inativo &&
+                usuario.GestorImediatoId == usuarioId &&
+                usuario.GestorImediatoCodigo == usuarioCodigo);
+
+            if (possuiSubordinadoDireto)
+            {
+                return true;
+            }
+
+            return await _context.Departamentos.AnyAsync(departamento =>
+                departamento.GestorDepartamentoId == usuarioId &&
+                departamento.GestorDepartamentoCodigo == usuarioCodigo);
+        }
+
+        public async Task<bool> PodeAcessarHistoricoAsync(int tarefaId, int usuarioId, string usuarioCodigo)
+        {
+            return await _context.Tarefas.AnyAsync(tarefa =>
+                tarefa.Id == tarefaId &&
+                (
+                    tarefa.UsuarioId == null ||
+                    (tarefa.UsuarioId == usuarioId && tarefa.UsuarioCodigo == usuarioCodigo) ||
+                    (tarefa.Departamento != null &&
+                     tarefa.Departamento.GestorDepartamentoId == usuarioId &&
+                     tarefa.Departamento.GestorDepartamentoCodigo == usuarioCodigo) ||
+                    (tarefa.Usuario != null &&
+                     (
+                         (tarefa.Usuario.GestorImediatoId == usuarioId &&
+                          tarefa.Usuario.GestorImediatoCodigo == usuarioCodigo) ||
+                         tarefa.Usuario.UsuarioCargoDepartamentos.Any(relacionamento =>
+                             relacionamento.Departamento != null &&
+                             relacionamento.Departamento.GestorDepartamentoId == usuarioId &&
+                             relacionamento.Departamento.GestorDepartamentoCodigo == usuarioCodigo)
+                     ))
+                ));
         }
 
         public async Task<bool> AssumirTarefaAsync(int tarefaId, int usuarioId, string usuarioCodigo)
@@ -159,6 +189,8 @@ namespace Infrastructure.Repositories
         {
             return _context.Tarefas
                 .Include(trf => trf.EstadoDaTarefa)
+                .Include(trf => trf.Departamento)
+                .Include(trf => trf.Cargo)
                 .Include(trf => trf.Usuario)
                     .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)

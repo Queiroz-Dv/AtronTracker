@@ -8,6 +8,8 @@ import { TarefaResponse } from '../models/response/tarefa-response.model';
 import { EstadoTarefa } from '../models/estadoTarefa.model';
 import { SolicitacaoObtencaoTarefaResponse } from '../models/response/solicitacao-obtencao-tarefa-response.model';
 import { TarefaConfiguracoes } from '../models/tarefa-configuracoes.model';
+import { TarefaAcesso } from '../models/tarefa-acesso.model';
+import { TarefaMovimentacaoPagina } from '../models/tarefa-movimentacao.model';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +36,10 @@ export class TarefaService extends BaseService<TarefaRequest> {
     return this.http.get<TarefaResponse[]>(`${RotasApi.tarefaEndpoint}/Disponiveis`);
   }
 
+  obterAcesso(): Observable<TarefaAcesso> {
+    return this.http.get<TarefaAcesso>(`${RotasApi.tarefaEndpoint}/Acesso`);
+  }
+
   obterSolicitacoes(): Observable<SolicitacaoObtencaoTarefaResponse[]> {
     return this.http.get<SolicitacaoObtencaoTarefaResponse[]>(`${RotasApi.tarefaEndpoint}/Solicitacoes`);
   }
@@ -56,6 +62,13 @@ export class TarefaService extends BaseService<TarefaRequest> {
 
   obterTarefaPorIdService(id: number): Observable<TarefaResponse> {
     return this.http.get<TarefaResponse>(`${RotasApi.tarefaEndpoint}/${id}`);
+  }
+
+  obterHistorico(id: number, pagina: number, tamanhoPagina: number): Observable<TarefaMovimentacaoPagina> {
+    return this.http.get<TarefaMovimentacaoPagina>(
+      `${RotasApi.tarefaEndpoint}/${id}/Movimentacoes`,
+      { params: { pagina, tamanhoPagina } }
+    );
   }
 
   obterEstados(): Observable<EstadoTarefa[]> {

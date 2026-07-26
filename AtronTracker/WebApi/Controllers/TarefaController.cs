@@ -4,6 +4,7 @@ using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Domain.ValueObjects;
+using Shared.Infrastructure.Filters;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApi.Helpers;
@@ -65,6 +66,17 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
+        /// Obtém as capacidades do usuário autenticado nas visões de tarefas.
+        /// </summary>
+        /// <returns>200 OK com as capacidades ou 400 BadRequest com mensagens de erro.</returns>
+        [HttpGet("Acesso")]
+        public async Task<ActionResult<TarefaAcessoDTO>> ObterAcesso()
+        {
+            var resultado = await tarefaService.ObterAcessoAsync();
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        /// <summary>
         /// Obtém todas as solicitações de obtenção de tarefas pendentes de aprovação.
         /// </summary>
         /// <returns>200 OK com a lista de solicitações ou 400 BadRequest com mensagens de erro.</returns>
@@ -115,6 +127,7 @@ namespace WebApi.Controllers
         /// <param name="tarefa">Objeto com os dados da tarefa a ser criada.</param>
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost]
+        [Transactional]
         public async Task<ActionResult> Post([FromBody] TarefaDTO tarefa)
         {
             var resultado = await tarefaService.CriarAsync(tarefa);
@@ -128,6 +141,7 @@ namespace WebApi.Controllers
         /// <param name="tarefa">Objeto com os dados atualizados da tarefa.</param>
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPut("{id}")]
+        [Transactional]
         public async Task<ActionResult> Put(int id, [FromBody] TarefaDTO tarefa)
         {
             var resultado = await tarefaService.AtualizarAsync(id, tarefa);
@@ -140,6 +154,7 @@ namespace WebApi.Controllers
         /// <param name="id">Identificador numérico da tarefa a ser assumida.</param>
         /// <returns>200 OK com o DTO da tarefa atualizada ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("{id}/Assumir")]
+        [Transactional]
         public async Task<ActionResult<TarefaDTO>> Assumir(int id)
         {
             var resultado = await tarefaService.AssumirAsync(id);
@@ -152,6 +167,7 @@ namespace WebApi.Controllers
         /// <param name="id">Identificador numérico da tarefa para a qual se está solicitando obtenção.</param>
         /// <returns>200 OK com o DTO da solicitação ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("{id}/SolicitarObtencao")]
+        [Transactional]
         public async Task<ActionResult<SolicitacaoObtencaoTarefaDTO>> SolicitarObtencao(int id)
         {
             var resultado = await tarefaService.SolicitarObtencaoAsync(id);
@@ -164,6 +180,7 @@ namespace WebApi.Controllers
         /// <param name="id">Identificador numérico da solicitação a ser aprovada.</param>
         /// <returns>200 OK com o DTO da solicitação atualizada ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("Solicitacoes/{id}/Aprovar")]
+        [Transactional]
         public async Task<ActionResult<SolicitacaoObtencaoTarefaDTO>> AprovarSolicitacao(int id)
         {
             var resultado = await tarefaService.AprovarSolicitacaoAsync(id);
@@ -176,6 +193,7 @@ namespace WebApi.Controllers
         /// <param name="id">Identificador numérico da solicitação a ser recusada.</param>
         /// <returns>200 OK com o DTO da solicitação atualizada ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("Solicitacoes/{id}/Recusar")]
+        [Transactional]
         public async Task<ActionResult<SolicitacaoObtencaoTarefaDTO>> RecusarSolicitacao(int id)
         {
             var resultado = await tarefaService.RecusarSolicitacaoAsync(id);
@@ -192,6 +210,23 @@ namespace WebApi.Controllers
         {
             var resultado = await tarefaService.ExcluirAsync(id);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        /// <summary>
+        /// Obtém uma página do histórico cronológico de movimentações da tarefa.
+        /// </summary>
+        /// <param name="id">Identificador numérico da tarefa.</param>
+        /// <param name="pagina">Página iniciada em 1.</param>
+        /// <param name="tamanhoPagina">Quantidade de movimentações por página.</param>
+        /// <returns>200 OK com a página solicitada ou 400 BadRequest com mensagens de erro.</returns>
+        [HttpGet("{id}/Movimentacoes")]
+        public async Task<ActionResult<TarefaMovimentacaoPaginaDTO>> ObterHistorico(
+            int id,
+            [FromQuery] int pagina = 1,
+            [FromQuery] int tamanhoPagina = 5)
+        {
+            var resultado = await tarefaService.ObterHistoricoAsync(id, pagina, tamanhoPagina);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         /// <summary>

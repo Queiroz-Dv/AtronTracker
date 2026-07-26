@@ -20,7 +20,8 @@ namespace Application.Services.EntitiesServices.Tarefas
         IAprovadorObtencaoTarefaResolver aprovadorResolver,
         ISolicitacaoObtencaoTarefaMapeador mapeador,
         ITarefaNotificacaoInternaService notificacaoInternaService,
-        IAsyncApplicationMapService<TarefaDTO, Tarefa> tarefaMapeador) : ITarefaObtencaoService
+        IAsyncApplicationMapService<TarefaDTO, Tarefa> tarefaMapeador,
+        ITarefaMovimentacaoService tarefaMovimentacaoService) : ITarefaObtencaoService
     {
         private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
         private readonly ISolicitacaoObtencaoTarefaRepository _solicitacaoRepository = solicitacaoRepository;
@@ -30,6 +31,7 @@ namespace Application.Services.EntitiesServices.Tarefas
         private readonly ISolicitacaoObtencaoTarefaMapeador _mapeador = mapeador;
         private readonly ITarefaNotificacaoInternaService _notificacaoInternaService = notificacaoInternaService;
         private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _tarefaMapeador = tarefaMapeador;
+        private readonly ITarefaMovimentacaoService _tarefaMovimentacaoService = tarefaMovimentacaoService;
 
         public async Task<Resultado<List<SolicitacaoObtencaoTarefaDTO>>> ObterSolicitacoesAsync()
         {
@@ -55,7 +57,9 @@ namespace Application.Services.EntitiesServices.Tarefas
             if (tarefa is null)
                 return Resultado<TarefaDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            var validacao = _validador.ValidarAssuncao(usuario.Dados, tarefa);
+            var possuiResponsabilidadeGestao = await _tarefaRepository
+                .PossuiResponsabilidadeGestaoAsync(usuario.Dados.Id, usuario.Dados.Codigo);
+            var validacao = _validador.ValidarAssuncao(tarefa, possuiResponsabilidadeGestao);
             if (validacao.TeveFalha)
                 return Resultado<TarefaDTO>.Falhas(validacao.Messages);
 
@@ -63,6 +67,12 @@ namespace Application.Services.EntitiesServices.Tarefas
                 return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_AssumirTarefa);
 
             var tarefaAtualizada = await _tarefaRepository.ObterTarefaPorId(tarefaId);
+            var movimentacao = await _tarefaMovimentacaoService.RegistrarObtencaoAsync(
+                tarefaAtualizada,
+                usuario.Dados);
+            if (movimentacao.TeveFalha)
+                return Resultado<TarefaDTO>.Falhas(movimentacao.Messages);
+
             await _notificacaoInternaService.NotificarObtencaoAsync(tarefaAtualizada, usuario.Dados);
             var dto = await _tarefaMapeador.MapToDTOAsync(tarefaAtualizada);
             return Resultado<TarefaDTO>.Sucesso(dto).AdicionarMensagem(TarefaResource.Mensagem_TarefaAssumida);
@@ -78,7 +88,9 @@ namespace Application.Services.EntitiesServices.Tarefas
             if (tarefa is null)
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            var validacao = _validador.ValidarSolicitacao(usuario.Dados, tarefa);
+            var possuiResponsabilidadeGestao = await _tarefaRepository
+                .PossuiResponsabilidadeGestaoAsync(usuario.Dados.Id, usuario.Dados.Codigo);
+            var validacao = _validador.ValidarSolicitacao(tarefa, possuiResponsabilidadeGestao);
             if (validacao.TeveFalha)
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falhas(validacao.Messages);
 
@@ -94,6 +106,12 @@ namespace Application.Services.EntitiesServices.Tarefas
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_CriarSolicitacao);
 
             var solicitacaoGravada = await _solicitacaoRepository.ObterPorIdAsync(solicitacao.Id);
+            var movimentacao = await _tarefaMovimentacaoService.RegistrarSolicitacaoAsync(
+                solicitacaoGravada,
+                usuario.Dados);
+            if (movimentacao.TeveFalha)
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falhas(movimentacao.Messages);
+
             await _notificacaoInternaService.NotificarSolicitacaoRecebidaAsync(solicitacaoGravada);
 
             var dto = await _mapeador.MapearAsync(solicitacaoGravada);
@@ -115,6 +133,13 @@ namespace Application.Services.EntitiesServices.Tarefas
 
             var solicitacao = await _solicitacaoRepository.ObterPorIdAsync(solicitacaoId);
             var dto = await _mapeador.MapearAsync(solicitacao);
+
+            var movimentacao = await _tarefaMovimentacaoService.RegistrarDecisaoAsync(
+                solicitacao,
+                usuario,
+                aprovar);
+            if (movimentacao.TeveFalha)
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falhas(movimentacao.Messages);
 
             await _notificacaoInternaService.NotificarDecisaoSolicitacaoAsync(solicitacao, aprovar);
             return Resultado<SolicitacaoObtencaoTarefaDTO>
