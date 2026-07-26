@@ -4,8 +4,8 @@ using Domain.Enums;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace Application.Validador
@@ -35,7 +35,7 @@ namespace Application.Validador
 
         private static void ValidarDestinoInicial(TarefaDTO tarefa, NotificationBag notificacoes)
         {
-            if (!System.Enum.IsDefined(typeof(DestinoInicialTarefa), tarefa.DestinoInicial))
+            if (!Enum.IsDefined(typeof(DestinoInicialTarefa), tarefa.DestinoInicial))
             {
                 notificacoes.AdicionarErroCampoObrigatorio(TarefaResource.Campo_DestinoInicial);
                 return;
@@ -67,7 +67,8 @@ namespace Application.Validador
             {
                 notificacoes.AdicionarErroCampoObrigatorio(TarefaResource.Campo_Titulo);
             }
-            else if (tarefa.Titulo.Length > 50)
+
+            if (tarefa.Titulo.Length > 50)
             {
                 notificacoes.AdicionarErro(TarefaResource.Erro_TituloTamanhoMaximo);
             }
@@ -103,18 +104,13 @@ namespace Application.Validador
 
             if (codigo.Length < 3)
             {
-                notificacoes.AdicionarErro(Formatar(TarefaResource.Erro_CodigoTamanhoMinimo, campo));
+                notificacoes.AdicionarErro(string.Format(TarefaResource.Erro_CodigoTamanhoMinimo, campo));
             }
 
             if (codigo.Length > 10)
             {
-                notificacoes.AdicionarErro(Formatar(TarefaResource.Erro_CodigoTamanhoMaximo, campo));
+                notificacoes.AdicionarErro(string.Format(TarefaResource.Erro_CodigoTamanhoMaximo, campo));
             }
-        }
-
-        private static string Formatar(string formato, params object[] argumentos)
-        {
-            return string.Format(CultureInfo.GetCultureInfo("pt-BR"), formato, argumentos);
         }
     }
 }

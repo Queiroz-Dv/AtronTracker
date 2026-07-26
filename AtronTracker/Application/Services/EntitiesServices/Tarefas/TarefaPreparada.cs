@@ -3,19 +3,12 @@ using Domain.Entities;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
-    public class TarefaPreparada
+    public class TarefaPreparada(TarefaDTO tarefaDTO, Tarefa tarefa, Usuario usuario)
     {
-        public TarefaPreparada(TarefaDTO dto, Tarefa entidade, Usuario usuario)
-        {
-            Dto = dto;
-            Entidade = entidade;
-            Usuario = usuario;
-        }
+        public TarefaDTO TarefaDTO { get; } = tarefaDTO;
 
-        public TarefaDTO Dto { get; }
+        public Tarefa Tarefa { get; } = tarefa;
 
-        public Tarefa Entidade { get; }
-
-        public Usuario Usuario { get; }
+        public Usuario Usuario { get; } = usuario;
     }
 }

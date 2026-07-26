@@ -1,7 +1,7 @@
 using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
-using Application.UseCases.Usuario;
+using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
 using Shared.Application.DTOS.Auth;

@@ -6,29 +6,20 @@ using Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.Services.EntitiesServices
+namespace Application.Services.EntitiesServices.PerfisDeAcesso
 {
-    public class PerfilDeAcessoPreparacaoService : IPerfilDeAcessoPreparacaoService
+    public class PerfilDeAcessoPreparacaoService(
+        IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
+        IModuloRepository moduloRepository,
+        IValidateModelService<PerfilDeAcesso> validateModel,
+        Notifiable messageModel) : IPerfilDeAcessoPreparacaoService
     {
-        private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map;
-        private readonly IModuloRepository _moduloRepository;
-        private readonly IValidateModelService<PerfilDeAcesso> _validateModel;
-        private readonly Notifiable _messageModel;
-
-        public PerfilDeAcessoPreparacaoService(
-            IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
-            IModuloRepository moduloRepository,
-            IValidateModelService<PerfilDeAcesso> validateModel,
-            Notifiable messageModel)
-        {
-            _map = map;
-            _moduloRepository = moduloRepository;
-            _validateModel = validateModel;
-            _messageModel = messageModel;
-        }
+        private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map = map;
+        private readonly IModuloRepository _moduloRepository = moduloRepository;
+        private readonly IValidateModelService<PerfilDeAcesso> _validateModel = validateModel;
+        private readonly Notifiable _messageModel = messageModel;
 
         public async Task<Resultado<PerfilDeAcesso>> PrepararAsync(PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
@@ -54,7 +45,7 @@ namespace Application.Services.EntitiesServices
                 return;
             }
 
-            if (perfilDeAcessoDTO.Modulos is null || !perfilDeAcessoDTO.Modulos.Any())
+            if (perfilDeAcessoDTO.Modulos is null || perfilDeAcessoDTO.Modulos.Count == 0)
                 _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_SemModulos);
         }
 

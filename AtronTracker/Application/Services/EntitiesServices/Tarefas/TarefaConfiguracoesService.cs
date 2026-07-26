@@ -9,24 +9,20 @@ using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
-    public class TarefaConfiguracoesService : ITarefaConfiguracoesService
+    public class TarefaConfiguracoesService(ITarefaUsuarioAtualService usuarioAtualService, IUsuarioRepository usuarioRepository)
+        : ITarefaConfiguracoesService
     {
-        private readonly ITarefaUsuarioAtualService _usuarioAtualService;
-        private readonly IUsuarioRepository _usuarioRepository;
-
-        public TarefaConfiguracoesService(ITarefaUsuarioAtualService usuarioAtualService, IUsuarioRepository usuarioRepository)
-        {
-            _usuarioAtualService = usuarioAtualService;
-            _usuarioRepository = usuarioRepository;
-        }
+        private readonly ITarefaUsuarioAtualService _usuarioAtualService = usuarioAtualService;
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
 
         public async Task<Resultado<TarefaConfiguracoesDTO>> ObterAsync()
         {
-            var usuario = await _usuarioAtualService.ObterAsync();
-            if (usuario.TeveFalha)
-                return Resultado<TarefaConfiguracoesDTO>.Falhas(usuario.Messages);
+            var usuarioResultado = await _usuarioAtualService.ObterAsync();
+            var usuario = usuarioResultado.Dados;
+            if (usuarioResultado.TeveFalha)
+                return Resultado<TarefaConfiguracoesDTO>.Falhas(usuarioResultado.Messages);
 
-            return Resultado<TarefaConfiguracoesDTO>.Sucesso(CriarDto(usuario.Dados.ReceberNotificacaoInternaTarefa, usuario.Dados.ReceberNotificacaoTarefaPorEmail));
+            return Resultado<TarefaConfiguracoesDTO>.Sucesso(CriarDto(usuario.ReceberNotificacaoInternaTarefa, usuario.ReceberNotificacaoTarefaPorEmail));
         }
 
         public async Task<Resultado<TarefaConfiguracoesDTO>> AtualizarAsync(TarefaConfiguracoesRequest request)
@@ -34,14 +30,16 @@ namespace Application.Services.EntitiesServices.Tarefas
             if (request is null)
                 return Resultado<TarefaConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNulo);
 
-            var usuario = await _usuarioAtualService.ObterAsync();
-            if (usuario.TeveFalha)
-                return Resultado<TarefaConfiguracoesDTO>.Falhas(usuario.Messages);
+            var usuarioResultado = await _usuarioAtualService.ObterAsync();
+            var usuario = usuarioResultado.Dados;
+            if (usuarioResultado.TeveFalha)
+                return Resultado<TarefaConfiguracoesDTO>.Falhas(usuarioResultado.Messages);
 
             var atualizado = await _usuarioRepository.AtualizarPreferenciasNotificacaoTarefaAsync(
-                usuario.Dados.Codigo,
+                usuario.Codigo,
                 request.ReceberNotificacaoInternaTarefa,
                 request.ReceberNotificacaoTarefaPorEmail);
+
             if (!atualizado)
                 return Resultado<TarefaConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 

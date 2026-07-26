@@ -1,6 +1,6 @@
 using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
-using Application.UseCases.Usuario;
+using Application.UseCases.UsuarioCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

@@ -3,7 +3,7 @@ using Domain.Entities;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Application.Services.EntitiesServices
+namespace Application.Services.EntitiesServices.PerfisDeAcesso
 {
     public class PerfilDeAcessoCacheInvalidator : IPerfilDeAcessoCacheInvalidator
     {

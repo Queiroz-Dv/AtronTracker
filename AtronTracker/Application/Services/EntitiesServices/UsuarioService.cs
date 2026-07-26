@@ -1,7 +1,7 @@
 using Application.DTO;
 using Application.DTO.Request;
 using Application.Interfaces.Services;
-using Application.UseCases.Usuario;
+using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
@@ -27,7 +27,6 @@ namespace Application.Services.EntitiesServices
     {
         private readonly IAsyncMap<UsuarioDTO, Usuario> _asyncMap = asyncMap;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
-
         private readonly ObterUsuario _obterUsuario = obterUsuario;
         private readonly CriarUsuario _criarUsuario = criarUsuario;
         private readonly AtualizarUsuario _atualizarUsuario = atualizarUsuario;
@@ -35,7 +34,6 @@ namespace Application.Services.EntitiesServices
         private readonly DesativarUsuario _desativarUsuario = desativarUsuario;
         private readonly ReativarUsuario _reativarUsuario = reativarUsuario;
         private readonly SolicitarReativacao _solicitarReativacao = solicitarReativacao;
-
         private readonly AlterarEmail _alterarEmail = alterarEmail;
         private readonly ConfirmarAlteracaoEmail _confirmarAlteracaoEmail = confirmarAlteracaoEmail;
         private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;

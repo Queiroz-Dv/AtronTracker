@@ -401,6 +401,18 @@ namespace Shared.Application.Resources {
                 return ResourceManager.GetString("MensagemUsuarioDesativado", resourceCulture);
             }
         }
+
+        public static string ErroRemoverUsuario {
+            get {
+                return ResourceManager.GetString("ErroRemoverUsuario", resourceCulture);
+            }
+        }
+
+        public static string ErroRepassarTarefasUsuario {
+            get {
+                return ResourceManager.GetString("ErroRepassarTarefasUsuario", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Usuário removido com sucesso..

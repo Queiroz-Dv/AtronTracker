@@ -5,23 +5,16 @@ using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Usuario
+namespace Application.UseCases.UsuarioCases
 {
-    public class ConfirmarAlteracaoEmail
+    public class ConfirmarAlteracaoEmail(
+        IUsuarioRepository usuarioRepository,
+        IUsuarioIdentityRepository usuarioIdentityRepository,
+        ICacheUsuarioService cacheUsuarioService)
     {
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
-        private readonly ICacheUsuarioService _cacheUsuarioService;
-
-        public ConfirmarAlteracaoEmail(
-            IUsuarioRepository usuarioRepository,
-            IUsuarioIdentityRepository usuarioIdentityRepository,
-            ICacheUsuarioService cacheUsuarioService)
-        {
-            _usuarioRepository = usuarioRepository;
-            _usuarioIdentityRepository = usuarioIdentityRepository;
-            _cacheUsuarioService = cacheUsuarioService;
-        }
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
+        private readonly ICacheUsuarioService _cacheUsuarioService = cacheUsuarioService;
 
         public async Task<Resultado> ExecutarAsync(string codigoUsuario, string emailNovo, string token)
         {

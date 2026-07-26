@@ -9,25 +9,16 @@ using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Usuario
+namespace Application.UseCases.UsuarioCases
 {
-    public class DesativarUsuario
+    public class DesativarUsuario(
+        IUsuarioRepository usuarioRepository,
+        IUsuarioIdentityRepository usuarioIdentityRepository,
+        IAuditoriaService auditoriaService)
     {
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
-        private readonly IAuditoriaService _auditoriaService;
-
-        private const string UsuarioContexto = "Usuario";
-
-        public DesativarUsuario(
-            IUsuarioRepository usuarioRepository,
-            IUsuarioIdentityRepository usuarioIdentityRepository,
-            IAuditoriaService auditoriaService)
-        {
-            _usuarioRepository = usuarioRepository;
-            _usuarioIdentityRepository = usuarioIdentityRepository;
-            _auditoriaService = auditoriaService;
-        }
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
+        private readonly IAuditoriaService _auditoriaService = auditoriaService;
 
         public async Task<Resultado> ExecutarAsync(string codigo)
         {
@@ -47,11 +38,11 @@ namespace Application.UseCases.Usuario
             await _auditoriaService.AtualizarServiceAsync(new AuditoriaDTO
             {
                 CodigoRegistro = usuario.Codigo,
-                Contexto = UsuarioContexto,
+                Contexto = nameof(Domain.Entities.Usuario),
                 Historico = new HistoricoDTO
                 {
                     CodigoRegistro = usuario.Codigo,
-                    Contexto = UsuarioContexto,
+                    Contexto = nameof(Domain.Entities.Usuario),
                     Descricao = $"Usuário {usuario.Codigo} desativado em {DateTime.Now:dd/MM/yyyy HH:mm}."
                 }
             });

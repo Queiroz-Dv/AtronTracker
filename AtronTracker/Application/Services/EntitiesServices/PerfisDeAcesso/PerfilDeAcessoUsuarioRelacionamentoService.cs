@@ -12,34 +12,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.Services.EntitiesServices
+namespace Application.Services.EntitiesServices.PerfisDeAcesso
 {
-    public class PerfilDeAcessoUsuarioSincronizacaoService : IPerfilDeAcessoUsuarioSincronizacaoService
+    public class PerfilDeAcessoUsuarioRelacionamentoService(
+        IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
+        IUsuarioRepository usuarioRepository,
+        IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
+        IPerfilDeAcessoRepository perfilDeAcessoRepository,
+        IPerfilDeAcessoCacheInvalidator cacheInvalidator,
+        ITransactionManager transactionManager) : IPerfilDeAcessoUsuarioRelacionamentoService
     {
-        private readonly IPerfilDeAcessoUsuarioRepository _perfilDeAcessoUsuarioRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map;
-        private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository;
-        private readonly IPerfilDeAcessoCacheInvalidator _cacheInvalidator;
-        private readonly ITransactionManager _transactionManager;
+        private readonly IPerfilDeAcessoUsuarioRepository _perfilDeAcessoUsuarioRepository = perfilDeAcessoUsuarioRepository;
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map = map;
+        private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository = perfilDeAcessoRepository;
+        private readonly IPerfilDeAcessoCacheInvalidator _cacheInvalidator = cacheInvalidator;
+        private readonly ITransactionManager _transactionManager = transactionManager;
 
-        public PerfilDeAcessoUsuarioSincronizacaoService(
-            IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
-            IUsuarioRepository usuarioRepository,
-            IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
-            IPerfilDeAcessoRepository perfilDeAcessoRepository,
-            IPerfilDeAcessoCacheInvalidator cacheInvalidator,
-            ITransactionManager transactionManager)
-        {
-            _perfilDeAcessoUsuarioRepository = perfilDeAcessoUsuarioRepository;
-            _usuarioRepository = usuarioRepository;
-            _map = map;
-            _perfilDeAcessoRepository = perfilDeAcessoRepository;
-            _cacheInvalidator = cacheInvalidator;
-            _transactionManager = transactionManager;
-        }
-
-        public async Task<Resultado> SincronizarAsync(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuario)
+        public async Task<Resultado> RelacionarAsync(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuario)
         {
             var validacao = ValidarComando(perfilDeAcessoUsuario);
             if (validacao.TeveFalha)

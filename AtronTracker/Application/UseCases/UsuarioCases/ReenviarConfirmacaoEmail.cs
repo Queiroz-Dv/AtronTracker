@@ -11,50 +11,38 @@ using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 using UsuarioEntity = Domain.Entities.Usuario;
 
-namespace Application.UseCases.Usuario
+namespace Application.UseCases.UsuarioCases
 {
-    public class ReenviarConfirmacaoEmail
+    public class ReenviarConfirmacaoEmail(
+        IUsuarioRepository usuarioRepository,
+        IConfirmacaoEmailRepository confirmacaoEmailRepository,
+        IConfirmacaoEmailCodigoService confirmacaoEmailCodigoService,
+        IEmailService emailService,
+        IAcessoEmailCompositor emailCompositor,
+        IHttpContextAccessor httpContextAccessor)
     {
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IConfirmacaoEmailRepository _confirmacaoEmailRepository;
-        private readonly IConfirmacaoEmailCodigoService _confirmacaoEmailCodigoService;
-        private readonly IEmailService _emailService;
-        private readonly IAcessoEmailCompositor _emailCompositor;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IConfirmacaoEmailRepository _confirmacaoEmailRepository = confirmacaoEmailRepository;
+        private readonly IConfirmacaoEmailCodigoService _confirmacaoEmailCodigoService = confirmacaoEmailCodigoService;
+        private readonly IEmailService _emailService = emailService;
+        private readonly IAcessoEmailCompositor _emailCompositor = emailCompositor;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private const int ValidadeConfirmacaoEmailEmHoras = 24;
-
-        public ReenviarConfirmacaoEmail(
-            IUsuarioRepository usuarioRepository,
-            IConfirmacaoEmailRepository confirmacaoEmailRepository,
-            IConfirmacaoEmailCodigoService confirmacaoEmailCodigoService,
-            IEmailService emailService,
-            IAcessoEmailCompositor emailCompositor,
-            IHttpContextAccessor httpContextAccessor)
-        {
-            _usuarioRepository = usuarioRepository;
-            _confirmacaoEmailRepository = confirmacaoEmailRepository;
-            _confirmacaoEmailCodigoService = confirmacaoEmailCodigoService;
-            _emailService = emailService;
-            _emailCompositor = emailCompositor;
-            _httpContextAccessor = httpContextAccessor;
-        }
 
         public async Task<Resultado> ExecutarAsync(string codigoUsuario, string clientUri)
         {
-            var codigoNormalizado = codigoUsuario.NormalizeUserCodeIdentifier();
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoNormalizado);
+            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
             return await ReenviarAsync(usuario, clientUri);
         }
 
         public async Task<Resultado> ExecutarPorIdentificadorAsync(string identificador, string clientUri)
         {
-            var identificadorNormalizado = identificador.NormalizeIdentifier();
-            if (string.IsNullOrWhiteSpace(identificadorNormalizado))
+            if (string.IsNullOrWhiteSpace(identificador))
                 return Resultado.Falha(EmailResource.Erro_InformeEmailCodigo);
 
-            var usuario = identificadorNormalizado.IdentifierIsEmail()
-                ? await _usuarioRepository.ObterUsuarioGeralPorEmailAsync(identificadorNormalizado)
-                : await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificadorNormalizado.NormalizeUserCodeIdentifier());
+            var usuario = identificador.IdentifierIsEmail()
+                ? await _usuarioRepository.ObterUsuarioGeralPorEmailAsync(identificador)
+                : await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificador);
 
             return await ReenviarAsync(usuario, clientUri);
         }
@@ -86,6 +74,7 @@ namespace Application.UseCases.Usuario
                     confirmacao.Identificador,
                     link,
                     ValidadeConfirmacaoEmailEmHoras));
+
                 if (email.TeveFalha)
                     return Resultado.Falha(email.Messages);
 

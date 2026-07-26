@@ -1,30 +1,28 @@
 using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Resources;
-using Application.Services.EntitiesServices;
 using Application.Services.EntitiesServices.Tarefas;
+using Application.UseCases.TarefaCases;
 using AtronNotificacoes.Contracts;
 using Domain.Entities;
 using Domain.Interfaces;
-using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
-using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Xunit;
 
 namespace Tracker.Tests.Tarefas;
 
-public class TarefaServiceNotificacaoTests
+public class CriarTarefaTests
 {
     [Fact]
     public async Task CriarAsync_DevePublicarTextoFinalDaNotificacaoInterna()
     {
         PublicarNotificacaoInternaRequest? capturada = null;
-        var service = CriarService(
+        var criarTarefa = CriarUseCase(
             Resultado.Sucesso(),
             notificacao => capturada = notificacao);
 
-        var resultado = await service.CriarAsync(CriarTarefaDto());
+        var resultado = await criarTarefa.ExecutarAsync(CriarTarefaDto());
 
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(capturada);
@@ -38,16 +36,16 @@ public class TarefaServiceNotificacaoTests
     [Fact]
     public async Task CriarAsync_DeveManterSucessoEAdicionarAvisoQuandoEmailFalha()
     {
-        var service = CriarService(Resultado.Falha("Falha simulada"));
+        var criarTarefa = CriarUseCase(Resultado.Falha("Falha simulada"));
 
-        var resultado = await service.CriarAsync(CriarTarefaDto());
+        var resultado = await criarTarefa.ExecutarAsync(CriarTarefaDto());
 
         Assert.True(resultado.TeveSucesso);
         Assert.Contains(resultado.Messages, mensagem =>
             mensagem.Descricao == TarefaResource.Aviso_EmailNotificacaoNaoEnviado);
     }
 
-    private static TarefaService CriarService(
+    private static CriarTarefa CriarUseCase(
         Resultado resultadoEmail,
         Action<PublicarNotificacaoInternaRequest>? capturarNotificacao = null)
     {
@@ -76,15 +74,11 @@ public class TarefaServiceNotificacaoTests
             .Setup(service => service.NotificarAtribuicaoAsync(It.IsAny<TarefaDTO>(), usuario))
             .ReturnsAsync(resultadoEmail);
 
-        return new TarefaService(
-            Mock.Of<IAsyncApplicationMapService<TarefaDTO, Tarefa>>(),
+        return new CriarTarefa(
             tarefaRepository.Object,
             preparacao.Object,
             email.Object,
-            notificacao,
-            Mock.Of<ITarefaObtencaoService>(),
-            Mock.Of<ITarefaUsuarioAtualService>(),
-            Mock.Of<ITarefaConfiguracoesService>());
+            notificacao);
     }
 
     private static TarefaDTO CriarTarefaDto()

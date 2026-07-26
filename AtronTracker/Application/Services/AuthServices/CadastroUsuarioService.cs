@@ -24,6 +24,14 @@ namespace Application.Services.AuthServices
             if (notificacoes.TemErros())
                 return Resultado.Falha(notificacoes);
 
+            var usuarioExistente = await context.UsuarioRepository
+                .ObterUsuarioGeralPorCodigoAsync(request.Codigo);
+            if (usuarioExistente is not null)
+                return Resultado.Falha(UsuarioResource.ErroUsuarioExistente);
+
+            if (await context.UsuarioRepository.VerificarEmailExistenteAsync(request.Email))
+                return Resultado.Falha(EmailResource.ErroEmailUtilizado);
+
             if (await context.IdentityRepository.ContaExisteRepositoryAsync(request.Codigo, request.Email))
                 return Resultado.Falha(UsuarioResource.ErroUsuarioExistente);
 

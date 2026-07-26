@@ -16,7 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Application.UseCases.Usuario
+namespace Application.UseCases.UsuarioCases
 {
     public class CriarUsuario(
         IValidador<UsuarioRequest> validador,
@@ -43,7 +43,7 @@ namespace Application.UseCases.Usuario
         private readonly ICacheService _cacheService = cacheService;
         private readonly IAuditoriaService _auditoriaService = auditoriaService;
 
-        private const string UsuarioContexto = nameof(Usuario);
+        private const string UsuarioContexto = nameof(Domain.Entities.Usuario);
         private const int ValidadeConvitePrimeiroAcessoEmHoras = 24;
 
         public async Task<Resultado<UsuarioRequest>> ExecutarAsync(UsuarioRequest request)
@@ -53,7 +53,8 @@ namespace Application.UseCases.Usuario
                 return Resultado<UsuarioRequest>.Falhas(mensagens);
 
             var codigoUsuario = request.Codigo.ToUpper();
-            var usuarioExistente = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
+            var usuarioExistente = await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(codigoUsuario);
+
             if (usuarioExistente != null)
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
 

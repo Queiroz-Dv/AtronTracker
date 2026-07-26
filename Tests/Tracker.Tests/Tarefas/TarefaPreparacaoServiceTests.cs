@@ -40,8 +40,8 @@ public class TarefaPreparacaoServiceTests
 
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(resultado.Dados);
-        Assert.Equal(usuario.Id, resultado.Dados.Entidade.UsuarioId);
-        Assert.Equal(usuario.Codigo, resultado.Dados.Entidade.UsuarioCodigo);
+        Assert.Equal(usuario.Id, resultado.Dados.Tarefa.UsuarioId);
+        Assert.Equal(usuario.Codigo, resultado.Dados.Tarefa.UsuarioCodigo);
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public class TarefaPreparacaoServiceTests
 
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(resultado.Dados);
-        Assert.Equal(usuario.Id, resultado.Dados.Entidade.UsuarioId);
-        Assert.Equal(usuario.Codigo, resultado.Dados.Entidade.UsuarioCodigo);
+        Assert.Equal(usuario.Id, resultado.Dados.Tarefa.UsuarioId);
+        Assert.Equal(usuario.Codigo, resultado.Dados.Tarefa.UsuarioCodigo);
     }
 
     [Fact]
@@ -84,8 +84,8 @@ public class TarefaPreparacaoServiceTests
 
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(resultado.Dados);
-        Assert.Equal(usuario.Id, resultado.Dados.Entidade.UsuarioId);
-        Assert.Equal(usuario.Codigo, resultado.Dados.Entidade.UsuarioCodigo);
+        Assert.Equal(usuario.Id, resultado.Dados.Tarefa.UsuarioId);
+        Assert.Equal(usuario.Codigo, resultado.Dados.Tarefa.UsuarioCodigo);
     }
 
     private static TarefaPreparacaoService CriarService(Usuario usuario, Departamento departamento)

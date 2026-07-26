@@ -6,9 +6,11 @@ using Application.Mapping;
 using Application.Services;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
+using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
-using Application.UseCases.Usuario;
+using Application.UseCases.TarefaCases;
+using Application.UseCases.UsuarioCases;
 using Application.Validador;
 using AtronNotificacoes.Client;
 using AtronNotificacoes.Contracts;
@@ -154,6 +156,7 @@ namespace IoC
             services.AddScoped<ITarefaObtencaoService, TarefaObtencaoService>();
             services.AddScoped<ITarefaEmailCompositor, TarefaEmailCompositor>();
             services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
+            services.AddScoped<CriarTarefa>();
             services.AddScoped<ITarefaService, TarefaService>();
         }
 
@@ -252,7 +255,7 @@ namespace IoC
             services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
             services.AddScoped<IPerfilDeAcessoPreparacaoService, PerfilDeAcessoPreparacaoService>();
             services.AddScoped<IPerfilDeAcessoCacheInvalidator, PerfilDeAcessoCacheInvalidator>();
-            services.AddScoped<IPerfilDeAcessoUsuarioSincronizacaoService, PerfilDeAcessoUsuarioSincronizacaoService>();
+            services.AddScoped<IPerfilDeAcessoUsuarioRelacionamentoService, PerfilDeAcessoUsuarioRelacionamentoService>();
             services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
         }
 

@@ -123,7 +123,7 @@ preparação, persistência, invalidação de acesso e resposta.
 **Critério de conclusão:** mudanças no vínculo de usuários e mudanças no cache
 podem evoluir sem alterar a preparação do perfil.
 
-**Resultado:** `IPerfilDeAcessoUsuarioSincronizacaoService` valida os usuários
+**Resultado:** `IPerfilDeAcessoUsuarioRelacionamentoService` valida os usuários
 antes de substituir os vínculos e grava a substituição em escopo transacional.
 `IPerfilDeAcessoCacheInvalidator` centraliza a invalidação posterior ao sucesso.
 

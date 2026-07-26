@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Application.Resources;
 using Shared.Extensions;
 using System;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace IoC
                         var result = JsonSerializer.Serialize(new
                         {
                             status = 403,
-                            message = "Acesso negado. Você não tem permissão para acessar este recurso."
+                            message = AuthResource.Erro_AcessoNegado
                         });
                         return context.Response.WriteAsync(result);
                     },
@@ -64,7 +65,11 @@ namespace IoC
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Response.ContentType = "application/json";
                         await context.Response.WriteAsync(
-                            JsonSerializer.Serialize(new { status = 401, message = "Token inválido ou ausente." })
+                            JsonSerializer.Serialize(new
+                            {
+                                status = 401,
+                                message = AuthResource.Erro_TokenInvalidoOuAusente
+                            })
                         );
                     },
                 };

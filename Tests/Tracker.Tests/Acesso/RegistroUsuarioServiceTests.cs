@@ -3,7 +3,7 @@ using Application.Email.Compositores;
 using Application.Extensions;
 using Application.Services.AuthServices;
 using Application.Services.AuthServices.Bases;
-using Application.UseCases.Usuario;
+using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
@@ -94,13 +94,13 @@ public class RegistroUsuarioServiceTests
     }
 
     [Fact]
-    public async Task ReenviarConfirmacaoEmail_DeveNormalizarCodigoUsuarioAntesDeBuscar()
+    public async Task ReenviarConfirmacaoEmail_DeveBuscarCodigoUsuarioInformado()
     {
         var usuarioRepository = new UsuarioRepositoryFake(new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
         var confirmacaoRepository = new ConfirmacaoEmailRepositoryFake();
         var service = CriarReenviarConfirmacaoEmail(usuarioRepository, confirmacaoRepository);
 
-        var resultado = await service.ExecutarPorIdentificadorAsync(" usr001 ", "http://localhost:4200");
+        var resultado = await service.ExecutarPorIdentificadorAsync("USR001", "http://localhost:4200");
 
         Assert.True(resultado.TeveSucesso);
         Assert.Equal("USR001", usuarioRepository.UltimoCodigoGeralBuscado);
@@ -111,7 +111,9 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task RegistrarUsuario_DeveManterCadastroEAdicionarAvisoQuandoEmailFalha()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(
+            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null),
+            codigoJaExiste: false);
         var service = CriarService(usuarioRepository, Resultado.Falha("falha de transporte"));
 
         var resultado = await service.RegistrarUsuario(new UsuarioRegistroRequest
@@ -129,6 +131,53 @@ public class RegistroUsuarioServiceTests
         Assert.Contains(resultado.Messages, mensagem =>
             mensagem.Descricao == AuthResource.Aviso_CadastroCriadoEmailNaoEnviado);
     }
+
+    [Fact]
+    public async Task RegistrarUsuario_DeveReservarCodigoQueJaExisteNoCadastroDeNegocio()
+    {
+        var usuarioRepository = new UsuarioRepositoryFake(
+            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var service = CriarService(usuarioRepository);
+
+        var request = CriarRequestRegistro();
+        request.Codigo = "USR001";
+
+        var resultado = await service.RegistrarUsuario(request);
+
+        Assert.True(resultado.TeveFalha);
+        Assert.Contains(
+            resultado.Messages,
+            mensagem => mensagem.Descricao == UsuarioResource.ErroUsuarioExistente);
+    }
+
+    [Fact]
+    public async Task RegistrarUsuario_DeveBloquearEmailDeUsuarioOperacional()
+    {
+        var usuarioRepository = new UsuarioRepositoryFake(
+            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null),
+            codigoJaExiste: false,
+            emailJaExiste: true);
+        var service = CriarService(usuarioRepository);
+
+        var resultado = await service.RegistrarUsuario(CriarRequestRegistro());
+
+        Assert.True(resultado.TeveFalha);
+        Assert.Contains(
+            resultado.Messages,
+            mensagem => mensagem.Descricao == EmailResource.ErroEmailUtilizado);
+    }
+
+    private static UsuarioRegistroRequest CriarRequestRegistro()
+        => new()
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com",
+            Senha = "Senha@123",
+            ConfirmaSenha = "Senha@123",
+            ClientUri = "http://localhost:4200"
+        };
 
     private static RegistroUsuarioService CriarService(
         UsuarioRepositoryFake usuarioRepository,
@@ -190,10 +239,17 @@ public class RegistroUsuarioServiceTests
     private sealed class UsuarioRepositoryFake : IUsuarioRepository
     {
         private readonly Usuario _usuario;
+        private readonly bool _codigoJaExiste;
+        private readonly bool _emailJaExiste;
 
-        public UsuarioRepositoryFake(Usuario usuario)
+        public UsuarioRepositoryFake(
+            Usuario usuario,
+            bool codigoJaExiste = true,
+            bool emailJaExiste = false)
         {
             _usuario = usuario;
+            _codigoJaExiste = codigoJaExiste;
+            _emailJaExiste = emailJaExiste;
         }
 
         public int BuscasPorCodigo { get; private set; }
@@ -204,7 +260,10 @@ public class RegistroUsuarioServiceTests
         {
             BuscasPorCodigo++;
             UltimoCodigoGeralBuscado = codigo;
-            return Task.FromResult(codigo == _usuario.Codigo ? _usuario : null);
+            return Task.FromResult(
+                _codigoJaExiste && codigo == _usuario.Codigo
+                    ? _usuario
+                    : null);
         }
 
         public Task<Usuario> ObterUsuarioGeralPorEmailAsync(string email)
@@ -231,7 +290,8 @@ public class RegistroUsuarioServiceTests
         public Task<bool> ConfirmarEmailAsync(string codigo) => Task.FromResult(true);
         public Task<bool> RemoverUsuarioAsync(Usuario usuario) => Task.FromResult(false);
         public Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity() => Task.FromResult(new List<UsuarioIdentity>());
-        public Task<bool> VerificarEmailExistenteAsync(string email) => Task.FromResult(false);
+        public Task<bool> VerificarEmailExistenteAsync(string email)
+            => Task.FromResult(_emailJaExiste);
     }
 
     private sealed class UsuarioIdentityRepositoryFake : IUsuarioIdentityRepository

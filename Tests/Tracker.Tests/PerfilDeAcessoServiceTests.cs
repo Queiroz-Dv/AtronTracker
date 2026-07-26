@@ -2,7 +2,7 @@ using Application.DTO;
 using Application.Interfaces.Mapping;
 using Application.Interfaces.Services;
 using Application.Resources;
-using Application.Services.EntitiesServices;
+using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Validations;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -145,7 +145,7 @@ public class PerfilDeAcessoServiceTests
         var escopoTransacao = new Mock<ITransactionScope>();
         var transacoes = new Mock<ITransactionManager>();
         transacoes.Setup(gerenciador => gerenciador.CreateScope()).Returns(escopoTransacao.Object);
-        var sincronizacao = new PerfilDeAcessoUsuarioSincronizacaoService(
+        var relacionamento = new PerfilDeAcessoUsuarioRelacionamentoService(
             perfisUsuarios.Object,
             usuarios.Object,
             mapa.Object,
@@ -158,7 +158,7 @@ public class PerfilDeAcessoServiceTests
                 mapa.Object,
                 perfis.Object,
                 preparacao,
-                sincronizacao,
+                relacionamento,
                 invalidacaoCache),
             perfisUsuarios,
             usuarios,

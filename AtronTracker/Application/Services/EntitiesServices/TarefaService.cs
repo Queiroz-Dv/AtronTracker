@@ -1,9 +1,8 @@
 using Application.DTO;
 using Application.DTO.Request;
-using Application.Extensions;
 using Application.Interfaces.Services;
 using Application.Resources;
-using Application.Services;
+using Application.UseCases.TarefaCases;
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
@@ -14,57 +13,25 @@ using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices
 {
-    public class TarefaService : ITarefaService
+    public class TarefaService(
+        IAsyncApplicationMapService<TarefaDTO, Tarefa> map,
+        ITarefaRepository tarefaRepository,
+        CriarTarefa criarTarefa,
+        ITarefaPreparacaoService tarefaPreparacaoService,
+        ITarefaObtencaoService tarefaObtencaoService,
+        ITarefaUsuarioAtualService usuarioAtualService,
+        ITarefaConfiguracoesService tarefaConfiguracoesService) : ITarefaService
     {
-        private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _map;
-        private readonly ITarefaRepository _tarefaRepository;
-        private readonly ITarefaPreparacaoService _tarefaPreparacaoService;
-        private readonly ITarefaNotificacaoService _tarefaNotificacaoService;
-        private readonly ITarefaNotificacaoInternaService _notificacaoInternaService;
-        private readonly ITarefaObtencaoService _tarefaObtencaoService;
-        private readonly ITarefaUsuarioAtualService _usuarioAtualService;
-        private readonly ITarefaConfiguracoesService _tarefaConfiguracoesService;
-
-        public TarefaService(
-            IAsyncApplicationMapService<TarefaDTO, Tarefa> map,
-            ITarefaRepository tarefaRepository,
-            ITarefaPreparacaoService tarefaPreparacaoService,
-            ITarefaNotificacaoService tarefaNotificacaoService,
-            ITarefaNotificacaoInternaService notificacaoInternaService,
-            ITarefaObtencaoService tarefaObtencaoService,
-            ITarefaUsuarioAtualService usuarioAtualService,
-            ITarefaConfiguracoesService tarefaConfiguracoesService)
-        {
-            _map = map;
-            _tarefaRepository = tarefaRepository;
-            _tarefaPreparacaoService = tarefaPreparacaoService;
-            _tarefaNotificacaoService = tarefaNotificacaoService;
-            _notificacaoInternaService = notificacaoInternaService;
-            _tarefaObtencaoService = tarefaObtencaoService;
-            _usuarioAtualService = usuarioAtualService;
-            _tarefaConfiguracoesService = tarefaConfiguracoesService;
-        }
+        private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _map = map;
+        private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
+        private readonly CriarTarefa _criarTarefa = criarTarefa;
+        private readonly ITarefaPreparacaoService _tarefaPreparacaoService = tarefaPreparacaoService;
+        private readonly ITarefaObtencaoService _tarefaObtencaoService = tarefaObtencaoService;
+        private readonly ITarefaUsuarioAtualService _usuarioAtualService = usuarioAtualService;
+        private readonly ITarefaConfiguracoesService _tarefaConfiguracoesService = tarefaConfiguracoesService;
 
         public async Task<Resultado<TarefaDTO>> CriarAsync(TarefaDTO tarefaDTO)
-        {
-            var preparacao = await _tarefaPreparacaoService.PrepararParaPersistenciaAsync(tarefaDTO);
-            if (preparacao.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(preparacao.Messages);
-
-            if (!await _tarefaRepository.CriarTarefaAsync(preparacao.Dados.Entidade))
-                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_GravarTarefa);
-
-            tarefaDTO.Id = preparacao.Dados.Entidade.Id;
-            tarefaDTO.Identificador = preparacao.Dados.Entidade.Identificador;
-            var resultado = Resultado<TarefaDTO>.Sucesso(tarefaDTO).AdicionarMensagem(TarefaResource.Mensagem_TarefaCriada);
-
-            await _notificacaoInternaService.NotificarAtribuicaoAsync(preparacao.Dados.Entidade, preparacao.Dados.Usuario);
-            var envioEmail = await _tarefaNotificacaoService.NotificarAtribuicaoAsync(tarefaDTO, preparacao.Dados.Usuario);
-            if (envioEmail.TeveFalha)
-                resultado.AdicionarAviso(TarefaResource.Aviso_EmailNotificacaoNaoEnviado);
-
-            return resultado;
-        }
+            => await _criarTarefa.ExecutarAsync(tarefaDTO);
 
         public async Task<Resultado<List<TarefaDTO>>> ObterTodosAsync()
         {
@@ -98,33 +65,10 @@ namespace Application.Services.EntitiesServices
             if (usuario.TeveFalha)
                 return Resultado<List<TarefaDTO>>.Falhas(usuario.Messages);
 
-            var tarefas = await _tarefaRepository.ObterTarefasAtivasDisponiveisParaUsuarioAsync(
-                usuario.Dados.Id,
-                usuario.Dados.Codigo,
-                usuario.Dados.ObterDepartamentoIdsParaTarefas(),
-                usuario.Dados.ObterCargoIdsParaTarefas());
+            var tarefas = await _tarefaRepository
+                .ObterTarefasAtivasDisponiveisParaUsuarioAsync(usuario.Dados);
 
             return Resultado<List<TarefaDTO>>.Sucesso(await _map.MapToListDTOAsync([.. tarefas]));
-        }
-
-        public Task<Resultado<List<SolicitacaoObtencaoTarefaDTO>>> ObterSolicitacoesAsync()
-        {
-            return _tarefaObtencaoService.ObterSolicitacoesAsync();
-        }
-
-        public Task<Resultado<List<TarefaEstadoDTO>>> ObterEstadosAsync()
-        {
-            return _tarefaPreparacaoService.ObterEstadosAsync();
-        }
-
-        public Task<Resultado<TarefaConfiguracoesDTO>> ObterConfiguracoesAsync()
-        {
-            return _tarefaConfiguracoesService.ObterAsync();
-        }
-
-        public Task<Resultado<TarefaConfiguracoesDTO>> AtualizarConfiguracoesAsync(TarefaConfiguracoesRequest request)
-        {
-            return _tarefaConfiguracoesService.AtualizarAsync(request);
         }
 
         public async Task<Resultado<TarefaDTO>> AtualizarAsync(int id, TarefaDTO tarefaDTO)
@@ -132,11 +76,12 @@ namespace Application.Services.EntitiesServices
             if (await _tarefaRepository.ObterTarefaPorId(id) is null)
                 return Resultado<TarefaDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            var preparacao = await _tarefaPreparacaoService.PrepararParaPersistenciaAsync(tarefaDTO);
-            if (preparacao.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(preparacao.Messages);
+            var preparacaoResultado = await _tarefaPreparacaoService.PrepararParaPersistenciaAsync(tarefaDTO);
+            if (preparacaoResultado.TeveFalha)
+                return Resultado<TarefaDTO>.Falhas(preparacaoResultado.Messages);
 
-            if (!await _tarefaRepository.AtualizarTarefaAsync(id, preparacao.Dados.Entidade))
+            var tarefaPreparada = preparacaoResultado.Dados;
+            if (!await _tarefaRepository.AtualizarTarefaAsync(id, tarefaPreparada.Tarefa))
                 return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_AtualizarTarefa);
 
             tarefaDTO.Id = id;
@@ -158,26 +103,6 @@ namespace Application.Services.EntitiesServices
             return Resultado.Sucesso().AdicionarMensagem(TarefaResource.Mensagem_TarefaRemovida);
         }
 
-        public Task<Resultado<TarefaDTO>> AssumirAsync(int id)
-        {
-            return _tarefaObtencaoService.AssumirAsync(id);
-        }
-
-        public Task<Resultado<SolicitacaoObtencaoTarefaDTO>> SolicitarObtencaoAsync(int id)
-        {
-            return _tarefaObtencaoService.SolicitarAsync(id);
-        }
-
-        public Task<Resultado<SolicitacaoObtencaoTarefaDTO>> AprovarSolicitacaoAsync(int id)
-        {
-            return _tarefaObtencaoService.DecidirAsync(id, aprovar: true);
-        }
-
-        public Task<Resultado<SolicitacaoObtencaoTarefaDTO>> RecusarSolicitacaoAsync(int id)
-        {
-            return _tarefaObtencaoService.DecidirAsync(id, aprovar: false);
-        }
-
         public async Task<Resultado<TarefaDTO>> ObterPorId(int id)
         {
             var tarefa = await _tarefaRepository.ObterTarefaPorId(id);
@@ -185,5 +110,29 @@ namespace Application.Services.EntitiesServices
                 ? Resultado<TarefaDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado)
                 : Resultado<TarefaDTO>.Sucesso(await _map.MapToDTOAsync(tarefa));
         }
+
+        public Task<Resultado<TarefaDTO>> AssumirAsync(int id)
+            => _tarefaObtencaoService.AssumirAsync(id);
+
+        public Task<Resultado<SolicitacaoObtencaoTarefaDTO>> SolicitarObtencaoAsync(int id)
+            => _tarefaObtencaoService.SolicitarAsync(id);
+
+        public Task<Resultado<SolicitacaoObtencaoTarefaDTO>> AprovarSolicitacaoAsync(int id)
+            => _tarefaObtencaoService.DecidirAsync(id, aprovar: true);
+
+        public Task<Resultado<SolicitacaoObtencaoTarefaDTO>> RecusarSolicitacaoAsync(int id)
+            => _tarefaObtencaoService.DecidirAsync(id, aprovar: false);
+
+        public Task<Resultado<List<SolicitacaoObtencaoTarefaDTO>>> ObterSolicitacoesAsync()
+           => _tarefaObtencaoService.ObterSolicitacoesAsync();
+
+        public Task<Resultado<List<TarefaEstadoDTO>>> ObterEstadosAsync()
+            => _tarefaPreparacaoService.ObterEstadosAsync();
+
+        public Task<Resultado<TarefaConfiguracoesDTO>> ObterConfiguracoesAsync()
+            => _tarefaConfiguracoesService.ObterAsync();
+
+        public Task<Resultado<TarefaConfiguracoesDTO>> AtualizarConfiguracoesAsync(TarefaConfiguracoesRequest request)
+            => _tarefaConfiguracoesService.AtualizarAsync(request);
     }
 }

@@ -1,5 +1,5 @@
 using Application.DTO;
-using Application.UseCases.Usuario;
+using Application.UseCases.UsuarioCases;
 using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
 using Shared.Application.Interfaces.Service;

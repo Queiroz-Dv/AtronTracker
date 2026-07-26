@@ -7,19 +7,19 @@ using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Application.Services.EntitiesServices
+namespace Application.Services.EntitiesServices.PerfisDeAcesso
 {
     public class PerfilDeAcessoService(
         IPerfilDeAcessoMapping map,
         IPerfilDeAcessoRepository perfilDeAcessoRepository,
         IPerfilDeAcessoPreparacaoService preparacaoService,
-        IPerfilDeAcessoUsuarioSincronizacaoService sincronizacaoService,
+        IPerfilDeAcessoUsuarioRelacionamentoService relacionamentoService,
         IPerfilDeAcessoCacheInvalidator cacheInvalidator) : IPerfilDeAcessoService
     {
         private readonly IPerfilDeAcessoMapping _map = map;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository = perfilDeAcessoRepository;
         private readonly IPerfilDeAcessoPreparacaoService _preparacaoService = preparacaoService;
-        private readonly IPerfilDeAcessoUsuarioSincronizacaoService _sincronizacaoService = sincronizacaoService;
+        private readonly IPerfilDeAcessoUsuarioRelacionamentoService _relacionamentoService = relacionamentoService;
         private readonly IPerfilDeAcessoCacheInvalidator _cacheInvalidator = cacheInvalidator;
 
         public async Task<Resultado<List<PerfilDeAcessoDTO>>> ObterTodosAsync()
@@ -81,7 +81,7 @@ namespace Application.Services.EntitiesServices
 
         public async Task<Resultado<PerfilDeAcessoUsuarioDTO>> RelacionarPerfilDeAcessoUsuarioAsync(PerfilDeAcessoUsuarioDTO perfilDeAcessoUsuario)
         {
-            var resultado = await _sincronizacaoService.SincronizarAsync(perfilDeAcessoUsuario);
+            var resultado = await _relacionamentoService.RelacionarAsync(perfilDeAcessoUsuario);
             return resultado.TeveFalha
                 ? Resultado<PerfilDeAcessoUsuarioDTO>.Falhas(resultado.Messages)
                 : Resultado<PerfilDeAcessoUsuarioDTO>.Sucesso(perfilDeAcessoUsuario);

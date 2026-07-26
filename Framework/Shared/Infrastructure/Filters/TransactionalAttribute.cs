@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Infrastructure.Repositories;
 
@@ -9,23 +11,32 @@ namespace Shared.Infrastructure.Filters
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            // 1. Resolve o gerenciador de transação
             var transactionManager = context.HttpContext.RequestServices.GetRequiredService<ITransactionManager>();
 
-            // 2. Abre o escopo transacional (Abrange toda a execução abaixo)
             using var transaction = transactionManager.CreateScope();
-            // 3. Executa a Action (Controller -> Service -> Repository)
             var resultContext = await next();
 
-            // 4. Verifica se houve exceção não tratada ou erro no pipeline
-            if (resultContext.Exception == null)
-            {
-                // Se tudo correu bem, COMITA a transação.
-                // Se o método do controller retornar BadRequest, o EF Core não terá salvo nada
-                // se o código estiver bem estruturado, mas aqui garantimos o commit do sucesso.
+            if (resultContext.Exception == null &&
+                RespostaFoiBemSucedida(resultContext))
                 transaction.Complete();
-            }            
-            // Se houver Exception, o 'Complete()' não é chamado e o Rollback é automático.
+        }
+
+        private static bool RespostaFoiBemSucedida(ActionExecutedContext context)
+        {
+            var statusCode = context.Result switch
+            {
+                StatusCodeResult resultado => resultado.StatusCode,
+                ObjectResult resultado => resultado.StatusCode ?? context.HttpContext.Response.StatusCode,
+                ContentResult resultado => resultado.StatusCode ?? context.HttpContext.Response.StatusCode,
+                RedirectResult or LocalRedirectResult or RedirectToActionResult or RedirectToRouteResult
+                    => StatusCodes.Status300MultipleChoices,
+                ChallengeResult => StatusCodes.Status401Unauthorized,
+                ForbidResult => StatusCodes.Status403Forbidden,
+                _ => context.HttpContext.Response.StatusCode
+            };
+
+            return statusCode >= StatusCodes.Status200OK
+                && statusCode < StatusCodes.Status300MultipleChoices;
         }
     }
 }

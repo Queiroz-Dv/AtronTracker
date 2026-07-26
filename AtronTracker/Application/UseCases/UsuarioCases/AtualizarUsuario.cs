@@ -13,7 +13,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Usuario
+namespace Application.UseCases.UsuarioCases
 {
     public class AtualizarUsuario(
         IValidador<UsuarioRequest> validador,
@@ -36,7 +36,7 @@ namespace Application.UseCases.Usuario
         private readonly IAuditoriaService _auditoriaService = auditoriaService;
         private readonly ICacheUsuarioService _cacheUsuarioService = cacheUsuarioService;
 
-        private const string UsuarioContexto = "Usuario";
+        private const string UsuarioContexto = nameof(Domain.Entities.Usuario);
 
         public async Task<Resultado<UsuarioRequest>> ExecutarAsync(UsuarioRequest request)
         {

@@ -1,8 +1,16 @@
-# Extrair notificações internas como capacidade transversal
+# ADR 0005: Extrair notificações internas como capacidade transversal
 
 ## Status
 
 Em implementação desde 19/07/2026. As Fases 0, 1, 2, 3, 4, 6 e 8 estão concluídas. A Fase 5 teve a transição direta do Angular e a retirada do runtime legado implementadas em 20/07/2026; permanece pendente a validação operacional autenticada da publicação pelo Tracker. A Fase 7 foi verificada em 19/07/2026 e permanece pendente até que o Atron Sales tenha escopo formalizado e implementação própria.
+
+| Fase | Situação | Observação principal |
+|---|---|---|
+| 0 a 4 | Concluídas | Contrato, módulo, persistência, autenticação e migração do Tracker implementados. |
+| 5 | Gate operacional | Runtime legado removido; falta validar a publicação autenticada do Tracker no ambiente. |
+| 6 | Concluída | Stock publica pelo contrato transversal. |
+| 7 | Aguardando produto | Sales ainda não possui escopo e implementação próprios. |
+| 8 | Concluída | Operação, métricas, autorização e contratos cobertos. |
 
 ## Contexto
 
@@ -36,6 +44,24 @@ Cada módulo produtor continuará dono de sua regra de negócio, da decisão de 
 O destinatário pode excluir uma notificação específica da própria lista. A exclusão é lógica e registrada pela central: ela oculta o item apenas da consulta do destinatário, preservando conteúdo e rastreabilidade operacional. A central autoriza a operação exclusivamente pelo `CodigoUsuario` do JWT e nunca expõe exclusão de outro destinatário.
 
 Tracker será o primeiro consumidor migrado. Stock e Sales adotarão o mesmo contrato quando seus eventos de produto forem definidos. A migração deve preservar o comportamento do front e os textos históricos já persistidos.
+
+### Visão arquitetural
+
+```mermaid
+flowchart LR
+    T["Tracker"] --> P["Contrato de publicação"]
+    S["Stock"] --> P
+    V["Sales futuro"] --> P
+    P --> N["AtronNotificacoes"]
+    N --> D["Persistência própria"]
+    U["Usuário autenticado"] --> Q["API de consulta e leitura"]
+    Q --> N
+    N -.->|Sem referência de domínio| T
+    N -.->|Sem referência de domínio| S
+    N -.->|Sem referência de domínio| V
+```
+
+Cada seta de publicação transporta apenas dados do contrato. Nenhuma entidade de domínio atravessa a fronteira do módulo produtor.
 
 ## Fases de implementação
 

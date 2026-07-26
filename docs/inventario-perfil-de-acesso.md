@@ -62,12 +62,12 @@ A preparação de perfil foi isolada em `IPerfilDeAcessoPreparacaoService`. Ela
 valida o comando, mapeia o DTO, resolve os módulos e monta os vínculos
 `PerfilDeAcessoModulo` antes de o caso de uso solicitar a persistência.
 
-A substituição de vínculos de usuários foi isolada em
-`IPerfilDeAcessoUsuarioSincronizacaoService`. Todos os usuários informados são
+A gestão dos relacionamentos com usuários foi isolada em
+`IPerfilDeAcessoUsuarioRelacionamentoService`. Todos os usuários informados são
 resolvidos antes de remover vínculos existentes. A remoção e as novas gravações
 ocorrem em uma transação; o cache só é invalidado depois da confirmação do
 escopo transacional.
 
 `IPerfilDeAcessoCacheInvalidator` concentra a coleta, a filtragem e a remoção
 das entradas de cache de acesso, reutilizada nas alterações de perfil, remoção
-e sincronização de usuários.
+e relacionamento de usuários.

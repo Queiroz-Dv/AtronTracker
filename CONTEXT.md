@@ -257,7 +257,7 @@ Aviso enviado fora do produto apenas quando o evento exigir comunicação extern
 _Avoid_: E-mail para todo evento, e-mail como fonte principal do sistema, duplicação obrigatória de notificação
 
 **Aprovador de obtenção de tarefa**:
-Usuário responsável por aprovar ou recusar uma solicitação de obtenção de tarefa. A ordem preferencial é: gestor imediato do solicitante; gestor do departamento da tarefa; gestor do departamento do solicitante; se nenhum aprovador existir, a solicitação deve ser bloqueada por regra de negócio.
+Usuário responsável por aprovar ou recusar uma solicitação de obtenção de tarefa. A ordem preferencial é: gestor imediato do solicitante; gestor do departamento da tarefa; gestores dos departamentos vinculados ao solicitante, sem prioridade de negócio entre estes últimos. Códigos repetidos são considerados uma única vez; se nenhum aprovador existir, a solicitação deve ser bloqueada por regra de negócio.
 _Avoid_: Solicitação sem aprovador, aprovador aleatório, regra fixa por cargo
 
 **Atribuir tarefa**:

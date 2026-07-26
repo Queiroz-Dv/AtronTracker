@@ -8,25 +8,16 @@ using Shared.Extensions;
 using System;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Usuario
+namespace Application.UseCases.UsuarioCases
 {
-    public class ReativarUsuario
+    public class ReativarUsuario(
+        IUsuarioRepository usuarioRepository,
+        IUsuarioIdentityRepository usuarioIdentityRepository,
+        IAuditoriaService auditoriaService)
     {
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
-        private readonly IAuditoriaService _auditoriaService;
-
-        private const string UsuarioContexto = "Usuario";
-
-        public ReativarUsuario(
-            IUsuarioRepository usuarioRepository,
-            IUsuarioIdentityRepository usuarioIdentityRepository,
-            IAuditoriaService auditoriaService)
-        {
-            _usuarioRepository = usuarioRepository;
-            _usuarioIdentityRepository = usuarioIdentityRepository;
-            _auditoriaService = auditoriaService;
-        }
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
+        private readonly IAuditoriaService _auditoriaService = auditoriaService;
 
         public async Task<Resultado> ExecutarAsync(string email, string codigoReativacao)
         {
@@ -37,7 +28,7 @@ namespace Application.UseCases.Usuario
             if (usuario is null)
                 return Resultado.Falha(UsuarioResource.Erro_UsuarioNaoEncontrado);
 
-            if (usuario.CodigoReativacao != codigoReativacao.ToUpper())
+            if (!usuario.CodigoReativacao.Equals(codigoReativacao))
                 return Resultado.Falha(UsuarioResource.ErroCodigoReativacaoInvalido);
 
             usuario.Inativo = false;
@@ -49,11 +40,11 @@ namespace Application.UseCases.Usuario
             await _auditoriaService.AtualizarServiceAsync(new AuditoriaDTO
             {
                 CodigoRegistro = usuario.Codigo,
-                Contexto = UsuarioContexto,
+                Contexto = nameof(Domain.Entities.Usuario),
                 Historico = new HistoricoDTO
                 {
                     CodigoRegistro = usuario.Codigo,
-                    Contexto = UsuarioContexto,
+                    Contexto = nameof(Domain.Entities.Usuario),
                     Descricao = $"Usuário {usuario.Codigo} reativado em {DateTime.Now:dd/MM/yyyy HH:mm}."
                 }
             });

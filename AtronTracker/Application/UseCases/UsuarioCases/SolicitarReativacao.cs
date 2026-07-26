@@ -6,23 +6,16 @@ using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Usuario
+namespace Application.UseCases.UsuarioCases
 {
-    public class SolicitarReativacao
+    public class SolicitarReativacao(
+        IUsuarioRepository usuarioRepository,
+        IEmailService emailService,
+        IAcessoEmailCompositor emailCompositor)
     {
-        private readonly IUsuarioRepository _usuarioRepository;        
-        private readonly IEmailService _emailService;
-        private readonly IAcessoEmailCompositor _emailCompositor;
-
-        public SolicitarReativacao(
-            IUsuarioRepository usuarioRepository,
-            IEmailService emailService,
-            IAcessoEmailCompositor emailCompositor)
-        {
-            _usuarioRepository = usuarioRepository;
-            _emailService = emailService;
-            _emailCompositor = emailCompositor;
-        }
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;        
+        private readonly IEmailService _emailService = emailService;
+        private readonly IAcessoEmailCompositor _emailCompositor = emailCompositor;
 
         public async Task<Resultado> ExecutarAsync(string email)
         {
@@ -39,6 +32,7 @@ namespace Application.UseCases.Usuario
                     usuario.Email,
                     usuario.Nome,
                     usuario.CodigoReativacao);
+
                 if (emailReativacao.TeveFalha)
                     return Resultado.Falha(emailReativacao.Messages);
 

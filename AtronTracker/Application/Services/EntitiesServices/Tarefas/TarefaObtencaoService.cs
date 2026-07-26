@@ -12,36 +12,24 @@ using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
-    public class TarefaObtencaoService : ITarefaObtencaoService
+    public class TarefaObtencaoService(
+        ITarefaRepository tarefaRepository,
+        ISolicitacaoObtencaoTarefaRepository solicitacaoRepository,
+        ITarefaUsuarioAtualService usuarioAtualService,
+        ITarefaObtencaoValidador validador,
+        IAprovadorObtencaoTarefaResolver aprovadorResolver,
+        ISolicitacaoObtencaoTarefaMapeador mapeador,
+        ITarefaNotificacaoInternaService notificacaoInternaService,
+        IAsyncApplicationMapService<TarefaDTO, Tarefa> tarefaMapeador) : ITarefaObtencaoService
     {
-        private readonly ITarefaRepository _tarefaRepository;
-        private readonly ISolicitacaoObtencaoTarefaRepository _solicitacaoRepository;
-        private readonly ITarefaUsuarioAtualService _usuarioAtualService;
-        private readonly ITarefaObtencaoValidador _validador;
-        private readonly IAprovadorObtencaoTarefaResolver _aprovadorResolver;
-        private readonly ISolicitacaoObtencaoTarefaMapeador _mapeador;
-        private readonly ITarefaNotificacaoInternaService _notificacaoInternaService;
-        private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _tarefaMapeador;
-
-        public TarefaObtencaoService(
-            ITarefaRepository tarefaRepository,
-            ISolicitacaoObtencaoTarefaRepository solicitacaoRepository,
-            ITarefaUsuarioAtualService usuarioAtualService,
-            ITarefaObtencaoValidador validador,
-            IAprovadorObtencaoTarefaResolver aprovadorResolver,
-            ISolicitacaoObtencaoTarefaMapeador mapeador,
-            ITarefaNotificacaoInternaService notificacaoInternaService,
-            IAsyncApplicationMapService<TarefaDTO, Tarefa> tarefaMapeador)
-        {
-            _tarefaRepository = tarefaRepository;
-            _solicitacaoRepository = solicitacaoRepository;
-            _usuarioAtualService = usuarioAtualService;
-            _validador = validador;
-            _aprovadorResolver = aprovadorResolver;
-            _mapeador = mapeador;
-            _notificacaoInternaService = notificacaoInternaService;
-            _tarefaMapeador = tarefaMapeador;
-        }
+        private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
+        private readonly ISolicitacaoObtencaoTarefaRepository _solicitacaoRepository = solicitacaoRepository;
+        private readonly ITarefaUsuarioAtualService _usuarioAtualService = usuarioAtualService;
+        private readonly ITarefaObtencaoValidador _validador = validador;
+        private readonly IAprovadorObtencaoTarefaResolver _aprovadorResolver = aprovadorResolver;
+        private readonly ISolicitacaoObtencaoTarefaMapeador _mapeador = mapeador;
+        private readonly ITarefaNotificacaoInternaService _notificacaoInternaService = notificacaoInternaService;
+        private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _tarefaMapeador = tarefaMapeador;
 
         public async Task<Resultado<List<SolicitacaoObtencaoTarefaDTO>>> ObterSolicitacoesAsync()
         {
@@ -107,24 +95,27 @@ namespace Application.Services.EntitiesServices.Tarefas
 
             var solicitacaoGravada = await _solicitacaoRepository.ObterPorIdAsync(solicitacao.Id);
             await _notificacaoInternaService.NotificarSolicitacaoRecebidaAsync(solicitacaoGravada);
+
             var dto = await _mapeador.MapearAsync(solicitacaoGravada);
             return Resultado<SolicitacaoObtencaoTarefaDTO>.Sucesso(dto).AdicionarMensagem(TarefaResource.Mensagem_SolicitacaoEnviada);
         }
 
         public async Task<Resultado<SolicitacaoObtencaoTarefaDTO>> DecidirAsync(int solicitacaoId, bool aprovar)
         {
-            var usuario = await _usuarioAtualService.ObterAsync();
-            if (usuario.TeveFalha)
-                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falhas(usuario.Messages);
+            var usuarioResultado = await _usuarioAtualService.ObterAsync();
+            var usuario = usuarioResultado.Dados;
+            if (usuarioResultado.TeveFalha)
+                return Resultado<SolicitacaoObtencaoTarefaDTO>.Falhas(usuarioResultado.Messages);
 
             var atualizado = aprovar
-                ? await _solicitacaoRepository.AprovarAsync(solicitacaoId, usuario.Dados.Id, usuario.Dados.Codigo)
-                : await _solicitacaoRepository.RecusarAsync(solicitacaoId, usuario.Dados.Id, usuario.Dados.Codigo);
+                ? await _solicitacaoRepository.AprovarAsync(solicitacaoId, usuario.Id, usuario.Codigo)
+                : await _solicitacaoRepository.RecusarAsync(solicitacaoId, usuario.Id, usuario.Codigo);
             if (!atualizado)
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_DecidirSolicitacao);
 
             var solicitacao = await _solicitacaoRepository.ObterPorIdAsync(solicitacaoId);
             var dto = await _mapeador.MapearAsync(solicitacao);
+
             await _notificacaoInternaService.NotificarDecisaoSolicitacaoAsync(solicitacao, aprovar);
             return Resultado<SolicitacaoObtencaoTarefaDTO>
                 .Sucesso(dto)

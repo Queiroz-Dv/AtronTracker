@@ -9,16 +9,10 @@ using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
-    public class TarefaUsuarioAtualService : ITarefaUsuarioAtualService
+    public class TarefaUsuarioAtualService(IUsuarioRepository usuarioRepository, IUserAccessor userAccessor) : ITarefaUsuarioAtualService
     {
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUserAccessor _userAccessor;
-
-        public TarefaUsuarioAtualService(IUsuarioRepository usuarioRepository, IUserAccessor userAccessor)
-        {
-            _usuarioRepository = usuarioRepository;
-            _userAccessor = userAccessor;
-        }
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IUserAccessor _userAccessor = userAccessor;
 
         public async Task<Resultado<Usuario>> ObterAsync()
         {

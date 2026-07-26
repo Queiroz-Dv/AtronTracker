@@ -6,26 +6,18 @@ using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Usuario
+namespace Application.UseCases.UsuarioCases
 {
-    public class AlterarEmail
+    public class AlterarEmail(
+        IUsuarioRepository usuarioRepository,
+        IUsuarioIdentityRepository usuarioIdentityRepository,
+        IEmailService emailService,
+        IAcessoEmailCompositor emailCompositor)
     {
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository;
-        private readonly IEmailService _emailService;
-        private readonly IAcessoEmailCompositor _emailCompositor;
-
-        public AlterarEmail(
-            IUsuarioRepository usuarioRepository,
-            IUsuarioIdentityRepository usuarioIdentityRepository,
-            IEmailService emailService,
-            IAcessoEmailCompositor emailCompositor)
-        {
-            _usuarioRepository = usuarioRepository;
-            _usuarioIdentityRepository = usuarioIdentityRepository;
-            _emailService = emailService;
-            _emailCompositor = emailCompositor;
-        }
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
+        private readonly IEmailService _emailService = emailService;
+        private readonly IAcessoEmailCompositor _emailCompositor = emailCompositor;
 
         public async Task<Resultado> ExecutarAsync(string codigoUsuario, string emailNovo, string urlBase)
         {

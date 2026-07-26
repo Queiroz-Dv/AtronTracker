@@ -200,4 +200,6 @@
   <data name="Erro_InformacoesTokenInvalidas" xml:space="preserve"><value>Informações do token inválidas para processamento.</value></data>
   <data name="Erro_EmailVazio" xml:space="preserve"><value>E-mail vazio</value></data>
   <data name="Erro_SenhaVazia" xml:space="preserve"><value>Senha vazia.</value></data>
+  <data name="Erro_AcessoNegado" xml:space="preserve"><value>Acesso negado. Você não tem permissão para acessar este recurso.</value></data>
+  <data name="Erro_TokenInvalidoOuAusente" xml:space="preserve"><value>Token inválido ou ausente.</value></data>
 </root>

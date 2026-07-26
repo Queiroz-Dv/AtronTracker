@@ -1,59 +1,37 @@
+using Application.Extensions;
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class TarefaRepository : Repository<Tarefa>, ITarefaRepository
+    public class TarefaRepository(AtronDbContext context) : Repository<Tarefa>(context), ITarefaRepository
     {
         private const int EstadoFinalizadaId = 4;
-        private readonly AtronDbContext _context;
-
-        public TarefaRepository(AtronDbContext context) : base(context)
-        {
-            _context = context;
-        }
+        private readonly AtronDbContext _context = context;
 
         public async Task<bool> AtualizarTarefaAsync(int id, Tarefa tarefa)
         {
             var tarefaBD = await ObterTarefaPorId(id);
             AtualizarEntidadeParaPersistencia(tarefa, tarefaBD);
 
-            try
-            {
-                _context.Tarefas.Update(tarefaBD);
-                var atualizado = await _context.SaveChangesAsync();
-                return atualizado > 0;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            _context.Tarefas.Update(tarefaBD);
+            var atualizado = await _context.SaveChangesAsync();
+            return atualizado > 0;
         }
 
         public async Task<bool> CriarTarefaAsync(Tarefa tarefa)
         {
-            try
+            if (!tarefa.Identificador.HasValue)
             {
-                if (!tarefa.Identificador.HasValue)
-                {
-                    var ultimoIdentificador = await _context.Tarefas.MaxAsync(trf => trf.Identificador);
-                    tarefa.Identificador = (ultimoIdentificador ?? 0) + 1;
-                }
+                var ultimoIdentificador = await _context.Tarefas.MaxAsync(trf => trf.Identificador);
+                tarefa.Identificador = (ultimoIdentificador ?? 0) + 1;
+            }
 
-                await _context.Tarefas.AddAsync(tarefa);
-                var gravado = await _context.SaveChangesAsync();
-                return gravado > 0;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            await _context.Tarefas.AddAsync(tarefa);
+            var gravado = await _context.SaveChangesAsync();
+            return gravado > 0;
         }
 
         public async Task<Tarefa> ObterTarefaPorId(int id)
@@ -122,28 +100,20 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Tarefa>> ObterTarefasAtivasDisponiveisParaUsuarioAsync(
-            int usuarioId,
-            string usuarioCodigo,
-            IReadOnlyCollection<int> departamentoIds,
-            IReadOnlyCollection<int> cargoIds)
+        public async Task<IEnumerable<Tarefa>> ObterTarefasAtivasDisponiveisParaUsuarioAsync(Usuario usuario)
         {
             return await QueryTarefasComRelacionamentos()
                 .Where(trf =>
                     trf.UsuarioId == null &&
                     trf.TarefaEstadoId != EstadoFinalizadaId &&
                     trf.DepartamentoId.HasValue &&
-                    (
-                        (
-                            departamentoIds.Contains(trf.DepartamentoId.Value) &&
-                            (!trf.CargoId.HasValue || cargoIds.Contains(trf.CargoId.Value))
-                        ) ||
-                        (
-                            trf.Departamento != null &&
-                            trf.Departamento.GestorDepartamentoId == usuarioId &&
-                            trf.Departamento.GestorDepartamentoCodigo == usuarioCodigo
-                        )
-                    ))
+                    ((usuario.ObterDepartamentoIdsParaTarefas().Contains(trf.DepartamentoId.Value) &&
+                        (!trf.CargoId.HasValue || usuario.ObterCargoIdsParaTarefas().Contains(trf.CargoId.Value))) ||
+
+                        (trf.Departamento != null &&
+                          trf.Departamento.GestorDepartamentoId == usuario.Id &&
+                          trf.Departamento.GestorDepartamentoCodigo == usuario.Codigo
+                        )))
                 .OrderByDescending(trf => trf.Identificador)
                 .ToListAsync();
         }
@@ -192,12 +162,7 @@ namespace Infrastructure.Repositories
                 .Include(trf => trf.Usuario)
                     .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
-                    .ThenInclude(dpt => dpt.Departamento)
-                .Include(trf => trf.Usuario)
-                    .ThenInclude(rel => rel.UsuarioCargoDepartamentos)
-                    .ThenInclude(rel => rel.Departamento)
-                .Include(trf => trf.Departamento)
-                .Include(trf => trf.Cargo);
+                    .ThenInclude(dpt => dpt.Departamento);
         }
     }
 }

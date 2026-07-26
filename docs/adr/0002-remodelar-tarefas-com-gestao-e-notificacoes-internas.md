@@ -1,29 +1,100 @@
-# Remodelar tarefas com gestao e notificacoes internas
+# ADR 0002: Remodelar tarefas com gestão e notificações internas
 
-O modulo de tarefas sera remodelado para deixar de ser uma listagem geral de tarefas atribuidas apenas a usuarios e passar a operar por visoes de trabalho, escopos estruturais, solicitacoes de obtencao e notificacoes internas. A decisao separa responsabilidade pessoal, gestao de equipe e aprovacao de solicitacoes, reduz carga de dados no carregamento padrao e prepara o produto para uma rotina de tarefas mais escalavel.
+## Status
 
-## Decisao
+Aceito.
 
-A tela de tarefas tera as visoes `Meu quadro`, `Equipe` e `Solicitacoes`. `Meu quadro` mostra tarefas ativas do usuario logado; `Equipe` mostra tarefas relacionadas aos subordinados diretos do gestor imediato; `Solicitacoes` e o local principal onde gestores aprovam ou recusam pedidos de obtencao de tarefa.
+## Contexto
 
-Uma tarefa podera nascer com destino inicial para `Usuario`, `Departamento/Cargo` ou `Equipe`. Tarefas estruturais podem ser vinculadas apenas a departamento ou a departamento e cargo, mas nunca a cargo sem departamento. O identificador da tarefa sera numerico, sequencial e global, separado do identificador tecnico.
+O módulo de tarefas nasceu como uma listagem geral de tarefas atribuídas diretamente a usuários. Esse modelo mistura responsabilidade pessoal, acompanhamento de equipe e decisões de aprovação, além de exigir carregamentos amplos para responder a contextos diferentes.
 
-Tarefas disponiveis poderao ser obtidas por usuarios. Quando a tarefa nao exigir aprovacao, ela entra diretamente em `Meu quadro`; quando exigir aprovacao, o sistema cria uma solicitacao para o aprovador. Obter ou aprovar uma tarefa nunca altera seu estado operacional. Tarefas finalizadas ou canceladas ficam fora dos carregamentos padrao e aparecem apenas por filtro explicito ou busca autorizada.
+O produto precisa representar tarefas individuais e tarefas vinculadas a uma estrutura funcional. Também precisa permitir que usuários obtenham tarefas disponíveis, que gestores decidam solicitações e que eventos importantes sejam comunicados dentro do próprio sistema.
 
-O produto tera uma central de notificacoes internas como canal principal de eventos do sistema, inicialmente para tarefas. Notificacoes devem suportar leitura e nao leitura e podem levar o usuario ao detalhe relacionado. E-mail deixa de ser canal padrao de operacao e passa a ser usado apenas em casos especificos de comunicacao externa ou aviso.
+## Decisão
 
-## Considered Options
+### Visões de trabalho
 
-Manter tarefa sempre atribuida a um unico usuario foi rejeitado porque impediria filas por estrutura, obtencao de tarefas e gestao por equipe.
+A experiência será organizada em três visões:
 
-Usar e-mail como principal meio de aprovacao foi rejeitado porque deixaria o fluxo operacional fora do produto. A decisao e manter `Solicitacoes` e a central de notificacoes como fonte principal, usando e-mail apenas quando houver necessidade especifica.
+| Visão | Responsabilidade |
+|---|---|
+| `Meu quadro` | Tarefas ativas atribuídas diretamente ao usuário logado. |
+| `Equipe` | Tarefas dos subordinados diretos acompanhados pelo gestor. |
+| `Solicitações` | Pedidos pendentes de obtenção que exigem decisão de um aprovador. |
 
-Tratar `Pendente de aprovacao` como estado operacional foi rejeitado porque mistura ciclo de execucao com regra de obtencao. A aprovacao para obter tarefa sera uma exigencia separada do estado.
+```mermaid
+flowchart LR
+    A["Tarefa estrutural"] --> B{"Exige aprovação?"}
+    B -->|"Não"| C["Usuário assume"]
+    B -->|"Sim"| D["Solicitação pendente"]
+    D --> E{"Decisão do aprovador"}
+    E -->|"Aprovar"| C
+    E -->|"Recusar"| A
+    C --> F["Meu quadro"]
+    F --> G["Equipe do gestor"]
+```
 
-## Consequencias
+### Destino e escopo
 
-O cadastro de usuarios passa a precisar de `Gestor imediato` opcional, e departamentos passam a poder ter `Gestor do departamento` opcional, respeitando a regra de no maximo um gestor ativo por departamento quando aplicavel.
+Uma tarefa poderá nascer com destino inicial para `Usuário`, `Departamento/Cargo` ou `Equipe`.
 
-A aprovacao de obtencao deve seguir a ordem: gestor imediato do solicitante, gestor do departamento da tarefa, gestor do departamento do solicitante. Se nenhum aprovador existir, a solicitacao deve ser bloqueada por regra de negocio no backend.
+- uma tarefa estrutural pode apontar somente para departamento ou para departamento e cargo;
+- cargo sem departamento não é permitido;
+- uma tarefa sem usuário responsável permanece em uma fila estrutural;
+- o identificador funcional será numérico, sequencial e global, separado do ID técnico.
 
-O modulo de notificacoes internas passa a ser uma capacidade propria do produto. Mesmo com tarefas como primeiro caso de uso, ele deve nascer preparado para atender outros modulos no futuro.
+### Obtenção e aprovação
+
+Quando uma tarefa não exigir aprovação, um usuário autorizado poderá assumi-la diretamente. Quando exigir aprovação, o sistema criará uma solicitação para um aprovador válido.
+
+Obter, aprovar ou recusar uma solicitação não altera o estado operacional da tarefa. A exigência de aprovação pertence ao processo de obtenção, não ao ciclo de execução.
+
+A resolução de aprovador seguirá esta ordem:
+
+1. gestor imediato do solicitante;
+2. gestor do departamento da tarefa;
+3. gestores dos departamentos vinculados ao solicitante, sem prioridade de negócio entre eles.
+
+Códigos repetidos serão considerados uma única vez. Entre os gestores dos departamentos do solicitante, o código do departamento será usado somente como critério técnico de ordenação determinística, sem representar preferência de negócio.
+
+Se nenhum aprovador válido existir, a solicitação será bloqueada no backend.
+
+### Histórico e carregamento
+
+Tarefas finalizadas ou canceladas ficam fora do carregamento padrão. Elas aparecem somente por filtro explícito ou busca autorizada e permanecem preservadas para consulta histórica.
+
+### Notificações
+
+A central de notificações internas será o canal principal para eventos operacionais. As notificações devem permitir controle de leitura e navegação ao detalhe relacionado quando aplicável. E-mail será usado somente em situações específicas de comunicação externa ou aviso complementar.
+
+## Alternativas consideradas
+
+### Manter toda tarefa atribuída a um único usuário
+
+Rejeitada porque impediria filas por estrutura, obtenção de tarefas e gestão por equipe.
+
+### Usar e-mail como principal meio de aprovação
+
+Rejeitada porque deslocaria a decisão operacional para fora do produto. `Solicitações` e a central interna permanecem como fontes principais.
+
+### Tratar pendência de aprovação como estado da tarefa
+
+Rejeitada porque misturaria o processo de obtenção com o ciclo de execução.
+
+## Consequências
+
+- usuários podem possuir gestor imediato opcional;
+- departamentos podem possuir, no máximo, um gestor ativo;
+- tarefas passam a aceitar usuário, departamento e cargo como vínculos opcionais e coerentes;
+- solicitações de obtenção passam a ter ciclo próprio;
+- consultas devem carregar apenas a visão necessária ao contexto;
+- o módulo de notificações internas torna-se uma capacidade própria do produto.
+
+## Validação
+
+- `Meu quadro`, `Equipe` e `Solicitações` devem possuir consultas separadas;
+- tarefa estrutural nunca pode possuir cargo sem departamento;
+- uma tarefa não pode ter mais de uma solicitação pendente de obtenção;
+- obter ou decidir solicitação não pode alterar o estado operacional;
+- tarefas finalizadas e canceladas não aparecem por padrão;
+- falha de notificação consultiva não desfaz a operação principal.

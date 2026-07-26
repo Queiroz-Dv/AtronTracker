@@ -2,42 +2,50 @@ using Application.Interfaces.Services;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Extensions;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
-    public class AprovadorObtencaoTarefaResolver : IAprovadorObtencaoTarefaResolver
+    public class AprovadorObtencaoTarefaResolver(IUsuarioRepository usuarioRepository) : IAprovadorObtencaoTarefaResolver
     {
-        private readonly IUsuarioRepository _usuarioRepository;
-
-        public AprovadorObtencaoTarefaResolver(IUsuarioRepository usuarioRepository)
-        {
-            _usuarioRepository = usuarioRepository;
-        }
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
 
         public async Task<Usuario> ResolverAsync(Usuario solicitante, Tarefa tarefa)
         {
-            var gestorImediato = await ObterAprovadorAsync(solicitante.GestorImediatoCodigo, solicitante);
-            if (gestorImediato is not null)
-                return gestorImediato;
+            var codigosCandidatos = ObterCodigosCandidatos(solicitante, tarefa)
+                .Where(codigo => !codigo.IsNullOrEmpty() &&
+                !string.Equals(codigo, solicitante.Codigo))
+                .Distinct();
 
-            var gestorDepartamentoTarefa = await ObterAprovadorAsync(tarefa.Departamento?.GestorDepartamentoCodigo, solicitante);
-            if (gestorDepartamentoTarefa is not null)
-                return gestorDepartamentoTarefa;
+            foreach (var codigo in codigosCandidatos)
+            {
+                var aprovador = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
+                if (aprovador is not null)
+                    return aprovador;
+            }
 
-            var departamentoSolicitante = solicitante.UsuarioCargoDepartamentos?
-                .Select(relacao => relacao.Departamento)
-                .FirstOrDefault(departamento => departamento is not null);
-
-            return await ObterAprovadorAsync(departamentoSolicitante?.GestorDepartamentoCodigo, solicitante);
+            return null;
         }
 
-        private async Task<Usuario> ObterAprovadorAsync(string codigo, Usuario solicitante)
+        private static List<string> ObterCodigosCandidatos(Usuario solicitante, Tarefa tarefa)
         {
-            return codigo.IsNullOrEmpty() || codigo == solicitante.Codigo
-                ? null
-                : await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
+            var codigos = new List<string>
+            {
+                solicitante.GestorImediatoCodigo,
+                tarefa.Departamento?.GestorDepartamentoCodigo
+            };
+
+            var gestoresDosDepartamentos = solicitante.UsuarioCargoDepartamentos?
+                .Where(relacao => relacao.Departamento is not null)
+                .OrderBy(relacao => relacao.DepartamentoCodigo)
+                .Select(relacao => relacao.Departamento.GestorDepartamentoCodigo);
+
+            if (gestoresDosDepartamentos is not null)
+                codigos.AddRange(gestoresDosDepartamentos);
+
+            return codigos;
         }
     }
 }
