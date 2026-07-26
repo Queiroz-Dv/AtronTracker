@@ -1,5 +1,7 @@
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Models;
+using Shared.Application.Resources;
+using Shared.Domain.ValueObjects;
 using System.Globalization;
 using System.Net;
 using System.Reflection;
@@ -16,66 +18,88 @@ public sealed class EmailTemplateRenderer : IEmailTemplateRenderer
 
     private static readonly CultureInfo CulturaPtBr = CultureInfo.GetCultureInfo("pt-BR");
 
-    public EmailRequest Renderizar<TModel>(
+    public Resultado<EmailRequest> Renderizar<TModel>(
         EmailTemplateDefinition template,
         TModel model,
         IEnumerable<string> destinatarios)
         where TModel : class
     {
-        ArgumentNullException.ThrowIfNull(template);
-        ArgumentNullException.ThrowIfNull(model);
-        ArgumentNullException.ThrowIfNull(destinatarios);
-
-        if (string.IsNullOrWhiteSpace(template.Assunto))
-            throw new EmailTemplateException("O assunto do e-mail é obrigatório.");
-
-        if (string.IsNullOrWhiteSpace(template.Titulo))
-            throw new EmailTemplateException("O título do template é obrigatório.");
-
-        var emailsDestino = destinatarios
-            .Where(destinatario => !string.IsNullOrWhiteSpace(destinatario))
-            .Select(destinatario => destinatario.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
-
-        if (emailsDestino.Count == 0)
-            throw new EmailTemplateException("Ao menos um destinatário é obrigatório.");
-
-        var templateConteudo = CarregarTemplate(template.TemplateAssembly, template.TemplateResourceName);
-        var conteudoRenderizado = RenderizarCampos(templateConteudo, model);
-        var templateBase = CarregarTemplate(typeof(EmailTemplateRenderer).Assembly, EmailTemplateResourceNames.Base);
-        var html = RenderizarBase(templateBase, template.Titulo, conteudoRenderizado);
-
-        return new EmailRequest
+        try
         {
-            Assunto = template.Assunto,
-            Mensagem = html,
-            EmailsDestino = emailsDestino
-        };
+            if (template is null)
+                return Resultado<EmailRequest>.Falha(EmailResource.Erro_TemplateDefinicaoObrigatoria);
+
+            if (model is null)
+                return Resultado<EmailRequest>.Falha(EmailResource.Erro_TemplateModeloObrigatorio);
+
+            if (destinatarios is null)
+                return Resultado<EmailRequest>.Falha(EmailResource.Erro_TemplateDestinatarioObrigatorio);
+
+            if (string.IsNullOrWhiteSpace(template.Assunto))
+                return Resultado<EmailRequest>.Falha(EmailResource.Erro_TemplateAssuntoObrigatorio);
+
+            if (string.IsNullOrWhiteSpace(template.Titulo))
+                return Resultado<EmailRequest>.Falha(EmailResource.Erro_TemplateTituloObrigatorio);
+
+            var emailsDestino = destinatarios
+                .Where(destinatario => !string.IsNullOrWhiteSpace(destinatario))
+                .Select(destinatario => destinatario.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (emailsDestino.Count == 0)
+                return Resultado<EmailRequest>.Falha(EmailResource.Erro_TemplateDestinatarioObrigatorio);
+
+            var templateConteudo = CarregarTemplate(template.TemplateAssembly, template.TemplateResourceName);
+            if (templateConteudo.TeveFalha)
+                return Resultado<EmailRequest>.Falhas(templateConteudo.Messages);
+
+            var conteudoRenderizado = RenderizarCampos(templateConteudo.Dados, model);
+            if (conteudoRenderizado.TeveFalha)
+                return Resultado<EmailRequest>.Falhas(conteudoRenderizado.Messages);
+
+            var templateBase = CarregarTemplate(typeof(EmailTemplateRenderer).Assembly, EmailTemplateResourceNames.Base);
+            if (templateBase.TeveFalha)
+                return Resultado<EmailRequest>.Falhas(templateBase.Messages);
+
+            var html = RenderizarBase(templateBase.Dados, template.Titulo, conteudoRenderizado.Dados);
+            if (html.TeveFalha)
+                return Resultado<EmailRequest>.Falhas(html.Messages);
+
+            return Resultado<EmailRequest>.Sucesso(new EmailRequest
+            {
+                Assunto = template.Assunto,
+                Mensagem = html.Dados,
+                EmailsDestino = emailsDestino
+            });
+        }
+        catch
+        {
+            return Resultado<EmailRequest>.Falha(EmailResource.Erro_TemplateRenderizacao);
+        }
     }
 
-    private static string CarregarTemplate(Assembly assembly, string resourceName)
+    private static Resultado<string> CarregarTemplate(Assembly assembly, string resourceName)
     {
-        ArgumentNullException.ThrowIfNull(assembly);
-
-        if (string.IsNullOrWhiteSpace(resourceName) ||
+        if (assembly is null ||
+            string.IsNullOrWhiteSpace(resourceName) ||
             !resourceName.EndsWith(".html", StringComparison.OrdinalIgnoreCase) ||
             resourceName.Contains("..", StringComparison.Ordinal) ||
             resourceName.Contains('/') ||
             resourceName.Contains('\\'))
         {
-            throw new EmailTemplateException("O nome do template incorporado é inválido.");
+            return Resultado<string>.Falha(EmailResource.Erro_TemplateNomeInvalido);
         }
 
         using var stream = assembly.GetManifestResourceStream(resourceName);
         if (stream is null)
-            throw new EmailTemplateException($"Template incorporado não encontrado: {resourceName}.");
+            return Resultado<string>.Falha(string.Format(EmailResource.Erro_TemplateNaoEncontrado, resourceName));
 
         using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-        return reader.ReadToEnd();
+        return Resultado<string>.Sucesso(reader.ReadToEnd());
     }
 
-    private static string RenderizarCampos<TModel>(string template, TModel model)
+    private static Resultado<string> RenderizarCampos<TModel>(string template, TModel model)
         where TModel : class
     {
         var properties = typeof(TModel)
@@ -92,16 +116,22 @@ public sealed class EmailTemplateRenderer : IEmailTemplateRenderer
         foreach (var token in tokens)
         {
             if (!properties.TryGetValue(token, out var property))
-                throw new EmailTemplateException($"O modelo {typeof(TModel).Name} não fornece o campo obrigatório {token}.");
+                return Resultado<string>.Falha(string.Format(EmailResource.Erro_TemplateModeloSemCampo, typeof(TModel).Name, token));
 
             var rawValue = property.GetValue(model);
             var value = ConverterValor(rawValue);
             if (string.IsNullOrWhiteSpace(value) &&
                 !property.IsDefined(typeof(EmailTemplateOptionalAttribute), inherit: true))
-                throw new EmailTemplateException($"O campo obrigatório {token} não foi informado.");
+                return Resultado<string>.Falha(string.Format(EmailResource.Erro_TemplateCampoObrigatorio, token));
 
             if (property.IsDefined(typeof(EmailTemplateUrlAttribute), inherit: true))
-                value = ValidarUrl(value, token);
+            {
+                var url = ValidarUrl(value, token);
+                if (url.TeveFalha)
+                    return Resultado<string>.Falhas(url.Messages);
+
+                value = url.Dados;
+            }
 
             resultado = resultado.Replace(
                 $"{{{{{token}}}}}",
@@ -110,12 +140,12 @@ public sealed class EmailTemplateRenderer : IEmailTemplateRenderer
         }
 
         if (TokenPattern.IsMatch(resultado))
-            throw new EmailTemplateException("O template contém campos obrigatórios não renderizados.");
+            return Resultado<string>.Falha(EmailResource.Erro_TemplateCamposNaoRenderizados);
 
-        return resultado;
+        return Resultado<string>.Sucesso(resultado);
     }
 
-    private static string RenderizarBase(string templateBase, string titulo, string conteudoRenderizado)
+    private static Resultado<string> RenderizarBase(string templateBase, string titulo, string conteudoRenderizado)
     {
         var html = templateBase
             .Replace("{{Titulo}}", WebUtility.HtmlEncode(titulo), StringComparison.Ordinal)
@@ -123,9 +153,9 @@ public sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             .Replace("{{Conteudo}}", conteudoRenderizado, StringComparison.Ordinal);
 
         if (TokenPattern.IsMatch(html))
-            throw new EmailTemplateException("O template base contém campos obrigatórios não renderizados.");
+            return Resultado<string>.Falha(EmailResource.Erro_TemplateBaseCamposNaoRenderizados);
 
-        return html;
+        return Resultado<string>.Sucesso(html);
     }
 
     private static string ConverterValor(object value)
@@ -138,14 +168,14 @@ public sealed class EmailTemplateRenderer : IEmailTemplateRenderer
         };
     }
 
-    private static string ValidarUrl(string value, string token)
+    private static Resultado<string> ValidarUrl(string value, string token)
     {
         if (!Uri.TryCreate(value, UriKind.Absolute, out var uri) ||
             (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
         {
-            throw new EmailTemplateException($"O campo {token} deve conter uma URL HTTP ou HTTPS absoluta.");
+            return Resultado<string>.Falha(string.Format(EmailResource.Erro_TemplateUrlInvalida, token));
         }
 
-        return uri.AbsoluteUri;
+        return Resultado<string>.Sucesso(uri.AbsoluteUri);
     }
 }

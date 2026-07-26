@@ -76,8 +76,8 @@ O modelo foi desenhado para separar a definição do produto de seu inventário,
 
 O `StockDbContext` usa Supabase/PostgreSQL como provider de persistência do projeto.
 
-As migrations ativas ficam no projeto separado:
+As migrations ativas ficam no projeto principal de infraestrutura:
 
-- `AtronStock/Infrastructure.PostgreSqlMigrations`
+- `AtronStock/Infrastructure/Migrations`
 
-O projeto principal de infraestrutura não mantém migrations próprias para o deploy.
+Os scripts SQL correspondentes ficam em `AtronStock/Infrastructure/Scripts`.

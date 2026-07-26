@@ -12,12 +12,10 @@
   <data name="Erro_RemoverTarefa" xml:space="preserve"><value>Erro ao remover a tarefa.</value></data>
   <data name="Erro_TarefaJaPossuiUsuarioResponsavel" xml:space="preserve"><value>Tarefa ja possui usuario responsavel.</value></data>
   <data name="Erro_TarefaFinalizadaNaoPodeSerAssumida" xml:space="preserve"><value>Tarefa finalizada nao pode ser assumida.</value></data>
-  <data name="Erro_UsuarioSemAcessoParaAssumir" xml:space="preserve"><value>Usuario nao possui acesso para assumir esta tarefa.</value></data>
   <data name="Erro_TarefaExigeSolicitacaoObtencao" xml:space="preserve"><value>Esta tarefa exige solicitacao de obtencao.</value></data>
   <data name="Erro_AssumirTarefa" xml:space="preserve"><value>Nao foi possivel assumir a tarefa.</value></data>
   <data name="Erro_TarefaFinalizadaNaoPodeSerSolicitada" xml:space="preserve"><value>Tarefa finalizada nao pode ser solicitada.</value></data>
   <data name="Erro_TarefaNaoExigeAprovacao" xml:space="preserve"><value>Esta tarefa nao exige aprovacao para obtencao.</value></data>
-  <data name="Erro_UsuarioSemAcessoParaSolicitar" xml:space="preserve"><value>Usuario nao possui acesso para solicitar esta tarefa.</value></data>
   <data name="Erro_SolicitacaoPendenteExistente" xml:space="preserve"><value>Ja existe solicitacao pendente para esta tarefa.</value></data>
   <data name="Erro_AprovadorIndisponivel" xml:space="preserve"><value>Nenhum aprovador disponivel para esta solicitacao.</value></data>
   <data name="Erro_CriarSolicitacao" xml:space="preserve"><value>Nao foi possivel criar a solicitacao.</value></data>
@@ -67,4 +65,28 @@
   <data name="Campo_Departamento" xml:space="preserve"><value>Departamento</value></data>
   <data name="Campo_Cargo" xml:space="preserve"><value>cargo</value></data>
   <data name="Campo_Titulo" xml:space="preserve"><value>Titulo</value></data>
+
+  <data name="Erro_RegistrarMovimentacao" xml:space="preserve"><value>Não foi possível registrar a movimentação da tarefa.</value></data>
+  <data name="Erro_AcessoHistoricoNaoPermitido" xml:space="preserve"><value>Você não possui acesso ao histórico desta tarefa.</value></data>
+
+  <data name="Historico_Movimento_Criacao" xml:space="preserve"><value>Criação</value></data>
+  <data name="Historico_Movimento_Atualizacao" xml:space="preserve"><value>Atualização</value></data>
+  <data name="Historico_Movimento_Obtencao" xml:space="preserve"><value>Obtenção</value></data>
+  <data name="Historico_Movimento_SolicitacaoObtencao" xml:space="preserve"><value>Solicitação de obtenção</value></data>
+  <data name="Historico_Movimento_AprovacaoObtencao" xml:space="preserve"><value>Aprovação de obtenção</value></data>
+  <data name="Historico_Movimento_RecusaObtencao" xml:space="preserve"><value>Recusa de obtenção</value></data>
+  <data name="Historico_DetalheCriacao" xml:space="preserve"><value>Tarefa criada no estado {0}.</value></data>
+  <data name="Historico_DetalheAtualizacao" xml:space="preserve"><value>Dados da tarefa atualizados.</value></data>
+  <data name="Historico_DetalheTituloAtualizado" xml:space="preserve"><value>Título atualizado.</value></data>
+  <data name="Historico_DetalheConteudoAtualizado" xml:space="preserve"><value>Conteúdo atualizado.</value></data>
+  <data name="Historico_DetalhePeriodoAlterado" xml:space="preserve"><value>Período alterado de {0:dd/MM/yyyy} a {1:dd/MM/yyyy} para {2:dd/MM/yyyy} a {3:dd/MM/yyyy}.</value></data>
+  <data name="Historico_DetalheEstadoAlterado" xml:space="preserve"><value>Estado alterado de {0} para {1}.</value></data>
+  <data name="Historico_DetalheResponsavelAlterado" xml:space="preserve"><value>Responsável alterado de {0} para {1}.</value></data>
+  <data name="Historico_DetalheEscopoAtualizado" xml:space="preserve"><value>Destino ou escopo da tarefa atualizado.</value></data>
+  <data name="Historico_DetalheAprovacaoAtualizada" xml:space="preserve"><value>Exigência de aprovação para obtenção atualizada.</value></data>
+  <data name="Historico_DetalheObtencao" xml:space="preserve"><value>Tarefa obtida diretamente por {0}.</value></data>
+  <data name="Historico_DetalheSolicitacao" xml:space="preserve"><value>Solicitação de obtenção enviada para {0}.</value></data>
+  <data name="Historico_DetalheAprovacao" xml:space="preserve"><value>Solicitação aprovada; tarefa atribuída a {0}. Estado atual: {1}.</value></data>
+  <data name="Historico_DetalheRecusa" xml:space="preserve"><value>Solicitação de {0} recusada; a tarefa permanece disponível.</value></data>
+  <data name="Historico_ValorNaoInformado" xml:space="preserve"><value>Não informado</value></data>
 </root>

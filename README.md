@@ -48,6 +48,8 @@ eventos específicos para o sistema. Adotamos então o Angular que está em `Atr
 - [docs/visao-produto-atron.md](docs/visao-produto-atron.md): direção de produto da plataforma.
 - [docs/publicacao-render-brevo-supabase.md](docs/publicacao-render-brevo-supabase.md): manual de publicação com Render, Supabase e Brevo.
 - [docs/adr](docs/adr): decisões arquiteturais e de domínio.
+- [docs/padrao-responsabilidades-servicos.md](docs/padrao-responsabilidades-servicos.md): critérios SOLID e distribuição de responsabilidades nos serviços de aplicação.
+- [docs/plano-refatoracao-servicos-aplicacao.md](docs/plano-refatoracao-servicos-aplicacao.md): fases para aplicar o padrão aos serviços do Tracker.
 - [docs/planejamento-custos-mvp.md](docs/planejamento-custos-mvp.md): contrato do módulo de planejamento de custos.
 
 ## Estrutura dos projetos
@@ -77,7 +79,7 @@ eventos específicos para o sistema. Adotamos então o Angular que está em `Atr
 
 ## Persistência
 
-O projeto partiu do SQL Server, mas foi reestruturado para usar PostgreSQL como banco alvo do deploy. As migrations ativas ficam nos projetos `*.PostgreSqlMigrations`.
+O projeto partiu do SQL Server, mas foi reestruturado para usar PostgreSQL como banco alvo do deploy. As migrations ativas ficam nos projetos `*.Migrations`.
 
 ## Configuração sensível
 

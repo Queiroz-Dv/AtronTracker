@@ -1,4 +1,4 @@
-# Padronizar resources, notificacoes internas e templates de e-mail
+# ADR 0003: Padronizar resources, notificações internas e templates de e-mail
 
 ## Status
 
@@ -6,85 +6,99 @@ Aceito em 17/07/2026.
 
 ## Contexto
 
-O backend do Atron possui mensagens observaveis definidas em resources e tambem literais espalhados por controllers, servicos, casos de uso e validadores. A composicao de e-mails segue situacao semelhante: o transporte compartilhado existe por meio de `IEmailService`, mas assuntos e corpos HTML ainda sao construidos dentro dos fluxos de aplicacao.
+O backend do Atron possui mensagens observáveis definidas em resources e também literais espalhados por controllers, serviços, casos de uso e validadores. A composição de e-mails segue situação semelhante: o transporte compartilhado existe por meio de `IEmailService`, mas assuntos e corpos HTML ainda são construídos dentro dos fluxos de aplicação.
 
-Essa distribuicao dificulta manter a linguagem do produto, comparar o comportamento antes e depois de uma alteracao e impedir que regras de composicao conhecam detalhes de SMTP ou Brevo. A central de notificacoes internas tambem precisa de um contrato explicito sobre qual texto deve ser persistido.
+Essa distribuição dificulta manter a linguagem do produto, comparar o comportamento antes e depois de uma alteração e impedir que regras de composição conheçam detalhes de SMTP ou Brevo. A central de notificações internas também precisa de um contrato explícito sobre o texto persistido.
 
-Esta decisao cobre a primeira implementacao em pt-BR. Internacionalizacao por usuario ou requisicao, fila de e-mail e retentativa automatica permanecem fora do escopo.
+Esta decisão cobre a primeira implementação em pt-BR. Internacionalização por usuário ou requisição, fila de e-mail e retentativa automática permanecem fora do escopo.
 
-## Decisao
+## Decisão
+
+### Fluxo de composição
+
+```mermaid
+flowchart LR
+    A["Caso de uso"] --> B["Resource do módulo"]
+    A --> C["Compositor tipado"]
+    B --> C
+    C --> D["Renderizador de template"]
+    D --> E["EmailRequest pronto"]
+    E --> F["IEmailService"]
+    A --> G["Notificação interna com texto final"]
+```
 
 ### Resources
 
-- A implementacao inicial usara somente resources em pt-BR.
-- Nao havera selecao de cultura por usuario, `Accept-Language` ou configuracao equivalente nesta rodada.
-- Cada modulo sera proprietario das mensagens do proprio dominio.
-- `Framework.Shared` manterá somente mensagens realmente transversais.
-- Configuracoes, nomes de provedores, hosts, chaves, constantes de protocolo e mensagens exclusivamente tecnicas nao serao tratados como texto localizavel de produto.
-- Arquivos `.Designer.cs` continuarao gerados pela ferramenta e nao serao editados manualmente.
-- A substituicao de um literal por resource nao podera alterar nivel da mensagem, payload, status HTTP ou regra de negocio.
+- a implementação inicial usará somente resources em pt-BR;
+- não haverá seleção de cultura por usuário, `Accept-Language` ou configuração equivalente nesta rodada;
+- cada módulo será proprietário das mensagens do próprio domínio;
+- `Framework.Shared` manterá somente mensagens realmente transversais;
+- configurações, provedores, hosts, chaves, constantes de protocolo e mensagens exclusivamente técnicas não serão tratados como texto localizável de produto;
+- arquivos `.Designer.cs` continuarão gerados pela ferramenta e não serão editados manualmente;
+- substituir um literal por resource não poderá alterar nível da mensagem, payload, status HTTP ou regra de negócio.
 
-Convencao de chaves:
+Convenção de chaves:
 
-- usar o prefixo que representa o papel observavel: `Erro_`, `Aviso_`, `Mensagem_` ou `Titulo_`;
-- completar a chave com uma descricao semantica em PascalCase, como `Erro_TarefaNaoEncontrada`;
-- nao repetir o nome do modulo quando a propria classe resource ja delimitar o contexto;
-- usar placeholders posicionais `{0}`, `{1}` e seguintes para valores dinamicos;
-- formatar os placeholders explicitamente com a cultura pt-BR no chamador ou compositor;
-- nao concatenar fragmentos de resource para montar uma frase observavel.
+- usar o prefixo que representa o papel observável: `Erro_`, `Aviso_`, `Mensagem_` ou `Titulo_`;
+- completar a chave com uma descrição semântica em PascalCase, como `Erro_TarefaNaoEncontrada`;
+- não repetir o nome do módulo quando a própria classe resource delimitar o contexto;
+- usar placeholders posicionais `{0}`, `{1}` e seguintes para valores dinâmicos;
+- formatar placeholders explicitamente com a cultura pt-BR no chamador ou compositor;
+- não concatenar fragmentos de resource para montar uma frase observável.
 
-### Notificacoes internas
+### Notificações internas
 
-- A notificacao interna persistira titulo e mensagem finais em pt-BR.
-- Nome de resource, chave, parametros de formatacao e cultura nao serao persistidos.
-- Nao sera criada migration de localizacao nem alterado o esquema de `NotificacaoInterna`.
-- Alteracoes futuras de resources afetarao somente notificacoes novas. O texto historico permanecera imutavel.
+- a notificação interna persistirá título e mensagem finais em pt-BR;
+- nome de resource, chave, parâmetros de formatação e cultura não serão persistidos;
+- não será criada migration de localização nem alterado o esquema de `NotificacaoInterna`;
+- alterações futuras de resources afetarão somente notificações novas;
+- o texto histórico permanecerá imutável.
 
 ### Templates e transporte de e-mail
 
-- Corpos de e-mail serao arquivos HTML incorporados ao assembly proprietario.
-- Assuntos e textos observaveis serao obtidos de resources pt-BR.
-- Dados dinamicos serao fornecidos por modelos tipados e codificados antes de entrar no HTML.
-- URLs serao validadas antes de entrar em atributos de links.
-- O compositor selecionara template, assunto e modelo.
-- O renderizador carregara o template, validara campos obrigatorios e produzira o HTML final.
-- `IEmailService` recebera um `EmailRequest` pronto e continuara responsavel somente pelo transporte.
-- SMTP e Brevo permanecerao detalhes de `SharedEmailService`.
-- Templates especificos nao serao movidos para `Framework.Shared` apenas para reutilizar a infraestrutura.
+- corpos de e-mail serão arquivos HTML incorporados ao assembly proprietário;
+- assuntos e textos observáveis serão obtidos de resources pt-BR;
+- dados dinâmicos serão fornecidos por modelos tipados e codificados antes de entrar no HTML;
+- URLs serão validadas antes de entrar em atributos de links;
+- o compositor selecionará template, assunto e modelo;
+- o renderizador carregará o template, validará campos obrigatórios e produzirá o HTML final;
+- `IEmailService` receberá um `EmailRequest` pronto e continuará responsável somente pelo transporte;
+- SMTP e Brevo permanecerão detalhes de `SharedEmailService`;
+- templates específicos não serão movidos para `Framework.Shared` apenas para reutilizar a infraestrutura.
 
-### Politica de falha de entrega
+### Política de falha de entrega
 
-As politicas abaixo orientarao as fases que migrarem cada fluxo. Esta Fase 0 nao altera o comportamento atual.
+As políticas abaixo orientam as fases que migrarem cada fluxo. A Fase 0 não altera o comportamento atual.
 
-| Fluxo | Politica | Consequencia contratual |
+| Fluxo | Política | Consequência contratual |
 |---|---|---|
-| Recuperacao de senha | Obrigatorio | O fluxo informa falha quando o link nao e entregue. |
-| Reenvio de confirmacao | Obrigatorio | O fluxo informa falha e nao afirma que a confirmacao foi enviada. |
-| Alteracao de e-mail | Obrigatorio | A solicitacao nao informa sucesso quando o link nao e entregue. |
-| Codigo de reativacao | Obrigatorio | O fluxo nao informa que o codigo foi enviado quando o transporte falha. |
-| Atribuicao de tarefa | Consultivo | A tarefa permanece criada ou atribuida e o resultado recebe um aviso. |
-| Confirmacao concluida | Consultivo | A confirmacao permanece concluida mesmo se o e-mail posterior falhar. |
-| Primeiro acesso de usuario interno | Obrigatorio | A criacao somente conclui com o convite entregue; preserva a reversao atual em caso de falha. |
-| Cadastro publico com confirmacao | Consultivo | A conta permanece criada e o resultado informa o problema, permitindo usar o reenvio sem induzir nova tentativa de cadastro. |
-| Diagnostico de e-mail | Obrigatorio | O endpoint de diagnostico falha se o envio que ele testa falhar. |
-| Notificacao generica compartilhada | Sem politica operacional | Nao possui consumidor alem do registro de DI; deve ser reavaliada e removida ou redefinida na Fase 7. |
+| Recuperação de senha | Obrigatória | O fluxo informa falha quando o link não é entregue. |
+| Reenvio de confirmação | Obrigatória | O fluxo informa falha e não afirma que a confirmação foi enviada. |
+| Alteração de e-mail | Obrigatória | A solicitação não informa sucesso quando o link não é entregue. |
+| Código de reativação | Obrigatória | O fluxo não informa que o código foi enviado quando o transporte falha. |
+| Atribuição de tarefa | Consultiva | A tarefa permanece criada ou atribuída e o resultado recebe um aviso. |
+| Confirmação concluída | Consultiva | A confirmação permanece concluída mesmo se o e-mail posterior falhar. |
+| Primeiro acesso de usuário interno | Obrigatória | A criação somente conclui com o convite entregue e preserva a reversão atual em caso de falha. |
+| Cadastro público com confirmação | Consultiva | A conta permanece criada e o resultado informa o problema, permitindo usar o reenvio sem induzir outro cadastro. |
+| Diagnóstico de e-mail | Obrigatória | O endpoint falha se o envio testado falhar. |
+| Notificação genérica compartilhada | Sem política operacional | Não possui consumidor além do registro de DI. |
 
-Politica obrigatoria nao implica rollback automatico. Cada fase deve preservar a consistencia do fluxo e definir explicitamente o estado persistido quando o transporte falhar.
+Política obrigatória não implica rollback automático. Cada fase deve preservar a consistência do fluxo e definir explicitamente o estado persistido quando o transporte falhar.
 
-### Excecoes para a futura protecao arquitetural
+### Exceções para a proteção arquitetural
 
-O verificador da Fase 8 podera aceitar somente as seguintes excecoes, identificadas de forma explicita:
+O verificador poderá aceitar somente exceções identificadas explicitamente:
 
 - arquivos `.resx` e templates `.html` incorporados;
-- testes, dados de teste e assercoes sobre mensagens;
-- logs e excecoes exclusivamente tecnicas que nao sejam devolvidas ao cliente;
-- descricoes historicas e de auditoria, enquanto preservarem o fato ocorrido e nao forem usadas como resposta de produto;
-- constantes de configuracao ou protocolo, como nomes de provedores, hosts, chaves de configuracao e niveis de notificacao;
-- `Framework/Shared/Application/Services/Email/SharedEmailService.cs`, somente para falhas tecnicas do adaptador SMTP ou Brevo, que nao sao respostas de produto;
-- codigo gerado, migrations, snapshots, `bin` e `obj`;
-- `PlanejamentoCustoRelatorioHtmlMontador`, por produzir deliberadamente um relatorio HTML que nao e template de e-mail. Seus textos observaveis continuam sujeitos a resources;
+- testes, dados de teste e asserções sobre mensagens;
+- logs e exceções exclusivamente técnicas que não sejam devolvidas ao cliente;
+- descrições históricas e de auditoria, enquanto preservarem o fato ocorrido e não forem usadas como resposta de produto;
+- constantes de configuração ou protocolo;
+- `SharedEmailService.cs`, somente para falhas técnicas do adaptador SMTP ou Brevo;
+- código gerado, migrations, snapshots, `bin` e `obj`;
+- `PlanejamentoCustoRelatorioHtmlMontador`, por produzir deliberadamente um relatório HTML que não é template de e-mail. Seus textos observáveis continuam sujeitos a resources.
 
-Uma excecao nao autoriza esconder texto observavel dentro de uma categoria tecnica. Se o texto chegar ao `Resultado`, resposta HTTP, notificacao interna ou e-mail de produto, ele devera ser classificado e migrado.
+Uma exceção não autoriza esconder texto observável em uma categoria técnica. Se o texto chegar ao `Resultado`, à resposta HTTP, à notificação interna ou ao e-mail de produto, deverá ser classificado e migrado.
 
 ## Alternativas consideradas
 
@@ -92,31 +106,29 @@ Uma excecao nao autoriza esconder texto observavel dentro de uma categoria tecni
 
 Rejeitada porque faria `Framework.Shared` conhecer conceitos como Tarefa e Planejamento de Custo e reduziria a localidade das regras.
 
-### Persistir chave e parametros das notificacoes internas
+### Persistir chave e parâmetros das notificações internas
 
-Rejeitada porque exigiria cultura de exibicao, mudanca de esquema e tratamento retroativo sem requisito atual de internacionalizacao.
+Rejeitada porque exigiria cultura de exibição, mudança de esquema e tratamento retroativo sem requisito atual de internacionalização.
 
 ### Construir HTML dentro dos casos de uso
 
-Rejeitada porque mistura decisao de negocio, composicao visual e transporte, alem de dificultar codificacao segura de valores dinamicos.
+Rejeitada porque mistura decisão de negócio, composição visual e transporte, além de dificultar a codificação segura de valores dinâmicos.
 
 ### Tratar toda falha de e-mail da mesma forma
 
-Rejeitada porque alguns e-mails habilitam o proximo passo do usuario, enquanto outros sao apenas avisos complementares de uma operacao ja concluida.
+Rejeitada porque alguns e-mails habilitam o próximo passo do usuário, enquanto outros são avisos complementares de uma operação já concluída.
 
-## Consequencias
+## Consequências
 
-- A migracao ocorrera por modulo e por fatia vertical, com comparacao de payload antes e depois.
-- O backend continuara entregando texto final em pt-BR ao Angular.
-- Nao havera migration de localizacao.
-- Os templates precisarao de testes de carregamento, campos obrigatorios, codificacao HTML e URLs.
-- Os compositores precisarao de testes de assunto, template, destinatario e modelo.
-- Fluxos que hoje ignoram o `Resultado` do transporte serao ajustados apenas em suas fases correspondentes.
-- A Fase 8 devera transformar a lista de excecoes em allowlist explicita, evitando exclusoes amplas por diretorio.
+- a migração ocorrerá por módulo e por fatia vertical, com comparação de payload antes e depois;
+- o backend continuará entregando texto final em pt-BR ao Angular;
+- não haverá migration de localização;
+- templates precisarão de testes de carregamento, campos obrigatórios, codificação HTML e URLs;
+- compositores precisarão de testes de assunto, template, destinatário e modelo;
+- fluxos que hoje ignoram o `Resultado` do transporte serão ajustados apenas nas fases correspondentes;
+- transforma a lista de exceções em allowlist explícita, evitando exclusões amplas por diretório.
 
-## Validacao
+## Validação
 
-- Conferir o inventario em `docs/inventario-resources-e-templates-email.md`.
-- Confirmar que esta decisao nao modifica codigo de aplicacao nem regra de negocio.
-- Confirmar que nenhuma migration foi criada na Fase 0.
-- Aprovar as politicas de entrega antes de iniciar a Fase 1.
+- conferir o inventário em `docs/inventario-resources-e-templates-email.md`;
+- confirmar que a decisão não modifica código de aplicação nem regra de negócio por si só;

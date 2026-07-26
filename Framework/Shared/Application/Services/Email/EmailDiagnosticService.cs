@@ -7,6 +7,7 @@ using Shared.Application.Email.Models;
 using Shared.Application.Email.Rendering;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
+using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 
 namespace Shared.Application.Services.Email
@@ -65,7 +66,15 @@ namespace Shared.Application.Services.Email
                     ? string.Format(EmailDiagnosticResource.Assunto_DiagnosticoPadrao, DateTime.Now.ToString("dd/MM/yyyy HH:mm"))
                     : request.Assunto;
 
-                request = ComporEmailDiagnostico(request);
+                var emailComposto = ComporEmailDiagnostico(request);
+                if (emailComposto.TeveFalha)
+                {
+                    return EmailStatusResponse.CriarErro(
+                        EmailDiagnosticResource.Erro_EnvioDiagnostico,
+                        string.Join(" | ", emailComposto.Messages.Select(mensagem => mensagem.Descricao)));
+                }
+
+                request = emailComposto.Dados;
 
                 var envio = await _emailService.EnviarAsync(request);
                 if (envio.TeveFalha)
@@ -190,7 +199,7 @@ namespace Shared.Application.Services.Email
         private int ObterPortaStatus()
             => UsarBrevo() ? 443 : _providerSettings?.SmtpPort ?? _settings.SmtpPort;
 
-        private EmailRequest ComporEmailDiagnostico(EmailRequest request)
+        private Resultado<EmailRequest> ComporEmailDiagnostico(EmailRequest request)
         {
             var mensagem = string.IsNullOrWhiteSpace(request.Mensagem)
                 ? EmailDiagnosticResource.Mensagem_CorpoPadrao

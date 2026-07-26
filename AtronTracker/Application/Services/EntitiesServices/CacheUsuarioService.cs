@@ -20,13 +20,13 @@ namespace Application.Services.EntitiesServices
         {
             var codigoUsuario = dadosDoUsuario.DadosDoUsuario.CodigoDoUsuario;
 
-            cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, codigoUsuario)
+            cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, codigoUsuario))
             {
                 EntityInfo = dadosDoUsuario,
                 ExpireTime = tokenComRefreshToken.TokenDTO.Expires
             });
 
-            cacheService.GravarCache(new CacheInfo<DadosDeTokenComRefreshToken>(ECacheKeysInfo.TokenInfo, codigoUsuario)
+            cacheService.GravarCache(new CacheInfo<DadosDeTokenComRefreshToken>(new ChaveCache(ECacheKeysInfo.TokenInfo, codigoUsuario))
             {
                 EntityInfo = tokenComRefreshToken,
                 ExpireTime = tokenComRefreshToken.TokenDTO.Expires
@@ -35,8 +35,8 @@ namespace Application.Services.EntitiesServices
 
         public DadosDeTokenComRefreshToken ObterDadosDoTokenPorCodigoUsuario(string codigoUsuario)
         {
-            var cacheInfo = new CacheInfo<DadosDeTokenComRefreshToken>(ECacheKeysInfo.TokenInfo, codigoUsuario);
-            var tokenCache = cacheService.ObterCache<DadosDeTokenComRefreshToken>(cacheInfo.KeyDescription);
+            var chaveCache = new ChaveCache(ECacheKeysInfo.TokenInfo, codigoUsuario);
+            var tokenCache = cacheService.ObterCache<DadosDeTokenComRefreshToken>(chaveCache);
 
             return tokenCache is null ? null : tokenCache;
         }
@@ -46,8 +46,8 @@ namespace Application.Services.EntitiesServices
             if (string.IsNullOrWhiteSpace(codigoUsuario))
                 return;
 
-            cacheService.RemoverCache(ECacheKeysInfo.Acesso, codigoUsuario);
-            cacheService.RemoverCache(ECacheKeysInfo.TokenInfo, codigoUsuario);
+            cacheService.RemoverCache(new ChaveCache(ECacheKeysInfo.Acesso, codigoUsuario));
+            cacheService.RemoverCache(new ChaveCache(ECacheKeysInfo.TokenInfo, codigoUsuario));
         }
     }
 }

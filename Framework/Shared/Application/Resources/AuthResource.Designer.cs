@@ -293,7 +293,19 @@ namespace Shared.Application.Resources {
                 return ResourceManager.GetString("Erro_UsuarioNaoEncontrado", resourceCulture);
             }
         }
-        
+
+        public static string Erro_AcessoNegado {
+            get {
+                return ResourceManager.GetString("Erro_AcessoNegado", resourceCulture);
+            }
+        }
+
+        public static string Erro_TokenInvalidoOuAusente {
+            get {
+                return ResourceManager.GetString("Erro_TokenInvalidoOuAusente", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a E-mail confirmado com sucesso!.
         /// </summary>

@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnDestroy, inject, ViewChild } from '@angular
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { TarefaService } from '../../services/tarefa.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../../../shared/modules/shared.module';
@@ -10,7 +10,6 @@ import { TarefaViewData } from '../../models/tarefa-view-data.model';
 import { formatLabel } from '../../../../shared/utils/formatar-label.util';
 import { BotaoVoltarComponent } from "../../../../core/layout/botao-voltar/botao-voltar.component";
 import { MatSort } from '@angular/material/sort';
-import { DestinoInicialTarefa } from '../../models/destino-inicial-tarefa.model';
 import { TarefaResponse } from '../../models/response/tarefa-response.model';
 import { SolicitacaoObtencaoTarefaResponse } from '../../models/response/solicitacao-obtencao-tarefa-response.model';
 import { NotificacaoInternaService } from '../../../notificacoes/services/notificacao-interna.service';
@@ -28,13 +27,11 @@ export class TarefaViewComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   dataSource: MatTableDataSource<TarefaViewData>;
   visaoAtual: TarefaVisao = 'meuQuadro';
+  possuiResponsabilidadeGestao = false;
   private queryParamsSubscription?: Subscription;
 
   route = inject(ActivatedRoute);
   colunas = [
-    'identificador',
-    'destino',
-    'solicitante',
     'usuario',
     'cargo',
     'departamento',
@@ -51,7 +48,11 @@ export class TarefaViewComponent implements AfterViewInit, OnDestroy {
   ) { }
 
   ngAfterViewInit() {
-    this.queryParamsSubscription = this.route.queryParamMap.subscribe(params => {
+    this.queryParamsSubscription = combineLatest([
+      this.service.obterAcesso(),
+      this.route.queryParamMap
+    ]).subscribe(([acesso, params]) => {
+      this.possuiResponsabilidadeGestao = acesso.possuiResponsabilidadeGestao;
       this.carregarVisao(this.normalizarVisao(params.get('visao')));
     });
   }
@@ -109,7 +110,7 @@ export class TarefaViewComponent implements AfterViewInit, OnDestroy {
   }
 
   obter(trf: TarefaViewData): void {
-    if (trf.exigeAprovacaoParaObter) {
+    if (!this.possuiResponsabilidadeGestao || trf.exigeAprovacaoParaObter) {
       this.service.solicitarObtencao(trf.id).subscribe(() => {
         this.atualizarNotificacoes();
         this.carregarDisponiveis();
@@ -156,10 +157,6 @@ export class TarefaViewComponent implements AfterViewInit, OnDestroy {
     return full_date;
   }
 
-  private obterDestinoDescricao(destinoInicial: number): string {
-    return DestinoInicialTarefa.getDestinos().find(destino => destino.id === destinoInicial)?.descricao ?? '-';
-  }
-
   private carregarVisao(visao: TarefaVisao): void {
     if (visao === 'solicitacoes') {
       this.carregarSolicitacoes();
@@ -180,7 +177,11 @@ export class TarefaViewComponent implements AfterViewInit, OnDestroy {
   }
 
   private normalizarVisao(visao: string | null): TarefaVisao {
-    if (visao === 'equipe' || visao === 'disponiveis' || visao === 'solicitacoes') {
+    if (visao === 'disponiveis') {
+      return visao;
+    }
+
+    if (this.possuiResponsabilidadeGestao && (visao === 'equipe' || visao === 'solicitacoes')) {
       return visao;
     }
 
@@ -197,10 +198,7 @@ export class TarefaViewComponent implements AfterViewInit, OnDestroy {
     const tarefaViewData: TarefaViewData[] = tarefas.map(trf => ({
       id: trf.id,
       solicitacaoId: null as number | null,
-      identificador: trf.identificador ?? null,
-      destinoDescricao: this.obterDestinoDescricao(trf.destinoInicial),
       exigeAprovacaoParaObter: trf.exigeAprovacaoParaObter,
-      nomeDoSolicitante: '-',
       nomeDoUsuario: trf.usuario
         ? `${trf.usuario.codigo} - ${trf.usuario.nome} ${trf.usuario.sobrenome}`
         : '-',
@@ -224,19 +222,13 @@ export class TarefaViewComponent implements AfterViewInit, OnDestroy {
   private atualizarTabelaSolicitacoes(solicitacoes: SolicitacaoObtencaoTarefaResponse[]): void {
     const tarefas = solicitacoes.map(solicitacao => ({
       ...solicitacao.tarefa,
-      solicitacaoId: solicitacao.id,
-      solicitante: solicitacao.solicitante
+      solicitacaoId: solicitacao.id
     }));
 
     const tarefaViewData: TarefaViewData[] = tarefas.map(trf => ({
       id: trf.id,
       solicitacaoId: trf.solicitacaoId ?? null,
-      identificador: trf.identificador ?? null,
-      destinoDescricao: this.obterDestinoDescricao(trf.destinoInicial),
       exigeAprovacaoParaObter: trf.exigeAprovacaoParaObter,
-      nomeDoSolicitante: trf.solicitante
-        ? `${trf.solicitante.codigo} - ${trf.solicitante.nome} ${trf.solicitante.sobrenome}`
-        : '-',
       nomeDoUsuario: trf.usuario
         ? `${trf.usuario.codigo} - ${trf.usuario.nome} ${trf.usuario.sobrenome}`
         : '-',

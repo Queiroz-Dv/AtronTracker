@@ -14,13 +14,13 @@ namespace Domain.Interfaces
 
         Task<IEnumerable<Tarefa>> ObterTarefasAtivasPorUsuarioAsync(int usuarioId, string usuarioCodigo);
 
-        Task<IEnumerable<Tarefa>> ObterTarefasAtivasPorSubordinadosDiretosAsync(int gestorId, string gestorCodigo);
+        Task<IEnumerable<Tarefa>> ObterTarefasAtivasPorSubordinadosDiretosAsync(int gestorId, string gestorCodigo);       
 
-        Task<IEnumerable<Tarefa>> ObterTarefasAtivasDisponiveisParaUsuarioAsync(
-            int usuarioId,
-            string usuarioCodigo,
-            IReadOnlyCollection<int> departamentoIds,
-            IReadOnlyCollection<int> cargoIds);
+        Task<IEnumerable<Tarefa>> ObterTarefasAtivasDisponiveisAsync();
+
+        Task<bool> PossuiResponsabilidadeGestaoAsync(int usuarioId, string usuarioCodigo);
+
+        Task<bool> PodeAcessarHistoricoAsync(int tarefaId, int usuarioId, string usuarioCodigo);
 
         Task<bool> AssumirTarefaAsync(int tarefaId, int usuarioId, string usuarioCodigo);
 

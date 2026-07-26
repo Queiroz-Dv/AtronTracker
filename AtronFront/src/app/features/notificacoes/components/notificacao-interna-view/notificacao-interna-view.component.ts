@@ -68,6 +68,10 @@ export class NotificacaoInternaViewComponent implements OnInit {
     });
   }
 
+  excluir(notificacao: NotificacaoInterna): void {
+    this.service.excluir(notificacao.id).subscribe();
+  }
+
   alterarFiltro(filtro: FiltroNotificacao): void {
     this.filtroAtual = filtro;
     this.atualizarFiltro();

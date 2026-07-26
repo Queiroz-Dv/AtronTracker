@@ -5,6 +5,7 @@ import { UsuarioService } from '../../services/usuario.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 import { UsuarioRequest } from '../../models/request/usuario-request';
+import { converterDataParaFormulario, formatarDataParaEnvio } from '../../../../shared/utils/data-form.utils';
 
 @Component({
   selector: 'c-usuario-edit',
@@ -39,7 +40,7 @@ export class UsuarioEditComponent implements OnInit {
       this.form.get('codigo')?.disable();
       this.service.obterPorCodigo(this.codigo).subscribe(usr => this.form.patchValue({
         ...usr,
-        dataNascimento: this.formatarDataParaExibicao(usr.dataNascimento)
+        dataNascimento: converterDataParaFormulario(usr.dataNascimento)
       }));
     }
   }
@@ -54,7 +55,7 @@ export class UsuarioEditComponent implements OnInit {
       dadosForm.cargoCodigo,
       dadosForm.departamentoCodigo,
       window.location.origin,
-      this.formatarDataParaEnvio(dadosForm.dataNascimento),
+      formatarDataParaEnvio(dadosForm.dataNascimento),
       dadosForm.gestorImediatoCodigo);
 
     const operacao = this.codigo
@@ -62,35 +63,5 @@ export class UsuarioEditComponent implements OnInit {
       : this.service.gravar(usuarioPayload);
 
     operacao.subscribe(() => this.router.navigate(['atron/usuarios']));
-  }
-
-  private formatarDataParaExibicao(data?: Date | string | null): string | null {
-    if (!data) return null;
-
-    const valor = data.toString();
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(valor)) return valor;
-    if (/^\d{4}-\d{2}-\d{2}/.test(valor)) {
-      const [ano, mes, dia] = valor.substring(0, 10).split('-');
-      return `${dia}/${mes}/${ano}`;
-    }
-
-    return valor;
-  }
-
-  private formatarDataParaEnvio(data?: Date | string | null): string | null {
-    if (!data) return null;
-
-    if (data instanceof Date) {
-      return data.toISOString().substring(0, 10);
-    }
-
-    const valor = data.toString().trim();
-    if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) return valor;
-
-    const partes = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(valor);
-    if (!partes) return valor;
-
-    const [, dia, mes, ano] = partes;
-    return `${ano}-${mes}-${dia}`;
   }
 }

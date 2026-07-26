@@ -6,10 +6,12 @@ import { TarefaFormComponent } from "../tarefa-form/tarefa-form.component";
 import { SharedModule } from '../../../../shared/modules/shared.module';
 import { TarefaRequest } from '../../models/request/tarefa-request.model';
 import { Nivel, NotificacaoService } from '../../../../core/services/notification.service';
+import { converterDataParaFormulario, formatarDataParaEnvio } from '../../../../shared/utils/data-form.utils';
+import { TarefaHistoricoComponent } from '../tarefa-historico/tarefa-historico.component';
 
 @Component({
   selector: 'c-tarefa-edit',
-  imports: [ReactiveFormsModule, TarefaFormComponent, SharedModule],
+  imports: [ReactiveFormsModule, TarefaFormComponent, TarefaHistoricoComponent, SharedModule],
   templateUrl: './tarefa-edit.component.html',
   styleUrl: '../../tarefa.component.css'
 })
@@ -52,8 +54,8 @@ export class TarefaEditComponent implements OnInit {
           id: trf.id,
           titulo: trf.titulo,
           conteudo: trf.conteudo,
-          dataInicial: this.formatDate(trf.dataInicial),
-          dataFinal: this.formatDate(trf.dataFinal),
+          dataInicial: converterDataParaFormulario(trf.dataInicial),
+          dataFinal: converterDataParaFormulario(trf.dataFinal),
           usuarioNome: trf.usuario?.nome ?? '',
           cargoDescricao: trf.usuario?.cargo?.descricao ?? '',
           departamentoDescricao: trf.usuario?.departamento?.descricao ?? '',
@@ -85,8 +87,8 @@ export class TarefaEditComponent implements OnInit {
       exigeAprovacaoParaObter: formValues.exigeAprovacaoParaObter,
       titulo: formValues.titulo,
       conteudo: formValues.conteudo,
-      dataInicial: this.formatarDataParaEnvio(formValues.dataInicial),
-      dataFinal: this.formatarDataParaEnvio(formValues.dataFinal),
+      dataInicial: formatarDataParaEnvio(formValues.dataInicial),
+      dataFinal: formatarDataParaEnvio(formValues.dataFinal),
       estadoDaTarefa: { id: formValues.estadoId, descricao: '' },
       usuarioCodigo: formValues.usuarioCodigo,
       departamentoCodigo: formValues.departamentoCodigo,
@@ -113,33 +115,4 @@ export class TarefaEditComponent implements OnInit {
     });
   }
 
-  private formatDate(dateString?: any): string | null {
-    if (!dateString) return null;
-
-    const valor = dateString.toString();
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(valor)) return valor;
-    if (/^\d{4}-\d{2}-\d{2}/.test(valor)) {
-      const [ano, mes, dia] = valor.substring(0, 10).split('-');
-      return `${dia}/${mes}/${ano}`;
-    }
-
-    return valor;
-  }
-
-  private formatarDataParaEnvio(data?: Date | string | null): string | null {
-    if (!data) return null;
-
-    if (data instanceof Date) {
-      return data.toISOString().substring(0, 10);
-    }
-
-    const valor = data.toString().trim();
-    if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) return valor;
-
-    const partes = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(valor);
-    if (!partes) return valor;
-
-    const [, dia, mes, ano] = partes;
-    return `${ano}-${mes}-${dia}`;
-  }
 }

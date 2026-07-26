@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Application.Resources;
 using Shared.Extensions;
 using System;
 using System.Linq;
@@ -16,7 +17,25 @@ namespace IoC
         public static IServiceCollection AddInfrastructureSecurity(this IServiceCollection services, IConfiguration configuration)
         {
             var secretKey = configuration.GetSecretKey();
-            var issueSigniKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+            // If no secret is configured, fall back to a generated temporary key in Development only.
+            // This avoids startup failure in local dev, but prevents accidental use in production.
+            byte[] keyBytes;
+            if (string.IsNullOrWhiteSpace(secretKey))
+            {
+                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                if (!string.Equals(env, "Development", StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException("JWT signing secret is not configured. Set the secret (e.g. Jwt:Secret) in configuration.");
+
+                // Development fallback: generate a 256-bit random key
+                keyBytes = System.Security.Cryptography.RandomNumberGenerator.GetBytes(32);
+            }
+            else
+            {
+                keyBytes = Encoding.UTF8.GetBytes(secretKey);
+            }
+
+            var issueSigniKey = new SymmetricSecurityKey(keyBytes);
 
             services.AddCors(options =>
             {
@@ -53,7 +72,7 @@ namespace IoC
                         var result = JsonSerializer.Serialize(new
                         {
                             status = 403,
-                            message = "Acesso negado. Você não tem permissão para acessar este recurso."
+                            message = AuthResource.Erro_AcessoNegado
                         });
                         return context.Response.WriteAsync(result);
                     },
@@ -64,7 +83,11 @@ namespace IoC
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Response.ContentType = "application/json";
                         await context.Response.WriteAsync(
-                            JsonSerializer.Serialize(new { status = 401, message = "Token inválido ou ausente." })
+                            JsonSerializer.Serialize(new
+                            {
+                                status = 401,
+                                message = AuthResource.Erro_TokenInvalidoOuAusente
+                            })
                         );
                     },
                 };

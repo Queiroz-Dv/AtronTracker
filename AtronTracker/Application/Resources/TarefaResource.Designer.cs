@@ -394,24 +394,6 @@ namespace Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Usuario nao possui acesso para assumir esta tarefa..
-        /// </summary>
-        public static string Erro_UsuarioSemAcessoParaAssumir {
-            get {
-                return ResourceManager.GetString("Erro_UsuarioSemAcessoParaAssumir", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Usuario nao possui acesso para solicitar esta tarefa..
-        /// </summary>
-        public static string Erro_UsuarioSemAcessoParaSolicitar {
-            get {
-                return ResourceManager.GetString("Erro_UsuarioSemAcessoParaSolicitar", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Configuracoes de tarefas atualizadas com sucesso..
         /// </summary>
         public static string Mensagem_ConfiguracoesAtualizadas {

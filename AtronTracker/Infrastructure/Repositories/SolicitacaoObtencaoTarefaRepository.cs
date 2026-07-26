@@ -3,32 +3,24 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class SolicitacaoObtencaoTarefaRepository : Repository<SolicitacaoObtencaoTarefa>, ISolicitacaoObtencaoTarefaRepository
+    public class SolicitacaoObtencaoTarefaRepository(AtronDbContext context) : Repository<SolicitacaoObtencaoTarefa>(context),
+        ISolicitacaoObtencaoTarefaRepository
     {
-        private readonly AtronDbContext _context;
-
-        public SolicitacaoObtencaoTarefaRepository(AtronDbContext context) : base(context)
-        {
-            _context = context;
-        }
+        private readonly AtronDbContext _context = context;
 
         public async Task<bool> ExisteSolicitacaoPendenteParaTarefaAsync(int tarefaId)
         {
-            return await _context.Set<SolicitacaoObtencaoTarefa>()
-                .AnyAsync(sol => sol.TarefaId == tarefaId && sol.Status == (int)StatusSolicitacaoObtencaoTarefa.Pendente);
+            return await _context.Set<SolicitacaoObtencaoTarefa>().AnyAsync(sol =>
+                        sol.TarefaId == tarefaId &&
+                        sol.Status == (int)StatusSolicitacaoObtencaoTarefa.Pendente);
         }
 
         public async Task<SolicitacaoObtencaoTarefa> ObterPorIdAsync(int id)
         {
-            return await QueryComRelacionamentos()
-                .FirstOrDefaultAsync(sol => sol.Id == id);
+            return await QueryComRelacionamentos().FirstOrDefaultAsync(sol => sol.Id == id);
         }
 
         public async Task<IEnumerable<SolicitacaoObtencaoTarefa>> ObterPendentesPorAprovadorAsync(int aprovadorId, string aprovadorCodigo)
@@ -65,8 +57,9 @@ namespace Infrastructure.Repositories
 
             solicitacao.Status = (int)StatusSolicitacaoObtencaoTarefa.Aprovada;
             solicitacao.DataDecisao = DateTime.Now;
-            solicitacao.Tarefa.UsuarioId = solicitacao.SolicitanteId;
-            solicitacao.Tarefa.UsuarioCodigo = solicitacao.SolicitanteCodigo;
+            solicitacao.Tarefa.AprovarObtencao(
+                solicitacao.SolicitanteId,
+                solicitacao.SolicitanteCodigo);
 
             return await _context.SaveChangesAsync() > 0;
         }

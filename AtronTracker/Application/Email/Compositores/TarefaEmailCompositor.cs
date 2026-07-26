@@ -5,6 +5,7 @@ using Domain.Entities;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
 using Shared.Extensions;
+using Shared.Domain.ValueObjects;
 using System.Globalization;
 
 namespace Application.Email.Compositores;
@@ -20,7 +21,7 @@ public sealed class TarefaEmailCompositor : ITarefaEmailCompositor
         _renderer = renderer;
     }
 
-    public EmailRequest ComporAtribuicao(TarefaDTO tarefa, Usuario usuario)
+    public Resultado<EmailRequest> ComporAtribuicao(TarefaDTO tarefa, Usuario usuario)
     {
         var assunto = string.Format(CulturaPtBr, TarefaResource.Assunto_EmailTarefaAtribuida, tarefa.Titulo);
         var template = new EmailTemplateDefinition(

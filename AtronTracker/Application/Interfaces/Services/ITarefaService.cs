@@ -16,7 +16,14 @@ namespace Application.Services
 
         Task<Resultado<List<TarefaDTO>>> ObterDisponiveisAsync();
 
+        Task<Resultado<TarefaAcessoDTO>> ObterAcessoAsync();
+
         Task<Resultado<List<SolicitacaoObtencaoTarefaDTO>>> ObterSolicitacoesAsync();
+
+        Task<Resultado<TarefaMovimentacaoPaginaDTO>> ObterHistoricoAsync(
+            int tarefaId,
+            int pagina,
+            int tamanhoPagina);
 
         Task<Resultado<List<TarefaEstadoDTO>>> ObterEstadosAsync();
 

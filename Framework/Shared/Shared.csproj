@@ -11,6 +11,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.32" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.34.0" />
 	</ItemGroup>
 
@@ -32,6 +33,15 @@
 
 	<ItemGroup>
 	  <Compile Remove="Migrations\**\*.cs" />
+	  <Compile Remove="Migrations\bin\**" />
+	  <Compile Remove="Migrations\obj\**" />
+	  <EmbeddedResource Remove="Migrations\bin\**" />
+	  <EmbeddedResource Remove="Migrations\obj\**" />
+	  <None Remove="Migrations\bin\**" />
+	  <None Remove="Migrations\obj\**" />
+	  <Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.cs" />
+	  <Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.Designer.cs" />
+	  <Compile Include="Migrations\SharedDbContextModelSnapshot.cs" />
 	  <Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>

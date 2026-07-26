@@ -2,6 +2,34 @@ using Shared.Application.Email.Models;
 
 namespace Application.Email.Models;
 
+/// <summary>
+/// Dados necessarios para compor o e-mail de confirmacao de cadastro.
+/// </summary>
+public sealed record ConfirmacaoCadastroEmailParametros(
+    string Destinatario,
+    string Nome,
+    string Codigo,
+    string Link,
+    int ValidadeHoras);
+
+/// <summary>
+/// Dados necessarios para compor o e-mail de recuperacao de senha.
+/// </summary>
+public sealed record RecuperacaoSenhaEmailParametros(
+    string Destinatario,
+    string Nome,
+    string Link,
+    int ValidadeHoras);
+
+/// <summary>
+/// Dados necessarios para compor o e-mail de primeiro acesso.
+/// </summary>
+public sealed record PrimeiroAcessoEmailParametros(
+    string Destinatario,
+    string Nome,
+    string Link,
+    int ValidadeHoras);
+
 public sealed record ConfirmacaoCadastroEmailModel
 {
     public string Nome { get; init; }
@@ -32,7 +60,7 @@ public sealed record PrimeiroAcessoEmailModel
     public string ValidadeHoras { get; init; }
 }
 
-public sealed record AlteracaoEmailEmailModel
+public sealed record AlteracaoEmailModel
 {
     public string Nome { get; init; }
     [EmailTemplateUrl]

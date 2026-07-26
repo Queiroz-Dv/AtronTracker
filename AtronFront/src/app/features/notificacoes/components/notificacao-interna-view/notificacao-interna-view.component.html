@@ -70,15 +70,26 @@
             </span>
           </button>
 
-          <button
-            mat-stroked-button
-            type="button"
-            class="notificacao-read-action"
-            [disabled]="notificacao.lida"
-            (click)="marcarComoLida(notificacao)">
-            <mat-icon>done</mat-icon>
-            Marcar como lida
-          </button>
+          <div class="notificacao-actions">
+            <button
+              mat-stroked-button
+              type="button"
+              class="notificacao-read-action"
+              [disabled]="notificacao.lida"
+              (click)="marcarComoLida(notificacao)">
+              <mat-icon>done</mat-icon>
+              Marcar como lida
+            </button>
+
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Excluir notificação"
+              title="Excluir notificação"
+              (click)="excluir(notificacao)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </article>
       } @empty {
         <div class="notificacoes-empty">

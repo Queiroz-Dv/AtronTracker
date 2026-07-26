@@ -6,6 +6,7 @@
 	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	  <DocumentationFile>bin/IoC.xml</DocumentationFile>
 	  <NoWarn>1591</NoWarn>
+    <UserSecretsId>c24a984f-ec97-4b86-a623-75f43f430e32</UserSecretsId>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -20,9 +21,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\IoC\IoC.csproj" />
-    <ProjectReference Include="..\..\Framework\Shared.PostgreSqlMigrations\Framework.Shared.PostgreSqlMigrations.csproj" />
+    <ProjectReference Include="..\..\Framework\Shared\Migrations\Framework.Shared.Migrations.csproj" />
     <ProjectReference Include="..\Application\AtronStock.Application.csproj" />
-    <ProjectReference Include="..\Infrastructure.PostgreSqlMigrations\AtronStock.Infrastructure.PostgreSqlMigrations.csproj" />
+    <ProjectReference Include="..\Infrastructure\AtronStock.Infrastructure.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

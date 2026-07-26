@@ -8,29 +8,20 @@ using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices
 {
-    public class PlanejamentoCustoService : IPlanejamentoCustoService
+    public class PlanejamentoCustoService(
+        IAsyncMap<PlanejamentoCustoDTO, PlanejamentoCusto> asyncMap,
+        IPlanejamentoCustoRepository planejamentoCustoRepository,
+        IPlanejamentoCustoPreparacaoService planejamentoCustoPreparacaoService,
+        IPlanejamentoCustoRelatorioService planejamentoCustoRelatorioService) : IPlanejamentoCustoService
     {
-        private readonly IAsyncMap<PlanejamentoCustoDTO, PlanejamentoCusto> _asyncMap;
-        private readonly IPlanejamentoCustoRepository _planejamentoCustoRepository;
-        private readonly IPlanejamentoCustoPreparacaoService _planejamentoCustoPreparacaoService;
-        private readonly IPlanejamentoCustoRelatorioService _planejamentoCustoRelatorioService;
-
-        public PlanejamentoCustoService(
-            IAsyncMap<PlanejamentoCustoDTO, PlanejamentoCusto> asyncMap,
-            IPlanejamentoCustoRepository planejamentoCustoRepository,
-            IPlanejamentoCustoPreparacaoService planejamentoCustoPreparacaoService,
-            IPlanejamentoCustoRelatorioService planejamentoCustoRelatorioService)
-        {
-            _asyncMap = asyncMap;
-            _planejamentoCustoRepository = planejamentoCustoRepository;
-            _planejamentoCustoPreparacaoService = planejamentoCustoPreparacaoService;
-            _planejamentoCustoRelatorioService = planejamentoCustoRelatorioService;
-        }
+        private readonly IAsyncMap<PlanejamentoCustoDTO, PlanejamentoCusto> _asyncMap = asyncMap;
+        private readonly IPlanejamentoCustoRepository _planejamentoCustoRepository = planejamentoCustoRepository;
+        private readonly IPlanejamentoCustoPreparacaoService _planejamentoCustoPreparacaoService = planejamentoCustoPreparacaoService;
+        private readonly IPlanejamentoCustoRelatorioService _planejamentoCustoRelatorioService = planejamentoCustoRelatorioService;
 
         public async Task<Resultado<PlanejamentoCustoDTO>> CriarAsync(PlanejamentoCustoDTO planejamentoCustoDTO)
         {
@@ -62,7 +53,7 @@ namespace Application.Services.EntitiesServices
             var dto = await _asyncMap.MapToDTOAsync(preparacao.Dados.Entidade);
             var resultado = Resultado<PlanejamentoCustoDTO>
                 .Sucesso(dto)
-                .AdicionarMensagem(string.Format("Planejamento de custo {0} atualizado com sucesso.", codigo));
+                .AdicionarMensagem(string.Format(PlanejamentoCustoResource.Mensagem_PlanejamentoAtualizado, codigo));
             AdicionarMensagensDetalhes(resultado, preparacao.Dados.ResultadoDetalhes);
 
             return resultado;

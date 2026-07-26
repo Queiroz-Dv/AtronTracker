@@ -150,6 +150,19 @@
   <data name="Erro_InformeEmailCodigo" xml:space="preserve">
     <value>Informe o código ou e-mail do usuário.</value>
   </data>
+  <data name="Erro_TemplateDefinicaoObrigatoria" xml:space="preserve"><value>A definição do template de e-mail é obrigatória.</value></data>
+  <data name="Erro_TemplateModeloObrigatorio" xml:space="preserve"><value>O modelo do template de e-mail é obrigatório.</value></data>
+  <data name="Erro_TemplateDestinatarioObrigatorio" xml:space="preserve"><value>Ao menos um destinatário é obrigatório.</value></data>
+  <data name="Erro_TemplateAssuntoObrigatorio" xml:space="preserve"><value>O assunto do e-mail é obrigatório.</value></data>
+  <data name="Erro_TemplateTituloObrigatorio" xml:space="preserve"><value>O título do template é obrigatório.</value></data>
+  <data name="Erro_TemplateNomeInvalido" xml:space="preserve"><value>O nome do template incorporado é inválido.</value></data>
+  <data name="Erro_TemplateNaoEncontrado" xml:space="preserve"><value>Template incorporado não encontrado: {0}.</value></data>
+  <data name="Erro_TemplateModeloSemCampo" xml:space="preserve"><value>O modelo {0} não fornece o campo obrigatório {1}.</value></data>
+  <data name="Erro_TemplateCampoObrigatorio" xml:space="preserve"><value>O campo obrigatório {0} não foi informado.</value></data>
+  <data name="Erro_TemplateCamposNaoRenderizados" xml:space="preserve"><value>O template contém campos obrigatórios não renderizados.</value></data>
+  <data name="Erro_TemplateBaseCamposNaoRenderizados" xml:space="preserve"><value>O template base contém campos obrigatórios não renderizados.</value></data>
+  <data name="Erro_TemplateUrlInvalida" xml:space="preserve"><value>O campo {0} deve conter uma URL HTTP ou HTTPS absoluta.</value></data>
+  <data name="Erro_TemplateRenderizacao" xml:space="preserve"><value>Não foi possível renderizar o template de e-mail.</value></data>
   <data name="Mensagem_EnvioConfirmacaoEmail" xml:space="preserve">
     <value>Enviamos um novo codigo de confirmacao para seu e-mail.</value>
   </data>

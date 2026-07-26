@@ -23,7 +23,7 @@ namespace Infrastructure.Repositories
         public async Task<bool> AtualizarUsuarioAsync(Usuario usuario)
         {
             var usuarioBd = await _context.Usuarios
-                .FirstOrDefaultAsync(usr => usr.Id == usuario.Id && usr.Codigo == usuario.Codigo && !usr.Inativo);
+                .FirstOrDefaultAsync(usr => usr.Id == usuario.Id && usr.Codigo == usuario.Codigo);
 
             if (usuarioBd is null)
                 return false;
@@ -35,6 +35,7 @@ namespace Infrastructure.Repositories
             usuarioBd.ReceberNotificacaoInternaTarefa = usuario.ReceberNotificacaoInternaTarefa;
             usuarioBd.ReceberNotificacaoTarefaPorEmail = usuario.ReceberNotificacaoTarefaPorEmail;
             usuarioBd.CodigoReativacao = usuario.CodigoReativacao;
+            usuarioBd.Inativo = usuario.Inativo;
             usuarioBd.GestorImediatoId = usuario.GestorImediatoId;
             usuarioBd.GestorImediatoCodigo = usuario.GestorImediatoCodigo;
 
@@ -66,10 +67,7 @@ namespace Infrastructure.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> AtualizarPreferenciasNotificacaoTarefaAsync(
-            string codigo,
-            bool receberNotificacaoInterna,
-            bool receberNotificacaoPorEmail)
+        public async Task<bool> AtualizarPreferenciasNotificacaoTarefaAsync(string codigo, bool receberNotificacaoInterna, bool receberNotificacaoPorEmail)
         {
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(usr => usr.Codigo == codigo && !usr.Inativo);
             if (usuario is null)
@@ -90,7 +88,7 @@ namespace Infrastructure.Repositories
 
         public async Task<Usuario> ObterUsuarioPorIdAsync(int? id)
         {
-            return await _context.Usuarios.FirstOrDefaultAsync(usr => usr.Id == id);
+            return await _context.Usuarios.FirstOrDefaultAsync(usr => usr.Id == id && !usr.Inativo);
         }
 
         public async Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo)
@@ -107,7 +105,7 @@ namespace Infrastructure.Repositories
         }
 
         public async Task<Usuario> ObterUsuarioGeralPorCodigoAsync(string codigo)
-        {            
+        {
             return await _context.Usuarios
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
@@ -128,9 +126,10 @@ namespace Infrastructure.Repositories
 
         public async Task<Usuario> ObterUsuarioGeralPorEmailAsync(string email)
         {
+            var emailNormalizado = email.ToUpperInvariant();
             return await _context.Usuarios
                 .AsNoTracking()
-                .FirstOrDefaultAsync(usr => usr.Email.ToUpper() == email);
+                .FirstOrDefaultAsync(usr => usr.Email.ToUpper() == emailNormalizado);
         }
 
         public async Task<IEnumerable<Usuario>> ObterUsuariosAsync()
@@ -148,7 +147,9 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> VerificarEmailExistenteAsync(string email)
         {
-            return await _context.Usuarios.AnyAsync(u => u.Email.ToUpper() == email);
+            var emailNormalizado = email.ToUpperInvariant();
+            return await _context.Usuarios.AnyAsync(
+                usuario => usuario.Email.ToUpper() == emailNormalizado);
         }
 
         public async Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()

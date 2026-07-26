@@ -14,19 +14,22 @@ namespace AtronStock.Application.Services
         private readonly IFornecedorRepository _fornecedorRepository;
         private readonly IProdutoRepository _produtoRepository;
         private readonly IClienteRepository _clienteRepository;
+        private readonly IEstoqueNotificacaoService _notificacaoService;
 
         public EstoqueService(
             IEstoqueRepository estoqueRepository,
             IAuditoriaService auditoriaService,
             IFornecedorRepository fornecedorRepository,
             IProdutoRepository produtoRepository,
-            IClienteRepository clienteRepository)
+            IClienteRepository clienteRepository,
+            IEstoqueNotificacaoService notificacaoService)
         {
             _estoqueRepository = estoqueRepository;
             _auditoriaService = auditoriaService;
             _fornecedorRepository = fornecedorRepository;
             _produtoRepository = produtoRepository;
             _clienteRepository = clienteRepository;
+            _notificacaoService = notificacaoService;
         }
 
         public async Task ProcessarEntradaAsync(Entrada entrada)
@@ -46,6 +49,7 @@ namespace AtronStock.Application.Services
                 if (prod == null) throw new InvalidOperationException($"Produto ID {item.ProdutoId} não encontrado.");
 
                 item.ProdutoCodigo = prod.Codigo;
+                item.Produto = prod;
             }
 
             // 3. Registrar a Entrada
@@ -106,6 +110,7 @@ namespace AtronStock.Application.Services
                 var prod = await _produtoRepository.ObterPorIdAsync(item.ProdutoId);
                 if (prod == null) throw new InvalidOperationException($"Produto ID {item.ProdutoId} não encontrado.");
                 item.ProdutoCodigo = prod.Codigo;
+                item.Produto = prod;
 
                 var estoque = await _estoqueRepository.ObterPorProdutoIdAsync(item.ProdutoId);
                 if (estoque == null || estoque.Quantidade < item.Quantidade)
@@ -142,6 +147,7 @@ namespace AtronStock.Application.Services
                     };
 
                     await _estoqueRepository.AdicionarMovimentacaoAsync(movimentacao);
+                    await _notificacaoService.NotificarSaidaRegistradaAsync(venda, item.Produto, item, estoque.Quantidade);
                 }
             }
         }

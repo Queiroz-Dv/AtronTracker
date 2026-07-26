@@ -15,37 +15,25 @@ using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
-    public class TarefaPreparacaoService : ITarefaPreparacaoService
+    public class TarefaPreparacaoService(
+        IAsyncApplicationMapService<TarefaDTO, Tarefa> map,
+        ITarefaEstadoRepository tarefaEstadoRepository,
+        IUsuarioRepository usuarioRepository,
+        IDepartamentoRepository departamentoRepository,
+        ICargoRepository cargoRepository,
+        IValidador<TarefaDTO> validador) : ITarefaPreparacaoService
     {
-        private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _map;
-        private readonly ITarefaEstadoRepository _tarefaEstadoRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly ICargoRepository _cargoRepository;
-        private readonly IValidador<TarefaDTO> _validador;
-
-        public TarefaPreparacaoService(
-            IAsyncApplicationMapService<TarefaDTO, Tarefa> map,
-            ITarefaEstadoRepository tarefaEstadoRepository,
-            IUsuarioRepository usuarioRepository,
-            IDepartamentoRepository departamentoRepository,
-            ICargoRepository cargoRepository,
-            IValidador<TarefaDTO> validador)
-        {
-            _map = map;
-            _tarefaEstadoRepository = tarefaEstadoRepository;
-            _usuarioRepository = usuarioRepository;
-            _departamentoRepository = departamentoRepository;
-            _cargoRepository = cargoRepository;
-            _validador = validador;
-        }
+        private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _map = map;
+        private readonly ITarefaEstadoRepository _tarefaEstadoRepository = tarefaEstadoRepository;
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
+        private readonly ICargoRepository _cargoRepository = cargoRepository;
+        private readonly IValidador<TarefaDTO> _validador = validador;
 
         public async Task<Resultado<TarefaPreparada>> PrepararParaPersistenciaAsync(TarefaDTO tarefaDTO)
         {
             if (tarefaDTO is not null && tarefaDTO.DestinoInicial == 0)
-            {
                 tarefaDTO.DestinoInicial = (int)DestinoInicialTarefa.Usuario;
-            }
 
             var erros = _validador.Validar(tarefaDTO);
             if (erros.Any())
@@ -58,19 +46,21 @@ namespace Application.Services.EntitiesServices.Tarefas
             tarefaDTO.EstadoDaTarefa = MapearEstado(estado);
 
             var tarefa = await _map.MapToEntityAsync(tarefaDTO);
-            var usuario = await VincularUsuarioAsync(tarefa, tarefaDTO);
-            if (usuario.TeveFalha)
-                return Resultado<TarefaPreparada>.Falhas(usuario.Messages);
+            tarefa.EstadoDaTarefa = estado;
+            var usuarioResultado = await VincularUsuarioAsync(tarefa, tarefaDTO);
+            if (usuarioResultado.TeveFalha)
+                return Resultado<TarefaPreparada>.Falhas(usuarioResultado.Messages);
 
             var estrutura = await VincularEstruturaAsync(tarefa, tarefaDTO);
             if (estrutura.TeveFalha)
                 return Resultado<TarefaPreparada>.Falhas(estrutura.Messages);
 
-            var governanca = ValidarGovernancaTarefaAtribuida(usuario.Dados, estrutura.Dados);
+            var governanca = ValidarGovernancaTarefaAtribuida(usuarioResultado.Dados, estrutura.Dados);
             if (governanca.TeveFalha)
                 return Resultado<TarefaPreparada>.Falhas(governanca.Messages);
 
-            return Resultado<TarefaPreparada>.Sucesso(new TarefaPreparada(tarefaDTO, tarefa, usuario.Dados));
+            return Resultado<TarefaPreparada>.Sucesso(
+                new TarefaPreparada(tarefaDTO, tarefa, usuarioResultado.Dados));
         }
 
         public async Task<Resultado<List<TarefaEstadoDTO>>> ObterEstadosAsync()
@@ -106,6 +96,7 @@ namespace Application.Services.EntitiesServices.Tarefas
                 tarefa.DepartamentoCodigo = null;
                 tarefa.CargoId = null;
                 tarefa.CargoCodigo = null;
+
                 return Resultado<Departamento>.Sucesso(null);
             }
 
@@ -140,30 +131,22 @@ namespace Application.Services.EntitiesServices.Tarefas
         private static Resultado ValidarGovernancaTarefaAtribuida(Usuario usuario, Departamento departamentoTarefa)
         {
             if (usuario is null || TemGestorImediato(usuario))
-            {
                 return Resultado.Sucesso();
-            }
 
             if (TemGestorDepartamento(departamentoTarefa))
-            {
                 return Resultado.Sucesso();
-            }
 
             var departamentoDoUsuarioComGestor = usuario.UsuarioCargoDepartamentos?
                 .Any(rel => TemGestorDepartamento(rel.Departamento)) == true;
 
             if (departamentoDoUsuarioComGestor)
-            {
                 return Resultado.Sucesso();
-            }
 
             return Resultado.Falha(TarefaResource.Erro_AprovadorObrigatorio);
         }
 
         private static bool TemGestorImediato(Usuario usuario)
-        {
-            return usuario.GestorImediatoId.HasValue && !usuario.GestorImediatoCodigo.IsNullOrEmpty();
-        }
+            => usuario.GestorImediatoId.HasValue && !usuario.GestorImediatoCodigo.IsNullOrEmpty();
 
         private static bool TemGestorDepartamento(Departamento departamento)
         {

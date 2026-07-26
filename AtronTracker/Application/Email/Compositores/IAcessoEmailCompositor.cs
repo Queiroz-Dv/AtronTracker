@@ -1,18 +1,20 @@
 using Shared.Application.DTOS.Requests;
+using Shared.Domain.ValueObjects;
+using Application.Email.Models;
 
 namespace Application.Email.Compositores;
 
 public interface IAcessoEmailCompositor
-{
-    EmailRequest ComporConfirmacaoCadastro(string destinatario, string nome, string codigo, string link, int validadeHoras);
+{    
+    Resultado<EmailRequest> ComporConfirmacaoCadastro(ConfirmacaoCadastroEmailParametros parametros);
+    
+    Resultado<EmailRequest> ComporRecuperacaoSenha(RecuperacaoSenhaEmailParametros parametros);
 
-    EmailRequest ComporRecuperacaoSenha(string destinatario, string nome, string link, int validadeHoras);
+    Resultado<EmailRequest> ComporConfirmacaoConcluida(string destinatario, string nome);
+    
+    Resultado<EmailRequest> ComporPrimeiroAcesso(PrimeiroAcessoEmailParametros parametros);
 
-    EmailRequest ComporConfirmacaoConcluida(string destinatario, string nome);
+    Resultado<EmailRequest> ComporAlteracaoEmail(string destinatario, string nome, string link);
 
-    EmailRequest ComporPrimeiroAcesso(string destinatario, string nome, string link, int validadeHoras);
-
-    EmailRequest ComporAlteracaoEmail(string destinatario, string nome, string link);
-
-    EmailRequest ComporReativacaoConta(string destinatario, string nome, string codigo);
+    Resultado<EmailRequest> ComporReativacaoConta(string destinatario, string nome, string codigo);
 }

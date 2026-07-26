@@ -190,4 +190,6 @@
   <data name="MensagemCodigoReativacaoEnviado" xml:space="preserve"><value>Código de reativação enviado para o e-mail cadastrado.</value></data>
   <data name="MensagemSolicitacaoAlteracaoEmail" xml:space="preserve"><value>Solicitação de alteração enviada. Verifique o novo e-mail para confirmar.</value></data>
   <data name="MensagemEmailAlterado" xml:space="preserve"><value>E-mail alterado com sucesso.</value></data>
+  <data name="ErroRemoverUsuario" xml:space="preserve"><value>Não foi possível remover o usuário.</value></data>
+  <data name="ErroRepassarTarefasUsuario" xml:space="preserve"><value>Não foi possível repassar as tarefas para o quadro do departamento do usuário.</value></data>
 </root>

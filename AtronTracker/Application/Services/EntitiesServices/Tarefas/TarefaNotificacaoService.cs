@@ -33,8 +33,12 @@ namespace Application.Services.EntitiesServices.Tarefas
             }
 
             var mensagem = _emailCompositor.ComporAtribuicao(tarefa, usuario);
+            if (mensagem.TeveFalha)
+            {
+                return Resultado.Falha(mensagem.Messages);
+            }
 
-            return await _emailService.EnviarAsync(mensagem);
+            return await _emailService.EnviarAsync(mensagem.Dados);
         }
 
     }

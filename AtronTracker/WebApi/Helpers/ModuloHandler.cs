@@ -45,7 +45,7 @@ namespace WebApi.Helpers
                 return;
             }
 
-            var dados = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, usuarioCodigo).KeyDescription)
+            var dados = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, usuarioCodigo))
             ?? await RecarregarSessaoNoCacheAsync(usuarioCodigo);
 
             var perfis = dados?.DadosDoPerfil;
@@ -71,7 +71,7 @@ namespace WebApi.Helpers
             var dadosComplementaresService = _serviceAccessor.ObterService<IDadosComplementaresDoUsuarioService>();
             var userDto = await _usuarioService.ObterPorCodigoAsync(userId);
             var dadosDto = await dadosComplementaresService.ObterInformacoesComplementaresDoUsuario(userDto.Dados);
-            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(ECacheKeysInfo.Acesso, userId)
+            _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, userId))
             {
                 EntityInfo = dadosDto
             });

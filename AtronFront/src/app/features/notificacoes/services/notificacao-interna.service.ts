@@ -24,7 +24,7 @@ export class NotificacaoInternaService {
   }
 
   marcarComoLida(id: number): Observable<NotificacaoInterna> {
-    return this.http.post<NotificacaoInterna>(`${RotasApi.notificacaoInternaEndpoint}/${id}/MarcarComoLida`, {}).pipe(
+    return this.http.post<NotificacaoInterna>(`${RotasApi.notificacaoInternaEndpoint}/${id}/marcar-como-lida`, {}).pipe(
       tap(notificacaoAtualizada => {
         const notificacoes = this.notificacoesSubject.value.map(notificacao =>
           notificacao.id === notificacaoAtualizada.id ? notificacaoAtualizada : notificacao
@@ -35,8 +35,16 @@ export class NotificacaoInternaService {
   }
 
   marcarTodasComoLidas(): Observable<NotificacaoInterna[]> {
-    return this.http.post<NotificacaoInterna[]>(`${RotasApi.notificacaoInternaEndpoint}/MarcarTodasComoLidas`, {}).pipe(
+    return this.http.post<NotificacaoInterna[]>(`${RotasApi.notificacaoInternaEndpoint}/marcar-todas-como-lidas`, {}).pipe(
       tap(notificacoes => this.notificacoesSubject.next(notificacoes))
+    );
+  }
+
+  excluir(id: number): Observable<void> {
+    return this.http.delete<void>(`${RotasApi.notificacaoInternaEndpoint}/${id}`).pipe(
+      tap(() => this.notificacoesSubject.next(
+        this.notificacoesSubject.value.filter(notificacao => notificacao.id !== id)
+      ))
     );
   }
 

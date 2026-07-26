@@ -1,59 +1,42 @@
 using Application.DTO;
 using Application.DTO.Request;
 using Application.Interfaces.Services;
-using Application.UseCases.Usuario;
+using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
-using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices
 {
-    public class UsuarioService : IUsuarioService
+    public class UsuarioService(
+        IAsyncMap<UsuarioDTO, Usuario> asyncMap,
+        IUsuarioRepository usuarioRepository,
+        ObterUsuario obterUsuario,
+        CriarUsuario criarUsuario,
+        AtualizarUsuario atualizarUsuario,
+        RemoverUsuario removerUsuario,
+        DesativarUsuario desativarUsuario,
+        ReativarUsuario reativarUsuario,
+        SolicitarReativacao solicitarReativacao,
+        AlterarEmail alterarEmail,
+        ConfirmarAlteracaoEmail confirmarAlteracaoEmail,
+        ReenviarConfirmacaoEmail reenviarConfirmacaoEmail) : IUsuarioService
     {
-        private readonly IAsyncMap<UsuarioDTO, Usuario> _asyncMap;
-        private readonly IUsuarioRepository _usuarioRepository;
-
-        private readonly CriarUsuario _criarUsuario;
-        private readonly AtualizarUsuario _atualizarUsuario;
-        private readonly RemoverUsuario _removerUsuario;
-        private readonly DesativarUsuario _desativarUsuario;
-        private readonly ReativarUsuario _reativarUsuario;
-        private readonly SolicitarReativacao _solicitarReativacao;
-
-        private readonly AlterarEmail _alterarEmail;
-        private readonly ConfirmarAlteracaoEmail _confirmarAlteracaoEmail;
-        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail;
-
-        public UsuarioService(
-            IAsyncMap<UsuarioDTO, Usuario> asyncMap,
-            IUsuarioRepository usuarioRepository,
-            CriarUsuario criarUsuario,
-            AtualizarUsuario atualizarUsuario,
-            RemoverUsuario removerUsuario,
-            DesativarUsuario desativarUsuario,
-            ReativarUsuario reativarUsuario,
-            SolicitarReativacao solicitarReativacao,
-            AlterarEmail alterarEmail,
-            ConfirmarAlteracaoEmail confirmarAlteracaoEmail,
-            ReenviarConfirmacaoEmail reenviarConfirmacaoEmail)
-        {
-            _asyncMap = asyncMap;
-            _usuarioRepository = usuarioRepository;
-            _criarUsuario = criarUsuario;
-            _atualizarUsuario = atualizarUsuario;
-            _removerUsuario = removerUsuario;
-            _desativarUsuario = desativarUsuario;
-            _reativarUsuario = reativarUsuario;
-            _solicitarReativacao = solicitarReativacao;
-            _alterarEmail = alterarEmail;
-            _confirmarAlteracaoEmail = confirmarAlteracaoEmail;
-            _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
-        }
+        private readonly IAsyncMap<UsuarioDTO, Usuario> _asyncMap = asyncMap;
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly ObterUsuario _obterUsuario = obterUsuario;
+        private readonly CriarUsuario _criarUsuario = criarUsuario;
+        private readonly AtualizarUsuario _atualizarUsuario = atualizarUsuario;
+        private readonly RemoverUsuario _removerUsuario = removerUsuario;
+        private readonly DesativarUsuario _desativarUsuario = desativarUsuario;
+        private readonly ReativarUsuario _reativarUsuario = reativarUsuario;
+        private readonly SolicitarReativacao _solicitarReativacao = solicitarReativacao;
+        private readonly AlterarEmail _alterarEmail = alterarEmail;
+        private readonly ConfirmarAlteracaoEmail _confirmarAlteracaoEmail = confirmarAlteracaoEmail;
+        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
 
         public async Task<Resultado<UsuarioRequest>> CriarAsync(UsuarioRequest request)
             => await _criarUsuario.ExecutarAsync(request);
@@ -90,16 +73,6 @@ namespace Application.Services.EntitiesServices
         }
 
         public async Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo)
-        {
-            if (codigo.IsNullOrEmpty())
-                return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
-
-            var entidade = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-            if (entidade is null)
-                return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
-
-            var dto = await _asyncMap.MapToDTOAsync(entidade);
-            return Resultado<UsuarioDTO>.Sucesso(dto);
-        }
+            => await _obterUsuario.ExecutarAsync(codigo);
     }
 }

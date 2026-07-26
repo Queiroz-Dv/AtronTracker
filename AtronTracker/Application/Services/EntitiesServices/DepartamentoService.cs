@@ -14,32 +14,22 @@ using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices
 {
-    public class DepartamentoService : IDepartamentoService
+    public class DepartamentoService(IValidador<DepartamentoDTO> validador,
+                               IAsyncMap<DepartamentoDTO, Departamento> asyncMap,
+                               IDepartamentoRepository departamentoRepository,
+                               IUsuarioRepository usuarioRepository,
+                               ICargoRepository cargoRepository,
+                               EstruturaPlanejadaPolicy estruturaPlanejadaPolicy,
+                               IUsuarioCargoDepartamentoRepository relacionamentoRepository)
+        : IDepartamentoService
     {
-        private readonly IAsyncMap<DepartamentoDTO, Departamento> _asyncMap;
-        private readonly IDepartamentoRepository _departamentoRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository;
-        private readonly ICargoRepository _cargoRepository;
-        private readonly EstruturaPlanejadaPolicy _estruturaPlanejadaPolicy;
-        private readonly IValidador<DepartamentoDTO> _validador;
-
-        public DepartamentoService(IValidador<DepartamentoDTO> validador,
-                                   IAsyncMap<DepartamentoDTO, Departamento> asyncMap,
-                                   IDepartamentoRepository departamentoRepository,
-                                   IUsuarioRepository usuarioRepository,
-                                   ICargoRepository cargoRepository,
-                                   IPlanejamentoCustoRepository planejamentoCustoRepository,
-                                   IUsuarioCargoDepartamentoRepository relacionamentoRepository)
-        {
-            _departamentoRepository = departamentoRepository;
-            _usuarioRepository = usuarioRepository;
-            _cargoRepository = cargoRepository;
-            _estruturaPlanejadaPolicy = new EstruturaPlanejadaPolicy(planejamentoCustoRepository);
-            _relacionamentoRepository = relacionamentoRepository;
-            _validador = validador;
-            _asyncMap = asyncMap;
-        }
+        private readonly IAsyncMap<DepartamentoDTO, Departamento> _asyncMap = asyncMap;
+        private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository = relacionamentoRepository;
+        private readonly ICargoRepository _cargoRepository = cargoRepository;
+        private readonly EstruturaPlanejadaPolicy _estruturaPlanejadaPolicy = estruturaPlanejadaPolicy;
+        private readonly IValidador<DepartamentoDTO> _validador = validador;
 
         public async Task<Resultado<DepartamentoDTO>> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
@@ -47,7 +37,7 @@ namespace Application.Services.EntitiesServices
                 return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var erros = _validador.Validar(departamentoDTO);
-            if (erros.Any()) 
+            if (erros.Any())
                 return Resultado<DepartamentoDTO>.Falha(erros.FirstOrDefault());
 
             var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
@@ -63,9 +53,8 @@ namespace Application.Services.EntitiesServices
 
             var atualizado = await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(entidade);
             if (!atualizado)
-            {
                 return Resultado<DepartamentoDTO>.Falha(string.Format(DepartamentoResource.ErroInesperadoAtualizacao, codigo));
-            }
+
 
             return Resultado<DepartamentoDTO>.Sucesso(departamentoDTO).AdicionarMensagem(string.Format(DepartamentoResource.MensagemAtualizacao, codigo));
         }
@@ -74,15 +63,12 @@ namespace Application.Services.EntitiesServices
         {
             var erros = _validador.Validar(departamentoDTO);
             if (erros.Any())
-            {
                 return Resultado<DepartamentoDTO>.Falhas(erros);
-            }
+
 
             var departamentoExiste = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamentoDTO.Codigo);
             if (departamentoExiste != null)
-            {
                 return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroCodigoDepartamentoExistente);
-            }
 
             var departamento = await _asyncMap.MapToEntityAsync(departamentoDTO);
 
@@ -92,11 +78,9 @@ namespace Application.Services.EntitiesServices
 
             var foiCriado = await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
             if (!foiCriado)
-            {
                 return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroGravacao);
-            }
 
-            return Resultado<DepartamentoDTO>.Sucesso(departamentoDTO).ComMensagemRegistroSalvo(departamento.Codigo);          
+            return Resultado<DepartamentoDTO>.Sucesso(departamentoDTO).ComMensagemRegistroSalvo(departamento.Codigo);
         }
 
         public async Task<Resultado<DepartamentoDTO>> ObterPorCodigo(string codigo)
@@ -143,8 +127,7 @@ namespace Application.Services.EntitiesServices
             if (codigo.IsNullOrEmpty())
                 return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            var departamento = await _departamentoRepository
-                .ObterDepartamentoPorCodigoRepositoryAsync(codigo);
+            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
             if (departamento == null)
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
@@ -160,17 +143,13 @@ namespace Application.Services.EntitiesServices
                 .ObterCargosPorDepartamento(departamento.Id, departamento.Codigo);
 
             if (relacionamentos.Any() || cargos.Any())
-                return Resultado.Falha(
-                    string.Format(DepartamentoResource.ErroDepartamentoContemRelacionamento, codigo)
-                );
+                return Resultado.Falha(string.Format(DepartamentoResource.ErroDepartamentoContemRelacionamento, codigo));
 
             var removido = await _departamentoRepository
                 .RemoverDepartmentoRepositoryAsync(departamento);
 
             if (!removido)
-                return Resultado.Falha(
-                    string.Format(DepartamentoResource.ErroRemocao, codigo)
-                );
+                return Resultado.Falha(string.Format(DepartamentoResource.ErroRemocao, codigo));
 
             return Resultado
                 .Sucesso(departamento)
