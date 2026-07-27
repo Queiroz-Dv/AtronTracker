@@ -2,159 +2,216 @@
 
 ## Objetivo
 
-Este manual descreve o que precisa ser configurado para o Atron funcionar fora da máquina local usando:
+Este manual descreve a publicação do núcleo do Atron com:
 
-- Render para publicar a API;
+- Render para hospedar a API;
 - Supabase/PostgreSQL como banco de dados;
-- Brevo como provedor de envio de e-mail transacional.
+- Brevo como provedor de e-mail transacional.
 
-Esses provedores foram escolhidos para manter o custo inicial reduzido, permitir publicação real do sistema e evitar que o projeto dependa de infraestrutura local ou de um banco SQL Server pago para rodar em produção.
+O produto é publicado pelo host neutro `AtronPlatform.WebApi`. Tracker, Stock,
+Auditoria e Notificações Internas executam no mesmo processo, conforme os ADRs
+0007 e 0008.
 
-## Decisão de infraestrutura
+## Artefato publicado
 
-### Render
-
-O Render hospeda a API do Atron a partir do `Dockerfile` da raiz do repositório. O Dockerfile publica o projeto `AtronTracker/WebApi/WebApi.csproj` e executa a aplicação na porta informada pelo próprio Render.
-
-Por que usamos:
-
-- permite colocar a API no ar com pouco atrito;
-- lê variáveis de ambiente sem versionar credenciais;
-- integra com GitHub para deploy por branch;
-- reduz custo inicial de publicação.
-
-Trade-offs:
-
-- planos gratuitos ou econômicos podem ter cold start;
-- a disponibilidade depende do provedor;
-- logs, deploy e variáveis precisam ser administrados no painel do Render;
-- mudanças de histórico Git exigem force push cuidadoso.
-
-### Supabase/PostgreSQL
-
-O Supabase é usado como destino principal de deploy do banco, usando PostgreSQL. No código, o provider `Supabase` é tratado como PostgreSQL via `Npgsql.EntityFrameworkCore.PostgreSQL`.
-
-Por que usamos:
-
-- oferece PostgreSQL gerenciado com custo inicial menor;
-- evita depender de SQL Server para publicar a primeira versão;
-- combina bem com Entity Framework Core e migrations separadas por provider;
-- simplifica a criação de banco remoto para testes reais.
-
-Trade-offs:
-
-- o projeto passa a depender das limitações e políticas do Supabase;
-- pooler, SSL e string de conexão precisam estar corretos;
-- recursos específicos de SQL Server não devem ser assumidos no fluxo de produção;
-- a rotação de senha exige atualização imediata das variáveis no Render.
-
-### Brevo
-
-O Brevo é usado para envio de e-mails transacionais, como primeiro acesso, troca de senha e notificações que exigem comunicação externa.
-
-Por que usamos:
-
-- evita depender de senha pessoal de Gmail ou Outlook em produção;
-- separa envio transacional da conta pessoal do desenvolvedor;
-- oferece API própria, mais adequada para aplicação publicada;
-- permite trocar provedor sem mudar os casos de uso do sistema.
-
-Trade-offs:
-
-- depende da reputação e dos limites do provedor;
-- exige chave de API protegida;
-- domínio/remetente precisam estar configurados corretamente;
-- falhas de e-mail devem bloquear fluxos críticos quando a regra exigir entrega.
-
-## Configuração no Supabase
-
-1. Crie ou acesse o projeto do Supabase.
-2. Copie a connection string PostgreSQL recomendada para aplicação.
-3. Use senha atual do banco. Se alguma senha já foi versionada, gere uma nova antes de publicar.
-4. Confirme se a string contém SSL habilitado.
-5. Aplique as migrations PostgreSQL do projeto antes de usar o sistema em produção.
-
-Formato esperado no Render:
+O Web Service usa o `Dockerfile` da raiz. O build publica:
 
 ```text
-ConnectionStrings__DefaultConnection=<connection string PostgreSQL/Supabase>
-ConnectionString=<mesma connection string, enquanto o fallback legado existir>
+AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
 ```
 
-`ConnectionStrings__DefaultConnection` é a configuração principal. `ConnectionString` existe por compatibilidade com código legado e deve receber o mesmo valor enquanto esse fallback ainda estiver ativo.
-
-## Configuração no Brevo
-
-1. Crie ou acesse a conta no Brevo.
-2. Configure o remetente que será usado pelo Atron.
-3. Gere uma API key.
-4. Não coloque a API key em `appsettings*.json`.
-5. Configure a chave no Render como variável de ambiente.
-
-Variáveis:
+O container executa:
 
 ```text
-EmailSettings__Provider=Brevo
-EmailSettings__FromName=Atron Platform
-EmailSettings__FromEmail=<remetente configurado no Brevo>
-EmailSettings__Brevo__ApiKey=<api key do Brevo>
-EmailSettings__Brevo__BaseUrl=https://api.brevo.com/v3
+AtronPlatform.WebApi.dll
 ```
 
-Se o projeto for configurado para SMTP em algum ambiente, use:
+na porta fornecida pelo Render. Os antigos hosts executáveis de Tracker,
+Auditoria e Stock foram removidos nas Fases 8 e 9 do ADR 0007. O rollback
+permanece disponível pelo último commit estável anterior à remoção.
 
-```text
-EmailSettings__Password=<senha SMTP ou senha de app>
-```
+## Configuração segura
 
-Para produção, a direção preferida é Brevo via API.
+Nenhuma credencial deve existir em `appsettings*.json`, arquivos `.env`, código
+fonte ou documentação versionada. O host aceita configuração do .NET por
+variáveis de ambiente.
 
-## Configuração no Render
-
-1. Crie um Web Service no Render.
-2. Conecte o repositório do GitHub.
-3. Escolha a branch que será publicada.
-4. Use o Dockerfile da raiz do repositório.
-5. Configure as variáveis de ambiente.
-6. Faça deploy.
-
-Variáveis mínimas para a API:
+Variáveis mínimas do núcleo:
 
 ```text
 ASPNETCORE_ENVIRONMENT=Production
-ConnectionStrings__DefaultConnection=<connection string PostgreSQL/Supabase>
-ConnectionString=<mesma connection string, se o fallback legado ainda estiver em uso>
+ATRON_CONNECTION_STRING=<connection string PostgreSQL/Supabase>
 Jwt__SecretKey=<chave forte gerada para produção>
 Jwt__Issuer=atron-web-api
 Jwt__Audience=atron-audience
+Cors__AllowedOrigins__0=<origem HTTPS do Angular publicado>
 EmailSettings__Provider=Brevo
 EmailSettings__FromName=Atron Platform
-EmailSettings__FromEmail=<remetente configurado no Brevo>
+EmailSettings__FromEmail=<remetente validado no Brevo>
 EmailSettings__Brevo__ApiKey=<api key do Brevo>
 EmailSettings__Brevo__BaseUrl=https://api.brevo.com/v3
-Cors__AllowedOrigins__0=<URL do front Angular publicado>
 ```
 
-Observações:
+`ATRON_CONNECTION_STRING` é a chave canônica do host. O código ainda aceita
+`ConnectionStrings__DefaultConnection` e `ConnectionString` como fallbacks de
+compatibilidade, mas o Render não precisa configurar valores duplicados.
 
-- `Jwt__SecretKey` precisa ser forte e diferente da chave de desenvolvimento.
-- `Cors__AllowedOrigins__0` deve apontar para a origem real do front.
-- Se a senha do Supabase for trocada, atualize `ConnectionStrings__DefaultConnection` e `ConnectionString`.
-- Depois de alterar variáveis sensíveis, faça restart ou redeploy do serviço.
+Notificações Internas não exigem URL, emissor, audiência ou segredo de serviço.
+A capacidade usa a mesma `ATRON_CONNECTION_STRING` e o mesmo JWT do Platform,
+mantendo `NotificacoesDbContext` e migrations próprios.
 
-## Configuração local
+### Rotação obrigatória
 
-Para rodar localmente sem versionar credenciais, use uma destas opções:
+Se uma senha, token ou chave já foi versionada, removê-la do arquivo atual não a
+torna segura, pois ela pode permanecer no histórico Git e em clones. Antes do
+próximo deploy:
 
-- variáveis de ambiente do usuário;
-- User Secrets do .NET;
-- `appsettings.Local.json`, que deve continuar ignorado pelo Git.
+1. rotacione a senha do banco no Supabase;
+2. rotacione qualquer chave de API ou segredo que tenha sido versionado;
+3. atualize somente as variáveis protegidas no Render;
+4. reinicie ou faça novo deploy do serviço;
+5. confirme que a credencial anterior não autentica mais.
 
-Exemplo com User Secrets no projeto da API:
+Não reutilize valores encontrados no histórico do repositório.
+
+## Preparação local
+
+Para configuração local, use User Secrets, variáveis de usuário ou um arquivo
+`.env.render.local`, que é ignorado pelo Git e pelo contexto do Docker.
+
+Exemplo com User Secrets no host neutro:
 
 ```powershell
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<connection string>" --project AtronTracker/WebApi/WebApi.csproj
-dotnet user-secrets set "ConnectionString" "<connection string>" --project AtronTracker/WebApi/WebApi.csproj
-dotnet user-secrets set "Jwt:SecretKey" "<chave local>" --project AtronTracker/WebApi/WebApi.csproj
-dotnet user-secrets set "EmailSettings:Brevo:ApiKey" "<api key>" --project AtronTracker/WebApi/WebApi.csproj
+dotnet user-secrets set "ATRON_CONNECTION_STRING" "<connection string>" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
+dotnet user-secrets set "Jwt:SecretKey" "<chave local forte>" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
+dotnet user-secrets set "EmailSettings:Brevo:ApiKey" "<api key>" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
 ```
+
+Exemplo de nomes para `.env.render.local`, sem preencher valores no
+repositório:
+
+```text
+ASPNETCORE_ENVIRONMENT=Production
+ATRON_CONNECTION_STRING=
+Jwt__SecretKey=
+Jwt__Issuer=atron-web-api
+Jwt__Audience=atron-audience
+Cors__AllowedOrigins__0=http://localhost:4200
+EmailSettings__Provider=Brevo
+EmailSettings__FromName=Atron Platform
+EmailSettings__FromEmail=
+EmailSettings__Brevo__ApiKey=
+EmailSettings__Brevo__BaseUrl=https://api.brevo.com/v3
+```
+
+## Validação do container antes do deploy
+
+Build:
+
+```powershell
+docker build --tag atron-platform:phase7 .
+```
+
+Execução:
+
+```powershell
+docker run --rm --name atron-platform-phase7 --publish 8080:8080 --env-file .env.render.local atron-platform:phase7
+```
+
+Em outro terminal:
+
+```powershell
+Invoke-WebRequest http://localhost:8080/api/saude
+Invoke-WebRequest http://localhost:8080/swagger/v1/swagger.json
+curl.exe --include http://localhost:8080/api/Tarefa
+curl.exe --include http://localhost:8080/Auditoria/registro/contexto
+curl.exe --include http://localhost:8080/api/Categoria
+```
+
+Resultados esperados:
+
+- `/api/saude` responde `200`;
+- o Swagger responde `200` e contém as rotas do Tracker e do Stock;
+- `/api/Tarefa` sem token responde `401`;
+- `/Auditoria/registro/contexto` sem token responde `401`;
+- `/api/Categoria` sem token responde `401`.
+
+A presença técnica das rotas do Stock não habilita card, navegação, listagem ou
+formulário de Categoria no Angular. Essa entrega funcional permanece governada
+pelo ADR 0006.
+
+O preflight CORS deve ser testado com uma origem realmente configurada:
+
+```powershell
+$headers = @{
+  Origin = "http://localhost:4200"
+  "Access-Control-Request-Method" = "GET"
+}
+Invoke-WebRequest http://localhost:8080/api/Tarefa -Method Options -Headers $headers
+```
+
+## Publicação manual no Render
+
+Esta etapa é executada somente na branch vinculada ao Web Service:
+
+1. confirme que o serviço usa o `Dockerfile` da raiz;
+2. rotacione as credenciais que já tenham sido versionadas;
+3. configure as variáveis da seção de configuração segura;
+4. registre o commit anterior ao corte como referência de rollback;
+5. publique o commit que contém o host neutro;
+6. aguarde o health check ficar saudável;
+7. execute a validação publicada;
+8. preserve a referência do último commit estável para rollback.
+
+Esta fase não cria nem aplica migrations. Antes do deploy, confirme que as
+migrations já aprovadas para Tracker, Shared e Auditoria estão aplicadas ao
+banco correto.
+
+## Validação publicada
+
+Após o deploy, valide sem registrar credenciais em comandos ou documentação:
+
+1. `GET /api/saude` responde `200`;
+2. uma origem não autorizada não recebe cabeçalhos CORS de permissão;
+3. a origem do Angular recebe o preflight esperado;
+4. uma rota protegida sem JWT responde `401`;
+5. o login gera um JWT aceito pelas rotas protegidas;
+6. sessão, tarefas, perfis de acesso e planejamento de custos mantêm os
+   contratos anteriores;
+7. `GET /api/Categoria` sem JWT responde `401`;
+8. consulta de Auditoria exige autenticação;
+9. o Swagger contém os 19 contratos HTTP já existentes do Stock;
+10. logs não exibem strings de conexão, tokens ou chaves.
+
+Valide publicação, consulta, leitura e exclusão lógica. A rota
+`/api/notificacoes/saude` comprova a conectividade do contexto de notificações;
+`/api/saude` comprova apenas a vida do processo.
+
+## Rollback
+
+O rollback da Fase 7 não exige reversão de banco porque ela não altera schema.
+
+Ordem recomendada:
+
+1. interrompa a validação funcional e preserve os logs do deploy com falha;
+2. republique o último commit estável anterior à remoção dos hosts transitórios;
+3. mantenha as mesmas variáveis de banco, JWT, CORS e e-mail;
+4. valide login, sessão e tarefas no commit restaurado;
+5. reverta o Angular somente se a URL pública da API tiver sido alterada;
+6. corrija o host neutro em uma nova mudança, sem recriar parcialmente um host
+   legado.
+
+Como alternativa de código, um commit de reversão pode restaurar integralmente
+o estado anterior às Fases 8 e 9. Não recrie manualmente apenas um executável
+antigo, pois isso pode produzir uma combinação de referências que nunca foi
+validada.
+
+## Limitações operacionais atuais
+
+- planos gratuitos podem apresentar cold start;
+- o diretório local de chaves de Data Protection do container ainda não é
+  persistente entre deploys;
+- a conectividade do `NotificacoesDbContext` deve ser verificada pela rota
+  autenticada específica;
+- logs, variáveis protegidas e histórico de deploy pertencem à operação no
+  Render.

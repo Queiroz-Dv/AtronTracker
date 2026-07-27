@@ -10,11 +10,17 @@ O produto deve crescer como uma plataforma modular, não como um conjunto solto 
 
 Os módulos de produto são:
 
-- `Atron Tracker`: gestão interna, estrutura organizacional, usuários, departamentos, cargos, tarefas, notificações, planejamentos e outras rotinas administrativas.
+- `Atron Tracker`: gestão interna, estrutura organizacional, usuários, departamentos, cargos, tarefas, planejamento de custos e outras rotinas administrativas; eventos do Tracker podem originar notificações na capacidade transversal.
 - `Atron Stock`: cadeia de suprimentos, estoque, patrimônio, bens, movimentações, fornecedores, produtos e rotinas físicas da empresa.
 - `Atron Sales`: módulo planejado para comercial e financeiro, incluindo vendas, recebimentos, contas e relatórios comerciais ou financeiros.
 
 O objetivo de evolução do projeto também é formar repertório real de arquitetura de software: escalar, manter, corrigir e documentar um sistema com qualidade e compromisso.
+
+O produto adota um monólito modular. Tracker, Stock, AtronAuditoria, Notificações Internas e o futuro Sales são compostos por um único host neutro da Atron Platform e publicados no mesmo processo. Essa unidade de execução não autoriza mistura de entidades, regras, persistência ou migrations. Os hosts transitórios, o IoC global e o host independente de notificações foram removidos conforme os ADRs 0007 e 0008.
+
+Identidade, autenticação, usuários, perfis de acesso, catálogo de módulos e estrutura funcional pertencem conceitualmente à plataforma. A implementação permanece fisicamente no Tracker durante a transição, mas módulos consumidores devem usar os contratos transversais de usuário atual e autorização por módulo, sem depender de entidades, serviços, repositórios ou DbContext internos do Tracker.
+
+A arquitetura deve priorizar baixo custo operacional e evolução incremental. Microsserviços permanecem como direção condicionada a necessidade comprovada de escala, isolamento de falhas, disponibilidade, equipe ou ciclo de publicação independente. Estudos de sistemas distribuídos podem ocorrer em Docker Compose e protótipos sem impor essa complexidade ao produto principal.
 
 ## Language
 
@@ -31,7 +37,7 @@ Empresa pequena ou operação regional que precisa controlar pessoas, tarefas, e
 _Avoid_: Grande corporação, operação sem rotina de gestão
 
 **Atron Tracker**:
-Módulo de gestão interna do Atron. Concentra estrutura organizacional, usuários, departamentos, cargos, perfis de acesso, tarefas, notificações internas, planejamento de custos e rotinas administrativas.
+Módulo de gestão interna do Atron. Concentra estrutura organizacional, usuários, departamentos, cargos, perfis de acesso, tarefas, planejamento de custos e rotinas administrativas. Pode produzir notificações, mas não é o proprietário definitivo da capacidade transversal de notificações internas.
 _Avoid_: Apenas módulo de tarefas, apenas cadastro de usuário
 
 **Atron Stock**:
@@ -41,6 +47,62 @@ _Avoid_: Apenas cadastro de produto, controle manual sem rastreabilidade, estoqu
 **Atron Sales**:
 Módulo planejado para centralizar o comercial e o financeiro do Atron. Deve ser tratado como direção futura até ter escopo formalizado em documentação própria.
 _Avoid_: Funcionalidade já implementada sem evidência, financeiro misturado sem fronteira, venda improvisada dentro de outro módulo
+
+**AtronNotificacoes**:
+Capacidade transversal in-process responsável por receber publicações, persistir o conteúdo final, consultar notificações e controlar leitura ou exclusão lógica. É composta pelo `AtronPlatform.WebApi`, mas preserva contrato, aplicação, `NotificacoesDbContext` e migrations próprios. Tracker, Stock e Sales permanecem proprietários do evento e do texto publicado.
+_Avoid_: Parte interna do Tracker, regra de negócio do produtor, DbContext compartilhado, chamada HTTP entre módulos do mesmo processo
+
+**AtronAuditoria**:
+Capacidade transversal in-process responsável por consultar ou registrar evidências de operações da plataforma. É composta exclusivamente pelo host neutro, possui contratos e persistência no `Shared` e não acessa entidades ou DbContexts dos módulos auditados.
+_Avoid_: Microsserviço apenas por possuir WebApi, acesso irrestrito aos DbContexts dos módulos, log técnico genérico, justificativa automática para outro deploy
+
+**Identidade e acesso da plataforma**:
+Capacidade central formada por autenticação, usuários, perfis de acesso, catálogo de módulos e autorização. Sua propriedade é da plataforma, mesmo enquanto a implementação permanece fisicamente no Tracker por compatibilidade. Módulos consumidores usam `IUserAccessor` e `ModuloPolicies`, não os internos do Tracker.
+_Avoid_: Identidade como domínio exclusivo do Tracker, serviço separado sem necessidade, módulo consultando repositório de perfil, configuração JWT duplicada
+
+**Estrutura funcional da plataforma**:
+Capacidade central formada por departamentos, cargos, vínculos, gestores e hierarquias usados por mais de um módulo. A implementação atual permanece no Tracker durante a transição, mas sua propriedade não se limita ao domínio de tarefas.
+_Avoid_: Estrutura funcional como detalhe de tarefa, duplicação de departamento por módulo, acesso cruzado ao AtronDbContext
+
+**Contrato de autorização por módulo**:
+Vocabulário estável de policies publicado por `Shared.Authorization.ModuloPolicies`. Cada módulo declara o código necessário sem conhecer como perfis, usuários e permissões são persistidos ou resolvidos.
+_Avoid_: String de policy montada manualmente, referência ao handler do Tracker, consulta direta a perfil de acesso
+
+**Monólito modular do Atron**:
+Arquitetura do produto principal em que Tracker, Stock e Sales são módulos de negócio separados no código, nos dados e nas regras, mas executados e publicados pelo mesmo host da plataforma. A unidade de processo reduz custo e operação sem transformar um módulo em parte interna de outro.
+_Avoid_: Projeto único sem fronteiras, Stock dentro do Tracker, monólito distribuído, microsserviços apenas por separação de processo, compartilhamento livre de entidades
+
+**Monólito modular com capacidades transversais**:
+Topologia atual do Atron em que módulos de produto e capacidades transversais são compostos pelo host neutro, preservando fronteiras lógicas e propriedade de dados dentro de um único processo.
+_Avoid_: Monólito sem fronteiras, serviço por módulo, processo separado sem autonomia, usar distribuição como sinônimo de modularidade
+
+**AtronPlatform.WebApi**:
+Host HTTP neutro responsável por compor os módulos principais, configurar autenticação, autorização, CORS, documentação e middlewares e produzir a unidade publicada. Não possui regras de negócio nem representa propriedade do Tracker, Stock ou Sales.
+_Avoid_: Novo domínio, módulo de negócio, WebApi do Tracker renomeado sem corrigir dependências, concentrador de regras
+
+**Módulo de produto**:
+Fatia vertical da plataforma que possui linguagem, regras, casos de uso, persistência, migrations, resources e testes próprios. Tracker, Stock e Sales são módulos pares e nenhum deles funciona como contêiner conceitual dos demais.
+_Avoid_: Pasta de telas, agrupamento sem domínio, módulo subordinado ao Tracker, divisão apenas por tecnologia
+
+**Fronteira de módulo**:
+Limite que impede um módulo de usar diretamente entidades, repositórios, DbContexts ou tabelas internas de outro. A colaboração ocorre por contratos de aplicação ou eventos explícitos, mesmo quando a chamada é executada no mesmo processo.
+_Avoid_: Acesso cruzado ao banco, referência direta entre domínios, Shared como atalho, integração implícita
+
+**Composição de módulo**:
+Registro de dependências mantido pelo módulo proprietário e chamado pelo host neutro, como `AddTrackerModule`, `AddStockModule` ou `AddSalesModule`. A composição expõe o necessário para executar o módulo sem publicar seus detalhes internos para os demais.
+_Avoid_: IoC global conhecendo todas as implementações, módulo registrando Infrastructure de outro, service locator
+
+**Propriedade de dados do módulo**:
+Responsabilidade exclusiva de um módulo por seu DbContext, entidades, configurações, migrations e tabelas. Os módulos podem usar a mesma instância PostgreSQL, mas não alteram ou consultam diretamente dados pertencentes a outro módulo.
+_Avoid_: Banco compartilhado sem proprietário, DbContext de outro módulo, migration transversal acidental
+
+**Serviço independente do Atron**:
+Capacidade com contrato, estado, operação e ciclo de falha próprios que possui justificativa explícita para executar fora do monólito modular. Não há serviço independente aprovado na topologia atual; novas extrações exigem evidência e ADR.
+_Avoid_: Um Web Service por pasta, microsserviço sem autonomia, processo separado com dependências internas dos módulos
+
+**Microsserviço no Atron**:
+Direção arquitetural futura condicionada a escala, isolamento, disponibilidade, propriedade de equipe, contrato estável ou ciclo de publicação independente. Vários processos interdependentes, por si só, não caracterizam a adoção aprovada de microsserviços.
+_Avoid_: Objetivo obrigatório, sinônimo de vários containers, solução automática para modularidade, experimento imposto à produção
 
 **Usuário**:
 Pessoa cadastrada no sistema que pode receber responsabilidades, acessar módulos e estar vinculada a cargo e departamento.
@@ -369,3 +431,12 @@ Especialista: A própria Maria, como usuário logado. No futuro, isso pode respe
 
 Dev: Onde a Maria altera essa preferência no front?
 Especialista: Em Configurações, dentro do módulo de usuário.
+
+Dev: Quando criarmos o Sales, ele deve ficar dentro do Tracker?
+Especialista: Não. Tracker, Stock e Sales são módulos pares compostos pelo AtronPlatform.WebApi.
+
+Dev: Se Tracker e Stock usam o mesmo processo, podem acessar os mesmos repositórios?
+Especialista: Não. O processo é compartilhado, mas entidades, DbContexts, migrations e regras continuam pertencendo ao módulo proprietário.
+
+Dev: Todo módulo novo deve receber um Web Service próprio?
+Especialista: Não. O padrão é o monólito modular; uma extração exige contrato, estado e necessidade operacional comprovados em ADR.

@@ -1,5 +1,4 @@
-using AtronNotificacoes;
-using AtronNotificacoes.Controllers;
+using AtronPlatform.WebApi.Controllers.Transversais;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
@@ -12,11 +11,11 @@ public class ProntidaoControllerTests
     [Fact]
     public void Prontidao_DeveSerEndpointProtegidoEDocumentado()
     {
-        var controllerType = typeof(ProntidaoController);
+        var controllerType = typeof(ProntidaoNotificacoesController);
 
         var authorize = controllerType.GetCustomAttribute<AuthorizeAttribute>();
         var route = controllerType.GetCustomAttribute<RouteAttribute>();
-        var action = controllerType.GetMethod(nameof(ProntidaoController.ObterProntidao));
+        var action = controllerType.GetMethod(nameof(ProntidaoNotificacoesController.ObterProntidao));
         var httpGet = action?.GetCustomAttribute<HttpGetAttribute>();
 
         Assert.NotNull(authorize);

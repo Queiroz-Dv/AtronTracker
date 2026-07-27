@@ -29,6 +29,32 @@ public class PerfilDeAcessoServiceTests
     }
 
     [Fact]
+    public async Task CriarAsync_DeveRelacionarModuloCategoria()
+    {
+        var cenario = CriarCenario();
+        cenario.Modulos
+            .Setup(repositorio => repositorio.ObterPorCodigoRepository("CAT"))
+            .ReturnsAsync(new Modulo { Id = 12, Codigo = "CAT", Descricao = "Categorias" });
+        cenario.Perfis
+            .Setup(repositorio => repositorio.CriarPerfilRepositoryAsync(It.IsAny<PerfilDeAcesso>()))
+            .ReturnsAsync(true);
+
+        var resultado = await cenario.Service.CriarAsync(new PerfilDeAcessoDTO
+        {
+            Codigo = "ESTOQUE",
+            Descricao = "Acesso ao estoque",
+            Modulos = [new ModuloDTO { Codigo = "CAT", Descricao = "Categorias" }]
+        });
+
+        Assert.True(resultado.TeveSucesso);
+        cenario.Perfis.Verify(repositorio => repositorio.CriarPerfilRepositoryAsync(
+            It.Is<PerfilDeAcesso>(perfil =>
+                perfil.PerfilDeAcessoModulos.Count == 1
+                && perfil.PerfilDeAcessoModulos.Single().ModuloId == 12
+                && perfil.PerfilDeAcessoModulos.Single().ModuloCodigo == "CAT")), Times.Once);
+    }
+
+    [Fact]
     public async Task AtualizarAsync_DeveAtualizarPerfilEInvalidarCacheDosUsuariosAfetados()
     {
         var cenario = CriarCenario();
@@ -163,6 +189,7 @@ public class PerfilDeAcessoServiceTests
             perfisUsuarios,
             usuarios,
             perfis,
+            modulos,
             cache);
     }
 
@@ -191,5 +218,6 @@ public class PerfilDeAcessoServiceTests
         Mock<IPerfilDeAcessoUsuarioRepository> PerfisUsuarios,
         Mock<IUsuarioRepository> Usuarios,
         Mock<IPerfilDeAcessoRepository> Perfis,
+        Mock<IModuloRepository> Modulos,
         Mock<ICacheUsuarioService> Cache);
 }

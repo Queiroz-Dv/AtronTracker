@@ -7,7 +7,7 @@ Ele também é uma trilha prática de formação em arquitetura de software, com
 
 ![Status do Projeto](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow)
 ![Licença](https://img.shields.io/badge/Licenca-MIT-blue)
-![.NET](https://img.shields.io/badge/.NET-8.0-purple)
+![.NET](https://img.shields.io/badge/.NET-9.0-purple)
 
 ## Visão de produto
 
@@ -29,6 +29,15 @@ Módulo destinado a suprimentos, estoque, patrimônio e bens da empresa. Cobre p
 
 Módulo planejado para comercial e financeiro. Deve concentrar vendas, recebimentos, contas, formas de pagamento e relatórios comerciais ou financeiros quando seu escopo for formalizado.
 
+## Direção arquitetural
+
+O produto principal adota um monólito modular: Tracker, Stock e o futuro Sales
+permanecem módulos pares, compostos e publicados por um único host neutro
+`AtronPlatform.WebApi`. Os hosts transitórios de Tracker, Stock, Auditoria e
+Notificações Internas foram removidos, conforme os
+[ADR 0007](docs/adr/transversais/0007-adotar-monolito-modular-com-host-neutro.md)
+e [ADR 0008](docs/adr/transversais/0008-incorporar-notificacoes-internas-ao-host-da-plataforma.md).
+
 ## Tecnologias
 
 | Tecnologia | Uso |
@@ -47,12 +56,12 @@ eventos específicos para o sistema. Adotamos então o Angular que está em `Atr
 - [CONTEXT.md](CONTEXT.md): glossário canônico e contratos duráveis de domínio.
 - [docs/visao-produto-atron.md](docs/visao-produto-atron.md): direção de produto da plataforma.
 - [docs/publicacao-render-brevo-supabase.md](docs/publicacao-render-brevo-supabase.md): manual de publicação com Render, Supabase e Brevo.
-- [docs/adr](docs/adr): decisões arquiteturais e de domínio.
+- [docs/adr](docs/adr/README.md): índice das decisões arquiteturais e de domínio, organizadas por módulo e por alcance transversal.
 - [docs/padrao-responsabilidades-servicos.md](docs/padrao-responsabilidades-servicos.md): critérios SOLID e distribuição de responsabilidades nos serviços de aplicação.
 - [docs/plano-refatoracao-servicos-aplicacao.md](docs/plano-refatoracao-servicos-aplicacao.md): fases para aplicar o padrão aos serviços do Tracker.
 - [docs/planejamento-custos-mvp.md](docs/planejamento-custos-mvp.md): contrato do módulo de planejamento de custos.
 
-## Estrutura dos projetos
+## Estrutura atual dos projetos
 
 ### Front
 
@@ -60,26 +69,32 @@ eventos específicos para o sistema. Adotamos então o Angular que está em `Atr
 
 ### Tracker
 
-- `AtronTracker/Domain`: entidades, contratos e regras centrais do Tracker.
-- `AtronTracker/Application`: casos de uso, DTOs, validações e orquestração.
-- `AtronTracker/Infrastructure`: persistência e repositórios.
-- `AtronTracker/WebApi`: API do módulo Tracker.
+- `AtronPlatform/Modules/Tracker/Domain`: entidades, contratos e regras centrais do Tracker.
+- `AtronPlatform/Modules/Tracker/Application`: casos de uso, DTOs, validações e orquestração.
+- `AtronPlatform/Modules/Tracker/Infrastructure`: persistência e repositórios.
+- `AtronPlatform/WebApi`: único host que compõe e publica Tracker, Stock, Auditoria e Notificações Internas.
 
 ### Stock
 
-- `AtronStock/Domain`: domínio de estoque, suprimentos e bens.
-- `AtronStock/Application`: serviços e validações do Stock.
-- `AtronStock/Infrastructure`: persistência e repositórios.
-- `AtronStock/WebApi`: API do módulo Stock.
+- `AtronPlatform/Modules/Stock/Domain`: domínio de estoque, suprimentos e bens.
+- `AtronPlatform/Modules/Stock/Application`: serviços e validações do Stock.
+- `AtronPlatform/Modules/Stock/Infrastructure`: persistência, migrations,
+  repositórios e composição `AddStockModule`.
+- `AtronPlatform/WebApi/Controllers/Stock`: controllers HTTP do módulo no host
+  neutro.
 
 ### Framework
 
 - [Framework/Shared](Framework/Shared/README.md): utilitários, recursos e componentes compartilhados.
-- [Framework/IoC](Framework/IoC/README.md): injeção de dependência.
+- `Framework/AtronNotificacoes`: capacidade transversal in-process, com contratos,
+  aplicação, persistência e migrations próprios.
 
 ## Persistência
 
-O projeto partiu do SQL Server, mas foi reestruturado para usar PostgreSQL como banco alvo do deploy. As migrations ativas ficam nos projetos `*.Migrations`.
+O projeto partiu do SQL Server, mas foi reestruturado para usar PostgreSQL como
+banco alvo do deploy. Cada DbContext mantém migrations sob seu proprietário:
+Tracker e Stock em suas respectivas Infrastructures, Auditoria em
+`Framework.Shared.Migrations` e AtronNotificacoes em seu Core.
 
 ## Configuração sensível
 
@@ -89,8 +104,7 @@ O passo a passo de publicação e o racional dos provedores estão em [docs/publ
 
 Variáveis principais:
 
-- `ConnectionStrings__DefaultConnection`: string de conexão do PostgreSQL/Supabase.
-- `ConnectionString`: fallback legado para a mesma conexão, quando necessário.
+- `ATRON_CONNECTION_STRING`: string de conexão canônica do PostgreSQL/Supabase.
 - `Jwt__SecretKey`: chave de assinatura dos tokens.
 - `EmailSettings__Brevo__ApiKey`: chave da Brevo, se o provedor de e-mail estiver ativo.
 - `EmailSettings__Password`: senha SMTP, se o provedor SMTP estiver ativo.
@@ -99,7 +113,7 @@ Variáveis principais:
 
 1. Instale o .NET SDK e as dependências do Angular.
 2. Configure as strings de conexão e ambientes conforme o módulo desejado.
-3. Rode a WebApi correspondente ao módulo.
+3. Rode `AtronPlatform/WebApi/AtronPlatform.WebApi.csproj` para o núcleo da plataforma.
 4. Entre em `AtronFront` e execute:
 
 ```powershell

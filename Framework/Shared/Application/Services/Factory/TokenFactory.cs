@@ -10,7 +10,8 @@ namespace Shared.Application.Services.Factory
     public class TokenFactory : TokenBuilder, ITokenFactoryService
     {
         public TokenFactory(IConfiguration configuration,
-            IAccessorService serviceAccessor) : base(configuration, serviceAccessor) { }
+            IRefreshTokenUnicidadeService refreshTokenUnicidadeService)
+            : base(configuration, refreshTokenUnicidadeService) { }
 
         public async Task<DadosDeTokenComRefreshToken> ObterDadosDoTokenAsync(DadosComplementaresDoUsuarioDTO dadosComplementaresDoUsuarioDTO)
         {

@@ -1,0 +1,237 @@
+﻿using Application.DTO.Request;
+using Application.Email.Compositores;
+using Application.Interfaces.ApplicationInterfaces;
+using Application.Interfaces.Contexts;
+using Application.Interfaces.Services;
+using Application.Interfaces.Services.Identity;
+using Application.Mapping;
+using Application.Services;
+using Application.Services.AuthServices;
+using Application.Services.Contexts;
+using Application.Services.EntitiesServices;
+using Application.Services.EntitiesServices.PerfisDeAcesso;
+using Application.Services.EntitiesServices.PlanejamentoCustos;
+using Application.Services.EntitiesServices.Tarefas;
+using Application.Services.Identity;
+using Application.UseCases.TarefaCases;
+using Application.UseCases.UsuarioCases;
+using Application.Validador;
+using AtronTracker.Infrastructure.Context;
+using AtronTracker.Infrastructure.Identity;
+using Domain.Entities;
+using Domain.Interfaces;
+using Domain.Interfaces.ApplicationInterfaces;
+using Domain.Interfaces.Identity;
+using Domain.Interfaces.UsuarioInterfaces;
+using Infrastructure.Repositories;
+using Infrastructure.Repositories.ApplicationRepositories;
+using Infrastructure.Repositories.Identity;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Shared.Application.DTOS.Auth;
+using Shared.Application.Interfaces.Service;
+using Shared.Domain.Entities.Identity;
+using Shared.Infrastructure.Configuration;
+using System;
+using System.IO;
+
+namespace AtronTracker.Infrastructure
+{
+    public static class TrackerModuleServiceCollectionExtensions
+    {
+        public static IServiceCollection AddTrackerModule(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.TryAddSingleton<IAtronConnectionStringProvider, AtronConnectionStringProvider>();
+
+            var database = DatabaseProviderResolver.Resolve(configuration);
+            var migrationsAssembly = typeof(AtronDbContext).Assembly.GetName().Name!;
+
+            services.AddDbContext<AtronDbContext>(options =>
+                options.UseConfiguredDatabase(database, migrationsAssembly));
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                    .AddEntityFrameworkStores<AtronDbContext>()
+                    .AddDefaultTokenProviders();
+
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(24);
+            });
+
+            services.AddTrackerSharedAdapters();
+            services.AddTrackerMappings();
+            services.AddTrackerValidations();
+            services.AddTrackerAuthorization();
+            ConfigureModuloServices(services);
+            ConfigureTarefaServices(services);
+            ConfigureDepartamentoServices(services);
+            ConfigureCargoServices(services);
+            ConfigurePlanejamentoCustoServices(services);
+            ConfigureUsuarioServices(services);
+            ConfigureUsuarioCargoDepartamentoServices(services);
+            ConfigureTarefaRepositoryServices(services);
+            ConfigureDefaultUserRoleServices(services);
+            ConfigureAuthenticationServices(services);
+            ConfigurePerfilDeAcessoServices(services);
+            ConfigurePerfilDeAcessoUsuarioServices(services);
+
+
+            services.AddDataProtection()
+                .SetApplicationName("Atron")
+                .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
+                .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+            return services;
+        }
+
+        private static void AddTrackerSharedAdapters(this IServiceCollection services)
+        {
+            services.AddScoped<ILoginContext, LoginContext>();
+            services.AddScoped<IUsuarioContext, UsuarioContext>();
+            services.AddScoped<IControleDeSessaoContext, ControleDeSessaoContext>();
+            services.AddScoped<ICacheUsuarioService, CacheUsuarioService>();
+            services.AddScoped<IDadosComplementaresDoUsuarioService, DadosComplementaresDoUsuarioService>();
+            services.AddScoped<IUserIdentityService, UserIdentityService>();
+            services.AddScoped<IUsuarioIdentityRepository, UserIdentityRepository>();
+            services.AddScoped<IRefreshTokenUnicidadeService, RefreshTokenUnicidadeService>();
+        }
+
+        private static void ConfigurePerfilDeAcessoUsuarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IPerfilDeAcessoUsuarioRepository, PerfilDeAcessoUsuarioRepository>();
+        }
+
+        private static void ConfigureUsuarioCargoDepartamentoServices(IServiceCollection services)
+        {
+            services.AddScoped<IUsuarioCargoDepartamentoRepository, UsuarioCargoDepartamentoRepository>();
+        }
+
+        private static void ConfigureAuthenticationServices(IServiceCollection services)
+        {
+            services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<ILoginRepository, LoginRepository>();
+
+            services.AddScoped(provider => new CadastroUsuarioContext(
+                provider.GetRequiredService<IUsuarioRepository>(),
+                provider.GetRequiredService<IPerfilDeAcessoUsuarioRepository>(),
+                provider.GetRequiredService<IPerfilDeAcessoRepository>(),
+                provider.GetRequiredService<IUsuarioIdentityRepository>(),
+                provider.GetRequiredService<IEmailService>(),
+                provider.GetRequiredService<IAcessoEmailCompositor>(),
+                provider.GetRequiredService<IValidador<UsuarioRegistroRequest>>(),
+                provider.GetRequiredService<IHttpContextAccessor>(),
+                provider.GetRequiredService<IConfirmacaoEmailRepository>(),
+                provider.GetRequiredService<IConfirmacaoEmailCodigoService>()));
+
+            services.AddScoped(provider => new RecuperacaoSenhaContext(
+                provider.GetRequiredService<IUsuarioRepository>(),
+                provider.GetRequiredService<IUsuarioIdentityRepository>(),
+                provider.GetRequiredService<ILoginRepository>(),
+                provider.GetRequiredService<ICacheService>(),
+                provider.GetRequiredService<IEmailService>(),
+                provider.GetRequiredService<IAcessoEmailCompositor>(),
+                provider.GetRequiredService<IHttpContextAccessor>()));
+
+            services.AddScoped<ICadastroUsuarioService, CadastroUsuarioService>();
+            services.AddScoped<IRecuperacaoSenhaService, RecuperacaoSenhaService>();
+            services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
+            services.AddScoped<IAcessoEmailCompositor, AcessoEmailCompositor>();
+            services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
+            services.AddScoped<IValidador<DadosDoTokenDTO>, DadosDoTokenValidador>();
+            services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidador>();
+        }
+
+        private static void ConfigureDefaultUserRoleServices(IServiceCollection services)
+        {
+            services.AddScoped<ICreateDefaultUserRoleRepository, CreateDefaultUserRoleRepository>();
+        }
+
+        private static void ConfigureTarefaRepositoryServices(IServiceCollection services)
+        {
+            services.AddScoped<ITarefaRepository, TarefaRepository>();
+            services.AddScoped<ITarefaMovimentacaoRepository, TarefaMovimentacaoRepository>();
+            services.AddScoped<ISolicitacaoObtencaoTarefaRepository, SolicitacaoObtencaoTarefaRepository>();
+            services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
+            services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
+            services.AddScoped<ITarefaObtencaoValidador, TarefaObtencaoValidador>();
+            services.AddScoped<IAprovadorObtencaoTarefaResolver, AprovadorObtencaoTarefaResolver>();
+            services.AddScoped<ISolicitacaoObtencaoTarefaMapeador, SolicitacaoObtencaoTarefaMapeador>();
+            services.AddScoped<ITarefaNotificacaoInternaService, TarefaNotificacaoInternaService>();
+            services.AddScoped<ITarefaUsuarioAtualService, TarefaUsuarioAtualService>();
+            services.AddScoped<ITarefaConfiguracoesService, TarefaConfiguracoesService>();
+            services.AddScoped<ITarefaObtencaoService, TarefaObtencaoService>();
+            services.AddScoped<ITarefaMovimentacaoService, TarefaMovimentacaoService>();
+            services.AddScoped<ITarefaEmailCompositor, TarefaEmailCompositor>();
+            services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
+            services.AddScoped<CriarTarefa>();
+            services.AddScoped<ITarefaService, TarefaService>();
+        }
+
+        private static void ConfigureUsuarioServices(IServiceCollection services)
+        {
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<CriarUsuario>();
+            services.AddScoped<AtualizarUsuario>();
+            services.AddScoped<RemoverUsuario>();
+            services.AddScoped<DesativarUsuario>();
+            services.AddScoped<SolicitarReativacao>();
+            services.AddScoped<ReativarUsuario>();
+            services.AddScoped<ObterUsuario>();
+            services.AddScoped<AlterarEmail>();
+            services.AddScoped<ConfirmarAlteracaoEmail>();
+            services.AddScoped<ReenviarConfirmacaoEmail>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<IConfirmacaoEmailRepository, ConfirmacaoEmailRepository>();
+            services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
+            services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
+            services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();
+        }
+
+        private static void ConfigureCargoServices(IServiceCollection services)
+        {
+            services.AddScoped<ICargoRepository, CargoRepository>();
+            services.AddScoped<ICargoService, CargoService>();
+        }
+
+        private static void ConfigurePlanejamentoCustoServices(IServiceCollection services)
+        {
+            services.AddScoped<IPlanejamentoCustoRepository, PlanejamentoCustoRepository>();
+            services.AddScoped<EstruturaPlanejadaPolicy>();
+            services.AddScoped<IPlanejamentoCustoPreparacaoService, PlanejamentoCustoPreparacaoService>();
+            services.AddScoped<IPlanejamentoCustoRelatorioService, PlanejamentoCustoRelatorioService>();
+            services.AddScoped<IPlanejamentoCustoRelatorioImpressaoService, PlanejamentoCustoRelatorioImpressaoService>();
+            services.AddScoped<IPlanejamentoCustoService, PlanejamentoCustoService>();
+        }
+
+        private static void ConfigureDepartamentoServices(IServiceCollection services)
+        {
+            services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
+            services.AddScoped<IDepartamentoService, DepartamentoService>();
+        }
+
+        private static void ConfigureModuloServices(IServiceCollection services)
+        {
+            services.AddScoped<IModuloRepository, ModuloRepository>();
+            services.AddScoped<IModuloService, ModuloService>();
+        }
+
+        private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
+        {
+            services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
+            services.AddScoped<IPerfilDeAcessoPreparacaoService, PerfilDeAcessoPreparacaoService>();
+            services.AddScoped<IPerfilDeAcessoCacheInvalidator, PerfilDeAcessoCacheInvalidator>();
+            services.AddScoped<IPerfilDeAcessoUsuarioRelacionamentoService, PerfilDeAcessoUsuarioRelacionamentoService>();
+            services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
+        }
+
+        private static void ConfigureTarefaServices(IServiceCollection services)
+        {
+            services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
+        }
+    }
+}

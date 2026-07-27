@@ -1,5 +1,4 @@
 export const environment = {
-  apiRoute: 'https://localhost:44316/',
-  apiLocalRoute: 'https://localhost:44316/',
-  notificacoesApiRoute: 'https://localhost:7090/',
+  apiRoute: 'https://localhost:7180/',
+  apiLocalRoute: 'https://localhost:7180/',
 }

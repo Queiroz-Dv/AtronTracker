@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AtronTracker\Application\Application.csproj" />
+    <ProjectReference Include="..\..\AtronPlatform\Modules\Tracker\Application\AtronTracker.Application.csproj" />
+    <ProjectReference Include="..\..\AtronPlatform\Modules\Tracker\Infrastructure\AtronTracker.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

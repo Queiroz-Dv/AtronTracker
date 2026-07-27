@@ -1,5 +1,10 @@
 # Plano de evolução das notificações internas e dos testes
 
+> Documento histórico das fases executadas em julho de 2026. A topologia HTTP,
+> o cliente interno e o host independente descritos abaixo foram substituídos
+> pelo ADR 0008. Os contratos, dados, migrations e comportamentos funcionais
+> continuam válidos.
+
 ## Objetivo
 
 Concluir a extração das notificações internas do Tracker, permitir publicação por qualquer módulo sem acoplamento a entidades produtoras e centralizar projetos de teste com nomes curtos por módulo.
@@ -11,7 +16,10 @@ Concluir a extração das notificações internas do Tracker, permitir publicaç
 - Cada produtor mantém a decisão de publicar, destinatário, texto final, URL e referência opaca.
 - A publicação de eventos consultivos não reverte a transação do produtor.
 - Os testes têm nomes por módulo e funções em pastas, não um projeto por funcionalidade pequena.
-- Migrations são responsabilidade de `AtronNotificacoes.Infrastructure` e ficam na pasta `Migrations/` desse projeto; não haverá projeto `AtronNotificacoes.Infrastructure.Migrations`.
+- Migrations são responsabilidade da Infrastructure interna do
+  `AtronNotificacoes.Core` e ficam em
+  `Framework/AtronNotificacoes/Infrastructure/Migrations`; não haverá projeto
+  separado apenas para migrations.
 
 ## Fase 0: Consolidar linha de base e documentação
 

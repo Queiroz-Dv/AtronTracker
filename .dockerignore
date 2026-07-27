@@ -7,6 +7,10 @@
 **/node_modules
 **/dist
 **/.angular
+**/.env
+**/.env.*
+**/appsettings.Local.json
+**/keys
 artifacts
 *.user
 *.suo

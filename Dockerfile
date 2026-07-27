@@ -4,8 +4,8 @@ WORKDIR /src
 
 COPY . .
 
-RUN dotnet restore "AtronTracker/WebApi/WebApi.csproj"
-RUN dotnet publish "AtronTracker/WebApi/WebApi.csproj" \
+RUN dotnet restore "AtronPlatform/WebApi/AtronPlatform.WebApi.csproj"
+RUN dotnet publish "AtronPlatform/WebApi/AtronPlatform.WebApi.csproj" \
     --configuration Release \
     --output /app/publish \
     --no-restore \
@@ -22,4 +22,4 @@ COPY --from=build /app/publish .
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "dotnet WebApi.dll --urls http://0.0.0.0:${PORT:-8080}"]
+CMD ["sh", "-c", "dotnet AtronPlatform.WebApi.dll --urls http://0.0.0.0:${PORT:-8080}"]

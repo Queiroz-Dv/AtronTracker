@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AtronNotificacoes\AtronNotificacoes.csproj" />
+    <ProjectReference Include="..\..\AtronPlatform\WebApi\AtronPlatform.WebApi.csproj" />
     <ProjectReference Include="..\..\Framework\AtronNotificacoes\AtronNotificacoes.Core.csproj" />
   </ItemGroup>
 </Project>
