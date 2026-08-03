@@ -22,7 +22,9 @@ public sealed class NotificacoesDbContextFactory : IDesignTimeDbContextFactory<N
 
     private static string ObterConnectionString()
     {
-        var variavelAmbiente = Environment.GetEnvironmentVariable("NOTIFICACOES_CONNECTION_STRING");
+        var variavelAmbiente =
+            Environment.GetEnvironmentVariable("ATRON_CONNECTION_STRING")
+            ?? Environment.GetEnvironmentVariable("NOTIFICACOES_CONNECTION_STRING");
         if (!string.IsNullOrWhiteSpace(variavelAmbiente))
             return variavelAmbiente;
 
@@ -40,11 +42,15 @@ public sealed class NotificacoesDbContextFactory : IDesignTimeDbContextFactory<N
     {
         for (var diretorio = new DirectoryInfo(Directory.GetCurrentDirectory()); diretorio is not null; diretorio = diretorio.Parent)
         {
-            var candidato = Path.Combine(diretorio.FullName, "AtronNotificacoes", "appsettings.json");
+            var candidato = Path.Combine(
+                diretorio.FullName,
+                "AtronPlatform",
+                "WebApi",
+                "appsettings.json");
             if (File.Exists(candidato))
                 return candidato;
         }
 
-        throw new InvalidOperationException("Defina NOTIFICACOES_CONNECTION_STRING ou disponibilize AtronNotificacoes/appsettings.json em um diretório ancestral.");
+        throw new InvalidOperationException("Defina ATRON_CONNECTION_STRING ou disponibilize AtronPlatform/WebApi/appsettings.json em um diretório ancestral.");
     }
 }

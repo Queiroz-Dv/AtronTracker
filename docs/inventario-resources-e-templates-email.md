@@ -10,9 +10,10 @@ A contagem e diagnostica, nao um criterio isolado de qualidade. Um mesmo literal
 
 Foram analisados arquivos `.cs` de:
 
-- `AtronTracker/Application` e `AtronTracker/WebApi`;
-- `AtronStock/Application` e `AtronStock/WebApi`;
-- `AtronEmail` e `AtronAuditoria`;
+- `AtronPlatform/Modules/Tracker/Application` e controllers de Tracker em `AtronPlatform/WebApi`;
+- `AtronPlatform/Modules/Stock/Application` e controllers de Stock em
+  `AtronPlatform/WebApi`;
+- capacidades de e-mail e Auditoria em `Framework/Shared`;
 - `Framework/Shared/Application` e `Framework/Shared/Domain`.
 
 Foram excluidos `bin`, `obj`, migrations, snapshots e codigo gerado. A busca direta considera strings literais usadas em:
@@ -33,11 +34,11 @@ No estado registrado em 15/07/2026, a busca encontrou 195 ocorrencias diretas em
 | Area | Ocorrencias diretas | Arquivos | Classificacao predominante |
 |---|---:|---:|---|
 | AtronTracker Application | 137 | 28 | Produto, validacao, notificacao interna e e-mail |
-| AtronTracker WebApi | 6 | 4 | Resposta transversal de controller |
+| AtronPlatform WebApi, controllers do Tracker | 6 | 4 | Resposta transversal de controller |
 | AtronStock Application | 27 | 2 | Validacao de produto |
-| AtronStock WebApi | 2 | 2 | Resposta transversal de controller |
+| AtronPlatform WebApi, controllers de Stock | 2 | 2 | Resposta transversal de controller |
 | AtronEmail | 2 | 1 | Diagnostico tecnico observavel |
-| AtronAuditoria | 0 | 0 | Sem candidata direta |
+| Auditoria transversal | 0 | 0 | Sem candidata direta |
 | Framework Shared Application | 9 | 4 | Diagnostico e transporte de e-mail |
 | Framework Shared Domain | 12 | 4 | Mensagens genericas e constantes de protocolo |
 | Total | 195 | 45 | A classificar e migrar por fase |

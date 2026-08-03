@@ -3,11 +3,11 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'; 
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from '@angular/material/snack-bar'; 
 import { importProvidersFrom } from '@angular/core'; 
 import { MatPaginatorIntl } from '@angular/material/paginator';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 function criarPaginadorPtBr(): MatPaginatorIntl {
   const paginador = new MatPaginatorIntl();

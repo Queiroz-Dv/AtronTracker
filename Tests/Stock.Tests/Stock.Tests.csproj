@@ -16,6 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AtronStock\Application\AtronStock.Application.csproj" />
+    <ProjectReference Include="..\..\AtronPlatform\Modules\Stock\Application\AtronStock.Application.csproj" />
   </ItemGroup>
 </Project>

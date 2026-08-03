@@ -21,7 +21,7 @@ Devem ser removidos:
 - vinculos de permissao/perfil relacionados ao modulo de salarios;
 - codigo de modulo antigo de salarios no catalogo de modulos.
 
-Os valores antigos de salario nao serao migrados para o novo planejamento. A decisao esta registrada em [ADR 0001](./adr/0001-substituir-salarios-por-planejamento-de-custos.md).
+Os valores antigos de salario nao serao migrados para o novo planejamento. A decisao esta registrada em [ADR 0001](./adr/tracker/0001-substituir-salarios-por-planejamento-de-custos.md).
 
 ## Modulo e acesso
 

@@ -12,22 +12,19 @@ A tabela foi removida somente após a criação de `Notificacoes`. O registro de
 
 ## Ordem de implantação
 
-1. Aplicar as migrations do `AtronNotificacoes` no Supabase compartilhado. A central usa a tabela própria `Notificacoes` e o histórico `__AtronNotificacoesMigrationsHistory`, sem conflito com o legado `NotificacoesInternas`.
-2. Configurar `NotificacoesInternas:BaseUrl` e as credenciais de serviço no Tracker e no host de notificações.
-3. Configurar a URL da central no ambiente Angular e liberar somente essa origem no CORS do host de notificações.
-4. Validar no navegador autenticado a consulta, a marcação individual, a marcação total e os deep links usando `api/notificacoes` diretamente.
-5. Confirmar que `NotificacoesInternas` contém apenas dados de teste.
-6. Remover a tabela de teste após a criação bem-sucedida de `Notificacoes`.
-7. Remover o fluxo legado do Tracker na fase seguinte.
-8. Monitorar publicação e consulta na central antes de encerrar a transição.
+1. Aplicar as migrations do Core de AtronNotificacoes no Supabase compartilhado. A capacidade usa a tabela própria `Notificacoes` e o histórico `__AtronNotificacoesMigrationsHistory`.
+2. Publicar `AtronPlatform.WebApi`, que compõe a capacidade in-process.
+3. Apontar o Angular para a `apiRoute` do Platform.
+4. Validar no navegador autenticado consulta, marcação individual, marcação total, exclusão e deep links.
+5. Monitorar os contadores de publicação e falha no processo do Platform.
 
 ## Critérios para retirada do legado
 
 Antes de remover o fluxo legado do Tracker, confirmar todos os itens abaixo:
 
 - a tabela central `Notificacoes` está disponível e a migration inicial consta como aplicada;
-- a central responde à consulta e às duas operações de leitura com JWT de usuário;
-- o Angular em cada ambiente configurado usa a URL da central, sem chamadas a `api/NotificacaoInterna`;
+- o Platform responde à consulta e às duas operações de leitura com JWT de usuário;
+- o Angular em cada ambiente configurado usa a URL do Platform, sem uma URL exclusiva de notificações;
 - o plano de reversão informa como restaurar temporariamente a fachada sem recriar a tabela legada;
 - os indicadores de publicação e falha permaneceram estáveis durante a janela acordada.
 

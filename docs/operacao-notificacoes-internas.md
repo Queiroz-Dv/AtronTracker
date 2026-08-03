@@ -2,7 +2,7 @@
 
 ## Indicadores
 
-O host `AtronNotificacoes` expõe as métricas nativas do .NET no medidor `Atron.Notificacoes`, versão `1.0.0`.
+O host `AtronPlatform.WebApi` expõe as métricas da capacidade no medidor `Atron.Notificacoes`, versão `1.0.0`.
 
 | Instrumento | Tipo | Uso |
 | --- | --- | --- |
@@ -15,15 +15,20 @@ O log estruturado da publicação inclui módulo, evento e correlação. Falhas 
 
 ## Saúde operacional
 
-`GET /api/notificacoes/saude` verifica a conectividade com o banco central. O endpoint exige a política `PublicadorDeNotificacoes`, portanto somente token de serviço com `tipo_token=servico` e `escopo=notificacoes.publicar` pode consultá-lo. Ele não substitui nem recria o endpoint de teste de banco removido do Tracker.
+`GET /api/notificacoes/saude` verifica exclusivamente a conectividade do
+`NotificacoesDbContext` e exige autenticação normal da plataforma.
+`GET /api/saude` permanece como liveness anônimo do processo e não inclui essa
+checagem de banco.
 
-`GET /api/notificacoes/prontidao` permanece protegido e indica que o host foi iniciado. A checagem de saúde deve ser usada por infraestrutura com a credencial de serviço, nunca pelo navegador público.
+`GET /api/notificacoes/prontidao` permanece protegido e indica que a capacidade
+foi composta pelo host.
 
 ## Consumo pelo Angular
 
-O Angular consulta a central diretamente pelas rotas `GET /api/notificacoes`, `POST /api/notificacoes/{id}/marcar-como-lida`, `POST /api/notificacoes/marcar-todas-como-lidas` e `DELETE /api/notificacoes/{id}`. A URL do host é configurada por ambiente e não deve ser inferida a partir da URL do Tracker.
+O Angular consulta as rotas `GET /api/notificacoes`, `POST /api/notificacoes/{id}/marcar-como-lida`, `POST /api/notificacoes/marcar-todas-como-lidas` e `DELETE /api/notificacoes/{id}` pela mesma `apiRoute` do Platform.
 
-O CORS da central deve permitir apenas as origens publicadas do Angular. A requisição envia o JWT de usuário; token de serviço não pode consultar nem alterar o estado de leitura. Durante a transição, monitorar chamadas ao endpoint legado do Tracker para confirmar que ele pode ser removido após a janela de compatibilidade.
+O CORS é configurado uma única vez no Platform. A requisição envia o JWT de
+usuário e a policy exige `CodigoUsuario`.
 
 ## Retenção
 

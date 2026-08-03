@@ -1,9 +1,9 @@
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, filter, finalize, Observable, switchMap, take, throwError } from "rxjs";
-import { SessaoInfoService } from "../../shared/services/sessaoInfo.service";
-import { RotasApi } from "../../shared/models/rotas-api.model";
+import { SessaoInfoService } from "../services/sessaoInfo.service";
 import { Router } from "@angular/router";
+import { RotasApi } from "../../shared/models/rotas-api.model";
 
 export enum HeaderInfo {
   refreshToken = 'XUSRRTK',

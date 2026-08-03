@@ -31,11 +31,11 @@ A exclusão não faz parte do contrato de publicação e não adiciona entidades
 ## Autenticação e falha
 
 - Consulta, marcação de leitura e exclusão usam o JWT do usuário, com o claim CODIGO_USUARIO.
-- Publicação usa token de serviço com a audiência `atron-notificacoes`, emissor e chave próprios, os claims `tipo_token=servico` e `escopo=notificacoes.publicar`.
-- Consulta, marcação e exclusão aceitam somente JWT de usuário com o claim CODIGO_USUARIO; o token de serviço não possui acesso a essas operações.
-- O adaptador compartilhado `AtronNotificacoes.Client` emite o token por cinco minutos, envia o `CorrelacaoId` também no cabeçalho `X-Correlation-Id` e retorna falha consultiva para indisponibilidade ou recusa HTTP.
-- Até haver uma política específica aprovada, falha de publicação é consultiva: o caso de uso produtor preserva sua transação e registra aviso ou telemetria.
-- Não há transação distribuída entre produtor e módulo de notificações.
+- Publicação é uma colaboração in-process por `INotificacoesInternasPublisher` e não possui endpoint HTTP público.
+- Consulta, marcação e exclusão aceitam somente JWT de usuário autenticado com o claim CODIGO_USUARIO.
+- O publicador cria um escopo próprio com a transação ambiente suprimida e retorna resultado consultivo.
+- Uma falha ao persistir a notificação não desfaz a transação do caso de uso produtor.
+- `CorrelacaoId` continua persistido para rastreabilidade, sem cabeçalho HTTP interno.
 
 ## Identificadores
 
