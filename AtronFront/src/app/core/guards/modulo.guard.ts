@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { catchError, map, Observable, of, take } from 'rxjs';
-import { AcessoService } from '../../features/acesso/login/services/acesso.service';
+import { AcessoService } from '../services/acesso.service';
 
 @Injectable({ providedIn: 'root' })
 export class ModuloGuard implements CanActivate {

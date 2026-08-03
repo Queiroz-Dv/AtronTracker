@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, fromEvent, interval, Subscription } from 'rxjs';
 import { MaterialContainerModule } from './material-container.module';
-import { AcessoService } from './features/acesso/login/services/acesso.service';
-import { NotificacaoInterna, normalizarTextoNotificacao } from './features/notificacoes/models/notificacao-interna.model';
-import { NotificacaoInternaService } from './features/notificacoes/services/notificacao-interna.service';
+import { NotificacaoInterna, normalizarTextoNotificacao } from './plataforma/notificacoes/models/notificacao-interna.model';
+import { AcessoService } from './core/services/acesso.service';
+import { NotificacaoInternaService } from './plataforma/notificacoes/services/notificacao-interna.service';
 
 @Component({
   standalone: true,

@@ -8,14 +8,9 @@ using Shared.Infrastructure.DependencyInjection;
 
 namespace AtronPlatform.WebApi;
 
-public class Startup
+public class Startup(IConfiguration configuration)
 {
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
-    public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; } = configuration;
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -47,15 +42,16 @@ public class Startup
         if (environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron Platform API v1"));
         }
         else
         {
+            // Força o uso de HTTPS e HSTS em produção
             app.UseHsts();
         }
 
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron Platform API v1"));
         app.UseReDoc(options =>
         {
             options.RoutePrefix = "docs";
