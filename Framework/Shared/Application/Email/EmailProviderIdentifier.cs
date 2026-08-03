@@ -17,21 +17,21 @@ namespace Shared.Application.Email
         private static readonly Dictionary<string, EmailProvider> DomainToProvider = new(StringComparer.OrdinalIgnoreCase)
         {
             // Gmail
-            { EmailResource.GmailProvider, EmailProvider.Gmail },
-            { EmailResource.GoogleMailProvider, EmailProvider.Gmail },
+            { EmailTransportCatalog.GmailDomain, EmailProvider.Gmail },
+            { EmailTransportCatalog.GoogleMailDomain, EmailProvider.Gmail },
 
             // Outlook / Microsoft family
-            { EmailResource.OutlookProvider, EmailProvider.Outlook },
-            { EmailResource.OutlookBrProvider, EmailProvider.Outlook },
-            { EmailResource.HotmailProvider, EmailProvider.Outlook },
-            { EmailResource.HotmailBrProvider, EmailProvider.Outlook },
-            { EmailResource.LiveProvider, EmailProvider.Outlook },
-            { EmailResource.MsnProvider, EmailProvider.Outlook },
+            { EmailTransportCatalog.OutlookDomain, EmailProvider.Outlook },
+            { EmailTransportCatalog.OutlookBrazilDomain, EmailProvider.Outlook },
+            { EmailTransportCatalog.HotmailDomain, EmailProvider.Outlook },
+            { EmailTransportCatalog.HotmailBrazilDomain, EmailProvider.Outlook },
+            { EmailTransportCatalog.LiveDomain, EmailProvider.Outlook },
+            { EmailTransportCatalog.MsnDomain, EmailProvider.Outlook },
 
             // Yahoo family
-            { EmailResource.YahooProvider, EmailProvider.Yahoo },
-            { EmailResource.YahooBrProvider, EmailProvider.Yahoo },
-            { EmailResource.YahooMailProvider, EmailProvider.Yahoo }
+            { EmailTransportCatalog.YahooDomain, EmailProvider.Yahoo },
+            { EmailTransportCatalog.YahooBrazilDomain, EmailProvider.Yahoo },
+            { EmailTransportCatalog.YahooMailDomain, EmailProvider.Yahoo }
         };
 
         /// <summary>
@@ -39,9 +39,9 @@ namespace Shared.Application.Email
         /// </summary>
         private static readonly Dictionary<EmailProvider, EmailProviderSettings> ProviderSettings = new()
         {
-            { EmailProvider.Gmail, new EmailProviderSettings(EmailResource.GoogleSmtp) },
-            { EmailProvider.Outlook, new EmailProviderSettings(EmailResource.OutlookSmtp) },
-            { EmailProvider.Yahoo, new EmailProviderSettings(EmailResource.YahooSmtp) }
+            { EmailProvider.Gmail, new EmailProviderSettings(EmailTransportCatalog.GmailSmtpHost) },
+            { EmailProvider.Outlook, new EmailProviderSettings(EmailTransportCatalog.OutlookSmtpHost) },
+            { EmailProvider.Yahoo, new EmailProviderSettings(EmailTransportCatalog.YahooSmtpHost) }
         };
 
         /// <summary>

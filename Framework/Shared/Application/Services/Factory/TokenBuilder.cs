@@ -1,4 +1,3 @@
-﻿using Domain.Interfaces.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Application.Interfaces.Service;
@@ -13,13 +12,14 @@ namespace Shared.Application.Services.Factory
     public class TokenBuilder
     {
         private readonly IConfiguration _configuration;
-        private readonly IAccessorService _serviceAccessor;
+        private readonly IRefreshTokenUnicidadeService _refreshTokenUnicidadeService;
 
-        public TokenBuilder(IConfiguration configuration,
-                            IAccessorService serviceAccessor)
+        public TokenBuilder(
+            IConfiguration configuration,
+            IRefreshTokenUnicidadeService refreshTokenUnicidadeService)
         {
             _configuration = configuration;
-            _serviceAccessor = serviceAccessor;
+            _refreshTokenUnicidadeService = refreshTokenUnicidadeService;
         }
 
         protected string CriarJwtToken(IEnumerable<Claim> claims, DateTime expiration)
@@ -27,21 +27,14 @@ namespace Shared.Application.Services.Factory
             var secretKey = _configuration.GetSecretKey();
             var audience = _configuration.GetAudience();
             var issuer = _configuration.GetIssuer();
-
-            // Gerar chave privada e assinar o token
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
-            // Gerar a assinatura digital do token
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            // Gerar o token
             var tokenDescriptor = new JwtSecurityToken(
                 issuer,
                 audience,
                 claims,
                 expires: expiration,
-                signingCredentials: credentials
-            );
+                signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
@@ -55,14 +48,12 @@ namespace Shared.Application.Services.Factory
             }
 
             var refreshToken = Convert.ToBase64String(randomNumber);
-
-            // Opcional: Validar no banco se já existe um igual (chance quase zero, mas por segurança)
-            var userIdentityRepo = _serviceAccessor.ObterService<IUsuarioIdentityRepository>();
-            var refreshTokenExiste = await userIdentityRepo.RefreshTokenExisteRepositoryAsync(refreshToken);
+            var refreshTokenExiste =
+                await _refreshTokenUnicidadeService.ExisteAsync(refreshToken);
 
             if (refreshTokenExiste)
             {
-                return await CriarRefreshToken(); // Recursividade controlada
+                return await CriarRefreshToken();
             }
 
             return refreshToken;
@@ -75,10 +66,16 @@ namespace Shared.Application.Services.Factory
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+                var principal = tokenHandler.ValidateToken(
+                    token,
+                    tokenValidationParameters,
+                    out var securityToken);
                 var jwtToken = (JwtSecurityToken)securityToken;
 
-                if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                if (jwtToken == null ||
+                    !jwtToken.Header.Alg.Equals(
+                        SecurityAlgorithms.HmacSha256,
+                        StringComparison.InvariantCultureIgnoreCase))
                 {
                     return null;
                 }
@@ -94,9 +91,8 @@ namespace Shared.Application.Services.Factory
         private TokenValidationParameters CreateTokenValidationParameters()
         {
             var chaveSecreta = _configuration.GetSecretKey();
-
             var secretKey = Encoding.UTF8.GetBytes(chaveSecreta);
-            var tokenValidationParameters = new TokenValidationParameters
+            return new TokenValidationParameters
             {
                 ValidateAudience = false,
                 ValidateIssuer = false,
@@ -104,8 +100,6 @@ namespace Shared.Application.Services.Factory
                 IssuerSigningKey = new SymmetricSecurityKey(secretKey),
                 ValidateLifetime = false
             };
-
-            return tokenValidationParameters;
         }
     }
 }

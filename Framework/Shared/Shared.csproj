@@ -7,28 +7,42 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.32" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.34.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\AtronTracker\Domain\Domain.csproj" />
+	  <EmbeddedResource Include="Application\Email\Templates\pt-BR\base.html">
+	    <LogicalName>Shared.Application.Email.Templates.pt-BR.base.html</LogicalName>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Application\Email\Templates\pt-BR\fundacao.html">
+	    <LogicalName>Shared.Application.Email.Templates.pt-BR.fundacao.html</LogicalName>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Application\Email\Templates\pt-BR\diagnostico.html">
+	    <LogicalName>Shared.Application.Email.Templates.pt-BR.diagnostico.html</LogicalName>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Compile Remove="Migrations\**\*.cs" />
+	  <Compile Remove="Migrations\bin\**" />
+	  <Compile Remove="Migrations\obj\**" />
+	  <EmbeddedResource Remove="Migrations\bin\**" />
+	  <EmbeddedResource Remove="Migrations\obj\**" />
+	  <None Remove="Migrations\bin\**" />
+	  <None Remove="Migrations\obj\**" />
+	  <Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.cs" />
+	  <Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.Designer.cs" />
+	  <Compile Include="Migrations\SharedDbContextModelSnapshot.cs" />
 	  <Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>CategoriaResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\AtronStock\FornecedoResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>FornecedoResource.resx</DependentUpon>
 	  </Compile>
 	  <Compile Update="Application\Resources\AtronStock\ProdutoResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
@@ -60,6 +74,11 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>EmailResource.resx</DependentUpon>
 	  </Compile>
+	  <Compile Update="Application\Resources\EmailDiagnosticResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>EmailDiagnosticResource.resx</DependentUpon>
+	  </Compile>
 	  <Compile Update="Application\Resources\HistoricoResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -81,10 +100,6 @@
 	  <EmbeddedResource Update="Application\Resources\AtronStock\CategoriaResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>CategoriaResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\AtronStock\FornecedoResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>FornecedoResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\AtronStock\ProdutoResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
@@ -109,6 +124,10 @@
 	  <EmbeddedResource Update="Application\Resources\EmailResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>EmailResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Application\Resources\EmailDiagnosticResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>EmailDiagnosticResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Application\Resources\HistoricoResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>

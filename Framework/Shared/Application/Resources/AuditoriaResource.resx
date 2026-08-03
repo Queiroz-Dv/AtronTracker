@@ -126,4 +126,7 @@
   <data name="ErroCodigoRegistro" xml:space="preserve">
     <value>Código de registro não pode estar vazio para registrar a auditoria.</value>
   </data>
+  <data name="ErroCodigoOuContextoObrigatorio" xml:space="preserve">
+    <value>Código ou contexto estão vazios ou nulos.</value>
+  </data>
 </root>

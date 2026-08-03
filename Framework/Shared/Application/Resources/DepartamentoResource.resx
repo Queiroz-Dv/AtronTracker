@@ -153,4 +153,5 @@
   <data name="MensagemAtualizacao" xml:space="preserve">
     <value>Departamento {0} atualizado com sucesso.</value>
   </data>
+  <data name="ErroGestorNaoEncontrado" xml:space="preserve"><value>Gestor do departamento nao encontrado.</value></data>
 </root>

@@ -111,7 +111,7 @@ namespace Shared.Application.Services.Email
                 return Resultado.Falha("E-mail do remetente nao configurado. Configure EmailSettings:FromEmail.");
 
             var baseUrl = string.IsNullOrWhiteSpace(_settings.Brevo.BaseUrl)
-                ? "https://api.brevo.com/v3"
+                ? EmailTransportCatalog.BrevoBaseUrl
                 : _settings.Brevo.BaseUrl.TrimEnd('/');
 
             var client = _httpClientFactory.CreateClient();
@@ -149,7 +149,7 @@ namespace Shared.Application.Services.Email
         }
 
         private bool UsarBrevo()
-            => string.Equals(_settings.Provider, "Brevo", StringComparison.OrdinalIgnoreCase);
+            => string.Equals(_settings.Provider, EmailTransportCatalog.BrevoProvider, StringComparison.OrdinalIgnoreCase);
 
         private sealed class BrevoEmailRequest
         {

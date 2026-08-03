@@ -49,7 +49,7 @@ Confirmar que os documentos atuais sao a base da implementacao e que nenhum requ
 - Revisar `docs/prd-planejamento-custos-mvp.md`.
 - Revisar `docs/planejamento-custos-mvp.md`.
 - Revisar `docs/planejamento-custos-pos-mvp.md`.
-- Revisar `docs/adr/0001-substituir-salarios-por-planejamento-de-custos.md`.
+- Revisar `docs/adr/tracker/0001-substituir-salarios-por-planejamento-de-custos.md`.
 - Confirmar que validacao sera manual.
 
 ### Criterios de conclusao

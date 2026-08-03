@@ -10,11 +10,17 @@ O produto deve crescer como uma plataforma modular, não como um conjunto solto 
 
 Os módulos de produto são:
 
-- `Atron Tracker`: gestão interna, estrutura organizacional, usuários, departamentos, cargos, tarefas, notificações, planejamentos e outras rotinas administrativas.
+- `Atron Tracker`: gestão interna, estrutura organizacional, usuários, departamentos, cargos, tarefas, planejamento de custos e outras rotinas administrativas; eventos do Tracker podem originar notificações na capacidade transversal.
 - `Atron Stock`: cadeia de suprimentos, estoque, patrimônio, bens, movimentações, fornecedores, produtos e rotinas físicas da empresa.
 - `Atron Sales`: módulo planejado para comercial e financeiro, incluindo vendas, recebimentos, contas e relatórios comerciais ou financeiros.
 
 O objetivo de evolução do projeto também é formar repertório real de arquitetura de software: escalar, manter, corrigir e documentar um sistema com qualidade e compromisso.
+
+O produto adota um monólito modular. Tracker, Stock, AtronAuditoria, Notificações Internas e o futuro Sales são compostos por um único host neutro da Atron Platform e publicados no mesmo processo. Essa unidade de execução não autoriza mistura de entidades, regras, persistência ou migrations. Os hosts transitórios, o IoC global e o host independente de notificações foram removidos conforme os ADRs 0007 e 0008.
+
+Identidade, autenticação, usuários, perfis de acesso, catálogo de módulos e estrutura funcional pertencem conceitualmente à plataforma. A implementação permanece fisicamente no Tracker durante a transição, mas módulos consumidores devem usar os contratos transversais de usuário atual e autorização por módulo, sem depender de entidades, serviços, repositórios ou DbContext internos do Tracker.
+
+A arquitetura deve priorizar baixo custo operacional e evolução incremental. Microsserviços permanecem como direção condicionada a necessidade comprovada de escala, isolamento de falhas, disponibilidade, equipe ou ciclo de publicação independente. Estudos de sistemas distribuídos podem ocorrer em Docker Compose e protótipos sem impor essa complexidade ao produto principal.
 
 ## Language
 
@@ -31,7 +37,7 @@ Empresa pequena ou operação regional que precisa controlar pessoas, tarefas, e
 _Avoid_: Grande corporação, operação sem rotina de gestão
 
 **Atron Tracker**:
-Módulo de gestão interna do Atron. Concentra estrutura organizacional, usuários, departamentos, cargos, perfis de acesso, tarefas, notificações internas, planejamento de custos e rotinas administrativas.
+Módulo de gestão interna do Atron. Concentra estrutura organizacional, usuários, departamentos, cargos, perfis de acesso, tarefas, planejamento de custos e rotinas administrativas. Pode produzir notificações, mas não é o proprietário definitivo da capacidade transversal de notificações internas.
 _Avoid_: Apenas módulo de tarefas, apenas cadastro de usuário
 
 **Atron Stock**:
@@ -41,6 +47,62 @@ _Avoid_: Apenas cadastro de produto, controle manual sem rastreabilidade, estoqu
 **Atron Sales**:
 Módulo planejado para centralizar o comercial e o financeiro do Atron. Deve ser tratado como direção futura até ter escopo formalizado em documentação própria.
 _Avoid_: Funcionalidade já implementada sem evidência, financeiro misturado sem fronteira, venda improvisada dentro de outro módulo
+
+**AtronNotificacoes**:
+Capacidade transversal in-process responsável por receber publicações, persistir o conteúdo final, consultar notificações e controlar leitura ou exclusão lógica. É composta pelo `AtronPlatform.WebApi`, mas preserva contrato, aplicação, `NotificacoesDbContext` e migrations próprios. Tracker, Stock e Sales permanecem proprietários do evento e do texto publicado.
+_Avoid_: Parte interna do Tracker, regra de negócio do produtor, DbContext compartilhado, chamada HTTP entre módulos do mesmo processo
+
+**AtronAuditoria**:
+Capacidade transversal in-process responsável por consultar ou registrar evidências de operações da plataforma. É composta exclusivamente pelo host neutro, possui contratos e persistência no `Shared` e não acessa entidades ou DbContexts dos módulos auditados.
+_Avoid_: Microsserviço apenas por possuir WebApi, acesso irrestrito aos DbContexts dos módulos, log técnico genérico, justificativa automática para outro deploy
+
+**Identidade e acesso da plataforma**:
+Capacidade central formada por autenticação, usuários, perfis de acesso, catálogo de módulos e autorização. Sua propriedade é da plataforma, mesmo enquanto a implementação permanece fisicamente no Tracker por compatibilidade. Módulos consumidores usam `IUserAccessor` e `ModuloPolicies`, não os internos do Tracker.
+_Avoid_: Identidade como domínio exclusivo do Tracker, serviço separado sem necessidade, módulo consultando repositório de perfil, configuração JWT duplicada
+
+**Estrutura funcional da plataforma**:
+Capacidade central formada por departamentos, cargos, vínculos, gestores e hierarquias usados por mais de um módulo. A implementação atual permanece no Tracker durante a transição, mas sua propriedade não se limita ao domínio de tarefas.
+_Avoid_: Estrutura funcional como detalhe de tarefa, duplicação de departamento por módulo, acesso cruzado ao AtronDbContext
+
+**Contrato de autorização por módulo**:
+Vocabulário estável de policies publicado por `Shared.Authorization.ModuloPolicies`. Cada módulo declara o código necessário sem conhecer como perfis, usuários e permissões são persistidos ou resolvidos.
+_Avoid_: String de policy montada manualmente, referência ao handler do Tracker, consulta direta a perfil de acesso
+
+**Monólito modular do Atron**:
+Arquitetura do produto principal em que Tracker, Stock e Sales são módulos de negócio separados no código, nos dados e nas regras, mas executados e publicados pelo mesmo host da plataforma. A unidade de processo reduz custo e operação sem transformar um módulo em parte interna de outro.
+_Avoid_: Projeto único sem fronteiras, Stock dentro do Tracker, monólito distribuído, microsserviços apenas por separação de processo, compartilhamento livre de entidades
+
+**Monólito modular com capacidades transversais**:
+Topologia atual do Atron em que módulos de produto e capacidades transversais são compostos pelo host neutro, preservando fronteiras lógicas e propriedade de dados dentro de um único processo.
+_Avoid_: Monólito sem fronteiras, serviço por módulo, processo separado sem autonomia, usar distribuição como sinônimo de modularidade
+
+**AtronPlatform.WebApi**:
+Host HTTP neutro responsável por compor os módulos principais, configurar autenticação, autorização, CORS, documentação e middlewares e produzir a unidade publicada. Não possui regras de negócio nem representa propriedade do Tracker, Stock ou Sales.
+_Avoid_: Novo domínio, módulo de negócio, WebApi do Tracker renomeado sem corrigir dependências, concentrador de regras
+
+**Módulo de produto**:
+Fatia vertical da plataforma que possui linguagem, regras, casos de uso, persistência, migrations, resources e testes próprios. Tracker, Stock e Sales são módulos pares e nenhum deles funciona como contêiner conceitual dos demais.
+_Avoid_: Pasta de telas, agrupamento sem domínio, módulo subordinado ao Tracker, divisão apenas por tecnologia
+
+**Fronteira de módulo**:
+Limite que impede um módulo de usar diretamente entidades, repositórios, DbContexts ou tabelas internas de outro. A colaboração ocorre por contratos de aplicação ou eventos explícitos, mesmo quando a chamada é executada no mesmo processo.
+_Avoid_: Acesso cruzado ao banco, referência direta entre domínios, Shared como atalho, integração implícita
+
+**Composição de módulo**:
+Registro de dependências mantido pelo módulo proprietário e chamado pelo host neutro, como `AddTrackerModule`, `AddStockModule` ou `AddSalesModule`. A composição expõe o necessário para executar o módulo sem publicar seus detalhes internos para os demais.
+_Avoid_: IoC global conhecendo todas as implementações, módulo registrando Infrastructure de outro, service locator
+
+**Propriedade de dados do módulo**:
+Responsabilidade exclusiva de um módulo por seu DbContext, entidades, configurações, migrations e tabelas. Os módulos podem usar a mesma instância PostgreSQL, mas não alteram ou consultam diretamente dados pertencentes a outro módulo.
+_Avoid_: Banco compartilhado sem proprietário, DbContext de outro módulo, migration transversal acidental
+
+**Serviço independente do Atron**:
+Capacidade com contrato, estado, operação e ciclo de falha próprios que possui justificativa explícita para executar fora do monólito modular. Não há serviço independente aprovado na topologia atual; novas extrações exigem evidência e ADR.
+_Avoid_: Um Web Service por pasta, microsserviço sem autonomia, processo separado com dependências internas dos módulos
+
+**Microsserviço no Atron**:
+Direção arquitetural futura condicionada a escala, isolamento, disponibilidade, propriedade de equipe, contrato estável ou ciclo de publicação independente. Vários processos interdependentes, por si só, não caracterizam a adoção aprovada de microsserviços.
+_Avoid_: Objetivo obrigatório, sinônimo de vários containers, solução automática para modularidade, experimento imposto à produção
 
 **Usuário**:
 Pessoa cadastrada no sistema que pode receber responsabilidades, acessar módulos e estar vinculada a cargo e departamento.
@@ -201,28 +263,32 @@ Tarefa ainda aberta para acompanhamento ou decisão operacional. Em Meu quadro e
 _Avoid_: Tarefa finalizada no carregamento padrão, tarefa cancelada no carregamento padrão, histórico misturado com operação
 
 **Fila de triagem de tarefas**:
-Conjunto de tarefas vinculadas a departamento ou cargo que ainda não pertencem a Meu quadro de um usuário. A fila deve ser acompanhada por usuários com responsabilidade de gestão sobre aquela estrutura, evitando distribuir tarefas estruturais para todos os usuários do escopo.
-_Avoid_: Quadro pessoal compartilhado, listagem geral de tarefas, carga automática para todos
+Conjunto de tarefas ativas sem usuário responsável que ainda não pertencem a Meu quadro. A fila aparece em Disponíveis para qualquer usuário com acesso ao módulo de tarefas; a responsabilidade de gestão determina se a obtenção pode ser direta ou precisa de aprovação.
+_Avoid_: Quadro pessoal compartilhado, tarefa disponível invisível, obtenção direta por usuário sem responsabilidade de gestão
 
 **Assumir tarefa**:
-Ação em que um usuário com acesso a uma fila de triagem torna uma tarefa estrutural uma tarefa individual própria. Depois de assumida, a tarefa passa a aparecer em Meu quadro desse usuário.
-_Avoid_: Atribuição automática, visualização sem responsabilidade
+Ação em que um usuário com responsabilidade de gestão torna uma tarefa disponível, que não exige aprovação, uma tarefa individual própria. Depois de assumida, a tarefa passa a aparecer em Meu quadro desse usuário.
+_Avoid_: Atribuição automática, assunção direta por usuário sem responsabilidade de gestão
 
 **Obter tarefa**:
-Ação em que um usuário solicita ou assume uma tarefa disponível em uma fila permitida. Quando a tarefa não exige aprovação, ela entra diretamente em Meu quadro; quando exige aprovação, a obtenção gera uma solicitação ao aprovador. Obter tarefa nunca altera o estado operacional da tarefa.
-_Avoid_: Atribuição pelo gestor, edição do responsável sem regra, tarefa invisível, mudança automática de estado
+Ação em que um usuário solicita ou assume uma tarefa exibida em Disponíveis. Usuário sem responsabilidade de gestão sempre gera uma solicitação ao aprovador. Usuário com responsabilidade de gestão pode assumir diretamente quando a tarefa não exige aprovação; quando exige, também gera solicitação. A solicitação, a obtenção direta e a recusa não alteram o estado operacional da tarefa. Na aprovação, uma tarefa em Pendente de aprovação passa para Iniciada e deixa de exigir aprovação para obtenção.
+_Avoid_: Atribuição pelo gestor, edição do responsável sem regra, tarefa invisível, mudança de qualquer estado fora da transição aprovada
 
 **Solicitação de obtenção de tarefa**:
 Pedido feito por um usuário para receber uma tarefa marcada como pendente de aprovação. A solicitação deve aparecer para o aprovador na visão Solicitações e, quando aprovada, a tarefa passa para Meu quadro do usuário solicitante. Uma tarefa deve ter no máximo uma solicitação de obtenção pendente por vez.
 _Avoid_: Aprovação implícita, e-mail como local de decisão, tarefa pendente assumida diretamente, várias solicitações pendentes para a mesma tarefa
 
 **Aprovação para obter tarefa**:
-Exigência separada do estado operacional da tarefa que define se um usuário pode obter a tarefa diretamente ou se precisa da aprovação do gestor imediato. Essa exigência não deve ser confundida com o estado da tarefa.
-_Avoid_: Estado pendente de aprovação, bloqueio implícito, aprovação como andamento da tarefa
+Exigência separada do estado operacional da tarefa. Usuário sem responsabilidade de gestão sempre precisa de aprovação; para gestores, a configuração da tarefa define se a obtenção pode ser direta ou também precisa de aprovação. Essa exigência não deve ser confundida com o estado da tarefa.
+_Avoid_: Bloqueio implícito, usar qualquer estado como substituto do flag, manter o flag marcado após aprovar uma tarefa pendente
 
 **Aprovação de obtenção**:
-Decisão do aprovador de obtenção de tarefa para aprovar ou recusar uma solicitação. A aprovação válida transforma a tarefa solicitada em tarefa individual do usuário solicitante sem alterar seu estado operacional; a recusa encerra a solicitação e mantém a tarefa disponível conforme seu escopo.
-_Avoid_: Aprovação implícita, resposta manual ao e-mail, assumir tarefa sem decisão, mudança automática de estado
+Decisão do aprovador de obtenção de tarefa para aprovar ou recusar uma solicitação. A aprovação válida transforma a tarefa solicitada em tarefa individual do usuário solicitante. Quando a tarefa estiver em Pendente de aprovação, a aprovação também altera seu estado para Iniciada e desmarca a exigência de aprovação para obtenção. Para os demais estados, a aprovação preserva o estado e o flag. A recusa encerra a solicitação e mantém a tarefa disponível conforme seu escopo.
+_Avoid_: Aprovação implícita, resposta manual ao e-mail, assumir tarefa sem decisão, alterar estados diferentes de Pendente de aprovação
+
+**Histórico de movimentações da tarefa**:
+Registro cronológico e imutável das movimentações relevantes da tarefa. Inclui criação, atualização, obtenção direta, solicitação de obtenção, aprovação e recusa; mudanças de estado como início, entrega e finalização aparecem nos detalhes da atualização. Cada registro preserva o evento, o código e o nome do responsável no momento da ação, a data e hora e as mudanças relevantes. A consulta é paginada, carregada sob demanda no detalhe da tarefa e limitada ao usuário responsável, às equipes e aos gestores autorizados.
+_Avoid_: Sobrescrever eventos anteriores, inferir histórico apenas pelo estado atual, expor movimentações fora do escopo de acesso
 
 **Notificação do sistema**:
 Aviso interno apresentado ao usuário dentro do produto para informar eventos relevantes. No primeiro escopo, notificações de tarefas informam aprovações ou recusas de solicitações e podem levar o usuário ao detalhe da tarefa quando aplicável; notificações devem poder ser controladas como lidas ou não lidas pelo usuário.
@@ -231,6 +297,22 @@ _Avoid_: E-mail obrigatório, alerta sem destino, histórico invisível, notific
 **Central de notificações**:
 Área do produto onde o usuário acompanha notificações do sistema e acessa os detalhes relacionados ao evento notificado. No primeiro escopo, a central atende eventos do módulo de tarefas e deve permitir abrir a tarefa relacionada quando houver uma; no futuro, tende a ser o canal padrão de notificações internas do produto.
 _Avoid_: Caixa de e-mail, alerta temporário sem histórico, lista sem contexto
+
+**Módulo de notificações internas**:
+Capacidade transversal planejada que centraliza a publicação, consulta e marcação de leitura das notificações internas do Atron. Deve atender Tracker, Stock e Sales sem depender das entidades de domínio de qualquer um desses módulos. Cada produtor informa destinatário, evento, conteúdo final em pt-BR e destino de navegação; o módulo mantém o histórico e o estado de leitura.
+_Avoid_: Controller deslocada sem serviços e dados próprios, chave estrangeira para Tarefa ou outra entidade de módulo produtor, regra de negócio de Tracker dentro da central, e-mail como substituto obrigatório da notificação interna
+
+**Destinatário de notificação**:
+Identificador transversal e estável de uma pessoa que pode receber notificações do sistema. É informado pelo módulo produtor e validado pelo mecanismo compartilhado de identidade, sem exigir que a central de notificações consulte o repositório de usuários de Tracker, Stock ou Sales.
+_Avoid_: Dependência direta de IUsuarioRepository do Tracker, cópia da entidade Usuario em cada módulo, destinatário implícito por tela
+
+**Publicação de notificação interna**:
+Contrato pelo qual um módulo produtor registra uma notificação para um destinatário. O contrato carrega origem, tipo de evento, título, mensagem, URL de destino e referência externa opcional. A publicação não recebe entidades de domínio do produtor e não altera o fluxo de negócio de origem quando a política daquele evento for somente consultiva.
+_Avoid_: Passar Tarefa, Pedido ou Produto para a central, montar texto de produto dentro da infraestrutura compartilhada, acoplamento de transação distribuída
+
+**Identificador de notificação interna**:
+Chave numérica longa gerada por sequence da persistência própria do módulo de notificações. A sequence pode iniciar em valor aleatório definido uma única vez ao criar o ambiente, mas cada novo identificador é sequencial. O identificador não autoriza consulta nem alteração, que sempre dependem do destinatário autenticado.
+_Avoid_: GUID como chave primária, número aleatório por registro sujeito a colisão, usar o identificador como prova de acesso
 
 **Atualização em tempo real**:
 Comportamento em que notificações e solicitações relevantes aparecem para o usuário sem depender de recarregamento manual da tela. No módulo de tarefas, esse comportamento apoia aprovações, recusas e acompanhamento de solicitações.
@@ -241,7 +323,7 @@ Aviso enviado fora do produto apenas quando o evento exigir comunicação extern
 _Avoid_: E-mail para todo evento, e-mail como fonte principal do sistema, duplicação obrigatória de notificação
 
 **Aprovador de obtenção de tarefa**:
-Usuário responsável por aprovar ou recusar uma solicitação de obtenção de tarefa. A ordem preferencial é: gestor imediato do solicitante; gestor do departamento da tarefa; gestor do departamento do solicitante; se nenhum aprovador existir, a solicitação deve ser bloqueada por regra de negócio.
+Usuário responsável por aprovar ou recusar uma solicitação de obtenção de tarefa. A ordem preferencial é: gestor imediato do solicitante; gestor do departamento da tarefa; gestores dos departamentos vinculados ao solicitante, sem prioridade de negócio entre estes últimos. Códigos repetidos são considerados uma única vez; se nenhum aprovador existir, a solicitação deve ser bloqueada por regra de negócio.
 _Avoid_: Solicitação sem aprovador, aprovador aleatório, regra fixa por cargo
 
 **Atribuir tarefa**:
@@ -256,12 +338,16 @@ _Avoid_: Troca silenciosa de responsável, edição comum, histórico perdido
 Conjunto de tarefas ativas atribuídas diretamente ao usuário logado. Tarefas apenas estruturais entram em Meu quadro somente quando forem assumidas ou atribuídas a esse usuário.
 _Avoid_: Todas as tarefas da empresa, fila de departamento, tarefas de todos os usuários
 
+**Disponíveis**:
+Visão das tarefas ativas que ainda não possuem usuário responsável. Todo usuário com acesso ao módulo pode consultar essa visão; a ação de obter respeita a exigência de aprovação conforme a responsabilidade de gestão do usuário e a configuração da tarefa.
+_Avoid_: Fila visível apenas para gestor, tarefa já atribuída, assunção sem autorização
+
 **Equipe**:
-Visão separada de tarefas relacionadas aos subordinados diretos do gestor imediato. Pode existir na mesma tela de Meu quadro, mas deve manter filtros e listagem próprios para não misturar responsabilidade pessoal com responsabilidade de gestão.
+Visão separada de tarefas relacionadas aos subordinados diretos do gestor imediato, visível apenas para usuário com responsabilidade de gestão. Pode existir na mesma tela de Meu quadro, mas deve manter filtros e listagem próprios para não misturar responsabilidade pessoal com responsabilidade de gestão.
 _Avoid_: Quadro único misturado, tarefas de todos os usuários, subordinados indiretos automáticos
 
 **Solicitações**:
-Visão operacional em que o gestor acompanha solicitações pendentes de obtenção de tarefa e decide aprovar ou recusar. O e-mail pode sinalizar a pendência, mas Solicitações deve ser o local de trabalho para decisões de aprovação no módulo de tarefas.
+Visão operacional, visível apenas para usuário com responsabilidade de gestão, em que o gestor acompanha solicitações pendentes de obtenção de tarefa e decide aprovar ou recusar. O e-mail pode sinalizar a pendência, mas Solicitações deve ser o local de trabalho para decisões de aprovação no módulo de tarefas.
 _Avoid_: Aprovação apenas por e-mail, pendência invisível, solicitação sem acompanhamento
 
 **Destino de equipe**:
@@ -320,6 +406,14 @@ _Avoid_: Duas estruturas de front ativas
 Mensagem de validação que explica uma regra do produto ou bloqueia uma ação de negócio deve nascer no backend, especialmente no módulo de planejamento de custos. O front Angular pode manter apenas validações de formato, estado visual ou eventos entre componentes necessários para montar a interação, mas não deve decidir a mensagem final de regra de negócio.
 _Avoid_: Mensagem de regra duplicada no front, bloqueio local que impede a API de responder, validação de negocio espalhada em componente Angular
 
+**Serviço de aplicação**:
+Orquestrador de um caso de uso. Coordena interfaces de domínio, persistência e efeitos externos, mantendo visível a sequência do fluxo. Não é o dono de invariantes, mapeamentos, criação de objetos de negócio ou blocos extensos de validação; essas responsabilidades pertencem aos conceitos e colaboradores especializados que o serviço consome.
+_Avoid_: Serviço concentrador, regra de domínio espalhada em orquestração, classe de passagem sem responsabilidade clara
+
+**Validador de aplicação**:
+Colaborador que valida a entrada e as condições de um fluxo de aplicação, especialmente quando essas verificações tornariam o serviço difícil de ler. Complementa, mas não substitui, as invariantes e validações do objeto de domínio.
+_Avoid_: Validador que permite entidade inválida, bloco de validação centralizado no serviço, duplicação sem propósito de invariante
+
 **Atron.WebViews**:
 Estrutura legada de front MVC/Razor deletada para evitar dois projetos de front diferentes evoluindo em paralelo.
 _Avoid_: Front secundário, duplicação de tela
@@ -337,3 +431,12 @@ Especialista: A própria Maria, como usuário logado. No futuro, isso pode respe
 
 Dev: Onde a Maria altera essa preferência no front?
 Especialista: Em Configurações, dentro do módulo de usuário.
+
+Dev: Quando criarmos o Sales, ele deve ficar dentro do Tracker?
+Especialista: Não. Tracker, Stock e Sales são módulos pares compostos pelo AtronPlatform.WebApi.
+
+Dev: Se Tracker e Stock usam o mesmo processo, podem acessar os mesmos repositórios?
+Especialista: Não. O processo é compartilhado, mas entidades, DbContexts, migrations e regras continuam pertencendo ao módulo proprietário.
+
+Dev: Todo módulo novo deve receber um Web Service próprio?
+Especialista: Não. O padrão é o monólito modular; uma extração exige contrato, estado e necessidade operacional comprovados em ADR.

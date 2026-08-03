@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>AtronNotificacoes</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.32" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.32">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.32" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.32">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="**\bin\**\*.cs" />
+    <Compile Remove="**\obj\**\*.cs" />
+    <Compile Remove="Application\obj\**" />
+    <Compile Remove="Contracts\obj\**" />
+    <Compile Remove="Domain\obj\**" />
+    <Compile Remove="Infrastructure\obj\**" />
+    <EmbeddedResource Remove="Application\obj\**" />
+    <EmbeddedResource Remove="Contracts\obj\**" />
+    <EmbeddedResource Remove="Domain\obj\**" />
+    <EmbeddedResource Remove="Infrastructure\obj\**" />
+    <None Remove="Application\obj\**" />
+    <None Remove="Contracts\obj\**" />
+    <None Remove="Domain\obj\**" />
+    <None Remove="Infrastructure\obj\**" />
+  </ItemGroup>
+</Project>

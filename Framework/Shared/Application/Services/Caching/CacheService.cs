@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Caching.Memory;
 using Shared.Application.Interfaces.Service;
-using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
 
 namespace Shared.Application.Services.Caching
 {
@@ -26,11 +24,11 @@ namespace Shared.Application.Services.Caching
                 expiracao);
         }
 
-        public T ObterCache<T>(string cacheKey)
+        public T ObterCache<T>(ChaveCache chaveCache)
         {
             try
             {
-                var data = _memoryCache.TryGetValue(cacheKey, out T valor) ? valor : default;
+                var data = _memoryCache.TryGetValue(chaveCache.Descricao, out T valor) ? valor : default;
                 return data;
             }
             catch (Exception ex)
@@ -40,23 +38,11 @@ namespace Shared.Application.Services.Caching
             }
         }
 
-        public void RemoverCache(ECacheKeysInfo chave)
+        public void RemoverCache(ChaveCache chaveCache)
         {
-            var cacheKey = chave.GetDescription();
-
-            if (_memoryCache.TryGetValue(cacheKey, out _))
+            if (_memoryCache.TryGetValue(chaveCache.Descricao, out _))
             {
-                _memoryCache.Remove(cacheKey);
-            }
-        }
-
-        public void RemoverCache(ECacheKeysInfo chave, string codigoDaEntidade)
-        {
-            var cacheKey = $"{chave.GetDescription()}:{codigoDaEntidade}";
-
-            if (_memoryCache.TryGetValue(cacheKey, out _))
-            {
-                _memoryCache.Remove(cacheKey);
+                _memoryCache.Remove(chaveCache.Descricao);
             }
         }
 

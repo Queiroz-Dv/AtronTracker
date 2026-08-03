@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Shared.Application.Interfaces.Service;
-using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -52,8 +50,9 @@ namespace Shared.Application.Services.Caching
             }
         }
 
-        public T ObterCache<T>(string cacheKey)
+        public T ObterCache<T>(ChaveCache chaveCache)
         {
+            var cacheKey = chaveCache.Descricao;
             var arquivo = ObterCaminhoArquivo(cacheKey);
             if (!File.Exists(arquivo))
                 return default;
@@ -84,14 +83,9 @@ namespace Shared.Application.Services.Caching
             }
         }
 
-        public void RemoverCache(ECacheKeysInfo chave)
+        public void RemoverCache(ChaveCache chaveCache)
         {
-            RemoverPorChave(chave.GetDescription());
-        }
-
-        public void RemoverCache(ECacheKeysInfo chave, string codigoDaEntidade)
-        {
-            RemoverPorChave($"{chave.GetDescription()}:{codigoDaEntidade}");
+            RemoverPorChave(chaveCache.Descricao);
         }
 
         private void RemoverPorChave(string cacheKey)
