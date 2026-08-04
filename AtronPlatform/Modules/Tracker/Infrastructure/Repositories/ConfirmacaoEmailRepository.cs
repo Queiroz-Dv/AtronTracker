@@ -60,6 +60,18 @@ namespace Infrastructure.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task RegistrarTentativaFalhaAsync(int id)
+        {
+            var confirmacao = await _context.ConfirmacoesEmail
+                .FirstOrDefaultAsync(item => item.Id == id);
+
+            if (confirmacao is null)
+                return;
+
+            confirmacao.TentativasFalhas++;
+            await _context.SaveChangesAsync();
+        }
+
         private static DateTime SemTimezone(DateTime data)
             => DateTime.SpecifyKind(data, DateTimeKind.Unspecified);
     }

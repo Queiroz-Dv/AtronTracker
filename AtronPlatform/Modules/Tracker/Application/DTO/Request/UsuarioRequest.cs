@@ -22,8 +22,6 @@ namespace Application.DTO.Request
 
         public string Senha { get; set; }
 
-        public string ClientUri { get; set; }
-
         public string GestorImediatoCodigo { get; set; }
     }
 }

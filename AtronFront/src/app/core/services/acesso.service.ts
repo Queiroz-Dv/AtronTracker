@@ -26,10 +26,10 @@ export class AcessoService {
   constructor(private http: HttpClient, private sessaoService: SessaoInfoService) { }
 
   logout(): Observable<boolean> {
-    return this.http.get<{ deslogado: boolean }>(RotasApi.desconectarEndpoint, { withCredentials: true }).pipe(
-      map(response => {
+    return this.http.post(RotasApi.desconectarEndpoint, {}, { withCredentials: true }).pipe(
+      map(() => {
         this.limparSessaoLocal();
-        return response.deslogado;
+        return true;
       }),
       catchError(() => {
         this.limparSessaoLocal();
@@ -41,7 +41,7 @@ export class AcessoService {
   autenticar(login: LoginRequest): Observable<void> {
     return this.http.post<UserToken>(RotasApi.logarEndpoint, login, { withCredentials: true }).pipe(
       switchMap(response => {
-        this.sessaoService.setUsuarioInfo(response.token, response.expires, login.codigoDoUsuario);
+        this.sessaoService.setUsuarioInfo(response.token, response.expires, response.usuarioCodigo);
         return this.carregarSessaoInfo(response.token);
       }),
       map((): void => undefined),
@@ -65,14 +65,9 @@ export class AcessoService {
       );
     }
 
-    const usuarioCodigo = this.sessaoService.obterUsuarioCodigo();
-    if (!usuarioCodigo) {
-      return of(false);
-    }
-
-    return this.http.get<UserToken>(RotasApi.refreshTokenEndpoint, { withCredentials: true }).pipe(
+    return this.http.post<UserToken>(RotasApi.refreshTokenEndpoint, {}, { withCredentials: true }).pipe(
       switchMap(token => {
-        this.sessaoService.setUsuarioInfo(token.token, token.expires, usuarioCodigo);
+        this.sessaoService.setUsuarioInfo(token.token, token.expires, token.usuarioCodigo);
         return this.carregarSessaoInfo(token.token);
       }),
       map(() => true),
@@ -161,12 +156,10 @@ export class ConfirmarEmailRequest {
 
 export class SolicitarRecuperacaoSenhaRequest {
   public identificador: string;
-  public clientUri: string;
 }
 
 export class ReenviarConfirmacaoEmailRequest {
   public identificador: string;
-  public clientUri: string;
 }
 
 export class RedefinirSenhaRequest {

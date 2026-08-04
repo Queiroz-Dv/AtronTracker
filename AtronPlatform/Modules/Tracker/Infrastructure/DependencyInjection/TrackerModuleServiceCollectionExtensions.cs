@@ -16,6 +16,7 @@ using Application.Services.Identity;
 using Application.UseCases.TarefaCases;
 using Application.UseCases.UsuarioCases;
 using Application.Validador;
+using AtronTracker.Infrastructure;
 using AtronTracker.Infrastructure.Context;
 using AtronTracker.Infrastructure.Identity;
 using Domain.Entities;
@@ -23,11 +24,11 @@ using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
+using Infrastructure.Configuration;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.ApplicationRepositories;
 using Infrastructure.Repositories.Identity;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,10 +37,8 @@ using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Entities.Identity;
 using Shared.Infrastructure.Configuration;
-using System;
-using System.IO;
 
-namespace AtronTracker.Infrastructure
+namespace Infrastructure.DependencyInjection
 {
     public static class TrackerModuleServiceCollectionExtensions
     {
@@ -55,7 +54,12 @@ namespace AtronTracker.Infrastructure
             services.AddDbContext<AtronDbContext>(options =>
                 options.UseConfiguredDatabase(database, migrationsAssembly));
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+                    {
+                        options.Lockout.AllowedForNewUsers = true;
+                        options.Lockout.MaxFailedAccessAttempts = 5;
+                        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                    })
                     .AddEntityFrameworkStores<AtronDbContext>()
                     .AddDefaultTokenProviders();
 
@@ -113,18 +117,18 @@ namespace AtronTracker.Infrastructure
 
         private static void ConfigureAuthenticationServices(IServiceCollection services)
         {
+            services.AddSingleton<IEnderecoFrontendService, EnderecoFrontendService>();
+            services.AddSingleton<ITokenTemporarioService, TokenTemporarioService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
 
             services.AddScoped(provider => new CadastroUsuarioContext(
                 provider.GetRequiredService<IUsuarioRepository>(),
-                provider.GetRequiredService<IPerfilDeAcessoUsuarioRepository>(),
-                provider.GetRequiredService<IPerfilDeAcessoRepository>(),
                 provider.GetRequiredService<IUsuarioIdentityRepository>(),
                 provider.GetRequiredService<IEmailService>(),
                 provider.GetRequiredService<IAcessoEmailCompositor>(),
                 provider.GetRequiredService<IValidador<UsuarioRegistroRequest>>(),
-                provider.GetRequiredService<IHttpContextAccessor>(),
+                provider.GetRequiredService<IEnderecoFrontendService>(),
                 provider.GetRequiredService<IConfirmacaoEmailRepository>(),
                 provider.GetRequiredService<IConfirmacaoEmailCodigoService>()));
 
@@ -135,7 +139,8 @@ namespace AtronTracker.Infrastructure
                 provider.GetRequiredService<ICacheService>(),
                 provider.GetRequiredService<IEmailService>(),
                 provider.GetRequiredService<IAcessoEmailCompositor>(),
-                provider.GetRequiredService<IHttpContextAccessor>()));
+                provider.GetRequiredService<IEnderecoFrontendService>(),
+                provider.GetRequiredService<ITokenTemporarioService>()));
 
             services.AddScoped<ICadastroUsuarioService, CadastroUsuarioService>();
             services.AddScoped<IRecuperacaoSenhaService, RecuperacaoSenhaService>();

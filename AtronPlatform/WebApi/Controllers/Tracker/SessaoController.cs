@@ -7,7 +7,6 @@ using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -47,16 +46,8 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
             var user = HttpContext.User;
             var usuarioCodigo = user.FindFirst(ClaimCode.CODIGO_USUARIO)?.Value;
 
-            if (usuarioCodigo.IsNullOrEmpty())
-            {
-                var codigoUsuarioRequest = Request.Headers.ExtrairCodigoUsuarioDoRequest();
-                if (!codigoUsuarioRequest.IsNullOrEmpty())
-                {
-                    usuarioCodigo = codigoUsuarioRequest;
-                }
-
+            if (string.IsNullOrWhiteSpace(usuarioCodigo))
                 return NoContent();
-            }
 
             var dadosCache = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, usuarioCodigo));
 

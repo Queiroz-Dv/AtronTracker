@@ -12,11 +12,11 @@ namespace Domain.Interfaces.Identity
         Task<bool> DeletarContaUserRepositoryAsync(string codigoUsuario);
         Task<bool> DesativarContaAsync(string codigoUsuario);
         Task<bool> ReativarContaAsync(string codigoUsuario);
-        Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime);
-        Task<bool> RefreshTokenExisteRepositoryAsync(string refreshToken);
-        Task<string> ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(string codigoUsuario);
+        Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshTokenHash, DateTime refreshTokenExpireTime);
+        Task<bool> RefreshTokenExisteRepositoryAsync(string refreshTokenHash);
+        Task<SessaoRefreshToken> ObterSessaoRefreshTokenRepositoryAsync(string refreshTokenHash);
+        Task<bool> RotacionarRefreshTokenRepositoryAsync(RotacaoRefreshTokenHash rotacao);
         Task<bool> RedefinirRefreshTokenRepositoryAsync(string codigoUsuario);
-        Task<bool> RefreshTokenExpiradoRepositoryAsync(string codigoUsuario);
         Task<string> GerarTokenConfirmacaoEmailAsync(string codigoUsuario);
         Task<bool> ConfirmarEmailAsync(string codigoUsuario, string token);
         Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario);

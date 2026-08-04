@@ -18,6 +18,7 @@ namespace Shared.Application.Services.Factory
                 HttpOnly = true,
                 SameSite = SameSiteMode.None,
                 Secure = true,
+                Path = "/",
                 Expires = expiracao
             });
         }
@@ -28,7 +29,8 @@ namespace Shared.Application.Services.Factory
             {
                 HttpOnly = true,
                 SameSite = SameSiteMode.None,
-                Secure = true
+                Secure = true,
+                Path = "/"
             });
         }
     }

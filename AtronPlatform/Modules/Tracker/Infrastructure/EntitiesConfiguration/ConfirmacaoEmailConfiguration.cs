@@ -15,6 +15,7 @@ namespace Infrastructure.EntitiesConfiguration
             builder.Property(cfm => cfm.CriadoEm).IsRequired();
             builder.Property(cfm => cfm.ExpiraEm).IsRequired();
             builder.Property(cfm => cfm.ConfirmadoEm).IsRequired(false);
+            builder.Property(cfm => cfm.TentativasFalhas).IsRequired().HasDefaultValue(0);
 
             builder.HasIndex(cfm => new { cfm.UsuarioCodigo, cfm.ExpiraEm, cfm.ConfirmadoEm });
         }

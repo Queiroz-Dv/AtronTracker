@@ -41,6 +41,18 @@ public class ModuloHandlerTests
         Assert.False(context.HasSucceeded);
     }
 
+    [Fact]
+    public async Task HandleAsync_NaoDeveAutorizarUsuarioSemPerfil()
+    {
+        var handler = CriarHandler(new DadosComplementaresDoUsuarioDTO());
+        var requirement = new ModuloRequirement("USR", ModuloPolicies.AcaoAcessar);
+        var context = CriarContexto(requirement);
+
+        await handler.HandleAsync(context);
+
+        Assert.False(context.HasSucceeded);
+    }
+
     private static ModuloHandler CriarHandlerComModulos(params string[] codigosDosModulos)
     {
         var dadosComplementares = new DadosComplementaresDoUsuarioDTO
@@ -57,6 +69,12 @@ public class ModuloHandlerTests
             ]
         };
 
+        return CriarHandler(dadosComplementares);
+    }
+
+    private static ModuloHandler CriarHandler(
+        DadosComplementaresDoUsuarioDTO dadosComplementares)
+    {
         var cacheService = new Mock<ICacheService>();
         cacheService
             .Setup(service => service.ObterCache<DadosComplementaresDoUsuarioDTO>(

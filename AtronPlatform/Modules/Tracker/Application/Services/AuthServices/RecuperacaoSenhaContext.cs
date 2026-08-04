@@ -1,8 +1,8 @@
 using Application.Email.Compositores;
+using Application.Interfaces.Services;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
-using Microsoft.AspNetCore.Http;
 using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.AuthServices
@@ -14,5 +14,6 @@ namespace Application.Services.AuthServices
         ICacheService CacheService,
         IEmailService EmailService,
         IAcessoEmailCompositor EmailCompositor,
-        IHttpContextAccessor HttpContextAccessor);
+        IEnderecoFrontendService EnderecoFrontendService,
+        ITokenTemporarioService TokenTemporarioService);
 }

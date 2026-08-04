@@ -56,14 +56,14 @@ namespace Application.Services.EntitiesServices
         public async Task<Resultado> SolicitarReativacaoAsync(string email)
             => await _solicitarReativacao.ExecutarAsync(email);
 
-        public async Task<Resultado> AlterarEmailAsync(string codigo, string emailNovo, string clienteUri)
-            => await _alterarEmail.ExecutarAsync(codigo, emailNovo, clienteUri);
+        public async Task<Resultado> AlterarEmailAsync(string codigo, string emailNovo)
+            => await _alterarEmail.ExecutarAsync(codigo, emailNovo);
 
         public async Task<Resultado> ConfirmarAlteracaoEmailAsync(string usuarioCodigo, string emailNovo, string token)
             => await _confirmarAlteracaoEmail.ExecutarAsync(usuarioCodigo, emailNovo, token);
 
-        public async Task<Resultado> ReenviarConfirmacaoEmailAsync(string codigo, string clientUri)
-            => await _reenviarConfirmacaoEmail.ExecutarAsync(codigo, clientUri);
+        public async Task<Resultado> ReenviarConfirmacaoEmailAsync(string codigo)
+            => await _reenviarConfirmacaoEmail.ExecutarAsync(codigo);
 
         public async Task<Resultado<List<UsuarioDTO>>> ObterTodosAsync()
         {

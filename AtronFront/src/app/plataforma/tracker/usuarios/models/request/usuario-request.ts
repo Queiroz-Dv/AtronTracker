@@ -7,7 +7,6 @@ export class UsuarioRequest implements UsuarioModel {
   dataNascimento?: Date | string;
   email: string;
   senha?: string;
-  clientUri?: string;
   cargoCodigo: string;
   departamentoCodigo: string;
   gestorImediatoCodigo?: string;
@@ -19,7 +18,6 @@ export class UsuarioRequest implements UsuarioModel {
     email: string,
     cargoCodigo: string,
     departamentoCodigo: string,
-    clientUri?: string,
     dataNascimento?: Date | string,
     gestorImediatoCodigo?: string) {
     this.codigo = codigo;
@@ -28,7 +26,6 @@ export class UsuarioRequest implements UsuarioModel {
     this.email = email;
     this.cargoCodigo = cargoCodigo;
     this.departamentoCodigo = departamentoCodigo;
-    this.clientUri = clientUri;
     this.dataNascimento = dataNascimento
     this.gestorImediatoCodigo = gestorImediatoCodigo;
   }

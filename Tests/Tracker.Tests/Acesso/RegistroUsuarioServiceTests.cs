@@ -1,15 +1,17 @@
 using Application.DTO.Request;
 using Application.Email.Compositores;
 using Application.Extensions;
+using Application.Interfaces.Services;
 using Application.Services.AuthServices;
-using Application.Services.AuthServices.Bases;
 using Application.UseCases.UsuarioCases;
+using AtronTracker.Infrastructure.Configuration;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
 using Shared.Application.Interfaces.Service;
@@ -21,21 +23,145 @@ namespace Tracker.Tests.Acesso;
 
 public class RegistroUsuarioServiceTests
 {
-    [Theory]
-    [InlineData("", "http://localhost:5000")]
-    [InlineData("http://localhost:4200", "http://localhost:4200")]
-    public void ObterUri_DeveUsarClientUriOuUriDaRequisicao(string clientUri, string esperado)
+    [Fact]
+    public void EnderecoFrontend_DevePriorizarEnderecoConfigurado()
     {
-        var httpContextAccessor = new HttpContextAccessor
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Auth:ClientBaseUri"] = "https://front.atron.test/caminho-ignorado",
+                ["Cors:AllowedOrigins:0"] = "https://origem-alternativa.test"
+            })
+            .Build();
+
+        var service = new EnderecoFrontendService(configuration);
+
+        Assert.Equal("https://front.atron.test", service.ObterUriBase());
+    }
+
+    [Fact]
+    public void EnderecoFrontend_DeveUsarOrigemCorsUnicaComoFallback()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Cors:AllowedOrigins:0"] = "https://front.atron.test"
+            })
+            .Build();
+
+        var service = new EnderecoFrontendService(configuration);
+
+        Assert.Equal("https://front.atron.test", service.ObterUriBase());
+    }
+
+    [Fact]
+    public void EnderecoFrontend_DeveExigirEnderecoExplicitoQuandoHaMultiplasOrigensCors()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Cors:AllowedOrigins:0"] = "https://front.atron.test",
+                ["Cors:AllowedOrigins:1"] = "https://outro-front.atron.test"
+            })
+            .Build();
+
+        var excecao = Assert.Throws<InvalidOperationException>(
+            () => new EnderecoFrontendService(configuration));
+
+        Assert.Equal(AuthResource.Erro_UriFrontendNaoConfigurada, excecao.Message);
+    }
+
+    [Fact]
+    public void TokenTemporario_DeveSerOpacoAleatorioEArmazenavelPorHash()
+    {
+        var service = new TokenTemporarioService();
+
+        var primeiro = service.Criar();
+        var segundo = service.Criar();
+
+        Assert.Equal(43, primeiro.Valor.Length);
+        Assert.Equal(64, primeiro.Hash.Length);
+        Assert.Equal(primeiro.Hash, service.ObterHash(primeiro.Valor));
+        Assert.NotEqual(primeiro.Valor, segundo.Valor);
+    }
+
+    [Theory]
+    [InlineData(typeof(LoginRequestDTO))]
+    [InlineData(typeof(SolicitarRecuperacaoSenhaRequest))]
+    [InlineData(typeof(ReenviarConfirmacaoEmailRequest))]
+    [InlineData(typeof(UsuarioRegistroRequest))]
+    [InlineData(typeof(AlterarEmailRequest))]
+    public void ContratosDeAcesso_NaoDevemAceitarClientUri(Type contrato)
+    {
+        Assert.Null(contrato.GetProperty("ClientUri"));
+    }
+
+    [Fact]
+    public void CadastroPublico_NaoDeveAceitarPerfilDeAcesso()
+    {
+        Assert.Null(typeof(UsuarioRegistroRequest).GetProperty("CodigoPerfilDeAcesso"));
+    }
+
+    [Fact]
+    public async Task RecuperacaoSenha_DeveUsarOrigemConfiavelETokenDeUsoUnico()
+    {
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var emailService = new EmailServiceFake();
+        var cacheService = new CacheServiceFake();
+        var service = CriarRecuperacaoSenha(usuarioRepository, emailService, cacheService);
+
+        var solicitacao = await service.SolicitarAsync(new SolicitarRecuperacaoSenhaRequest
         {
-            HttpContext = new DefaultHttpContext()
-        };
-        httpContextAccessor.HttpContext.Request.Scheme = "http";
-        httpContextAccessor.HttpContext.Request.Host = new HostString("localhost:5000");
+            Identificador = "USR001"
+        });
 
-        var service = new AuthUriBaseServiceFake(httpContextAccessor);
+        Assert.True(solicitacao.TeveSucesso);
+        Assert.NotNull(emailService.UltimoRequest);
+        Assert.Contains("https://front.atron.test/trocar-senha#token=", emailService.UltimoRequest.Mensagem);
+        Assert.DoesNotContain("?id=", emailService.UltimoRequest.Mensagem);
 
-        Assert.Equal(esperado, service.Obter(clientUri));
+        var inicio = emailService.UltimoRequest.Mensagem.IndexOf("#token=", StringComparison.Ordinal) + 7;
+        var fim = emailService.UltimoRequest.Mensagem.IndexOf('"', inicio);
+        var token = emailService.UltimoRequest.Mensagem[inicio..fim];
+
+        var primeiraTroca = await service.TrocarAsync(new RedefinirSenhaRequest
+        {
+            IdentificadorTemporario = token,
+            NovaSenha = "NovaSenha@2026!",
+            RepetirSenha = "NovaSenha@2026!"
+        });
+        var segundaTroca = await service.TrocarAsync(new RedefinirSenhaRequest
+        {
+            IdentificadorTemporario = token,
+            NovaSenha = "OutraSenha@2026!",
+            RepetirSenha = "OutraSenha@2026!"
+        });
+
+        Assert.True(primeiraTroca.TeveSucesso);
+        Assert.True(segundaTroca.TeveFalha);
+    }
+
+    [Fact]
+    public async Task RecuperacaoSenha_NaoDeveRevelarSeUsuarioExiste()
+    {
+        var usuarioRepository = new UsuarioRepositoryFake(
+            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var service = CriarService(usuarioRepository);
+
+        var existente = await service.SolicitarRecuperacaoSenha(new SolicitarRecuperacaoSenhaRequest
+        {
+            Identificador = "USR001"
+        });
+        var inexistente = await service.SolicitarRecuperacaoSenha(new SolicitarRecuperacaoSenhaRequest
+        {
+            Identificador = "DESCONHECIDO"
+        });
+
+        Assert.True(existente.TeveSucesso);
+        Assert.True(inexistente.TeveSucesso);
+        Assert.Equal(
+            existente.Messages.Select(mensagem => mensagem.Descricao),
+            inexistente.Messages.Select(mensagem => mensagem.Descricao));
     }
 
     [Fact]
@@ -46,8 +172,7 @@ public class RegistroUsuarioServiceTests
 
         var resultado = await service.SolicitarRecuperacaoSenha(new SolicitarRecuperacaoSenhaRequest
         {
-            Identificador = "USR001",
-            ClientUri = "http://localhost:4200"
+            Identificador = "USR001"
         });
 
         Assert.True(resultado.TeveSucesso);
@@ -63,8 +188,7 @@ public class RegistroUsuarioServiceTests
 
         var resultado = await service.SolicitarRecuperacaoSenha(new SolicitarRecuperacaoSenhaRequest
         {
-            Identificador = "usuario@teste.com",
-            ClientUri = "http://localhost:4200"
+            Identificador = "usuario@teste.com"
         });
 
         Assert.True(resultado.TeveSucesso);
@@ -94,18 +218,84 @@ public class RegistroUsuarioServiceTests
     }
 
     [Fact]
+    public async Task ConfirmacaoEmail_DeveBloquearAposCincoTentativasInvalidas()
+    {
+        var usuarioRepository = new UsuarioRepositoryFake(
+            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var confirmacaoRepository = new ConfirmacaoEmailRepositoryFake();
+        var codigoService = new ConfirmacaoEmailCodigoService();
+        var confirmacao = codigoService.CriarDadosConfirmacao("USR001", 24);
+        await confirmacaoRepository.GravarOuSubstituirAsync(confirmacao.ConfirmacaoEmail);
+        var codigoInvalido = confirmacao.Identificador == "999999" ? "000000" : "999999";
+        var cadastro = new CadastroUsuarioService(new CadastroUsuarioContext(
+            usuarioRepository,
+            new UsuarioIdentityRepositoryFake(),
+            new EmailServiceFake(),
+            new AcessoEmailCompositor(new EmailTemplateRenderer()),
+            new ValidadorFake(),
+            new EnderecoFrontendServiceFake(),
+            confirmacaoRepository,
+            codigoService));
+
+        for (var tentativa = 0; tentativa < 6; tentativa++)
+        {
+            var resultado = await cadastro.ConfirmarEmailAsync("USR001", codigoInvalido);
+            Assert.True(resultado.TeveFalha);
+        }
+
+        Assert.Equal(5, confirmacaoRepository.UltimaConfirmacaoGravada.TentativasFalhas);
+    }
+
+    [Fact]
     public async Task ReenviarConfirmacaoEmail_DeveBuscarCodigoUsuarioInformado()
     {
         var usuarioRepository = new UsuarioRepositoryFake(new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
         var confirmacaoRepository = new ConfirmacaoEmailRepositoryFake();
         var service = CriarReenviarConfirmacaoEmail(usuarioRepository, confirmacaoRepository);
 
-        var resultado = await service.ExecutarPorIdentificadorAsync("USR001", "http://localhost:4200");
+        var resultado = await service.ExecutarPorIdentificadorAsync("USR001");
 
         Assert.True(resultado.TeveSucesso);
         Assert.Equal("USR001", usuarioRepository.UltimoCodigoGeralBuscado);
         Assert.NotNull(confirmacaoRepository.UltimaConfirmacaoGravada);
         Assert.Equal("USR001", confirmacaoRepository.UltimaConfirmacaoGravada.UsuarioCodigo);
+    }
+
+    [Fact]
+    public async Task ReenviarConfirmacaoEmail_NaoDeveRevelarSeUsuarioExiste()
+    {
+        var usuarioRepository = new UsuarioRepositoryFake(
+            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var confirmacaoRepository = new ConfirmacaoEmailRepositoryFake();
+        var service = CriarReenviarConfirmacaoEmail(usuarioRepository, confirmacaoRepository);
+
+        var existente = await service.ExecutarPorIdentificadorAsync("USR001");
+        var inexistente = await service.ExecutarPorIdentificadorAsync("DESCONHECIDO");
+
+        Assert.True(existente.TeveSucesso);
+        Assert.True(inexistente.TeveSucesso);
+        Assert.Equal(
+            existente.Messages.Select(mensagem => mensagem.Descricao),
+            inexistente.Messages.Select(mensagem => mensagem.Descricao));
+    }
+
+    [Fact]
+    public async Task ReenviarConfirmacaoEmail_DeveRespeitarIntervaloMinimo()
+    {
+        var usuarioRepository = new UsuarioRepositoryFake(
+            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var confirmacaoRepository = new ConfirmacaoEmailRepositoryFake();
+        var emailService = new EmailServiceFake();
+        var service = CriarReenviarConfirmacaoEmail(
+            usuarioRepository,
+            confirmacaoRepository,
+            emailService);
+
+        await service.ExecutarPorIdentificadorAsync("USR001");
+        await service.ExecutarPorIdentificadorAsync("USR001");
+
+        Assert.Equal(1, confirmacaoRepository.Gravacoes);
+        Assert.Equal(1, emailService.Envios);
     }
 
     [Fact]
@@ -123,8 +313,7 @@ public class RegistroUsuarioServiceTests
             Sobrenome = "Teste",
             Email = "usuario@teste.com",
             Senha = "Senha@123",
-            ConfirmaSenha = "Senha@123",
-            ClientUri = "http://localhost:4200"
+            ConfirmaSenha = "Senha@123"
         });
 
         Assert.True(resultado.TeveSucesso);
@@ -175,33 +364,25 @@ public class RegistroUsuarioServiceTests
             Sobrenome = "Teste",
             Email = "usuario@teste.com",
             Senha = "Senha@123",
-            ConfirmaSenha = "Senha@123",
-            ClientUri = "http://localhost:4200"
+            ConfirmaSenha = "Senha@123"
         };
 
     private static RegistroUsuarioService CriarService(
         UsuarioRepositoryFake usuarioRepository,
         Resultado? resultadoEmail = null)
     {
-        var httpContextAccessor = new HttpContextAccessor
-        {
-            HttpContext = new DefaultHttpContext()
-        };
-        httpContextAccessor.HttpContext.Request.Scheme = "http";
-        httpContextAccessor.HttpContext.Request.Host = new HostString("localhost:5000");
-
         var identidade = new UsuarioIdentityRepositoryFake();
         var email = new EmailServiceFake(resultadoEmail);
         var compositor = new AcessoEmailCompositor(new EmailTemplateRenderer());
+        var enderecoFrontend = new EnderecoFrontendServiceFake();
+        var tokenTemporario = new TokenTemporarioService();
         var cadastro = new CadastroUsuarioService(new CadastroUsuarioContext(
             usuarioRepository,
-            new PerfilDeAcessoUsuarioRepositoryFake(),
-            new PerfilDeAcessoRepositoryFake(),
             identidade,
             email,
             compositor,
             new ValidadorFake(),
-            httpContextAccessor,
+            enderecoFrontend,
             new ConfirmacaoEmailRepositoryFake(),
             new ConfirmacaoEmailCodigoService()));
         var recuperacao = new RecuperacaoSenhaService(new RecuperacaoSenhaContext(
@@ -211,29 +392,40 @@ public class RegistroUsuarioServiceTests
             new CacheServiceFake(),
             email,
             compositor,
-            httpContextAccessor));
+            enderecoFrontend,
+            tokenTemporario));
 
         return new RegistroUsuarioService(cadastro, recuperacao);
     }
 
     private static ReenviarConfirmacaoEmail CriarReenviarConfirmacaoEmail(
         UsuarioRepositoryFake usuarioRepository,
-        ConfirmacaoEmailRepositoryFake confirmacaoRepository)
+        ConfirmacaoEmailRepositoryFake confirmacaoRepository,
+        EmailServiceFake? emailService = null)
     {
-        var httpContextAccessor = new HttpContextAccessor
-        {
-            HttpContext = new DefaultHttpContext()
-        };
-        httpContextAccessor.HttpContext.Request.Scheme = "http";
-        httpContextAccessor.HttpContext.Request.Host = new HostString("localhost:5000");
-
         return new ReenviarConfirmacaoEmail(
             usuarioRepository,
             confirmacaoRepository,
             new ConfirmacaoEmailCodigoService(),
-            new EmailServiceFake(),
+            emailService ?? new EmailServiceFake(),
             new AcessoEmailCompositor(new EmailTemplateRenderer()),
-            httpContextAccessor);
+            new EnderecoFrontendServiceFake());
+    }
+
+    private static RecuperacaoSenhaService CriarRecuperacaoSenha(
+        UsuarioRepositoryFake usuarioRepository,
+        EmailServiceFake emailService,
+        CacheServiceFake cacheService)
+    {
+        return new RecuperacaoSenhaService(new RecuperacaoSenhaContext(
+            usuarioRepository,
+            new UsuarioIdentityRepositoryFake(),
+            new LoginRepositoryFake(),
+            cacheService,
+            emailService,
+            new AcessoEmailCompositor(new EmailTemplateRenderer()),
+            new EnderecoFrontendServiceFake(),
+            new TokenTemporarioService()));
     }
 
     private sealed class UsuarioRepositoryFake : IUsuarioRepository
@@ -304,9 +496,9 @@ public class RegistroUsuarioServiceTests
         public Task<bool> ReativarContaAsync(string codigoUsuario) => Task.FromResult(true);
         public Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime) => Task.FromResult(true);
         public Task<bool> RefreshTokenExisteRepositoryAsync(string refreshToken) => Task.FromResult(true);
-        public Task<string> ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(string codigoUsuario) => Task.FromResult("refresh-token");
+        public Task<SessaoRefreshToken> ObterSessaoRefreshTokenRepositoryAsync(string refreshTokenHash) => Task.FromResult<SessaoRefreshToken>(null);
+        public Task<bool> RotacionarRefreshTokenRepositoryAsync(RotacaoRefreshTokenHash rotacao) => Task.FromResult(true);
         public Task<bool> RedefinirRefreshTokenRepositoryAsync(string codigoUsuario) => Task.FromResult(true);
-        public Task<bool> RefreshTokenExpiradoRepositoryAsync(string codigoUsuario) => Task.FromResult(false);
         public Task<string> GerarTokenConfirmacaoEmailAsync(string codigoUsuario) => Task.FromResult("token-confirmacao");
         public Task<bool> ConfirmarEmailAsync(string codigoUsuario, string token) => Task.FromResult(true);
         public Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario) => Task.FromResult<UsuarioIdentity>(null);
@@ -319,28 +511,53 @@ public class RegistroUsuarioServiceTests
 
     private sealed class EmailServiceFake(Resultado? resultado = null) : IEmailService
     {
-        public Task<Resultado> EnviarAsync(EmailRequest message) => Task.FromResult(resultado ?? Resultado.Sucesso());
+        public EmailRequest? UltimoRequest { get; private set; }
+        public int Envios { get; private set; }
+
+        public Task<Resultado> EnviarAsync(EmailRequest message)
+        {
+            Envios++;
+            UltimoRequest = message;
+            return Task.FromResult(resultado ?? Resultado.Sucesso());
+        }
     }
 
     private sealed class CacheServiceFake : ICacheService
     {
-        public void GravarCache<T>(CacheInfo<T> cacheInfo) { }
-        public void GravarCache<T>(CacheInfo<T> cacheInfo, TimeSpan expiracao) { }
-        public T ObterCache<T>(ChaveCache chaveCache) => default;
-        public void RemoverCache(ChaveCache chaveCache) { }
+        private readonly Dictionary<string, object> _itens = new(StringComparer.Ordinal);
+
+        public void GravarCache<T>(CacheInfo<T> cacheInfo)
+            => _itens[cacheInfo.KeyDescription] = cacheInfo.EntityInfo!;
+
+        public void GravarCache<T>(CacheInfo<T> cacheInfo, TimeSpan expiracao)
+            => GravarCache(cacheInfo);
+
+        public T ObterCache<T>(ChaveCache chaveCache)
+            => _itens.TryGetValue(chaveCache.Descricao, out var valor) ? (T)valor : default;
+
+        public void RemoverCache(ChaveCache chaveCache)
+            => _itens.Remove(chaveCache.Descricao);
     }
 
     private sealed class ConfirmacaoEmailRepositoryFake : IConfirmacaoEmailRepository
     {
         public ConfirmacaoEmail UltimaConfirmacaoGravada { get; private set; }
+        public int Gravacoes { get; private set; }
 
         public Task<bool> GravarOuSubstituirAsync(ConfirmacaoEmail confirmacaoEmail)
         {
+            Gravacoes++;
             UltimaConfirmacaoGravada = confirmacaoEmail;
             return Task.FromResult(true);
         }
-        public Task<ConfirmacaoEmail> ObterAtivaPorUsuarioAsync(string usuarioCodigo) => Task.FromResult<ConfirmacaoEmail>(null);
+        public Task<ConfirmacaoEmail> ObterAtivaPorUsuarioAsync(string usuarioCodigo)
+            => Task.FromResult(UltimaConfirmacaoGravada);
         public Task<bool> MarcarConfirmadaAsync(int id) => Task.FromResult(true);
+        public Task RegistrarTentativaFalhaAsync(int id)
+        {
+            UltimaConfirmacaoGravada.TentativasFalhas++;
+            return Task.CompletedTask;
+        }
         public Task<IEnumerable<ConfirmacaoEmail>> ObterTodosRepositoryAsync() => Task.FromResult(Enumerable.Empty<ConfirmacaoEmail>());
         public Task<ConfirmacaoEmail> ObterPorIdRepositoryAsync(int id) => Task.FromResult<ConfirmacaoEmail>(null);
         public Task<ConfirmacaoEmail> ObterPorCodigoRepositoryAsync(string codigo) => Task.FromResult<ConfirmacaoEmail>(null);
@@ -363,8 +580,7 @@ public class RegistroUsuarioServiceTests
     private sealed class LoginRepositoryFake : ILoginRepository
     {
         public Task<bool> AtualizarSenhaUsuario(string codigoDoUsuario, string senha) => Task.FromResult(true);
-        public Task<bool> AutenticarUsuarioAsync(UsuarioIdentity usuarioIdentity) => Task.FromResult(true);
-        public Task Logout() => Task.CompletedTask;
+        public Task<bool> ValidarCredenciaisAsync(string codigoUsuario, string senha) => Task.FromResult(true);
     }
 
     private sealed class PerfilDeAcessoRepositoryFake : IPerfilDeAcessoRepository
@@ -386,9 +602,8 @@ public class RegistroUsuarioServiceTests
         public Task DeletarRelacionamento(PerfilDeAcessoUsuario relacionamento) => Task.CompletedTask;
     }
 
-    private sealed class AuthUriBaseServiceFake(IHttpContextAccessor httpContextAccessor)
-        : AuthUriBaseService(httpContextAccessor)
+    private sealed class EnderecoFrontendServiceFake : IEnderecoFrontendService
     {
-        public string Obter(string clientUri) => ObterUri(clientUri);
+        public string ObterUriBase() => "https://front.atron.test";
     }
 }

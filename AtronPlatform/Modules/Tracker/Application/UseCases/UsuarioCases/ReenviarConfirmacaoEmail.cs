@@ -4,10 +4,10 @@ using Application.Extensions;
 using Application.Interfaces.Services;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
-using Microsoft.AspNetCore.Http;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
+using System;
 using System.Threading.Tasks;
 using UsuarioEntity = Domain.Entities.Usuario;
 
@@ -19,35 +19,37 @@ namespace Application.UseCases.UsuarioCases
         IConfirmacaoEmailCodigoService confirmacaoEmailCodigoService,
         IEmailService emailService,
         IAcessoEmailCompositor emailCompositor,
-        IHttpContextAccessor httpContextAccessor)
+        IEnderecoFrontendService enderecoFrontendService)
     {
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly IConfirmacaoEmailRepository _confirmacaoEmailRepository = confirmacaoEmailRepository;
         private readonly IConfirmacaoEmailCodigoService _confirmacaoEmailCodigoService = confirmacaoEmailCodigoService;
         private readonly IEmailService _emailService = emailService;
         private readonly IAcessoEmailCompositor _emailCompositor = emailCompositor;
-        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly IEnderecoFrontendService _enderecoFrontendService = enderecoFrontendService;
         private const int ValidadeConfirmacaoEmailEmHoras = 24;
+        private static readonly TimeSpan IntervaloMinimoReenvio = TimeSpan.FromMinutes(2);
 
-        public async Task<Resultado> ExecutarAsync(string codigoUsuario, string clientUri)
+        public async Task<Resultado> ExecutarAsync(string codigoUsuario)
         {
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
-            return await ReenviarAsync(usuario, clientUri);
+            return await ReenviarAsync(usuario);
         }
 
-        public async Task<Resultado> ExecutarPorIdentificadorAsync(string identificador, string clientUri)
+        public async Task<Resultado> ExecutarPorIdentificadorAsync(string identificador)
         {
             if (string.IsNullOrWhiteSpace(identificador))
-                return Resultado.Falha(EmailResource.Erro_InformeEmailCodigo);
+                return RespostaPublica();
 
             var usuario = identificador.IdentifierIsEmail()
                 ? await _usuarioRepository.ObterUsuarioGeralPorEmailAsync(identificador)
                 : await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificador);
 
-            return await ReenviarAsync(usuario, clientUri);
+            await ReenviarAsync(usuario);
+            return RespostaPublica();
         }
 
-        private async Task<Resultado> ReenviarAsync(UsuarioEntity usuario, string clientUri)
+        private async Task<Resultado> ReenviarAsync(UsuarioEntity usuario)
         {
             if (usuario == null)
                 return Resultado.Falha(UsuarioResource.Erro_UsuarioNaoEncontrado);
@@ -58,12 +60,22 @@ namespace Application.UseCases.UsuarioCases
             if (usuario.EmailConfirmado)
                 return Resultado.Falha(EmailResource.Erro_EmailConfirmado);
 
+            var confirmacaoAtiva = await _confirmacaoEmailRepository
+                .ObterAtivaPorUsuarioAsync(usuario.Codigo);
+            var agora = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+
+            if (confirmacaoAtiva is not null &&
+                agora - confirmacaoAtiva.CriadoEm < IntervaloMinimoReenvio)
+            {
+                return RespostaPublica();
+            }
+
             var confirmacao = _confirmacaoEmailCodigoService.CriarDadosConfirmacao(usuario.Codigo, ValidadeConfirmacaoEmailEmHoras);
             var gravado = await _confirmacaoEmailRepository.GravarOuSubstituirAsync(confirmacao.ConfirmacaoEmail);
             if (!gravado)
                 return Resultado.Falha(EmailResource.Erro_CriarCodigoDeConfirmacao);
 
-            var baseUri = ObterUri(clientUri);
+            var baseUri = _enderecoFrontendService.ObterUriBase();
             var link = $"{baseUri}/confirmar-email?usuarioCodigo={usuario.Codigo}";
 
             try
@@ -90,12 +102,8 @@ namespace Application.UseCases.UsuarioCases
             }
         }
 
-        private string ObterUri(string uri)
-        {
-            var httpContext = _httpContextAccessor.HttpContext;
-            var uriContext = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
-            return !string.IsNullOrEmpty(uri) ? uri.TrimEnd('/') : uriContext;
-        }
+        private static Resultado RespostaPublica()
+            => Resultado.Sucesso(EmailResource.Mensagem_EnvioConfirmacaoEmail);
 
     }
 }

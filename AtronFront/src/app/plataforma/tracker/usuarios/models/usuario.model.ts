@@ -5,7 +5,6 @@ export interface UsuarioModel {
   email: string;
   dataNascimento?: Date | string;
   senha?: string;
-  clientUri?: string;
   cargoCodigo: string;
   departamentoCodigo: string;
 }

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AcessoService, RedefinirSenhaRequest } from '../../../../core/services/acesso.service';
-import { CryptoService } from '../../../../core/services/crypto/crypto.service';
 import { NotificacaoService, Nivel } from '../../../../core/services/notification.service';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error.component';
 import { SharedModule } from '../../../../shared/modules/shared.module';
@@ -24,7 +23,6 @@ export class TrocarSenhaComponent implements OnInit {
   erroLink = false;
 
   private identificadorTemporario = '';
-
   private readonly SESSION_KEY = 'atron_id_temp';
 
   constructor(
@@ -32,31 +30,21 @@ export class TrocarSenhaComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private acessoService: AcessoService,
-    private cryptoService: CryptoService,
     private notificacaoService: NotificacaoService
   ) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      const idCriptografado = this.normalizarIdentificadorDaUrl(params['id'] || '');
+    this.route.fragment.subscribe(fragmento => {
+      const token = new URLSearchParams(fragmento ?? '').get('token') ?? '';
 
-      if (idCriptografado) {
-        // Descriptografar o identificador temporário que veio na URL
-        const idDescriptografado = this.cryptoService.decrypt(idCriptografado);
-
-        if (idDescriptografado) {
-          this.identificadorTemporario = idDescriptografado;
-          // Guardar no sessionStorage para resiliência em caso de refresh
-          sessionStorage.setItem(this.SESSION_KEY, this.identificadorTemporario);
-        } else {
-          // Falha na descriptografia — link inválido ou adulterado
-          this.marcarLinkInvalido();
-        }
+      if (token) {
+        this.identificadorTemporario = token;
+        sessionStorage.setItem(this.SESSION_KEY, token);
+        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
       } else {
-        // Tentar recuperar do sessionStorage (caso de refresh da página)
-        const idSalvo = sessionStorage.getItem(this.SESSION_KEY);
-        if (idSalvo) {
-          this.identificadorTemporario = idSalvo;
+        const tokenSalvo = sessionStorage.getItem(this.SESSION_KEY);
+        if (tokenSalvo) {
+          this.identificadorTemporario = tokenSalvo;
         } else {
           this.marcarLinkInvalido();
         }
@@ -91,17 +79,14 @@ export class TrocarSenhaComponent implements OnInit {
 
     const req = new RedefinirSenhaRequest();
     req.identificadorTemporario = this.identificadorTemporario;
-
-    // Criptografar senhas na requisição
-    req.novaSenha = this.cryptoService.encrypt(pw1);
-    req.repetirSenha = this.cryptoService.encrypt(pw2);
+    req.novaSenha = pw1;
+    req.repetirSenha = pw2;
 
     this.acessoService.trocarSenha(req).subscribe({
       next: () => {
         this.senhaSalva = true;
         this.mensagemEnvio = 'Sua senha foi redefinida com sucesso.';
         this.notificacaoService.exibirMensagem(this.mensagemEnvio, Nivel.Sucesso);
-        // Limpar sessionStorage após sucesso
         sessionStorage.removeItem(this.SESSION_KEY);
       },
       error: (err: any) => {
@@ -116,18 +101,6 @@ export class TrocarSenhaComponent implements OnInit {
   voltarLogin() {
     sessionStorage.removeItem(this.SESSION_KEY);
     this.router.navigate(['/login']);
-  }
-
-  private normalizarIdentificadorDaUrl(valor: string): string {
-    if (!valor) return '';
-
-    const valorComMais = valor.replace(/ /g, '+');
-
-    try {
-      return decodeURIComponent(valorComMais).replace(/ /g, '+');
-    } catch {
-      return valorComMais;
-    }
   }
 
   private marcarLinkInvalido(): void {

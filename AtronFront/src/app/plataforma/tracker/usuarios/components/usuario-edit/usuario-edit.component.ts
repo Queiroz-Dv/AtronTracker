@@ -54,7 +54,6 @@ export class UsuarioEditComponent implements OnInit {
       dadosForm.email,
       dadosForm.cargoCodigo,
       dadosForm.departamentoCodigo,
-      window.location.origin,
       formatarDataParaEnvio(dadosForm.dataNascimento),
       dadosForm.gestorImediatoCodigo);
 

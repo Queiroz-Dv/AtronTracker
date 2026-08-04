@@ -1,9 +1,7 @@
 ﻿using Application.DTO;
 using Domain.Entities;
-using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services.Mapper;
-using System;
 using System.Threading.Tasks;
 
 namespace Application.Mapping
@@ -33,11 +31,6 @@ namespace Application.Mapping
                 Sobrenome = entity.Sobrenome,
                 Email = entity.Email,
                 DataNascimento = entity.DataNascimento,
-                DadosDoToken = new DadosDeTokenComRefreshToken()
-                {
-                    TokenDTO = new DadosDoTokenDTO(entity.Token, DateTime.Now),
-                    RefrehTokenDTO = new DadosDoRefrehTokenDTO(entity.RefreshToken, entity.RefreshTokenExpireTime)
-                },
                 PerfisDeAcesso = []
             };
 

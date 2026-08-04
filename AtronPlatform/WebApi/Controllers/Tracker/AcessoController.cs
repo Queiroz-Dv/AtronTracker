@@ -1,12 +1,15 @@
 using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.UseCases.UsuarioCases;
+using AtronPlatform.WebApi.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.RateLimiting;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
-using Shared.Extensions;
+using Shared.Application.Resources;
+using Shared.Domain.Enums;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
@@ -33,8 +36,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
             ICookieService cookieService,
             SolicitarReativacao solicitarReativacao,
             ReativarUsuario reativarUsuario,
-            ReenviarConfirmacaoEmail reenviarConfirmacaoEmail,
-            ILogger<AcessoController> logger)
+            ReenviarConfirmacaoEmail reenviarConfirmacaoEmail)
         {
             _registroUsuarioService = registroUsuarioService;
             _cookieService = cookieService;
@@ -50,6 +52,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <param name="loginDTO">Credenciais de acesso (código do usuário e senha).</param>
         /// <returns>200 OK com dados do token ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost(nameof(Login))]
+        [EnableRateLimiting(AcessoRateLimiting.Login)]
         public async Task<ActionResult<DadosDoTokenDTO>> Login([FromBody] LoginRequestDTO loginDTO)
         {
             var resultado = await _service.Autenticar(loginDTO);
@@ -60,7 +63,8 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// Renova o token de acesso usando o refresh token armazenado em cookie.
         /// </summary>
         /// <returns>200 OK com novos dados de token ou 400 BadRequest com mensagens de erro.</returns>
-        [HttpGet("RefreshToken")]
+        [HttpPost("RefreshToken")]
+        [AllowAnonymous]
         public async Task<IActionResult> Refresh()
         {
             var dadosDoRefreshToken = await _cookieService.ObterRefreshTokenPorRequest(Request);
@@ -73,10 +77,14 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// Encerra a sessão do usuário autenticado, invalidando o token.
         /// </summary>
         /// <returns>200 OK com mensagens de confirmação ou 400 BadRequest com mensagens de erro.</returns>
-        [HttpGet("Desconectar")]
+        [HttpPost("Desconectar")]
+        [Authorize]
         public async Task<ActionResult<bool>> Logout()
         {
-            var usuarioCodigo = HttpContext.Request.Headers.ExtrairCodigoUsuarioDoRequest();
+            var usuarioCodigo = User.FindFirst(ClaimCode.CODIGO_USUARIO)?.Value;
+            if (string.IsNullOrWhiteSpace(usuarioCodigo))
+                return Unauthorized();
+
             var resultado = await _service.Logout(usuarioCodigo);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
@@ -84,13 +92,14 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <summary>
         /// Reenvia o link de confirmacao de e-mail para usuarios que ainda nao confirmaram o acesso.
         /// </summary>
-        /// <param name="request">Objeto com codigo ou e-mail do usuario e a clientUri para construcao do link.</param>
+        /// <param name="request">Objeto com codigo ou e-mail do usuario.</param>
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("ReenviarConfirmacaoEmail")]
         [AllowAnonymous]
+        [EnableRateLimiting(AcessoRateLimiting.ReenvioConfirmacao)]
         public async Task<ActionResult> ReenviarConfirmacaoEmail([FromBody] ReenviarConfirmacaoEmailRequest request)
         {
-            var resultado = await _reenviarConfirmacaoEmail.ExecutarPorIdentificadorAsync(request.Identificador, request.ClientUri);
+            var resultado = await _reenviarConfirmacaoEmail.ExecutarPorIdentificadorAsync(request.Identificador);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
@@ -101,6 +110,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost(nameof(TrocarSenha))]
         [AllowAnonymous]
+        [EnableRateLimiting(AcessoRateLimiting.TrocaSenha)]
         public async Task<ActionResult<bool>> TrocarSenha([FromBody] RedefinirSenhaRequest request)
         {
             var resultado = await _registroUsuarioService.TrocarSenha(request);
@@ -110,10 +120,11 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <summary>
         /// Solicita o envio de e-mail de recuperação de senha para o usuário informado.
         /// </summary>
-        /// <param name="request">Objeto com o e-mail do usuário e a clientUri para construção do link de redefinição.</param>
+        /// <param name="request">Objeto com o e-mail ou código do usuário.</param>
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("RecuperarSenha")]
         [AllowAnonymous]
+        [EnableRateLimiting(AcessoRateLimiting.RecuperacaoSenha)]
         public async Task<ActionResult> RecuperarSenha([FromBody] SolicitarRecuperacaoSenhaRequest request)
         {
             var resultado = await _registroUsuarioService.SolicitarRecuperacaoSenha(request);
@@ -126,6 +137,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <param name="registroRequest">Dados do usuário a ser registrado.</param>
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("Registrar")]
+        [EnableRateLimiting(AcessoRateLimiting.Registro)]
         public async Task<ActionResult> Post([FromBody] UsuarioRegistroRequest registroRequest)
         {
             var resultado = await _registroUsuarioService.RegistrarUsuario(registroRequest);
@@ -139,10 +151,11 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("ConfirmarEmail")]
         [AllowAnonymous]
+        [EnableRateLimiting(AcessoRateLimiting.ConfirmacaoEmail)]
         public async Task<ActionResult> ConfirmarEmail([FromBody] ConfirmarEmailRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.UsuarioCodigo) || string.IsNullOrWhiteSpace(request.Identificador))
-                return BadRequest("Usuario e codigo de confirmacao sao obrigatorios.");
+                return BadRequest(AuthResource.Erro_DadosConfirmacaoObrigatorios);
 
             var resultado = await _registroUsuarioService.ConfirmarEmail(request.UsuarioCodigo, request.Identificador);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
@@ -155,6 +168,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("SolicitarReativacao")]
         [AllowAnonymous]
+        [EnableRateLimiting(AcessoRateLimiting.Reativacao)]
         public async Task<ActionResult> SolicitarReativacao([FromBody] SolicitarReativacaoRequest request)
         {
             var resultado = await _solicitarReativacao.ExecutarAsync(request.Email);
@@ -168,6 +182,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("ReativarConta")]
         [AllowAnonymous]
+        [EnableRateLimiting(AcessoRateLimiting.Reativacao)]
         public async Task<ActionResult> ReativarConta([FromBody] ReativarContaRequest request)
         {
             var resultado = await _reativarUsuario.ExecutarAsync(request.Email, request.CodigoReativacao);

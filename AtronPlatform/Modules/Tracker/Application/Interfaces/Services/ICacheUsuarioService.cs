@@ -1,13 +1,12 @@
 ﻿using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
+using System;
 
 namespace Application.Interfaces.Services
 {
     public interface ICacheUsuarioService
     {
-        void GravarCacheDeAcessoTokenInfo(DadosComplementaresDoUsuarioDTO dadosDoUsuario, DadosDeTokenComRefreshToken tokenComRefreshToken);
-
-        DadosDeTokenComRefreshToken ObterDadosDoTokenPorCodigoUsuario(string codigoUsuario);
+        void GravarCacheDeAcesso(DadosComplementaresDoUsuarioDTO dadosDoUsuario, DateTime expiracaoAccessToken);
 
         void RemoverCacheDeAcessoTokenInfo(string codigoUsuario);
     }
