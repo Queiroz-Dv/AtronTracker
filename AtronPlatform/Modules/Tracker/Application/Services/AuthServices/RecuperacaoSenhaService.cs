@@ -2,25 +2,24 @@ using Application.DTO.Request;
 using Application.Email.Models;
 using Application.Extensions;
 using Application.Interfaces.Services;
-using Application.Services.AuthServices.Bases;
 using Shared.Application.Resources;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 using System;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Application.Services.AuthServices
 {
-    public class RecuperacaoSenhaService(RecuperacaoSenhaContext context)
-        : AuthUriBaseService(context.HttpContextAccessor), IRecuperacaoSenhaService
+    public class RecuperacaoSenhaService(RecuperacaoSenhaContext context) : IRecuperacaoSenhaService
     {
         private const int ValidadeEmHoras = 24;
 
         public async Task<Resultado> SolicitarAsync(SolicitarRecuperacaoSenhaRequest request)
         {
+            var respostaPublica = Resultado.Sucesso(AuthResource.Mensagem_EnvioDeEmail);
+
             if (string.IsNullOrWhiteSpace(request.Identificador))
-                return Resultado.Falha(AuthResource.Erro_IdentificadorTemporario);
+                return respostaPublica;
 
             var identificador = request.Identificador.NormalizeIdentifier();
 
@@ -29,45 +28,41 @@ namespace Application.Services.AuthServices
                 : await context.UsuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificador.NormalizeUserCodeIdentifier());
 
             if (usuario == null)
-                return Resultado.Falha(AuthResource.Erro_UsuarioNaoEncontrado);
+                return respostaPublica;
 
             if (usuario.Inativo)
-                return Resultado.Falha(AuthResource.Erro_UsuarioInativo);
+                return respostaPublica;
 
-            var temporario = CryptoHelper.GerarIdentificadorTemporario(usuario.Codigo);
+            var temporario = context.TokenTemporarioService.Criar();
 
             var dados = new DadosTemporarios
             {
-                IdentificadorTemporario = temporario,
                 UsuarioCodigo = usuario.Codigo,
                 Email = usuario.Email,
                 Token = await context.IdentityRepository.GerarTokenRecuperacaoSenhaAsync(usuario.Codigo),
                 DataAlteracaoSenha = DateTime.UtcNow
             };
 
-            var cache = new CacheInfo<DadosTemporarios>(new ChaveCache(ECacheKeysInfo.DadosTemporarios, temporario)) { EntityInfo = dados };
+            var cache = new CacheInfo<DadosTemporarios>(new ChaveCache(ECacheKeysInfo.DadosTemporarios, temporario.Hash)) { EntityInfo = dados };
 
             context.CacheService.GravarCache(cache, TimeSpan.FromHours(ValidadeEmHoras));
-            var uri = ObterUri(request.ClientUri);
-            var encoder = HttpUtility.UrlEncode(CryptoHelper.EncryptCryptoJsAes(temporario));
-
-            var link = $"{uri}/trocar-senha?id={encoder}";
+            var uri = context.EnderecoFrontendService.ObterUriBase();
+            var link = $"{uri}/trocar-senha#token={temporario.Valor}";
             try
             {
                 var recuperacao = new RecuperacaoSenhaEmailParametros(usuario.Email, usuario.Nome, link, ValidadeEmHoras);
                 var email = context.EmailCompositor.ComporRecuperacaoSenha(recuperacao);
 
                 if (email.TeveFalha)
-                    return Resultado.Falha(email.Messages);
+                    return respostaPublica;
 
-                var envio = await context.EmailService.EnviarAsync(email.Dados);
-
-                return envio.TeveFalha ? Resultado.Falha(envio.Messages) : Resultado.Sucesso();
+                await context.EmailService.EnviarAsync(email.Dados);
             }
             catch
             {
-                return Resultado.Falha(AuthResource.Erro_EnvioEmailObrigatorio);
             }
+
+            return respostaPublica;
         }
 
         public async Task<Resultado> TrocarAsync(RedefinirSenhaRequest request)
@@ -75,14 +70,15 @@ namespace Application.Services.AuthServices
             if (string.IsNullOrWhiteSpace(request.IdentificadorTemporario))
                 return Resultado.Falha(AuthResource.Erro_IdentificadorTemporario);
 
-            var chave = new ChaveCache(ECacheKeysInfo.DadosTemporarios, request.IdentificadorTemporario);
+            var hash = context.TokenTemporarioService.ObterHash(request.IdentificadorTemporario);
+            var chave = new ChaveCache(ECacheKeysInfo.DadosTemporarios, hash);
             var dados = context.CacheService.ObterCache<DadosTemporarios>(chave);
 
             if (dados == null)
                 return Resultado.Falha(AuthResource.Erro_CacheExpiradoNaTrocaDeSenha);
 
-            var senha = CryptoHelper.DecryptCryptoJsAes(request.NovaSenha);
-            var repetir = CryptoHelper.DecryptCryptoJsAes(request.RepetirSenha);
+            var senha = request.NovaSenha;
+            var repetir = request.RepetirSenha;
 
             if (string.IsNullOrEmpty(senha) || string.IsNullOrEmpty(repetir))
                 return Resultado.Falha(AuthResource.Erro_SenhaInvalida);

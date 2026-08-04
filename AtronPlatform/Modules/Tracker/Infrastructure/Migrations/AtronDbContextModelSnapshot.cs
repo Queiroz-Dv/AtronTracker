@@ -75,6 +75,11 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
+                    b.Property<int>("TentativasFalhas")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
                     b.Property<string>("UsuarioCodigo")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -758,8 +763,9 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("RefreshToken")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .IsConcurrencyToken()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<DateTime?>("RefreshTokenExpireTime")
                         .HasColumnType("timestamp without time zone");

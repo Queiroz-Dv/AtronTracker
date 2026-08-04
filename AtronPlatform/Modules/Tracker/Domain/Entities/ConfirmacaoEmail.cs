@@ -9,5 +9,6 @@ namespace Domain.Entities
         public DateTime CriadoEm { get; set; }
         public DateTime ExpiraEm { get; set; }
         public DateTime? ConfirmadoEm { get; set; }
+        public int TentativasFalhas { get; set; }
     }
 }

@@ -1,7 +1,5 @@
 using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
-using Domain.Interfaces.Identity;
-using Microsoft.Extensions.Logging;
 using Shared.Application.Interfaces.Service;
 using Shared.Extensions;
 using System.Threading.Tasks;
@@ -11,39 +9,33 @@ namespace Infrastructure.Repositories.ApplicationRepositories
     public class LoginRepository : ILoginRepository
     {
         private readonly IAuthManagerService _authManager;
-        private readonly IUsuarioIdentityRepository _userIdentityRepo;
-        private readonly ILogger<LoginRepository> _logger;
-
-        public LoginRepository(
-            IUsuarioIdentityRepository userIdentityRepo,
-            IAuthManagerService authManagerContext,
-            ILogger<LoginRepository> logger)
+        public LoginRepository(IAuthManagerService authManagerContext)
         {
-            _userIdentityRepo = userIdentityRepo;
             _authManager = authManagerContext;
-            _logger = logger;
         }
 
-        public async Task<bool> AutenticarUsuarioAsync(UsuarioIdentity usuarioIdentity)
+        public async Task<bool> ValidarCredenciaisAsync(string codigoUsuario, string senha)
         {
-            var usuario = await _authManager.UserManager.FindByNameAsync(usuarioIdentity.Codigo);
-            if (usuario != null)
+            var usuario = await _authManager.UserManager.FindByNameAsync(codigoUsuario);
+            if (usuario is null || await _authManager.UserManager.IsLockedOutAsync(usuario))
+                return false;
+
+            if (!usuario.LockoutEnabled)
             {
-                var refreshTokenAtualizado = await _userIdentityRepo.AtualizarRefreshTokenUsuarioRepositoryAsync(
-                    usuario.UserName,
-                    usuarioIdentity.RefreshToken,
-                    usuarioIdentity.RefreshTokenExpireTime);
-
-                if (refreshTokenAtualizado && !usuarioIdentity.Senha.IsNullOrEmpty())
-                {
-                    var signInResult = await _authManager.SignInManager.PasswordSignInAsync(usuarioIdentity.Codigo, usuarioIdentity.Senha, true, false);
-                    return signInResult.Succeeded;
-                }
-
-                return refreshTokenAtualizado;
+                usuario.LockoutEnabled = true;
+                var lockoutHabilitado = await _authManager.UserManager.UpdateAsync(usuario);
+                if (!lockoutHabilitado.Succeeded)
+                    return false;
             }
 
-            return false;
+            if (!await _authManager.UserManager.CheckPasswordAsync(usuario, senha))
+            {
+                await _authManager.UserManager.AccessFailedAsync(usuario);
+                return false;
+            }
+
+            var falhasRedefinidas = await _authManager.UserManager.ResetAccessFailedCountAsync(usuario);
+            return falhasRedefinidas.Succeeded;
         }
 
         public async Task<bool> AtualizarSenhaUsuario(string codigoDoUsuario, string senha)
@@ -64,9 +56,5 @@ namespace Infrastructure.Repositories.ApplicationRepositories
             return false;
         }
 
-        public async Task Logout()
-        {
-            await _authManager.SignInManager.SignOutAsync();
-        }
     }
 }

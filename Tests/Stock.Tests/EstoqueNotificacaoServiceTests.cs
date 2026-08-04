@@ -1,5 +1,4 @@
 using AtronNotificacoes.Contracts;
-using AtronStock.Application.Interfaces;
 using AtronStock.Application.Services;
 using AtronStock.Domain.Entities;
 using Xunit;

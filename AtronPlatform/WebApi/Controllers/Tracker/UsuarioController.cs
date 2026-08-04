@@ -104,13 +104,13 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// Solicita alteração de e-mail para o usuário informado — envia token de confirmação para o novo e-mail.
         /// </summary>
         /// <param name="codigo">Código do usuário cujo e-mail será alterado.</param>
-        /// <param name="request">Objeto contendo o novo e-mail e a clientUri para construção do link.</param>
+        /// <param name="request">Objeto contendo o novo e-mail.</param>
         /// <returns>200 OK com dados ou 400 BadRequest com mensagens de erro.</returns>
         [Authorize]
         [HttpPut("alterar-email/{codigo}")]
         public async Task<IActionResult> AlterarEmail(string codigo, [FromBody] AlterarEmailRequest request)
         {
-            var resultado = await usuarioService.AlterarEmailAsync(codigo, request.EmailNovo, request.ClientUri);
+            var resultado = await usuarioService.AlterarEmailAsync(codigo, request.EmailNovo);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -136,13 +136,12 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// Reenvia o e-mail de confirmação de cadastro para o usuário autenticado.
         /// </summary>
         /// <param name="codigo">Código do usuário que solicita o reenvio.</param>
-        /// <param name="request">Objeto contendo a clientUri para construção do link de confirmação.</param>
         /// <returns>200 OK com dados ou 400 BadRequest com mensagens de erro.</returns>
         [Authorize]
         [HttpPost("reenviar-confirmacao-email/{codigo}")]
-        public async Task<IActionResult> ReenviarConfirmacaoEmail(string codigo, [FromBody] ReenviarConfirmacaoEmailRequest request)
+        public async Task<IActionResult> ReenviarConfirmacaoEmail(string codigo)
         {
-            var resultado = await usuarioService.ReenviarConfirmacaoEmailAsync(codigo, request.ClientUri);
+            var resultado = await usuarioService.ReenviarConfirmacaoEmailAsync(codigo);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
     }

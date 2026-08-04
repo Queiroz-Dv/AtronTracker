@@ -7,6 +7,7 @@ namespace Domain.Interfaces
     {
         Task<bool> GravarOuSubstituirAsync(ConfirmacaoEmail confirmacaoEmail);
         Task<ConfirmacaoEmail> ObterAtivaPorUsuarioAsync(string usuarioCodigo);
+        Task RegistrarTentativaFalhaAsync(int id);
         Task<bool> MarcarConfirmadaAsync(int id);
     }
 }

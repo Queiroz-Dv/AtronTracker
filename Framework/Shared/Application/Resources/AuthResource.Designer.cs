@@ -223,7 +223,7 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Senha inválida ou falha na descriptografia da requisição..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Senha inválida..
         /// </summary>
         public static string Erro_SenhaInvalida {
             get {
@@ -270,9 +270,18 @@ namespace Shared.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a URI da aplicacao nao informada para envio do link de primeiro acesso..
         /// </summary>
-        public static string Erro_UriPrimeiroAcessoObrigatoria {
+        public static string Erro_UriFrontendNaoConfigurada {
             get {
-                return ResourceManager.GetString("Erro_UriPrimeiroAcessoObrigatoria", resourceCulture);
+                return ResourceManager.GetString("Erro_UriFrontendNaoConfigurada", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Muitas tentativas foram realizadas. Aguarde antes de tentar novamente..
+        /// </summary>
+        public static string Erro_MuitasTentativas {
+            get {
+                return ResourceManager.GetString("Erro_MuitasTentativas", resourceCulture);
             }
         }
         

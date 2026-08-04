@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using System;
 using System.Threading.Tasks;
 
 namespace Domain.Interfaces.ApplicationInterfaces
@@ -7,8 +8,7 @@ namespace Domain.Interfaces.ApplicationInterfaces
     {
         Task<bool> AtualizarSenhaUsuario(string codigoDoUsuario, string senha);
 
-        Task<bool> AutenticarUsuarioAsync(UsuarioIdentity usuarioIdentity);
-        
-        Task Logout();
+        Task<bool> ValidarCredenciaisAsync(string codigoUsuario, string senha);
+
     }
 }

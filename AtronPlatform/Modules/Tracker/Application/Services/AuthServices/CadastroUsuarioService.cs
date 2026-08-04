@@ -2,7 +2,6 @@ using Application.DTO.Request;
 using Application.Email.Models;
 using Application.Extensions;
 using Application.Interfaces.Services;
-using Application.Services.AuthServices.Bases;
 using Domain.Entities;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -13,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace Application.Services.AuthServices
 {
-    public class CadastroUsuarioService(CadastroUsuarioContext context)
-        : AuthUriBaseService(context.HttpContextAccessor), ICadastroUsuarioService
+    public class CadastroUsuarioService(CadastroUsuarioContext context) : ICadastroUsuarioService
     {
         private const int ValidadeConfirmacaoEmHoras = 24;
+        private const int MaximoTentativasConfirmacao = 5;
 
         public async Task<Resultado> RegistrarAsync(UsuarioRegistroRequest request)
         {
@@ -45,21 +44,7 @@ namespace Application.Services.AuthServices
                 return Resultado.Falha(UsuarioResource.ErroInesperadoGravacao);
 
             var usuarioGravado = await context.UsuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
-            var perfil = await context.PerfilRepository.ObterPerfilPorCodigoRepositoryAsync(request.CodigoPerfilDeAcesso);
-            if (perfil != null)
-            {
-                var relacionamento = new PerfilDeAcessoUsuario
-                {
-                    PerfilDeAcessoId = perfil.Id,
-                    PerfilDeAcessoCodigo = perfil.Codigo,
-                    UsuarioId = usuarioGravado.Id,
-                    UsuarioCodigo = usuarioGravado.Codigo
-                };
-
-                await context.PerfilUsuarioRepository.CriarRelacionamentoRepositoryAsync(relacionamento);
-            }
-
-            var confirmacao = await CriarConfirmacaoAsync(request.ClientUri, usuarioGravado.Codigo);
+            var confirmacao = await CriarConfirmacaoAsync(usuarioGravado.Codigo);
             if (!confirmacao.Gravado)
                 return Resultado.Falha(AuthResource.Erro_GerarCodigoConfirmacao);
 
@@ -93,8 +78,14 @@ namespace Application.Services.AuthServices
                 return Resultado.Falha(AuthResource.Erro_DadosConfirmacaoObrigatorios);
 
             var confirmacao = await context.ConfirmacaoRepository.ObterAtivaPorUsuarioAsync(codigo);
-            if (confirmacao is null || !context.ConfirmacaoCodigoService.ConfirmacaoValida(confirmacao, codigo, id))
+            if (confirmacao is null || confirmacao.TentativasFalhas >= MaximoTentativasConfirmacao)
                 return Resultado.Falha(AuthResource.Erro_FalhaConfirmarEmail);
+
+            if (!context.ConfirmacaoCodigoService.ConfirmacaoValida(confirmacao, codigo, id))
+            {
+                await context.ConfirmacaoRepository.RegistrarTentativaFalhaAsync(confirmacao.Id);
+                return Resultado.Falha(AuthResource.Erro_FalhaConfirmarEmail);
+            }
 
             if (!await context.UsuarioRepository.ConfirmarEmailAsync(codigo))
                 return Resultado.Falha(AuthResource.Erro_FalhaConfirmarEmail);
@@ -123,11 +114,12 @@ namespace Application.Services.AuthServices
             return resultado;
         }
 
-        private async Task<(string Link, string Identificador, bool Gravado)> CriarConfirmacaoAsync(string clientUri, string codigo)
+        private async Task<(string Link, string Identificador, bool Gravado)> CriarConfirmacaoAsync(string codigo)
         {
             var dados = context.ConfirmacaoCodigoService.CriarDadosConfirmacao(codigo, ValidadeConfirmacaoEmHoras);
             var gravado = await context.ConfirmacaoRepository.GravarOuSubstituirAsync(dados.ConfirmacaoEmail);
-            return ($"{ObterUri(clientUri)}/confirmar-email?usuarioCodigo={codigo}", dados.Identificador, gravado);
+            var uriBase = context.EnderecoFrontendService.ObterUriBase();
+            return ($"{uriBase}/confirmar-email?usuarioCodigo={codigo}", dados.Identificador, gravado);
         }
     }
 }

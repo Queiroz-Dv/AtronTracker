@@ -6,7 +6,5 @@ namespace Application.DTO.Request
     {
         [Required]
         public string EmailNovo { get; set; }
-
-        public string ClientUri { get; set; }
     }
 }

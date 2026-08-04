@@ -3,6 +3,8 @@ using System.ComponentModel;
 
 namespace Application.DTO.Request
 {
+    [System.Text.Json.Serialization.JsonUnmappedMemberHandling(
+        System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow)]
     public class UsuarioRegistroRequest
     {
         [DisplayName("Código")]
@@ -15,15 +17,10 @@ namespace Application.DTO.Request
         [DisplayName("Data de nascimento")]
         public DateOnly? DataNascimento { get; set; }
 
-        [DisplayName("Código de perfil de acesso")]
-        public string? CodigoPerfilDeAcesso { get; set; }
-
         public string Email { get; set; }
 
         public string Senha { get; set; }
 
         public string ConfirmaSenha { get; set; }
-
-        public string ClientUri { get; set; } = string.Empty;
     }
 }

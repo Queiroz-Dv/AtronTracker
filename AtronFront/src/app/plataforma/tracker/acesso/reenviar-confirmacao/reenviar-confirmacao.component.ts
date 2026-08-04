@@ -30,8 +30,6 @@ export class ReenviarConfirmacaoComponent {
 
     const request = new ReenviarConfirmacaoEmailRequest();
     request.identificador = this.identificadorControl.value as string;
-    request.clientUri = window.location.origin;
-
     this.acessoService.reenviarConfirmacaoEmail(request).subscribe({
       next: () => {
         this.enviado = true;

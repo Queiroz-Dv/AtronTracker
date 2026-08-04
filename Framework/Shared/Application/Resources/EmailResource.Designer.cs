@@ -213,7 +213,7 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Enviamos um novo codigo de confirmacao para seu e-mail..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Se a conta existir e estiver apta, enviaremos as instruções de confirmação para o e-mail cadastrado..
         /// </summary>
         public static string Mensagem_EnvioConfirmacaoEmail {
             get {

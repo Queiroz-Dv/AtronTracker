@@ -1,7 +1,7 @@
 using Application.DTO.Request;
 using Application.Email.Compositores;
 using Application.Email.Models;
-using Application.Extensions;
+using Application.Interfaces.Services;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -14,7 +14,6 @@ using Shared.Extensions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Application.UseCases.UsuarioCases
 {
@@ -29,7 +28,9 @@ namespace Application.UseCases.UsuarioCases
         IEmailService emailService,
         IAcessoEmailCompositor emailCompositor,
         ICacheService cacheService,
-        IAuditoriaService auditoriaService)
+        IAuditoriaService auditoriaService,
+        IEnderecoFrontendService enderecoFrontendService,
+        ITokenTemporarioService tokenTemporarioService)
     {
         private readonly IValidador<UsuarioRequest> _validador = validador;
         private readonly IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> _mapService = mapService;
@@ -42,6 +43,8 @@ namespace Application.UseCases.UsuarioCases
         private readonly IAcessoEmailCompositor _emailCompositor = emailCompositor;
         private readonly ICacheService _cacheService = cacheService;
         private readonly IAuditoriaService _auditoriaService = auditoriaService;
+        private readonly IEnderecoFrontendService _enderecoFrontendService = enderecoFrontendService;
+        private readonly ITokenTemporarioService _tokenTemporarioService = tokenTemporarioService;
 
         private const string UsuarioContexto = nameof(Domain.Entities.Usuario);
         private const int ValidadeConvitePrimeiroAcessoEmHoras = 24;
@@ -91,7 +94,7 @@ namespace Application.UseCases.UsuarioCases
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroInesperadoGravacao);
             }
 
-            var conviteEnviado = await EnviarEmailPrimeiroAcessoAsync(usuarioBd, request.ClientUri);
+            var conviteEnviado = await EnviarEmailPrimeiroAcessoAsync(usuarioBd);
             if (conviteEnviado.TeveFalha)
             {
                 await _usuarioIdentityRepository.DeletarContaUserRepositoryAsync(usuarioBd.Codigo);
@@ -155,34 +158,29 @@ namespace Application.UseCases.UsuarioCases
             return Resultado.Sucesso();
         }
 
-        private async Task<Resultado> EnviarEmailPrimeiroAcessoAsync(Domain.Entities.Usuario usuario, string clientUri)
+        private async Task<Resultado> EnviarEmailPrimeiroAcessoAsync(Domain.Entities.Usuario usuario)
         {
-            if (string.IsNullOrWhiteSpace(clientUri))
-                return Resultado.Falha(AuthResource.Erro_UriPrimeiroAcessoObrigatoria);
-
             var token = await _usuarioIdentityRepository.GerarTokenRecuperacaoSenhaAsync(usuario.Codigo);
             if (string.IsNullOrWhiteSpace(token))
                 return Resultado.Falha(AuthResource.Erro_GerarLinkPrimeiroAcesso);
 
-            var identificadorTemporario = Guid.NewGuid().ToString("N");
+            var identificadorTemporario = _tokenTemporarioService.Criar();
             var dadosTemporarios = new DadosTemporarios
             {
-                IdentificadorTemporario = identificadorTemporario,
                 UsuarioCodigo = usuario.Codigo,
                 Email = usuario.Email,
                 Token = token,
                 DataAlteracaoSenha = DateTime.UtcNow
             };
 
-            var chaveCache = new ChaveCache(ECacheKeysInfo.DadosTemporarios, identificadorTemporario);
+            var chaveCache = new ChaveCache(ECacheKeysInfo.DadosTemporarios, identificadorTemporario.Hash);
             var cacheInfo = new CacheInfo<DadosTemporarios>(chaveCache);
             cacheInfo.VincularDadosTemporarios(dadosTemporarios);
 
             _cacheService.GravarCache(cacheInfo, TimeSpan.FromHours(ValidadeConvitePrimeiroAcessoEmHoras));
 
-            var identificadorCriptografado = CryptoHelper.EncryptCryptoJsAes(identificadorTemporario);
-            var identificadorUrlEncoded = HttpUtility.UrlEncode(identificadorCriptografado);
-            var link = $"{clientUri.TrimEnd('/')}/trocar-senha?id={identificadorUrlEncoded}";
+            var uriBase = _enderecoFrontendService.ObterUriBase();
+            var link = $"{uriBase}/trocar-senha#token={identificadorTemporario.Valor}";
 
             Resultado resultadoEmail;
             try

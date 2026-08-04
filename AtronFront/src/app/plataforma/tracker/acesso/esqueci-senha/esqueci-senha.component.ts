@@ -30,8 +30,6 @@ export class EsqueciSenhaComponent {
 
     const req = new SolicitarRecuperacaoSenhaRequest();
     req.identificador = this.identificadorControl.value as string;
-    req.clientUri = window.location.origin;
-
     this.acessoService.solicitarRecuperacaoSenha(req).subscribe({
       next: () => {
         this.enviado = true;

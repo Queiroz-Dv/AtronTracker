@@ -29,7 +29,7 @@ namespace Infrastructure.EntitiesConfiguration.ApplicationConfiguration
             builder.Property(u => u.PasswordHash).HasMaxLength(450).IsRequired(false);
             builder.Property(u => u.PhoneNumber).HasMaxLength(25).IsRequired(false);
 
-            builder.Property(u => u.RefreshToken).HasMaxLength(1000);
+            builder.Property(u => u.RefreshToken).HasMaxLength(64).IsConcurrencyToken();
             //builder.Property(u => u.Token).HasMaxLength(1000);
             builder.Property(u => u.RefreshTokenExpireTime);
 

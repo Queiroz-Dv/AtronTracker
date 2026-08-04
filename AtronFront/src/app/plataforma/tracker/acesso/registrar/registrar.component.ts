@@ -33,15 +33,12 @@ export class RegistrarComponent implements OnInit {
       sobrenome: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       dataNascimento: ['', Validators.required],
-      codigoPerfilDeAcesso: [''],
       senha: ['', Validators.required],
       confirmaSenha: ['', Validators.required]
     }, { validators: [senhasIguaisValidator()] });
   }
 
   registrarNovoUsuario(): void {
-    const clientUri = window.location.origin;
-
     const dadosDoUsuario = new RegistrarRequest(
       this.form.value.codigo,
       this.form.value.nome,
@@ -49,9 +46,7 @@ export class RegistrarComponent implements OnInit {
       this.form.value.email,
       this.form.value.senha,
       this.form.value.confirmaSenha,
-      this.form.value.dataNascimento,
-      this.form.value.codigoPerfilDeAcesso || undefined,
-      clientUri || undefined);
+      this.form.value.dataNascimento);
 
     this.acessoService.registrar(dadosDoUsuario).subscribe({
       next: (resposta: unknown) => {

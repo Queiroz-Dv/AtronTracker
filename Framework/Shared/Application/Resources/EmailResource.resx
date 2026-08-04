@@ -164,7 +164,7 @@
   <data name="Erro_TemplateUrlInvalida" xml:space="preserve"><value>O campo {0} deve conter uma URL HTTP ou HTTPS absoluta.</value></data>
   <data name="Erro_TemplateRenderizacao" xml:space="preserve"><value>Não foi possível renderizar o template de e-mail.</value></data>
   <data name="Mensagem_EnvioConfirmacaoEmail" xml:space="preserve">
-    <value>Enviamos um novo codigo de confirmacao para seu e-mail.</value>
+    <value>Se a conta existir e estiver apta, enviaremos as instruções de confirmação para o e-mail cadastrado.</value>
   </data>
   <data name="Assunto_PrimeiroAcesso" xml:space="preserve"><value>Defina sua senha de acesso - Sistema Atron</value></data>
   <data name="Assunto_AlteracaoEmail" xml:space="preserve"><value>Confirme a alteração do seu e-mail - AtronTracker</value></data>

@@ -1,15 +1,10 @@
-﻿using Application.DTO;
-using Application.Interfaces.Services;
+﻿using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AtronTracker.Infrastructure.Authorization
 {
@@ -35,12 +30,7 @@ namespace AtronTracker.Infrastructure.Authorization
         {
             var usuarioCodigo = context.User.Claims.FirstOrDefault(usr => usr.Type == ClaimCode.CODIGO_USUARIO)?.Value;
 
-            if (usuarioCodigo.IsNullOrEmpty() && context.Resource is AuthorizationFilterContext mvcContext)
-            {
-                usuarioCodigo = mvcContext.HttpContext.Request.Headers.ExtrairCodigoUsuarioDoRequest();
-            }
-
-            if (usuarioCodigo.IsNullOrEmpty())
+            if (string.IsNullOrWhiteSpace(usuarioCodigo))
             {
                 return;
             }

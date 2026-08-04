@@ -142,7 +142,7 @@
     <value>Identificador temporário não informado.</value>
   </data>
   <data name="Erro_SenhaInvalida" xml:space="preserve">
-    <value>Senha inválida ou falha na descriptografia da requisição.</value>
+    <value>Senha inválida.</value>
   </data>
   <data name="Erro_SenhasDivergentes" xml:space="preserve">
     <value>As senhas informadas não coincidem.</value>
@@ -180,8 +180,8 @@
   <data name="Erro_EnvioEmailObrigatorio" xml:space="preserve">
     <value>Não foi possível enviar o e-mail. Tente novamente.</value>
   </data>
-  <data name="Erro_UriPrimeiroAcessoObrigatoria" xml:space="preserve">
-    <value>URI da aplicacao nao informada para envio do link de primeiro acesso.</value>
+  <data name="Erro_UriFrontendNaoConfigurada" xml:space="preserve">
+    <value>O endereço público do frontend não está configurado corretamente.</value>
   </data>
   <data name="Erro_GerarLinkPrimeiroAcesso" xml:space="preserve">
     <value>Nao foi possivel gerar o link de primeiro acesso.</value>
@@ -202,4 +202,5 @@
   <data name="Erro_SenhaVazia" xml:space="preserve"><value>Senha vazia.</value></data>
   <data name="Erro_AcessoNegado" xml:space="preserve"><value>Acesso negado. Você não tem permissão para acessar este recurso.</value></data>
   <data name="Erro_TokenInvalidoOuAusente" xml:space="preserve"><value>Token inválido ou ausente.</value></data>
+  <data name="Erro_MuitasTentativas" xml:space="preserve"><value>Muitas tentativas foram realizadas. Aguarde antes de tentar novamente.</value></data>
 </root>

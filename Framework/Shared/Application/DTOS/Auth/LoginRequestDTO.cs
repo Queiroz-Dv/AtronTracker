@@ -3,6 +3,8 @@
     /// <summary>
     /// Representa a requisição de login do usuário.
     /// </summary>
+    [System.Text.Json.Serialization.JsonUnmappedMemberHandling(
+        System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow)]
     public class LoginRequestDTO
     {
         /// <summary>
@@ -14,7 +16,5 @@
         /// Senha do usuário que será autenticado.
         /// </summary>
         public string Senha { get; set; } = string.Empty;
-
-        public string ClientUri { get; set; } = string.Empty;
     }
 }

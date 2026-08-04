@@ -51,8 +51,6 @@ export class LoginComponent implements OnInit {
     let loginPayload = new LoginRequest();
     loginPayload.codigoDoUsuario = this.form.value.codigo;
     loginPayload.senha = this.form.value.senha;
-    loginPayload.clientUri = window.location.origin;
-
     this.loginService.autenticar(loginPayload).subscribe({
       next: () => {
         const rota = this.getRotaPorVisualizacao();

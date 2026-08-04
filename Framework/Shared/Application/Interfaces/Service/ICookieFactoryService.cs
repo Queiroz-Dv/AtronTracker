@@ -7,8 +7,8 @@ namespace Shared.Application.Interfaces.Service
     {
         Task<DadosDoRefreshTokenCookieDTO> ObterRefreshTokenPorRequest(HttpRequest request);
 
-        void CriarCookieDeRefreshToken(DadosDoRefrehTokenDTO dadosDoRefreshToken, string codigoUsuario);
+        void CriarCookieDeRefreshToken(DadosDoRefrehTokenDTO dadosDoRefreshToken);
 
-        void RemoverCookie(string chave);
+        void RemoverCookieDeRefreshToken();
     }
 }

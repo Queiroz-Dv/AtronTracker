@@ -1,10 +1,11 @@
 using AtronNotificacoes.Infrastructure.DependencyInjection;
 using AtronStock.Infrastructure;
-using AtronTracker.Infrastructure;
 using AtronPlatform.WebApi.OpenApi;
+using AtronPlatform.WebApi.Security;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Shared.Infrastructure.DependencyInjection;
+using Infrastructure.DependencyInjection;
 
 namespace AtronPlatform.WebApi;
 
@@ -22,6 +23,7 @@ public class Startup(IConfiguration configuration)
         services.AddTrackerModule(Configuration);
         services.AddStockModule(Configuration);
         services.AddInfrastructureSecurity(Configuration);
+        services.AddAcessoRateLimiting();
         services.AddControllers();
         services.AddHealthChecks();
         services.AddHttpClient();
@@ -45,25 +47,26 @@ public class Startup(IConfiguration configuration)
             app.UseSwagger();
             app.UseSwaggerUI(options =>
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "Atron Platform API v1"));
+            app.UseReDoc(options =>
+            {
+                options.RoutePrefix = "docs";
+                options.DocumentTitle = "Atron Platform Doc";
+                options.SpecUrl = "/swagger/v1/swagger.json";
+                options.ExpandResponses("200,201");
+            });
         }
         else
         {
             // Força o uso de HTTPS e HSTS em produção
+            app.UseCabecalhosSeguranca();
             app.UseHsts();
         }
-
-        app.UseReDoc(options =>
-        {
-            options.RoutePrefix = "docs";
-            options.DocumentTitle = "Atron Platform Doc";
-            options.SpecUrl = "/swagger/v1/swagger.json";
-            options.ExpandResponses("200,201");
-        });
 
         app.UseHttpsRedirection();
         app.UseStatusCodePages();
         app.UseRouting();
         app.UseCors("CorsPolicy");
+        app.UseRateLimiter();
         app.UseAuthentication();
         app.UseAuthorization();
 

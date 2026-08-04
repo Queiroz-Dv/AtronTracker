@@ -42,48 +42,61 @@ namespace Infrastructure.Repositories.Identity
             return result.Succeeded;
         }
 
-        public async Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshToken, DateTime refreshTokenExpireTime)
+        public async Task<bool> AtualizarRefreshTokenUsuarioRepositoryAsync(string codigoUsuario, string refreshTokenHash, DateTime refreshTokenExpireTime)
         {
             var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
             if (user is null) return false;
 
-            user.RefreshToken = refreshToken;
+            user.RefreshToken = refreshTokenHash;
             // É necessário fazer dessa forma por causa do PostgreSQL, que não aceita DateTimeKind.Utc, então definimos como Unspecified
             user.RefreshTokenExpireTime = DateTime.SpecifyKind(refreshTokenExpireTime, DateTimeKind.Unspecified);
             _context.AppUsers.Update(user);
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> RefreshTokenExisteRepositoryAsync(string refreshToken)
+        public async Task<bool> RefreshTokenExisteRepositoryAsync(string refreshTokenHash)
         {
-            return await _context.AppUsers.AnyAsync(u => u.RefreshToken == refreshToken);
+            return await _context.AppUsers.AnyAsync(u => u.RefreshToken == refreshTokenHash);
         }
 
-        public async Task<string> ObterRefreshTokenPorCodigoUsuarioRepositoryAsync(string codigoUsuario)
+        public Task<SessaoRefreshToken> ObterSessaoRefreshTokenRepositoryAsync(string refreshTokenHash)
         {
-            return await _context.AppUsers
-                .Where(u => u.UserName == codigoUsuario)
-                .Select(u => u.RefreshToken)
+            return _context.AppUsers
+                .Where(u => u.RefreshToken == refreshTokenHash && u.RefreshTokenExpireTime.HasValue)
+                .Select(u => new SessaoRefreshToken(u.UserName, u.RefreshTokenExpireTime.Value))
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> RotacionarRefreshTokenRepositoryAsync(RotacaoRefreshTokenHash rotacao)
+        {
+            var user = await _context.AppUsers.FirstOrDefaultAsync(u =>
+                u.UserName == rotacao.UsuarioCodigo && u.RefreshToken == rotacao.HashAtual);
+
+            if (user is null) return false;
+
+            user.RefreshToken = rotacao.NovoHash;
+            user.RefreshTokenExpireTime = DateTime.SpecifyKind(rotacao.NovaExpiracao, DateTimeKind.Unspecified);
+
+            try
+            {
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> RedefinirRefreshTokenRepositoryAsync(string codigoUsuario)
         {
             var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.UserName == codigoUsuario);
             if (user is null) return false;
+            if (user.RefreshToken is null) return true;
 
             user.RefreshToken = null;
-            user.RefreshTokenExpireTime = DateTime.MinValue;
+            user.RefreshTokenExpireTime = null;
             _context.AppUsers.Update(user);
             return await _context.SaveChangesAsync() > 0;
-        }
-
-        public Task<bool> RefreshTokenExpiradoRepositoryAsync(string codigoUsuario)
-        {
-            return _context.AppUsers
-                .Where(u => u.UserName == codigoUsuario)
-                .Select(u => u.RefreshTokenExpireTime < DateTimeOffset.UtcNow)
-                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> AtualizarUserIdentityRepositoryAsync(string codigoUsuario, string email, string senha)

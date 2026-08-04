@@ -18,14 +18,14 @@ namespace Shared.Application.Services
             return await _cookieFactory.ObterRefreshTokenPorRequest(httpRequest);
         }
 
-        public void CriarCookieDeRefreshToken(DadosDoRefrehTokenDTO dadosDoRefreshToken, string codigoUsuario)
+        public void CriarCookieDeRefreshToken(DadosDoRefrehTokenDTO dadosDoRefreshToken)
         {
-            _cookieFactory.CriarCookieDeRefreshToken(dadosDoRefreshToken, codigoUsuario);
+            _cookieFactory.CriarCookieDeRefreshToken(dadosDoRefreshToken);
         }
 
-        public void RemoverCookie(string chave)
+        public void RemoverCookieDeRefreshToken()
         {
-            _cookieFactory.RemoverCookie(chave);
+            _cookieFactory.RemoverCookieDeRefreshToken();
         }
     }
 }

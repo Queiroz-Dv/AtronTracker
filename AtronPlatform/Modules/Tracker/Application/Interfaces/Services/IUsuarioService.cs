@@ -38,10 +38,10 @@ namespace Application.Interfaces.Services
 
         Task<Resultado> DesativarAsync(string codigo);
 
-        Task<Resultado> AlterarEmailAsync(string codigo, string emailNovo, string clienteUri);
+        Task<Resultado> AlterarEmailAsync(string codigo, string emailNovo);
 
         Task<Resultado> ConfirmarAlteracaoEmailAsync(string usuarioCodigo, string emailNovo, string token);
 
-        Task<Resultado> ReenviarConfirmacaoEmailAsync(string codigo, string clientUri);
+        Task<Resultado> ReenviarConfirmacaoEmailAsync(string codigo);
     }
 }

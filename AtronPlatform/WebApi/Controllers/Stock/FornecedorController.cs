@@ -1,9 +1,11 @@
 using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AtronPlatform.WebApi.Controllers.Stock
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class FornecedorController : ControllerBase

@@ -5,44 +5,35 @@ import { SessaoInfoService } from "../services/sessaoInfo.service";
 import { Router } from "@angular/router";
 import { RotasApi } from "../../shared/models/rotas-api.model";
 
-export enum HeaderInfo {
-  refreshToken = 'XUSRRTK',
-  usuarioCodigo = 'XUSRCD'
-}
-
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing = false;
-  private refreshSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private refreshSubject = new BehaviorSubject<string | null>(null);
 
   constructor(private sessaoService: SessaoInfoService, private http: HttpClient, private router: Router) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const usuarioCodigo = this.sessaoService.obterUsuarioCodigo();
-
     if (this.ehRotaPublica(req)) {
       return next.handle(req);
     }
 
-    if (this.ehRotaLogout(req)) {
-      return next.handle(this.prepararRequisicaoDeSessao(req, usuarioCodigo, 'false'));
-    }
-
     if (this.ehRotaRefresh(req)) {
-      return next.handle(this.prepararRequisicaoDeSessao(req, usuarioCodigo, 'true'));
+      return next.handle(req.clone({ withCredentials: true }));
     }
 
     const tokenInfo = this.sessaoService.obterAccessToken();
-    if (!tokenInfo) {
-      return this.refreshTokenHandle(req, next, usuarioCodigo);
+
+    if (this.ehRotaLogout(req)) {
+      return tokenInfo
+        ? next.handle(this.prepararRequisicaoAutenticada(req, tokenInfo.token))
+        : next.handle(req.clone({ withCredentials: true }));
     }
 
-    const tokenExpiration = new Date(tokenInfo.expires);
-    if (tokenExpiration.getTime() <= Date.now()) {
-      return this.refreshTokenHandle(req, next, usuarioCodigo);
+    if (!tokenInfo || new Date(tokenInfo.expires).getTime() <= Date.now()) {
+      return this.refreshTokenHandle(req, next);
     }
 
-    return next.handle(this.prepararRequisicaoAutenticada(req, tokenInfo.token, usuarioCodigo));
+    return next.handle(this.prepararRequisicaoAutenticada(req, tokenInfo.token));
   }
 
   private ehRotaPublica(request: HttpRequest<any>): boolean {
@@ -66,52 +57,27 @@ export class AuthInterceptor implements HttpInterceptor {
     return request.url.startsWith(RotasApi.refreshTokenEndpoint);
   }
 
-  private prepararRequisicaoDeSessao(
-    request: HttpRequest<any>,
-    usuarioCodigo: string | null,
-    refreshTokenHeader: 'true' | 'false'
-  ): HttpRequest<any> {
+  private prepararRequisicaoAutenticada(request: HttpRequest<any>, token: string): HttpRequest<any> {
     return request.clone({
       withCredentials: true,
-      setHeaders: {
-        [HeaderInfo.refreshToken]: refreshTokenHeader,
-        [HeaderInfo.usuarioCodigo]: usuarioCodigo ?? ''
-      }
+      setHeaders: { Authorization: `Bearer ${token}` }
     });
   }
 
-  private prepararRequisicaoAutenticada(
-    request: HttpRequest<any>,
-    token: string,
-    usuarioCodigo: string | null
-  ): HttpRequest<any> {
-    return request.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-        [HeaderInfo.usuarioCodigo]: usuarioCodigo ?? ''
-      }
-    });
-  }
-
-  private refreshTokenHandle(
-    request: HttpRequest<any>,
-    next: HttpHandler,
-    usuarioCodigo: string | null
-  ): Observable<HttpEvent<any>> {
-    if (!usuarioCodigo) {
-      this.limparSessaoERedirecionar();
-      return throwError(() => new Error('Código do usuário ausente para renovar a sessão.'));
-    }
-
+  private refreshTokenHandle(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
       this.refreshSubject.next(null);
 
-      return this.http.get<{ token: string, expires: Date }>(RotasApi.refreshTokenEndpoint, { withCredentials: true }).pipe(
+      return this.http.post<{ token: string, expires: Date, usuarioCodigo: string }>(
+        RotasApi.refreshTokenEndpoint,
+        {},
+        { withCredentials: true }
+      ).pipe(
         switchMap(response => {
-          this.sessaoService.setUsuarioInfo(response.token, response.expires, usuarioCodigo);
+          this.sessaoService.setUsuarioInfo(response.token, response.expires, response.usuarioCodigo);
           this.refreshSubject.next(response.token);
-          return next.handle(this.prepararRequisicaoAutenticada(request, response.token, usuarioCodigo));
+          return next.handle(this.prepararRequisicaoAutenticada(request, response.token));
         }),
         catchError(error => {
           this.limparSessaoERedirecionar();
@@ -123,9 +89,9 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     return this.refreshSubject.pipe(
-      filter(t => t != null),
+      filter(token => token !== null),
       take(1),
-      switchMap(newToken => next.handle(this.prepararRequisicaoAutenticada(request, newToken!, usuarioCodigo)))
+      switchMap(token => next.handle(this.prepararRequisicaoAutenticada(request, token!)))
     );
   }
 

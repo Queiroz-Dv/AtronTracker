@@ -1,10 +1,12 @@
 using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Infrastructure.Filters;
 
 namespace AtronPlatform.WebApi.Controllers.Stock
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ProdutoController : ControllerBase
