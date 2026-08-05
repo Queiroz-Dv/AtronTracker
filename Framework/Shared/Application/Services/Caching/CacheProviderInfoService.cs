@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Service;
-using System;
-using System.IO;
 
 namespace Shared.Application.Services.Caching
 {
