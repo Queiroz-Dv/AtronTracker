@@ -34,7 +34,7 @@ namespace Shared.Application.Services.Caching
                 ImplementacaoCache = _cacheService.GetType().Name,
                 ImplementacaoMemoria = providerNormalizado == "Memory" ? "MemoryCache" : null,
                 DiretorioArquivoJson = providerNormalizado == "JsonFile" ? diretorioArquivoJson : null,
-                Distribuido = false,
+                Distribuido = providerNormalizado == "Redis",
                 Observacao = ObterObservacao(providerNormalizado, diretorioArquivoJson)
             };
         }
@@ -44,6 +44,9 @@ namespace Shared.Application.Services.Caching
             if (string.Equals(provider, "JsonFile", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(provider, "ArquivoJson", StringComparison.OrdinalIgnoreCase))
                 return "JsonFile";
+
+            if (string.Equals(provider, "Redis", StringComparison.OrdinalIgnoreCase))
+                return "Redis";
 
             return "Memory";
         }
@@ -64,6 +67,9 @@ namespace Shared.Application.Services.Caching
         {
             if (provider == "JsonFile")
                 return $"Cache local em arquivos JSON no diretorio '{diretorioArquivoJson}'. Sobrevive a reinicio da aplicacao, mas nao e compartilhado entre instancias.";
+
+            if (provider == "Redis")
+                return "Cache distribuido Redis compativel. E compartilhado entre instancias e permanece independente do processo da aplicacao.";
 
             return "Cache local em memoria do processo. Sera perdido em reinicio e nao e compartilhado entre instancias.";
         }

@@ -29,6 +29,7 @@ proprietário ou o alcance, mas não reinicia a sequência.
 | [0005](./transversais/0005-extrair-notificacoes-internas-como-capacidade-transversal.md) | Substituído parcialmente | Extrair notificações internas como capacidade transversal; a topologia HTTP foi substituída pelo ADR 0008. |
 | [0007](./transversais/0007-adotar-monolito-modular-com-host-neutro.md) | Aceito | Adotar monólito modular com host neutro e publicação única para os módulos principais. |
 | [0008](./transversais/0008-incorporar-notificacoes-internas-ao-host-da-plataforma.md) | Aceito | Incorporar Notificações Internas ao host neutro sem perder sua fronteira e propriedade de dados. |
+| [0009](./transversais/0009-adotar-redis-como-cache-distribuido.md) | Aceito | Adotar Redis compatível como provider distribuído do cache transversal da plataforma. |
 
 ## Convenções
 

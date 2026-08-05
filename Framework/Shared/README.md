@@ -1,6 +1,6 @@
 ﻿# 📦 Shared - Núcleo de Utilitários Compartilhados
 
-O projeto **Shared** faz parte do módulo **Framework** do Atron Tracker e concentra **componentes reutilizáveis**, **helpers**, **extensões** e **abstrações genéricas** que são compartilhadas entre múltiplas camadas da aplicação.
+O projeto **Shared** faz parte do **Framework** da Atron Platform e concentra componentes transversais reutilizados pelos módulos e pelo host neutro.
 
 Seu objetivo principal é **evitar duplicação de código**, **padronizar comportamentos comuns** e **facilitar a manutenção e evolução do sistema**.
 
@@ -26,6 +26,7 @@ Ele é utilizado por:
 - Disponibilizar **helpers comuns**
 - Facilitar **validações e conversões**
 - Reduzir acoplamento entre camadas
+- Publicar contratos e adapters transversais de cache, e-mail e auditoria
 
 ---
 
@@ -76,9 +77,22 @@ O projeto Shared segue boas práticas de arquitetura e design:
 
 ## 🔗 Dependências
 
-- **.NET 8**
-- Não depende de infraestrutura externa
+- **.NET 9**
+- Redis compatível opcional por `Microsoft.Extensions.Caching.StackExchangeRedis`
 - Pode ser referenciado por qualquer camada do sistema
+
+## Cache transversal
+
+Os consumidores dependem de `ICacheService` e usam `ChaveCache`. A composição
+`AddAtronCache` seleciona exatamente um provider:
+
+- `Memory`: memória do processo;
+- `JsonFile`: arquivo local para experimentos;
+- `Redis`: cache distribuído fora do processo.
+
+O provider Redis é habilitado por ambiente. Consulte
+[docs/cache-redis.md](../../docs/cache-redis.md) e o
+[ADR 0009](../../docs/adr/transversais/0009-adotar-redis-como-cache-distribuido.md).
 
 ---
 

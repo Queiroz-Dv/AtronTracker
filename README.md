@@ -42,9 +42,10 @@ e [ADR 0008](docs/adr/transversais/0008-incorporar-notificacoes-internas-ao-host
 
 | Tecnologia | Uso |
 | ---------- | --- |
-| .NET 8 | Backend e APIs |
+| .NET 9 | Backend e APIs |
 | Entity Framework Core | Persistência |
 | Supabase/PostgreSQL | Banco alvo para deploy inicial |
+| Redis / Render Key Value | Cache distribuído de acesso e dados temporários |
 | Angular | Front principal em `AtronFront` |
 | Swagger / Redoc | Documentação das APIs |
 
@@ -56,6 +57,7 @@ eventos específicos para o sistema. Adotamos então o Angular que está em `Atr
 - [CONTEXT.md](CONTEXT.md): glossário canônico e contratos duráveis de domínio.
 - [docs/visao-produto-atron.md](docs/visao-produto-atron.md): direção de produto da plataforma.
 - [docs/publicacao-render-brevo-supabase.md](docs/publicacao-render-brevo-supabase.md): manual de publicação com Render, Supabase e Brevo.
+- [docs/cache-redis.md](docs/cache-redis.md): decisão aplicada, configuração local e operação do cache Redis compatível.
 - [docs/adr](docs/adr/README.md): índice das decisões arquiteturais e de domínio, organizadas por módulo e por alcance transversal.
 - [docs/padrao-responsabilidades-servicos.md](docs/padrao-responsabilidades-servicos.md): critérios SOLID e distribuição de responsabilidades nos serviços de aplicação.
 - [docs/plano-refatoracao-servicos-aplicacao.md](docs/plano-refatoracao-servicos-aplicacao.md): fases para aplicar o padrão aos serviços do Tracker.

@@ -1,4 +1,4 @@
-# Publicação no Render, Supabase e Brevo
+# Publicação no Render, Supabase, Brevo e Redis
 
 ## Objetivo
 
@@ -6,7 +6,8 @@ Este manual descreve a publicação do núcleo do Atron com:
 
 - Render para hospedar a API;
 - Supabase/PostgreSQL como banco de dados;
-- Brevo como provedor de e-mail transacional.
+- Brevo como provedor de e-mail transacional;
+- Render Key Value como cache Redis compatível.
 
 O produto é publicado pelo host neutro `AtronPlatform.WebApi`. Tracker, Stock,
 Auditoria e Notificações Internas executam no mesmo processo, conforme os ADRs
@@ -50,6 +51,9 @@ EmailSettings__FromName=Atron Platform
 EmailSettings__FromEmail=<remetente validado no Brevo>
 EmailSettings__Brevo__ApiKey=<api key do Brevo>
 EmailSettings__Brevo__BaseUrl=https://api.brevo.com/v3
+Cache__Provider=Redis
+Cache__Redis__ConnectionString=<host interno>:6379,abortConnect=false
+Cache__Redis__InstanceName=atron:prod:
 ```
 
 `ATRON_CONNECTION_STRING` é a chave canônica do host. O código ainda aceita
@@ -85,6 +89,9 @@ Exemplo com User Secrets no host neutro:
 dotnet user-secrets set "ATRON_CONNECTION_STRING" "<connection string>" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
 dotnet user-secrets set "Jwt:SecretKey" "<chave local forte>" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
 dotnet user-secrets set "EmailSettings:Brevo:ApiKey" "<api key>" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
+dotnet user-secrets set "Cache:Provider" "Redis" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
+dotnet user-secrets set "Cache:Redis:ConnectionString" "localhost:6379,abortConnect=false" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
+dotnet user-secrets set "Cache:Redis:InstanceName" "atron:dev:" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
 ```
 
 Exemplo de nomes para `.env.render.local`, sem preencher valores no
@@ -102,6 +109,7 @@ EmailSettings__FromName=Atron Platform
 EmailSettings__FromEmail=
 EmailSettings__Brevo__ApiKey=
 EmailSettings__Brevo__BaseUrl=https://api.brevo.com/v3
+Cache__Provider=Memory
 ```
 
 ## Validação do container antes do deploy
@@ -152,6 +160,14 @@ Invoke-WebRequest http://localhost:8080/api/Tarefa -Method Options -Headers $hea
 
 ## Publicação manual no Render
 
+Antes do deploy da WebApi, crie um Render Key Value no mesmo workspace e na
+mesma região. Para cache, use `allkeys-lru`, mantenha a persistência desligada e
+configure a WebApi com o host da `Internal Key Value URL`. O guia completo está
+em [cache-redis.md](cache-redis.md).
+
+O Redis não é instalado no Dockerfile da aplicação. A WebApi e o Key Value são
+serviços separados e se comunicam pela rede interna do Render.
+
 Esta etapa é executada somente na branch vinculada ao Web Service:
 
 1. confirme que o serviço usa o `Dockerfile` da raiz;
@@ -181,7 +197,9 @@ Após o deploy, valide sem registrar credenciais em comandos ou documentação:
 7. `GET /api/Categoria` sem JWT responde `401`;
 8. consulta de Auditoria exige autenticação;
 9. o Swagger contém os 19 contratos HTTP já existentes do Stock;
-10. logs não exibem strings de conexão, tokens ou chaves.
+10. login e `GET /api/Sessao/Info` produzem atividade no Key Value;
+11. reiniciar somente a WebApi preserva o cache enquanto o Key Value permanece ativo;
+12. logs não exibem strings de conexão, tokens ou chaves.
 
 Valide publicação, consulta, leitura e exclusão lógica. A rota
 `/api/notificacoes/saude` comprova a conectividade do contexto de notificações;
@@ -209,6 +227,9 @@ validada.
 ## Limitações operacionais atuais
 
 - planos gratuitos podem apresentar cold start;
+- o plano gratuito do Key Value não oferece persistência, condição aceitável
+  apenas enquanto o conteúdo permanecer descartável;
+- `/api/saude` ainda não comprova a prontidão específica do Redis;
 - o diretório local de chaves de Data Protection do container ainda não é
   persistente entre deploys;
 - a conectividade do `NotificacoesDbContext` deve ser verificada pela rota

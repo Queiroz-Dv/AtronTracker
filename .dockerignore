@@ -12,6 +12,7 @@
 **/appsettings.Local.json
 **/keys
 artifacts
+.artifacts
 *.user
 *.suo
 *.nupkg

@@ -1,8 +1,8 @@
-using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services.Caching;
+using Shared.Infrastructure.Caching;
 
 namespace Shared.Infrastructure.DependencyInjection
 {
@@ -24,9 +24,26 @@ namespace Shared.Infrastructure.DependencyInjection
             {
                 services.AddScoped<ICacheService, JsonFileCacheService>();
             }
+            else if (string.Equals(provider, "Redis", StringComparison.OrdinalIgnoreCase))
+            {
+                var connectionString = configuration["Cache:Redis:ConnectionString"];
+                if (string.IsNullOrWhiteSpace(connectionString))
+                    throw new InvalidOperationException(
+                        "A conexão do Redis não foi configurada.");
+
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = connectionString;
+                    options.InstanceName =
+                        configuration["Cache:Redis:InstanceName"]
+                        ?? "atron:";
+                });
+
+                services.AddScoped<ICacheService, RedisCacheService>();
+            }
             else
             {
-                throw new InvalidOperationException($"Provider de cache '{provider}' nao suportado. Providers suportados: Memory, JsonFile.");
+                throw new InvalidOperationException($"Provider de cache '{provider}' nao suportado. Providers suportados: Memory, JsonFile, Redis.");
             }
 
             services.AddScoped<ICacheProviderInfoService, CacheProviderInfoService>();
