@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
-using System;
-using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
