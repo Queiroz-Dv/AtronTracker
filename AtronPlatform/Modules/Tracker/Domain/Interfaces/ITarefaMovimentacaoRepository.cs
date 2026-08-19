@@ -1,5 +1,5 @@
 using Domain.Entities;
-using Domain.Queries;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Domain.Interfaces
@@ -8,6 +8,6 @@ namespace Domain.Interfaces
     {
         Task<bool> RegistrarAsync(TarefaMovimentacao movimentacao);
 
-        Task<TarefaMovimentacaoPagina> ObterPaginaAsync(TarefaMovimentacaoConsulta consulta);
+        Task<List<TarefaMovimentacao>> ObterMovimentacoesPorIdAsync(int tarefaId);
     }
 }

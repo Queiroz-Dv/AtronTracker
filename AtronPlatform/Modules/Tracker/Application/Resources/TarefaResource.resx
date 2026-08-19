@@ -1,92 +1,354 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
-  <resheader name="version"><value>2.0</value></resheader>
-  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-  <data name="Erro_TarefaNaoEncontrada" xml:space="preserve"><value>Tarefa não encontrada.</value></data>
-  <data name="Erro_TarefaNaoPodeSerAssumida" xml:space="preserve"><value>A tarefa não pode ser assumida.</value></data>
-  <data name="Erro_GravarTarefa" xml:space="preserve"><value>Erro ao gravar a tarefa.</value></data>
-  <data name="Erro_AtualizarTarefa" xml:space="preserve"><value>Erro ao atualizar a tarefa.</value></data>
-  <data name="Erro_RemoverTarefa" xml:space="preserve"><value>Erro ao remover a tarefa.</value></data>
-  <data name="Erro_TarefaJaPossuiUsuarioResponsavel" xml:space="preserve"><value>Tarefa ja possui usuario responsavel.</value></data>
-  <data name="Erro_TarefaFinalizadaNaoPodeSerAssumida" xml:space="preserve"><value>Tarefa finalizada nao pode ser assumida.</value></data>
-  <data name="Erro_TarefaExigeSolicitacaoObtencao" xml:space="preserve"><value>Esta tarefa exige solicitacao de obtencao.</value></data>
-  <data name="Erro_AssumirTarefa" xml:space="preserve"><value>Nao foi possivel assumir a tarefa.</value></data>
-  <data name="Erro_TarefaFinalizadaNaoPodeSerSolicitada" xml:space="preserve"><value>Tarefa finalizada nao pode ser solicitada.</value></data>
-  <data name="Erro_TarefaNaoExigeAprovacao" xml:space="preserve"><value>Esta tarefa nao exige aprovacao para obtencao.</value></data>
-  <data name="Erro_SolicitacaoPendenteExistente" xml:space="preserve"><value>Ja existe solicitacao pendente para esta tarefa.</value></data>
-  <data name="Erro_AprovadorIndisponivel" xml:space="preserve"><value>Nenhum aprovador disponivel para esta solicitacao.</value></data>
-  <data name="Erro_CriarSolicitacao" xml:space="preserve"><value>Nao foi possivel criar a solicitacao.</value></data>
-  <data name="Erro_DecidirSolicitacao" xml:space="preserve"><value>Nao foi possivel decidir a solicitacao.</value></data>
-  <data name="Erro_EstadoNaoEncontrado" xml:space="preserve"><value>Estado da tarefa nao encontrado.</value></data>
-  <data name="Erro_DepartamentoNaoEncontrado" xml:space="preserve"><value>Departamento da tarefa nao encontrado.</value></data>
-  <data name="Erro_CargoNaoEncontrado" xml:space="preserve"><value>Cargo da tarefa nao encontrado.</value></data>
-  <data name="Erro_CargoNaoPertenceDepartamento" xml:space="preserve"><value>Cargo informado nao pertence ao departamento da tarefa.</value></data>
-  <data name="Erro_AprovadorObrigatorio" xml:space="preserve"><value>Nao foi possivel criar a tarefa porque o usuario responsavel nao possui gestor imediato e o departamento nao possui gestor definido.</value></data>
-  <data name="Erro_TituloTamanhoMaximo" xml:space="preserve"><value>O titulo da tarefa informada e invalido. Quantidade de caracteres maior que 50 digitos, tente novamente.</value></data>
-  <data name="Erro_ConteudoTamanhoMaximo" xml:space="preserve"><value>O conteudo da tarefa informada e invalido. Quantidade de caracteres maior que 2500 digitos, tente novamente.</value></data>
-  <data name="Erro_PeriodoInvalido" xml:space="preserve"><value>Data inicial da tarefa e maior que a data final. Tente novamente.</value></data>
-  <data name="Erro_CodigoTamanhoMinimo" xml:space="preserve"><value>O codigo de {0} informado e invalido. Quantidade de caracteres menor que 3 digitos, tente novamente.</value></data>
-  <data name="Erro_CodigoTamanhoMaximo" xml:space="preserve"><value>O codigo de {0} informado e invalido. Quantidade de caracteres maior que 10 digitos, tente novamente.</value></data>
-  <data name="Erro_IdentificadorUsuarioInvalido" xml:space="preserve"><value>Identificador de usuário é inválido.</value></data>
-
-  <data name="Mensagem_TarefaCriada" xml:space="preserve"><value>Tarefa gravada com sucesso.</value></data>
-  <data name="Mensagem_TarefaAtualizada" xml:space="preserve"><value>Tarefa atualizada com sucesso.</value></data>
-  <data name="Mensagem_TarefaRemovida" xml:space="preserve"><value>Tarefa removida com sucesso.</value></data>
-  <data name="Mensagem_TarefaAssumida" xml:space="preserve"><value>Tarefa assumida com sucesso.</value></data>
-  <data name="Mensagem_ConfiguracoesAtualizadas" xml:space="preserve"><value>Configuracoes de tarefas atualizadas com sucesso.</value></data>
-  <data name="Mensagem_SolicitacaoEnviada" xml:space="preserve"><value>Solicitacao enviada com sucesso.</value></data>
-  <data name="Mensagem_SolicitacaoAprovada" xml:space="preserve"><value>Solicitacao aprovada com sucesso.</value></data>
-  <data name="Mensagem_SolicitacaoRecusada" xml:space="preserve"><value>Solicitacao recusada com sucesso.</value></data>
-  <data name="Aviso_EmailNotificacaoNaoEnviado" xml:space="preserve"><value>Tarefa criada, mas não foi possível enviar o e-mail de notificação.</value></data>
-
-  <data name="Titulo_TarefaAtribuida" xml:space="preserve"><value>Nova tarefa atribuída</value></data>
-  <data name="Mensagem_TarefaAtribuidaUsuario" xml:space="preserve"><value>A tarefa {0} foi atribuída a você.</value></data>
-  <data name="Titulo_TarefaObtida" xml:space="preserve"><value>Tarefa adicionada ao seu quadro</value></data>
-  <data name="Mensagem_TarefaObtida" xml:space="preserve"><value>A tarefa {0} foi adicionada ao seu quadro.</value></data>
-  <data name="Titulo_SolicitacaoRecebida" xml:space="preserve"><value>Solicitacao de obtencao recebida</value></data>
-  <data name="Mensagem_SolicitacaoRecebida" xml:space="preserve"><value>{0} solicitou obter a tarefa {1}.</value></data>
-  <data name="Titulo_SolicitacaoAprovada" xml:space="preserve"><value>Solicitacao de tarefa aprovada</value></data>
-  <data name="Titulo_SolicitacaoRecusada" xml:space="preserve"><value>Solicitacao de tarefa recusada</value></data>
-  <data name="Mensagem_NotificacaoSolicitacaoAprovada" xml:space="preserve"><value>Sua solicitacao para obter a tarefa {0} foi aprovada.</value></data>
-  <data name="Mensagem_NotificacaoSolicitacaoRecusada" xml:space="preserve"><value>Sua solicitacao para obter a tarefa {0} foi recusada.</value></data>
-
-  <data name="Assunto_EmailTarefaAtribuida" xml:space="preserve"><value>Nova tarefa atribuída: {0}</value></data>
-  <data name="Titulo_EmailTarefaAtribuida" xml:space="preserve"><value>Nova tarefa atribuída</value></data>
-  <data name="Descricao_EstadoNaoInformado" xml:space="preserve"><value>Nao informado</value></data>
-  <data name="Descricao_TarefaNaoIdentificada" xml:space="preserve"><value>nao identificada</value></data>
-  <data name="Descricao_ModuloTarefas" xml:space="preserve"><value>Tarefas</value></data>
-
-  <data name="Campo_EstadoDaTarefa" xml:space="preserve"><value>Estado da tarefa</value></data>
-  <data name="Campo_DestinoInicial" xml:space="preserve"><value>Destino inicial da tarefa</value></data>
-  <data name="Campo_Usuario" xml:space="preserve"><value>Usuario</value></data>
-  <data name="Campo_Departamento" xml:space="preserve"><value>Departamento</value></data>
-  <data name="Campo_Cargo" xml:space="preserve"><value>cargo</value></data>
-  <data name="Campo_Titulo" xml:space="preserve"><value>Titulo</value></data>
-
-  <data name="Erro_RegistrarMovimentacao" xml:space="preserve"><value>Não foi possível registrar a movimentação da tarefa.</value></data>
-  <data name="Erro_AcessoHistoricoNaoPermitido" xml:space="preserve"><value>Você não possui acesso ao histórico desta tarefa.</value></data>
-
-  <data name="Historico_Movimento_Criacao" xml:space="preserve"><value>Criação</value></data>
-  <data name="Historico_Movimento_Atualizacao" xml:space="preserve"><value>Atualização</value></data>
-  <data name="Historico_Movimento_Obtencao" xml:space="preserve"><value>Obtenção</value></data>
-  <data name="Historico_Movimento_SolicitacaoObtencao" xml:space="preserve"><value>Solicitação de obtenção</value></data>
-  <data name="Historico_Movimento_AprovacaoObtencao" xml:space="preserve"><value>Aprovação de obtenção</value></data>
-  <data name="Historico_Movimento_RecusaObtencao" xml:space="preserve"><value>Recusa de obtenção</value></data>
-  <data name="Historico_DetalheCriacao" xml:space="preserve"><value>Tarefa criada no estado {0}.</value></data>
-  <data name="Historico_DetalheAtualizacao" xml:space="preserve"><value>Dados da tarefa atualizados.</value></data>
-  <data name="Historico_DetalheTituloAtualizado" xml:space="preserve"><value>Título atualizado.</value></data>
-  <data name="Historico_DetalheConteudoAtualizado" xml:space="preserve"><value>Conteúdo atualizado.</value></data>
-  <data name="Historico_DetalhePeriodoAlterado" xml:space="preserve"><value>Período alterado de {0:dd/MM/yyyy} a {1:dd/MM/yyyy} para {2:dd/MM/yyyy} a {3:dd/MM/yyyy}.</value></data>
-  <data name="Historico_DetalheEstadoAlterado" xml:space="preserve"><value>Estado alterado de {0} para {1}.</value></data>
-  <data name="Historico_DetalheResponsavelAlterado" xml:space="preserve"><value>Responsável alterado de {0} para {1}.</value></data>
-  <data name="Historico_DetalheEscopoAtualizado" xml:space="preserve"><value>Destino ou escopo da tarefa atualizado.</value></data>
-  <data name="Historico_DetalheAprovacaoAtualizada" xml:space="preserve"><value>Exigência de aprovação para obtenção atualizada.</value></data>
-  <data name="Historico_DetalheObtencao" xml:space="preserve"><value>Tarefa obtida diretamente por {0}.</value></data>
-  <data name="Historico_DetalheSolicitacao" xml:space="preserve"><value>Solicitação de obtenção enviada para {0}.</value></data>
-  <data name="Historico_DetalheAprovacao" xml:space="preserve"><value>Solicitação aprovada; tarefa atribuída a {0}. Estado atual: {1}.</value></data>
-  <data name="Historico_DetalheRecusa" xml:space="preserve"><value>Solicitação de {0} recusada; a tarefa permanece disponível.</value></data>
-  <data name="Historico_ValorNaoInformado" xml:space="preserve"><value>Não informado</value></data>
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Erro_TarefaNaoEncontrada" xml:space="preserve">
+    <value>Tarefa não encontrada.</value>
+  </data>
+  <data name="Erro_TarefaNaoPodeSerAssumida" xml:space="preserve">
+    <value>A tarefa não pode ser assumida.</value>
+  </data>
+  <data name="Erro_GravarTarefa" xml:space="preserve">
+    <value>Erro ao gravar a tarefa.</value>
+  </data>
+  <data name="Erro_AtualizarTarefa" xml:space="preserve">
+    <value>Erro ao atualizar a tarefa.</value>
+  </data>
+  <data name="Erro_RemoverTarefa" xml:space="preserve">
+    <value>Erro ao remover a tarefa.</value>
+  </data>
+  <data name="Erro_TarefaJaPossuiUsuarioResponsavel" xml:space="preserve">
+    <value>Tarefa ja possui usuario responsavel.</value>
+  </data>
+  <data name="Erro_TarefaFinalizadaNaoPodeSerAssumida" xml:space="preserve">
+    <value>Tarefa finalizada nao pode ser assumida.</value>
+  </data>
+  <data name="Erro_TarefaExigeSolicitacaoObtencao" xml:space="preserve">
+    <value>Esta tarefa exige solicitacao de obtencao.</value>
+  </data>
+  <data name="Erro_AssumirTarefa" xml:space="preserve">
+    <value>Nao foi possivel assumir a tarefa.</value>
+  </data>
+  <data name="Erro_TarefaFinalizadaNaoPodeSerSolicitada" xml:space="preserve">
+    <value>Tarefa finalizada nao pode ser solicitada.</value>
+  </data>
+  <data name="Erro_TarefaNaoExigeAprovacao" xml:space="preserve">
+    <value>Esta tarefa nao exige aprovacao para obtencao.</value>
+  </data>
+  <data name="Erro_SolicitacaoPendenteExistente" xml:space="preserve">
+    <value>Ja existe solicitacao pendente para esta tarefa.</value>
+  </data>
+  <data name="Erro_AprovadorIndisponivel" xml:space="preserve">
+    <value>Nenhum aprovador disponivel para esta solicitacao.</value>
+  </data>
+  <data name="Erro_CriarSolicitacao" xml:space="preserve">
+    <value>Nao foi possivel criar a solicitacao.</value>
+  </data>
+  <data name="Erro_DecidirSolicitacao" xml:space="preserve">
+    <value>Nao foi possivel decidir a solicitacao.</value>
+  </data>
+  <data name="Erro_EstadoNaoEncontrado" xml:space="preserve">
+    <value>Estado da tarefa nao encontrado.</value>
+  </data>
+  <data name="Erro_DepartamentoNaoEncontrado" xml:space="preserve">
+    <value>Departamento da tarefa nao encontrado.</value>
+  </data>
+  <data name="Erro_CargoNaoEncontrado" xml:space="preserve">
+    <value>Cargo da tarefa nao encontrado.</value>
+  </data>
+  <data name="Erro_CargoNaoPertenceDepartamento" xml:space="preserve">
+    <value>Cargo informado nao pertence ao departamento da tarefa.</value>
+  </data>
+  <data name="Erro_AprovadorObrigatorio" xml:space="preserve">
+    <value>Nao foi possivel criar a tarefa porque o usuario responsavel nao possui gestor imediato e o departamento nao possui gestor definido.</value>
+  </data>
+  <data name="Erro_TituloTamanhoMaximo" xml:space="preserve">
+    <value>O titulo da tarefa informada e invalido. Quantidade de caracteres maior que 50 digitos, tente novamente.</value>
+  </data>
+  <data name="Erro_ConteudoTamanhoMaximo" xml:space="preserve">
+    <value>O conteudo da tarefa informada e invalido. Quantidade de caracteres maior que 2500 digitos, tente novamente.</value>
+  </data>
+  <data name="Erro_PeriodoInvalido" xml:space="preserve">
+    <value>Data inicial da tarefa e maior que a data final. Tente novamente.</value>
+  </data>
+  <data name="Erro_CodigoTamanhoMinimo" xml:space="preserve">
+    <value>O codigo de {0} informado e invalido. Quantidade de caracteres menor que 3 digitos, tente novamente.</value>
+  </data>
+  <data name="Erro_CodigoTamanhoMaximo" xml:space="preserve">
+    <value>O codigo de {0} informado e invalido. Quantidade de caracteres maior que 10 digitos, tente novamente.</value>
+  </data>
+  <data name="Erro_IdentificadorUsuarioInvalido" xml:space="preserve">
+    <value>Identificador de usuário é inválido.</value>
+  </data>
+  <data name="Mensagem_TarefaCriada" xml:space="preserve">
+    <value>Tarefa gravada com sucesso.</value>
+  </data>
+  <data name="Mensagem_TarefaAtualizada" xml:space="preserve">
+    <value>Tarefa atualizada com sucesso.</value>
+  </data>
+  <data name="Mensagem_TarefaRemovida" xml:space="preserve">
+    <value>Tarefa removida com sucesso.</value>
+  </data>
+  <data name="Mensagem_TarefaAssumida" xml:space="preserve">
+    <value>Tarefa assumida com sucesso.</value>
+  </data>
+  <data name="Mensagem_ConfiguracoesAtualizadas" xml:space="preserve">
+    <value>Configuracoes de tarefas atualizadas com sucesso.</value>
+  </data>
+  <data name="Mensagem_SolicitacaoEnviada" xml:space="preserve">
+    <value>Solicitacao enviada com sucesso.</value>
+  </data>
+  <data name="Mensagem_SolicitacaoAprovada" xml:space="preserve">
+    <value>Solicitacao aprovada com sucesso.</value>
+  </data>
+  <data name="Mensagem_SolicitacaoRecusada" xml:space="preserve">
+    <value>Solicitacao recusada com sucesso.</value>
+  </data>
+  <data name="Aviso_EmailNotificacaoNaoEnviado" xml:space="preserve">
+    <value>Tarefa criada, mas não foi possível enviar o e-mail de notificação.</value>
+  </data>
+  <data name="Titulo_TarefaAtribuida" xml:space="preserve">
+    <value>Nova tarefa atribuída</value>
+  </data>
+  <data name="Mensagem_TarefaAtribuidaUsuario" xml:space="preserve">
+    <value>A tarefa {0} foi atribuída a você.</value>
+  </data>
+  <data name="Titulo_TarefaObtida" xml:space="preserve">
+    <value>Tarefa adicionada ao seu quadro</value>
+  </data>
+  <data name="Mensagem_TarefaObtida" xml:space="preserve">
+    <value>A tarefa {0} foi adicionada ao seu quadro.</value>
+  </data>
+  <data name="Titulo_SolicitacaoRecebida" xml:space="preserve">
+    <value>Solicitacao de obtencao recebida</value>
+  </data>
+  <data name="Mensagem_SolicitacaoRecebida" xml:space="preserve">
+    <value>{0} solicitou obter a tarefa {1}.</value>
+  </data>
+  <data name="Titulo_SolicitacaoAprovada" xml:space="preserve">
+    <value>Solicitacao de tarefa aprovada</value>
+  </data>
+  <data name="Titulo_SolicitacaoRecusada" xml:space="preserve">
+    <value>Solicitacao de tarefa recusada</value>
+  </data>
+  <data name="Mensagem_NotificacaoSolicitacaoAprovada" xml:space="preserve">
+    <value>Sua solicitacao para obter a tarefa {0} foi aprovada.</value>
+  </data>
+  <data name="Mensagem_NotificacaoSolicitacaoRecusada" xml:space="preserve">
+    <value>Sua solicitacao para obter a tarefa {0} foi recusada.</value>
+  </data>
+  <data name="Assunto_EmailTarefaAtribuida" xml:space="preserve">
+    <value>Nova tarefa atribuída: {0}</value>
+  </data>
+  <data name="Titulo_EmailTarefaAtribuida" xml:space="preserve">
+    <value>Nova tarefa atribuída</value>
+  </data>
+  <data name="Descricao_EstadoNaoInformado" xml:space="preserve">
+    <value>Nao informado</value>
+  </data>
+  <data name="Descricao_TarefaNaoIdentificada" xml:space="preserve">
+    <value>nao identificada</value>
+  </data>
+  <data name="Descricao_ModuloTarefas" xml:space="preserve">
+    <value>Tarefas</value>
+  </data>
+  <data name="Campo_EstadoDaTarefa" xml:space="preserve">
+    <value>Estado da tarefa</value>
+  </data>
+  <data name="Campo_DestinoInicial" xml:space="preserve">
+    <value>Destino inicial da tarefa</value>
+  </data>
+  <data name="Campo_Usuario" xml:space="preserve">
+    <value>Usuario</value>
+  </data>
+  <data name="Campo_Departamento" xml:space="preserve">
+    <value>Departamento</value>
+  </data>
+  <data name="Campo_Cargo" xml:space="preserve">
+    <value>cargo</value>
+  </data>
+  <data name="Campo_Titulo" xml:space="preserve">
+    <value>Titulo</value>
+  </data>
+  <data name="Erro_RegistrarMovimentacao" xml:space="preserve">
+    <value>Não foi possível registrar a movimentação da tarefa.</value>
+  </data>
+  <data name="Erro_AcessoHistoricoNaoPermitido" xml:space="preserve">
+    <value>Você não possui acesso ao histórico desta tarefa.</value>
+  </data>
+  <data name="Historico_Movimento_Criacao" xml:space="preserve">
+    <value>Criação</value>
+  </data>
+  <data name="Historico_Movimento_Atualizacao" xml:space="preserve">
+    <value>Atualização</value>
+  </data>
+  <data name="Historico_Movimento_Obtencao" xml:space="preserve">
+    <value>Obtenção</value>
+  </data>
+  <data name="Historico_Movimento_SolicitacaoObtencao" xml:space="preserve">
+    <value>Solicitação de obtenção</value>
+  </data>
+  <data name="Historico_Movimento_AprovacaoObtencao" xml:space="preserve">
+    <value>Aprovação de obtenção</value>
+  </data>
+  <data name="Historico_Movimento_RecusaObtencao" xml:space="preserve">
+    <value>Recusa de obtenção</value>
+  </data>
+  <data name="Historico_DetalheCriacao" xml:space="preserve">
+    <value>Tarefa criada no estado {0}.</value>
+  </data>
+  <data name="Historico_DetalheAtualizacao" xml:space="preserve">
+    <value>Dados da tarefa atualizados.</value>
+  </data>
+  <data name="Historico_DetalheTituloAtualizado" xml:space="preserve">
+    <value>Título atualizado.</value>
+  </data>
+  <data name="Historico_DetalheConteudoAtualizado" xml:space="preserve">
+    <value>Conteúdo atualizado.</value>
+  </data>
+  <data name="Historico_DetalhePeriodoAlterado" xml:space="preserve">
+    <value>Período alterado de {0:dd/MM/yyyy} a {1:dd/MM/yyyy} para {2:dd/MM/yyyy} a {3:dd/MM/yyyy}.</value>
+  </data>
+  <data name="Historico_DetalheEstadoAlterado" xml:space="preserve">
+    <value>Estado alterado de {0} para {1}.</value>
+  </data>
+  <data name="Historico_DetalheResponsavelAlterado" xml:space="preserve">
+    <value>Responsável alterado de {0} para {1}.</value>
+  </data>
+  <data name="Historico_DetalheEscopoAtualizado" xml:space="preserve">
+    <value>Destino ou escopo da tarefa atualizado.</value>
+  </data>
+  <data name="Historico_DetalheAprovacaoAtualizada" xml:space="preserve">
+    <value>Exigência de aprovação para obtenção atualizada.</value>
+  </data>
+  <data name="Historico_DetalheObtencao" xml:space="preserve">
+    <value>Tarefa obtida diretamente por {0}.</value>
+  </data>
+  <data name="Historico_DetalheSolicitacao" xml:space="preserve">
+    <value>Solicitação de obtenção enviada para {0}.</value>
+  </data>
+  <data name="Historico_DetalheAprovacao" xml:space="preserve">
+    <value>Solicitação aprovada; tarefa atribuída a {0}. Estado atual: {1}.</value>
+  </data>
+  <data name="Historico_DetalheRecusa" xml:space="preserve">
+    <value>Solicitação de {0} recusada; a tarefa permanece disponível.</value>
+  </data>
+  <data name="Historico_ValorNaoInformado" xml:space="preserve">
+    <value>Não informado</value>
+  </data>
 </root>

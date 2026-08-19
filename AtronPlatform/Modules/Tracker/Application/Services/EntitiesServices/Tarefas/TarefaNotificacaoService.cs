@@ -1,7 +1,6 @@
 using Application.DTO;
 using Application.Email.Compositores;
 using Application.Interfaces.Services;
-using Domain.Entities;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -20,7 +19,7 @@ namespace Application.Services.EntitiesServices.Tarefas
             _emailCompositor = emailCompositor;
         }
 
-        public async Task<Resultado> NotificarAtribuicaoAsync(TarefaDTO tarefa, Usuario usuario)
+        public async Task<Resultado> NotificarAtribuicaoAsync(TarefaDTO tarefa, UsuarioDTO usuario)
         {
             if (usuario is null)
             {

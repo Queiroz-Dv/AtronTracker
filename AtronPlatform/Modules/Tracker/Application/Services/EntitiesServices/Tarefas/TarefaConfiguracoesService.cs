@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
-    public class TarefaConfiguracoesService(ITarefaUsuarioAtualService usuarioAtualService, IUsuarioRepository usuarioRepository)
+    public class TarefaConfiguracoesService(IUsuarioService usuarioService, IUsuarioRepository usuarioRepository)
         : ITarefaConfiguracoesService
     {
-        private readonly ITarefaUsuarioAtualService _usuarioAtualService = usuarioAtualService;
+        private readonly IUsuarioService _usuarioService = usuarioService;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
 
         public async Task<Resultado<TarefaConfiguracoesDTO>> ObterAsync()
         {
-            var usuarioResultado = await _usuarioAtualService.ObterAsync();
+            var usuarioResultado = await _usuarioService.ObterUsuarioAtual();
             var usuario = usuarioResultado.Dados;
             if (usuarioResultado.TeveFalha)
                 return Resultado<TarefaConfiguracoesDTO>.Falhas(usuarioResultado.Messages);
@@ -30,7 +30,7 @@ namespace Application.Services.EntitiesServices.Tarefas
             if (request is null)
                 return Resultado<TarefaConfiguracoesDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNulo);
 
-            var usuarioResultado = await _usuarioAtualService.ObterAsync();
+            var usuarioResultado = await _usuarioService.ObterUsuarioAtual();
             var usuario = usuarioResultado.Dados;
             if (usuarioResultado.TeveFalha)
                 return Resultado<TarefaConfiguracoesDTO>.Falhas(usuarioResultado.Messages);

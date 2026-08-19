@@ -148,8 +148,8 @@ public class PerfilDeAcessoServiceTests
         var perfisUsuarios = new Mock<IPerfilDeAcessoUsuarioRepository>();
         var usuarios = new Mock<IUsuarioRepository>();
         var mapa = new Mock<IPerfilDeAcessoMapping>();
-        mapa.Setup(servico => servico.MapToEntityAsync(It.IsAny<PerfilDeAcessoDTO>()))
-            .ReturnsAsync((PerfilDeAcessoDTO dto) => new PerfilDeAcesso
+        mapa.Setup(servico => servico.MapToEntity(It.IsAny<PerfilDeAcessoDTO>()))
+            .Returns((PerfilDeAcessoDTO dto) => new PerfilDeAcesso
             {
                 Id = dto.Id,
                 Codigo = dto.Codigo,

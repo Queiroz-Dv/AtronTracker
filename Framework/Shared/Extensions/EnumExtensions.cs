@@ -26,5 +26,19 @@ namespace Shared.Extensions
 
             return value.ToString();
         }
+
+
+        public static T GetEnumFromDescription<T>(string description) where T : Enum
+        {
+            foreach (T value in Enum.GetValues(typeof(T)))
+            {
+                if (value.GetDescription() == description)
+                {
+                    return value;
+                }
+            }
+
+            return default;
+        }
     }
 }

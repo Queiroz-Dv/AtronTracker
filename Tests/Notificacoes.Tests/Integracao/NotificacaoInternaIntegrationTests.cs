@@ -1,5 +1,5 @@
-using AtronNotificacoes.Application;
-using AtronNotificacoes.Contracts;
+using AtronNotificacoes.Application.Services;
+using AtronNotificacoes.Contracts.DTO.Request;
 using AtronNotificacoes.Domain;
 using AtronNotificacoes.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -16,16 +16,18 @@ public sealed class NotificacaoInternaIntegrationTests
         var service = new NotificacaoInternaService(new NotificacaoInternaRepository(context));
 
         var resultado = await service.CriarAsync(
-            new PublicarNotificacaoInternaRequest(
-                "USR001",
-                "Sales",
-                "PropostaAprovada",
-                "Proposta aprovada",
-                "A proposta foi aprovada.",
-                "/propostas/42",
-                "proposta:42",
-                DateTimeOffset.Parse("2026-07-19T12:00:00Z"),
-                "evento:42"));
+            new PublicarNotificacaoInternaRequest
+            {
+                DestinatarioCodigo = "USR001",
+                ModuloOrigem = "Sales",
+                TipoEvento = "PropostaAprovada",
+                Titulo = "Proposta aprovada",
+                Mensagem = "A proposta foi aprovada.",
+                UrlDestino = "/propostas/42",
+                ReferenciaExterna = "proposta:42",
+                DataCriacao = DateTimeOffset.Parse("2026-07-19T12:00:00Z"),
+                ChaveIdempotencia = "evento:42"
+            });
 
         var persistida = await context.NotificacoesInternas.SingleAsync();
 
@@ -42,9 +44,19 @@ public sealed class NotificacaoInternaIntegrationTests
     {
         await using var context = CriarContexto("idempotencia");
         var service = new NotificacaoInternaService(new NotificacaoInternaRepository(context));
-        var request = new PublicarNotificacaoInternaRequest(
-            "USR001", "Tracker", "TarefaCriada", "Nova tarefa", "Uma tarefa foi criada.", null, "tarefa:123",
-            DateTimeOffset.Parse("2026-07-19T12:00:00Z"), "tracker:tarefa:123", "correlacao-123");
+        var request = new PublicarNotificacaoInternaRequest
+        {
+            DestinatarioCodigo = "USR001",
+            ModuloOrigem = "Tracker",
+            TipoEvento = "TarefaCriada",
+            Titulo = "Nova tarefa",
+            Mensagem = "Uma tarefa foi criada.",
+            UrlDestino = null,
+            ReferenciaExterna = "tarefa:123",
+            DataCriacao = DateTimeOffset.Parse("2026-07-19T12:00:00Z"),
+            ChaveIdempotencia = "tracker:tarefa:123",
+            CorrelacaoId = "correlacao-123"
+        };
 
         var primeira = await service.CriarAsync(request);
         var segunda = await service.CriarAsync(request);

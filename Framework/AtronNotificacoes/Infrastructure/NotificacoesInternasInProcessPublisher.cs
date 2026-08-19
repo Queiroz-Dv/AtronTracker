@@ -1,6 +1,9 @@
 using System.Transactions;
-using AtronNotificacoes.Application;
-using AtronNotificacoes.Contracts;
+using AtronNotificacoes.Application.Interfaces;
+using AtronNotificacoes.Contracts.DTO.Request;
+using AtronNotificacoes.Contracts.DTO.Response;
+using AtronNotificacoes.Contracts.Interfaces;
+using AtronNotificacoes.Observability;
 using AtronNotificacoes.Resources;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,20 +20,17 @@ public sealed class NotificacoesInternasInProcessPublisher(
     {
         try
         {
-            using var transacaoSuprimida = new TransactionScope(
-                TransactionScopeOption.Suppress,
-                TransactionScopeAsyncFlowOption.Enabled);
+            using var transacaoSuprimida = new TransactionScope(TransactionScopeOption.Suppress, TransactionScopeAsyncFlowOption.Enabled);
+
             await using var scope = serviceScopeFactory.CreateAsyncScope();
             var service = scope.ServiceProvider.GetRequiredService<INotificacaoInternaService>();
             var notificacao = await service.CriarAsync(request);
+
             transacaoSuprimida.Complete();
 
             ObservabilidadeNotificacoes.RegistrarPublicacao(request);
-            logger.LogInformation(
-                NotificacoesResource.Log_Publicacao,
-                request.ModuloOrigem,
-                request.TipoEvento,
-                request.CorrelacaoId);
+
+            logger.LogInformation(NotificacoesResource.Log_Publicacao, request.ModuloOrigem, request.TipoEvento, request.CorrelacaoId);
 
             return ResultadoPublicacaoNotificacaoInterna.Sucesso(notificacao);
         }
@@ -41,12 +41,8 @@ public sealed class NotificacoesInternasInProcessPublisher(
         catch (Exception exception)
         {
             ObservabilidadeNotificacoes.RegistrarFalhaDePublicacao(request);
-            logger.LogError(
-                exception,
-                NotificacoesResource.Log_FalhaPublicacao,
-                request.ModuloOrigem,
-                request.TipoEvento,
-                request.CorrelacaoId);
+
+            logger.LogError(exception, NotificacoesResource.Log_FalhaPublicacao, request.ModuloOrigem, request.TipoEvento, request.CorrelacaoId);
 
             return ResultadoPublicacaoNotificacaoInterna.Falha(
                 NotificacoesResource.Erro_Publicacao);

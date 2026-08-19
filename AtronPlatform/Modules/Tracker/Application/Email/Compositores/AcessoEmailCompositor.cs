@@ -1,4 +1,4 @@
-using Application.Email.Models;
+using Application.Records.Usuario;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
 using Shared.Application.Resources;
@@ -18,14 +18,14 @@ public sealed class AcessoEmailCompositor : IAcessoEmailCompositor
         _renderer = renderer;
     }
 
-    public Resultado<EmailRequest> ComporConfirmacaoCadastro(ConfirmacaoCadastroEmailParametros parametros)
+    public Resultado<EmailRequest> ComporConfirmacaoCadastro(ConfirmacaoCadastroEmailParametrosRecord parametros)
     {
         return Renderizar(
             CriarTemplate(
                 "confirmacao-cadastro.html",
                 EmailResource.Assunto_ConfirmeCadastro,
                 EmailResource.Titulo_ConfirmacaoCadastro),
-            new ConfirmacaoCadastroEmailModel
+            new ConfirmacaoCadastroEmailModelRecord
             {
                 Nome = parametros.Nome,
                 Codigo = parametros.Codigo,
@@ -35,14 +35,14 @@ public sealed class AcessoEmailCompositor : IAcessoEmailCompositor
             parametros.Destinatario);
     }
 
-    public Resultado<EmailRequest> ComporRecuperacaoSenha(RecuperacaoSenhaEmailParametros parametros)
+    public Resultado<EmailRequest> ComporRecuperacaoSenha(RecuperacaoSenhaEmailParametrosRecord parametros)
     {
         return Renderizar(
             CriarTemplate(
                 "recuperacao-senha.html",
                 EmailResource.Assunto_RecuperacaoSenha,
                 EmailResource.Titulo_RecuperacaoSenha),
-            new RecuperacaoSenhaEmailModel
+            new RecuperacaoSenhaEmailModelRecord
             {
                 Nome = parametros.Nome,
                 Link = parametros.Link,
@@ -58,18 +58,18 @@ public sealed class AcessoEmailCompositor : IAcessoEmailCompositor
                 "confirmacao-concluida.html",
                 EmailResource.Assunto_EmailConfirmado,
                 EmailResource.Titulo_EmailConfirmado),
-            new ConfirmacaoConcluidaEmailModel { Nome = nome },
+            new ConfirmacaoConcluidaEmailModelRecord { Nome = nome },
             destinatario);
     }
 
-    public Resultado<EmailRequest> ComporPrimeiroAcesso(PrimeiroAcessoEmailParametros parametros)
+    public Resultado<EmailRequest> ComporPrimeiroAcesso(PrimeiroAcessoEmailParametrosRecord parametros)
     {
         return Renderizar(
             CriarTemplate(
                 "primeiro-acesso.html",
                 EmailResource.Assunto_PrimeiroAcesso,
                 EmailResource.Titulo_PrimeiroAcesso),
-            new PrimeiroAcessoEmailModel
+            new PrimeiroAcessoEmailModelRecord
             {
                 Nome = parametros.Nome,
                 Link = parametros.Link,
@@ -85,7 +85,7 @@ public sealed class AcessoEmailCompositor : IAcessoEmailCompositor
                 "alteracao-email.html",
                 EmailResource.Assunto_AlteracaoEmail,
                 EmailResource.Titulo_AlteracaoEmail),
-            new AlteracaoEmailModel { Nome = nome, Link = link },
+            new AlteracaoEmailModelRecord { Nome = nome, Link = link },
             destinatario);
     }
 
@@ -96,7 +96,7 @@ public sealed class AcessoEmailCompositor : IAcessoEmailCompositor
                 "reativacao-conta.html",
                 EmailResource.Assunto_ReativacaoConta,
                 EmailResource.Titulo_ReativacaoConta),
-            new ReativacaoContaEmailModel { Nome = nome, Codigo = codigo },
+            new ReativacaoContaEmailModelRecord { Nome = nome, Codigo = codigo },
             destinatario);
     }
 

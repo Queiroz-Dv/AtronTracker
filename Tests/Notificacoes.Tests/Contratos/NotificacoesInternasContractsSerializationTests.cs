@@ -1,5 +1,6 @@
 using System.Text.Json;
-using AtronNotificacoes.Contracts;
+using AtronNotificacoes.Contracts.DTO.Request;
+using AtronNotificacoes.Contracts.DTO.Response;
 using Xunit;
 
 namespace Notificacoes.Tests.Contratos;
@@ -16,17 +17,19 @@ public class NotificacoesInternasContractsSerializationTests
         string referenciaExterna)
     {
         var dataCriacao = new DateTimeOffset(2026, 7, 19, 14, 30, 0, TimeSpan.Zero);
-        var request = new PublicarNotificacaoInternaRequest(
-            "USR001",
-            moduloOrigem,
-            tipoEvento,
-            "Nova tarefa atribuída",
-            "A tarefa 123 foi atribuída a você.",
-            "/atron/tarefas/123",
-            referenciaExterna,
-            dataCriacao,
-            $"{moduloOrigem.ToLowerInvariant()}:{referenciaExterna}:teste",
-            "correlacao-123");
+        var request = new PublicarNotificacaoInternaRequest
+        {
+            DestinatarioCodigo = "USR001",
+            ModuloOrigem = moduloOrigem,
+            TipoEvento = tipoEvento,
+            Titulo = "Nova tarefa atribuída",
+            Mensagem = "A tarefa 123 foi atribuída a você.",
+            UrlDestino = "/atron/tarefas/123",
+            ReferenciaExterna = referenciaExterna,
+            DataCriacao = dataCriacao,
+            ChaveIdempotencia = $"{moduloOrigem.ToLowerInvariant()}:{referenciaExterna}:teste",
+            CorrelacaoId = "correlacao-123"
+        };
 
         var json = JsonSerializer.Serialize(request);
 

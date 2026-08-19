@@ -556,7 +556,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
         public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
             => Task.FromResult(codigo == departamento.Codigo ? departamento : null!);
 
-        public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo)
+        public Task<Departamento> ObterDepartamentoPorCodigoRepository(string codigo)
             => Task.FromResult(codigo == departamento.Codigo ? departamento : null!);
 
         public Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)

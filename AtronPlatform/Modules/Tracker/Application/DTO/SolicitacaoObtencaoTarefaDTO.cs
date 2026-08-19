@@ -10,6 +10,8 @@ namespace Application.DTO
 
         public int Status { get; set; }
 
+        public bool Aprovar { get; set; }
+
         public DateTime DataSolicitacao { get; set; }
 
         public DateTime? DataDecisao { get; set; }

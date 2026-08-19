@@ -9,7 +9,7 @@ namespace Application.Validador
 {
     public class DadosDoTokenValidador : IValidador<DadosDoTokenDTO>
     {
-        public IList<NotificationMessage> Validar(DadosDoTokenDTO entity)
+        public IEnumerable<NotificationMessage> Validar(DadosDoTokenDTO entity)
         {
             var context = new NotificationBag();
 

@@ -1,7 +1,8 @@
 using Application.DTO.Request;
 using Application.Email.Compositores;
-using Application.Email.Models;
 using Application.Interfaces.Services;
+using Application.Mapping;
+using Application.Records.Usuario;
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -19,7 +20,7 @@ namespace Application.UseCases.UsuarioCases
 {
     public class CriarUsuario(
         IValidador<UsuarioRequest> validador,
-        IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> mapService,
+        UsuarioRequestMapping mapService,
         IUsuarioRepository usuarioRepository,
         IUsuarioIdentityRepository usuarioIdentityRepository,
         IDepartamentoRepository departamentoRepository,
@@ -33,7 +34,7 @@ namespace Application.UseCases.UsuarioCases
         ITokenTemporarioService tokenTemporarioService)
     {
         private readonly IValidador<UsuarioRequest> _validador = validador;
-        private readonly IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> _mapService = mapService;
+        private readonly UsuarioRequestMapping _mapService = mapService;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
         private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
@@ -72,7 +73,7 @@ namespace Application.UseCases.UsuarioCases
             if (contaExiste)
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
 
-            var usuario = await _mapService.MapToEntityAsync(request);
+            var usuario = _mapService.MapToEntity(request);
             var resultadoGestor = await VincularGestorImediatoAsync(usuario, request.GestorImediatoCodigo);
             if (resultadoGestor.TeveFalha)
                 return Resultado<UsuarioRequest>.Falhas(resultadoGestor.Messages);
@@ -105,7 +106,7 @@ namespace Application.UseCases.UsuarioCases
             if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
             {
                 var departamento = await _departamentoRepository
-                    .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
+                    .ObterDepartamentoPorCodigoRepository(request.DepartamentoCodigo);
                 var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(request.CargoCodigo);
 
                 if (departamento != null && cargo != null)
@@ -185,7 +186,7 @@ namespace Application.UseCases.UsuarioCases
             Resultado resultadoEmail;
             try
             {
-                var email = _emailCompositor.ComporPrimeiroAcesso(new PrimeiroAcessoEmailParametros(
+                var email = _emailCompositor.ComporPrimeiroAcesso(new PrimeiroAcessoEmailParametrosRecord(
                     usuario.Email,
                     usuario.Nome,
                     link,

@@ -1,4 +1,5 @@
 using Application.Interfaces.Services;
+using Application.Records.Autenticacao;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,7 +10,7 @@ public sealed class TokenTemporarioService : ITokenTemporarioService
 {
     private const int TamanhoTokenEmBytes = 32;
 
-    public TokenTemporario Criar()
+    public TokenTemporarioRecord Criar()
     {
         var bytes = RandomNumberGenerator.GetBytes(TamanhoTokenEmBytes);
         var valor = Convert.ToBase64String(bytes)
@@ -17,7 +18,7 @@ public sealed class TokenTemporarioService : ITokenTemporarioService
             .Replace('+', '-')
             .Replace('/', '_');
 
-        return new TokenTemporario(valor, ObterHash(valor));
+        return new TokenTemporarioRecord(valor, ObterHash(valor));
     }
 
     public string ObterHash(string token)

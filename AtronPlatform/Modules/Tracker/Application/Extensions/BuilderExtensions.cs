@@ -1,6 +1,7 @@
 using Application.DTO;
 using Application.DTO.Request;
 using Application.DTO.Response;
+using Application.Records.Tarefa;
 
 namespace Application.Extensions
 {

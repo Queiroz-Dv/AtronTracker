@@ -1,7 +1,7 @@
 using Application.DTO.Request;
-using Application.Email.Models;
 using Application.Extensions;
 using Application.Interfaces.Services;
+using Application.Records.Usuario;
 using Domain.Entities;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services.AuthServices
 {
-    public class CadastroUsuarioService(CadastroUsuarioContext context) : ICadastroUsuarioService
+    public class CadastroUsuarioService(CadastroUsuarioContextRecord context) : ICadastroUsuarioService
     {
         private const int ValidadeConfirmacaoEmHoras = 24;
         private const int MaximoTentativasConfirmacao = 5;
@@ -51,7 +51,7 @@ namespace Application.Services.AuthServices
             var resultado = Resultado.Sucesso(string.Format(AuthResource.Mensagem_UsuarioRegistrado, usuario.Nome, usuario.Sobrenome));
             try
             {
-                var confirmacaoDeCadastrao = new ConfirmacaoCadastroEmailParametros(
+                var confirmacaoDeCadastrao = new ConfirmacaoCadastroEmailParametrosRecord(
                     request.Email, usuario.Nome, confirmacao.Identificador, confirmacao.Link, ValidadeConfirmacaoEmHoras);
 
                 var email = context.EmailCompositor.ComporConfirmacaoCadastro(confirmacaoDeCadastrao);

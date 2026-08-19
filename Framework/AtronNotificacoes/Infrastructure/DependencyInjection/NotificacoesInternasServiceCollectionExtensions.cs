@@ -1,6 +1,8 @@
-using AtronNotificacoes.Application;
-using AtronNotificacoes.Contracts;
+using AtronNotificacoes.Application.Interfaces;
+using AtronNotificacoes.Application.Services;
+using AtronNotificacoes.Contracts.Interfaces;
 using AtronNotificacoes.Domain;
+using AtronNotificacoes.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

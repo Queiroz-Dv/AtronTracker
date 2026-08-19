@@ -1,6 +1,7 @@
 using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Interfaces;
 using AtronStock.Application.Mapping;
+using AtronStock.Application.Providers.Notificacoes;
 using AtronStock.Application.Services;
 using AtronStock.Application.Validacoes;
 using AtronStock.Domain.Entities;
@@ -10,6 +11,7 @@ using AtronStock.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
 using Shared.Infrastructure.Configuration;
 
@@ -40,15 +42,15 @@ public static class StockModuleServiceCollectionExtensions
         services.AddScoped<IEstoqueService, EstoqueService>();
         services.AddScoped<IEstoqueRepository, EstoqueRepository>();
 
-        services.AddScoped<IResponsavelNotificacaoEstoqueResolver>(_ =>
-            new ResponsavelNotificacaoEstoqueResolver(
+        services.AddScoped<ResponsavelNotificacaoEstoqueProvider>(_ =>
+            new ResponsavelNotificacaoEstoqueProvider(
                 configuration["NotificacoesEstoque:ResponsavelCodigo"]));
         services.AddScoped<IEstoqueNotificacaoService, EstoqueNotificacaoService>();
 
-        services.AddScoped<IAsyncMap<ClienteRequest, Cliente>, ClienteMapping>();
-        services.AddScoped<IAsyncMap<CategoriaRequest, Categoria>, CategoriaMapping>();
-        services.AddScoped<IAsyncMap<ProdutoRequest, Produto>, ProdutoMapping>();
-        services.AddScoped<IAsyncMap<FornecedorRequest, Fornecedor>, FornecedorMapping>();
+        services.AddMapper<Cliente, ClienteRequest, ClienteMapping>();
+        services.AddMapper<Categoria, CategoriaRequest, CategoriaMapping>();
+        services.AddMapper<Produto, ProdutoRequest, ProdutoMapping>();
+        services.AddMapper<Fornecedor, FornecedorRequest, FornecedorMapping>();
 
         services.AddScoped<IValidador<ClienteRequest>, ClienteValidador>();
         services.AddScoped<IValidador<CategoriaRequest>, CategoriaValidador>();
@@ -56,5 +58,19 @@ public static class StockModuleServiceCollectionExtensions
         services.AddScoped<IValidador<FornecedorRequest>, FornecedorValidador>();
 
         return services;
+    }
+
+    private static void AddMapper<TEntity, TDto, TMapper>(this IServiceCollection services)
+        where TEntity : class
+        where TDto : class
+        where TMapper : class, IMapper<TEntity, TDto>
+    {
+        services.AddScoped<TMapper>();
+        services.AddScoped<IMapper<TEntity, TDto>>(provider =>
+            provider.GetRequiredService<TMapper>());
+        services.AddScoped<IToDtoMapper<TEntity, TDto>>(provider =>
+            provider.GetRequiredService<TMapper>());
+        services.AddScoped<IToEntityMapper<TEntity, TDto>>(provider =>
+            provider.GetRequiredService<TMapper>());
     }
 }

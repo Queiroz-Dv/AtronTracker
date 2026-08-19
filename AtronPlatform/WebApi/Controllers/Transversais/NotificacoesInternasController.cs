@@ -1,7 +1,7 @@
-using AtronNotificacoes;
-using AtronNotificacoes.Application;
-using AtronNotificacoes.Contracts;
+using AtronNotificacoes.Application.Interfaces;
+using AtronNotificacoes.Contracts.DTO.Response;
 using AtronNotificacoes.Resources;
+using AtronNotificacoes.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

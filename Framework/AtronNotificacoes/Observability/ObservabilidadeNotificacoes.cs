@@ -1,7 +1,7 @@
 using System.Diagnostics.Metrics;
-using AtronNotificacoes.Contracts;
+using AtronNotificacoes.Contracts.DTO.Request;
 
-namespace AtronNotificacoes;
+namespace AtronNotificacoes.Observability;
 
 public static class ObservabilidadeNotificacoes
 {

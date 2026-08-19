@@ -1,7 +1,7 @@
 using Application.Email.Compositores;
-using Application.Email.Models;
 using Application.Extensions;
 using Application.Interfaces.Services;
+using Application.Records.Usuario;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
@@ -80,7 +80,7 @@ namespace Application.UseCases.UsuarioCases
 
             try
             {
-                var email = _emailCompositor.ComporConfirmacaoCadastro(new ConfirmacaoCadastroEmailParametros(
+                var email = _emailCompositor.ComporConfirmacaoCadastro(new ConfirmacaoCadastroEmailParametrosRecord(
                     usuario.Email,
                     usuario.Nome,
                     confirmacao.Identificador,

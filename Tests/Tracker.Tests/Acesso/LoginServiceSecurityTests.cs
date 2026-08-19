@@ -2,6 +2,7 @@ using Application.DTO;
 using Application.DTO.Request;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
+using Application.Records.Autenticacao;
 using Application.Services.AuthServices;
 using Domain.Interfaces.ApplicationInterfaces;
 using Moq;
@@ -36,7 +37,7 @@ public class LoginServiceSecurityTests
             .ReturnsAsync(new Domain.Entities.SessaoRefreshToken("USR001", DateTime.UtcNow.AddDays(1)))
             .ReturnsAsync((Domain.Entities.SessaoRefreshToken)null!);
         dependencias.UserIdentityService
-            .Setup(service => service.RotacionarRefreshTokenAsync(It.IsAny<RotacaoRefreshToken>()))
+            .Setup(service => service.RotacionarRefreshTokenAsync(It.IsAny<RotacaoRefreshTokenRecord>()))
             .ReturnsAsync(true);
         dependencias.DadosComplementaresService
             .Setup(service => service.ObterInformacoesComplementaresDoUsuario(usuario))
@@ -53,7 +54,7 @@ public class LoginServiceSecurityTests
         Assert.Equal("USR001", primeiraTentativa.Dados.UsuarioCodigo);
         Assert.True(reuso.TeveFalha);
         dependencias.UserIdentityService.Verify(
-            service => service.RotacionarRefreshTokenAsync(It.Is<RotacaoRefreshToken>(rotacao =>
+            service => service.RotacionarRefreshTokenAsync(It.Is<RotacaoRefreshTokenRecord>(rotacao =>
                 rotacao.UsuarioCodigo == "USR001" &&
                 rotacao.RefreshTokenAtual == "refresh-antigo" &&
                 rotacao.NovoRefreshToken == "refresh-novo")),

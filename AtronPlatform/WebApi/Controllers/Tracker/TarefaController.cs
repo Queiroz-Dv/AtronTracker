@@ -1,12 +1,12 @@
 using Application.DTO;
 using Application.DTO.Request;
-using Application.Services;
+using Application.Interfaces.Services;
+using Application.Services.EntitiesServices.Tarefas;
+using Application.UseCases.TarefaCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Infrastructure.Filters;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Shared.Authorization;
+using Shared.Infrastructure.Filters;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -18,7 +18,12 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Policy = ModuloPolicies.Tarefa)]
-    public class TarefaController(ITarefaService tarefaService) : ControllerBase
+    public class TarefaController(
+        ITarefaService tarefaService,
+        ITarefaObtencaoService tarefaObtencaoService,
+        ITarefaConfiguracoesService tarefaConfiguracoesService,
+        TarefaEstadoService tarefaEstadoService,
+        ObterHistoricoTarefaCase obterHistoricoTarefaCase) : ControllerBase
     {
         /// <summary>
         /// Obtém todas as tarefas cadastradas no sistema.
@@ -38,7 +43,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("MeuQuadro")]
         public async Task<ActionResult<IEnumerable<TarefaDTO>>> ObterMeuQuadro()
         {
-            var resultado = await tarefaService.ObterMeuQuadroAsync();
+            var resultado = await tarefaObtencaoService.ObterMeuQuadroAsync();
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -49,7 +54,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("Equipe")]
         public async Task<ActionResult<IEnumerable<TarefaDTO>>> ObterEquipe()
         {
-            var resultado = await tarefaService.ObterEquipeAsync();
+            var resultado = await tarefaObtencaoService.ObterEquipeAsync();
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -60,7 +65,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("Disponiveis")]
         public async Task<ActionResult<IEnumerable<TarefaDTO>>> ObterDisponiveis()
         {
-            var resultado = await tarefaService.ObterDisponiveisAsync();
+            var resultado = await tarefaObtencaoService.ObterDisponiveisAsync();
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -71,7 +76,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("Acesso")]
         public async Task<ActionResult<TarefaAcessoDTO>> ObterAcesso()
         {
-            var resultado = await tarefaService.ObterAcessoAsync();
+            var resultado = await tarefaObtencaoService.ObterAcessoAsync();
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -82,7 +87,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("Solicitacoes")]
         public async Task<ActionResult<IEnumerable<SolicitacaoObtencaoTarefaDTO>>> ObterSolicitacoes()
         {
-            var resultado = await tarefaService.ObterSolicitacoesAsync();
+            var resultado = await tarefaObtencaoService.ObterSolicitacoesAsync();
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -93,7 +98,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("Estados")]
         public async Task<ActionResult<IEnumerable<TarefaEstadoDTO>>> ObterEstados()
         {
-            var resultado = await tarefaService.ObterEstadosAsync();
+            var resultado = await tarefaEstadoService.ObterTodosAsync();
             return Ok(resultado.Dados);
         }
 
@@ -104,7 +109,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("Configuracoes")]
         public async Task<ActionResult<TarefaConfiguracoesDTO>> ObterConfiguracoes()
         {
-            var resultado = await tarefaService.ObterConfiguracoesAsync();
+            var resultado = await tarefaConfiguracoesService.ObterAsync();
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -116,7 +121,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpPut("Configuracoes")]
         public async Task<ActionResult> AtualizarConfiguracoes([FromBody] TarefaConfiguracoesRequest request)
         {
-            var resultado = await tarefaService.AtualizarConfiguracoesAsync(request);
+            var resultado = await tarefaConfiguracoesService.AtualizarAsync(request);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
@@ -156,7 +161,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Transactional]
         public async Task<ActionResult<TarefaDTO>> Assumir(int id)
         {
-            var resultado = await tarefaService.AssumirAsync(id);
+            var resultado = await tarefaObtencaoService.AssumirAsync(id);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -169,7 +174,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Transactional]
         public async Task<ActionResult<SolicitacaoObtencaoTarefaDTO>> SolicitarObtencao(int id)
         {
-            var resultado = await tarefaService.SolicitarObtencaoAsync(id);
+            var resultado = await tarefaObtencaoService.SolicitarAsync(id);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -182,7 +187,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Transactional]
         public async Task<ActionResult<SolicitacaoObtencaoTarefaDTO>> AprovarSolicitacao(int id)
         {
-            var resultado = await tarefaService.AprovarSolicitacaoAsync(id);
+            var resultado = await tarefaObtencaoService.DecidirAsync(id, true);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -195,7 +200,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Transactional]
         public async Task<ActionResult<SolicitacaoObtencaoTarefaDTO>> RecusarSolicitacao(int id)
         {
-            var resultado = await tarefaService.RecusarSolicitacaoAsync(id);
+            var resultado = await tarefaObtencaoService.DecidirAsync(id, false);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -212,19 +217,14 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         }
 
         /// <summary>
-        /// Obtém uma página do histórico cronológico de movimentações da tarefa.
+        /// Obtém o histórico cronológico de movimentações da tarefa.
         /// </summary>
         /// <param name="id">Identificador numérico da tarefa.</param>
-        /// <param name="pagina">Página iniciada em 1.</param>
-        /// <param name="tamanhoPagina">Quantidade de movimentações por página.</param>
-        /// <returns>200 OK com a página solicitada ou 400 BadRequest com mensagens de erro.</returns>
+        /// <returns>200 OK com as movimentações autorizadas ou 400 BadRequest com mensagens de erro.</returns>
         [HttpGet("{id}/Movimentacoes")]
-        public async Task<ActionResult<TarefaMovimentacaoPaginaDTO>> ObterHistorico(
-            int id,
-            [FromQuery] int pagina = 1,
-            [FromQuery] int tamanhoPagina = 5)
+        public async Task<ActionResult<IReadOnlyCollection<TarefaMovimentacaoDTO>>> ObterHistorico(int id)
         {
-            var resultado = await tarefaService.ObterHistoricoAsync(id, pagina, tamanhoPagina);
+            var resultado = await obterHistoricoTarefaCase.ExecutarAsync(id);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 

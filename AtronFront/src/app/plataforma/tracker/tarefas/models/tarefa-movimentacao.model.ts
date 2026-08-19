@@ -6,10 +6,3 @@ export interface TarefaMovimentacao {
   responsavelNome: string;
   dataOcorrencia: string;
 }
-
-export interface TarefaMovimentacaoPagina {
-  itens: TarefaMovimentacao[];
-  totalItens: number;
-  pagina: number;
-  tamanhoPagina: number;
-}

@@ -2,6 +2,7 @@
 
 namespace Shared.Application.Services.Mapper
 {
+    [Obsolete("Use os contratos de Shared.Application.Interfaces.Mapping.", false)]
     public abstract class ApplicationMapService<DTO, Entity> : IApplicationMapService<DTO, Entity>
     {
         public abstract Entity MapToEntity(DTO dto);

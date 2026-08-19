@@ -1,15 +1,14 @@
 ﻿using AtronStock.Application.DTO.Request;
 using AtronStock.Domain.Entities;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Mapper;
+using Shared.Application.Interfaces.Mapping;
 
 namespace AtronStock.Application.Mapping
 {
-    public class FornecedorMapping : AsyncApplicationMapService<FornecedorRequest, Fornecedor>, IAsyncMap<FornecedorRequest, Fornecedor>
+    public class FornecedorMapping : Mapper<Fornecedor, FornecedorRequest>
     {
-        public override Task<FornecedorRequest> MapToDTOAsync(Fornecedor entity)
+        public override FornecedorRequest MapToDto(Fornecedor entity)
         {
-            var fornecedorRequest = new FornecedorRequest
+            return new FornecedorRequest
             {
                 Codigo = entity.Codigo,
                 Nome = entity.Nome,
@@ -18,10 +17,9 @@ namespace AtronStock.Application.Mapping
                 EnderecoVO = entity.Endereco,
                 Telefone = entity.Telefone
             };
-            return Task.FromResult(fornecedorRequest);
         }
 
-        public Task MapToEntityAsync(FornecedorRequest dto, Fornecedor entityToUpdate)
+        public void MapToEntity(FornecedorRequest dto, Fornecedor entityToUpdate)
         {
             entityToUpdate.Codigo = dto.Codigo;
             entityToUpdate.Nome = dto.Nome;
@@ -29,12 +27,11 @@ namespace AtronStock.Application.Mapping
             entityToUpdate.Telefone = dto.Telefone;
             entityToUpdate.CNPJ = dto.CNPJ;
             entityToUpdate.Endereco = dto.EnderecoVO;
-            return Task.CompletedTask;
         }
 
-        public override Task<Fornecedor> MapToEntityAsync(FornecedorRequest request)
+        public override Fornecedor MapToEntity(FornecedorRequest request)
         {
-            var fornecedor = new Fornecedor
+            return new Fornecedor
             {
                 Codigo = request.Codigo,
                 Nome = request.Nome,
@@ -43,7 +40,6 @@ namespace AtronStock.Application.Mapping
                 CNPJ = request.CNPJ,
                 Endereco = request.EnderecoVO
             };
-            return Task.FromResult(fornecedor);
         }
     }
 }

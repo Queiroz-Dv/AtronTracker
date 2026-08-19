@@ -66,7 +66,7 @@ Se nenhum aprovador válido existir, a solicitação será bloqueada no backend.
 
 Tarefas finalizadas ou canceladas ficam fora do carregamento padrão. Elas aparecem somente por filtro explícito ou busca autorizada e permanecem preservadas para consulta histórica.
 
-O módulo mantém um histórico cronológico e imutável das movimentações da tarefa. A implementação registra criação, atualização, obtenção direta, solicitação de obtenção, aprovação e recusa; transições como início, entrega e finalização são preservadas nos detalhes da atualização. Cada registro mantém o código e o nome do ator como fotografia do momento da ação, a data e hora e as mudanças relevantes. A consulta usa paginação no servidor, é carregada sob demanda em uma caixa expansível no detalhe da tarefa e respeita o acesso do usuário responsável, das equipes e dos gestores.
+O módulo mantém um histórico cronológico e imutável das movimentações da tarefa. A implementação registra criação, atualização, obtenção direta, solicitação de obtenção, aprovação e recusa; transições como início, entrega e finalização são preservadas nos detalhes da atualização. Cada registro mantém o código e o nome do ator como fotografia do momento da ação, a data e hora e as mudanças relevantes. A API retorna a coleção autorizada já ordenada, sem paginação no backend. O histórico é carregado sob demanda em uma caixa expansível no detalhe da tarefa, respeitando o acesso do usuário responsável, das equipes e dos gestores. A paginação visual pertence exclusivamente ao grid Angular e não remove a ordenação nem a autorização do backend.
 
 ### Notificações
 

@@ -5,6 +5,7 @@
     /// </summary>
     /// <typeparam name="DTO">O tipo do Data Transfer Object (DTO).</typeparam>
     /// <typeparam name="Entity">O tipo da Entidade.</typeparam>
+    [Obsolete("Use os contratos de Shared.Application.Interfaces.Mapping.", false)]
     public interface IApplicationMapService<DTO, Entity>
     {
         /// <summary>
@@ -36,6 +37,7 @@
         List<DTO> MapToListDTO(List<Entity> entities);
     }
 
+    [Obsolete("Use os contratos de Shared.Application.Interfaces.Mapping.", false)]
     public interface IMapService<DTO, Entity> : IApplicationMapService<DTO, Entity>
     {    }
 }

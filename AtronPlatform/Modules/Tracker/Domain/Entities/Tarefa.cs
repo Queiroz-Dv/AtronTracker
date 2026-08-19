@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Domain.Enums;
+using Domain.Extensions;
 
 namespace Domain.Entities
 {
@@ -49,18 +50,14 @@ namespace Domain.Entities
         public ICollection<SolicitacaoObtencaoTarefa> SolicitacoesObtencao { get; set; }
 
         public ICollection<TarefaMovimentacao> Movimentacoes { get; set; }
-
+        
         public void AprovarObtencao(int usuarioId, string usuarioCodigo)
         {
             UsuarioId = usuarioId;
             UsuarioCodigo = usuarioCodigo;
             DestinoInicial = (int)DestinoInicialTarefa.Usuario;
-            DepartamentoId = null;
-            DepartamentoCodigo = null;
-            Departamento = null;
-            CargoId = null;
-            CargoCodigo = null;
-            Cargo = null;
+            this.RemoverDepartamento();
+            this.RemoverCargo();
 
             if (TarefaEstadoId != EstadoPendenteAprovacaoId)
             {

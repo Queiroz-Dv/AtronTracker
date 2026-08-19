@@ -1,54 +1,39 @@
 ﻿using Application.DTO;
 using Domain.Entities;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Mapper;
-using System.Threading.Tasks;
+using Domain.Extensions;
+using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Mapping
 {
-    public class DepartamentoMapping : AsyncApplicationMapService<DepartamentoDTO, Departamento>, IAsyncMap<DepartamentoDTO, Departamento>
+    public sealed class DepartamentoMapping : Mapper<Departamento, DepartamentoDTO>
     {
-        public override Task<DepartamentoDTO> MapToDTOAsync(Departamento entity)
+        public override DepartamentoDTO MapToDto(Departamento entity)
         {
-            var dto = new DepartamentoDTO
+            return new DepartamentoDTO
             {
                 Id = entity.Id,
                 Codigo = entity.Codigo.ToUpper(),
                 Descricao = entity.Descricao.ToUpper(),
                 GestorDepartamentoCodigo = entity.GestorDepartamentoCodigo,
-                GestorDepartamentoNome = ObterNomeGestor(entity.GestorDepartamento)
+                GestorDepartamentoNome = entity.GestorDepartamento.ObterNome()
             };
-
-            return Task.FromResult(dto);
         }
 
-        public override Task<Departamento> MapToEntityAsync(DepartamentoDTO dto)
+        public override Departamento MapToEntity(DepartamentoDTO dto)
         {
-            var entity = new Departamento
+            return new Departamento
             {
                 Id = dto.Id,
                 Codigo = dto.Codigo.ToUpper(),
                 Descricao = dto.Descricao.ToUpper(),
                 GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo?.ToUpper()
             };
-            return Task.FromResult(entity);
         }
 
-        public Task MapToEntityAsync(DepartamentoDTO dto, Departamento entityToUpdate)
+        public static void MapToEntity(DepartamentoDTO dto, Departamento entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao;
             entityToUpdate.GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo?.ToUpper();
-            return Task.CompletedTask;
-        }
-
-        private static string ObterNomeGestor(Usuario gestor)
-        {
-            if (gestor is null)
-            {
-                return null;
-            }
-
-            return $"{gestor.Nome} {gestor.Sobrenome}";
-        }
+        }        
     }
 }

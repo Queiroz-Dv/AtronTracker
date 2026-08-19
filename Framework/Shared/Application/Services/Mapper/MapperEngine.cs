@@ -6,6 +6,7 @@ namespace Shared.Application.Services.Mapper
     /// Implementação padrão do motor de mapeamento. Esta classe deve ser registrada
     /// como Scoped ou Transient no contêiner de DI.
     /// </summary>
+    [Obsolete("Use os contratos de Shared.Application.Interfaces.Mapping.", false)]
     public class MapperEngine : IMapperEngineService
     {
         /// <summary>

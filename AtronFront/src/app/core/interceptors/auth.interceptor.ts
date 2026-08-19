@@ -69,15 +69,15 @@ export class AuthInterceptor implements HttpInterceptor {
       this.isRefreshing = true;
       this.refreshSubject.next(null);
 
-      return this.http.post<{ token: string, expires: Date, usuarioCodigo: string }>(
+      return this.http.post<{ value: string, expires: Date, usuarioCodigo: string }>(
         RotasApi.refreshTokenEndpoint,
         {},
         { withCredentials: true }
       ).pipe(
         switchMap(response => {
-          this.sessaoService.setUsuarioInfo(response.token, response.expires, response.usuarioCodigo);
-          this.refreshSubject.next(response.token);
-          return next.handle(this.prepararRequisicaoAutenticada(request, response.token));
+          this.sessaoService.setUsuarioInfo(response.value, response.expires, response.usuarioCodigo);
+          this.refreshSubject.next(response.value);
+          return next.handle(this.prepararRequisicaoAutenticada(request, response.value));
         }),
         catchError(error => {
           this.limparSessaoERedirecionar();

@@ -9,7 +9,7 @@ import { EstadoTarefa } from '../models/estadoTarefa.model';
 import { SolicitacaoObtencaoTarefaResponse } from '../models/response/solicitacao-obtencao-tarefa-response.model';
 import { TarefaConfiguracoes } from '../models/tarefa-configuracoes.model';
 import { TarefaAcesso } from '../models/tarefa-acesso.model';
-import { TarefaMovimentacaoPagina } from '../models/tarefa-movimentacao.model';
+import { TarefaMovimentacao } from '../models/tarefa-movimentacao.model';
 
 @Injectable({
   providedIn: 'root'
@@ -64,10 +64,9 @@ export class TarefaService extends BaseService<TarefaRequest> {
     return this.http.get<TarefaResponse>(`${RotasApi.tarefaEndpoint}/${id}`);
   }
 
-  obterHistorico(id: number, pagina: number, tamanhoPagina: number): Observable<TarefaMovimentacaoPagina> {
-    return this.http.get<TarefaMovimentacaoPagina>(
-      `${RotasApi.tarefaEndpoint}/${id}/Movimentacoes`,
-      { params: { pagina, tamanhoPagina } }
+  obterHistorico(id: number): Observable<TarefaMovimentacao[]> {
+    return this.http.get<TarefaMovimentacao[]>(
+      `${RotasApi.tarefaEndpoint}/${id}/Movimentacoes`
     );
   }
 

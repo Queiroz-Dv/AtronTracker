@@ -26,16 +26,9 @@ namespace Shared.Application.Services.Caching
 
         public T ObterCache<T>(ChaveCache chaveCache)
         {
-            try
-            {
-                var data = _memoryCache.TryGetValue(chaveCache.Descricao, out T valor) ? valor : default;
-                return data;
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
+            return _memoryCache.TryGetValue(chaveCache.Descricao, out T valor)
+                ? valor
+                : default;
         }
 
         public void RemoverCache(ChaveCache chaveCache)
@@ -51,9 +44,10 @@ namespace Shared.Application.Services.Caching
             if (cacheInfo.ExpireTime == default)
                 return TimeSpan.FromMinutes(30);
 
-            var expireTimeUtc = cacheInfo.ExpireTime.Kind == DateTimeKind.Local
-                ? cacheInfo.ExpireTime.ToUniversalTime()
-                : cacheInfo.ExpireTime;
+            var expireTime = cacheInfo.ExpireTime.Value;
+            var expireTimeUtc = expireTime.Kind == DateTimeKind.Local
+                ? expireTime.ToUniversalTime()
+                : expireTime;
 
             var ttl = expireTimeUtc - DateTime.UtcNow;
             return ttl > TimeSpan.Zero ? ttl : TimeSpan.FromSeconds(1);

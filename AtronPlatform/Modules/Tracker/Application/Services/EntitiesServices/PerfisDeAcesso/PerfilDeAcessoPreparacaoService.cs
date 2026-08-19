@@ -3,6 +3,7 @@ using Application.Interfaces.Services;
 using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
+using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -11,12 +12,12 @@ using System.Threading.Tasks;
 namespace Application.Services.EntitiesServices.PerfisDeAcesso
 {
     public class PerfilDeAcessoPreparacaoService(
-        IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
+        IToEntityMapper<PerfilDeAcesso, PerfilDeAcessoDTO> map,
         IModuloRepository moduloRepository,
         IValidateModelService<PerfilDeAcesso> validateModel,
         Notifiable messageModel) : IPerfilDeAcessoPreparacaoService
     {
-        private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map = map;
+        private readonly IToEntityMapper<PerfilDeAcesso, PerfilDeAcessoDTO> _map = map;
         private readonly IModuloRepository _moduloRepository = moduloRepository;
         private readonly IValidateModelService<PerfilDeAcesso> _validateModel = validateModel;
         private readonly Notifiable _messageModel = messageModel;
@@ -27,7 +28,7 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
             if (_messageModel.Notificacoes.HasErrors())
                 return Resultado<PerfilDeAcesso>.Falhas(_messageModel.Notificacoes);
 
-            var perfilDeAcesso = await _map.MapToEntityAsync(perfilDeAcessoDTO);
+            var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoDTO);
             await VincularModulosAsync(perfilDeAcessoDTO, perfilDeAcesso);
 
             _validateModel.Validate(perfilDeAcesso);

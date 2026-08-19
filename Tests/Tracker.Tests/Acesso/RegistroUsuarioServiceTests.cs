@@ -2,6 +2,7 @@ using Application.DTO.Request;
 using Application.Email.Compositores;
 using Application.Extensions;
 using Application.Interfaces.Services;
+using Application.Records.Usuario;
 using Application.Services.AuthServices;
 using Application.UseCases.UsuarioCases;
 using Domain.Entities;
@@ -227,7 +228,7 @@ public class RegistroUsuarioServiceTests
         var confirmacao = codigoService.CriarDadosConfirmacao("USR001", 24);
         await confirmacaoRepository.GravarOuSubstituirAsync(confirmacao.ConfirmacaoEmail);
         var codigoInvalido = confirmacao.Identificador == "999999" ? "000000" : "999999";
-        var cadastro = new CadastroUsuarioService(new CadastroUsuarioContext(
+        var cadastro = new CadastroUsuarioService(new CadastroUsuarioContextRecord(
             usuarioRepository,
             new UsuarioIdentityRepositoryFake(),
             new EmailServiceFake(),
@@ -376,7 +377,7 @@ public class RegistroUsuarioServiceTests
         var compositor = new AcessoEmailCompositor(new EmailTemplateRenderer());
         var enderecoFrontend = new EnderecoFrontendServiceFake();
         var tokenTemporario = new TokenTemporarioService();
-        var cadastro = new CadastroUsuarioService(new CadastroUsuarioContext(
+        var cadastro = new CadastroUsuarioService(new CadastroUsuarioContextRecord(
             usuarioRepository,
             identidade,
             email,
@@ -385,7 +386,7 @@ public class RegistroUsuarioServiceTests
             enderecoFrontend,
             new ConfirmacaoEmailRepositoryFake(),
             new ConfirmacaoEmailCodigoService()));
-        var recuperacao = new RecuperacaoSenhaService(new RecuperacaoSenhaContext(
+        var recuperacao = new RecuperacaoSenhaService(new RecuperacaoSenhaContextRecord(
             usuarioRepository,
             identidade,
             new LoginRepositoryFake(),
@@ -417,7 +418,7 @@ public class RegistroUsuarioServiceTests
         EmailServiceFake emailService,
         CacheServiceFake cacheService)
     {
-        return new RecuperacaoSenhaService(new RecuperacaoSenhaContext(
+        return new RecuperacaoSenhaService(new RecuperacaoSenhaContextRecord(
             usuarioRepository,
             new UsuarioIdentityRepositoryFake(),
             new LoginRepositoryFake(),
@@ -569,7 +570,7 @@ public class RegistroUsuarioServiceTests
 
     private sealed class ValidadorFake : IValidador<UsuarioRegistroRequest>
     {
-        public IList<NotificationMessage> Validar(UsuarioRegistroRequest entity) => new List<NotificationMessage>();
+        public IEnumerable<NotificationMessage> Validar(UsuarioRegistroRequest entity) => [];
     }
 
     private sealed class AccessorServiceFake : IAccessorService

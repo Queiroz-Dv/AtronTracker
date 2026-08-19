@@ -5,6 +5,7 @@ using Application.Resources;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.PerfisDeAcesso
@@ -25,7 +26,7 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
         public async Task<Resultado<List<PerfilDeAcessoDTO>>> ObterTodosAsync()
         {
             var perfis = await _perfilDeAcessoRepository.ObterTodosPerfisRepositoryAsync();
-            var dtos = await _map.MapToListDTOAsync(perfis);
+            var dtos = _map.MapToDtos(perfis).ToList();
             return Resultado<List<PerfilDeAcessoDTO>>.Sucesso(dtos);
         }
 
@@ -34,7 +35,7 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
             var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
             return perfil is null
                 ? Resultado<PerfilDeAcessoDTO>.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado)
-                : Resultado<PerfilDeAcessoDTO>.Sucesso(await _map.MapToDTOAsync(perfil));
+                : Resultado<PerfilDeAcessoDTO>.Sucesso(_map.MapToDto(perfil));
         }
 
         public async Task<Resultado<PerfilDeAcessoDTO>> CriarAsync(PerfilDeAcessoDTO perfilDeAcessoDTO)
@@ -96,14 +97,14 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
             if (perfilDeAcesso is null)
                 return Resultado<PerfilDeAcessoUsuarioDTO>.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado);
 
-            var dto = await _map.MapToPerfilDeAcessoUsuarioDTOAsync(perfilDeAcesso);
+            var dto = _map.MapToPerfilDeAcessoUsuarioDto(perfilDeAcesso);
             return Resultado<PerfilDeAcessoUsuarioDTO>.Sucesso(dto);
         }
 
         public async Task<List<PerfilDeAcessoDTO>> ObterPerfisPorCodigoUsuarioAsync(string usuarioCodigo)
         {
             var perfis = await _perfilDeAcessoRepository.ObterPerfisPorCodigoDeUsuarioRepositoryAsync(usuarioCodigo);
-            return perfis is null ? null : await _map.MapToListDTOAsync(perfis);
+            return perfis is null ? null : _map.MapToDtos(perfis).ToList();
         }
     }
 }

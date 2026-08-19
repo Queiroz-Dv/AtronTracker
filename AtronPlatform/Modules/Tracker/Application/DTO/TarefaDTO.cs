@@ -32,6 +32,6 @@ namespace Application.DTO
 
         public CargoDTO Cargo { get; set; }
 
-        public TarefaEstadoDTO EstadoDaTarefa { get; set; }
+        public TarefaEstadoDTO EstadoDaTarefa { get; set; }       
     }
 }

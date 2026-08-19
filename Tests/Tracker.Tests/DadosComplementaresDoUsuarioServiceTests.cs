@@ -1,6 +1,6 @@
 using Application.DTO;
 using Application.Interfaces.Services;
-using Application.Services.EntitiesServices;
+using Application.Services.AuthServices;
 using Moq;
 using Xunit;
 

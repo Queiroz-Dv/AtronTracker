@@ -75,12 +75,9 @@
 
         <mat-paginator
           class="tarefa-historico-paginador"
-          [length]="totalItens"
-          [pageIndex]="paginaAtual"
-          [pageSize]="tamanhoPagina"
+          [pageSize]="5"
           [pageSizeOptions]="[5, 10, 20]"
-          showFirstLastButtons
-          (page)="alterarPagina($event)">
+          showFirstLastButtons>
         </mat-paginator>
       }
     </div>

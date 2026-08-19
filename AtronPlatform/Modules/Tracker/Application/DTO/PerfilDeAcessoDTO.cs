@@ -14,6 +14,6 @@ namespace Application.DTO
 
         public string Descricao { get; set; }
 
-        public ICollection<ModuloDTO> Modulos { get; set; }
+        public List<ModuloDTO> Modulos { get; set; }
     }
 }

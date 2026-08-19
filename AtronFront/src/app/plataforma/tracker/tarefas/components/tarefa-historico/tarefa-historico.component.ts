@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
+import { Component, Input, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { finalize } from 'rxjs';
 import { SharedModule } from '../../../../../shared/modules/shared.module';
@@ -21,9 +21,11 @@ export class TarefaHistoricoComponent {
   carregando = false;
   carregado = false;
   erroAoCarregar = false;
-  totalItens = 0;
-  paginaAtual = 0;
-  tamanhoPagina = 5;
+
+  @ViewChild(MatPaginator)
+  set paginator(paginator: MatPaginator | undefined) {
+    this.dataSource.paginator = paginator ?? null;
+  }
 
   constructor(private readonly tarefaService: TarefaService) {}
 
@@ -35,12 +37,6 @@ export class TarefaHistoricoComponent {
     }
   }
 
-  alterarPagina(evento: PageEvent): void {
-    this.paginaAtual = evento.pageIndex;
-    this.tamanhoPagina = evento.pageSize;
-    this.carregar();
-  }
-
   tentarNovamente(): void {
     this.carregar();
   }
@@ -50,17 +46,16 @@ export class TarefaHistoricoComponent {
     this.erroAoCarregar = false;
 
     this.tarefaService
-      .obterHistorico(this.tarefaId, this.paginaAtual + 1, this.tamanhoPagina)
+      .obterHistorico(this.tarefaId)
       .pipe(finalize(() => this.carregando = false))
       .subscribe({
-        next: pagina => {
-          this.dataSource.data = pagina.itens;
-          this.totalItens = pagina.totalItens;
+        next: movimentacoes => {
+          this.dataSource.data = movimentacoes;
+          this.dataSource.paginator?.firstPage();
           this.carregado = true;
         },
         error: () => {
           this.dataSource.data = [];
-          this.totalItens = 0;
           this.erroAoCarregar = true;
         }
       });

@@ -14,7 +14,7 @@ public class CookieFactory : CookieBuilder, ICookieFactoryService
     {
         MontarCookie(
             NomeCookieRefreshToken,
-            dadosDoRefreshToken.Token,
+            dadosDoRefreshToken.Value,
             dadosDoRefreshToken.Expires);
     }
 

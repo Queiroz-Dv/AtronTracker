@@ -8,16 +8,10 @@ using Shared.Extensions;
 
 namespace Infrastructure.Repositories.Identity
 {
-    public class UserIdentityRepository : IUsuarioIdentityRepository
+    public class UserIdentityRepository(AtronDbContext context, UserManager<ApplicationUser> userManager) : IUsuarioIdentityRepository
     {
-        private AtronDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public UserIdentityRepository(AtronDbContext context, UserManager<ApplicationUser> userManager)
-        {
-            _context = context;
-            _userManager = userManager;
-        }
+        private readonly AtronDbContext _context = context;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
 
         public async Task<bool> DesativarContaAsync(string codigoUsuario)
         {
@@ -59,9 +53,9 @@ namespace Infrastructure.Repositories.Identity
             return await _context.AppUsers.AnyAsync(u => u.RefreshToken == refreshTokenHash);
         }
 
-        public Task<SessaoRefreshToken> ObterSessaoRefreshTokenRepositoryAsync(string refreshTokenHash)
+        public async Task<SessaoRefreshToken> ObterSessaoRefreshTokenRepositoryAsync(string refreshTokenHash)
         {
-            return _context.AppUsers
+            return await _context.AppUsers
                 .Where(u => u.RefreshToken == refreshTokenHash && u.RefreshTokenExpireTime.HasValue)
                 .Select(u => new SessaoRefreshToken(u.UserName, u.RefreshTokenExpireTime.Value))
                 .FirstOrDefaultAsync();

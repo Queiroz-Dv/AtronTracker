@@ -5,18 +5,22 @@ using Application.Interfaces.Contexts;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
 using Application.Mapping;
-using Application.Services;
+using Application.Policies.PlanejamentoCustos;
+using Application.Policies.Tarefas;
+using Application.Resolvers.Tarefas;
+using Application.Records.Usuario;
 using Application.Services.AuthServices;
 using Application.Services.Contexts;
 using Application.Services.EntitiesServices;
 using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
+using Application.Services.EntitiesServices.Tarefas.Obtencao;
 using Application.Services.Identity;
 using Application.UseCases.TarefaCases;
+using Application.UseCases.TarefaCases.Movimentacao;
 using Application.UseCases.UsuarioCases;
 using Application.Validador;
-using AtronTracker.Infrastructure;
 using AtronTracker.Infrastructure.Context;
 using AtronTracker.Infrastructure.Identity;
 using Domain.Entities;
@@ -122,7 +126,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
 
-            services.AddScoped(provider => new CadastroUsuarioContext(
+            services.AddScoped(provider => new CadastroUsuarioContextRecord(
                 provider.GetRequiredService<IUsuarioRepository>(),
                 provider.GetRequiredService<IUsuarioIdentityRepository>(),
                 provider.GetRequiredService<IEmailService>(),
@@ -132,7 +136,7 @@ namespace Infrastructure.DependencyInjection
                 provider.GetRequiredService<IConfirmacaoEmailRepository>(),
                 provider.GetRequiredService<IConfirmacaoEmailCodigoService>()));
 
-            services.AddScoped(provider => new RecuperacaoSenhaContext(
+            services.AddScoped(provider => new RecuperacaoSenhaContextRecord(
                 provider.GetRequiredService<IUsuarioRepository>(),
                 provider.GetRequiredService<IUsuarioIdentityRepository>(),
                 provider.GetRequiredService<ILoginRepository>(),
@@ -162,18 +166,38 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ITarefaMovimentacaoRepository, TarefaMovimentacaoRepository>();
             services.AddScoped<ISolicitacaoObtencaoTarefaRepository, SolicitacaoObtencaoTarefaRepository>();
             services.AddScoped<ITarefaEstadoRepository, TarefaEstadoRepository>();
+            services.AddScoped<TarefaEstadoService>();
+            services.AddScoped<TarefaUsuarioRelacionamentoService>();
+            services.AddScoped<TarefaDepartamentoCargoRelacionamentoService>();
+            services.AddScoped<TarefaRelacionamentoService>();
             services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
-            services.AddScoped<ITarefaObtencaoValidador, TarefaObtencaoValidador>();
-            services.AddScoped<IAprovadorObtencaoTarefaResolver, AprovadorObtencaoTarefaResolver>();
-            services.AddScoped<ISolicitacaoObtencaoTarefaMapeador, SolicitacaoObtencaoTarefaMapeador>();
-            services.AddScoped<ITarefaNotificacaoInternaService, TarefaNotificacaoInternaService>();
-            services.AddScoped<ITarefaUsuarioAtualService, TarefaUsuarioAtualService>();
+            services.AddScoped<ITarefaObtencaoPolicy, TarefaObtencaoPolicy>();
+            services.AddScoped<AprovadorObtencaoTarefaResolver>();
             services.AddScoped<ITarefaConfiguracoesService, TarefaConfiguracoesService>();
             services.AddScoped<ITarefaObtencaoService, TarefaObtencaoService>();
-            services.AddScoped<ITarefaMovimentacaoService, TarefaMovimentacaoService>();
             services.AddScoped<ITarefaEmailCompositor, TarefaEmailCompositor>();
             services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
-            services.AddScoped<CriarTarefa>();
+
+            services.AddScoped<AssumirTarefaCase>();
+            services.AddScoped<AtualizarTarefaCase>();
+            services.AddScoped<AtualizarTarefaMovimentacaoCase>();
+            services.AddScoped<CriarTarefaCase>();
+            services.AddScoped<CriarTarefaMovimentacaoCase>();
+            services.AddScoped<DecidirTarefaCase>();
+            services.AddScoped<ExcluirTarefaCase>();
+            services.AddScoped<ObterAcessoTarefaCase>();
+            services.AddScoped<ObterEquipeCase>();
+            services.AddScoped<ObterHistoricoTarefaCase>();
+            services.AddScoped<ObterMeuQuadroCase>();
+            services.AddScoped<ObterSolicitacaoCase>();
+            services.AddScoped<ObterTarefasDisponiveisCase>();
+            services.AddScoped<ObterTarefaCase>();
+            services.AddScoped<RegistrarDecisaoTarefaMovimentacaoCase>();
+            services.AddScoped<RegistrarObtencaoTarefaMovimentacaoCase>();
+            services.AddScoped<RegistrarSolicitacaoTarefaMovimentacaoCase>();
+            services.AddScoped<SolicitarTarefaCase>();
+            services.AddScoped<TarefaNotificacaoInternaCase>();
+
             services.AddScoped<ITarefaService, TarefaService>();
         }
 
@@ -194,7 +218,6 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IConfirmacaoEmailRepository, ConfirmacaoEmailRepository>();
             services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
             services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
-            services.AddScoped<IAsyncMap<UsuarioRequest, Usuario>, UsuarioRequestMapping>();
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)

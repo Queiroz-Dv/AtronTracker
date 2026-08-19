@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
         }
 
-        public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo)
+        public async Task<Departamento> ObterDepartamentoPorCodigoRepository(string codigo)
         {
             return await _context.Departamentos
                 .Include(dpt => dpt.GestorDepartamento)

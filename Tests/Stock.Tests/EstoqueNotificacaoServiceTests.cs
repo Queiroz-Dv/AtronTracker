@@ -1,4 +1,7 @@
-using AtronNotificacoes.Contracts;
+using AtronNotificacoes.Contracts.DTO.Request;
+using AtronNotificacoes.Contracts.DTO.Response;
+using AtronNotificacoes.Contracts.Interfaces;
+using AtronStock.Application.Providers.Notificacoes;
 using AtronStock.Application.Services;
 using AtronStock.Domain.Entities;
 using Xunit;
@@ -13,7 +16,7 @@ public sealed class EstoqueNotificacaoServiceTests
         var publisher = new PublisherCapturador();
         var service = new EstoqueNotificacaoService(
             publisher,
-            new ResponsavelNotificacaoEstoqueResolver("USR_ESTOQUE"));
+            new ResponsavelNotificacaoEstoqueProvider("USR_ESTOQUE"));
 
         await service.NotificarSaidaRegistradaAsync(
             new Venda { Id = 12 },
@@ -36,7 +39,7 @@ public sealed class EstoqueNotificacaoServiceTests
         var publisher = new PublisherCapturador();
         var service = new EstoqueNotificacaoService(
             publisher,
-            new ResponsavelNotificacaoEstoqueResolver(string.Empty));
+            new ResponsavelNotificacaoEstoqueProvider(string.Empty));
 
         await service.NotificarSaidaRegistradaAsync(
             new Venda { Id = 12 },

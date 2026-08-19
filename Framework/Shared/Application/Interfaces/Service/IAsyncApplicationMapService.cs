@@ -8,6 +8,7 @@
     /// </summary>
     /// <typeparam name="DTO">O tipo do Data Transfer Object.</typeparam>
     /// <typeparam name="Entity">O tipo da Entidade de Domínio.</typeparam>
+    [Obsolete("Use os contratos de Shared.Application.Interfaces.Mapping.", false)]
     public interface IAsyncApplicationMapService<DTO, Entity>
     {
         /// <summary>
@@ -49,6 +50,7 @@
         Task<List<DTO>> MapToListDTOAsync(IEnumerable<Entity> entities);        
     }
 
+    [Obsolete("Use os contratos de Shared.Application.Interfaces.Mapping.", false)]
     public interface IAsyncMap<DTO, Entity> : IAsyncApplicationMapService<DTO, Entity>
     {
         /// <summary>

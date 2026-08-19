@@ -1,9 +1,11 @@
 using System.Diagnostics.Metrics;
 using System.Transactions;
-using AtronNotificacoes;
-using AtronNotificacoes.Application;
-using AtronNotificacoes.Contracts;
+using AtronNotificacoes.Application.Interfaces;
+using AtronNotificacoes.Contracts.DTO.Request;
+using AtronNotificacoes.Contracts.DTO.Response;
+using AtronNotificacoes.Contracts.Interfaces;
 using AtronNotificacoes.Infrastructure;
+using AtronNotificacoes.Observability;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -64,17 +66,19 @@ public sealed class NotificacoesInternasInProcessPublisherTests
     }
 
     private static PublicarNotificacaoInternaRequest CriarRequest() =>
-        new(
-            "USR001",
-            "Tracker",
-            "TarefaCriada",
-            "Nova tarefa",
-            "Uma tarefa foi criada.",
-            null,
-            "tarefa:123",
-            DateTimeOffset.Parse("2026-07-19T12:00:00Z"),
-            "tracker:tarefa:123",
-            "correlacao-123");
+        new()
+        {
+            DestinatarioCodigo = "USR001",
+            ModuloOrigem = "Tracker",
+            TipoEvento = "TarefaCriada",
+            Titulo = "Nova tarefa",
+            Mensagem = "Uma tarefa foi criada.",
+            UrlDestino = null,
+            ReferenciaExterna = "tarefa:123",
+            DataCriacao = DateTimeOffset.Parse("2026-07-19T12:00:00Z"),
+            ChaveIdempotencia = "tracker:tarefa:123",
+            CorrelacaoId = "correlacao-123"
+        };
 
     private sealed class NotificacaoInternaServiceDeTeste : INotificacaoInternaService
     {

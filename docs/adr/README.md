@@ -30,6 +30,7 @@ proprietário ou o alcance, mas não reinicia a sequência.
 | [0007](./transversais/0007-adotar-monolito-modular-com-host-neutro.md) | Aceito | Adotar monólito modular com host neutro e publicação única para os módulos principais. |
 | [0008](./transversais/0008-incorporar-notificacoes-internas-ao-host-da-plataforma.md) | Aceito | Incorporar Notificações Internas ao host neutro sem perder sua fronteira e propriedade de dados. |
 | [0009](./transversais/0009-adotar-redis-como-cache-distribuido.md) | Aceito | Adotar Redis compatível como provider distribuído do cache transversal da plataforma. |
+| [0010](./transversais/0010-adotar-resolvers-para-selecao-contextual.md) | Aceito | Adotar resolvers para selecionar um resultado efetivo entre candidatos ou fontes contextuais. |
 
 ## Convenções
 

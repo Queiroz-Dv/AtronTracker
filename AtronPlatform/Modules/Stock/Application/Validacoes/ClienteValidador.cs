@@ -9,7 +9,7 @@ namespace AtronStock.Application.Validacoes
 {
     public class ClienteValidador : IValidador<ClienteRequest>
     {
-        public IList<NotificationMessage> Validar(ClienteRequest entity)
+        public IEnumerable<NotificationMessage> Validar(ClienteRequest entity)
         {
             var context = new NotificationBag();
 

@@ -1,4 +1,5 @@
 using Application.DTO.Request;
+using Application.Records.Autenticacao;
 using Application.Services.Identity;
 using Domain.Entities;
 using Domain.Interfaces.Identity;
@@ -34,7 +35,7 @@ public class RefreshTokenSecurityTests
 
         await service.GravarRefreshTokenAsync("USR001", "token-bruto", expiracao);
         await service.ObterSessaoRefreshTokenAsync("token-bruto");
-        await service.RotacionarRefreshTokenAsync(new RotacaoRefreshToken(
+        await service.RotacionarRefreshTokenAsync(new RotacaoRefreshTokenRecord(
             "USR001", "token-bruto", "token-novo", expiracao));
 
         var hashAtual = RefreshTokenHash.Obter("token-bruto");
@@ -43,6 +44,31 @@ public class RefreshTokenSecurityTests
         repository.Verify(repo => repo.ObterSessaoRefreshTokenRepositoryAsync(hashAtual));
         repository.Verify(repo => repo.RotacionarRefreshTokenRepositoryAsync(It.Is<RotacaoRefreshTokenHash>(rotacao =>
             rotacao.HashAtual == hashAtual && rotacao.NovoHash == hashNovo)));
+    }
+
+    [Fact]
+    public async Task UserIdentityService_NaoDevePersistirRefreshTokenComDadosInvalidos()
+    {
+        var repository = new Mock<IUsuarioIdentityRepository>();
+        var service = new UserIdentityService(repository.Object);
+        var expiracaoValida = DateTime.UtcNow.AddDays(7);
+
+        var codigoVazio = await service.GravarRefreshTokenAsync("", "token-valido", expiracaoValida);
+        var tokenVazio = await service.GravarRefreshTokenAsync("USR001", "", expiracaoValida);
+        var tokenExpirado = await service.GravarRefreshTokenAsync(
+            "USR001",
+            "token-valido",
+            DateTime.UtcNow.AddSeconds(-1));
+
+        Assert.False(codigoVazio);
+        Assert.False(tokenVazio);
+        Assert.False(tokenExpirado);
+        repository.Verify(
+            repo => repo.AtualizarRefreshTokenUsuarioRepositoryAsync(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<DateTime>()),
+            Times.Never);
     }
 
     [Fact]

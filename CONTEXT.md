@@ -287,7 +287,7 @@ Decisão do aprovador de obtenção de tarefa para aprovar ou recusar uma solici
 _Avoid_: Aprovação implícita, resposta manual ao e-mail, assumir tarefa sem decisão, alterar estados diferentes de Pendente de aprovação
 
 **Histórico de movimentações da tarefa**:
-Registro cronológico e imutável das movimentações relevantes da tarefa. Inclui criação, atualização, obtenção direta, solicitação de obtenção, aprovação e recusa; mudanças de estado como início, entrega e finalização aparecem nos detalhes da atualização. Cada registro preserva o evento, o código e o nome do responsável no momento da ação, a data e hora e as mudanças relevantes. A consulta é paginada, carregada sob demanda no detalhe da tarefa e limitada ao usuário responsável, às equipes e aos gestores autorizados.
+Registro cronológico e imutável das movimentações relevantes da tarefa. Inclui criação, atualização, obtenção direta, solicitação de obtenção, aprovação e recusa; mudanças de estado como início, entrega e finalização aparecem nos detalhes da atualização. Cada registro preserva o evento, o código e o nome do responsável no momento da ação, a data e hora e as mudanças relevantes. A API retorna a coleção autorizada já ordenada, carregada sob demanda no detalhe da tarefa; a paginação visual pertence ao grid do front e não substitui a autorização do backend.
 _Avoid_: Sobrescrever eventos anteriores, inferir histórico apenas pelo estado atual, expor movimentações fora do escopo de acesso
 
 **Notificação do sistema**:
@@ -413,6 +413,10 @@ _Avoid_: Serviço concentrador, regra de domínio espalhada em orquestração, c
 **Validador de aplicação**:
 Colaborador que valida a entrada e as condições de um fluxo de aplicação, especialmente quando essas verificações tornariam o serviço difícil de ler. Complementa, mas não substitui, as invariantes e validações do objeto de domínio.
 _Avoid_: Validador que permite entidade inválida, bloco de validação centralizado no serviço, duplicação sem propósito de invariante
+
+**Resolver de aplicação**:
+Colaborador que seleciona um único resultado efetivo entre candidatos ou fontes contextuais, respeitando prioridades e fallbacks explícitos. Resolvers internos com uma única implementação são classes concretas `sealed`; interfaces existem somente quando há fronteira ou substituição real.
+_Avoid_: Consulta simples renomeada como resolver, policy escondida, `IResolver<T>` genérico, interface sem substituição real
 
 **Atron.WebViews**:
 Estrutura legada de front MVC/Razor deletada para evitar dois projetos de front diferentes evoluindo em paralelo.

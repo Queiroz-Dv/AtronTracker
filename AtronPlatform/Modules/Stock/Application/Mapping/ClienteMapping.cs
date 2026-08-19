@@ -1,17 +1,16 @@
 ﻿using AtronStock.Application.DTO.Request;
 using AtronStock.Domain.Entities;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Mapper;
+using Shared.Application.Interfaces.Mapping;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 
 namespace AtronStock.Application.Mapping
 {
-    public class ClienteMapping : AsyncApplicationMapService<ClienteRequest, Cliente>, IAsyncMap<ClienteRequest, Cliente>
+    public class ClienteMapping : Mapper<Cliente, ClienteRequest>
     {
-        public override Task<ClienteRequest> MapToDTOAsync(Cliente entity)
+        public override ClienteRequest MapToDto(Cliente entity)
         {
-            var clienteRequest = new ClienteRequest()
+            return new ClienteRequest()
             {
                 Codigo = entity.Codigo,
                 Nome = entity.Nome,
@@ -22,12 +21,11 @@ namespace AtronStock.Application.Mapping
                 EnderecoVO = entity.Endereco
             };           
 
-            return Task.FromResult(clienteRequest);
         }
 
-        public override Task<Cliente> MapToEntityAsync(ClienteRequest dto)
+        public override Cliente MapToEntity(ClienteRequest dto)
         {
-            var entity = new Cliente()
+            return new Cliente()
             {
                 Codigo = dto.Codigo,
                 Nome = dto.Nome,
@@ -39,10 +37,9 @@ namespace AtronStock.Application.Mapping
                 Endereco = dto.EnderecoVO
             };
 
-            return Task.FromResult(entity);
         }
 
-        public Task MapToEntityAsync(ClienteRequest dto, Cliente entityToUpdate)
+        public void MapToEntity(ClienteRequest dto, Cliente entityToUpdate)
         {
             entityToUpdate.Nome = dto.Nome;
             entityToUpdate.CPF = dto.Documento.Dado;
@@ -52,7 +49,6 @@ namespace AtronStock.Application.Mapping
             entityToUpdate.Status = dto.StatusPessoa;
             entityToUpdate.Endereco = dto.EnderecoVO;
 
-            return Task.CompletedTask;
         }
     }
 }

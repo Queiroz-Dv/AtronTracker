@@ -4,14 +4,9 @@ using Shared.Application.Interfaces.Service;
 
 namespace Shared.Application.Services
 {
-    public class CookieService : ICookieService
+    public class CookieService(ICookieFactoryService cookieFactory) : ICookieService
     {
-        private readonly ICookieFactoryService _cookieFactory;
-
-        public CookieService(ICookieFactoryService cookieFactory)
-        {
-            _cookieFactory = cookieFactory;
-        }
+        private readonly ICookieFactoryService _cookieFactory = cookieFactory;
 
         public async Task<DadosDoRefreshTokenCookieDTO> ObterRefreshTokenPorRequest(HttpRequest httpRequest)
         {

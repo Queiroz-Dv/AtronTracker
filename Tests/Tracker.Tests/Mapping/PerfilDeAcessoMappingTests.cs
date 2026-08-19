@@ -1,9 +1,6 @@
 using Application.DTO;
 using Application.Mapping;
 using Domain.Entities;
-using Moq;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Mapper;
 using Xunit;
 
 namespace Tracker.Tests.Mapping;
@@ -11,20 +8,11 @@ namespace Tracker.Tests.Mapping;
 public class PerfilDeAcessoMappingTests
 {
     [Fact]
-    public async Task MapToPerfilDeAcessoUsuarioDTOAsync_DeveMapearPerfilModulosEUsuariosRelacionados()
+    public void MapToPerfilDeAcessoUsuarioDto_DeveMapearPerfilModulosEUsuariosRelacionados()
     {
-        var moduloMap = new Mock<IAsyncApplicationMapService<ModuloDTO, Modulo>>();
-        moduloMap
-            .Setup(mapeador => mapeador.MapToDTOAsync(It.IsAny<Modulo>()))
-            .ReturnsAsync((Modulo modulo) => new ModuloDTO
-            {
-                Codigo = modulo.Codigo,
-                Descricao = modulo.Descricao
-            });
         var mapeador = new PerfilDeAcessoMapping(
-            moduloMap.Object,
-            new UsuarioDoPerfilDeAcessoMapping(),
-            new MapperEngine());
+            new ModuloMapping(),
+            new UsuarioDoPerfilDeAcessoMapping());
         var perfil = new PerfilDeAcesso
         {
             Id = 9,
@@ -50,7 +38,7 @@ public class PerfilDeAcessoMappingTests
             ]
         };
 
-        var dto = await mapeador.MapToPerfilDeAcessoUsuarioDTOAsync(perfil);
+        var dto = mapeador.MapToPerfilDeAcessoUsuarioDto(perfil);
 
         Assert.Equal("PRF", dto.PerfilDeAcesso.Codigo);
         Assert.Equal("Perfil de tarefas", dto.PerfilDeAcesso.Descricao);

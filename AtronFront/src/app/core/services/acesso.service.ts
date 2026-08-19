@@ -41,8 +41,8 @@ export class AcessoService {
   autenticar(login: LoginRequest): Observable<void> {
     return this.http.post<UserToken>(RotasApi.logarEndpoint, login, { withCredentials: true }).pipe(
       switchMap(response => {
-        this.sessaoService.setUsuarioInfo(response.token, response.expires, response.usuarioCodigo);
-        return this.carregarSessaoInfo(response.token);
+        this.sessaoService.setUsuarioInfo(response.value, response.expires, response.usuarioCodigo);
+        return this.carregarSessaoInfo(response.value);
       }),
       map((): void => undefined),
       catchError(error => throwError(() => error))
@@ -67,8 +67,8 @@ export class AcessoService {
 
     return this.http.post<UserToken>(RotasApi.refreshTokenEndpoint, {}, { withCredentials: true }).pipe(
       switchMap(token => {
-        this.sessaoService.setUsuarioInfo(token.token, token.expires, token.usuarioCodigo);
-        return this.carregarSessaoInfo(token.token);
+        this.sessaoService.setUsuarioInfo(token.value, token.expires, token.usuarioCodigo);
+        return this.carregarSessaoInfo(token.value);
       }),
       map(() => true),
       catchError(() => {

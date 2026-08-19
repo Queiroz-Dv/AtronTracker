@@ -13,7 +13,7 @@ namespace Application.Validador
     /// </summary>
     public class UsuarioRequestValidador : IValidador<UsuarioRequest>
     {
-        public IList<NotificationMessage> Validar(UsuarioRequest request)
+        public IEnumerable<NotificationMessage> Validar(UsuarioRequest request)
         {
             var notificacoes = new NotificationBag();
 

@@ -1,28 +1,26 @@
 ﻿using Application.DTO;
 using Application.Interfaces.Mapping;
 using Domain.Entities;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Mapper;
+using Shared.Application.Interfaces.Mapping;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Mapping
 {
-    public class PerfilDeAcessoMapping : AsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso>, IPerfilDeAcessoMapping
+    public sealed class PerfilDeAcessoMapping
+        : Mapper<PerfilDeAcesso, PerfilDeAcessoDTO>, IPerfilDeAcessoMapping
     {
-        private readonly IAsyncApplicationMapService<ModuloDTO, Modulo> _moduloMap;
-        private readonly IAsyncApplicationMapService<UsuarioDTO, PerfilDeAcessoUsuario> _usuarioMap;
+        private readonly IToDtoMapper<Modulo, ModuloDTO> _moduloMap;
+        private readonly IToDtoMapper<PerfilDeAcessoUsuario, UsuarioDTO> _usuarioMap;
 
         public PerfilDeAcessoMapping(
-            IAsyncApplicationMapService<ModuloDTO, Modulo> moduloMap,
-            IAsyncApplicationMapService<UsuarioDTO, PerfilDeAcessoUsuario> usuarioMap,
-            IMapperEngineService mapperEngine) : base(mapperEngine)
+            IToDtoMapper<Modulo, ModuloDTO> moduloMap,
+            IToDtoMapper<PerfilDeAcessoUsuario, UsuarioDTO> usuarioMap)
         {
             _moduloMap = moduloMap;
             _usuarioMap = usuarioMap;
         }
 
-        public override async Task<PerfilDeAcessoDTO> MapToDTOAsync(PerfilDeAcesso entity)
+        public override PerfilDeAcessoDTO MapToDto(PerfilDeAcesso entity)
         {
             var dto = new PerfilDeAcessoDTO
             {
@@ -39,7 +37,7 @@ namespace Application.Mapping
                 {
                     if (relacionamento.Modulo != null)
                     {
-                        var moduloDTO = await MapChildAsync(relacionamento.Modulo, _moduloMap);
+                        var moduloDTO = relacionamento.Modulo.MapToDto(_moduloMap);
                         dto.Modulos.Add(moduloDTO);
                     }
                 }
@@ -48,12 +46,12 @@ namespace Application.Mapping
             return dto;
         }
 
-        public async Task<PerfilDeAcessoUsuarioDTO> MapToPerfilDeAcessoUsuarioDTOAsync(PerfilDeAcesso perfilDeAcesso)
+        public PerfilDeAcessoUsuarioDTO MapToPerfilDeAcessoUsuarioDto(PerfilDeAcesso perfilDeAcesso)
         {
-            var perfilDeAcessoDTO = await MapToDTOAsync(perfilDeAcesso);
-            var usuarios = await MapChildrenAsync(
-                perfilDeAcesso.PerfisDeAcessoUsuario ?? [],
-                _usuarioMap);
+            var perfilDeAcessoDTO = MapToDto(perfilDeAcesso);
+            var usuarios = _usuarioMap
+                .MapToDtos(perfilDeAcesso.PerfisDeAcessoUsuario ?? [])
+                .ToList();
 
             return new PerfilDeAcessoUsuarioDTO
             {
@@ -67,13 +65,13 @@ namespace Application.Mapping
             };
         }
 
-        public override Task<PerfilDeAcesso> MapToEntityAsync(PerfilDeAcessoDTO dto)
+        public override PerfilDeAcesso MapToEntity(PerfilDeAcessoDTO dto)
         {
-            return Task.FromResult(new PerfilDeAcesso()
+            return new PerfilDeAcesso
             {
                 Codigo = dto.Codigo,
                 Descricao = dto.Descricao
-            });
+            };
         }
     }
 }

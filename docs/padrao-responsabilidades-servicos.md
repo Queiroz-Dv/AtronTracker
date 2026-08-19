@@ -48,8 +48,11 @@ Em toda criação, alteração ou revisão de serviço, avaliar os pontos abaixo
 | Invariantes, transições de estado, decisões e criação de objetos de negócio | Entidade, objeto de valor, fábrica ou interface de domínio do conceito processado |
 | Mapeamento entre contratos e entidades | Mapeador ou colaborador de preparação específico |
 | Validação de campos e coerência do comando | Validador de aplicação específico |
-| Validação que combina regras de fluxo, consultas e permissões | Validador ou política de aplicação específico |
+| Decisão que combina operação, ator, estado e consultas | Policy de aplicação específica |
+| Seleção de um resultado entre candidatos ou fontes ordenadas | Resolver da capacidade proprietária |
 | Transformação simples, pura e reutilizável | Classe auxiliar ou método de extensão coeso |
+| Tipo declarado como `record` no projeto de aplicação | `Application/Records/<Capacidade>` |
+| Catálogo de constantes ou operação intencionalmente estática, pura e sem estado | Classe estática em `Application/Statics` |
 | Persistência | Repositório |
 | Comunicação interna, e-mail ou outra integração | Serviço ou compositor especializado |
 | Ordem das etapas do caso de uso | Serviço de aplicação |
@@ -57,6 +60,13 @@ Em toda criação, alteração ou revisão de serviço, avaliar os pontos abaixo
 Validadores de aplicação não substituem as validações do domínio. O primeiro
 reduz métodos inflados e protege a entrada de um fluxo; o segundo protege a
 invariante mesmo quando a entidade for usada por outro caso de uso.
+
+As diferenças entre Policy, Specification e Validation, incluindo a estrutura
+de pastas adotada, estão em
+`docs/padrao-policies-specifications-validacoes.md`.
+
+A seleção contextual de um resultado e os critérios para classes concretas ou
+interfaces estão em `docs/padrao-resolvers.md`.
 
 ## Sinais de extração obrigatória
 
@@ -66,6 +76,7 @@ Extrair uma responsabilidade quando um serviço:
   transporte ou contexto do usuário;
 - instancia entidades ou pedidos de domínio em vários métodos;
 - repete seleção, normalização, formatação ou mapeamento;
+- resolve candidatos ou fontes em ordem de prioridade dentro do orquestrador;
 - mistura leitura de dados, decisão de regra, persistência e notificação no
   mesmo método;
 - acumula blocos de validação que ocultam a sequência principal do caso de uso;
@@ -75,8 +86,18 @@ Extrair uma responsabilidade quando um serviço:
 Não criar classes artificiais para operações curtas e estáveis. Uma extensão ou
 auxiliar é preferível quando a operação é pura, pequena e não representa um
 conceito de domínio. Quando a regra possui dependências, varia por contexto ou
-precisa de testes próprios, ela deve receber uma interface com nome do conceito
-que processa.
+precisa de testes próprios, ela deve receber um colaborador com nome do conceito
+que processa. A interface só é necessária quando existir uma fronteira ou
+substituição real.
+
+As pastas `Records` e `Statics` descrevem a natureza técnica dos tipos, sem
+criar uma nova camada arquitetural. Todo `record` da aplicação fica em uma
+subpasta da capacidade proprietária dentro de `Records`; o nome do tipo
+continua indicando se ele representa parâmetros, contexto, modelo ou contrato
+e termina com o sufixo singular `Record`.
+Da mesma forma, `Statics` não deve se tornar um agrupamento genérico de helpers;
+ela é reservada a catálogos de constantes e operações cujo contrato seja
+deliberadamente estático, puro e sem dependências.
 
 ## Aplicação no módulo de tarefas
 
@@ -99,3 +120,4 @@ mas não dispensa revisar as responsabilidades ainda concentradas em
 - Um mapeamento, formatação ou normalização simples pode ser reutilizado por
   auxiliar ou extensão?
 - A nova interface reduz dependência real ou apenas cria uma camada de passagem?
+- Uma seleção contextual possui um resolver explícito sem abstração genérica?

@@ -22,9 +22,9 @@
         public string CodigoDoCargo { get; set; } = string.Empty;
     }
 
-    public class DadosDoPerfilDTO
-    {    
-        public string CodigoPerfil { get; set; } = string.Empty;
+    public class DadosDoPerfilDTO(string codigoPerfil = null)
+    {
+        public string CodigoPerfil { get; set; } = codigoPerfil;
 
         public List<DadosDoModuloDTO> Modulos { get; set; } = new();
     }

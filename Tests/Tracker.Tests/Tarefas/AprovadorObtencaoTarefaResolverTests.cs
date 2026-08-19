@@ -1,4 +1,4 @@
-using Application.Services.EntitiesServices.Tarefas;
+using Application.Resolvers.Tarefas;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
@@ -114,6 +114,30 @@ public class AprovadorObtencaoTarefaResolverTests
         repositorio.Verify(
             item => item.ObterUsuarioPorCodigoAsync("USR"),
             Times.Never);
+    }
+
+    [Fact]
+    public async Task ResolverAsync_DeveRetornarNuloQuandoNenhumCandidatoForValido()
+    {
+        var solicitante = CriarSolicitante(
+            gestorImediatoCodigo: "GST-IMEDIATO",
+            ("DPT-SOLICITANTE", "GST-SOLICITANTE"));
+        var tarefa = CriarTarefa("GST-TAREFA");
+        var repositorio = new Mock<IUsuarioRepository>();
+        var resolver = new AprovadorObtencaoTarefaResolver(repositorio.Object);
+
+        var resultado = await resolver.ResolverAsync(solicitante, tarefa);
+
+        Assert.Null(resultado);
+        repositorio.Verify(
+            item => item.ObterUsuarioPorCodigoAsync("GST-IMEDIATO"),
+            Times.Once);
+        repositorio.Verify(
+            item => item.ObterUsuarioPorCodigoAsync("GST-TAREFA"),
+            Times.Once);
+        repositorio.Verify(
+            item => item.ObterUsuarioPorCodigoAsync("GST-SOLICITANTE"),
+            Times.Once);
     }
 
     private static Usuario CriarSolicitante(

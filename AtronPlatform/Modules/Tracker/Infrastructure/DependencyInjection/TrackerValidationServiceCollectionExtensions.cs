@@ -8,7 +8,7 @@ using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 
-namespace AtronTracker.Infrastructure
+namespace Infrastructure.DependencyInjection
 {
     internal static class TrackerValidationServiceCollectionExtensions
     {

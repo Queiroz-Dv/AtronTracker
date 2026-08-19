@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using AtronNotificacoes;
 using AtronNotificacoes.Infrastructure.DependencyInjection;
+using AtronNotificacoes.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

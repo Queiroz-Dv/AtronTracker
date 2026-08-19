@@ -1,5 +1,6 @@
 using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Interfaces;
+using AtronStock.Application.Mapping;
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Interfaces;
 using Shared.Application.DTOS.Common;
@@ -15,13 +16,13 @@ namespace AtronStock.Application.Services
         private readonly IProdutoRepository _produtoRepository;
         private readonly IEstoqueService _estoqueService;
         private readonly IFornecedorRepository _fornecedorRepository;
-        private readonly IAsyncMap<ProdutoRequest, Produto> _map;
+        private readonly ProdutoMapping _map;
         private readonly IAuditoriaService _auditoriaService;
         private readonly IValidador<ProdutoRequest> _validador;
 
         public ProdutoService(IProdutoRepository produtoRepository,
                               IEstoqueService estoqueService,
-                              IAsyncMap<ProdutoRequest, Produto> map,
+                              ProdutoMapping map,
                               IAuditoriaService auditoriaService,
                               IValidador<ProdutoRequest> validador,
                               IFornecedorRepository fornecedorRepository)
@@ -54,7 +55,7 @@ namespace AtronStock.Application.Services
             }
 
             //1. Fluxo de Produto
-            Produto produto = await _map.MapToEntityAsync(request);
+            Produto produto = _map.MapToEntity(request);
 
             // A entidade de produto deve realizar todo o processo pelo EF Core
             bool foiSalvo = await _produtoRepository.AdicionarAsync(produto);

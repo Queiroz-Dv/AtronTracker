@@ -6,7 +6,7 @@ namespace Shared.Application.Validacoes
 {
     public class EmailValidador : IValidador<EmailRequest>
     {
-        public IList<NotificationMessage> Validar(EmailRequest entity)
+        public IEnumerable<NotificationMessage> Validar(EmailRequest entity)
         {
             var context = new NotificationBag();
 

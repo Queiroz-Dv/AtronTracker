@@ -2,166 +2,46 @@ using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Resources;
 using Domain.Entities;
-using Domain.Enums;
 using Domain.Interfaces;
-using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
-using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
     public class TarefaPreparacaoService(
-        IAsyncApplicationMapService<TarefaDTO, Tarefa> map,
+        TarefaRelacionamentoService tarefaRelacionamentoService,
         ITarefaEstadoRepository tarefaEstadoRepository,
-        IUsuarioRepository usuarioRepository,
-        IDepartamentoRepository departamentoRepository,
-        ICargoRepository cargoRepository,
+        IMapper<TarefaEstado, TarefaEstadoDTO> tarefaEstadoMap,
+        IMapper<Tarefa, TarefaDTO> map,
         IValidador<TarefaDTO> validador) : ITarefaPreparacaoService
     {
-        private readonly IAsyncApplicationMapService<TarefaDTO, Tarefa> _map = map;
+        private readonly TarefaRelacionamentoService _tarefaRelacionamentoService = tarefaRelacionamentoService;
         private readonly ITarefaEstadoRepository _tarefaEstadoRepository = tarefaEstadoRepository;
-        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
-        private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
-        private readonly ICargoRepository _cargoRepository = cargoRepository;
+        private readonly IMapper<TarefaEstado, TarefaEstadoDTO> _tarefaEstadoMap = tarefaEstadoMap;
+        private readonly IMapper<Tarefa, TarefaDTO> _map = map;
         private readonly IValidador<TarefaDTO> _validador = validador;
 
-        public async Task<Resultado<TarefaPreparada>> PrepararParaPersistenciaAsync(TarefaDTO tarefaDTO)
+        public async Task<Resultado<Tarefa>> PrepararParaPersistenciaAsync(TarefaDTO tarefaDTO)
         {
-            if (tarefaDTO is not null && tarefaDTO.DestinoInicial == 0)
-                tarefaDTO.DestinoInicial = (int)DestinoInicialTarefa.Usuario;
-
             var erros = _validador.Validar(tarefaDTO);
             if (erros.Any())
-                return Resultado<TarefaPreparada>.Falhas(erros);
+                return Resultado<Tarefa>.Falhas(erros);
 
             var estado = await _tarefaEstadoRepository.ObterPorIdAsync(tarefaDTO.EstadoDaTarefa.Id);
             if (estado is null)
-                return Resultado<TarefaPreparada>.Falha(TarefaResource.Erro_EstadoNaoEncontrado);
+                return Resultado<Tarefa>.Falha(TarefaResource.Erro_EstadoNaoEncontrado);
 
-            tarefaDTO.EstadoDaTarefa = MapearEstado(estado);
+            tarefaDTO.EstadoDaTarefa = _tarefaEstadoMap.MapToDto(estado);
+            var tarefa = _map.MapToEntity(tarefaDTO);
 
-            var tarefa = await _map.MapToEntityAsync(tarefaDTO);
-            tarefa.EstadoDaTarefa = estado;
-            var usuarioResultado = await VincularUsuarioAsync(tarefa, tarefaDTO);
-            if (usuarioResultado.TeveFalha)
-                return Resultado<TarefaPreparada>.Falhas(usuarioResultado.Messages);
+            var relacionamentoResultado = await _tarefaRelacionamentoService.RelacionarAsync(tarefa, tarefaDTO);
+            if (relacionamentoResultado.TeveFalha)
+                return Resultado<Tarefa>.Falhas(relacionamentoResultado.Messages);
 
-            var estrutura = await VincularEstruturaAsync(tarefa, tarefaDTO);
-            if (estrutura.TeveFalha)
-                return Resultado<TarefaPreparada>.Falhas(estrutura.Messages);
-
-            var governanca = ValidarGovernancaTarefaAtribuida(usuarioResultado.Dados, estrutura.Dados);
-            if (governanca.TeveFalha)
-                return Resultado<TarefaPreparada>.Falhas(governanca.Messages);
-
-            return Resultado<TarefaPreparada>.Sucesso(
-                new TarefaPreparada(tarefaDTO, tarefa, usuarioResultado.Dados));
-        }
-
-        public async Task<Resultado<List<TarefaEstadoDTO>>> ObterEstadosAsync()
-        {
-            var estados = await _tarefaEstadoRepository.ObterTodosAsync();
-            return Resultado<List<TarefaEstadoDTO>>.Sucesso(estados.Select(MapearEstado).ToList());
-        }
-
-        private async Task<Resultado<Usuario>> VincularUsuarioAsync(Tarefa tarefa, TarefaDTO tarefaDTO)
-        {
-            if (tarefaDTO.UsuarioCodigo.IsNullOrEmpty())
-            {
-                tarefa.UsuarioId = null;
-                tarefa.UsuarioCodigo = null;
-                return Resultado<Usuario>.Sucesso(null);
-            }
-
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefaDTO.UsuarioCodigo.ToUpper());
-            if (usuario is null)
-                return Resultado<Usuario>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
-
-            tarefa.UsuarioId = usuario.Id;
-            tarefa.UsuarioCodigo = usuario.Codigo;
-
-            return Resultado<Usuario>.Sucesso(usuario);
-        }
-
-        private async Task<Resultado<Departamento>> VincularEstruturaAsync(Tarefa tarefa, TarefaDTO tarefaDTO)
-        {
-            if (tarefaDTO.DepartamentoCodigo.IsNullOrEmpty())
-            {
-                tarefa.DepartamentoId = null;
-                tarefa.DepartamentoCodigo = null;
-                tarefa.CargoId = null;
-                tarefa.CargoCodigo = null;
-
-                return Resultado<Departamento>.Sucesso(null);
-            }
-
-            var departamento = await _departamentoRepository
-                .ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(tarefaDTO.DepartamentoCodigo.ToUpper());
-            if (departamento is null)
-                return Resultado<Departamento>.Falha(TarefaResource.Erro_DepartamentoNaoEncontrado);
-
-            tarefa.DepartamentoId = departamento.Id;
-            tarefa.DepartamentoCodigo = departamento.Codigo;
-
-            if (tarefaDTO.CargoCodigo.IsNullOrEmpty())
-            {
-                tarefa.CargoId = null;
-                tarefa.CargoCodigo = null;
-                return Resultado<Departamento>.Sucesso(departamento);
-            }
-
-            var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(tarefaDTO.CargoCodigo.ToUpper());
-            if (cargo is null)
-                return Resultado<Departamento>.Falha(TarefaResource.Erro_CargoNaoEncontrado);
-
-            if (cargo.DepartamentoId != departamento.Id || cargo.DepartamentoCodigo != departamento.Codigo)
-                return Resultado<Departamento>.Falha(TarefaResource.Erro_CargoNaoPertenceDepartamento);
-
-            tarefa.CargoId = cargo.Id;
-            tarefa.CargoCodigo = cargo.Codigo;
-
-            return Resultado<Departamento>.Sucesso(departamento);
-        }
-
-        private static Resultado ValidarGovernancaTarefaAtribuida(Usuario usuario, Departamento departamentoTarefa)
-        {
-            if (usuario is null || TemGestorImediato(usuario))
-                return Resultado.Sucesso();
-
-            if (TemGestorDepartamento(departamentoTarefa))
-                return Resultado.Sucesso();
-
-            var departamentoDoUsuarioComGestor = usuario.UsuarioCargoDepartamentos?
-                .Any(rel => TemGestorDepartamento(rel.Departamento)) == true;
-
-            if (departamentoDoUsuarioComGestor)
-                return Resultado.Sucesso();
-
-            return Resultado.Falha(TarefaResource.Erro_AprovadorObrigatorio);
-        }
-
-        private static bool TemGestorImediato(Usuario usuario)
-            => usuario.GestorImediatoId.HasValue && !usuario.GestorImediatoCodigo.IsNullOrEmpty();
-
-        private static bool TemGestorDepartamento(Departamento departamento)
-        {
-            return departamento is not null &&
-                   departamento.GestorDepartamentoId.HasValue &&
-                   !departamento.GestorDepartamentoCodigo.IsNullOrEmpty();
-        }
-
-        private static TarefaEstadoDTO MapearEstado(TarefaEstado estado)
-        {
-            return new TarefaEstadoDTO
-            {
-                Id = estado.Id,
-                Descricao = estado.Descricao
-            };
+            return Resultado<Tarefa>.Sucesso(tarefa);
         }
     }
 }
