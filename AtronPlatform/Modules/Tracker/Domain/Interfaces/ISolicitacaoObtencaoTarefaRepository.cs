@@ -17,5 +17,10 @@ namespace Domain.Interfaces
         Task<bool> AprovarAsync(int id, int usuarioId, string usuarioCodigo);
 
         Task<bool> RecusarAsync(int id, int usuarioId, string usuarioCodigo);
+
+        Task<IEnumerable<SolicitacaoObtencaoTarefa>> ObterPendentesPorAprovadorOuDepartamentosAsync(
+            int aprovadorId,
+            string aprovadorCodigo,
+            IEnumerable<string> departamentoCodigos);
     }
 }

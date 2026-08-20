@@ -84,6 +84,17 @@ namespace Application.Services.EntitiesServices
             return Resultado<DepartamentoDTO>.Sucesso(departamentoDTO).ComMensagemRegistroSalvo(departamento.Codigo);
         }
 
+        public async Task<Resultado<IEnumerable<DepartamentoDTO>>> ObterDepartamentosPorGestor(string usuarioCodigo)
+        {
+            if (usuarioCodigo.IsNullOrEmpty())
+                return Resultado<IEnumerable<DepartamentoDTO>>.Sucesso([]);
+
+            var entidades = await _departamentoRepository.ObterDepartamentosPorCodigoGestorAsync(usuarioCodigo);
+            var departamentos = _mapper.MapToDtos(entidades);
+
+            return Resultado<IEnumerable<DepartamentoDTO>>.Sucesso(departamentos);
+        }
+
         public async Task<Resultado<DepartamentoDTO>> ObterPorCodigo(string codigo)
         {
             if (codigo.IsNullOrEmpty())

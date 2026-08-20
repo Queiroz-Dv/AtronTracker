@@ -275,6 +275,15 @@ namespace Application.Resources {
                 return ResourceManager.GetString("Erro_DepartamentoNaoEncontrado", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Nao foi possivel definir o departamento da equipe. O usuario responsavel pelo cadastro deve possuir exatamente um departamento..
+        /// </summary>
+        public static string Erro_DepartamentoEquipeIndefinido {
+            get {
+                return ResourceManager.GetString("Erro_DepartamentoEquipeIndefinido", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Estado da tarefa nao encontrado..

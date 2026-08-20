@@ -19,6 +19,53 @@ namespace Tracker.Tests.Tarefas;
 public class CriarTarefaTests
 {
     [Fact]
+    public async Task CriarAsync_DeveUsarDepartamentoDoResponsavelQuandoDestinoForEquipe()
+    {
+        TarefaDTO? tarefaPreparada = null;
+        var cenario = CriarCenario(capturarTarefa: tarefa => tarefaPreparada = tarefa);
+        cenario.Responsavel.UsuarioCargoDepartamentos =
+        [
+            new UsuarioCargoDepartamento
+            {
+                DepartamentoId = 10,
+                DepartamentoCodigo = "ADM"
+            }
+        ];
+        var tarefa = CriarTarefaDto();
+        tarefa.DestinoInicial = (int)DestinoInicialTarefa.Equipe;
+
+        var resultado = await cenario.Case.ExecutarAsync(tarefa);
+
+        Assert.True(resultado.TeveSucesso);
+        Assert.NotNull(tarefaPreparada);
+        Assert.Equal("ADM", tarefaPreparada.DepartamentoCodigo);
+        Assert.Null(tarefaPreparada.UsuarioCodigo);
+        Assert.Null(tarefaPreparada.CargoCodigo);
+    }
+
+    [Fact]
+    public async Task CriarAsync_DeveFalharQuandoDestinoForEquipeEUsuarioPossuirMaisDeUmDepartamento()
+    {
+        var cenario = CriarCenario();
+        cenario.Responsavel.UsuarioCargoDepartamentos =
+        [
+            new UsuarioCargoDepartamento { DepartamentoId = 10, DepartamentoCodigo = "ADM" },
+            new UsuarioCargoDepartamento { DepartamentoId = 20, DepartamentoCodigo = "FIN" }
+        ];
+        var tarefa = CriarTarefaDto();
+        tarefa.DestinoInicial = (int)DestinoInicialTarefa.Equipe;
+
+        var resultado = await cenario.Case.ExecutarAsync(tarefa);
+
+        Assert.True(resultado.TeveFalha);
+        Assert.Contains(resultado.Messages, mensagem =>
+            mensagem.Descricao == TarefaResource.Erro_DepartamentoEquipeIndefinido);
+        cenario.Preparacao.Verify(
+            service => service.PrepararParaPersistenciaAsync(It.IsAny<TarefaDTO>()),
+            Times.Never);
+    }
+
+    [Fact]
     public async Task CriarAsync_DevePublicarTextoFinalDaNotificacaoInterna()
     {
         PublicarNotificacaoInternaRequest? capturada = null;
@@ -158,7 +205,8 @@ public class CriarTarefaTests
 
     private static CenarioCriacao CriarCenario(
         Resultado? resultadoEmail = null,
-        Action<PublicarNotificacaoInternaRequest>? capturarNotificacao = null)
+        Action<PublicarNotificacaoInternaRequest>? capturarNotificacao = null,
+        Action<TarefaDTO>? capturarTarefa = null)
     {
         var usuario = new UsuarioDTO { Id = 7, Codigo = "USR", Nome = "Usuario" };
         var responsavel = new Usuario
@@ -182,6 +230,7 @@ public class CriarTarefaTests
             .ReturnsAsync((TarefaDTO tarefa) =>
             {
                 tarefa.Usuario = usuario;
+                capturarTarefa?.Invoke(tarefa);
                 return Resultado<Tarefa>.Sucesso(entidade);
             });
 

@@ -3,8 +3,11 @@ using Application.Extensions;
 using Application.Interfaces.Services;
 using Application.Resources;
 using Application.UseCases.TarefaCases.Movimentacao;
+using Domain.Enums;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases
@@ -27,17 +30,29 @@ namespace Application.UseCases.TarefaCases
 
         public async Task<Resultado<TarefaDTO>> ExecutarAsync(TarefaDTO tarefaDTO)
         {
+            Resultado<Domain.Entities.Usuario>? responsavelResultado = null;
+            if (tarefaDTO.DestinoInicial == (int)DestinoInicialTarefa.Equipe)
+            {
+                responsavelResultado = await _usuarioService.ObterUsuarioAtual();
+                if (responsavelResultado.TeveFalha)
+                    return Resultado<TarefaDTO>.Falhas(responsavelResultado.Messages);
+
+                var departamentoEquipeResultado = DefinirDepartamentoDaEquipe(tarefaDTO, responsavelResultado.Dados!);
+                if (departamentoEquipeResultado.TeveFalha)
+                    return Resultado<TarefaDTO>.Falhas(departamentoEquipeResultado.Messages);
+            }
+
             var preparacaoResultado = await _tarefaPreparacaoService.PrepararParaPersistenciaAsync(tarefaDTO);
             if (preparacaoResultado.TeveFalha)
                 return Resultado<TarefaDTO>.Falhas(preparacaoResultado.Messages);
 
             var tarefa = preparacaoResultado.Dados;
 
-            var responsavelResultado = await _usuarioService.ObterUsuarioAtual();
+            responsavelResultado ??= await _usuarioService.ObterUsuarioAtual();
             if (responsavelResultado.TeveFalha)
                 return Resultado<TarefaDTO>.Falhas(responsavelResultado.Messages);
 
-            var responsavel = responsavelResultado.Dados;
+            var responsavel = responsavelResultado.Dados!;
 
             if (!await _tarefaRepository.CriarTarefaAsync(tarefa))
                 return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_GravarTarefa);
@@ -57,6 +72,27 @@ namespace Application.UseCases.TarefaCases
                 resultado.AdicionarAviso(TarefaResource.Aviso_EmailNotificacaoNaoEnviado);
 
             return resultado;
+        }
+
+        private static Resultado DefinirDepartamentoDaEquipe(TarefaDTO tarefaDTO, Domain.Entities.Usuario responsavel)
+        {
+            if (tarefaDTO.DestinoInicial != (int)DestinoInicialTarefa.Equipe)
+                return Resultado.Sucesso();
+
+            var departamentos = responsavel.UsuarioCargoDepartamentos?
+                .Select(relacionamento => relacionamento.DepartamentoCodigo)
+                .Where(codigo => !string.IsNullOrWhiteSpace(codigo))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? [];
+
+            if (departamentos.Count != 1)
+                return Resultado.Falha(TarefaResource.Erro_DepartamentoEquipeIndefinido);
+
+            tarefaDTO.UsuarioCodigo = null;
+            tarefaDTO.DepartamentoCodigo = departamentos[0];
+            tarefaDTO.CargoCodigo = null;
+
+            return Resultado.Sucesso();
         }
     }
 }

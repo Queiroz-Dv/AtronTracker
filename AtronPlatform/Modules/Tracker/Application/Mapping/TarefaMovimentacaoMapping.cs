@@ -129,7 +129,9 @@ namespace Application.Mapping
                 TarefaId = tarefaId,
                 ResponsavelCodigo = responsavel.Codigo,
                 ResponsavelNome = responsavel.ObterNome(),
-                DataOcorrencia = DateTime.UtcNow
+                DataOcorrencia = DateTime.SpecifyKind(
+                    DateTime.UtcNow,
+                    DateTimeKind.Unspecified)
             };
         }
     }

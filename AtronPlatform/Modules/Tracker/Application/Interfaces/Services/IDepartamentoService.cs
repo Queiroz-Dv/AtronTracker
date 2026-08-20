@@ -45,5 +45,7 @@ namespace Application.Interfaces.Services
         /// </summary>
         /// <param name="codigo">Código do departamento</param>
         Task<Resultado> RemoverAsync(string codigo);
+
+        Task<Resultado<IEnumerable<DepartamentoDTO>>> ObterDepartamentosPorGestor(string usuarioCodigo);
     }
 }

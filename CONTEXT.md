@@ -228,6 +228,7 @@ _Avoid_: Tarefa sempre individual, fila técnica, responsável implícito
 **Destino inicial da tarefa**:
 Escolha feita na criação da tarefa para definir se ela nasce atribuída a um usuário, vinculada a departamento e cargo, ou direcionada para equipe do gestor. As opções disponíveis devem respeitar as permissões e a responsabilidade de gestão do usuário logado.
 No cadastro de tarefas, o destino `Departamento/Cargo` deve ficar disponível apenas para usuário que seja gestor de algum departamento. Usuário sem gestão de departamento deve poder escolher apenas `Usuario` e `Equipe` como destino inicial.
+Quando o destino inicial for `Equipe`, a tarefa deve herdar o único departamento vinculado ao usuário responsável pelo cadastro. Se não for possível determinar exatamente um departamento, o cadastro deve ser bloqueado em vez de escolher um vínculo arbitrariamente.
 _Avoid_: Destino único obrigatório, tarefa sem escopo, escolha que ignora permissão
 
 **Tarefa estrutural**:
@@ -276,6 +277,7 @@ _Avoid_: Atribuição pelo gestor, edição do responsável sem regra, tarefa in
 
 **Solicitação de obtenção de tarefa**:
 Pedido feito por um usuário para receber uma tarefa marcada como pendente de aprovação. A solicitação deve aparecer para o aprovador na visão Solicitações e, quando aprovada, a tarefa passa para Meu quadro do usuário solicitante. Uma tarefa deve ter no máximo uma solicitação de obtenção pendente por vez.
+Na visão `Solicitações`, o gestor de departamento também visualiza pedidos pendentes de tarefas vinculadas aos departamentos que gere. Essa visibilidade estrutural não substitui o aprovador registrado nem amplia, por si só, a autorização para aprovar ou recusar.
 _Avoid_: Aprovação implícita, e-mail como local de decisão, tarefa pendente assumida diretamente, várias solicitações pendentes para a mesma tarefa
 
 **Aprovação para obter tarefa**:

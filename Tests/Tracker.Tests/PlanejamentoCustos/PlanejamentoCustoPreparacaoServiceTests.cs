@@ -565,6 +565,9 @@ public class PlanejamentoCustoPreparacaoServiceTests
         public Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
             => Task.FromResult<IEnumerable<Departamento>>([departamento]);
 
+        public Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo)
+            => Task.FromResult<IEnumerable<Departamento>>([]);
+
         public Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento) => Task.FromResult(true);
     }
 

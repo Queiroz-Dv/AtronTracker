@@ -15,13 +15,13 @@ namespace Application.Services.EntitiesServices.Tarefas
         TarefaRelacionamentoService tarefaRelacionamentoService,
         ITarefaEstadoRepository tarefaEstadoRepository,
         IMapper<TarefaEstado, TarefaEstadoDTO> tarefaEstadoMap,
-        IMapper<Tarefa, TarefaDTO> map,
+        IToEntityMapper<Tarefa, TarefaDTO> map,
         IValidador<TarefaDTO> validador) : ITarefaPreparacaoService
     {
         private readonly TarefaRelacionamentoService _tarefaRelacionamentoService = tarefaRelacionamentoService;
         private readonly ITarefaEstadoRepository _tarefaEstadoRepository = tarefaEstadoRepository;
         private readonly IMapper<TarefaEstado, TarefaEstadoDTO> _tarefaEstadoMap = tarefaEstadoMap;
-        private readonly IMapper<Tarefa, TarefaDTO> _map = map;
+        private readonly IToEntityMapper<Tarefa, TarefaDTO> _map = map;
         private readonly IValidador<TarefaDTO> _validador = validador;
 
         public async Task<Resultado<Tarefa>> PrepararParaPersistenciaAsync(TarefaDTO tarefaDTO)

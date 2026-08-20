@@ -49,5 +49,7 @@ namespace Domain.Interfaces
         /// </summary>
         /// <param name="departamento">Entidade que será removida</param>
         Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento);
+
+        Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo);
     }
 }

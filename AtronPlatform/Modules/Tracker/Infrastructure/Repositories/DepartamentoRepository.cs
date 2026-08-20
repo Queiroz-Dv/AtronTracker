@@ -59,5 +59,11 @@ namespace Infrastructure.Repositories
             var removido = await _context.SaveChangesAsync();
             return removido > 0;
         }
+
+        public async Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo)
+        {
+            return await _context.Departamentos
+                .Where(dpt => dpt.GestorDepartamentoCodigo == usuarioCodigo).ToListAsync();
+        }
     }
 }

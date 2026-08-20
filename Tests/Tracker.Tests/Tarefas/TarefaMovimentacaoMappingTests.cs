@@ -16,7 +16,7 @@ public class TarefaMovimentacaoMappingTests
     {
         var tarefa = CriarTarefa();
         var responsavel = CriarResponsavel();
-        var inicio = DateTime.UtcNow;
+        var inicio = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
 
         var dto = _mapping.MapearParaCriacao(tarefa, responsavel);
 
@@ -26,12 +26,15 @@ public class TarefaMovimentacaoMappingTests
         Assert.Equal("Tarefa criada no estado Em atividade.", dto.Detalhes);
         Assert.Equal(responsavel.Codigo, dto.ResponsavelCodigo);
         Assert.Equal("Maria Silva", dto.ResponsavelNome);
-        Assert.InRange(dto.DataOcorrencia, inicio, DateTime.UtcNow);
+        var fim = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+        Assert.InRange(dto.DataOcorrencia, inicio, fim);
+        Assert.Equal(DateTimeKind.Unspecified, dto.DataOcorrencia.Kind);
 
         var entity = _mapping.MapToEntity(dto);
 
         Assert.Equal(0, entity.Id);
         Assert.Equal(tarefa.Id, entity.TarefaId);
+        Assert.Equal(DateTimeKind.Unspecified, entity.DataOcorrencia.Kind);
     }
 
     [Fact]

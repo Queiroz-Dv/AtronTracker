@@ -168,6 +168,9 @@
   <data name="Erro_DepartamentoNaoEncontrado" xml:space="preserve">
     <value>Departamento da tarefa nao encontrado.</value>
   </data>
+  <data name="Erro_DepartamentoEquipeIndefinido" xml:space="preserve">
+    <value>Nao foi possivel definir o departamento da equipe. O usuario responsavel pelo cadastro deve possuir exatamente um departamento.</value>
+  </data>
   <data name="Erro_CargoNaoEncontrado" xml:space="preserve">
     <value>Cargo da tarefa nao encontrado.</value>
   </data>
