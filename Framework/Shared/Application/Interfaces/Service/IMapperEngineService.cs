@@ -4,6 +4,7 @@
     /// Define a interface para o motor de mapeamento, responsável por orquestrar
     /// o mapeamento de coleções usando mapeadores específicos.
     /// </summary>
+    [Obsolete("Use os contratos de Shared.Application.Interfaces.Mapping.", false)]
     public interface IMapperEngineService
     {
         /// <summary>

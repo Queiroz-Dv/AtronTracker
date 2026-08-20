@@ -3,10 +3,8 @@ using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Resources;
-using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Shared.Authorization;
+using Shared.Domain.ValueObjects;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {

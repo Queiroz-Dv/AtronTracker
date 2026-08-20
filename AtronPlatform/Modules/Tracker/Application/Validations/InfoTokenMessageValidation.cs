@@ -13,7 +13,7 @@ namespace Application.Validations
         {
             if (entity != null)
             {
-                if (entity.Token.IsNullOrEmpty())
+                if (entity.Value.IsNullOrEmpty())
                 {
                     AdicionarErro(AuthResource.Erro_TokenNaoPreenchido);
                 }

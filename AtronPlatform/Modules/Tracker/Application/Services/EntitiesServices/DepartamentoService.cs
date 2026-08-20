@@ -1,7 +1,8 @@
 ﻿using Application.DTO;
 using System.Collections.Generic;
 using Application.Interfaces.Services;
-using Application.Services.EntitiesServices.PlanejamentoCustos;
+using Application.Mapping;
+using Application.Policies.PlanejamentoCustos;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 namespace Application.Services.EntitiesServices
 {
     public class DepartamentoService(IValidador<DepartamentoDTO> validador,
-                               IAsyncMap<DepartamentoDTO, Departamento> asyncMap,
+                               DepartamentoMapping mapper,
                                IDepartamentoRepository departamentoRepository,
                                IUsuarioRepository usuarioRepository,
                                ICargoRepository cargoRepository,
@@ -23,7 +24,7 @@ namespace Application.Services.EntitiesServices
                                IUsuarioCargoDepartamentoRepository relacionamentoRepository)
         : IDepartamentoService
     {
-        private readonly IAsyncMap<DepartamentoDTO, Departamento> _asyncMap = asyncMap;
+        private readonly DepartamentoMapping _mapper = mapper;
         private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository = relacionamentoRepository;
@@ -38,14 +39,15 @@ namespace Application.Services.EntitiesServices
 
             var erros = _validador.Validar(departamentoDTO);
             if (erros.Any())
-                return Resultado<DepartamentoDTO>.Falha(erros.FirstOrDefault());
+                return erros as Resultado<DepartamentoDTO>;
+
 
             var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
             if (entidade == null)
                 return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            await _asyncMap.MapToEntityAsync(departamentoDTO, entidade);
+            DepartamentoMapping.MapToEntity(departamentoDTO, entidade);
 
             var resultadoGestor = await VincularGestorDepartamentoAsync(entidade, departamentoDTO.GestorDepartamentoCodigo);
             if (resultadoGestor.TeveFalha)
@@ -65,12 +67,11 @@ namespace Application.Services.EntitiesServices
             if (erros.Any())
                 return Resultado<DepartamentoDTO>.Falhas(erros);
 
-
             var departamentoExiste = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamentoDTO.Codigo);
             if (departamentoExiste != null)
                 return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroCodigoDepartamentoExistente);
 
-            var departamento = await _asyncMap.MapToEntityAsync(departamentoDTO);
+            var departamento = _mapper.MapToEntity(departamentoDTO);
 
             var resultadoGestor = await VincularGestorDepartamentoAsync(departamento, departamentoDTO.GestorDepartamentoCodigo);
             if (resultadoGestor.TeveFalha)
@@ -83,6 +84,17 @@ namespace Application.Services.EntitiesServices
             return Resultado<DepartamentoDTO>.Sucesso(departamentoDTO).ComMensagemRegistroSalvo(departamento.Codigo);
         }
 
+        public async Task<Resultado<IEnumerable<DepartamentoDTO>>> ObterDepartamentosPorGestor(string usuarioCodigo)
+        {
+            if (usuarioCodigo.IsNullOrEmpty())
+                return Resultado<IEnumerable<DepartamentoDTO>>.Sucesso([]);
+
+            var entidades = await _departamentoRepository.ObterDepartamentosPorCodigoGestorAsync(usuarioCodigo);
+            var departamentos = _mapper.MapToDtos(entidades);
+
+            return Resultado<IEnumerable<DepartamentoDTO>>.Sucesso(departamentos);
+        }
+
         public async Task<Resultado<DepartamentoDTO>> ObterPorCodigo(string codigo)
         {
             if (codigo.IsNullOrEmpty())
@@ -92,7 +104,7 @@ namespace Application.Services.EntitiesServices
 
             if (entidade != null)
             {
-                var dto = await _asyncMap.MapToDTOAsync(entidade);
+                var dto = _mapper.MapToDto(entidade);
                 return Resultado<DepartamentoDTO>.Sucesso(dto);
             }
 
@@ -108,7 +120,7 @@ namespace Application.Services.EntitiesServices
 
             if (entidade != null)
             {
-                var dto = await _asyncMap.MapToDTOAsync(entidade);
+                var dto = _mapper.MapToDto(entidade);
                 return Resultado<DepartamentoDTO>.Sucesso(dto);
             }
 
@@ -118,7 +130,7 @@ namespace Application.Services.EntitiesServices
         public async Task<Resultado<List<DepartamentoDTO>>> ObterTodosAsync()
         {
             var entities = await _departamentoRepository.ObterDepartmentosAsync();
-            var dtos = await _asyncMap.MapToListDTOAsync([.. entities]);
+            var dtos = _mapper.MapToDtos(entities).ToList();
             return Resultado<List<DepartamentoDTO>>.Sucesso(dtos);
         }
 

@@ -1,5 +1,6 @@
 ﻿using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Interfaces;
+using AtronStock.Application.Mapping;
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Enums;
 using AtronStock.Domain.Interfaces;
@@ -17,13 +18,13 @@ namespace AtronStock.Application.Services
 
         private readonly ICategoriaRepository _repository;
         private readonly IValidador<CategoriaRequest> _validador;
-        private readonly IAsyncMap<CategoriaRequest, Categoria> _mapService;
+        private readonly CategoriaMapping _mapService;
         private readonly IAuditoriaService _auditoriaService;
 
         public CategoriaService(
             ICategoriaRepository repository,
             IValidador<CategoriaRequest> validador,
-            IAsyncMap<CategoriaRequest, Categoria> mapService,
+            CategoriaMapping mapService,
             IAuditoriaService auditoriaService)
         {
             _repository = repository;
@@ -43,7 +44,7 @@ namespace AtronStock.Application.Services
                 return Resultado.Falha(string.Format(CategoriaResource.ErroCategoriaJaExiste, request.Codigo));
             }
 
-            var categoria = await _mapService.MapToEntityAsync(request);
+            var categoria = _mapService.MapToEntity(request);
             await _repository.CriarCategoriaAsync(categoria);
 
             IAuditoriaDTO auditoria = new AuditoriaDTO
@@ -76,7 +77,7 @@ namespace AtronStock.Application.Services
                 return Resultado.Falha(string.Format(CategoriaResource.ErroCategoriaNaoEncontrada, dto.Codigo));
             }
 
-            await _mapService.MapToEntityAsync(dto, categoria);
+            _mapService.MapToEntity(dto, categoria);
 
             var atualizado = await _repository.AtualizarCategoriaAsync(categoria);
             if (!atualizado)
@@ -147,14 +148,14 @@ namespace AtronStock.Application.Services
         public async Task<Resultado<ICollection<CategoriaRequest>>> ObterTodasAsync()
         {
             var categorias = await _repository.ObterTodasCategoriasAsync();
-            var dtos = await _mapService.MapToListDTOAsync(categorias);
+            var dtos = _mapService.MapToDtos(categorias).ToList();
             return Resultado<ICollection<CategoriaRequest>>.Sucesso(dtos);
         }
 
         public async Task<Resultado<ICollection<CategoriaRequest>>> ObterInativasAsync()
         {
             var categorias = await _repository.ObterTodasCategoriasInativasAsync();
-            var dtos = await _mapService.MapToListDTOAsync(categorias);
+            var dtos = _mapService.MapToDtos(categorias).ToList();
             return Resultado<ICollection<CategoriaRequest>>.Sucesso(dtos);
         }
 
@@ -168,7 +169,7 @@ namespace AtronStock.Application.Services
                 return Resultado<CategoriaRequest>.Falhas(bag.Messages.ToList());
             }
 
-            var dto = await _mapService.MapToDTOAsync(categoria);
+            var dto = _mapService.MapToDto(categoria);
             return Resultado<CategoriaRequest>.Sucesso(dto);
         }
     }

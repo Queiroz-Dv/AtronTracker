@@ -1,7 +1,6 @@
 using Application.DTO;
 using Application.Email.Compositores;
 using Application.Services.EntitiesServices.Tarefas;
-using Domain.Entities;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
 using Shared.Application.Interfaces.Service;
@@ -94,9 +93,9 @@ public class TarefaNotificacaoServiceTests
         };
     }
 
-    private static Usuario CriarUsuario(bool receberEmail)
+    private static UsuarioDTO CriarUsuario(bool receberEmail)
     {
-        return new Usuario
+        return new UsuarioDTO
         {
             Nome = "Usuario",
             Sobrenome = "Teste",
@@ -120,7 +119,7 @@ public class TarefaNotificacaoServiceTests
     {
         public int QuantidadeChamadas { get; private set; }
 
-        public Resultado<EmailRequest> ComporAtribuicao(TarefaDTO tarefa, Usuario usuario)
+        public Resultado<EmailRequest> ComporAtribuicao(TarefaDTO tarefa, UsuarioDTO usuario)
         {
             QuantidadeChamadas++;
             return Resultado<EmailRequest>.Sucesso(new EmailRequest

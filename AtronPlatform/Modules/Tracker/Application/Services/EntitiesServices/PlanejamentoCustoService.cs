@@ -1,24 +1,25 @@
 using Application.DTO;
 using Application.Interfaces.Services;
+using Application.Mapping;
 using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
-using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices
 {
     public class PlanejamentoCustoService(
-        IAsyncMap<PlanejamentoCustoDTO, PlanejamentoCusto> asyncMap,
+        PlanejamentoCustoMapping planejamentoCustoMapping,
         IPlanejamentoCustoRepository planejamentoCustoRepository,
         IPlanejamentoCustoPreparacaoService planejamentoCustoPreparacaoService,
         IPlanejamentoCustoRelatorioService planejamentoCustoRelatorioService) : IPlanejamentoCustoService
     {
-        private readonly IAsyncMap<PlanejamentoCustoDTO, PlanejamentoCusto> _asyncMap = asyncMap;
+        private readonly PlanejamentoCustoMapping _planejamentoCustoMapping = planejamentoCustoMapping;
         private readonly IPlanejamentoCustoRepository _planejamentoCustoRepository = planejamentoCustoRepository;
         private readonly IPlanejamentoCustoPreparacaoService _planejamentoCustoPreparacaoService = planejamentoCustoPreparacaoService;
         private readonly IPlanejamentoCustoRelatorioService _planejamentoCustoRelatorioService = planejamentoCustoRelatorioService;
@@ -33,7 +34,7 @@ namespace Application.Services.EntitiesServices
             if (!criado)
                 return Resultado<PlanejamentoCustoDTO>.Falha(PlanejamentoCustoResource.Erro_CriarPlanejamento);
 
-            var dto = await _asyncMap.MapToDTOAsync(preparacao.Dados.Entidade);
+            var dto = _planejamentoCustoMapping.MapToDto(preparacao.Dados.Entidade);
             var resultado = Resultado<PlanejamentoCustoDTO>.Sucesso(dto).ComMensagemRegistroSalvo(preparacao.Dados.Entidade.Codigo);
             AdicionarMensagensDetalhes(resultado, preparacao.Dados.ResultadoDetalhes);
 
@@ -50,7 +51,7 @@ namespace Application.Services.EntitiesServices
             if (!atualizado)
                 return Resultado<PlanejamentoCustoDTO>.Falha(string.Format(PlanejamentoCustoResource.Erro_AtualizarPlanejamento, codigo));
 
-            var dto = await _asyncMap.MapToDTOAsync(preparacao.Dados.Entidade);
+            var dto = _planejamentoCustoMapping.MapToDto(preparacao.Dados.Entidade);
             var resultado = Resultado<PlanejamentoCustoDTO>
                 .Sucesso(dto)
                 .AdicionarMensagem(string.Format(PlanejamentoCustoResource.Mensagem_PlanejamentoAtualizado, codigo));
@@ -81,21 +82,21 @@ namespace Application.Services.EntitiesServices
             if (planejamento == null)
                 return Resultado<PlanejamentoCustoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            var dto = await _asyncMap.MapToDTOAsync(planejamento);
+            var dto = _planejamentoCustoMapping.MapToDto(planejamento);
             return Resultado<PlanejamentoCustoDTO>.Sucesso(dto);
         }
 
         public async Task<Resultado<List<PlanejamentoCustoDTO>>> ObterPorAnoAsync(int ano)
         {
             var planejamentos = await _planejamentoCustoRepository.ObterPorAnoAsync(ano);
-            var dtos = await _asyncMap.MapToListDTOAsync([.. planejamentos]);
+            var dtos = _planejamentoCustoMapping.MapToDtos(planejamentos).ToList();
             return Resultado<List<PlanejamentoCustoDTO>>.Sucesso(dtos);
         }
 
         public async Task<Resultado<List<PlanejamentoCustoDTO>>> ObterTodosAsync()
         {
             var planejamentos = await _planejamentoCustoRepository.ObterTodosAsync();
-            var dtos = await _asyncMap.MapToListDTOAsync([.. planejamentos]);
+            var dtos = _planejamentoCustoMapping.MapToDtos(planejamentos).ToList();
             return Resultado<List<PlanejamentoCustoDTO>>.Sucesso(dtos);
         }
 

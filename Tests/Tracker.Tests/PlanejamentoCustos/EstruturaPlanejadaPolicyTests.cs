@@ -1,8 +1,8 @@
 using Application.DTO;
 using Application.Mapping;
+using Application.Policies.PlanejamentoCustos;
 using Application.Resources;
 using Application.Services.EntitiesServices;
-using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Validador;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -144,7 +144,7 @@ public class EstruturaPlanejadaPolicyTests
         public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
             => Task.FromResult(_departamentos.SingleOrDefault(d => d.Codigo == codigo) ?? null!);
 
-        public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo)
+        public Task<Departamento> ObterDepartamentoPorCodigoRepository(string codigo)
             => Task.FromResult(_departamentos.SingleOrDefault(d => d.Codigo == codigo) ?? null!);
 
         public Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
@@ -152,6 +152,9 @@ public class EstruturaPlanejadaPolicyTests
 
         public Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
             => Task.FromResult<IEnumerable<Departamento>>(_departamentos);
+
+        public Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo)
+            => Task.FromResult<IEnumerable<Departamento>>([]);
 
         public Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento) => Task.FromResult(true);
     }

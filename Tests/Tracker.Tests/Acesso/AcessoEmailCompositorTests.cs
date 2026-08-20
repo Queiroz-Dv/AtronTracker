@@ -1,5 +1,5 @@
 using Application.Email.Compositores;
-using Application.Email.Models;
+using Application.Records.Usuario;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
 using Xunit;

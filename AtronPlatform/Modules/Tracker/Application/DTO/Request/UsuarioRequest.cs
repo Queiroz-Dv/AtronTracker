@@ -16,11 +16,9 @@ namespace Application.DTO.Request
 
         public string DepartamentoCodigo { get; set; }
 
-        public string CodigoPerfilDeAcesso { get; set; }
-
         public string Email { get; set; }
 
-        public string Senha { get; set; }
+        public string? Senha { get; set; }
 
         public string GestorImediatoCodigo { get; set; }
     }

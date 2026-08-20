@@ -4,15 +4,17 @@ using Application.Interfaces.Services;
 using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices
 {
     public class UsuarioService(
-        IAsyncMap<UsuarioDTO, Usuario> asyncMap,
+        IToDtoMapper<Usuario, UsuarioDTO> mapper,
         IUsuarioRepository usuarioRepository,
         ObterUsuario obterUsuario,
         CriarUsuario criarUsuario,
@@ -25,7 +27,7 @@ namespace Application.Services.EntitiesServices
         ConfirmarAlteracaoEmail confirmarAlteracaoEmail,
         ReenviarConfirmacaoEmail reenviarConfirmacaoEmail) : IUsuarioService
     {
-        private readonly IAsyncMap<UsuarioDTO, Usuario> _asyncMap = asyncMap;
+        private readonly IToDtoMapper<Usuario, UsuarioDTO> _mapper = mapper;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly ObterUsuario _obterUsuario = obterUsuario;
         private readonly CriarUsuario _criarUsuario = criarUsuario;
@@ -68,11 +70,14 @@ namespace Application.Services.EntitiesServices
         public async Task<Resultado<List<UsuarioDTO>>> ObterTodosAsync()
         {
             var entities = await _usuarioRepository.ObterUsuariosAsync();
-            var dtos = await _asyncMap.MapToListDTOAsync([.. entities]);
+            var dtos = _mapper.MapToDtos(entities).ToList();
             return Resultado<List<UsuarioDTO>>.Sucesso(dtos);
         }
 
         public async Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo)
             => await _obterUsuario.ExecutarAsync(codigo);
+
+        public async Task<Resultado<Usuario>> ObterUsuarioAtual()
+            => await _obterUsuario.ObterAsync();
     }
 }

@@ -1,17 +1,15 @@
 using Application.DTO;
 using Domain.Entities;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Mapper;
+using Shared.Application.Interfaces.Mapping;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Mapping
 {
-    public class PlanejamentoCustoMapping : AsyncApplicationMapService<PlanejamentoCustoDTO, PlanejamentoCusto>, IAsyncMap<PlanejamentoCustoDTO, PlanejamentoCusto>
+    public class PlanejamentoCustoMapping : Mapper<PlanejamentoCusto, PlanejamentoCustoDTO>
     {
-        public override Task<PlanejamentoCustoDTO> MapToDTOAsync(PlanejamentoCusto entity)
+        public override PlanejamentoCustoDTO MapToDto(PlanejamentoCusto entity)
         {
-            var dto = new PlanejamentoCustoDTO
+            return new PlanejamentoCustoDTO
             {
                 Id = entity.Id,
                 Codigo = entity.Codigo,
@@ -41,12 +39,11 @@ namespace Application.Mapping
                 }).ToList() ?? []
             };
 
-            return Task.FromResult(dto);
         }
 
-        public override Task<PlanejamentoCusto> MapToEntityAsync(PlanejamentoCustoDTO dto)
+        public override PlanejamentoCusto MapToEntity(PlanejamentoCustoDTO dto)
         {
-            var entity = new PlanejamentoCusto
+            return new PlanejamentoCusto
             {
                 Id = dto.Id,
                 Codigo = dto.Codigo,
@@ -66,16 +63,14 @@ namespace Application.Mapping
                 }).ToList() ?? []
             };
 
-            return Task.FromResult(entity);
         }
 
-        public Task MapToEntityAsync(PlanejamentoCustoDTO dto, PlanejamentoCusto entityToUpdate)
+        public void MapToEntity(PlanejamentoCustoDTO dto, PlanejamentoCusto entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao;
             entityToUpdate.ValorMinimo = dto.ValorMinimo;
             entityToUpdate.ValorTeto = dto.ValorTeto;
             entityToUpdate.ApenasDepartamento = dto.ApenasDepartamento;
-            return Task.CompletedTask;
         }
     }
 }

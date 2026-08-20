@@ -8,7 +8,7 @@ namespace AtronStock.Application.Validacoes
 {
     public class ProdutoValidador : IValidador<ProdutoRequest>
     {
-        public IList<NotificationMessage> Validar(ProdutoRequest entity)
+        public IEnumerable<NotificationMessage> Validar(ProdutoRequest entity)
         {
             var context = new NotificationBag();
             ValidaCodigo(entity, context);

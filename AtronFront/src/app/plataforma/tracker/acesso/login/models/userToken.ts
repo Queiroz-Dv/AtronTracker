@@ -1,5 +1,5 @@
 export class UserToken {
-  token: string;
+  value: string;
   expires: Date;
   usuarioCodigo: string;
 }

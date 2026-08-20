@@ -4,5 +4,13 @@ namespace Domain.Entities
     {
         public int Id { get; set; }
         public string Descricao { get; set; }
+
+        public TarefaEstado() { }
+
+        public TarefaEstado(int id, string descricao)
+        {
+            Id = id;
+            Descricao = descricao;
+        }
     }
 }

@@ -1,0 +1,1080 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Guia didático dos padrões arquiteturais usados atualmente no AtronRC, com exemplos reais do Tracker, Stock e Shared.">
+  <title>Padrões arquiteturais do AtronRC</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink-950: #142019;
+      --ink-800: #29372f;
+      --ink-650: #526159;
+      --paper: #f5f1e8;
+      --paper-soft: #fcfaf5;
+      --surface: rgba(255,255,255,.84);
+      --line: #d9d5c9;
+      --green-950: #12382e;
+      --green-800: #205746;
+      --green-650: #357762;
+      --green-150: #dcece3;
+      --green-100: #eaf4ee;
+      --amber-800: #8c5519;
+      --amber-100: #fff1d8;
+      --blue-800: #245f78;
+      --blue-100: #e4f1f6;
+      --violet-800: #654e83;
+      --violet-100: #efe9f7;
+      --rose-800: #914d46;
+      --rose-100: #f8e7e3;
+      --code-bg: #15231b;
+      --code-line: #263a2e;
+      --code-text: #e7efe9;
+      --code-muted: #9aaba0;
+      --code-keyword: #e8c66d;
+      --code-type: #83d1c3;
+      --code-method: #b9d982;
+      --shadow: 0 22px 65px rgba(31, 45, 36, .10);
+      --content: 1220px;
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink-950);
+      background:
+        radial-gradient(circle at 7% 5%, rgba(53,119,98,.12), transparent 28rem),
+        radial-gradient(circle at 95% 20%, rgba(140,85,25,.09), transparent 24rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    a { color: inherit; }
+    p, h1, h2, h3, h4 { margin-top: 0; }
+    code { font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace; }
+
+    .shell {
+      width: min(calc(100% - 40px), var(--content));
+      margin-inline: auto;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin-top: 28px;
+      padding: clamp(38px, 7vw, 84px);
+      border-radius: 34px;
+      color: #f7fbf8;
+      background:
+        linear-gradient(120deg, rgba(18,56,46,.99), rgba(32,87,70,.94)),
+        var(--green-950);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 50%;
+    }
+
+    .hero::before {
+      width: 360px;
+      height: 360px;
+      right: -120px;
+      top: -180px;
+      box-shadow: 0 0 0 50px rgba(255,255,255,.025), 0 0 0 105px rgba(255,255,255,.015);
+    }
+
+    .hero::after {
+      width: 180px;
+      height: 180px;
+      right: 19%;
+      bottom: -125px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      color: #cce4d7;
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 2px;
+      background: #a6cdb9;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin-bottom: 24px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.6rem, 7vw, 5.6rem);
+      font-weight: 500;
+      letter-spacing: -.045em;
+      line-height: 1;
+    }
+
+    .lead {
+      max-width: 820px;
+      margin-bottom: 30px;
+      color: #dcebe3;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-tags span {
+      padding: 8px 13px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      color: #edf6f1;
+      font-size: .84rem;
+    }
+
+    .jump-nav {
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin: 22px auto 68px;
+      padding: 10px;
+      border: 1px solid rgba(217,213,201,.92);
+      border-radius: 999px;
+      background: rgba(252,250,245,.90);
+      box-shadow: 0 10px 30px rgba(31,45,36,.07);
+      backdrop-filter: blur(14px);
+      scrollbar-width: none;
+    }
+
+    .jump-nav::-webkit-scrollbar { display: none; }
+
+    .jump-nav a {
+      flex: 0 0 auto;
+      padding: 8px 13px;
+      border-radius: 999px;
+      color: var(--ink-650);
+      font-size: .78rem;
+      font-weight: 750;
+      text-decoration: none;
+    }
+
+    .jump-nav a:hover,
+    .jump-nav a:focus-visible {
+      color: #fff;
+      background: var(--green-800);
+      outline: none;
+    }
+
+    main { padding-bottom: 80px; }
+    section { margin-bottom: 78px; scroll-margin-top: 95px; }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(220px,.38fr) minmax(0,.62fr);
+      gap: 36px;
+      align-items: start;
+      margin-bottom: 30px;
+    }
+
+    .section-index {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--green-650);
+      font-size: .74rem;
+      font-weight: 850;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin-bottom: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 3.45rem);
+      font-weight: 500;
+      letter-spacing: -.035em;
+      line-height: 1.08;
+    }
+
+    h3 { margin-bottom: 12px; font-size: 1.08rem; line-height: 1.35; }
+    h4 { margin-bottom: 8px; font-size: .92rem; }
+
+    .section-intro {
+      margin: 8px 0 0;
+      color: var(--ink-650);
+      font-size: 1.06rem;
+    }
+
+    .callout {
+      display: grid;
+      grid-template-columns: 170px minmax(0,1fr);
+      gap: 24px;
+      padding: 28px;
+      border: 1px solid #c6dccf;
+      border-radius: var(--radius-md);
+      background: var(--green-100);
+    }
+
+    .callout strong {
+      color: var(--green-800);
+      font-size: .77rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .callout p { margin-bottom: 0; }
+
+    .matrix {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .matrix-row {
+      display: grid;
+      grid-template-columns: .72fr 1.28fr 1.15fr .7fr;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .matrix-row:last-child { border-bottom: 0; }
+    .matrix-row > div { min-width: 0; padding: 17px 19px; }
+    .matrix-row > div + div { border-left: 1px solid var(--line); }
+
+    .matrix-row.header {
+      color: #eef6f1;
+      background: var(--green-950);
+      font-size: .72rem;
+      font-weight: 850;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .matrix-row:not(.header) > div:first-child {
+      color: var(--green-950);
+      font-weight: 800;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: .66rem;
+      font-weight: 850;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .status.active { color: var(--green-800); background: var(--green-150); }
+    .status.transition { color: var(--amber-800); background: var(--amber-100); }
+    .status.declared { color: var(--violet-800); background: var(--violet-100); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5,minmax(0,1fr));
+      gap: 30px;
+      margin-top: 28px;
+    }
+
+    .flow-step {
+      position: relative;
+      min-height: 220px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .flow-step::after {
+      content: "→";
+      position: absolute;
+      top: 50%;
+      right: -24px;
+      transform: translateY(-50%);
+      color: var(--green-650);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .flow-step:last-child::after { display: none; }
+
+    .flow-step small {
+      display: block;
+      margin-bottom: 24px;
+      color: var(--green-650);
+      font-size: .69rem;
+      font-weight: 850;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+
+    .flow-step p { margin-bottom: 0; color: var(--ink-650); font-size: .88rem; }
+
+    .group {
+      display: grid;
+      gap: 22px;
+    }
+
+    .pattern-card {
+      display: grid;
+      grid-template-columns: minmax(250px,.38fr) minmax(0,.62fr);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--paper-soft);
+      box-shadow: 0 12px 34px rgba(31,45,36,.055);
+    }
+
+    .pattern-info { padding: 28px; }
+
+    .pattern-number {
+      display: inline-block;
+      margin-bottom: 19px;
+      color: var(--green-650);
+      font-size: .71rem;
+      font-weight: 850;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .pattern-info h3 {
+      margin-bottom: 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.75rem;
+      font-weight: 500;
+      letter-spacing: -.025em;
+    }
+
+    .question {
+      margin-bottom: 18px;
+      color: var(--green-800);
+      font-weight: 800;
+    }
+
+    .explain {
+      margin: 20px 0 0;
+      padding: 17px 18px;
+      border-left: 4px solid var(--green-650);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      background: var(--green-100);
+    }
+
+    .explain span,
+    .beware span {
+      display: block;
+      margin-bottom: 5px;
+      font-size: .67rem;
+      font-weight: 850;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+
+    .explain p,
+    .beware p { margin-bottom: 0; }
+
+    .beware {
+      margin-top: 12px;
+      padding: 15px 17px;
+      border: 1px solid #eccca0;
+      border-radius: var(--radius-sm);
+      background: var(--amber-100);
+      color: #654116;
+      font-size: .9rem;
+    }
+
+    .code-side {
+      min-width: 0;
+      color: var(--code-text);
+      background: var(--code-bg);
+    }
+
+    .code-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--code-line);
+      color: #cbd8cf;
+      background: #1b2b21;
+      font-size: .74rem;
+    }
+
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      font: 500 .82rem/1.7 "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+      tab-size: 4;
+    }
+
+    pre code { display: block; min-width: max-content; padding: 22px; }
+    .kw { color: var(--code-keyword); }
+    .type { color: var(--code-type); }
+    .method { color: var(--code-method); }
+    .comment { color: var(--code-muted); font-style: italic; }
+    .literal { color: #e6a889; }
+
+    .inline {
+      padding: .12em .38em;
+      border: 1px solid #d8ded9;
+      border-radius: 6px;
+      color: #214f3e;
+      background: #eef3ef;
+      font-size: .9em;
+      font-weight: 650;
+    }
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .decision-card {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .decision-card .ask {
+      display: block;
+      margin-bottom: 14px;
+      color: var(--green-650);
+      font-size: .7rem;
+      font-weight: 850;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .decision-card p:last-child { margin-bottom: 0; color: var(--ink-650); }
+
+    .talk-track {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .talk-step {
+      display: grid;
+      grid-template-columns: 46px minmax(0,1fr);
+      gap: 16px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .talk-step b {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--green-800);
+      font-size: .82rem;
+    }
+
+    .talk-step p { margin-bottom: 0; color: var(--ink-650); }
+
+    .summary {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(34px,6vw,62px);
+      border-radius: var(--radius-lg);
+      color: #eff7f2;
+      background: var(--green-950);
+    }
+
+    .summary h2 { margin-bottom: 20px; }
+    .summary p { max-width: 900px; margin-bottom: 0; color: #d4e6dc; font-size: 1.08rem; }
+    .summary strong { color: #fff; }
+
+    footer {
+      padding: 0 0 38px;
+      color: var(--ink-650);
+      font-size: .8rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .section-head,
+      .pattern-card,
+      .callout { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 26px; }
+      .flow-step::after { display: none; }
+      .decision-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .matrix-row { grid-template-columns: .75fr 1.25fr 1fr; }
+      .matrix-row > div:nth-child(4) { display: none; }
+    }
+
+    @media (max-width: 680px) {
+      .shell { width: min(calc(100% - 24px),var(--content)); }
+      .hero { margin-top: 12px; border-radius: 24px; }
+      .jump-nav { border-radius: 18px; }
+      section { margin-bottom: 58px; }
+      .flow,
+      .decision-grid,
+      .talk-track { grid-template-columns: 1fr; }
+      .matrix { border: 0; background: transparent; box-shadow: none; }
+      .matrix-row,
+      .matrix-row.header { display: block; margin-bottom: 13px; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); }
+      .matrix-row.header { display: none; }
+      .matrix-row > div,
+      .matrix-row > div + div { display: block !important; padding: 14px 17px; border-left: 0; border-bottom: 1px solid var(--line); }
+      .matrix-row > div:last-child { border-bottom: 0; }
+      .code-head { display: block; }
+      .code-head span { display: block; overflow-wrap: anywhere; }
+      .code-head span + span { margin-top: 4px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .shell { width: 100%; }
+      .jump-nav { display: none; }
+      .hero, .pattern-card, .matrix { box-shadow: none; }
+      section { break-inside: avoid; }
+      pre { white-space: pre-wrap; overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero shell">
+    <p class="eyebrow">AtronRC · Guia de arquitetura aplicada</p>
+    <h1>Cada padrão responde a uma pergunta diferente</h1>
+    <p class="lead">
+      Um mapa didático das responsabilidades usadas hoje no AtronRC, com exemplos reais do Tracker,
+      Stock e Shared, frases simples para explicar cada conceito e alertas sobre o que não misturar.
+    </p>
+    <div class="hero-tags" aria-label="Assuntos abordados">
+      <span>Casos de uso</span>
+      <span>Decisões e seleção</span>
+      <span>Transformação e criação</span>
+      <span>Fronteiras técnicas</span>
+      <span>Contrato de resultado</span>
+    </div>
+  </header>
+
+  <nav class="jump-nav shell" aria-label="Navegação do documento">
+    <a href="#mapa">Mapa rápido</a>
+    <a href="#fluxo">Fluxo real</a>
+    <a href="#orquestracao">Orquestração</a>
+    <a href="#decisao">Decisão</a>
+    <a href="#transformacao">Transformação</a>
+    <a href="#fronteiras">Fronteiras</a>
+    <a href="#resultado">Resultado</a>
+    <a href="#escolher">Como escolher</a>
+    <a href="#explicar">Como explicar</a>
+  </nav>
+
+  <main class="shell">
+    <section id="mapa">
+      <div class="section-head">
+        <div>
+          <span class="section-index">01 · Mapa rápido</span>
+          <h2>A pergunta define o padrão</h2>
+        </div>
+        <p class="section-intro">
+          Antes de criar uma classe, formule a pergunta que ela deve responder. Se duas classes respondem
+          perguntas diferentes, provavelmente representam responsabilidades diferentes.
+        </p>
+      </div>
+
+      <div class="matrix" role="table" aria-label="Comparação dos padrões">
+        <div class="matrix-row header" role="row">
+          <div>Padrão</div><div>Pergunta principal</div><div>Exemplo atual</div><div>Situação</div>
+        </div>
+        <div class="matrix-row" role="row"><div>Use Case</div><div>Qual intenção completa deve ser executada?</div><div>AssumirTarefaCase</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Service / Facade</div><div>Qual porta estável encaminha operações?</div><div>UsuarioService</div><div><span class="status transition">Híbrido</span></div></div>
+        <div class="matrix-row" role="row"><div>Policy</div><div>A operação é permitida neste contexto?</div><div>TarefaObtencaoPolicy</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Resolver</div><div>Qual candidato deve ser escolhido?</div><div>AprovadorObtencaoTarefaResolver</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Specification</div><div>Este candidato satisfaz um critério?</div><div>ModuloExistenteSpecification</div><div><span class="status declared">Sem consumidor</span></div></div>
+        <div class="matrix-row" role="row"><div>Validation</div><div>Os dados recebidos estão coerentes?</div><div>TarefaValidador</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Mapping</div><div>Como traduzir uma representação?</div><div>TarefaMovimentacaoMapping</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Provider</div><div>Como disponibilizar um valor configurado?</div><div>ResponsavelNotificacaoEstoqueProvider</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Factory</div><div>Como construir corretamente um novo objeto?</div><div>TokenFactory</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Extension</div><div>Qual operação pequena pode ganhar um nome reutilizável?</div><div>TarefaVinculoExtensions</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Repository</div><div>Como consultar e persistir dados do domínio?</div><div>TarefaRepository</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Compositor</div><div>Como montar uma comunicação final?</div><div>TarefaEmailCompositor</div><div><span class="status active">Ativo</span></div></div>
+        <div class="matrix-row" role="row"><div>Context</div><div>Quais colaboradores pertencem a um mesmo contexto?</div><div>UsuarioContext</div><div><span class="status transition">Uso restrito</span></div></div>
+        <div class="matrix-row" role="row"><div>Resultado</div><div>Como transportar sucesso, falha, dados e mensagens?</div><div>Resultado&lt;T&gt;</div><div><span class="status active">Transversal</span></div></div>
+      </div>
+    </section>
+
+    <section id="fluxo">
+      <div class="section-head">
+        <div>
+          <span class="section-index">02 · Fluxo real</span>
+          <h2>Assumir uma tarefa atravessa vários padrões</h2>
+        </div>
+        <p class="section-intro">
+          Nenhum padrão executa tudo. O valor está na colaboração: cada componente responde sua pergunta e o
+          caso de uso preserva a ordem do processo.
+        </p>
+      </div>
+
+      <div class="callout">
+        <strong>Resultado de produto</strong>
+        <p>Um usuário autorizado assume uma tarefa disponível, a movimentação é registrada, a notificação consultiva é publicada e o front recebe um DTO acompanhado da mensagem de sucesso.</p>
+      </div>
+
+      <div class="flow" aria-label="Fluxo simplificado de assumir tarefa">
+        <article class="flow-step"><small>01 · Use Case</small><h3>Recebe a intenção</h3><p><code class="inline">AssumirTarefaCase</code> mantém visível a sequência completa.</p></article>
+        <article class="flow-step"><small>02 · Repository</small><h3>Carrega o estado</h3><p>Busca tarefa, usuário atual e responsabilidade de gestão.</p></article>
+        <article class="flow-step"><small>03 · Policy</small><h3>Decide se pode</h3><p>Bloqueia tarefa ocupada, finalizada ou que exige solicitação.</p></article>
+        <article class="flow-step"><small>04 · Mapping</small><h3>Traduz os dados</h3><p>Monta movimentação e DTO de saída sem persistir.</p></article>
+        <article class="flow-step"><small>05 · Resultado</small><h3>Fecha o contrato</h3><p>Entrega sucesso ou falha com mensagens consistentes.</p></article>
+      </div>
+    </section>
+
+    <section id="orquestracao">
+      <div class="section-head">
+        <div><span class="section-index">03 · Orquestração</span><h2>Quem executa e quem encaminha</h2></div>
+        <p class="section-intro">Use Case e Service podem parecer semelhantes, mas têm compromissos diferentes no AtronRC atual.</p>
+      </div>
+
+      <div class="group">
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 01 · Use Case</span>
+            <h3>AssumirTarefaCase</h3>
+            <p class="question">Pergunta: qual fluxo executa a intenção “assumir tarefa”?</p>
+            <p>Coordena usuário atual, tarefa, decisão da policy, persistência, histórico, notificação e saída. Ele conhece a ordem, mas delega os detalhes especializados.</p>
+            <div class="explain"><span>Explique assim</span><p>“Um Use Case representa uma intenção completa do usuário ou do sistema e coordena tudo que precisa acontecer para concluí-la.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Ele não deve virar dono de todas as validações, SQL, mapeamentos e textos de comunicação.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>AssumirTarefaCase.cs</span><span>Application/UseCases/TarefaCases</span></div>
+            <pre><code><span class="kw">public async</span> Task&lt;Resultado&lt;TarefaDTO&gt;&gt; <span class="method">ExecutarAsync</span>(<span class="kw">int</span> tarefaId)
+{
+    <span class="kw">var</span> usuario = <span class="kw">await</span> _usuarioService.<span class="method">ObterUsuarioAtual</span>();
+    <span class="kw">var</span> tarefa = <span class="kw">await</span> _tarefaRepository.<span class="method">ObterTarefaPorId</span>(tarefaId);
+
+    <span class="kw">var</span> decisao = _tarefaObtencaoPolicy
+        .<span class="method">AvaliarAssuncao</span>(tarefa, possuiGestao);
+
+    <span class="kw">if</span> (decisao.TeveFalha)
+        <span class="kw">return</span> Resultado&lt;TarefaDTO&gt;.<span class="method">Falhas</span>(decisao.Messages);
+
+    <span class="comment">// persiste, registra movimentação, notifica e mapeia</span>
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 02 · Service / Facade</span>
+            <h3>UsuarioService</h3>
+            <p class="question">Pergunta: qual porta estável atende os consumidores existentes?</p>
+            <p>Preserva o contrato <code class="inline">IUsuarioService</code> e encaminha comandos para casos de uso como criar, atualizar, remover e reativar. Algumas consultas ainda ficam diretamente no serviço, por isso a implementação atual é híbrida.</p>
+            <div class="explain"><span>Explique assim</span><p>“A fachada oferece uma entrada conhecida e delega cada intenção ao componente especializado que realmente executa o comportamento.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Uma fachada não deve voltar a acumular regras novas apenas porque já é conhecida pelos controllers.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>UsuarioService.cs</span><span>Application/Services/EntitiesServices</span></div>
+            <pre><code><span class="kw">public async</span> Task&lt;Resultado&lt;UsuarioRequest&gt;&gt; <span class="method">CriarAsync</span>(UsuarioRequest request)
+    =&gt; <span class="kw">await</span> _criarUsuario.<span class="method">ExecutarAsync</span>(request);
+
+<span class="kw">public async</span> Task&lt;Resultado&gt; <span class="method">RemoverAsync</span>(<span class="kw">string</span> codigo)
+    =&gt; <span class="kw">await</span> _removerUsuario.<span class="method">ExecutarAsync</span>(codigo);
+
+<span class="comment">// ObterTodosAsync ainda consulta repositório e mapeia diretamente.</span></code></pre>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="decisao">
+      <div class="section-head">
+        <div><span class="section-index">04 · Decisão e seleção</span><h2>Quatro perguntas parecidas, quatro responsabilidades</h2></div>
+        <p class="section-intro">Policy, Resolver, Specification e Validation deixam de parecer iguais quando observamos o formato de sua resposta.</p>
+      </div>
+
+      <div class="group">
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 03 · Policy</span>
+            <h3>TarefaObtencaoPolicy</h3>
+            <p class="question">Pergunta: o usuário pode assumir ou solicitar esta tarefa neste contexto?</p>
+            <p>Combina estado da tarefa, existência de responsável, exigência de aprovação e responsabilidade de gestão. Retorna <code class="inline">Resultado</code> para explicar a recusa.</p>
+            <div class="explain"><span>Explique assim</span><p>“Uma Policy toma uma decisão de negócio contextual e informa por que a operação foi aceita ou recusada.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Policy não escolhe o aprovador e não valida apenas formato de campos.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>TarefaObtencaoPolicy.cs</span><span>Application/Policies/Tarefas</span></div>
+            <pre><code><span class="kw">public</span> Resultado <span class="method">AvaliarAssuncao</span>(Tarefa tarefa, <span class="kw">bool</span> possuiGestao)
+{
+    <span class="kw">var</span> acesso = <span class="method">ValidarTarefaDisponivel</span>(tarefa, mensagem);
+    <span class="kw">if</span> (acesso.TeveFalha)
+        <span class="kw">return</span> acesso;
+
+    <span class="kw">return</span> !possuiGestao || tarefa.ExigeAprovacaoParaObter
+        ? Resultado.<span class="method">Falha</span>(TarefaResource.Erro_TarefaExigeSolicitacaoObtencao)
+        : Resultado.<span class="method">Sucesso</span>();
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 04 · Resolver</span>
+            <h3>AprovadorObtencaoTarefaResolver</h3>
+            <p class="question">Pergunta: qual usuário será o aprovador efetivo?</p>
+            <p>Monta candidatos em ordem, ignora códigos vazios e o próprio solicitante, elimina repetições e retorna o primeiro usuário encontrado.</p>
+            <div class="explain"><span>Explique assim</span><p>“Um Resolver recebe várias opções possíveis e devolve uma resposta concreta segundo prioridades e fallbacks conhecidos.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Ele não decide se a solicitação pode ser criada. Essa decisão pertence à Policy e ao caso de uso.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>AprovadorObtencaoTarefaResolver.cs</span><span>Application/Resolvers/Tarefas</span></div>
+            <pre><code><span class="kw">var</span> candidatos = <span class="method">ObterCodigosCandidatos</span>(solicitante, tarefa)
+    .Where(codigo =&gt; !codigo.IsNullOrEmpty())
+    .Distinct();
+
+<span class="kw">foreach</span> (<span class="kw">var</span> codigo <span class="kw">in</span> candidatos)
+{
+    <span class="kw">var</span> aprovador = <span class="kw">await</span> _usuarioRepository
+        .<span class="method">ObterUsuarioPorCodigoAsync</span>(codigo);
+
+    <span class="kw">if</span> (aprovador <span class="kw">is not null</span>)
+        <span class="kw">return</span> aprovador;
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 05 · Specification</span>
+            <h3>ModuloExistenteSpecification</h3>
+            <p class="question">Pergunta: este DTO satisfaz o critério de representar o módulo existente?</p>
+            <p>Recebe um candidato e retorna somente <code class="inline">bool</code>. É adequada para critérios reutilizáveis, combináveis ou aplicáveis como filtro.</p>
+            <div class="explain"><span>Explique assim</span><p>“Uma Specification é uma pergunta de sim ou não feita sobre um candidato.”</p></div>
+            <div class="beware"><span>Evidência atual</span><p>As classes de Specification existem no Tracker, mas a busca atual não encontrou consumidores. Portanto, o padrão está declarado, mas não há fluxo ativo comprovado neste checkout.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>ModuloExistenteSpecification.cs</span><span>Application/Specifications</span></div>
+            <pre><code><span class="kw">public bool</span> <span class="method">IsSatisfiedBy</span>(ModuloDTO dto)
+{
+    <span class="kw">return</span> _moduloExistente <span class="kw">is not null</span>
+        &amp;&amp; _moduloExistente.Codigo == dto.Codigo.ToUpper();
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 06 · Validation</span>
+            <h3>TarefaValidador</h3>
+            <p class="question">Pergunta: os dados enviados possuem formato e coerência suficientes?</p>
+            <p>Valida obrigatoriedade, tamanhos, período e coerência do destino. Pode acumular várias mensagens antes de devolver a resposta.</p>
+            <div class="explain"><span>Explique assim</span><p>“Validation protege a entrada: verifica se os dados chegaram completos e coerentes antes do fluxo continuar.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Ela não deve decidir autorização contextual nem substituir invariantes obrigatórias da entidade.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>TarefaValidador.cs</span><span>Application/Validador</span></div>
+            <pre><code><span class="kw">public</span> IEnumerable&lt;NotificationMessage&gt; <span class="method">Validar</span>(TarefaDTO tarefa)
+{
+    <span class="kw">var</span> notificacoes = <span class="kw">new</span> NotificationBag();
+
+    <span class="method">ValidarDestinoInicial</span>(tarefa, notificacoes);
+    <span class="method">ValidarConteudo</span>(tarefa, notificacoes);
+
+    <span class="kw">return</span> notificacoes.Messages.ToList();
+}</code></pre>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="transformacao">
+      <div class="section-head">
+        <div><span class="section-index">05 · Transformação e criação</span><h2>Mudar forma não é executar o fluxo</h2></div>
+        <p class="section-intro">Mapeadores, factories, extensions e compositores trabalham sobre dados, mas cada um possui um resultado diferente.</p>
+      </div>
+
+      <div class="group">
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 07 · Mapping</span>
+            <h3>TarefaMovimentacaoMapping</h3>
+            <p class="question">Pergunta: como representar uma movimentação no contrato esperado?</p>
+            <p>Transforma entidades em DTOs, DTOs em entidades e monta representações específicas para criação, atualização e obtenção.</p>
+            <div class="explain"><span>Explique assim</span><p>“Mapping traduz dados entre formatos sem decidir se a operação pode acontecer e sem persistir.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Mapeamento não é validação, repositório ou caso de uso.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>TarefaMovimentacaoMapping.cs</span><span>Application/Mapping</span></div>
+            <pre><code><span class="kw">public</span> TarefaMovimentacaoDTO <span class="method">MapearParaCriacao</span>(
+    Tarefa tarefa,
+    Usuario responsavel)
+{
+    <span class="kw">return new</span> TarefaMovimentacaoDTO
+    {
+        Id = tarefa.Id,
+        ResponsavelCodigo = responsavel.Codigo,
+        TipoMovimentacaoTarefa = TipoMovimentacaoTarefa.Criacao
+    };
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 08 · Factory</span>
+            <h3>TokenFactory e CriarPendente</h3>
+            <p class="question">Pergunta: como construir corretamente um novo objeto complexo?</p>
+            <p><code class="inline">TokenFactory</code> monta token, refresh token e DTOs relacionados. No domínio, <code class="inline">SolicitacaoObtencaoTarefa.CriarPendente</code> centraliza o nascimento de uma solicitação pendente.</p>
+            <div class="explain"><span>Explique assim</span><p>“Uma Factory concentra a criação quando montar o objeto corretamente exige regras, dependências ou várias etapas.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Factory cria. Ela não é responsável pelo ciclo completo de uso, persistência e notificação do objeto.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>SolicitacaoObtencaoTarefa.cs</span><span>Domain/Entities</span></div>
+            <pre><code><span class="kw">public static</span> SolicitacaoObtencaoTarefa <span class="method">CriarPendente</span>(
+    Tarefa tarefa,
+    Usuario solicitante,
+    Usuario aprovador)
+{
+    <span class="kw">return new</span> SolicitacaoObtencaoTarefa
+    {
+        TarefaId = tarefa.Id,
+        SolicitanteId = solicitante.Id,
+        AprovadorId = aprovador.Id,
+        Status = StatusSolicitacaoObtencaoTarefa.Pendente
+    };
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 09 · Extension</span>
+            <h3>TarefaVinculoExtensions</h3>
+            <p class="question">Pergunta: qual operação pequena e reutilizável merece uma chamada legível?</p>
+            <p>Centraliza a atualização coerente de navegação, ID e código ao vincular departamento, cargo ou usuário.</p>
+            <div class="explain"><span>Explique assim</span><p>“Uma Extension dá nome a uma operação pequena sobre um tipo existente sem criar herança nem inflar a classe original.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Se a operação consulta banco, coordena etapas ou possui dependências, ela deixou de ser uma extension simples.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>TarefaVinculoExtensions.cs</span><span>Domain/Extensions</span></div>
+            <pre><code><span class="kw">public static void</span> <span class="method">VincularDepartamento</span>(
+    <span class="kw">this</span> Tarefa tarefa,
+    Departamento departamento)
+{
+    tarefa.Departamento = departamento;
+    tarefa.DepartamentoId = departamento.Id;
+    tarefa.DepartamentoCodigo = departamento.Codigo;
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 10 · Compositor</span>
+            <h3>TarefaEmailCompositor</h3>
+            <p class="question">Pergunta: como montar a comunicação final de atribuição?</p>
+            <p>Escolhe resource, template, assunto, modelo e destinatário. O renderer transforma essa composição em <code class="inline">EmailRequest</code>.</p>
+            <div class="explain"><span>Explique assim</span><p>“O Compositor reúne conteúdo e contexto para produzir uma mensagem pronta; outro componente cuida do transporte.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Compor e enviar são responsabilidades separadas. O compositor não deve conhecer SMTP ou Brevo.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>TarefaEmailCompositor.cs</span><span>Application/Email/Compositores</span></div>
+            <pre><code><span class="kw">var</span> template = <span class="kw">new</span> EmailTemplateDefinition(
+    <span class="kw">typeof</span>(TarefaEmailCompositor).Assembly,
+    TemplateResourceName,
+    assunto,
+    TarefaResource.Titulo_EmailTarefaAtribuida);
+
+<span class="kw">return</span> _renderer.<span class="method">Renderizar</span>(
+    template,
+    model,
+    [usuario.Email]);</code></pre>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="fronteiras">
+      <div class="section-head">
+        <div><span class="section-index">06 · Fronteiras</span><h2>Dados, configuração e grupos de dependências</h2></div>
+        <p class="section-intro">Esses componentes ligam o fluxo a recursos externos ou organizam acesso a colaboradores, sem assumir a regra completa do produto.</p>
+      </div>
+
+      <div class="group">
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 11 · Repository</span>
+            <h3>ITarefaRepository / TarefaRepository</h3>
+            <p class="question">Pergunta: como consultar e persistir tarefas?</p>
+            <p>O contrato fica no domínio e a implementação com EF Core fica na Infrastructure. O repositório conhece consultas, carregamentos e persistência, mas não decide sozinho o caso de uso.</p>
+            <div class="explain"><span>Explique assim</span><p>“Repository é a fronteira de persistência: oferece operações no vocabulário do domínio e esconde o mecanismo de banco.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Uma consulta pode proteger concorrência e consistência técnica, mas a política contextual continua fora do repositório.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>TarefaRepository.cs</span><span>Infrastructure/Repositories</span></div>
+            <pre><code><span class="kw">public async</span> Task&lt;Tarefa&gt; <span class="method">ObterTarefaPorId</span>(<span class="kw">int</span> id)
+{
+    <span class="kw">return await</span> _context.Tarefas
+        .Include(tarefa =&gt; tarefa.EstadoDaTarefa)
+        .Include(tarefa =&gt; tarefa.Usuario)
+        .Include(tarefa =&gt; tarefa.Departamento)
+        .Include(tarefa =&gt; tarefa.Cargo)
+        .FirstOrDefaultAsync(tarefa =&gt; tarefa.Id == id);
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 12 · Provider</span>
+            <h3>ResponsavelNotificacaoEstoqueProvider</h3>
+            <p class="question">Pergunta: qual valor configurado deve ser disponibilizado ao consumidor?</p>
+            <p>Recebe o código configurado pela composição do módulo e o entrega ao serviço de notificação do Stock. Não escolhe entre vários responsáveis.</p>
+            <div class="explain"><span>Explique assim</span><p>“Provider fornece um valor ou recurso vindo de configuração ou integração; ele não aplica uma prioridade de negócio entre candidatos.”</p></div>
+            <div class="beware"><span>Não confunda</span><p>Se no futuro houver várias fontes ordenadas de responsável, a seleção poderá justificar um Resolver próprio.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>ResponsavelNotificacaoEstoqueProvider.cs</span><span>Application/Providers/Notificacoes</span></div>
+            <pre><code><span class="kw">public sealed class</span> <span class="type">ResponsavelNotificacaoEstoqueProvider</span>(
+    <span class="kw">string</span> codigoResponsavel)
+{
+    <span class="kw">public string</span> <span class="method">ObterCodigoResponsavel</span>()
+        =&gt; codigoResponsavel ?? <span class="literal">string.Empty</span>;
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="pattern-card">
+          <div class="pattern-info">
+            <span class="pattern-number">Padrão 13 · Context</span>
+            <h3>UsuarioContext</h3>
+            <p class="question">Pergunta: quais colaboradores formam o contexto compartilhado de usuário?</p>
+            <p>Agrupa serviço, repositório, cache e dados complementares usados por fluxos de autenticação. É uma solução localizada, não a forma padrão de injetar qualquer dependência.</p>
+            <div class="explain"><span>Explique assim</span><p>“Context reúne dependências que pertencem a um mesmo recorte operacional para transportá-las juntas.”</p></div>
+            <div class="beware"><span>Cuidado</span><p>Se começar a expor serviços sem coesão ou esconder dependências reais, transforma-se em service locator e dificulta entender o fluxo.</p></div>
+          </div>
+          <div class="code-side">
+            <div class="code-head"><span>UsuarioContext.cs</span><span>Application/Services/Contexts</span></div>
+            <pre><code><span class="kw">public class</span> <span class="type">UsuarioContext</span> : IUsuarioContext
+{
+    <span class="kw">public</span> IUsuarioService UsuarioService { <span class="kw">get</span>; }
+    <span class="kw">public</span> IUsuarioRepository UsuarioRepository { <span class="kw">get</span>; }
+    <span class="kw">public</span> ICacheUsuarioService CacheUsuarioService { <span class="kw">get</span>; }
+    <span class="kw">public</span> IDadosComplementaresDoUsuarioService DadosComplementaresDoUsuarioService { <span class="kw">get</span>; }
+}</code></pre>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="resultado">
+      <div class="section-head">
+        <div><span class="section-index">07 · Contrato transversal</span><h2>Resultado&lt;T&gt; faz o fluxo falar a mesma língua</h2></div>
+        <p class="section-intro">O contrato reúne payload, sucesso, falha e mensagens. Casos de uso e serviços conseguem propagar uma falha sem criar um novo canal de erro em cada camada.</p>
+      </div>
+
+      <article class="pattern-card">
+        <div class="pattern-info">
+          <span class="pattern-number">Padrão 14 · Result</span>
+          <h3>Resultado&lt;T&gt;</h3>
+          <p class="question">Pergunta: como devolver dados e mensagens de uma operação de forma uniforme?</p>
+          <p>Herda de <code class="inline">NotificationBag</code>, carrega o payload em <code class="inline">Dados</code> e deriva sucesso ou falha das mensagens de erro.</p>
+          <div class="explain"><span>Explique assim</span><p>“Resultado é o envelope da operação: leva os dados quando dá certo e explica o problema quando dá errado.”</p></div>
+          <div class="beware"><span>Não confunda</span><p>Ele transporta o resultado. Não deve virar o lugar onde as regras do caso de uso são executadas.</p></div>
+        </div>
+        <div class="code-side">
+          <div class="code-head"><span>Resultado.cs</span><span>Framework/Shared/Domain/ValueObjects</span></div>
+          <pre><code><span class="kw">public class</span> <span class="type">Resultado&lt;T&gt;</span> : Resultado
+{
+    <span class="kw">public new</span> T? Dados { <span class="kw">get</span>; <span class="kw">private set</span>; }
+
+    <span class="kw">public static</span> Resultado&lt;T&gt; <span class="method">Sucesso</span>(T data)
+        =&gt; <span class="kw">new</span>(<span class="literal">true</span>, data);
+
+    <span class="kw">public static</span> Resultado&lt;T&gt; <span class="method">Falha</span>(<span class="kw">string</span> mensagem)
+    {
+        <span class="kw">var</span> resultado = <span class="kw">new</span> Resultado&lt;T&gt;(<span class="literal">false</span>);
+        resultado.<span class="method">AdicionarErro</span>(mensagem);
+        <span class="kw">return</span> resultado;
+    }
+}</code></pre>
+        </div>
+      </article>
+    </section>
+
+    <section id="escolher">
+      <div class="section-head">
+        <div><span class="section-index">08 · Decisão prática</span><h2>Como escolher sem decorar nomes</h2></div>
+        <p class="section-intro">Comece pela pergunta e pelo tipo de resposta esperado. O sufixo vem depois da responsabilidade.</p>
+      </div>
+
+      <div class="decision-grid">
+        <article class="decision-card"><span class="ask">“Pode executar?”</span><h3>Policy</h3><p>Use quando a resposta depende de ator, operação, estado ou consultas e precisa explicar a recusa.</p></article>
+        <article class="decision-card"><span class="ask">“Qual deles?”</span><h3>Resolver</h3><p>Use quando há candidatos ou fontes ordenadas e apenas um resultado deve prevalecer.</p></article>
+        <article class="decision-card"><span class="ask">“Satisfaz?”</span><h3>Specification</h3><p>Use para um predicado reutilizável sobre um candidato, normalmente retornando <code class="inline">bool</code>.</p></article>
+        <article class="decision-card"><span class="ask">“Está coerente?”</span><h3>Validation</h3><p>Use para campos, formatos, limites e coerência da entrada, com possibilidade de acumular mensagens.</p></article>
+        <article class="decision-card"><span class="ask">“Como representar?”</span><h3>Mapping</h3><p>Use para converter entidade, DTO, request, response ou outra forma de transporte.</p></article>
+        <article class="decision-card"><span class="ask">“Como criar?”</span><h3>Factory</h3><p>Use quando a construção correta do objeto concentra regras ou etapas relevantes.</p></article>
+        <article class="decision-card"><span class="ask">“Como fornecer?”</span><h3>Provider</h3><p>Use para disponibilizar configuração ou recurso externo sem prioridade contextual de negócio.</p></article>
+        <article class="decision-card"><span class="ask">“Como persistir?”</span><h3>Repository</h3><p>Use como fronteira para consultas e gravações no vocabulário do domínio.</p></article>
+        <article class="decision-card"><span class="ask">“Qual fluxo?”</span><h3>Use Case</h3><p>Use para coordenar a intenção completa, reagindo aos resultados dos demais colaboradores.</p></article>
+      </div>
+    </section>
+
+    <section id="explicar">
+      <div class="section-head">
+        <div><span class="section-index">09 · Comunicação</span><h2>Um roteiro para explicar qualquer padrão</h2></div>
+        <p class="section-intro">A explicação fica mais clara quando parte do problema de produto, passa pelo contrato e termina no limite da responsabilidade.</p>
+      </div>
+
+      <div class="talk-track">
+        <article class="talk-step"><b>01</b><div><h3>Comece pelo problema</h3><p>“Quando alguém tenta assumir uma tarefa, o sistema precisa verificar se ela está disponível e se o usuário pode agir diretamente.”</p></div></article>
+        <article class="talk-step"><b>02</b><div><h3>Formule a pergunta</h3><p>“Quem responde se a operação pode acontecer?” A resposta aponta para a Policy.</p></div></article>
+        <article class="talk-step"><b>03</b><div><h3>Mostre a entrada e a saída</h3><p>A Policy recebe tarefa e contexto de gestão; devolve sucesso ou uma mensagem de recusa.</p></div></article>
+        <article class="talk-step"><b>04</b><div><h3>Mostre o consumidor</h3><p>O Use Case chama a Policy e encerra o fluxo quando recebe uma falha.</p></div></article>
+        <article class="talk-step"><b>05</b><div><h3>Defina o limite</h3><p>A Policy não persiste, não envia notificação e não escolhe aprovador.</p></div></article>
+        <article class="talk-step"><b>06</b><div><h3>Compare com o vizinho</h3><p>Policy decide “pode?”. Resolver responde “qual?”. Validation pergunta “os dados estão coerentes?”.</p></div></article>
+      </div>
+    </section>
+
+    <section class="summary">
+      <span class="section-index" style="color:#b8d5c5">Resumo de bolso</span>
+      <h2>Responsabilidade primeiro, sufixo depois.</h2>
+      <p>
+        No AtronRC, o <strong>Use Case coordena</strong>, a <strong>Policy decide</strong>, o
+        <strong>Resolver escolhe</strong>, a <strong>Specification testa</strong>, a
+        <strong>Validation confere</strong>, o <strong>Mapping traduz</strong>, a
+        <strong>Factory cria</strong>, a <strong>Extension nomeia uma operação pequena</strong>,
+        o <strong>Repository persiste</strong>, o <strong>Provider fornece</strong>, o
+        <strong>Compositor monta</strong> e o <strong>Resultado transporta</strong> a resposta.
+      </p>
+    </section>
+  </main>
+
+  <footer class="shell">
+    Documento técnico didático · AtronRC · Tracker, Stock e Shared · 17/08/2026
+  </footer>
+</body>
+</html>

@@ -8,7 +8,7 @@ namespace AtronStock.Application.Validacoes
 {
     public class CategoriaValidador : IValidador<CategoriaRequest>
     {
-        public IList<NotificationMessage> Validar(CategoriaRequest entity)
+        public IEnumerable<NotificationMessage> Validar(CategoriaRequest entity)
         {
             var context = new NotificationBag();
 

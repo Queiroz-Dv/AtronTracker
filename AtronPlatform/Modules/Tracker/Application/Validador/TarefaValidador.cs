@@ -12,7 +12,7 @@ namespace Application.Validador
 {
     public class TarefaValidador : IValidador<TarefaDTO>
     {
-        public IList<NotificationMessage> Validar(TarefaDTO tarefa)
+        public IEnumerable<NotificationMessage> Validar(TarefaDTO tarefa)
         {
             var notificacoes = new NotificationBag();
 

@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Application.Interfaces.Services;
+using Application.Mapping;
 using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
@@ -17,7 +18,7 @@ namespace Application.UseCases.UsuarioCases
 {
     public class AtualizarUsuario(
         IValidador<UsuarioRequest> validador,
-        IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> mapService,
+        UsuarioRequestMapping mapService,
         IUsuarioRepository usuarioRepository,
         IUsuarioIdentityRepository usuarioIdentityRepository,
         IDepartamentoRepository departamentoRepository,
@@ -27,7 +28,7 @@ namespace Application.UseCases.UsuarioCases
         ICacheUsuarioService cacheUsuarioService)
     {
         private readonly IValidador<UsuarioRequest> _validador = validador;
-        private readonly IAsyncMap<UsuarioRequest, Domain.Entities.Usuario> _mapService = mapService;
+        private readonly UsuarioRequestMapping _mapService = mapService;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
         private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
@@ -48,7 +49,7 @@ namespace Application.UseCases.UsuarioCases
             if (usuario is null)
                 return Resultado<UsuarioRequest>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            await _mapService.MapToEntityAsync(request, usuario);
+            _mapService.MapToEntity(request, usuario);
 
             var resultadoGestor = await VincularGestorImediatoAsync(usuario, request.GestorImediatoCodigo);
             if (resultadoGestor.TeveFalha)
@@ -68,7 +69,7 @@ namespace Application.UseCases.UsuarioCases
 
             if (!request.DepartamentoCodigo.IsNullOrEmpty() && !request.CargoCodigo.IsNullOrEmpty())
             {
-                var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(request.DepartamentoCodigo);
+                var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepository(request.DepartamentoCodigo);
                 var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(request.CargoCodigo);
 
                 if (departamento != null && cargo != null)

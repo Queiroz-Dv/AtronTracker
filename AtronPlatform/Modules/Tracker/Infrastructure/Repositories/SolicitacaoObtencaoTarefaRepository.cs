@@ -101,5 +101,24 @@ namespace Infrastructure.Repositories
                     .ThenInclude(crg => crg.Departamento)
                 .Include(sol => sol.Aprovador);
         }
+
+        public async Task<IEnumerable<SolicitacaoObtencaoTarefa>> ObterPendentesPorAprovadorOuDepartamentosAsync(
+            int aprovadorId,
+            string aprovadorCodigo,
+            IEnumerable<string> departamentoCodigos)
+        {
+            var codigos = departamentoCodigos
+                .Where(codigo => !string.IsNullOrWhiteSpace(codigo))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            return await QueryComRelacionamentos()
+                .Where(sol =>
+                    sol.Status == (int)StatusSolicitacaoObtencaoTarefa.Pendente &&
+                    ((sol.AprovadorId == aprovadorId && sol.AprovadorCodigo == aprovadorCodigo) ||
+                     (sol.Tarefa.DepartamentoCodigo != null && codigos.Contains(sol.Tarefa.DepartamentoCodigo))))
+                .OrderByDescending(sol => sol.DataSolicitacao)
+                .ToListAsync();
+        }
     }
 }

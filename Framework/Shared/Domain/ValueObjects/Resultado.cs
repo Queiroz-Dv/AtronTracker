@@ -111,7 +111,7 @@ namespace Shared.Domain.ValueObjects
             resultado.Adicionar(message);
             return resultado;
         }
-
+        
         public static Resultado Falha(IEnumerable<NotificationMessage> messages)
         {
             var resultado = new Resultado(false);

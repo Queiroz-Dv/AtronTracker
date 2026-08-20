@@ -12,7 +12,7 @@ namespace Application.Validador
     /// </summary>
     public class CargoValidador : IValidador<CargoDTO>
     {
-        public IList<NotificationMessage> Validar(CargoDTO entity)
+        public IEnumerable<NotificationMessage> Validar(CargoDTO entity)
         {
             var notificacoes = new NotificationBag();
 

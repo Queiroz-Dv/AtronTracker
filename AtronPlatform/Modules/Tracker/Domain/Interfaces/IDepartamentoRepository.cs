@@ -29,7 +29,7 @@ namespace Domain.Interfaces
         /// <returns>Um departamento</returns>
         Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo);
 
-        Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo);
+        Task<Departamento> ObterDepartamentoPorCodigoRepository(string codigo);
 
         /// <summary>
         /// Cria um departamento
@@ -49,5 +49,7 @@ namespace Domain.Interfaces
         /// </summary>
         /// <param name="departamento">Entidade que será removida</param>
         Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento);
+
+        Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo);
     }
 }

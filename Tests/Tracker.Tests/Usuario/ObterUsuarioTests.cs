@@ -1,7 +1,9 @@
 using Application.DTO;
 using Application.UseCases.UsuarioCases;
+using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
+using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Xunit;
@@ -14,8 +16,11 @@ public class ObterUsuarioTests
     public async Task ExecutarAsync_DeveFalharQuandoCodigoForVazio()
     {
         var repositorio = new Mock<IUsuarioRepository>();
-        var mapa = new Mock<IAsyncMap<UsuarioDTO, Domain.Entities.Usuario>>();
-        var casoDeUso = new ObterUsuario(mapa.Object, repositorio.Object);
+        var mapa = new Mock<IToDtoMapper<Usuario, UsuarioDTO>>();
+        var casoDeUso = new ObterUsuario(
+            mapa.Object,
+            repositorio.Object,
+            Mock.Of<IUserAccessor>());
 
         var resultado = await casoDeUso.ExecutarAsync(string.Empty);
 
@@ -26,7 +31,7 @@ public class ObterUsuarioTests
             item => item.ObterUsuarioPorCodigoAsync(It.IsAny<string>()),
             Times.Never);
         mapa.Verify(
-            item => item.MapToDTOAsync(It.IsAny<Domain.Entities.Usuario>()),
+            item => item.MapToDto(It.IsAny<Usuario>()),
             Times.Never);
     }
 
@@ -37,8 +42,11 @@ public class ObterUsuarioTests
         repositorio
             .Setup(item => item.ObterUsuarioPorCodigoAsync("USR"))
             .ReturnsAsync((Domain.Entities.Usuario)null!);
-        var mapa = new Mock<IAsyncMap<UsuarioDTO, Domain.Entities.Usuario>>();
-        var casoDeUso = new ObterUsuario(mapa.Object, repositorio.Object);
+        var mapa = new Mock<IToDtoMapper<Usuario, UsuarioDTO>>();
+        var casoDeUso = new ObterUsuario(
+            mapa.Object,
+            repositorio.Object,
+            Mock.Of<IUserAccessor>());
 
         var resultado = await casoDeUso.ExecutarAsync("USR");
 
@@ -46,7 +54,7 @@ public class ObterUsuarioTests
         Assert.Contains(resultado.Messages,
             mensagem => mensagem.Descricao == NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
         mapa.Verify(
-            item => item.MapToDTOAsync(It.IsAny<Domain.Entities.Usuario>()),
+            item => item.MapToDto(It.IsAny<Usuario>()),
             Times.Never);
     }
 
@@ -59,11 +67,14 @@ public class ObterUsuarioTests
         repositorio
             .Setup(item => item.ObterUsuarioPorCodigoAsync("USR"))
             .ReturnsAsync(usuario);
-        var mapa = new Mock<IAsyncMap<UsuarioDTO, Domain.Entities.Usuario>>();
+        var mapa = new Mock<IToDtoMapper<Usuario, UsuarioDTO>>();
         mapa
-            .Setup(item => item.MapToDTOAsync(usuario))
-            .ReturnsAsync(usuarioDto);
-        var casoDeUso = new ObterUsuario(mapa.Object, repositorio.Object);
+            .Setup(item => item.MapToDto(usuario))
+            .Returns(usuarioDto);
+        var casoDeUso = new ObterUsuario(
+            mapa.Object,
+            repositorio.Object,
+            Mock.Of<IUserAccessor>());
 
         var resultado = await casoDeUso.ExecutarAsync("USR");
 

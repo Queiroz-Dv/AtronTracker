@@ -5,12 +5,12 @@ namespace Shared.Extensions
 {
     public static class MessageExtensions
     {
-        public static bool HasErrors(this IList<NotificationMessage> messages)
+        public static bool HasErrors(this IEnumerable<NotificationMessage> messages)
         {
             return messages.Any(m => m.Nivel == ENotificationType.Error);
         }
 
-        public static bool TemErros(this IList<NotificationMessage> messages)
+        public static bool TemErros(this IEnumerable<NotificationMessage> messages)
         {
             return messages.Any(m => m.Nivel == ENotificationType.Error);
         }

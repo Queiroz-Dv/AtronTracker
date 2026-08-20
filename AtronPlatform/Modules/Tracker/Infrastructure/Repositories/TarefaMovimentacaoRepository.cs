@@ -1,7 +1,6 @@
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
-using Domain.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -16,21 +15,18 @@ namespace Infrastructure.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<TarefaMovimentacaoPagina> ObterPaginaAsync(TarefaMovimentacaoConsulta consulta)
+        public async Task<List<TarefaMovimentacao>> ObterMovimentacoesPorIdAsync(int tarefaId)
         {
             var query = _context.TarefaMovimentacoes
                 .AsNoTracking()
-                .Where(movimentacao => movimentacao.TarefaId == consulta.TarefaId);
+                .Where(movimentacao => movimentacao.TarefaId == tarefaId);
 
-            var totalItens = await query.CountAsync();
             var itens = await query
                 .OrderByDescending(movimentacao => movimentacao.DataOcorrencia)
                 .ThenByDescending(movimentacao => movimentacao.Id)
-                .Skip((consulta.Pagina - 1) * consulta.TamanhoPagina)
-                .Take(consulta.TamanhoPagina)
                 .ToListAsync();
 
-            return new TarefaMovimentacaoPagina(itens, totalItens);
+            return itens;
         }
     }
 }

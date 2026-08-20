@@ -9,7 +9,7 @@ namespace Application.Validador
 {
     public class DepartamentoValidador : IValidador<DepartamentoDTO>
     {
-        public IList<NotificationMessage> Validar(DepartamentoDTO entity)
+        public IEnumerable<NotificationMessage> Validar(DepartamentoDTO entity)
         {
             var notificacoes = new NotificationBag();
 

@@ -1,42 +1,38 @@
 ﻿using AtronStock.Application.DTO.Request;
 using AtronStock.Domain.Entities;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Mapper;
+using Shared.Application.Interfaces.Mapping;
 
 namespace AtronStock.Application.Mapping
 {
-    public class CategoriaMapping : AsyncApplicationMapService<CategoriaRequest, Categoria>, IAsyncMap<CategoriaRequest, Categoria>
+    public class CategoriaMapping : Mapper<Categoria, CategoriaRequest>
     {
-        public override Task<CategoriaRequest> MapToDTOAsync(Categoria entity)
+        public override CategoriaRequest MapToDto(Categoria entity)
         {
-            var dto = new CategoriaRequest
+            return new CategoriaRequest
             {
                 Codigo = entity.Codigo,
                 Descricao = entity.Descricao,
                 Status = entity.Status
             };
 
-            return Task.FromResult(dto);
         }
 
-        public override Task<Categoria> MapToEntityAsync(CategoriaRequest dto)
+        public override Categoria MapToEntity(CategoriaRequest dto)
         {
-            var entity = new Categoria
+            return new Categoria
             {
                 Codigo = dto.Codigo,
                 Descricao = dto.Descricao,
                 Status = dto.Status
             };
 
-            return Task.FromResult(entity);
         }
 
-        public Task MapToEntityAsync(CategoriaRequest dto, Categoria entityToUpdate)
+        public void MapToEntity(CategoriaRequest dto, Categoria entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao;
             entityToUpdate.Status = dto.Status;
 
-            return Task.CompletedTask;
         }
     }
 }

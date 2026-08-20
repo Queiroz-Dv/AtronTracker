@@ -10,6 +10,30 @@ validados e terminar antes de iniciar o próximo conceito.
 O padrão de decisão está em
 [Padrão de responsabilidades dos serviços de aplicação](./padrao-responsabilidades-servicos.md).
 
+## Consolidação de tarefas e mapeamentos em 19/08/2026
+
+**Status:** concluída estruturalmente e validada pela rodada faseada de testes.
+
+- `TarefaService` mantém somente criar, atualizar, excluir, obter por ID e
+  obter todos, delegando as operações aos casos correspondentes.
+- Obtenção, solicitação, decisão, visões contextuais e movimentações são
+  coordenadas por casos de uso registrados explicitamente na DI do Tracker.
+- `ITarefaMovimentacaoService` e `TarefaMovimentacaoService` foram removidos;
+  cada evento de escrita possui um único caso de movimentação.
+- O histórico é autorizado por `ObterHistoricoTarefaCase`, retorna a coleção
+  completa ordenada e não possui contrato de paginação no backend.
+- O grid Angular carrega o histórico uma vez e pagina localmente com
+  `MatTableDataSource` e `MatPaginator`.
+- Tracker e Stock não possuem consumidores de produção da família antiga de
+  mapeadores. Os contratos legados permanecem apenas como ponte obsoleta de
+  compatibilidade.
+- A rodada faseada aprovou 76 testes focados de tarefas e a suíte completa do
+  `Tracker.Tests`, com 160 testes. O host real também resolveu os 19 casos de
+  tarefa registrados em DI.
+- Os dois testes Angular do histórico foram aprovados no Chrome Headless,
+  incluindo requisição única e paginação local. Os builds finais do `WebApi` e
+  do Angular também foram concluídos sem erros.
+
 ## Regras de execução
 
 - Executar somente a fase autorizada.
@@ -43,12 +67,13 @@ revisões futuras.
 - Tirar de `TarefaService` a elegibilidade para obter tarefa, a resolução de
   aprovador, a criação de solicitação, o mapeamento de solicitação e as
   notificações internas.
-- Manter `TarefaService` como entrada dos contratos públicos do módulo.
+- Manter `TarefaObtencaoService` como fachada fina do ciclo de obtenção e
+  `TarefaService` como fachada CRUD.
 - Criar a solicitação pendente na entidade `SolicitacaoObtencaoTarefa`.
 
-**Pontos de encaixe criados:** `ITarefaObtencaoService`,
-`ITarefaObtencaoValidador`, `IAprovadorObtencaoTarefaResolver`,
-`ISolicitacaoObtencaoTarefaMapeador` e `ITarefaNotificacaoInternaService`.
+**Pontos de encaixe atuais:** `ITarefaObtencaoService`,
+`ITarefaObtencaoPolicy`, `AprovadorObtencaoTarefaResolver`, casos principais
+de obtenção e casos específicos de movimentação.
 
 **Critério de conclusão:** build do `WebApi` e testes de tarefa aprovados sem
 mudança de comportamento observável.
@@ -59,8 +84,8 @@ mudança de comportamento observável.
 
 - Revisar se consulta de visões (`Meu quadro`, `Equipe` e disponíveis) e
   configurações de notificação continuam crescendo no mesmo serviço.
-- Extrair o contexto do usuário logado para `ITarefaUsuarioAtualService`,
-  reutilizado pelos fluxos de consulta e obtenção.
+- Obter o usuário logado dentro dos casos que realmente dependem desse
+  contexto, por meio de `IUsuarioService`.
 - Extrair as preferências de notificação para
   `ITarefaConfiguracoesService`, mantendo a atualização e o contrato de saída
   em um único caso de uso.
@@ -70,9 +95,10 @@ mudança de comportamento observável.
 **Não inclui:** alterar regras de obtenção, permissões, textos ou fluxos do
 front-end.
 
-**Critério de conclusão:** atingido. `TarefaService` não resolve mais usuário
-logado nem atualiza configurações diretamente; cada regra extraída possui dono
-explícito e testes focados.
+**Critério de conclusão:** atingido. `TarefaService` não resolve usuário
+logado nem atualiza configurações. `Meu quadro`, `Equipe`, `Disponíveis` e
+`Acesso` possuem casos explícitos, e configurações são atendidas por
+`ITarefaConfiguracoesService`.
 
 ## Fase 3 - Diagnóstico protegido de perfis de acesso
 

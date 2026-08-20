@@ -1,22 +1,20 @@
 using Application.DTO.Request;
 using Domain.Entities;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Mapper;
-using System.Threading.Tasks;
+using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Mapping
 {
     /// <summary>
     /// Mapeamento para UsuarioRequest ↔ Usuario.    
     /// </summary>
-    public class UsuarioRequestMapping : AsyncApplicationMapService<UsuarioRequest, Usuario>, IAsyncMap<UsuarioRequest, Usuario>
+    public class UsuarioRequestMapping : Mapper<Usuario, UsuarioRequest>
     {
         /// <summary>
         /// Mapeia uma entidade Usuario para um UsuarioRequest (DTO).
         /// </summary>
-        public override Task<UsuarioRequest> MapToDTOAsync(Usuario entity)
+        public override UsuarioRequest MapToDto(Usuario entity)
         {
-            var dto = new UsuarioRequest
+            return new UsuarioRequest
             {
                 Codigo = entity.Codigo,
                 Nome = entity.Nome,
@@ -26,15 +24,14 @@ namespace Application.Mapping
                 GestorImediatoCodigo = entity.GestorImediatoCodigo
             };
 
-            return Task.FromResult(dto);
         }
 
         /// <summary>
         /// Mapeia um UsuarioRequest (DTO) para uma nova entidade Usuario.
         /// </summary>
-        public override Task<Usuario> MapToEntityAsync(UsuarioRequest dto)
+        public override Usuario MapToEntity(UsuarioRequest dto)
         {
-            var entity = new Usuario
+            return new Usuario
             {
                 Codigo = dto.Codigo?.ToUpper(),
                 Nome = dto.Nome,
@@ -46,14 +43,13 @@ namespace Application.Mapping
                 ReceberNotificacaoTarefaPorEmail = false
             };
 
-            return Task.FromResult(entity);
         }
 
         /// <summary>
         /// Mapeia um UsuarioRequest (DTO) para uma entidade Usuario existente (atualização in-place).
         /// O código não é atualizado pois é a chave de identificação.
         /// </summary>
-        public Task MapToEntityAsync(UsuarioRequest dto, Usuario entityToUpdate)
+        public void MapToEntity(UsuarioRequest dto, Usuario entityToUpdate)
         {
             entityToUpdate.Nome = dto.Nome;
             entityToUpdate.Sobrenome = dto.Sobrenome;
@@ -61,7 +57,6 @@ namespace Application.Mapping
             entityToUpdate.Email = dto.Email;
             entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper();
 
-            return Task.CompletedTask;
         }
     }
 }

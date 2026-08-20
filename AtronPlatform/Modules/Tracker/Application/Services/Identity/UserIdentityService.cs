@@ -1,6 +1,6 @@
 using Application.DTO.ApiDTO;
-using Application.DTO.Request;
 using Application.Interfaces.Services.Identity;
+using Application.Records.Autenticacao;
 using Domain.Entities;
 using Domain.Interfaces.Identity;
 using Shared.Application.Security;
@@ -39,7 +39,7 @@ public class UserIdentityService(IUsuarioIdentityRepository repository) : IUserI
             RefreshTokenHash.Obter(refreshToken));
     }
 
-    public Task<bool> RotacionarRefreshTokenAsync(RotacaoRefreshToken rotacao)
+    public Task<bool> RotacionarRefreshTokenAsync(RotacaoRefreshTokenRecord rotacao)
     {
         if (rotacao is null ||
             rotacao.UsuarioCodigo.IsNullOrEmpty() ||

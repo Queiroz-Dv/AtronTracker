@@ -1,4 +1,4 @@
-namespace AtronNotificacoes;
+namespace AtronNotificacoes.Security;
 
 public static class SegurancaNotificacoes
 {

@@ -1,5 +1,5 @@
 using Application.DTO.ApiDTO;
-using Application.DTO.Request;
+using Application.Records.Autenticacao;
 using Domain.Entities;
 using System;
 using System.Threading.Tasks;
@@ -15,7 +15,7 @@ public interface IUserIdentityService
 
     Task<SessaoRefreshToken> ObterSessaoRefreshTokenAsync(string refreshToken);
 
-    Task<bool> RotacionarRefreshTokenAsync(RotacaoRefreshToken rotacao);
+    Task<bool> RotacionarRefreshTokenAsync(RotacaoRefreshTokenRecord rotacao);
 
     Task<bool> RevogarRefreshTokenAsync(string codigoUsuario);
 

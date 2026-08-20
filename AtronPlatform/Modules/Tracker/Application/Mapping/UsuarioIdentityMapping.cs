@@ -1,27 +1,26 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Domain.Entities;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Services.Mapper;
-using System.Threading.Tasks;
+using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Mapping
 {
-    public class UsuarioIdentityMapping : AsyncApplicationMapService<UsuarioDTO, UsuarioIdentity>
+    public class UsuarioIdentityMapping : Mapper<UsuarioIdentity, UsuarioDTO>
     {
-        private readonly IAsyncApplicationMapService<CargoDTO, Cargo> _cargoMap;
-        private readonly IAsyncApplicationMapService<DepartamentoDTO, Departamento> _departamentoMap;
-        private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _perfilDeAcessoMap;
+        private readonly IToDtoMapper<Cargo, CargoDTO> _cargoMap;
+        private readonly IToDtoMapper<Departamento, DepartamentoDTO> _departamentoMap;
+        private readonly IToDtoMapper<PerfilDeAcesso, PerfilDeAcessoDTO> _perfilDeAcessoMap;
 
-        public UsuarioIdentityMapping(IAsyncApplicationMapService<CargoDTO, Cargo> cargoMap,
-                              IAsyncApplicationMapService<DepartamentoDTO, Departamento> departamentoMap,
-                              IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> perfilDeAcessoMap) : base()
+        public UsuarioIdentityMapping(
+            IToDtoMapper<Cargo, CargoDTO> cargoMap,
+            IToDtoMapper<Departamento, DepartamentoDTO> departamentoMap,
+            IToDtoMapper<PerfilDeAcesso, PerfilDeAcessoDTO> perfilDeAcessoMap)
         {
             _cargoMap = cargoMap;
             _departamentoMap = departamentoMap;
             _perfilDeAcessoMap = perfilDeAcessoMap;
         }
 
-        public override async Task<UsuarioDTO> MapToDTOAsync(UsuarioIdentity entity)
+        public override UsuarioDTO MapToDto(UsuarioIdentity entity)
         {
             var usuario = new UsuarioDTO
             {
@@ -39,10 +38,10 @@ namespace Application.Mapping
                 foreach (var item in entity.UsuarioCargoDepartamentos)
                 {
                     usuario.CargoCodigo = item.CargoCodigo;
-                    usuario.Cargo = await MapChildAsync(item.Cargo, _cargoMap);
+                    usuario.Cargo = item.Cargo.MapToDto(_cargoMap);
 
                     usuario.DepartamentoCodigo = item.DepartamentoCodigo;
-                    usuario.Departamento = await MapChildAsync(item.Departamento, _departamentoMap);
+                    usuario.Departamento = item.Departamento.MapToDto(_departamentoMap);
                 }
             }
 
@@ -50,8 +49,7 @@ namespace Application.Mapping
             {
                 foreach (var item in entity.PerfisDeAcessoUsuario)
                 {
-                    var perfilDeAcesso = await MapChildAsync(item.PerfilDeAcesso, _perfilDeAcessoMap);
-
+                    var perfilDeAcesso = item.PerfilDeAcesso.MapToDto(_perfilDeAcessoMap);
                     usuario.PerfisDeAcesso.Add(perfilDeAcesso);
                 }
             }
@@ -59,16 +57,16 @@ namespace Application.Mapping
             return usuario;
         }
 
-        public override Task<UsuarioIdentity> MapToEntityAsync(UsuarioDTO dto)
+        public override UsuarioIdentity MapToEntity(UsuarioDTO dto)
         {
-            return Task.FromResult(new UsuarioIdentity()
+            return new UsuarioIdentity
             {
                 Codigo = dto.Codigo.ToUpper(),
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,
                 Email = dto.Email,
                 DataNascimento = dto.DataNascimento
-            });
+            };
         }
-    }   
+    }
 }

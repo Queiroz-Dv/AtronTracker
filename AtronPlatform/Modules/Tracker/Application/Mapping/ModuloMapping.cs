@@ -1,27 +1,24 @@
 ﻿using Domain.Entities;
 using Application.DTO;
-using System.Threading.Tasks;
-using Shared.Application.Services.Mapper;
+using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Mapping
 {
-    public class ModuloMapping : AsyncApplicationMapService<ModuloDTO, Modulo>
+    public sealed class ModuloMapping : Mapper<Modulo, ModuloDTO>
     {
         //TODO: Ainda será necessário verificar se as propriedades devem seguir junto com os módulos
-        public override Task<ModuloDTO> MapToDTOAsync(Modulo entity)
+        public override ModuloDTO MapToDto(Modulo entity)
         {
-            var moduloDTO = new ModuloDTO { Codigo = entity.Codigo, Descricao = entity.Descricao };            
-
-            return Task.FromResult(moduloDTO);
+            return new ModuloDTO { Codigo = entity.Codigo, Descricao = entity.Descricao };
         }
 
-        public override Task<Modulo> MapToEntityAsync(ModuloDTO dto)
+        public override Modulo MapToEntity(ModuloDTO dto)
         {
-            return Task.FromResult(new Modulo
+            return new Modulo
             {
                 Codigo = dto.Codigo.ToUpper(),
                 Descricao = dto.Descricao.ToUpper()
-            });
+            };
         }
     }
 }

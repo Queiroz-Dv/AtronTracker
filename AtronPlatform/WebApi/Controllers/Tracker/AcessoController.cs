@@ -8,9 +8,6 @@ using Microsoft.AspNetCore.RateLimiting;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
-using Shared.Domain.Enums;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -21,30 +18,20 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class AcessoController : ControllerBase
+    public class AcessoController(
+        ILoginService loginUserService,
+        IRegistroUsuarioService registroUsuarioService,
+        ICookieService cookieService,
+        SolicitarReativacao solicitarReativacao,
+        ReativarUsuario reativarUsuario,
+        ReenviarConfirmacaoEmail reenviarConfirmacaoEmail) : ControllerBase
     {
-        private readonly IRegistroUsuarioService _registroUsuarioService;
-        private readonly ILoginService _service;
-        private readonly ICookieService _cookieService;
-        private readonly SolicitarReativacao _solicitarReativacao;
-        private readonly ReativarUsuario _reativarUsuario;
-        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail;        
-
-        public AcessoController(
-            ILoginService loginUserService,
-            IRegistroUsuarioService registroUsuarioService,
-            ICookieService cookieService,
-            SolicitarReativacao solicitarReativacao,
-            ReativarUsuario reativarUsuario,
-            ReenviarConfirmacaoEmail reenviarConfirmacaoEmail)
-        {
-            _registroUsuarioService = registroUsuarioService;
-            _cookieService = cookieService;
-            _solicitarReativacao = solicitarReativacao;
-            _reativarUsuario = reativarUsuario;
-            _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
-            _service = loginUserService;
-        }
+        private readonly IRegistroUsuarioService _registroUsuarioService = registroUsuarioService;
+        private readonly ILoginService _service = loginUserService;
+        private readonly ICookieService _cookieService = cookieService;
+        private readonly SolicitarReativacao _solicitarReativacao = solicitarReativacao;
+        private readonly ReativarUsuario _reativarUsuario = reativarUsuario;
+        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
 
         /// <summary>
         /// Autentica o usuário e retorna um token JWT.

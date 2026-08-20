@@ -7,12 +7,10 @@ using System.Security.Claims;
 
 namespace Shared.Application.Services.Factory
 {
-    public class TokenFactory : TokenBuilder, ITokenFactoryService
+    public class TokenFactory(IConfiguration configuration,
+        IRefreshTokenUnicidadeService refreshTokenUnicidadeService) :
+        TokenBuilder(configuration, refreshTokenUnicidadeService), ITokenFactoryService
     {
-        public TokenFactory(IConfiguration configuration,
-            IRefreshTokenUnicidadeService refreshTokenUnicidadeService)
-            : base(configuration, refreshTokenUnicidadeService) { }
-
         public async Task<DadosDeTokenComRefreshToken> ObterDadosDoTokenAsync(DadosComplementaresDoUsuarioDTO dadosComplementaresDoUsuarioDTO)
         {
             var tempoDoToken = dadosComplementaresDoUsuarioDTO.DadosDoToken.ExpiracaoDoToken;
@@ -26,7 +24,7 @@ namespace Shared.Application.Services.Factory
 
             return new DadosDeTokenComRefreshToken
             {
-                TokenDTO = new DadosDoTokenDTO(token, tempoDoToken),
+                TokenDTO = new DadosDoTokenDTO(token, tempoDoToken, dadosDoUsuario.CodigoDoUsuario),
                 RefrehTokenDTO = new DadosDoRefrehTokenDTO(refreshToken, tempoDoRefreshToken)
             };
         }

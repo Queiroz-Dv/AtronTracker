@@ -2,7 +2,7 @@ using AtronTracker.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AtronTracker.Infrastructure;
+namespace Infrastructure.DependencyInjection;
 
 internal static class TrackerAuthorizationServiceCollectionExtensions
 {

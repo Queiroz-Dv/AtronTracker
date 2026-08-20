@@ -1,26 +1,25 @@
 using Application.DTO;
 using Domain.Entities;
-using Shared.Application.Services.Mapper;
-using System.Threading.Tasks;
+using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Mapping
 {
-    public class UsuarioDoPerfilDeAcessoMapping : AsyncApplicationMapService<UsuarioDTO, PerfilDeAcessoUsuario>
+    public sealed class UsuarioDoPerfilDeAcessoMapping : Mapper<PerfilDeAcessoUsuario, UsuarioDTO>
     {
-        public override Task<UsuarioDTO> MapToDTOAsync(PerfilDeAcessoUsuario entity)
+        public override UsuarioDTO MapToDto(PerfilDeAcessoUsuario entity)
         {
             var usuario = entity.Usuario;
-            return Task.FromResult(new UsuarioDTO
+            return new UsuarioDTO
             {
                 Codigo = usuario.Codigo,
                 Nome = usuario.Nome,
                 Sobrenome = usuario.Sobrenome
-            });
+            };
         }
 
-        public override Task<PerfilDeAcessoUsuario> MapToEntityAsync(UsuarioDTO dto)
+        public override PerfilDeAcessoUsuario MapToEntity(UsuarioDTO dto)
         {
-            return Task.FromResult(new PerfilDeAcessoUsuario
+            return new PerfilDeAcessoUsuario
             {
                 UsuarioCodigo = dto.Codigo,
                 Usuario = new Usuario
@@ -29,7 +28,7 @@ namespace Application.Mapping
                     Nome = dto.Nome,
                     Sobrenome = dto.Sobrenome
                 }
-            });
+            };
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Application.Validador
     {
         private readonly IAccessorService _accessorService = accessorService;
 
-        public IList<NotificationMessage> Validar(UsuarioRegistroRequest entity)
+        public IEnumerable<NotificationMessage> Validar(UsuarioRegistroRequest entity)
         {
             var context = new NotificationBag();
 

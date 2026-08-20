@@ -556,7 +556,7 @@ public class PlanejamentoCustoPreparacaoServiceTests
         public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
             => Task.FromResult(codigo == departamento.Codigo ? departamento : null!);
 
-        public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo)
+        public Task<Departamento> ObterDepartamentoPorCodigoRepository(string codigo)
             => Task.FromResult(codigo == departamento.Codigo ? departamento : null!);
 
         public Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
@@ -564,6 +564,9 @@ public class PlanejamentoCustoPreparacaoServiceTests
 
         public Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
             => Task.FromResult<IEnumerable<Departamento>>([departamento]);
+
+        public Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo)
+            => Task.FromResult<IEnumerable<Departamento>>([]);
 
         public Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento) => Task.FromResult(true);
     }

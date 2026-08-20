@@ -1,12 +1,11 @@
 using Application.DTO;
 using Domain.Entities;
-using Shared.Application.Interfaces.Service;
-using System.Threading.Tasks;
+using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Interfaces.Mapping
 {
-    public interface IPerfilDeAcessoMapping : IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso>
+    public interface IPerfilDeAcessoMapping : IMapper<PerfilDeAcesso, PerfilDeAcessoDTO>
     {
-        Task<PerfilDeAcessoUsuarioDTO> MapToPerfilDeAcessoUsuarioDTOAsync(PerfilDeAcesso perfilDeAcesso);
+        PerfilDeAcessoUsuarioDTO MapToPerfilDeAcessoUsuarioDto(PerfilDeAcesso perfilDeAcesso);
     }
 }

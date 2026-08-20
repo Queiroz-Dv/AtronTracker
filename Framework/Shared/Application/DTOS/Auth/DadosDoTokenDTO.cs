@@ -7,7 +7,7 @@ namespace Shared.Application.DTOS.Auth
         /// <summary>
         /// Token de acesso do usuário.
         /// </summary>
-        public string Token { get; set; }
+        public string Value { get; set; }
         /// <summary>
         /// Tempo de expiração do token de acesso.
         /// </summary>
@@ -26,22 +26,18 @@ namespace Shared.Application.DTOS.Auth
         /// </summary>
         /// <param name="token">Token de acesso que é autenticado</param>
         /// <param name="expires">Tempo de vida do token</param>
-        public DadosDoTokenDTO(string token, DateTime expires)
+        public DadosDoTokenDTO(string token, DateTime expires, string usuarioCodigo = null)
         {
-            Token = token;
+            Value = token;
             Expires = expires;
-        }
-
-        public DadosDoTokenDTO()
-        {
-
+            UsuarioCodigo = usuarioCodigo;
         }
 
         public string UsuarioCodigo { get; set; }
 
         public override bool IsValid()
         {
-            return !Token.IsNullOrEmpty() && Expires > DateTime.UtcNow;
+            return !Value.IsNullOrEmpty() && Expires > DateTime.UtcNow;
         }
     }
 
@@ -57,7 +53,7 @@ namespace Shared.Application.DTOS.Auth
         /// <param name="expires">Tempo de vida do token</param>
         public DadosDoRefrehTokenDTO(string token, DateTime expires)
         {
-            Token = token;
+            Value = token;
             Expires = expires;
         }
 

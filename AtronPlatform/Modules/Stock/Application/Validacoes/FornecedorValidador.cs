@@ -9,7 +9,7 @@ namespace AtronStock.Application.Validacoes
 {
     public class FornecedorValidador : IValidador<FornecedorRequest>
     {
-        public IList<NotificationMessage> Validar(FornecedorRequest entity)
+        public IEnumerable<NotificationMessage> Validar(FornecedorRequest entity)
         {
             var context = new NotificationBag();
             ValidaCodigo(entity, context);

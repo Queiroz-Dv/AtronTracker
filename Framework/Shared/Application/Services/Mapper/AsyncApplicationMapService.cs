@@ -9,6 +9,7 @@ namespace Shared.Application.Services.Mapper
     /// </summary>
     /// <typeparam name="DTO">O tipo do Data Transfer Object.</typeparam>
     /// <typeparam name="Entity">O tipo da Entidade de Domínio.</typeparam>
+    [Obsolete("Use os contratos de Shared.Application.Interfaces.Mapping.", false)]
     public abstract class AsyncApplicationMapService<DTO, Entity> : IAsyncApplicationMapService<DTO, Entity>
     {
         protected readonly IMapperEngineService _mapperEngine;

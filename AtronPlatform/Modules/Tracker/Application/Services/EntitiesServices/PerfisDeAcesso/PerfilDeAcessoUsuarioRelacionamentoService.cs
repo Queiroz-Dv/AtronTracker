@@ -4,6 +4,7 @@ using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -17,14 +18,14 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
     public class PerfilDeAcessoUsuarioRelacionamentoService(
         IPerfilDeAcessoUsuarioRepository perfilDeAcessoUsuarioRepository,
         IUsuarioRepository usuarioRepository,
-        IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> map,
+        IToEntityMapper<PerfilDeAcesso, PerfilDeAcessoDTO> map,
         IPerfilDeAcessoRepository perfilDeAcessoRepository,
         IPerfilDeAcessoCacheInvalidator cacheInvalidator,
         ITransactionManager transactionManager) : IPerfilDeAcessoUsuarioRelacionamentoService
     {
         private readonly IPerfilDeAcessoUsuarioRepository _perfilDeAcessoUsuarioRepository = perfilDeAcessoUsuarioRepository;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
-        private readonly IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso> _map = map;
+        private readonly IToEntityMapper<PerfilDeAcesso, PerfilDeAcessoDTO> _map = map;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository = perfilDeAcessoRepository;
         private readonly IPerfilDeAcessoCacheInvalidator _cacheInvalidator = cacheInvalidator;
         private readonly ITransactionManager _transactionManager = transactionManager;
@@ -40,7 +41,7 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
             if (perfilRelacionado is null)
                 return Resultado.Falha(MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_PerfilDeAcesso));
 
-            var perfilDeAcesso = await _map.MapToEntityAsync(perfilDeAcessoUsuario.PerfilDeAcesso);
+            var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoUsuario.PerfilDeAcesso);
             var novosRelacionamentos = await PrepararRelacionamentosAsync(perfilDeAcesso, perfilRelacionado, perfilDeAcessoUsuario.Usuarios);
             if (novosRelacionamentos.TeveFalha)
                 return Resultado.Falha(novosRelacionamentos.Messages);

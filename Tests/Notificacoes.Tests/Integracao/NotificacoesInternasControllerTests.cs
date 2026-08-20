@@ -1,5 +1,5 @@
 using System.Reflection;
-using AtronNotificacoes;
+using AtronNotificacoes.Security;
 using AtronPlatform.WebApi.Controllers.Transversais;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

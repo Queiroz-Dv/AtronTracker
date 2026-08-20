@@ -11,7 +11,7 @@ namespace Application.Validador
 {
     public class PlanejamentoCustoValidador : IValidador<PlanejamentoCustoDTO>
     {
-        public IList<NotificationMessage> Validar(PlanejamentoCustoDTO entity)
+        public IEnumerable<NotificationMessage> Validar(PlanejamentoCustoDTO entity)
         {
             var notificacoes = new NotificationBag();
 

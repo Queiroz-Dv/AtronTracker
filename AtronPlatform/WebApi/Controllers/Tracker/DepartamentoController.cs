@@ -3,10 +3,8 @@ using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Resources;
-using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Shared.Authorization;
+using Shared.Domain.ValueObjects;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -23,7 +21,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// </summary>  
         /// <param name="departamento">Dados do departamento a ser criado.</param>  
         /// <returns>Resultado da operação.</returns>  
-        [HttpPost]    
+        [HttpPost]
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
         {
             var resultado = await departamentoService.CriarAsync(departamento);

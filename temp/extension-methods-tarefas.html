@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explicação didática sobre o uso de extension methods e serviços especializados no domínio de tarefas do AtronRC.">
+  <title>Extension methods no domínio de Tarefas | AtronRC</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink-950: #17211b;
+      --ink-800: #2d3931;
+      --ink-650: #516057;
+      --paper: #f6f2e9;
+      --paper-soft: #fbf9f4;
+      --surface: rgba(255, 255, 255, 0.82);
+      --line: #d9d5c9;
+      --green-900: #173d32;
+      --green-800: #205443;
+      --green-650: #33735d;
+      --green-150: #dcebe2;
+      --green-100: #eaf3ed;
+      --amber-700: #9a5c19;
+      --amber-100: #fff2dc;
+      --blue-700: #2a5f75;
+      --blue-100: #e4f0f4;
+      --rose-700: #985047;
+      --rose-100: #f8e8e4;
+      --code-bg: #17211b;
+      --code-text: #e8eee9;
+      --code-muted: #97a89d;
+      --code-keyword: #e9c46a;
+      --code-type: #8bd3c7;
+      --code-method: #b8d97e;
+      --shadow: 0 22px 70px rgba(35, 48, 39, 0.10);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+      --content: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink-950);
+      background:
+        radial-gradient(circle at 10% 8%, rgba(51, 115, 93, 0.10), transparent 28rem),
+        radial-gradient(circle at 92% 26%, rgba(154, 92, 25, 0.08), transparent 23rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    a { color: inherit; }
+
+    .page-shell {
+      width: min(calc(100% - 40px), var(--content));
+      margin: 0 auto;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin: 28px auto 72px;
+      padding: clamp(34px, 7vw, 82px);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 34px;
+      color: #f8fbf9;
+      background:
+        linear-gradient(115deg, rgba(23, 61, 50, 0.98), rgba(32, 84, 67, 0.94)),
+        var(--green-900);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      right: -130px;
+      bottom: -250px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      box-shadow: 0 0 0 52px rgba(255,255,255,0.035), 0 0 0 108px rgba(255,255,255,0.02);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 22px;
+      color: #cfe3d8;
+      font-size: 0.78rem;
+      font-weight: 750;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 2px;
+      background: #a9ccb9;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 820px;
+      margin-bottom: 24px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.6rem, 7vw, 5.8rem);
+      font-weight: 500;
+      letter-spacing: -0.045em;
+      line-height: 0.98;
+    }
+
+    .hero .lead {
+      max-width: 780px;
+      margin-bottom: 32px;
+      color: #dbe8e0;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-meta span {
+      padding: 8px 13px;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px;
+      color: #edf5f0;
+      background: rgba(255,255,255,0.06);
+      font-size: 0.86rem;
+    }
+
+    main { padding-bottom: 80px; }
+
+    section { margin: 0 0 76px; }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: minmax(180px, 0.36fr) minmax(0, 0.64fr);
+      gap: 34px;
+      align-items: start;
+      margin-bottom: 30px;
+    }
+
+    .section-index {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--green-650);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin-bottom: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+    }
+
+    h3 {
+      margin-bottom: 12px;
+      font-size: 1.04rem;
+      line-height: 1.35;
+    }
+
+    .section-intro {
+      margin: 8px 0 0;
+      color: var(--ink-650);
+      font-size: 1.08rem;
+    }
+
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 20px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: 0 10px 30px rgba(35, 48, 39, 0.045);
+      backdrop-filter: blur(8px);
+    }
+
+    .card p:last-child { margin-bottom: 0; }
+
+    .card-label {
+      display: block;
+      margin-bottom: 13px;
+      color: var(--green-650);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .callout {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 24px;
+      padding: 27px;
+      border: 1px solid #c8dccf;
+      border-radius: var(--radius-md);
+      background: var(--green-100);
+    }
+
+    .callout .callout-title {
+      color: var(--green-800);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .callout p { margin-bottom: 0; }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--paper-soft);
+      box-shadow: var(--shadow);
+    }
+
+    .comparison-pane { min-width: 0; }
+
+    .comparison-pane + .comparison-pane {
+      border-left: 1px solid var(--line);
+    }
+
+    .pane-head {
+      min-height: 124px;
+      padding: 25px 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .pane-head p {
+      margin-bottom: 0;
+      color: var(--ink-650);
+      font-size: 0.93rem;
+    }
+
+    .pane-head.before { background: var(--rose-100); }
+    .pane-head.after { background: var(--green-100); }
+
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      color: var(--code-text);
+      background: var(--code-bg);
+      font: 500 0.88rem/1.7 "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+      tab-size: 4;
+    }
+
+    pre code { display: block; min-width: max-content; }
+
+    .comparison pre {
+      min-height: 316px;
+      padding: 27px 28px;
+    }
+
+    .code-card {
+      overflow: hidden;
+      border: 1px solid #26342c;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      box-shadow: 0 18px 45px rgba(23,33,27,0.16);
+    }
+
+    .code-card + .code-card { margin-top: 22px; }
+
+    .code-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: #cdd8d1;
+      background: #1c2921;
+      font-size: 0.78rem;
+    }
+
+    .code-head span:last-child { color: #83958a; }
+
+    .code-card pre { padding: 22px; }
+
+    .kw { color: var(--code-keyword); }
+    .type { color: var(--code-type); }
+    .method { color: var(--code-method); }
+    .comment { color: var(--code-muted); font-style: italic; }
+    .literal { color: #e6a98b; }
+
+    .anatomy {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .number-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: explanations;
+    }
+
+    .number-list li {
+      position: relative;
+      padding: 18px 18px 18px 60px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      counter-increment: explanations;
+    }
+
+    .number-list li::before {
+      content: counter(explanations, decimal-leading-zero);
+      position: absolute;
+      top: 17px;
+      left: 18px;
+      color: var(--green-650);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.06em;
+    }
+
+    .number-list strong { color: var(--green-900); }
+
+    code.inline {
+      padding: 0.16em 0.42em;
+      border: 1px solid #d8ddd8;
+      border-radius: 6px;
+      color: #214d3e;
+      background: #edf2ee;
+      font: 600 0.88em/1.4 "Cascadia Code", Consolas, monospace;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 34px;
+      align-items: stretch;
+      margin: 30px 0;
+    }
+
+    .flow-step {
+      position: relative;
+      min-height: 210px;
+      padding: 23px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .flow-step::after {
+      content: "→";
+      position: absolute;
+      top: 50%;
+      right: -29px;
+      transform: translateY(-50%);
+      color: var(--green-650);
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .flow-step:last-child::after { display: none; }
+
+    .flow-step .step-number {
+      display: block;
+      margin-bottom: 28px;
+      color: var(--green-650);
+      font-size: 0.76rem;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .flow-step h3 { overflow-wrap: anywhere; }
+
+    .flow-step p {
+      margin-bottom: 0;
+      color: var(--ink-650);
+      font-size: 0.91rem;
+    }
+
+    .responsibility-table {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .responsibility-row {
+      display: grid;
+      grid-template-columns: 0.8fr 1.15fr 1.25fr;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .responsibility-row:last-child { border-bottom: 0; }
+
+    .responsibility-row > div {
+      padding: 20px 22px;
+    }
+
+    .responsibility-row > div + div { border-left: 1px solid var(--line); }
+
+    .responsibility-row.header {
+      color: #eef5f1;
+      background: var(--green-900);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .responsibility-row:not(.header) > div:first-child {
+      color: var(--green-900);
+      font-weight: 750;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .status.local { color: var(--green-800); background: var(--green-150); }
+    .status.io { color: var(--blue-700); background: var(--blue-100); }
+    .status.rule { color: var(--amber-700); background: var(--amber-100); }
+
+    .list-clean {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list-clean li {
+      padding: 0 0 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .list-clean li:last-child { padding-bottom: 0; border-bottom: 0; }
+
+    .review-note {
+      padding: 28px;
+      border: 1px solid #edcda0;
+      border-radius: var(--radius-md);
+      background: var(--amber-100);
+    }
+
+    .review-note h3 { color: #744415; }
+    .review-note p:last-child { margin-bottom: 0; }
+
+    .summary {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(30px, 5vw, 58px);
+      border-radius: var(--radius-lg);
+      color: #eff6f2;
+      background: var(--green-900);
+    }
+
+    .summary p {
+      max-width: 850px;
+      margin-bottom: 0;
+      color: #d6e5dc;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+    }
+
+    .summary strong { color: #fff; }
+
+    footer {
+      padding: 0 0 38px;
+      color: var(--ink-650);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .section-heading,
+      .anatomy,
+      .callout { grid-template-columns: 1fr; gap: 14px; }
+      .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flow-step:nth-child(2)::after { display: none; }
+      .responsibility-row { grid-template-columns: 0.75fr 1fr 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .page-shell { width: min(calc(100% - 24px), var(--content)); }
+      .hero { margin-top: 12px; margin-bottom: 52px; border-radius: 24px; }
+      section { margin-bottom: 58px; }
+      .grid-2, .grid-3, .comparison, .flow { grid-template-columns: 1fr; }
+      .comparison-pane + .comparison-pane { border-left: 0; border-top: 1px solid var(--line); }
+      .comparison pre { min-height: auto; }
+      .flow { gap: 28px; }
+      .flow-step { min-height: auto; }
+      .flow-step::after,
+      .flow-step:nth-child(2)::after {
+        display: block;
+        top: auto;
+        right: 50%;
+        bottom: -29px;
+        transform: translateX(50%) rotate(90deg);
+      }
+      .flow-step:last-child::after { display: none; }
+      .responsibility-table { border: 0; background: transparent; }
+      .responsibility-row,
+      .responsibility-row.header { display: block; margin-bottom: 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
+      .responsibility-row.header { display: none; }
+      .responsibility-row > div,
+      .responsibility-row > div + div { padding: 16px 18px; border-left: 0; border-bottom: 1px solid var(--line); }
+      .responsibility-row > div:last-child { border-bottom: 0; }
+      .code-head { display: block; }
+      .code-head span { display: block; overflow-wrap: anywhere; }
+      .code-head span + span { margin-top: 4px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page-shell { width: 100%; }
+      .hero, .summary, .code-card, .comparison { box-shadow: none; }
+      section { break-inside: avoid; }
+      pre { white-space: pre-wrap; overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero page-shell">
+    <p class="eyebrow">AtronRC · Tracker · Domínio de tarefas</p>
+    <h1>Menos peso na entidade, mais intenção no código</h1>
+    <p class="lead">
+      Como as extension methods extraíram operações reutilizáveis de vínculo e remoção,
+      enquanto serviços especializados passaram a coordenar consultas, validações e regras do fluxo.
+    </p>
+    <div class="hero-meta" aria-label="Assuntos abordados">
+      <span>Extension methods</span>
+      <span>Responsabilidade única</span>
+      <span>Orquestração</span>
+      <span>Consistência de relacionamentos</span>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section>
+      <div class="section-heading">
+        <div>
+          <span class="section-index">01 · O problema</span>
+          <h2>Por que desafogar a classe de domínio?</h2>
+        </div>
+        <p class="section-intro">
+          Uma entidade como <code class="inline">Tarefa</code> já representa dados e comportamentos importantes.
+          Quando toda operação auxiliar também fica dentro dela, a classe cresce e passa a misturar regras centrais
+          com detalhes repetitivos de manutenção de propriedades.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card">
+          <span class="card-label">Antes</span>
+          <h3>Detalhes espalhados</h3>
+          <p>Remover um relacionamento exigia lembrar de limpar a navegação, o identificador e o código em cada ponto do sistema.</p>
+        </article>
+        <article class="card">
+          <span class="card-label">Risco</span>
+          <h3>Estado parcialmente atualizado</h3>
+          <p>Se apenas <code class="inline">DepartamentoId</code> fosse limpo, por exemplo, a entidade poderia continuar carregando dados incoerentes.</p>
+        </article>
+        <article class="card">
+          <span class="card-label">Objetivo</span>
+          <h3>Uma intenção por chamada</h3>
+          <p>Em vez de repetir atribuições, o código passa a dizer diretamente: remover departamento, vincular cargo ou vincular usuário.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <span class="section-index">02 · A mudança</span>
+          <h2>Do detalhe mecânico para a linguagem do domínio</h2>
+        </div>
+        <p class="section-intro">
+          A alteração reduz o ruído dentro de <code class="inline">Tarefa</code>. O comportamento continua atuando
+          sobre a mesma instância, mas agora a operação repetitiva possui nome e lugar próprios.
+        </p>
+      </div>
+
+      <div class="comparison">
+        <article class="comparison-pane">
+          <div class="pane-head before">
+            <span class="card-label">Código anterior</span>
+            <h3>A entidade conhece cada atribuição necessária</h3>
+            <p>Quem lê precisa interpretar seis mudanças para descobrir duas intenções.</p>
+          </div>
+          <pre><code><span class="comment">// Dentro de Tarefa.AprovarObtencao(...)</span>
+DepartamentoId = <span class="literal">null</span>;
+DepartamentoCodigo = <span class="literal">null</span>;
+Departamento = <span class="literal">null</span>;
+
+CargoId = <span class="literal">null</span>;
+CargoCodigo = <span class="literal">null</span>;
+Cargo = <span class="literal">null</span>;</code></pre>
+        </article>
+
+        <article class="comparison-pane">
+          <div class="pane-head after">
+            <span class="card-label">Código atual</span>
+            <h3>A entidade expressa o que deseja fazer</h3>
+            <p>Os detalhes ficam centralizados em operações reutilizáveis.</p>
+          </div>
+          <pre><code><span class="comment">// Dentro de Tarefa.AprovarObtencao(...)</span>
+<span class="kw">this</span>.<span class="method">RemoverDepartamento</span>();
+<span class="kw">this</span>.<span class="method">RemoverCargo</span>();</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <span class="section-index">03 · O mecanismo</span>
+          <h2>O que uma extension method faz?</h2>
+        </div>
+        <p class="section-intro">
+          Ela é um método estático que pode ser chamado com a sintaxe de um método da própria instância.
+          Isso melhora a leitura sem alterar a classe original nem usar herança.
+        </p>
+      </div>
+
+      <div class="anatomy">
+        <div class="code-card">
+          <div class="code-head">
+            <span>TarefaRemocaoExtensions.cs</span>
+            <span>Domain/Extensions</span>
+          </div>
+          <pre><code><span class="kw">public static class</span> <span class="type">TarefaRemocaoExtensions</span>
+{
+    <span class="kw">public static void</span> <span class="method">RemoverDepartamento</span>(
+        <span class="kw">this</span> <span class="type">Tarefa</span> tarefa)
+    {
+        tarefa.Departamento = <span class="literal">null</span>;
+        tarefa.DepartamentoId = <span class="literal">null</span>;
+        tarefa.DepartamentoCodigo = <span class="literal">null</span>;
+    }
+}</code></pre>
+        </div>
+
+        <ol class="number-list">
+          <li><strong>A classe é estática.</strong> Ela agrupa operações e não precisa ser instanciada.</li>
+          <li><strong>O método também é estático.</strong> Por baixo dos panos, a chamada continua sendo estática.</li>
+          <li><strong>O primeiro parâmetro usa <code class="inline">this</code>.</strong> Isso informa ao C# que o método estende <code class="inline">Tarefa</code>.</li>
+          <li><strong>A chamada fica natural.</strong> Com <code class="inline">using Domain.Extensions</code>, escrevemos <code class="inline">tarefa.RemoverDepartamento()</code>.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <span class="section-index">04 · Os helpers</span>
+          <h2>Remover e vincular são duas famílias de operação</h2>
+        </div>
+        <p class="section-intro">
+          A separação por intenção facilita encontrar o comportamento. Uma classe concentra limpeza de vínculos;
+          a outra mantém juntas as propriedades necessárias para criar o relacionamento.
+        </p>
+      </div>
+
+      <div class="code-card">
+        <div class="code-head">
+          <span>TarefaRemocaoExtensions.cs</span>
+          <span>Limpeza consistente de navegação, Id e código</span>
+        </div>
+        <pre><code><span class="kw">public static void</span> <span class="method">RemoverDepartamento</span>(<span class="kw">this</span> <span class="type">Tarefa</span> tarefa)
+{
+    tarefa.Departamento = <span class="literal">null</span>;
+    tarefa.DepartamentoId = <span class="literal">null</span>;
+    tarefa.DepartamentoCodigo = <span class="literal">null</span>;
+}
+
+<span class="kw">public static void</span> <span class="method">RemoverCargo</span>(<span class="kw">this</span> <span class="type">Tarefa</span> tarefa)
+{
+    tarefa.Cargo = <span class="literal">null</span>;
+    tarefa.CargoId = <span class="literal">null</span>;
+    tarefa.CargoCodigo = <span class="literal">null</span>;
+}
+
+<span class="kw">public static void</span> <span class="method">RemoverUsuario</span>(<span class="kw">this</span> <span class="type">Tarefa</span> tarefa)
+{
+    tarefa.Usuario = <span class="literal">null</span>;
+    tarefa.UsuarioId = <span class="literal">null</span>;
+    tarefa.UsuarioCodigo = <span class="literal">null</span>;
+}</code></pre>
+      </div>
+
+      <div class="code-card">
+        <div class="code-head">
+          <span>TarefaVinculoExtensions.cs</span>
+          <span>Criação consistente dos relacionamentos</span>
+        </div>
+        <pre><code><span class="kw">public static void</span> <span class="method">VincularDepartamento</span>(
+    <span class="kw">this</span> <span class="type">Tarefa</span> tarefa,
+    <span class="type">Departamento</span> departamento)
+{
+    tarefa.Departamento = departamento;
+    tarefa.DepartamentoId = departamento.Id;
+    tarefa.DepartamentoCodigo = departamento.Codigo;
+}
+
+<span class="kw">public static void</span> <span class="method">VincularCargo</span>(
+    <span class="kw">this</span> <span class="type">Tarefa</span> tarefa,
+    <span class="type">Cargo</span> cargo)
+{
+    tarefa.Cargo = cargo;
+    tarefa.CargoId = cargo.Id;
+    tarefa.CargoCodigo = cargo.Codigo;
+}
+
+<span class="kw">public static void</span> <span class="method">VincularUsuario</span>(
+    <span class="kw">this</span> <span class="type">Tarefa</span> tarefa,
+    <span class="kw">int</span> usuarioId,
+    <span class="kw">string</span> usuarioCodigo,
+    <span class="type">Usuario</span> usuario = <span class="literal">null</span>)
+{
+    tarefa.Usuario = usuario;
+    tarefa.UsuarioId = usuarioId;
+    tarefa.UsuarioCodigo = usuarioCodigo;
+}</code></pre>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <span class="section-index">05 · O encadeamento</span>
+          <h2>Onde cada chamada entra no fluxo?</h2>
+        </div>
+        <p class="section-intro">
+          O caminho começa no caso de uso, passa pela preparação, chega ao orquestrador e termina nos serviços especializados.
+          As extensions ficam na última etapa, onde o estado da entidade é realmente atualizado.
+        </p>
+      </div>
+
+      <div class="flow" aria-label="Fluxo de preparação e relacionamento da tarefa">
+        <article class="flow-step">
+          <span class="step-number">Passo 01</span>
+          <h3>CriarTarefa</h3>
+          <p>Inicia o caso de uso e solicita uma tarefa pronta para persistência.</p>
+        </article>
+        <article class="flow-step">
+          <span class="step-number">Passo 02</span>
+          <h3>TarefaPreparacaoService</h3>
+          <p>Valida o DTO, realiza o mapeamento e encaminha a entidade para o relacionamento.</p>
+        </article>
+        <article class="flow-step">
+          <span class="step-number">Passo 03</span>
+          <h3>TarefaRelacionamentoService</h3>
+          <p>Orquestra usuário, departamento, cargo e a validação de governança.</p>
+        </article>
+        <article class="flow-step">
+          <span class="step-number">Passo 04</span>
+          <h3>Serviços especializados</h3>
+          <p>Consultam dados e chamam <code class="inline">Remover...</code> ou <code class="inline">Vincular...</code>.</p>
+        </article>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">Leitura precisa</div>
+        <p>
+          No código atual, <code class="inline">TarefaRelacionamentoService</code> não chama as extension methods diretamente.
+          Ele delega para <code class="inline">TarefaUsuarioRelacionamentoService</code> e
+          <code class="inline">TarefaDepartamentoCargoRelacionamentoService</code>. São esses colaboradores que aplicam
+          as operações sobre <code class="inline">Tarefa</code>.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <span class="section-index">06 · A orquestração</span>
+          <h2>O serviço principal coordena, não executa tudo</h2>
+        </div>
+        <p class="section-intro">
+          O orquestrador define a ordem do fluxo, interrompe em caso de falha e só então aplica a política de governança.
+          Isso deixa explícito o processo sem concentrar consultas e mutações na mesma classe.
+        </p>
+      </div>
+
+      <div class="code-card">
+        <div class="code-head">
+          <span>TarefaRelacionamentoService.cs</span>
+          <span>Application/Services/EntitiesServices/Tarefas</span>
+        </div>
+        <pre><code><span class="kw">public async</span> <span class="type">Task&lt;Resultado&gt;</span> <span class="method">RelacionarAsync</span>(
+    <span class="type">Tarefa</span> tarefa,
+    <span class="type">TarefaDTO</span> tarefaDTO)
+{
+    <span class="kw">var</span> usuarioResultado =
+        <span class="kw">await</span> _usuarioRelacionamentoService
+            .<span class="method">RelacionarAsync</span>(tarefa, tarefaDTO);
+
+    <span class="kw">if</span> (usuarioResultado.TeveFalha)
+        <span class="kw">return</span> <span class="type">Resultado</span>.<span class="method">Falha</span>(usuarioResultado.Messages);
+
+    <span class="kw">var</span> estruturaResultado =
+        <span class="kw">await</span> _tarefaDepartamentoCargoRelacionamentoService
+            .<span class="method">RelacionarAsync</span>(tarefa, tarefaDTO);
+
+    <span class="kw">if</span> (estruturaResultado.TeveFalha)
+        <span class="kw">return</span> <span class="type">Resultado</span>.<span class="method">Falha</span>(estruturaResultado.Messages);
+
+    <span class="kw">var</span> governancaResultado = <span class="type">TarefaGovernancaPolicy</span>
+        .<span class="method">Validar</span>(usuarioResultado.Dados, estruturaResultado.Dados);
+
+    <span class="kw">return</span> governancaResultado.TeveFalha
+        ? <span class="type">Resultado</span>.<span class="method">Falha</span>(governancaResultado.Messages)
+        : <span class="type">Resultado</span>.<span class="method">Sucesso</span>();
+}</code></pre>
+      </div>
+
+      <div class="grid-2" style="margin-top: 22px;">
+        <article class="card">
+          <span class="card-label">Usuário ausente</span>
+          <h3>O colaborador remove o relacionamento</h3>
+          <pre style="border-radius: 10px; padding: 16px;"><code><span class="kw">if</span> (tarefaDTO.UsuarioCodigo.IsNullOrEmpty())
+{
+    tarefa.<span class="method">RemoverUsuario</span>();
+    <span class="kw">return</span> <span class="type">Resultado&lt;Usuario&gt;</span>.<span class="method">Sucesso</span>(<span class="literal">null</span>);
+}</code></pre>
+        </article>
+        <article class="card">
+          <span class="card-label">Usuário encontrado</span>
+          <h3>O colaborador cria o vínculo</h3>
+          <pre style="border-radius: 10px; padding: 16px;"><code><span class="kw">var</span> usuario = <span class="kw">await</span> _usuarioRepository
+    .<span class="method">ObterUsuarioPorCodigoAsync</span>(tarefaDTO.UsuarioCodigo);
+
+tarefa.<span class="method">VincularUsuario</span>(usuario.Id, usuario.Codigo);</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <span class="section-index">07 · As fronteiras</span>
+          <h2>Qual responsabilidade fica em cada lugar?</h2>
+        </div>
+        <p class="section-intro">
+          A principal melhoria não é apenas reduzir linhas. É criar uma fronteira compreensível entre estado local,
+          acesso a dados, coordenação do processo e regra de negócio.
+        </p>
+      </div>
+
+      <div class="responsibility-table" role="table" aria-label="Responsabilidades das classes no fluxo">
+        <div class="responsibility-row header" role="row">
+          <div role="columnheader">Componente</div>
+          <div role="columnheader">Faz</div>
+          <div role="columnheader">Não deveria fazer</div>
+        </div>
+        <div class="responsibility-row" role="row">
+          <div role="cell">Tarefa<span class="status local">Domínio</span></div>
+          <div role="cell">Mantém estado e comportamentos realmente centrais da tarefa.</div>
+          <div role="cell">Conhecer repositórios, DTOs ou detalhes de consulta.</div>
+        </div>
+        <div class="responsibility-row" role="row">
+          <div role="cell">Tarefa...Extensions<span class="status local">Mutação local</span></div>
+          <div role="cell">Aplica operações pequenas e reutilizáveis sobre a instância recebida.</div>
+          <div role="cell">Acessar banco, disparar e-mail ou coordenar um fluxo assíncrono.</div>
+        </div>
+        <div class="responsibility-row" role="row">
+          <div role="cell">Serviços especializados<span class="status io">Aplicação + I/O</span></div>
+          <div role="cell">Consultam usuário, departamento e cargo; depois aplicam o vínculo correto.</div>
+          <div role="cell">Assumir toda a preparação, persistência e notificação da tarefa.</div>
+        </div>
+        <div class="responsibility-row" role="row">
+          <div role="cell">TarefaRelacionamentoService<span class="status io">Orquestração</span></div>
+          <div role="cell">Ordena colaboradores, propaga falhas e chama a política.</div>
+          <div role="cell">Repetir as atribuições que já pertencem às extensions.</div>
+        </div>
+        <div class="responsibility-row" role="row">
+          <div role="cell">TarefaGovernancaPolicy<span class="status rule">Regra</span></div>
+          <div role="cell">Decide se existe uma cadeia válida de aprovação.</div>
+          <div role="cell">Alterar a entidade ou buscar dados necessários no banco.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <span class="section-index">08 · Termos técnicos</span>
+          <h2>“Puro” e “encadeado” precisam de contexto</h2>
+        </div>
+        <p class="section-intro">
+          A ideia adotada é válida, mas usar os termos com precisão evita que um júnior aprenda dois conceitos diferentes como se fossem iguais.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <span class="card-label">Método “puro” no sentido prático</span>
+          <h3>Local, previsível e sem infraestrutura</h3>
+          <p>
+            As extensions não acessam banco, rede, relógio ou serviço externo. Recebem um objeto e argumentos,
+            e atuam apenas sobre esse estado. Nesse sentido prático, são helpers determinísticos de domínio.
+          </p>
+        </article>
+        <article class="card">
+          <span class="card-label">Função pura no sentido estrito</span>
+          <h3>Não altera estado externo</h3>
+          <p>
+            Tecnicamente, essas extensions <strong>não são funções puras</strong>, porque modificam a instância de
+            <code class="inline">Tarefa</code> recebida. O nome mais exato é operação de mutação local ou helper de relacionamento.
+          </p>
+        </article>
+        <article class="card">
+          <span class="card-label">Sequência atual</span>
+          <h3>Chamadas extension em sequência</h3>
+          <p>
+            <code class="inline">RemoverDepartamento()</code> e <code class="inline">RemoverCargo()</code> retornam
+            <code class="inline">void</code>. Por isso, são chamadas sequenciais, embora componham um fluxo encadeado.
+          </p>
+        </article>
+        <article class="card">
+          <span class="card-label">Fluent chaining</span>
+          <h3>Uma forma diferente de API</h3>
+          <p>
+            Um encadeamento fluente retornaria a própria tarefa e permitiria algo como
+            <code class="inline">tarefa.RemoverDepartamento().RemoverCargo()</code>. Isso não é necessário para obter o benefício atual.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <span class="section-index">09 · Resultado</span>
+          <h2>O que essa abordagem melhora?</h2>
+        </div>
+        <p class="section-intro">
+          O ganho aparece na leitura, na reutilização e principalmente na consistência das alterações feitas em relacionamentos representados por várias propriedades.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <span class="card-label">Ganhos</span>
+          <ul class="list-clean">
+            <li><strong>Intenção visível:</strong> o nome do método explica a operação.</li>
+            <li><strong>Menos repetição:</strong> uma única implementação atende diferentes fluxos.</li>
+            <li><strong>Consistência:</strong> navegação, Id e código mudam em conjunto.</li>
+            <li><strong>Entidade mais legível:</strong> comportamentos centrais deixam de competir com detalhes mecânicos.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <span class="card-label">Cuidados</span>
+          <ul class="list-clean">
+            <li><strong>Não esconder I/O:</strong> extension methods de domínio devem evitar banco e serviços externos.</li>
+            <li><strong>Preservar invariantes:</strong> operações críticas precisam continuar fáceis de descobrir e proteger.</li>
+            <li><strong>Evitar uma pasta genérica demais:</strong> agrupar por entidade e intenção mantém a navegação simples.</li>
+            <li><strong>Testar o efeito completo:</strong> validar todas as propriedades modificadas em cada vínculo.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="review-note">
+        <span class="card-label">Nota de revisão do recorte atual</span>
+        <h3>Existe um nome que ainda precisa ser alinhado</h3>
+        <p>
+          <code class="inline">TarefaDepartamentoCargoRelacionamentoService</code> chama
+          <code class="inline">tarefa.RemoverDepartamentoECargo()</code>, mas
+          <code class="inline">TarefaRemocaoExtensions</code> expõe apenas
+          <code class="inline">RemoverDepartamento()</code> e <code class="inline">RemoverCargo()</code> separadamente.
+          Antes de fechar a implementação, a chamada deve usar os dois métodos existentes ou a operação combinada deve ser criada explicitamente.
+        </p>
+      </div>
+    </section>
+
+    <section class="summary">
+      <span class="card-label" style="color:#b9d4c4;">Em uma frase</span>
+      <h2 style="margin-bottom:18px;">A refatoração separa intenção, coordenação e detalhe.</h2>
+      <p>
+        As <strong>extension methods</strong> cuidam de pequenas mutações reutilizáveis;
+        os <strong>serviços especializados</strong> consultam e validam dados;
+        o <strong>orquestrador</strong> encadeia o processo e propaga falhas.
+        O resultado é uma entidade <code class="inline">Tarefa</code> menos inflada e um fluxo mais fácil de ler.
+      </p>
+    </section>
+  </main>
+
+  <footer class="page-shell">
+    Documento técnico didático · AtronRC · Módulo Tracker
+  </footer>
+</body>
+</html>

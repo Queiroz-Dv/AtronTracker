@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>    
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
@@ -11,136 +12,136 @@
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.18" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.32" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.34.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.32" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.34.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="Application\Email\Templates\pt-BR\base.html">
-	    <LogicalName>Shared.Application.Email.Templates.pt-BR.base.html</LogicalName>
-	  </EmbeddedResource>
-	  <EmbeddedResource Include="Application\Email\Templates\pt-BR\fundacao.html">
-	    <LogicalName>Shared.Application.Email.Templates.pt-BR.fundacao.html</LogicalName>
-	  </EmbeddedResource>
-	  <EmbeddedResource Include="Application\Email\Templates\pt-BR\diagnostico.html">
-	    <LogicalName>Shared.Application.Email.Templates.pt-BR.diagnostico.html</LogicalName>
-	  </EmbeddedResource>
+		<EmbeddedResource Include="Application\Email\Templates\pt-BR\base.html">
+			<LogicalName>Shared.Application.Email.Templates.pt-BR.base.html</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Application\Email\Templates\pt-BR\fundacao.html">
+			<LogicalName>Shared.Application.Email.Templates.pt-BR.fundacao.html</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Application\Email\Templates\pt-BR\diagnostico.html">
+			<LogicalName>Shared.Application.Email.Templates.pt-BR.diagnostico.html</LogicalName>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Migrations\**\*.cs" />
-	  <Compile Remove="Migrations\bin\**" />
-	  <Compile Remove="Migrations\obj\**" />
-	  <EmbeddedResource Remove="Migrations\bin\**" />
-	  <EmbeddedResource Remove="Migrations\obj\**" />
-	  <None Remove="Migrations\bin\**" />
-	  <None Remove="Migrations\obj\**" />
-	  <Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.cs" />
-	  <Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.Designer.cs" />
-	  <Compile Include="Migrations\SharedDbContextModelSnapshot.cs" />
-	  <Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>CategoriaResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\AtronStock\ProdutoResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ProdutoResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\AuditoriaResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>AuditoriaResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\AtronStock\ClienteResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ClienteResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\AuthResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>AuthResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\DepartamentoResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>DepartamentoResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\EmailResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>EmailResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\EmailDiagnosticResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>EmailDiagnosticResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\HistoricoResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>HistoricoResource.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\NotificacoesPadronizadas.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>NotificacoesPadronizadas.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Application\Resources\UsuarioResource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>UsuarioResource.resx</DependentUpon>
-	  </Compile>
+		<Compile Remove="Migrations\**\*.cs" />
+		<Compile Remove="Migrations\bin\**" />
+		<Compile Remove="Migrations\obj\**" />
+		<EmbeddedResource Remove="Migrations\bin\**" />
+		<EmbeddedResource Remove="Migrations\obj\**" />
+		<None Remove="Migrations\bin\**" />
+		<None Remove="Migrations\obj\**" />
+		<Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.cs" />
+		<Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.Designer.cs" />
+		<Compile Include="Migrations\SharedDbContextModelSnapshot.cs" />
+		<Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>CategoriaResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\AtronStock\ProdutoResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ProdutoResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\AuditoriaResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>AuditoriaResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\AtronStock\ClienteResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ClienteResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\AuthResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>AuthResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\DepartamentoResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>DepartamentoResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\EmailResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>EmailResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\EmailDiagnosticResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>EmailDiagnosticResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\HistoricoResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>HistoricoResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\NotificacoesPadronizadas.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>NotificacoesPadronizadas.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Application\Resources\UsuarioResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>UsuarioResource.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Application\Resources\AtronStock\CategoriaResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>CategoriaResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\AtronStock\ProdutoResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>ProdutoResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\AuditoriaResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>AuditoriaResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\AtronStock\ClienteResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>ClienteResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\AuthResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>AuthResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\DepartamentoResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>DepartamentoResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\EmailResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>EmailResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\EmailDiagnosticResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>EmailDiagnosticResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\HistoricoResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>HistoricoResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\NotificacoesPadronizadas.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>NotificacoesPadronizadas.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Application\Resources\UsuarioResource.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>UsuarioResource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	</ItemGroup>	
+		<EmbeddedResource Update="Application\Resources\AtronStock\CategoriaResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>CategoriaResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\AtronStock\ProdutoResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>ProdutoResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\AuditoriaResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>AuditoriaResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\AtronStock\ClienteResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>ClienteResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\AuthResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>AuthResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\DepartamentoResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>DepartamentoResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\EmailResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>EmailResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\EmailDiagnosticResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>EmailDiagnosticResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\HistoricoResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>HistoricoResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\NotificacoesPadronizadas.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>NotificacoesPadronizadas.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Application\Resources\UsuarioResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>UsuarioResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>

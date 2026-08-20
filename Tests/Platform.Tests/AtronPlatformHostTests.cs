@@ -1,6 +1,6 @@
 using Application.Interfaces.Services;
-using AtronNotificacoes.Application;
-using AtronNotificacoes.Contracts;
+using Application.UseCases.TarefaCases;
+using Application.UseCases.TarefaCases.Movimentacao;
 using AtronNotificacoes.Infrastructure;
 using AtronStock.Application.Interfaces;
 using AtronStock.Infrastructure.Context;
@@ -28,6 +28,8 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Xunit;
+using AtronNotificacoes.Contracts.Interfaces;
+using AtronNotificacoes.Application.Interfaces;
 
 namespace Platform.Tests;
 
@@ -89,6 +91,37 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
 
         Assert.NotNull(scope.ServiceProvider.GetService<IModuloService>());
         Assert.NotNull(scope.ServiceProvider.GetService<AtronDbContext>());
+    }
+
+    [Fact]
+    public void CasosDeTarefaConsumidos_DevemSerResolvidosNoHostReal()
+    {
+        using var scope = _factory.Services.CreateScope();
+        Type[] casosDeTarefa =
+        [
+            typeof(AssumirTarefaCase),
+            typeof(AtualizarTarefaCase),
+            typeof(AtualizarTarefaMovimentacaoCase),
+            typeof(CriarTarefaCase),
+            typeof(CriarTarefaMovimentacaoCase),
+            typeof(DecidirTarefaCase),
+            typeof(ExcluirTarefaCase),
+            typeof(ObterAcessoTarefaCase),
+            typeof(ObterEquipeCase),
+            typeof(ObterHistoricoTarefaCase),
+            typeof(ObterMeuQuadroCase),
+            typeof(ObterSolicitacaoCase),
+            typeof(ObterTarefasDisponiveisCase),
+            typeof(ObterTarefaCase),
+            typeof(RegistrarDecisaoTarefaMovimentacaoCase),
+            typeof(RegistrarObtencaoTarefaMovimentacaoCase),
+            typeof(RegistrarSolicitacaoTarefaMovimentacaoCase),
+            typeof(SolicitarTarefaCase),
+            typeof(TarefaNotificacaoInternaCase)
+        ];
+
+        foreach (var tipo in casosDeTarefa)
+            Assert.NotNull(scope.ServiceProvider.GetRequiredService(tipo));
     }
 
     [Fact]

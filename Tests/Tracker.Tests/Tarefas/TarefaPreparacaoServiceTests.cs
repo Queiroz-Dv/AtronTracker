@@ -1,11 +1,13 @@
 using Application.DTO;
+using Application.Mapping;
 using Application.Services.EntitiesServices.Tarefas;
 using Application.Validador;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Application.Interfaces.Service;
+using Moq;
+using Shared.Application.Interfaces.Mapping;
 using Xunit;
 
 namespace Tracker.Tests.Tarefas;
@@ -35,13 +37,15 @@ public class TarefaPreparacaoServiceTests
         usuario.GestorImediatoId = 99;
         usuario.GestorImediatoCodigo = "GST";
         var service = CriarService(usuario, departamento);
+        var tarefaDTO = CriarTarefaDto();
 
-        var resultado = await service.PrepararParaPersistenciaAsync(CriarTarefaDto());
+        var resultado = await service.PrepararParaPersistenciaAsync(tarefaDTO);
 
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(resultado.Dados);
-        Assert.Equal(usuario.Id, resultado.Dados.Tarefa.UsuarioId);
-        Assert.Equal(usuario.Codigo, resultado.Dados.Tarefa.UsuarioCodigo);
+        Assert.Equal(usuario.Id, resultado.Dados.UsuarioId);
+        Assert.Equal(usuario.Codigo, resultado.Dados.UsuarioCodigo);
+        Assert.Equal(usuario.Id, tarefaDTO.Usuario?.Id);
     }
 
     [Fact]
@@ -62,8 +66,8 @@ public class TarefaPreparacaoServiceTests
 
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(resultado.Dados);
-        Assert.Equal(usuario.Id, resultado.Dados.Tarefa.UsuarioId);
-        Assert.Equal(usuario.Codigo, resultado.Dados.Tarefa.UsuarioCodigo);
+        Assert.Equal(usuario.Id, resultado.Dados.UsuarioId);
+        Assert.Equal(usuario.Codigo, resultado.Dados.UsuarioCodigo);
     }
 
     [Fact]
@@ -84,20 +88,105 @@ public class TarefaPreparacaoServiceTests
 
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(resultado.Dados);
-        Assert.Equal(usuario.Id, resultado.Dados.Tarefa.UsuarioId);
-        Assert.Equal(usuario.Codigo, resultado.Dados.Tarefa.UsuarioCodigo);
+        Assert.Equal(usuario.Id, resultado.Dados.UsuarioId);
+        Assert.Equal(usuario.Codigo, resultado.Dados.UsuarioCodigo);
     }
 
-    private static TarefaPreparacaoService CriarService(Usuario usuario, Departamento departamento)
+    [Fact]
+    public async Task PrepararParaPersistenciaAsync_DeveRetornarFalhaQuandoEstadoNaoExiste()
     {
+        var departamento = new Departamento { Id = 10, Codigo = "DPT", Descricao = "Departamento" };
+        var usuario = CriarUsuario(departamento);
+        var service = CriarService(usuario, departamento);
+        var tarefa = CriarTarefaDto();
+        tarefa.EstadoDaTarefa.Id = 999;
+
+        var resultado = await service.PrepararParaPersistenciaAsync(tarefa);
+
+        Assert.True(resultado.TeveFalha);
+        Assert.Contains(
+            resultado.Messages,
+            mensagem => mensagem.Descricao == Application.Resources.TarefaResource.Erro_EstadoNaoEncontrado);
+    }
+
+    [Fact]
+    public async Task PrepararParaPersistenciaAsync_DevePropagarFalhaQuandoUsuarioNaoExiste()
+    {
+        var departamento = new Departamento { Id = 10, Codigo = "DPT", Descricao = "Departamento" };
+        var usuario = CriarUsuario(departamento);
+        var usuarioRepository = new Mock<IUsuarioRepository>();
+        usuarioRepository
+            .Setup(repository => repository.ObterUsuarioPorCodigoAsync("USR"))
+            .ReturnsAsync((Usuario)null!);
+        var service = CriarService(
+            usuario,
+            departamento,
+            new DependenciasPreparacao(UsuarioRepository: usuarioRepository.Object));
+
+        var resultado = await service.PrepararParaPersistenciaAsync(CriarTarefaDto());
+
+        Assert.True(resultado.TeveFalha);
+        Assert.Contains(
+            resultado.Messages,
+            mensagem => mensagem.Descricao == Shared.Application.Resources.NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+    }
+
+    [Fact]
+    public async Task PrepararParaPersistenciaAsync_DevePropagarFalhaQuandoDepartamentoNaoExiste()
+    {
+        var departamento = new Departamento { Id = 10, Codigo = "DPT", Descricao = "Departamento" };
+        var usuario = CriarUsuario(departamento);
+        var departamentoRepository = new Mock<IDepartamentoRepository>();
+        departamentoRepository
+            .Setup(repository => repository.ObterDepartamentoPorCodigoRepository("DPT"))
+            .ReturnsAsync((Departamento)null!);
+        var service = CriarService(
+            usuario,
+            departamento,
+            new DependenciasPreparacao(DepartamentoRepository: departamentoRepository.Object));
+        var tarefa = CriarTarefaDto();
+        tarefa.DestinoInicial = (int)DestinoInicialTarefa.DepartamentoCargo;
+        tarefa.UsuarioCodigo = null;
+        tarefa.DepartamentoCodigo = "DPT";
+
+        var resultado = await service.PrepararParaPersistenciaAsync(tarefa);
+
+        Assert.True(resultado.TeveFalha);
+        Assert.Contains(
+            resultado.Messages,
+            mensagem => mensagem.Descricao == Application.Resources.TarefaResource.Erro_DepartamentoNaoEncontrado);
+    }
+
+    private static TarefaPreparacaoService CriarService(
+        Usuario usuario,
+        Departamento departamento,
+        DependenciasPreparacao? dependencias = null)
+    {
+        var usuarioRelacionamento = new TarefaUsuarioRelacionamentoService(
+            dependencias?.UsuarioRepository ?? new UsuarioRepositoryFake(usuario),
+            new UsuarioMapFake());
+        var estruturaRelacionamento = new TarefaDepartamentoCargoRelacionamentoService(
+            dependencias?.DepartamentoRepository ?? new DepartamentoRepositoryFake(departamento),
+            new CargoRepositoryFake([]));
+        var tarefaRelacionamento = new TarefaRelacionamentoService(
+            usuarioRelacionamento,
+            estruturaRelacionamento);
+        var tarefaEstadoRepository = new Mock<ITarefaEstadoRepository>();
+        tarefaEstadoRepository
+            .Setup(repository => repository.ObterPorIdAsync(1))
+            .ReturnsAsync(new TarefaEstado { Id = 1, Descricao = "Aberta" });
+
         return new TarefaPreparacaoService(
+            tarefaRelacionamento,
+            tarefaEstadoRepository.Object,
+            new TarefaEstadoMapping(),
             new TarefaMapFake(),
-            new TarefaEstadoRepositoryFake(),
-            new UsuarioRepositoryFake(usuario),
-            new DepartamentoRepositoryFake(departamento),
-            new CargoRepositoryFake([]),
             new TarefaValidador());
     }
+
+    private sealed record DependenciasPreparacao(
+        IUsuarioRepository? UsuarioRepository = null,
+        IDepartamentoRepository? DepartamentoRepository = null);
 
     private static Usuario CriarUsuario(Departamento departamento)
     {
@@ -138,11 +227,11 @@ public class TarefaPreparacaoServiceTests
         };
     }
 
-    private sealed class TarefaMapFake : IAsyncApplicationMapService<TarefaDTO, Tarefa>
+    private sealed class TarefaMapFake : IToEntityMapper<Tarefa, TarefaDTO>
     {
-        public Task<Tarefa> MapToEntityAsync(TarefaDTO dto)
+        public Tarefa MapToEntity(TarefaDTO dto)
         {
-            return Task.FromResult(new Tarefa
+            return new Tarefa
             {
                 Id = dto.Id,
                 DestinoInicial = dto.DestinoInicial,
@@ -155,27 +244,29 @@ public class TarefaPreparacaoServiceTests
                 DataInicial = dto.DataInicial,
                 DataFinal = dto.DataFinal,
                 TarefaEstadoId = dto.EstadoDaTarefa?.Id ?? 0
-            });
+            };
         }
 
-        public Task<TarefaDTO> MapToDTOAsync(Tarefa entity) => Task.FromResult(new TarefaDTO());
-
-        public Task<List<Tarefa>> MapToListEntityAsync(IEnumerable<TarefaDTO> dtos)
-            => Task.FromResult(new List<Tarefa>());
-
-        public Task<List<TarefaDTO>> MapToListDTOAsync(IEnumerable<Tarefa> entities)
-            => Task.FromResult(new List<TarefaDTO>());
+        public IEnumerable<Tarefa> MapToEntities(IEnumerable<TarefaDTO>? dtos)
+            => dtos?.Select(MapToEntity) ?? [];
     }
 
-    private sealed class TarefaEstadoRepositoryFake : ITarefaEstadoRepository
+    private sealed class UsuarioMapFake : IToDtoMapper<Usuario, UsuarioDTO>
     {
-        private readonly TarefaEstado _estado = new() { Id = 1, Descricao = "Aberta" };
+        public UsuarioDTO MapToDto(Usuario entity)
+            => new()
+            {
+                Id = entity.Id,
+                Codigo = entity.Codigo,
+                Nome = entity.Nome,
+                Sobrenome = entity.Sobrenome,
+                Email = entity.Email,
+                ReceberNotificacaoInternaTarefa = entity.ReceberNotificacaoInternaTarefa,
+                ReceberNotificacaoTarefaPorEmail = entity.ReceberNotificacaoTarefaPorEmail
+            };
 
-        public Task<TarefaEstado> ObterPorIdAsync(int id)
-            => Task.FromResult(id == _estado.Id ? _estado : null!);
-
-        public Task<List<TarefaEstado>> ObterTodosAsync()
-            => Task.FromResult(new List<TarefaEstado> { _estado });
+        public IEnumerable<UsuarioDTO> MapToDtos(IEnumerable<Usuario>? entities)
+            => entities?.Select(MapToDto) ?? [];
     }
 
     private sealed class UsuarioRepositoryFake(Usuario usuario) : IUsuarioRepository
@@ -232,7 +323,7 @@ public class TarefaPreparacaoServiceTests
         public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
             => Task.FromResult(codigo == departamento.Codigo ? departamento : null!);
 
-        public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsyncAsNoTracking(string codigo)
+        public Task<Departamento> ObterDepartamentoPorCodigoRepository(string codigo)
             => Task.FromResult(codigo == departamento.Codigo ? departamento : null!);
 
         public Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
@@ -240,6 +331,9 @@ public class TarefaPreparacaoServiceTests
 
         public Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
             => Task.FromResult<IEnumerable<Departamento>>([departamento]);
+
+        public Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo)
+            => Task.FromResult<IEnumerable<Departamento>>([]);
 
         public Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento) => Task.FromResult(true);
     }

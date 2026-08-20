@@ -1,5 +1,6 @@
 using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Interfaces;
+using AtronStock.Application.Mapping;
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
@@ -11,11 +12,11 @@ namespace AtronStock.Application.Services
     public class FornecedorService : IFornecedorService
     {
         private readonly IValidador<FornecedorRequest> _validador;
-        private readonly IAsyncMap<FornecedorRequest, Fornecedor> _map;
+        private readonly FornecedorMapping _map;
         private readonly IFornecedorRepository _fornecedorRepository;
 
         public FornecedorService(IValidador<FornecedorRequest> validador,
-                                 IAsyncMap<FornecedorRequest, Fornecedor> map,
+                                 FornecedorMapping map,
                                  IFornecedorRepository fornecedorRepository)
         {
             _validador = validador;
@@ -37,7 +38,7 @@ namespace AtronStock.Application.Services
                 return Resultado.Falha(FornecedorResource.ErroCodigoFornecedorExistente);
             }
 
-            Fornecedor fornecedor = await _map.MapToEntityAsync(request);
+            Fornecedor fornecedor = _map.MapToEntity(request);
             bool foiSalvo = await _fornecedorRepository.AdicionarAsync(fornecedor);
             if (!foiSalvo)
             {
@@ -63,7 +64,7 @@ namespace AtronStock.Application.Services
                 return Resultado<FornecedorRequest>.Falha(FornecedorResource.ErroFornecedorNaoEncontrado);
             }
 
-            FornecedorRequest dto = await _map.MapToDTOAsync(fornecedor);
+            FornecedorRequest dto = _map.MapToDto(fornecedor);
 
             return Resultado<FornecedorRequest>.Sucesso(dto);
         }
