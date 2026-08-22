@@ -3,6 +3,7 @@ using Application.Mapping;
 using Application.Policies.PlanejamentoCustos;
 using Application.Resources;
 using Application.Services.EntitiesServices;
+using Application.UseCases.DepartamentoCases;
 using Application.Validador;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -17,16 +18,13 @@ public class EstruturaPlanejadaPolicyTests
     public async Task RemoverDepartamentoAsync_DeveBloquearDepartamentoComPlanejamentoAtualOuFuturo()
     {
         var departamento = new Departamento { Id = 10, Codigo = "DPT", Descricao = "Departamento" };
-        var service = new DepartamentoService(
-            new DepartamentoValidador(),
-            new DepartamentoMapping(),
+        var useCase = new ExcluirDepartamentoCase(
             new DepartamentoRepositoryFake(departamentos: [departamento]),
-            new UsuarioRepositoryFake(),
             new CargoRepositoryFake(),
             new EstruturaPlanejadaPolicy(new PlanejamentoCustoRepositoryFake(possuiDepartamentoPlanejado: true)),
             new UsuarioCargoDepartamentoRepositoryFake());
 
-        var resultado = await service.RemoverAsync("DPT");
+        var resultado = await useCase.ExecutarAsync("DPT");
 
         Assert.True(resultado.TeveFalha);
         Assert.Contains(

@@ -30,7 +30,7 @@ namespace Application.Mapping
             };
         }
 
-        public static void MapToEntity(DepartamentoDTO dto, Departamento entityToUpdate)
+        public override void MapToUpdate(DepartamentoDTO dto, Departamento entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao;
             entityToUpdate.GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo?.ToUpper();

@@ -17,6 +17,7 @@ using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
 using Application.Services.EntitiesServices.Tarefas.Obtencao;
 using Application.Services.Identity;
+using Application.UseCases.DepartamentoCases;
 using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using Application.UseCases.UsuarioCases;
@@ -239,6 +240,11 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {
             services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
+            services.AddScoped<AtualizarDepartamentoCase>();
+            services.AddScoped<CriarDepartamentoCase>();
+            services.AddScoped<ExcluirDepartamentoCase>();
+            services.AddScoped<ObterDepartamentoCase>();
+            services.AddScoped<VincularGestorDepartamentoCase>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
         }
 
