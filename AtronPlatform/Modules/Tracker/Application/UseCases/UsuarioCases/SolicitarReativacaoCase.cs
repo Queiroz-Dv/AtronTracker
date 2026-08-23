@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public class SolicitarReativacao(
+    public class SolicitarReativacaoCase(
         IUsuarioRepository usuarioRepository,
         IEmailService emailService,
         IAcessoEmailCompositor emailCompositor)

@@ -13,7 +13,7 @@ using UsuarioEntity = Domain.Entities.Usuario;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public class ReenviarConfirmacaoEmail(
+    public class ReenviarConfirmacaoEmailCase(
         IUsuarioRepository usuarioRepository,
         IConfirmacaoEmailRepository confirmacaoEmailRepository,
         IConfirmacaoEmailCodigoService confirmacaoEmailCodigoService,

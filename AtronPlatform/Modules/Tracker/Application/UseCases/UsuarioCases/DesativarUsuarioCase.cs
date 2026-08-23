@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public class DesativarUsuario(
+    public class DesativarUsuarioCase(
         IUsuarioRepository usuarioRepository,
         IUsuarioIdentityRepository usuarioIdentityRepository,
         IAuditoriaService auditoriaService)

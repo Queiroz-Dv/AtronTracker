@@ -399,12 +399,12 @@ public class RegistroUsuarioServiceTests
         return new RegistroUsuarioService(cadastro, recuperacao);
     }
 
-    private static ReenviarConfirmacaoEmail CriarReenviarConfirmacaoEmail(
+    private static ReenviarConfirmacaoEmailCase CriarReenviarConfirmacaoEmail(
         UsuarioRepositoryFake usuarioRepository,
         ConfirmacaoEmailRepositoryFake confirmacaoRepository,
         EmailServiceFake? emailService = null)
     {
-        return new ReenviarConfirmacaoEmail(
+        return new ReenviarConfirmacaoEmailCase(
             usuarioRepository,
             confirmacaoRepository,
             new ConfirmacaoEmailCodigoService(),

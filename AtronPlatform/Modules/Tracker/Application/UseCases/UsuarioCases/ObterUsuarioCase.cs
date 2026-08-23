@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public class ObterUsuario(
+    public class ObterUsuarioCase(
         IToDtoMapper<Usuario, UsuarioDTO> usuarioMapper,
         IUsuarioRepository usuarioRepository,
         IUserAccessor userAccessor)

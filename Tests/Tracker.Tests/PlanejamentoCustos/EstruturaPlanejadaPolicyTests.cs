@@ -2,7 +2,7 @@ using Application.DTO;
 using Application.Mapping;
 using Application.Policies.PlanejamentoCustos;
 using Application.Resources;
-using Application.Services.EntitiesServices;
+using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
 using Application.Validador;
 using Domain.Entities;
@@ -43,15 +43,12 @@ public class EstruturaPlanejadaPolicyTests
             DepartamentoId = 10,
             DepartamentoCodigo = "DPT"
         };
-        var service = new CargoService(
-            new CargoValidador(),
-            new CargoMapping(),
+        var useCase = new ExcluirCargoCase(
             new CargoRepositoryFake(cargos: [cargo]),
-            new DepartamentoRepositoryFake(),
             new EstruturaPlanejadaPolicy(new PlanejamentoCustoRepositoryFake(possuiCargoPlanejado: true)),
             new UsuarioCargoDepartamentoRepositoryFake());
 
-        var resultado = await service.RemoverAsync("CRG");
+        var resultado = await useCase.ExecutarAsync("CRG");
 
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
@@ -74,13 +71,12 @@ public class EstruturaPlanejadaPolicyTests
             Departamento = departamentoAtual
         };
 
-        var service = new CargoService(
+        var useCase = new AtualizarCargoCase(
             new CargoValidador(),
             new CargoMapping(),
             new CargoRepositoryFake(cargos: [cargo]),
             new DepartamentoRepositoryFake(departamentos: [departamentoAtual, novoDepartamento]),
-            new EstruturaPlanejadaPolicy(new PlanejamentoCustoRepositoryFake(possuiCargoPlanejado: true)),
-            new UsuarioCargoDepartamentoRepositoryFake());
+            new EstruturaPlanejadaPolicy(new PlanejamentoCustoRepositoryFake(possuiCargoPlanejado: true)));
 
         var dto = new CargoDTO
         {
@@ -89,7 +85,7 @@ public class EstruturaPlanejadaPolicyTests
             DepartamentoCodigo = "DPB"
         };
 
-        var resultado = await service.AtualizarAsync("CRG", dto);
+        var resultado = await useCase.ExecutarAsync("CRG", dto);
 
         Assert.True(resultado.TeveFalha);
         Assert.Contains(

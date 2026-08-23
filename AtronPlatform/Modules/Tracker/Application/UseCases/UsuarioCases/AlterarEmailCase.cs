@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public class AlterarEmail(
+    public class AlterarEmailCase(
         IUsuarioRepository usuarioRepository,
         IUsuarioIdentityRepository usuarioIdentityRepository,
         IEmailService emailService,

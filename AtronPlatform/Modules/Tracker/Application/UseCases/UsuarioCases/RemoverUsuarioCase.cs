@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public class RemoverUsuario(
+    public class RemoverUsuarioCase(
         IUsuarioRepository usuarioRepository,
         IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
         ITarefaRepository tarefaRepository,

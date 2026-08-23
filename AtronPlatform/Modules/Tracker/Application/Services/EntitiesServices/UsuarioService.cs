@@ -16,29 +16,29 @@ namespace Application.Services.EntitiesServices
     public class UsuarioService(
         IToDtoMapper<Usuario, UsuarioDTO> mapper,
         IUsuarioRepository usuarioRepository,
-        ObterUsuario obterUsuario,
-        CriarUsuario criarUsuario,
-        AtualizarUsuario atualizarUsuario,
-        RemoverUsuario removerUsuario,
-        DesativarUsuario desativarUsuario,
-        ReativarUsuario reativarUsuario,
-        SolicitarReativacao solicitarReativacao,
-        AlterarEmail alterarEmail,
-        ConfirmarAlteracaoEmail confirmarAlteracaoEmail,
-        ReenviarConfirmacaoEmail reenviarConfirmacaoEmail) : IUsuarioService
+        ObterUsuarioCase obterUsuario,
+        CriarUsuarioCase criarUsuario,
+        AtualizarUsuarioCase atualizarUsuario,
+        RemoverUsuarioCase removerUsuario,
+        DesativarUsuarioCase desativarUsuario,
+        ReativarUsuarioCase reativarUsuario,
+        SolicitarReativacaoCase solicitarReativacao,
+        AlterarEmailCase alterarEmail,
+        ConfirmarAlteracaoEmailCase confirmarAlteracaoEmail,
+        ReenviarConfirmacaoEmailCase reenviarConfirmacaoEmail) : IUsuarioService
     {
         private readonly IToDtoMapper<Usuario, UsuarioDTO> _mapper = mapper;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
-        private readonly ObterUsuario _obterUsuario = obterUsuario;
-        private readonly CriarUsuario _criarUsuario = criarUsuario;
-        private readonly AtualizarUsuario _atualizarUsuario = atualizarUsuario;
-        private readonly RemoverUsuario _removerUsuario = removerUsuario;
-        private readonly DesativarUsuario _desativarUsuario = desativarUsuario;
-        private readonly ReativarUsuario _reativarUsuario = reativarUsuario;
-        private readonly SolicitarReativacao _solicitarReativacao = solicitarReativacao;
-        private readonly AlterarEmail _alterarEmail = alterarEmail;
-        private readonly ConfirmarAlteracaoEmail _confirmarAlteracaoEmail = confirmarAlteracaoEmail;
-        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
+        private readonly ObterUsuarioCase _obterUsuario = obterUsuario;
+        private readonly CriarUsuarioCase _criarUsuario = criarUsuario;
+        private readonly AtualizarUsuarioCase _atualizarUsuario = atualizarUsuario;
+        private readonly RemoverUsuarioCase _removerUsuario = removerUsuario;
+        private readonly DesativarUsuarioCase _desativarUsuario = desativarUsuario;
+        private readonly ReativarUsuarioCase _reativarUsuario = reativarUsuario;
+        private readonly SolicitarReativacaoCase _solicitarReativacao = solicitarReativacao;
+        private readonly AlterarEmailCase _alterarEmail = alterarEmail;
+        private readonly ConfirmarAlteracaoEmailCase _confirmarAlteracaoEmail = confirmarAlteracaoEmail;
+        private readonly ReenviarConfirmacaoEmailCase _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
 
         public async Task<Resultado<UsuarioRequest>> CriarAsync(UsuarioRequest request)
             => await _criarUsuario.ExecutarAsync(request);

@@ -17,7 +17,7 @@ public class ObterUsuarioTests
     {
         var repositorio = new Mock<IUsuarioRepository>();
         var mapa = new Mock<IToDtoMapper<Usuario, UsuarioDTO>>();
-        var casoDeUso = new ObterUsuario(
+        var casoDeUso = new ObterUsuarioCase(
             mapa.Object,
             repositorio.Object,
             Mock.Of<IUserAccessor>());
@@ -43,7 +43,7 @@ public class ObterUsuarioTests
             .Setup(item => item.ObterUsuarioPorCodigoAsync("USR"))
             .ReturnsAsync((Domain.Entities.Usuario)null!);
         var mapa = new Mock<IToDtoMapper<Usuario, UsuarioDTO>>();
-        var casoDeUso = new ObterUsuario(
+        var casoDeUso = new ObterUsuarioCase(
             mapa.Object,
             repositorio.Object,
             Mock.Of<IUserAccessor>());
@@ -71,7 +71,7 @@ public class ObterUsuarioTests
         mapa
             .Setup(item => item.MapToDto(usuario))
             .Returns(usuarioDto);
-        var casoDeUso = new ObterUsuario(
+        var casoDeUso = new ObterUsuarioCase(
             mapa.Object,
             repositorio.Object,
             Mock.Of<IUserAccessor>());

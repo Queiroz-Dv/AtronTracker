@@ -25,7 +25,7 @@ namespace Application.UseCases.DepartamentoCases
         public async Task<Resultado> ExecutarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
             if (codigo.IsNullOrEmpty())
-                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
+                return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var erros = _validador.Validar(departamentoDTO);
             if (erros.Any())
@@ -34,21 +34,21 @@ namespace Application.UseCases.DepartamentoCases
             var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
             if (entidade == null)
-                return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+                return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             entidade.MapToUpdate(departamentoDTO, _mapper);
 
             var resultadoGestor = await _vincularGestorDepartamento
                 .ExecutarAsync(entidade, departamentoDTO.GestorDepartamentoCodigo);
             if (resultadoGestor.TeveFalha)
-                return Resultado<DepartamentoDTO>.Falhas(resultadoGestor.Messages);
+                return Resultado.Falha(resultadoGestor.Messages);
 
             var atualizado = await _departamentoRepository.AtualizarDepartamentoRepositoryAsync(entidade);
             if (!atualizado)
-                return Resultado<DepartamentoDTO>.Falha(string.Format(DepartamentoResource.ErroInesperadoAtualizacao, codigo));
+                return Resultado.Falha(string.Format(DepartamentoResource.ErroInesperadoAtualizacao, codigo));
 
-            return Resultado<DepartamentoDTO>
-                .Sucesso(departamentoDTO)
+            return Resultado
+                .Sucesso()
                 .AdicionarMensagem(string.Format(DepartamentoResource.MensagemAtualizacao, codigo));
         }
     }

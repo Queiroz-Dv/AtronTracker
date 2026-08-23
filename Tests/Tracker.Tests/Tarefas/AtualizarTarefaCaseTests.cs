@@ -60,7 +60,7 @@ public class AtualizarTarefaCaseTests
         var resultado = await caseDeAtualizacao.ExecutarAsync(tarefaAnterior.Id, tarefaDto);
 
         Assert.True(resultado.TeveSucesso);
-        Assert.Same(tarefaDto, resultado.Dados);
+        Assert.Null(resultado.Dados);
         Assert.NotNull(movimentacaoRegistrada);
         Assert.Equal(tarefaAtual.Id, movimentacaoRegistrada.TarefaId);
         Assert.Equal(TipoMovimentacaoTarefa.Atualizacao, movimentacaoRegistrada.Tipo);

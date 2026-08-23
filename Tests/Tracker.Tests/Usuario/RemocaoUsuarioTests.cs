@@ -74,7 +74,7 @@ public class RemocaoUsuarioTests
             .Setup(service => service.RemoverServiceAsync(It.IsAny<IAuditoriaDTO>()))
             .ReturnsAsync(Resultado.Sucesso());
 
-        var casoDeUso = new RemoverUsuario(
+        var casoDeUso = new RemoverUsuarioCase(
             usuarioRepository.Object,
             associacaoRepository.Object,
             tarefaRepository.Object,
@@ -134,7 +134,7 @@ public class RemocaoUsuarioTests
             .ReturnsAsync((UsuarioCargoDepartamento)null!);
 
         var identityRepository = new Mock<IUsuarioIdentityRepository>();
-        var casoDeUso = new RemoverUsuario(
+        var casoDeUso = new RemoverUsuarioCase(
             usuarioRepository.Object,
             associacaoRepository.Object,
             tarefaRepository.Object,
@@ -175,7 +175,7 @@ public class RemocaoUsuarioTests
             .Setup(repository => repository.DeletarContaUserRepositoryAsync(CodigoUsuario))
             .ReturnsAsync(false);
 
-        var casoDeUso = new RemoverUsuario(
+        var casoDeUso = new RemoverUsuarioCase(
             usuarioRepository.Object,
             Mock.Of<IUsuarioCargoDepartamentoRepository>(),
             Mock.Of<ITarefaRepository>(),

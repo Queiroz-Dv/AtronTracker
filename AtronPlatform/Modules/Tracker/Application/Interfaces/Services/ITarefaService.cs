@@ -7,9 +7,9 @@ namespace Application.Interfaces.Services
 {
     public interface ITarefaService
     {
-        Task<Resultado<TarefaDTO>> CriarAsync(TarefaDTO tarefaDTO);
+        Task<Resultado> CriarAsync(TarefaDTO tarefaDTO);
 
-        Task<Resultado<TarefaDTO>> AtualizarAsync(int id, TarefaDTO tarefaDTO);
+        Task<Resultado> AtualizarAsync(int id, TarefaDTO tarefaDTO);
 
         Task<Resultado> ExcluirAsync(string id);
 

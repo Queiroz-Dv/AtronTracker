@@ -11,23 +11,23 @@ namespace Application.UseCases.DepartamentoCases
     {
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
 
-        public async Task<Resultado<Departamento>> ExecutarAsync(Departamento departamento, string gestorCodigo)
+        public async Task<Resultado> ExecutarAsync(Departamento departamento, string gestorCodigo)
         {
             if (gestorCodigo.IsNullOrEmpty())
             {
                 departamento.GestorDepartamentoId = null;
                 departamento.GestorDepartamentoCodigo = null;
-                return Resultado<Departamento>.Sucesso(departamento);
+                return Resultado.Sucesso();
             }
 
             var gestor = await _usuarioRepository.ObterUsuarioPorCodigoAsync(gestorCodigo.ToUpper());
             if (gestor is null)
-                return Resultado<Departamento>.Falha(DepartamentoResource.ErroGestorNaoEncontrado);
+                return Resultado.Falha(DepartamentoResource.ErroGestorNaoEncontrado);
 
             departamento.GestorDepartamentoId = gestor.Id;
             departamento.GestorDepartamentoCodigo = gestor.Codigo;
 
-            return Resultado<Departamento>.Sucesso(departamento);
+            return Resultado.Sucesso();
         }
     }
 }

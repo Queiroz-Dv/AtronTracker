@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public class ConfirmarAlteracaoEmail(
+    public class ConfirmarAlteracaoEmailCase(
         IUsuarioRepository usuarioRepository,
         IUsuarioIdentityRepository usuarioIdentityRepository,
         ICacheUsuarioService cacheUsuarioService)

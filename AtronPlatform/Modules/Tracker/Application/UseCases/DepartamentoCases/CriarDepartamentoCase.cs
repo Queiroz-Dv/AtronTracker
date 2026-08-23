@@ -24,11 +24,11 @@ namespace Application.UseCases.DepartamentoCases
         {
             var erros = _validador.Validar(departamentoDTO);
             if (erros.Any())
-                return Resultado<DepartamentoDTO>.Falhas(erros);
+                return Resultado.Falha(erros);
 
             var departamentoExiste = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamentoDTO.Codigo);
             if (departamentoExiste != null)
-                return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroCodigoDepartamentoExistente);
+                return Resultado.Falha(DepartamentoResource.ErroCodigoDepartamentoExistente);
 
             var departamento = _mapper.MapToEntity(departamentoDTO);
 
@@ -36,15 +36,17 @@ namespace Application.UseCases.DepartamentoCases
                 .ExecutarAsync(departamento, departamentoDTO.GestorDepartamentoCodigo);
 
             if (resultadoGestor.TeveFalha)
-                return Resultado<DepartamentoDTO>.Falhas(resultadoGestor.Messages);
+                return Resultado.Falha(resultadoGestor.Messages);
 
             var foiCriado = await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
             if (!foiCriado)
-                return Resultado<DepartamentoDTO>.Falha(DepartamentoResource.ErroGravacao);
+                return Resultado.Falha(DepartamentoResource.ErroGravacao);
 
-            return Resultado<DepartamentoDTO>
-                .Sucesso(departamentoDTO)
-                .ComMensagemRegistroSalvo(departamento.Codigo);
+            return Resultado
+                .Sucesso()
+                .AdicionarMensagem(string.Format(
+                    NotificacoesPadronizadas.ResourceManager.GetString("Mensagem_RegistroSalvo")!,
+                    departamento.Codigo));
         }
     }
 }

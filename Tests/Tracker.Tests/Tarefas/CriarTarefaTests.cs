@@ -37,6 +37,7 @@ public class CriarTarefaTests
         var resultado = await cenario.Case.ExecutarAsync(tarefa);
 
         Assert.True(resultado.TeveSucesso);
+        Assert.Null(resultado.Dados);
         Assert.NotNull(tarefaPreparada);
         Assert.Equal("ADM", tarefaPreparada.DepartamentoCodigo);
         Assert.Null(tarefaPreparada.UsuarioCodigo);

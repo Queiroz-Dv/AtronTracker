@@ -28,42 +28,42 @@ namespace Application.UseCases.TarefaCases
 
         private readonly CriarTarefaMovimentacaoCase _criarMovimentacao = criarMovimentacao;
 
-        public async Task<Resultado<TarefaDTO>> ExecutarAsync(TarefaDTO tarefaDTO)
+        public async Task<Resultado> ExecutarAsync(TarefaDTO tarefaDTO)
         {
             Resultado<Domain.Entities.Usuario>? responsavelResultado = null;
             if (tarefaDTO.DestinoInicial == (int)DestinoInicialTarefa.Equipe)
             {
                 responsavelResultado = await _usuarioService.ObterUsuarioAtual();
                 if (responsavelResultado.TeveFalha)
-                    return Resultado<TarefaDTO>.Falhas(responsavelResultado.Messages);
+                    return Resultado.Falha(responsavelResultado.Messages);
 
                 var departamentoEquipeResultado = DefinirDepartamentoDaEquipe(tarefaDTO, responsavelResultado.Dados!);
                 if (departamentoEquipeResultado.TeveFalha)
-                    return Resultado<TarefaDTO>.Falhas(departamentoEquipeResultado.Messages);
+                    return Resultado.Falha(departamentoEquipeResultado.Messages);
             }
 
             var preparacaoResultado = await _tarefaPreparacaoService.PrepararParaPersistenciaAsync(tarefaDTO);
             if (preparacaoResultado.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(preparacaoResultado.Messages);
+                return Resultado.Falha(preparacaoResultado.Messages);
 
             var tarefa = preparacaoResultado.Dados;
 
             responsavelResultado ??= await _usuarioService.ObterUsuarioAtual();
             if (responsavelResultado.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(responsavelResultado.Messages);
+                return Resultado.Falha(responsavelResultado.Messages);
 
             var responsavel = responsavelResultado.Dados!;
 
             if (!await _tarefaRepository.CriarTarefaAsync(tarefa))
-                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_GravarTarefa);
+                return Resultado.Falha(TarefaResource.Erro_GravarTarefa);
 
             var movimentacao = await _criarMovimentacao.ExecutarAsync(tarefa, responsavel);
             if (movimentacao.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(movimentacao.Messages);
+                return Resultado.Falha(movimentacao.Messages);
 
             tarefaDTO.Id = tarefa.Id;
             tarefaDTO.Identificador = tarefa.Identificador;
-            var resultado = Resultado<TarefaDTO>.Sucesso(tarefaDTO).AdicionarMensagem(TarefaResource.Mensagem_TarefaCriada);
+            var resultado = Resultado.Sucesso().AdicionarMensagem(TarefaResource.Mensagem_TarefaCriada);
 
             await _notificacaoInternaCase.ExecutarAsync(tarefaDTO.CriarNotificacaoDeAtribuicao());
             var envioEmail = await _tarefaNotificacaoService.NotificarAtribuicaoAsync(tarefaDTO, tarefaDTO.Usuario);

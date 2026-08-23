@@ -27,14 +27,14 @@ namespace Application.Interfaces.Services
         /// Cria um cargo
         /// </summary>
         /// <param name="cargoDTO">Modelo que será criado</param>
-        Task<Resultado<CargoDTO>> CriarAsync(CargoDTO cargoDTO);
+        Task<Resultado> CriarAsync(CargoDTO cargoDTO);
 
         /// <summary>
         /// Atualiza um cargo existente
         /// </summary>
         /// <param name="codigo">Código do cargo</param>
         /// <param name="cargoDTO">Modelo que será atualizado</param>
-        Task<Resultado<CargoDTO>> AtualizarAsync(string codigo, CargoDTO cargoDTO);
+        Task<Resultado> AtualizarAsync(string codigo, CargoDTO cargoDTO);
 
         /// <summary>
         /// Exclui um cargo existente por código informado

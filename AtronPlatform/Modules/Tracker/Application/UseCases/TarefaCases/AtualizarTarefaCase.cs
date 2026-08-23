@@ -21,19 +21,19 @@ namespace Application.UseCases.TarefaCases
         private readonly IUsuarioService _usuarioService = usuarioService;
         private readonly AtualizarTarefaMovimentacaoCase _atualizarMovimentacao = atualizarMovimentacao;
 
-        public async Task<Resultado<TarefaDTO>> ExecutarAsync(int id, TarefaDTO tarefaDTO)
+        public async Task<Resultado> ExecutarAsync(int id, TarefaDTO tarefaDTO)
         {
             var tarefaAnterior = await _tarefaRepository.ObterTarefaPorId(id);
             if (tarefaAnterior is null)
-                return Resultado<TarefaDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
+                return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             var preparacaoResultado = await _tarefaPreparacaoService.PrepararParaPersistenciaAsync(tarefaDTO);
             if (preparacaoResultado.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(preparacaoResultado.Messages);
+                return Resultado.Falha(preparacaoResultado.Messages);
 
             var responsavelResultado = await _usuarioService.ObterUsuarioAtual();
             if (responsavelResultado.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(responsavelResultado.Messages);
+                return Resultado.Falha(responsavelResultado.Messages);
 
             var tarefaAtual = preparacaoResultado.Dados;
             var responsavel = responsavelResultado.Dados;
@@ -42,12 +42,12 @@ namespace Application.UseCases.TarefaCases
 
             var movimentacao = await _atualizarMovimentacao.ExecutarAsync(parametros);
             if (movimentacao.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(movimentacao.Messages);
+                return Resultado.Falha(movimentacao.Messages);
 
             if (!await _tarefaRepository.AtualizarTarefaAsync(id, tarefaAtual))
-                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_AtualizarTarefa);
+                return Resultado.Falha(TarefaResource.Erro_AtualizarTarefa);
 
-            return Resultado<TarefaDTO>.Sucesso(tarefaDTO).AdicionarMensagem(TarefaResource.Mensagem_TarefaAtualizada);
+            return Resultado.Sucesso().AdicionarMensagem(TarefaResource.Mensagem_TarefaAtualizada);
         }
     }
 }

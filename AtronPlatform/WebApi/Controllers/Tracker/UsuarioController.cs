@@ -1,13 +1,11 @@
 ﻿using Application.DTO.Request;
 using Application.Interfaces.Services;
-using Application.Services.EntitiesServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Resources;
+using Shared.Authorization;
 using Shared.Domain.ValueObjects;
 using Shared.Infrastructure.Filters;
-using System.Threading.Tasks;
-using Shared.Authorization;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {

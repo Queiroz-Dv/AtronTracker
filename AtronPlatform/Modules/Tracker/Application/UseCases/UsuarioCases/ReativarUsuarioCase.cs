@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public class ReativarUsuario(
+    public class ReativarUsuarioCase(
         IUsuarioRepository usuarioRepository,
         IUsuarioIdentityRepository usuarioIdentityRepository,
         IAuditoriaService auditoriaService)

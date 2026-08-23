@@ -29,18 +29,18 @@ export abstract class BaseService<T> {
       .pipe(catchError(this.handleError));
   }
 
-  gravar(model: T): Observable<T> {
-    return this.http.post<T>(this.endpoint, model)
+  gravar(model: T): Observable<RespostaApi> {
+    return this.http.post<RespostaApi>(this.endpoint, model)
       .pipe(catchError(this.handleError));
   }
 
-  atualizar(codigo: string | number, model: T): Observable<T> {
-    return this.http.put<T>(`${this.endpoint}/${codigo}`, model)
+  atualizar(codigo: string | number, model: T): Observable<RespostaApi> {
+    return this.http.put<RespostaApi>(`${this.endpoint}/${codigo}`, model)
       .pipe(catchError(this.handleError));
   }
 
-  deletar(codigo: string | number): Observable<void> {
-    return this.http.delete<void>(`${this.endpoint}/${codigo}`)
+  deletar(codigo: string | number): Observable<RespostaApi> {
+    return this.http.delete<RespostaApi>(`${this.endpoint}/${codigo}`)
       .pipe(catchError(this.handleError));
   }
 
@@ -55,7 +55,7 @@ export abstract class BaseService<T> {
   }
 }
 
-type RespostaApi = Mensagem[] | any;
+export type RespostaApi = Mensagem[];
 
 function extrairCorpoErro(erro: any): Mensagem[] | null {
   const corpo = normalizarCorpoErro(erro?.error);
@@ -139,17 +139,17 @@ export abstract class BaseGenericService<TRequest, TResponse = TRequest> {
   }
 
   gravar(model: TRequest): Observable<RespostaApi> {
-    return this.http.post<TResponse>(this.endpoint, model)
+    return this.http.post<RespostaApi>(this.endpoint, model)
       .pipe(catchError(this.tratarErro));
   }
 
   atualizar(codigo: string | number, model: TRequest): Observable<RespostaApi> {
-    return this.http.put<TResponse>(`${this.endpoint}/${codigo}`, model)
+    return this.http.put<RespostaApi>(`${this.endpoint}/${codigo}`, model)
       .pipe(catchError(this.tratarErro));
   }
 
   deletar(codigo: string | number): Observable<RespostaApi> {
-    return this.http.delete<void>(`${this.endpoint}/${codigo}`)
+    return this.http.delete<RespostaApi>(`${this.endpoint}/${codigo}`)
       .pipe(catchError(this.tratarErro));
   }
 
