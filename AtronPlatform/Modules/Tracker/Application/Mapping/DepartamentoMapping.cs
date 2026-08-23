@@ -5,7 +5,9 @@ using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Mapping
 {
-    public sealed class DepartamentoMapping : Mapper<Departamento, DepartamentoDTO>
+    public sealed class DepartamentoMapping
+        : Mapper<Departamento, DepartamentoDTO>,
+          IUpdateMapper<Departamento, DepartamentoDTO>
     {
         public override DepartamentoDTO MapToDto(Departamento entity)
         {
@@ -30,7 +32,7 @@ namespace Application.Mapping
             };
         }
 
-        public override void MapToUpdate(DepartamentoDTO dto, Departamento entityToUpdate)
+        public void MapToUpdate(DepartamentoDTO dto, Departamento entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao;
             entityToUpdate.GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo?.ToUpper();

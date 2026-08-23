@@ -2,6 +2,7 @@
 using Application.Mapping;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -35,7 +36,7 @@ namespace Application.UseCases.DepartamentoCases
             if (entidade == null)
                 return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            _mapper.MapToUpdate(departamentoDTO, entidade);
+            entidade.MapToUpdate(departamentoDTO, _mapper);
 
             var resultadoGestor = await _vincularGestorDepartamento
                 .ExecutarAsync(entidade, departamentoDTO.GestorDepartamentoCodigo);

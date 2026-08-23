@@ -5,6 +5,7 @@ using Application.Policies.PlanejamentoCustos;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -76,7 +77,7 @@ namespace Application.Services.EntitiesServices
             if (estruturaPlanejada.TeveFalha)
                 return Resultado<CargoDTO>.Falhas(estruturaPlanejada.Messages);
 
-            _mapper.MapToEntity(cargoDTO, entidade);
+            entidade.MapToUpdate(cargoDTO, _mapper);
             entidade.VincularDepartamento(departamento);
 
             var atualizado = await _cargoRepository.AtualizarCargoAsync(entidade);

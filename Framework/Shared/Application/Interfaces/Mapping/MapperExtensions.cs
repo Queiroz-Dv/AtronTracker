@@ -42,6 +42,20 @@
             return entities.Select(mapper.MapToDto);
         }
 
+        public static void MapToUpdate<TEntity, TDto>(
+            this TEntity entity,
+            TDto dto,
+            IUpdateMapper<TEntity, TDto> mapper)
+            where TEntity : class
+            where TDto : class
+        {
+            ArgumentNullException.ThrowIfNull(entity);
+            ArgumentNullException.ThrowIfNull(dto);
+            ArgumentNullException.ThrowIfNull(mapper);
+
+            mapper.MapToUpdate(dto, entity);
+        }
+
         public static IEnumerable<TEntity> MapToEntities<TEntity, TDto>(
             this IEnumerable<TDto>? dtos,
             IToEntityMapper<TEntity, TDto> mapper)
