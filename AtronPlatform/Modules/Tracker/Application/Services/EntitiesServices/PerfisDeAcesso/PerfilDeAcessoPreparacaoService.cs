@@ -6,7 +6,7 @@ using Domain.Interfaces;
 using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.PerfisDeAcesso
@@ -14,47 +14,36 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
     public class PerfilDeAcessoPreparacaoService(
         IToEntityMapper<PerfilDeAcesso, PerfilDeAcessoDTO> map,
         IModuloRepository moduloRepository,
-        IValidateModelService<PerfilDeAcesso> validateModel,
-        Notifiable messageModel) : IPerfilDeAcessoPreparacaoService
+        IValidador<PerfilDeAcessoDTO> validador) : IPerfilDeAcessoPreparacaoService
     {
         private readonly IToEntityMapper<PerfilDeAcesso, PerfilDeAcessoDTO> _map = map;
         private readonly IModuloRepository _moduloRepository = moduloRepository;
-        private readonly IValidateModelService<PerfilDeAcesso> _validateModel = validateModel;
-        private readonly Notifiable _messageModel = messageModel;
+        private readonly IValidador<PerfilDeAcessoDTO> _validador = validador;
 
         public async Task<Resultado<PerfilDeAcesso>> PrepararAsync(PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
-            ValidarComando(perfilDeAcessoDTO);
-            if (_messageModel.Notificacoes.HasErrors())
-                return Resultado<PerfilDeAcesso>.Falhas(_messageModel.Notificacoes);
+            var mensagens = _validador.Validar(perfilDeAcessoDTO);
+            if (mensagens.Any())
+                return Resultado<PerfilDeAcesso>.Falhas(mensagens);
 
             var perfilDeAcesso = _map.MapToEntity(perfilDeAcessoDTO);
-            await VincularModulosAsync(perfilDeAcessoDTO, perfilDeAcesso);
+            var vinculacao = await VincularModulosAsync(perfilDeAcessoDTO, perfilDeAcesso);
+            if (vinculacao.TeveFalha)
+                return Resultado<PerfilDeAcesso>.Falhas(vinculacao.Messages);
 
-            _validateModel.Validate(perfilDeAcesso);
-
-            return _messageModel.Notificacoes.HasErrors()
-                ? Resultado<PerfilDeAcesso>.Falhas(_messageModel.Notificacoes)
-                : Resultado<PerfilDeAcesso>.Sucesso(perfilDeAcesso);
+            return Resultado<PerfilDeAcesso>.Sucesso(perfilDeAcesso);
         }
 
-        private void ValidarComando(PerfilDeAcessoDTO perfilDeAcessoDTO)
-        {
-            if (perfilDeAcessoDTO is null)
-            {
-                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_PerfilInvalido);
-                return;
-            }
-
-            if (perfilDeAcessoDTO.Modulos is null || perfilDeAcessoDTO.Modulos.Count == 0)
-                _messageModel.AdicionarErro(PerfilDeAcessoResource.Erro_SemModulos);
-        }
-
-        private async Task VincularModulosAsync(PerfilDeAcessoDTO perfilDeAcessoDTO, PerfilDeAcesso perfilDeAcesso)
+        private async Task<Resultado> VincularModulosAsync(
+            PerfilDeAcessoDTO perfilDeAcessoDTO,
+            PerfilDeAcesso perfilDeAcesso)
         {
             foreach (var moduloDTO in perfilDeAcessoDTO.Modulos)
             {
                 var modulo = await _moduloRepository.ObterPorCodigoRepository(moduloDTO.Codigo);
+                if (modulo is null)
+                    return Resultado.Falha(ModuloResource.Erro_ModuloNaoEncontrado);
+
                 perfilDeAcesso.PerfilDeAcessoModulos.Add(new PerfilDeAcessoModulo
                 {
                     PerfilDeAcessoId = perfilDeAcesso.Id,
@@ -63,6 +52,8 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
                     ModuloCodigo = modulo.Codigo
                 });
             }
+
+            return Resultado.Sucesso();
         }
     }
 }

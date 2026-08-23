@@ -19,6 +19,7 @@ using Application.Services.EntitiesServices.Tarefas.Obtencao;
 using Application.Services.Identity;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
+using Application.UseCases.PerfilDeAcessoCases;
 using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using Application.UseCases.UsuarioCases;
@@ -270,6 +271,11 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
         {
             services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
+            services.AddScoped<AtualizarPerfilDeAcessoCase>();
+            services.AddScoped<CriarPerfilDeAcessoCase>();
+            services.AddScoped<ObterPerfilDeAcessoCase>();
+            services.AddScoped<ObterPerfisUsuarioCase>();
+            services.AddScoped<RemoverPerfilDeAcessoCase>();
             services.AddScoped<IPerfilDeAcessoPreparacaoService, PerfilDeAcessoPreparacaoService>();
             services.AddScoped<IPerfilDeAcessoCacheInvalidator, PerfilDeAcessoCacheInvalidator>();
             services.AddScoped<IPerfilDeAcessoUsuarioRelacionamentoService, PerfilDeAcessoUsuarioRelacionamentoService>();
