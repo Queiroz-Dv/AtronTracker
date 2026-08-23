@@ -20,6 +20,7 @@ using Application.Services.Identity;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
 using Application.UseCases.PerfilDeAcessoCases;
+using Application.UseCases.PlanejamentoCustoCases;
 using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using Application.UseCases.UsuarioCases;
@@ -248,6 +249,10 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IPlanejamentoCustoPreparacaoService, PlanejamentoCustoPreparacaoService>();
             services.AddScoped<IPlanejamentoCustoRelatorioService, PlanejamentoCustoRelatorioService>();
             services.AddScoped<IPlanejamentoCustoRelatorioImpressaoService, PlanejamentoCustoRelatorioImpressaoService>();
+            services.AddScoped<AtualizarPlanejamentoCustoCase>();
+            services.AddScoped<CriarPlanejamentoCustoCase>();
+            services.AddScoped<ExcluirPlanejamentoCustoCase>();
+            services.AddScoped<ObterPlanejamentoCustoCase>();
             services.AddScoped<IPlanejamentoCustoService, PlanejamentoCustoService>();
         }
 

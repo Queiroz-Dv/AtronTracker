@@ -1,7 +1,12 @@
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 using Shared.Infrastructure.Caching;
+using StackExchange.Redis;
 using Xunit;
 
 namespace Shared.Tests.Infrastructure.Caching;
@@ -12,7 +17,7 @@ public class RedisCacheServiceTests
     public void DeveGravarERecuperarObjetoSerializadoComExpiracao()
     {
         var cacheDistribuido = new CacheDistribuidoFake();
-        var service = new RedisCacheService(cacheDistribuido);
+        var service = CriarService(cacheDistribuido);
         var chave = new ChaveCache(ECacheKeysInfo.Acesso, "USR001");
         var expiracao = TimeSpan.FromMinutes(5);
 
@@ -31,7 +36,7 @@ public class RedisCacheServiceTests
     public void DeveUsarTrintaMinutosQuandoExpiracaoNaoFoiInformada()
     {
         var cacheDistribuido = new CacheDistribuidoFake();
-        var service = new RedisCacheService(cacheDistribuido);
+        var service = CriarService(cacheDistribuido);
 
         service.GravarCache(new CacheInfo<DadosTeste>(
             new ChaveCache(ECacheKeysInfo.Acesso, "USR001"))
@@ -45,7 +50,7 @@ public class RedisCacheServiceTests
     [Fact]
     public void DeveRetornarNuloQuandoChaveNaoExiste()
     {
-        var service = new RedisCacheService(new CacheDistribuidoFake());
+        var service = CriarService(new CacheDistribuidoFake());
 
         var resultado = service.ObterCache<DadosTeste>(
             new ChaveCache(ECacheKeysInfo.Acesso, "INEXISTENTE"));
@@ -57,7 +62,7 @@ public class RedisCacheServiceTests
     public void DeveRemoverChave()
     {
         var cacheDistribuido = new CacheDistribuidoFake();
-        var service = new RedisCacheService(cacheDistribuido);
+        var service = CriarService(cacheDistribuido);
         var chave = new ChaveCache(ECacheKeysInfo.Acesso, "USR001");
 
         service.GravarCache(new CacheInfo<DadosTeste>(chave)
@@ -67,6 +72,58 @@ public class RedisCacheServiceTests
         service.RemoverCache(chave);
 
         Assert.Null(service.ObterCache<DadosTeste>(chave));
+    }
+
+    [Fact]
+    public void DeveIgnorarIndisponibilidadeDoRedisEmDesenvolvimento()
+    {
+        var logger = new LoggerFake<RedisCacheService>();
+        var service = CriarService(
+            new CacheDistribuidoIndisponivelFake(),
+            Environments.Development,
+            logger);
+        var chave = new ChaveCache(ECacheKeysInfo.Acesso, "USR001");
+
+        var excecao = Record.Exception(() =>
+        {
+            service.GravarCache(new CacheInfo<DadosTeste>(chave)
+            {
+                EntityInfo = new DadosTeste("USR001", "Usuario de teste")
+            });
+            Assert.Null(service.ObterCache<DadosTeste>(chave));
+            service.RemoverCache(chave);
+        });
+
+        Assert.Null(excecao);
+        Assert.Contains(
+            logger.Mensagens,
+            mensagem => mensagem.Contains("Inicie o Redis local"));
+    }
+
+    [Fact]
+    public void DevePropagarIndisponibilidadeDoRedisForaDeDesenvolvimento()
+    {
+        var service = CriarService(
+            new CacheDistribuidoIndisponivelFake(),
+            Environments.Production);
+        var chave = new ChaveCache(ECacheKeysInfo.Acesso, "USR001");
+
+        Assert.Throws<RedisConnectionException>(() =>
+            service.GravarCache(new CacheInfo<DadosTeste>(chave)
+            {
+                EntityInfo = new DadosTeste("USR001", "Usuario de teste")
+            }));
+    }
+
+    private static RedisCacheService CriarService(
+        IDistributedCache cacheDistribuido,
+        string ambiente = "Development",
+        ILogger<RedisCacheService>? logger = null)
+    {
+        return new RedisCacheService(
+            cacheDistribuido,
+            new HostEnvironmentFake { EnvironmentName = ambiente },
+            logger ?? NullLogger<RedisCacheService>.Instance);
     }
 
     private sealed record DadosTeste(string Codigo, string Nome);
@@ -113,6 +170,66 @@ public class RedisCacheServiceTests
         {
             Set(key, value, options);
             return Task.CompletedTask;
+        }
+    }
+
+    private sealed class CacheDistribuidoIndisponivelFake : IDistributedCache
+    {
+        public byte[]? Get(string key) => throw CriarExcecao();
+
+        public Task<byte[]?> GetAsync(string key, CancellationToken token = default)
+            => throw CriarExcecao();
+
+        public void Refresh(string key) => throw CriarExcecao();
+
+        public Task RefreshAsync(string key, CancellationToken token = default)
+            => throw CriarExcecao();
+
+        public void Remove(string key) => throw CriarExcecao();
+
+        public Task RemoveAsync(string key, CancellationToken token = default)
+            => throw CriarExcecao();
+
+        public void Set(string key, byte[] value, DistributedCacheEntryOptions options)
+            => throw CriarExcecao();
+
+        public Task SetAsync(
+            string key,
+            byte[] value,
+            DistributedCacheEntryOptions options,
+            CancellationToken token = default)
+            => throw CriarExcecao();
+
+        private static RedisConnectionException CriarExcecao()
+            => new(ConnectionFailureType.UnableToConnect, "Redis indisponível para o teste.");
+    }
+
+    private sealed class HostEnvironmentFake : IHostEnvironment
+    {
+        public string EnvironmentName { get; set; } = Environments.Development;
+        public string ApplicationName { get; set; } = "Shared.Tests";
+        public string ContentRootPath { get; set; } = AppContext.BaseDirectory;
+        public IFileProvider ContentRootFileProvider { get; set; } = null!;
+    }
+
+    private sealed class LoggerFake<T> : ILogger<T>
+    {
+        public List<string> Mensagens { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+            => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            if (logLevel == LogLevel.Warning)
+                Mensagens.Add(formatter(state, exception));
         }
     }
 }

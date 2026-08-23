@@ -7,9 +7,9 @@ namespace Application.Interfaces.Services
 {
     public interface IPlanejamentoCustoService
     {
-        Task<Resultado<PlanejamentoCustoDTO>> CriarAsync(PlanejamentoCustoDTO planejamentoCustoDTO);
+        Task<Resultado> CriarAsync(PlanejamentoCustoDTO planejamentoCustoDTO);
 
-        Task<Resultado<PlanejamentoCustoDTO>> AtualizarAsync(string codigo, PlanejamentoCustoDTO planejamentoCustoDTO);
+        Task<Resultado> AtualizarAsync(string codigo, PlanejamentoCustoDTO planejamentoCustoDTO);
 
         Task<Resultado> RemoverAsync(string codigo);
 
