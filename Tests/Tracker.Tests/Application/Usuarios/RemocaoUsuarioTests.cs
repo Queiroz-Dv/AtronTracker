@@ -55,6 +55,9 @@ public class RemocaoUsuarioTests
         associacaoRepository
             .Setup(repository => repository.ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo))
             .ReturnsAsync(associacao);
+        associacaoRepository
+            .Setup(repository => repository.RemoverAssociacaoUsuarioCargoDepartamento(associacao))
+            .ReturnsAsync(true);
 
         var tarefaRepository = new Mock<ITarefaRepository>();
         tarefaRepository
@@ -94,8 +97,11 @@ public class RemocaoUsuarioTests
             repository => repository.AtualizarTarefaAsync(tarefa.Id, tarefa),
             Times.Once);
         tarefaRepository.Verify(
-            repository => repository.RemoverRepositoryAsync(It.IsAny<Tarefa>()),
+            repository => repository.RemoverTarefaAsync(It.IsAny<Tarefa>()),
             Times.Never);
+        associacaoRepository.Verify(
+            repository => repository.RemoverAssociacaoUsuarioCargoDepartamento(associacao),
+            Times.Once);
         usuarioRepository.Verify(
             repository => repository.RemoverUsuarioAsync(usuario),
             Times.Once);

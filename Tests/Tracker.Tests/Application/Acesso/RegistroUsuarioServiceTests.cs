@@ -18,6 +18,7 @@ using Shared.Application.Email.Rendering;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
+using Tracker.Tests.TestSupport.Fakes.Email;
 using Xunit;
 
 namespace Tracker.Tests.Acesso;
@@ -208,14 +209,14 @@ public class RegistroUsuarioServiceTests
     }
 
     [Fact]
-    public void GerarIdentificador_DeveGerarCodigoNumericoComSeisDigitos()
+    public void CriarDadosConfirmacao_DeveGerarIdentificadorNumericoComSeisDigitos()
     {
         var service = new ConfirmacaoEmailCodigoService();
 
-        var identificador = service.GerarIdentificador();
+        var dadosConfirmacao = service.CriarDadosConfirmacao("USR001", 24);
 
-        Assert.Equal(6, identificador.Length);
-        Assert.All(identificador, caractere => Assert.True(char.IsDigit(caractere)));
+        Assert.Equal(6, dadosConfirmacao.Identificador.Length);
+        Assert.All(dadosConfirmacao.Identificador, caractere => Assert.True(char.IsDigit(caractere)));
     }
 
     [Fact]
@@ -296,7 +297,7 @@ public class RegistroUsuarioServiceTests
         await service.ExecutarPorIdentificadorAsync("USR001");
 
         Assert.Equal(1, confirmacaoRepository.Gravacoes);
-        Assert.Equal(1, emailService.Envios);
+        Assert.Equal(1, emailService.QuantidadeEnvios);
     }
 
     [Fact]
@@ -465,13 +466,6 @@ public class RegistroUsuarioServiceTests
             return Task.FromResult(_usuario);
         }
 
-        public Task<IEnumerable<Usuario>> ObterTodosRepositoryAsync() => Task.FromResult(Enumerable.Empty<Usuario>());
-        public Task<Usuario> ObterPorIdRepositoryAsync(int id) => Task.FromResult<Usuario>(null);
-        public Task<Usuario> ObterPorCodigoRepositoryAsync(string codigo) => Task.FromResult<Usuario>(null);
-        public Task<bool> CriarRepositoryAsync(Usuario entity) => Task.FromResult(false);
-        public Task<bool> AtualizarRepositoryAsync(Usuario entity) => Task.FromResult(false);
-        public Task<bool> AtualizarRepositoryAsync(int id, Usuario entity) => Task.FromResult(false);
-        public Task<bool> RemoverRepositoryAsync(Usuario entity) => Task.FromResult(false);
         public Task<IEnumerable<Usuario>> ObterUsuariosAsync() => Task.FromResult(Enumerable.Empty<Usuario>());
         public Task<Usuario> ObterUsuarioPorIdAsync(int? id) => Task.FromResult<Usuario>(null);
         public Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo) => Task.FromResult(codigo == _usuario.Codigo ? _usuario : null);
@@ -510,19 +504,6 @@ public class RegistroUsuarioServiceTests
         public Task<bool> EmailConfirmadoAsync(string codigoUsuario) => Task.FromResult(false);
     }
 
-    private sealed class EmailServiceFake(Resultado? resultado = null) : IEmailService
-    {
-        public EmailRequest? UltimoRequest { get; private set; }
-        public int Envios { get; private set; }
-
-        public Task<Resultado> EnviarAsync(EmailRequest message)
-        {
-            Envios++;
-            UltimoRequest = message;
-            return Task.FromResult(resultado ?? Resultado.Sucesso());
-        }
-    }
-
     private sealed class CacheServiceFake : ICacheService
     {
         private readonly Dictionary<string, object> _itens = new(StringComparer.Ordinal);
@@ -559,13 +540,6 @@ public class RegistroUsuarioServiceTests
             UltimaConfirmacaoGravada.TentativasFalhas++;
             return Task.CompletedTask;
         }
-        public Task<IEnumerable<ConfirmacaoEmail>> ObterTodosRepositoryAsync() => Task.FromResult(Enumerable.Empty<ConfirmacaoEmail>());
-        public Task<ConfirmacaoEmail> ObterPorIdRepositoryAsync(int id) => Task.FromResult<ConfirmacaoEmail>(null);
-        public Task<ConfirmacaoEmail> ObterPorCodigoRepositoryAsync(string codigo) => Task.FromResult<ConfirmacaoEmail>(null);
-        public Task<bool> CriarRepositoryAsync(ConfirmacaoEmail entity) => Task.FromResult(true);
-        public Task<bool> AtualizarRepositoryAsync(ConfirmacaoEmail entity) => Task.FromResult(true);
-        public Task<bool> AtualizarRepositoryAsync(int id, ConfirmacaoEmail entity) => Task.FromResult(true);
-        public Task<bool> RemoverRepositoryAsync(ConfirmacaoEmail entity) => Task.FromResult(true);
     }
 
     private sealed class ValidadorFake : IValidador<UsuarioRegistroRequest>

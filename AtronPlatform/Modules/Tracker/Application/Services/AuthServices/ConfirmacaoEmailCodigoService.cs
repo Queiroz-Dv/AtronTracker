@@ -12,7 +12,7 @@ namespace Application.Services.AuthServices
         private const int MenorCodigo = 0;
         private const int MaiorCodigoExclusivo = 1000000;
 
-        public string GerarIdentificador()
+        private static string GerarIdentificador()
             => RandomNumberGenerator.GetInt32(MenorCodigo, MaiorCodigoExclusivo).ToString("D6");
 
         public string GerarHash(string valor)

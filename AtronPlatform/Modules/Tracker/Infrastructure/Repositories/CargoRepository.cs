@@ -11,7 +11,7 @@ namespace Infrastructure.Repositories
     /// <summary>
     /// Repository para operações de persistência de Cargo
     /// </summary>
-    public class CargoRepository(AtronDbContext context) : Repository<Cargo>(context), ICargoRepository
+    public class CargoRepository(AtronDbContext context) : ICargoRepository
     {
         private readonly AtronDbContext _context = context;
 

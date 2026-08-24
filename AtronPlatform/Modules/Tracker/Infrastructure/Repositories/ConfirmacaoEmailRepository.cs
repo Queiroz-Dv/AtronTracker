@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class ConfirmacaoEmailRepository : Repository<ConfirmacaoEmail>, IConfirmacaoEmailRepository
+    public class ConfirmacaoEmailRepository : IConfirmacaoEmailRepository
     {
         private readonly AtronDbContext _context;
 
-        public ConfirmacaoEmailRepository(AtronDbContext context) : base(context)
+        public ConfirmacaoEmailRepository(AtronDbContext context)
         {
             _context = context;
         }

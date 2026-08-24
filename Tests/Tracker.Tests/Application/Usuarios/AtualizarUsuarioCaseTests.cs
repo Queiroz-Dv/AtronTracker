@@ -90,7 +90,7 @@ public sealed class AtualizarUsuarioCaseTests
             .Setup(repository => repository.ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo))
             .ReturnsAsync(relacionamento);
         relacionamentos
-            .Setup(repository => repository.RemoverRepositoryAsync(relacionamento))
+            .Setup(repository => repository.RemoverAssociacaoUsuarioCargoDepartamento(relacionamento))
             .ReturnsAsync(true);
         relacionamentos
             .Setup(repository => repository.GravarAssociacaoUsuarioCargoDepartamento(usuario, cargo, departamento))
@@ -104,7 +104,7 @@ public sealed class AtualizarUsuarioCaseTests
 
         Assert.True(resultado.TeveSucesso);
         relacionamentos.Verify(
-            repository => repository.RemoverRepositoryAsync(relacionamento),
+            repository => repository.RemoverAssociacaoUsuarioCargoDepartamento(relacionamento),
             Times.Once);
         relacionamentos.Verify(
             repository => repository.GravarAssociacaoUsuarioCargoDepartamento(usuario, cargo, departamento),

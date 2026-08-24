@@ -60,7 +60,7 @@ namespace Application.UseCases.UsuarioCases
             }
 
             if (associacao is not null)
-                await usuarioCargoDepartamentoRepository.RemoverRepositoryAsync(associacao);
+                await usuarioCargoDepartamentoRepository.RemoverAssociacaoUsuarioCargoDepartamento(associacao);
 
             if (!await usuarioRepository.RemoverUsuarioAsync(usuario))
                 return Resultado.Falha(UsuarioResource.ErroRemoverUsuario);

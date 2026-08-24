@@ -36,7 +36,7 @@ seguintes efeitos observáveis:
 
 | Dependência | Papel observado | Destino de responsabilidade nas próximas fases |
 | --- | --- | --- |
-| `IAsyncApplicationMapService<PerfilDeAcessoDTO, PerfilDeAcesso>` | Mapeia DTO e entidade. | Permanece como colaborador do preparador ou do caso de uso. |
+| `IPerfilDeAcessoMapping` | Mapeia perfil, módulos e usuários para os contratos atuais. | Permanece como colaborador dos casos de consulta. |
 | `IModuloRepository` | Resolve cada módulo informado para montar o vínculo. | Preparação de perfil e módulos, Fase 4. |
 | `IValidateModelService<PerfilDeAcesso>` e `Notifiable` | Valida a entidade e acumula mensagens. | Validação de comando e resultado, Fase 4. |
 | `IPerfilDeAcessoRepository` | Persiste e consulta perfis e associações carregadas. | Orquestração do caso de uso. |

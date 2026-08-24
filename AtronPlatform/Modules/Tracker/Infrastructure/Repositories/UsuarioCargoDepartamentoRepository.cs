@@ -5,8 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class UsuarioCargoDepartamentoRepository(AtronDbContext context) :
-        Repository<UsuarioCargoDepartamento>(context), IUsuarioCargoDepartamentoRepository
+    public class UsuarioCargoDepartamentoRepository(AtronDbContext context) : IUsuarioCargoDepartamentoRepository
     {
         private readonly AtronDbContext _context = context;
 
@@ -45,6 +44,12 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorCargo(int id, string codigo)
         {
             return await _context.UsuarioCargoDepartamentos.Where(rel => rel.CargoId == id && rel.CargoCodigo == codigo).ToListAsync();
+        }
+
+        public async Task<bool> RemoverAssociacaoUsuarioCargoDepartamento(UsuarioCargoDepartamento associacao)
+        {
+            _context.UsuarioCargoDepartamentos.Remove(associacao);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface ITarefaRepository : IRepository<Tarefa>
+    public interface ITarefaRepository
     {
         Task<Tarefa> ObterTarefaPorId(int id);
 
@@ -26,6 +26,8 @@ namespace Domain.Interfaces
 
         Task<bool> CriarTarefaAsync(Tarefa tarefa);
 
-        Task<bool> AtualizarTarefaAsync(int id, Tarefa tarefa);        
+        Task<bool> AtualizarTarefaAsync(int id, Tarefa tarefa);
+
+        Task<bool> RemoverTarefaAsync(Tarefa tarefa);
     }
 }

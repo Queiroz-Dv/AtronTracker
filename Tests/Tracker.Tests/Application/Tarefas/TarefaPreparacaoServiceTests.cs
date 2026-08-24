@@ -8,6 +8,7 @@ using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
 using Shared.Application.Interfaces.Mapping;
+using Tracker.Tests.TestSupport.Fakes.PlanejamentoCustos;
 using Xunit;
 
 namespace Tracker.Tests.Tarefas;
@@ -163,7 +164,7 @@ public class TarefaPreparacaoServiceTests
         DependenciasPreparacao? dependencias = null)
     {
         var usuarioRelacionamento = new TarefaUsuarioRelacionamentoService(
-            dependencias?.UsuarioRepository ?? new UsuarioRepositoryFake(usuario),
+            dependencias?.UsuarioRepository ?? new UsuarioPreparacaoRepositoryFake(usuario),
             new UsuarioMapFake());
         var estruturaRelacionamento = new TarefaDepartamentoCargoRelacionamentoService(
             dependencias?.DepartamentoRepository ?? new DepartamentoRepositoryFake(departamento),
@@ -269,31 +270,19 @@ public class TarefaPreparacaoServiceTests
             => entities?.Select(MapToDto) ?? [];
     }
 
-    private sealed class UsuarioRepositoryFake(Usuario usuario) : IUsuarioRepository
+    private sealed class UsuarioPreparacaoRepositoryFake(Usuario usuario) : IUsuarioRepository
     {
-        public Task<bool> AtualizarRepositoryAsync(Usuario entity) => Task.FromResult(true);
-
-        public Task<bool> AtualizarRepositoryAsync(int id, Usuario entity) => Task.FromResult(true);
-
         public Task<bool> AtualizarPreferenciaNotificacaoTarefaPorEmailAsync(string codigo, bool receberNotificacao) => Task.FromResult(true);
 
         public Task<bool> AtualizarPreferenciasNotificacaoTarefaAsync(string codigo, bool receberNotificacaoInterna, bool receberNotificacaoPorEmail) => Task.FromResult(true);
 
         public Task<bool> AtualizarUsuarioAsync(Usuario usuario) => Task.FromResult(true);
 
-        public Task<bool> CriarRepositoryAsync(Usuario entity) => Task.FromResult(true);
-
         public Task<bool> CriarUsuarioAsync(Usuario usuario) => Task.FromResult(true);
 
         public Task<bool> ConfirmarEmailAsync(string codigo) => Task.FromResult(true);
 
         public Task<Usuario> ObterInativoPorEmailAsync(string email) => Task.FromResult<Usuario>(null!);
-
-        public Task<Usuario> ObterPorCodigoRepositoryAsync(string codigo) => Task.FromResult(codigo == usuario.Codigo ? usuario : null!);
-
-        public Task<Usuario> ObterPorIdRepositoryAsync(int id) => Task.FromResult(id == usuario.Id ? usuario : null!);
-
-        public Task<IEnumerable<Usuario>> ObterTodosRepositoryAsync() => Task.FromResult<IEnumerable<Usuario>>([usuario]);
 
         public Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity() => Task.FromResult(new List<UsuarioIdentity>());
 
@@ -307,73 +296,9 @@ public class TarefaPreparacaoServiceTests
 
         public Task<IEnumerable<Usuario>> ObterUsuariosAsync() => Task.FromResult<IEnumerable<Usuario>>([usuario]);
 
-        public Task<bool> RemoverRepositoryAsync(Usuario entity) => Task.FromResult(true);
-
         public Task<bool> RemoverUsuarioAsync(Usuario usuario) => Task.FromResult(true);
 
         public Task<bool> VerificarEmailExistenteAsync(string email) => Task.FromResult(false);
     }
 
-    private sealed class DepartamentoRepositoryFake(Departamento departamento) : IDepartamentoRepository
-    {
-        public Task<bool> AtualizarDepartamentoRepositoryAsync(Departamento departamento) => Task.FromResult(true);
-
-        public Task<bool> CriarDepartamentoRepositoryAsync(Departamento departamento) => Task.FromResult(true);
-
-        public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo)
-            => Task.FromResult(codigo == departamento.Codigo ? departamento : null!);
-
-        public Task<Departamento> ObterDepartamentoPorCodigoRepository(string codigo)
-            => Task.FromResult(codigo == departamento.Codigo ? departamento : null!);
-
-        public Task<Departamento> ObterDepartamentoPorIdRepositoryAsync(int? id)
-            => Task.FromResult(id == departamento.Id ? departamento : null!);
-
-        public Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
-            => Task.FromResult<IEnumerable<Departamento>>([departamento]);
-
-        public Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo)
-            => Task.FromResult<IEnumerable<Departamento>>([]);
-
-        public Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento) => Task.FromResult(true);
-    }
-
-    private sealed class CargoRepositoryFake(IReadOnlyCollection<Cargo> cargos) : ICargoRepository
-    {
-        public Task<bool> AtualizarCargoAsync(Cargo cargo) => Task.FromResult(true);
-
-        public Task<bool> AtualizarRepositoryAsync(Cargo entity) => Task.FromResult(true);
-
-        public Task<bool> AtualizarRepositoryAsync(int id, Cargo entity) => Task.FromResult(true);
-
-        public Task<bool> CriarCargoAsync(Cargo cargo) => Task.FromResult(true);
-
-        public Task<bool> CriarRepositoryAsync(Cargo entity) => Task.FromResult(true);
-
-        public Task<Cargo> ObterCargoPorCodigoAsync(string codigo)
-            => Task.FromResult(cargos.SingleOrDefault(cargo => cargo.Codigo == codigo) ?? null!);
-
-        public Task<Cargo> ObterCargoPorIdAsync(int? id)
-            => Task.FromResult(cargos.SingleOrDefault(cargo => cargo.Id == id) ?? null!);
-
-        public Task<IEnumerable<Cargo>> ObterCargosAsync() => Task.FromResult<IEnumerable<Cargo>>(cargos);
-
-        public Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo)
-            => Task.FromResult<IEnumerable<Cargo>>(cargos.Where(cargo =>
-                cargo.DepartamentoId == departamentoId &&
-                cargo.DepartamentoCodigo == departamentoCodigo));
-
-        public Task<Cargo> ObterPorCodigoRepositoryAsync(string codigo)
-            => Task.FromResult(cargos.SingleOrDefault(cargo => cargo.Codigo == codigo) ?? null!);
-
-        public Task<Cargo> ObterPorIdRepositoryAsync(int id)
-            => Task.FromResult(cargos.SingleOrDefault(cargo => cargo.Id == id) ?? null!);
-
-        public Task<IEnumerable<Cargo>> ObterTodosRepositoryAsync()
-            => Task.FromResult<IEnumerable<Cargo>>(cargos);
-
-        public Task<bool> RemoverCargoAsync(Cargo cargo) => Task.FromResult(true);
-
-        public Task<bool> RemoverRepositoryAsync(Cargo entity) => Task.FromResult(true);
-    }
 }

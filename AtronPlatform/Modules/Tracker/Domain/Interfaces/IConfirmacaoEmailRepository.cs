@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IConfirmacaoEmailRepository : IRepository<ConfirmacaoEmail>
+    public interface IConfirmacaoEmailRepository
     {
         Task<bool> GravarOuSubstituirAsync(ConfirmacaoEmail confirmacaoEmail);
         Task<ConfirmacaoEmail> ObterAtivaPorUsuarioAsync(string usuarioCodigo);

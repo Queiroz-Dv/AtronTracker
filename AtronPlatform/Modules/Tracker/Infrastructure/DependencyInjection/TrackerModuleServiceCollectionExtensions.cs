@@ -81,7 +81,6 @@ namespace Infrastructure.DependencyInjection
             services.AddTrackerValidations();
             services.AddTrackerAuthorization();
             ConfigureModuloServices(services);
-            ConfigureTarefaServices(services);
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
@@ -228,7 +227,6 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<VincularGestorImediatoCase>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IConfirmacaoEmailRepository, ConfirmacaoEmailRepository>();
-            services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
             services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
         }
 
@@ -287,9 +285,5 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
         }
 
-        private static void ConfigureTarefaServices(IServiceCollection services)
-        {
-            services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
-        }
     }
 }

@@ -3,8 +3,8 @@ using Application.Email.Compositores;
 using Application.Services.EntitiesServices.Tarefas;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
-using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
+using Tracker.Tests.TestSupport.Fakes.Email;
 using Xunit;
 
 namespace Tracker.Tests.Tarefas;
@@ -102,17 +102,6 @@ public class TarefaNotificacaoServiceTests
             Email = "usuario@teste.com",
             ReceberNotificacaoTarefaPorEmail = receberEmail
         };
-    }
-
-    private sealed class EmailServiceFake(Resultado resultado) : IEmailService
-    {
-        public int QuantidadeEnvios { get; private set; }
-
-        public Task<Resultado> EnviarAsync(EmailRequest message)
-        {
-            QuantidadeEnvios++;
-            return Task.FromResult(resultado);
-        }
     }
 
     private sealed class CompositorFake : ITarefaEmailCompositor

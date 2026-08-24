@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class TarefaRepository(AtronDbContext context) : Repository<Tarefa>(context), ITarefaRepository
+    public class TarefaRepository(AtronDbContext context) : ITarefaRepository
     {
         private const int EstadoFinalizadaId = 4;
         private readonly AtronDbContext _context = context;
@@ -31,6 +31,12 @@ namespace Infrastructure.Repositories
             await _context.Tarefas.AddAsync(tarefa);
             var gravado = await _context.SaveChangesAsync();
             return gravado > 0;
+        }
+
+        public async Task<bool> RemoverTarefaAsync(Tarefa tarefa)
+        {
+            _context.Tarefas.Remove(tarefa);
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<Tarefa> ObterTarefaPorId(int id)

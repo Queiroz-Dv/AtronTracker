@@ -23,10 +23,7 @@ namespace Domain.Interfaces.Identity
         Task<string> GerarTokenAlteracaoEmailAsync(string codigoUsuario, string emailNovo);
         Task<bool> ConfirmarAlteracaoEmailAsync(string codigoUsuario, string emailNovo, string token);
         Task<string> GerarTokenRecuperacaoSenhaAsync(string codigoUsuario);
-        Task<bool> RedefinirSenhaAsync(string codigoUsuario, string token, string novaSenha);
-        /// <summary>
-        /// Verifica se o e-mail do usuário já foi confirmado
-        /// </summary>
+        Task<bool> RedefinirSenhaAsync(string codigoUsuario, string token, string novaSenha);      
         Task<bool> EmailConfirmadoAsync(string codigoUsuario);
     }
 }

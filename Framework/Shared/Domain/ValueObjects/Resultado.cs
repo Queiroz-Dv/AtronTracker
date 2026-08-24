@@ -1,4 +1,3 @@
-﻿using Shared.Application.Resources;
 using Shared.Domain.Enums;
 using System.Text.Json.Serialization;
 
@@ -66,12 +65,6 @@ namespace Shared.Domain.ValueObjects
                 resultado.Adicionar(message);
             }
             return resultado;
-        }
-
-        public Resultado<T> ComMensagemRegistroSalvo(string codigo)
-        {
-            AdicionarMensagem(string.Format(NotificacoesPadronizadas.ResourceManager.GetString("Mensagem_RegistroSalvo")!, codigo));
-            return this;
         }
 
         public new Resultado<T> AdicionarMensagem(string mensagem)

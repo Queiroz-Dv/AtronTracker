@@ -43,10 +43,13 @@ public record DepartamentoResponse(Guid Id, string Codigo, string Descricao);
 - Utiliza **classes** para entidades e **records** para DTOs.
 
 ```csharp
-public class DepartamentoMapping : ApplicationMapService<DepartamentoRequest, Departamento>
+public sealed class DepartamentoMapping : Mapper<Departamento, DepartamentoRequest>
 {
     public override Departamento MapToEntity(DepartamentoRequest dto) =>
-        new Departamento(dto.Codigo.ToUpper(), dto.Descricao.ToUpper());
+        new() { Codigo = dto.Codigo.ToUpper(), Descricao = dto.Descricao.ToUpper() };
+
+    public override DepartamentoRequest MapToDto(Departamento entity) =>
+        new(entity.Codigo, entity.Descricao);
 }
 ```
 

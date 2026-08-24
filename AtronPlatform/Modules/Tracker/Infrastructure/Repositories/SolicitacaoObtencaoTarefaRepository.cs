@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class SolicitacaoObtencaoTarefaRepository(AtronDbContext context) : Repository<SolicitacaoObtencaoTarefa>(context),
-        ISolicitacaoObtencaoTarefaRepository
+    public class SolicitacaoObtencaoTarefaRepository(AtronDbContext context) : ISolicitacaoObtencaoTarefaRepository
     {
         private readonly AtronDbContext _context = context;
 

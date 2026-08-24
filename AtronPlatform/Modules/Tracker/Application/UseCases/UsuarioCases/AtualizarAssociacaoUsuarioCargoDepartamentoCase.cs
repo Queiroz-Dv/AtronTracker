@@ -39,7 +39,7 @@ namespace Application.UseCases.UsuarioCases
             if (relacionamentoExistente is not null)
             {
                 var removido = await _usuarioCargoDepartamentoRepository
-                    .RemoverRepositoryAsync(relacionamentoExistente);
+                    .RemoverAssociacaoUsuarioCargoDepartamento(relacionamentoExistente);
                 if (!removido)
                     return Resultado.Falha(UsuarioResource.ErroInesperadoAtualizacao);
             }
