@@ -98,6 +98,11 @@ namespace Shared.Domain.ValueObjects
             return resultado;
         }
 
+        public static Resultado Falha()
+        {
+            return new Resultado(false);                        
+        }
+
         public static Resultado Falha(NotificationMessage message)
         {
             var resultado = new Resultado(false);

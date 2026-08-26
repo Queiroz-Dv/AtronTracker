@@ -1,0 +1,17 @@
+<form [formGroup]="form" (ngSubmit)="salvar()" class="form-container">
+  <c-produto-form
+    [form]="form"
+    [categoriasAtivas]="categoriasAtivas"
+    [editando]="!!codigo"
+    [statusDescricao]="statusDescricao"
+    [dataEfetivaBaixa]="dataEfetivaBaixa">
+  </c-produto-form>
+
+  <mat-card-actions>
+    <button mat-flat-button type="submit" [disabled]="form.invalid || salvando">
+      <mat-icon>{{ salvando ? 'hourglass_top' : (gerarPorLote ? 'playlist_add' : 'save') }}</mat-icon>
+      {{ rotuloAcao }}
+    </button>
+    <button mat-stroked-button type="button" (click)="voltar()">Cancelar</button>
+  </mat-card-actions>
+</form>

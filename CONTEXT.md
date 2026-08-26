@@ -44,6 +44,22 @@ _Avoid_: Apenas módulo de tarefas, apenas cadastro de usuário
 Módulo de suprimentos, estoque, patrimônio e bens do Atron. Deve proteger a rastreabilidade de produtos, fornecedores, entradas, saídas, movimentações, saldos e controles físicos ou patrimoniais da empresa.
 _Avoid_: Apenas cadastro de produto, controle manual sem rastreabilidade, estoque desconectado da empresa
 
+**Produto patrimonial**:
+Patrimônio individual identificado por código textual normalizado em maiúsculas. Possui descrição, descrição complementar opcional, aquisição, preço unitário, status e data efetiva de baixa controlada por rotina própria. Pode existir sem Categoria e, quando criado individualmente, não pertence a lote.
+_Avoid_: Item genérico com quantidade embutida, produto obrigado a possuir fornecedor, cadastro comum preenchendo data de baixa
+
+**LoteProduto**:
+Identidade enxuta da origem de uma geração de Produtos patrimoniais, formada por id e código. Quantidade e valor total pertencem aos Produtos relacionados e são calculados por consulta.
+_Avoid_: Duplicar quantidade ou valor no lote, usar lote como substituto do patrimônio individual
+
+**Processamento de Produtos em lote**:
+Trabalho durável e específico do Stock que registra solicitante, dados comuns dos patrimônios, progresso, resultado e falha. A requisição apenas aceita e persiste o trabalho; um hosted service singleton cria escopos para executar casos de uso e acessar o banco. Listagem e detalhe são visíveis somente ao próprio solicitante, cuja identidade é obtida do contexto autenticado. A reserva usa lease persistido, token de concorrência e bloqueio PostgreSQL com `SKIP LOCKED`; um trabalho em execução cuja lease expirou volta a ser elegível para recuperação.
+_Avoid_: Criar milhares de Produtos dentro da requisição, guardar DbContext no worker, usar o worker como dono da regra de geração, aceitar solicitante informado pelo cliente, reservar com consulta e atualização separadas
+
+**Categoria de Produto em uso**:
+Categoria vinculada a qualquer Produto, inclusive patrimônio baixado. Uma Categoria em uso não pode ser inativada, e a tentativa recusada deve permanecer registrada na Auditoria.
+_Avoid_: Perder classificação histórica, inativar Categoria ainda vinculada, permitir Categoria inativa em novo Produto
+
 **Atron Sales**:
 Módulo planejado para centralizar o comercial e o financeiro do Atron. Deve ser tratado como direção futura até ter escopo formalizado em documentação própria.
 _Avoid_: Funcionalidade já implementada sem evidência, financeiro misturado sem fronteira, venda improvisada dentro de outro módulo
@@ -235,13 +251,9 @@ _Avoid_: Destino único obrigatório, tarefa sem escopo, escolha que ignora perm
 Tarefa cujo destino inicial é uma estrutura funcional em vez de um usuário responsável. Pode ser vinculada apenas a departamento ou a departamento e cargo; não deve existir tarefa vinculada a cargo sem departamento.
 _Avoid_: Cargo sem departamento, tarefa sem usuário e sem estrutura, tarefa de todos
 
-**Identificador da tarefa**:
-Código numérico sequencial usado pelos usuários para localizar uma tarefa no produto. O identificador é global no sistema, independente de departamento ou cargo, e deve ser exibido de forma amigável com zeros a esquerda quando necessário.
-_Avoid_: Id técnico, código por departamento, prefixo obrigatório
-
-**Busca por identificador da tarefa**:
-Consulta direta de tarefa pelo identificador numérico, respeitando as permissões do usuário. A busca pode localizar tarefas ativas, finalizadas, individuais ou estruturais, desde que estejam dentro do acesso permitido ao usuário.
-_Avoid_: Filtro apenas do quadro atual, listagem geral, acesso irrestrito por código
+**Identidade da tarefa**:
+O `Id` é a única identidade numérica da tarefa e é usado nas rotas, relacionamentos, consultas e referências apresentadas aos usuários. A tarefa não possui código numérico funcional paralelo.
+_Avoid_: Identificador redundante, numeração paralela ao `Id`, código por departamento
 
 **Tarefa finalizada**:
 Tarefa encerrada para operação e mantida apenas para consulta. Uma tarefa finalizada não pode ser reaberta, atualizada ou removida.

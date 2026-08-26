@@ -3,7 +3,6 @@ using Domain.Entities;
 using Domain.Extensions;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Mapping;
-using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -29,7 +28,7 @@ namespace Application.Services.EntitiesServices.Tarefas
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(tarefaDTO.UsuarioCodigo);
             if (usuario is null)
                 return Resultado<Usuario>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
-          
+
             tarefa.VincularUsuario(usuario.Id, usuario.Codigo);
             tarefaDTO.Usuario = _usuarioMap.MapToDto(usuario);
 

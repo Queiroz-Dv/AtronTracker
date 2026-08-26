@@ -1,8 +1,10 @@
+#nullable enable
+
 using System.ComponentModel.DataAnnotations;
 
 namespace AtronStock.Application.DTO.Request
 {
-    public class ProdutoRequest
+    public sealed class ProdutoRequest
     {
         [Required]
         public string Codigo { get; set; } = string.Empty;
@@ -10,16 +12,14 @@ namespace AtronStock.Application.DTO.Request
         [Required]
         public string Descricao { get; set; } = string.Empty;
 
-        public decimal Preco { get; set; }
+        public string? DescricaoComplementar { get; set; }
+
+        [Required]
+        public DateTime DataAquisicao { get; set; }
+
+        public decimal PrecoUnitario { get; set; }
 
         public List<string> CategoriaCodigos { get; set; } = [];
 
-        public List<string> FornecedoresCodigos { get; set; } = [];
-    }
-
-    public class ProdutoBulkRequest : ProdutoRequest
-    {
-        [Required]
-        public int Quantidade { get; set; }
     }
 }

@@ -12,10 +12,14 @@
   <data name="ErroDescricaoTamanho" xml:space="preserve"><value>A Descrição excede o limite de 50 caracteres.</value></data>
   <data name="ErroStatusObrigatorio" xml:space="preserve"><value>O status da categoria deve ser informado.</value></data>
   <data name="ErroCategoriaJaExiste" xml:space="preserve"><value>Já existe uma categoria cadastrada com o código {0}.</value></data>
+  <data name="ErroCategoriaEmUso" xml:space="preserve"><value>A categoria {0} não pode ser inativada porque está vinculada a um ou mais produtos.</value></data>
   <data name="ErroCategoriaNaoEncontrada" xml:space="preserve"><value>Categoria não encontrada para o código {0}.</value></data>
   <data name="ErroInesperadoAtualizar" xml:space="preserve"><value>Ocorreu um erro inesperado ao atualizar a categoria.</value></data>
+  <data name="ErroInesperadoRemover" xml:space="preserve"><value>Ocorreu um erro inesperado ao remover a categoria.</value></data>
   <data name="SucessoCadastro" xml:space="preserve"><value>Categoria</value></data>
   <data name="HistoricoCriacao" xml:space="preserve"><value>Categoria {0} criada em {1}.</value></data>
   <data name="HistoricoAtualizacao" xml:space="preserve"><value>Categoria {0} atualizada em {1}. Descrição: {2}, Status: {3}.</value></data>
   <data name="HistoricoStatusAlterado" xml:space="preserve"><value>Status da categoria {0} alterado para {1} em {2}.</value></data>
+  <data name="HistoricoInativacaoRecusada" xml:space="preserve"><value>Inativação da categoria {0} recusada em {1} porque existem produtos vinculados.</value></data>
+  <data name="HistoricoRemocao" xml:space="preserve"><value>Categoria {0} removida em {1}.</value></data>
 </root>

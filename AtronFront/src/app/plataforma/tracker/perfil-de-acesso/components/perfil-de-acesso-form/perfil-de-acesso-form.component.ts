@@ -108,13 +108,7 @@ export class PerfilDeAcessoFormComponent implements OnInit, OnChanges {
     }
 
     const termoBusca = this.obterTermoBusca();
-    const origem = termoBusca
-      ? this.todosModulos
-      : this.perfilEncontrado
-        ? this.modulosDoPerfil
-        : this.todosModulos;
-
-    this.dataSource.data = origem;
+    this.dataSource.data = this.todosModulos;
     this.dataSource.filter = termoBusca;
 
     if (this.dataSource.paginator) {

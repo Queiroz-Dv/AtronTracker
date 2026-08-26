@@ -1,80 +1,67 @@
 using AtronStock.Application.DTO.Request;
+using AtronStock.Application.DTO.Response;
 using AtronStock.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Authorization;
 using Shared.Infrastructure.Filters;
 
 namespace AtronPlatform.WebApi.Controllers.Stock
 {
-    [Authorize]
+    [Authorize(Policy = ModuloPolicies.Produto)]
     [ApiController]
     [Route("api/[controller]")]
-    public class ProdutoController : ControllerBase
+    public sealed class ProdutoController(IProdutoService service) : ControllerBase
     {
-        private readonly IProdutoService _produtoService;
-
-        public ProdutoController(IProdutoService produtoService)
-        {
-            _produtoService = produtoService;
-        }
+        private readonly IProdutoService _service = service;
 
         [HttpPost]
         [Transactional]
-        public async Task<IActionResult> Post([FromBody] ProdutoRequest request)
+        public async Task<ActionResult> Post(ProdutoRequest request)
         {
-            var resultado = await _produtoService.RegistrarProdutoAsync(request);
-
-            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+            var resultado = await _service.CriarAsync(request);
+            return resultado.TeveFalha
+                ? BadRequest(resultado.Messages)
+                : Ok(resultado.Messages);
         }
 
-        //[HttpPost("lote")]
-        //public async Task<IActionResult> RegistrarProdutosEmLote([FromBody] ProdutoBulkRequest request)
-        //{
-        //    var produtoBase = new Produto
-        //    {
-        //        Codigo = request.Codigo,
-        //        Descricao = request.Descricao,
-        //        Categorias = request.CategoriaCodigos.Select(codigo => new ProdutoCategoria { CategoriaCodigo = codigo }).ToList()
-        //    };
+        [HttpPost("lotes")]
+        [Transactional]
+        public async Task<ActionResult<SolicitacaoGeracaoProdutosLoteResponse>> PostLote(
+            GerarProdutosLoteRequest request)
+        {
+            var resultado = await _service.SolicitarGeracaoLoteAsync(request);
+            return resultado.TeveFalha
+                ? BadRequest(resultado.Messages)
+                : Accepted(resultado.Dados);
+        }
 
-        //    await _produtoService.RegistrarProdutosEmLoteAsync(produtoBase, request.Quantidade);
-        //    return Ok(new { Message = $"{request.Quantidade} produtos registrados com sucesso." });
-        //}
+        [HttpPut("{codigo}")]
+        [Transactional]
+        public async Task<ActionResult> Put(
+            string codigo,
+            ProdutoAtualizacaoRequest request)
+        {
+            var resultado = await _service.AtualizarAsync(codigo, request);
+            return resultado.TeveFalha
+                ? BadRequest(resultado.Messages)
+                : Ok(resultado.Messages);
+        }
 
-        //[HttpPut("inativar/{id}")]
-        //public async Task<IActionResult> InativarProduto(int id)
-        //{
-        //    try
-        //    {
-        //        await _produtoService.InativarProdutoAsync(id);
-        //        return Ok(new { Message = "Produto inativado com sucesso." });
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return BadRequest(new { Error = ex.Message });
-        //    }
-        //}
+        [HttpGet]
+        public async Task<ActionResult<ICollection<ProdutoResponse>>> Get()
+        {
+            var resultado = await _service.ObterTodosAsync();
+            return Ok(resultado.Dados);
+        }
 
-        //[HttpGet]
-        //public async Task<ActionResult<ICollection<Produto>>> Get()
-        //{
-        //    var resultado = await _produtoService.ObterTodos();
-        //    return Ok(resultado.Dado);
-        //}
-
-
-        //[HttpPut("inativar-lote")]
-        //public async Task<IActionResult> InativarProdutosEmLote([FromBody] List<int> ids)
-        //{
-        //    try
-        //    {
-        //        await _produtoService.InativarProdutosEmLoteAsync(ids);
-        //        return Ok(new { Message = "Produtos inativados com sucesso." });
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return BadRequest(new { Error = ex.Message });
-        //    }
-        //}
+        [HttpGet("{codigo}")]
+        public async Task<ActionResult<ProdutoResponse>> Get(string codigo)
+        {
+            var resultado = await _service.ObterPorCodigoAsync(codigo);
+            return resultado.TeveFalha
+                ? NotFound(resultado.Messages)
+                : Ok(resultado.Dados);
+        }
     }
 }

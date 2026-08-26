@@ -24,17 +24,18 @@
 
   <section class="dashboard-content" aria-labelledby="dashboard-title">
     <div class="dashboard-title-group">
-      @if(visualizacao === 'tracker') {
-        <button class="dashboard-back" type="button" (click)="voltarParaProdutos()">
+      @if(areaSelecionada) {
+        <button class="dashboard-back" type="button" (click)="voltarParaAreas()">
           <mat-icon>arrow_back</mat-icon>
-          Voltar aos módulos
+          Voltar às áreas
         </button>
       }
-      <h1 id="dashboard-title">{{ visualizacao === 'tracker' ? 'Atron Tracker' : 'Módulos do sistema' }}</h1>
-      <p>{{ visualizacao === 'tracker' ? 'Acesse as rotinas administrativas e operacionais.' : 'Acesse as rotinas centrais da operação.' }}</p>
+
+      <h1 id="dashboard-title">{{ tituloVisualizacao }}</h1>
+      <p>{{ descricaoVisualizacao }}</p>
     </div>
 
-    @if(visualizacao === 'produtos' && cardsView.length > 0) {
+    @if(!areaSelecionada && cardsView.length > 0) {
       <div class="module-grid">
         @for (card of cardsView; track card.code) {
           <button
@@ -63,11 +64,11 @@
           </button>
         }
       </div>
-    } @else if(visualizacao === 'tracker' && trackerCardsView.length > 0) {
-      <div class="module-grid tracker-routine-grid">
-        @for (card of trackerCardsView; track card.code) {
+    } @else if(areaSelecionada && rotinasCardsView.length > 0) {
+      <div class="module-grid routine-grid">
+        @for (card of rotinasCardsView; track card.code) {
           <button
-            class="module-card tracker-routine-card"
+            class="module-card"
             type="button"
             (click)="navigate(card)"
             [attr.aria-label]="card.accessLabel + ' ' + card.title">
@@ -94,8 +95,8 @@
     } @else {
       <div class="dashboard-empty">
         <mat-icon>lock</mat-icon>
-        <h3>Nenhum módulo disponível</h3>
-        <p>Seu usuário ainda não possui módulos liberados para acesso.</p>
+        <h3>{{ areaSelecionada ? 'Nenhuma rotina disponível' : 'Nenhuma área disponível' }}</h3>
+        <p>Seu usuário ainda não possui áreas liberadas para acesso.</p>
       </div>
     }
   </section>

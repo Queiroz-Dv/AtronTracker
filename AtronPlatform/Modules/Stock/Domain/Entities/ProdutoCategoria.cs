@@ -10,12 +10,12 @@ namespace AtronStock.Domain.Entities
         [MaxLength(25), Required]
         public string ProdutoCodigo { get; set; } = string.Empty;
 
-        public Produto Produto { get; set; } = new();
+        public Produto Produto { get; set; } = null!;
 
         public int CategoriaId { get; set; }
 
         [MaxLength(25), Required]
         public string CategoriaCodigo { get; set; } = string.Empty;
-        public Categoria Categoria { get; set; } = new();
+        public Categoria Categoria { get; set; } = null!;
     }
 }

@@ -180,7 +180,6 @@ public class DecidirTarefaCaseTests
         var tarefa = new Tarefa
         {
             Id = 30,
-            Identificador = 123456,
             DestinoInicial = (int)DestinoInicialTarefa.DepartamentoCargo,
             DepartamentoId = 100,
             DepartamentoCodigo = "DPT",
@@ -247,7 +246,6 @@ public class DecidirTarefaCaseTests
             .Returns(() => new TarefaDTO
             {
                 Id = tarefa.Id,
-                Identificador = tarefa.Identificador,
                 UsuarioCodigo = tarefa.UsuarioCodigo,
                 EstadoDaTarefa = new TarefaEstadoDTO
                 {

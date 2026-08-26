@@ -1,5 +1,4 @@
 using Application.Interfaces.Services;
-using AtronTracker.Infrastructure.Authorization;
 using Shared.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Moq;
@@ -10,6 +9,7 @@ using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 using System.Security.Claims;
 using Xunit;
+using Infrastructure.Authorization;
 
 namespace Tracker.Tests.Autorizacao;
 

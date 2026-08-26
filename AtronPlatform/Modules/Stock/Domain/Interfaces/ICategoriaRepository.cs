@@ -12,6 +12,10 @@ namespace AtronStock.Domain.Interfaces
 
         Task<Categoria> ObterCategoriaPorCodigoAsync(string codigo);
 
+        Task<ICollection<Categoria>> ObterPorCodigosAsync(IReadOnlyCollection<string> codigos);
+
+        Task<bool> PossuiProdutosVinculadosAsync(int categoriaId);
+
         Task<bool> AtualizarCategoriaAsync(Categoria categoria);
     }
 }

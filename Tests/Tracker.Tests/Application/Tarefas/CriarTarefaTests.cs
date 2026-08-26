@@ -78,7 +78,7 @@ public class CriarTarefaTests
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(capturada);
         Assert.Equal(TarefaResource.Titulo_TarefaAtribuida, capturada.Titulo);
-        Assert.Equal("A tarefa 123456 foi atribuída a você.", capturada.Mensagem);
+        Assert.Equal("A tarefa 42 foi atribuída a você.", capturada.Mensagem);
         Assert.Equal("Tracker", capturada.ModuloOrigem);
         Assert.Equal("TarefaAtribuida", capturada.TipoEvento);
         Assert.Equal("/atron/tarefas/editar/42", capturada.UrlDestino);
@@ -220,7 +220,6 @@ public class CriarTarefaTests
         var entidade = new Tarefa
         {
             Id = 42,
-            Identificador = 123456,
             TarefaEstadoId = 1,
             EstadoDaTarefa = new TarefaEstado { Id = 1, Descricao = "Aberta" }
         };

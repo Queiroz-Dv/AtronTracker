@@ -6,7 +6,6 @@ import { TarefaModel } from "../tarefa.model";
 
 export class TarefaResponse implements TarefaModel {
   id: number;
-  identificador?: number;
   destinoInicial: number;
   exigeAprovacaoParaObter: boolean;
   titulo: string;

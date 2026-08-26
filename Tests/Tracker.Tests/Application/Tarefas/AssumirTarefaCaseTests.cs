@@ -223,7 +223,6 @@ public class AssumirTarefaCaseTests
         return new Tarefa
         {
             Id = 30,
-            Identificador = 123456,
             TarefaEstadoId = 1,
             EstadoDaTarefa = new TarefaEstado { Id = 1, Descricao = "Em atividade" },
             ExigeAprovacaoParaObter = false

@@ -44,8 +44,15 @@ namespace Infrastructure.Repositories.Identity
             user.RefreshToken = refreshTokenHash;
             // É necessário fazer dessa forma por causa do PostgreSQL, que não aceita DateTimeKind.Utc, então definimos como Unspecified
             user.RefreshTokenExpireTime = DateTime.SpecifyKind(refreshTokenExpireTime, DateTimeKind.Unspecified);
-            _context.AppUsers.Update(user);
-            return await _context.SaveChangesAsync() > 0;
+
+            try
+            {
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> RefreshTokenExisteRepositoryAsync(string refreshTokenHash)

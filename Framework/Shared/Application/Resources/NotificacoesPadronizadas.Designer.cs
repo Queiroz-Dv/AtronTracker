@@ -113,5 +113,68 @@ namespace Shared.Application.Resources {
                 return ResourceManager.GetString("MensagemRemocaoSucesso", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a {0} salvo com sucesso..
+        /// </summary>
+        public static string Mensagem_EntidadeSalva {
+            get {
+                return ResourceManager.GetString("Mensagem_EntidadeSalva", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Registro {0} atualizado com sucesso..
+        /// </summary>
+        public static string Mensagem_RegistroAtualizado {
+            get {
+                return ResourceManager.GetString("Mensagem_RegistroAtualizado", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Registro {0} não encontrado..
+        /// </summary>
+        public static string Erro_RegistroComDescricaoNaoEncontrado {
+            get {
+                return ResourceManager.GetString("Erro_RegistroComDescricaoNaoEncontrado", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Registro {0} removido com sucesso.
+        /// </summary>
+        public static string Mensagem_RegistroRemovido {
+            get {
+                return ResourceManager.GetString("Mensagem_RegistroRemovido", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Removido com sucesso.
+        /// </summary>
+        public static string Mensagem_RemocaoSucessoSemRegistro {
+            get {
+                return ResourceManager.GetString("Mensagem_RemocaoSucessoSemRegistro", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Registro {0} inválido.
+        /// </summary>
+        public static string Erro_RegistroComDescricaoInvalido {
+            get {
+                return ResourceManager.GetString("Erro_RegistroComDescricaoInvalido", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Registro {0} já existe..
+        /// </summary>
+        public static string Erro_RegistroComDescricaoExistente {
+            get {
+                return ResourceManager.GetString("Erro_RegistroComDescricaoExistente", resourceCulture);
+            }
+        }
     }
 }

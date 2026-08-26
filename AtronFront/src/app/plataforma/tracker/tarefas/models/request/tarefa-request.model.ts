@@ -3,7 +3,6 @@ import { TarefaModel } from "../tarefa.model";
 
 export class TarefaRequest implements TarefaModel {
   id: number;
-  identificador?: number;
   destinoInicial: number;
   exigeAprovacaoParaObter: boolean;
   titulo: string;

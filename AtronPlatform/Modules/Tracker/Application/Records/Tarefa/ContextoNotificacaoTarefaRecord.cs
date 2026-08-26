@@ -4,14 +4,11 @@ using Domain.Entities;
 
 namespace Application.Records.Tarefa
 {
-    public sealed record ContextoNotificacaoTarefaRecord(
-        int TarefaId,
-        int? IdentificadorOriginal)
+    public sealed record ContextoNotificacaoTarefaRecord(int TarefaId)
     {
-        public string Identificador => IdentificadorOriginal?.ToString()
-            ?? (TarefaId > 0
-                ? TarefaId.ToString()
-                : TarefaResource.Descricao_TarefaNaoIdentificada);
+        public string TarefaIdTexto => TarefaId > 0
+            ? TarefaId.ToString()
+            : TarefaResource.Descricao_TarefaNaoIdentificada;
 
         public string UrlEdicao => $"/atron/tarefas/editar/{TarefaId}";
 
@@ -33,24 +30,18 @@ namespace Application.Records.Tarefa
 
         public static ContextoNotificacaoTarefaRecord Criar(TarefaDTO tarefa)
         {
-            return new ContextoNotificacaoTarefaRecord(
-                tarefa.Id,
-                tarefa.Identificador);
+            return new ContextoNotificacaoTarefaRecord(tarefa.Id);
         }
 
         public static ContextoNotificacaoTarefaRecord Criar(Domain.Entities.Tarefa tarefa)
         {
-            return new ContextoNotificacaoTarefaRecord(
-                tarefa.Id,
-                tarefa.Identificador);
+            return new ContextoNotificacaoTarefaRecord(tarefa.Id);
         }
 
         public static ContextoNotificacaoTarefaRecord Criar(
             SolicitacaoObtencaoTarefa solicitacao)
         {
-            return new ContextoNotificacaoTarefaRecord(
-                solicitacao.TarefaId,
-                solicitacao.Tarefa?.Identificador);
+            return new ContextoNotificacaoTarefaRecord(solicitacao.TarefaId);
         }
     }
 }

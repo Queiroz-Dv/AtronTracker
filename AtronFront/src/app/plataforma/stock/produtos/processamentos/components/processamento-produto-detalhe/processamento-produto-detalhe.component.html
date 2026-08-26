@@ -1,0 +1,59 @@
+<main class="processamento-page">
+  @if (processamento; as item) {
+    <section class="processamento-panel" aria-labelledby="processamento-title">
+      <header class="processamento-header">
+        <div>
+          <p class="list-eyebrow">Atron Stock</p>
+          <h1 id="processamento-title">Processamento #{{ item.id }}</h1>
+          <p>{{ item.codigoBase }} · {{ item.descricao }}</p>
+        </div>
+        <span class="processamento-status" [class.status-execucao]="item.status === Status.EmExecucao"
+          [class.status-concluido]="item.status === Status.Concluido" [class.status-falha]="item.status === Status.Falha">
+          {{ descreverStatus(item.status) }}
+        </span>
+      </header>
+
+      <section class="processamento-progresso" aria-label="Progresso do processamento">
+        <div><strong>{{ item.quantidadeProcessada }} de {{ item.quantidadeSolicitada }}</strong><span>{{ progresso }}%</span></div>
+        @if (pollingAtivo) {
+          <small>Atualização automática a cada 5 segundos.</small>
+        }
+      </section>
+
+      <div class="processamento-grid">
+        <div><span>Código-base</span><strong>{{ item.codigoBase }}</strong></div>
+        <div><span>Lote gerado</span><strong>{{ item.loteProdutoCodigo || 'Ainda não gerado' }}</strong></div>
+        <div><span>Data de aquisição</span><strong>{{ item.dataAquisicao | date:'dd/MM/yyyy' }}</strong></div>
+        <div><span>Valor unitário</span><strong>{{ item.precoUnitario | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong></div>
+        <div class="grid-wide"><span>Descrição</span><strong>{{ item.descricao }}</strong></div>
+        <div class="grid-wide"><span>Descrição complementar</span><strong>{{ item.descricaoComplementar || 'Não informada' }}</strong></div>
+        <div class="grid-wide"><span>Categorias</span><strong>{{ item.categoriaCodigos.join(', ') || 'Sem categorias' }}</strong></div>
+      </div>
+
+      @if (item.erro) {
+        <div class="processamento-erro" role="alert"><mat-icon>error</mat-icon><div><strong>Falha no processamento</strong><p>{{ item.erro }}</p></div></div>
+      }
+
+      <footer class="processamento-acoes">
+        <button mat-stroked-button (click)="router.navigate(['/atron/produtos/processamentos'])">
+          <mat-icon>arrow_back</mat-icon>Voltar aos processamentos
+        </button>
+        @if (pollingAtivo) {
+          <button mat-stroked-button (click)="atualizar()" [disabled]="carregando">
+            <mat-icon>refresh</mat-icon>Atualizar agora
+          </button>
+        }
+        @if (item.loteProdutoCodigo) {
+          <button mat-flat-button class="list-primary-action" (click)="abrirProdutos()">
+            <mat-icon>inventory_2</mat-icon>Ver produtos gerados
+          </button>
+        }
+      </footer>
+    </section>
+  } @else {
+    <section class="processamento-carregando" aria-live="polite">
+      <mat-spinner diameter="42"></mat-spinner>
+      <p>Carregando processamento...</p>
+    </section>
+  }
+</main>

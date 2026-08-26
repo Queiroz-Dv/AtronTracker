@@ -25,6 +25,10 @@ namespace AtronStock.Infrastructure.Context
 
         public DbSet<Produto> Produtos { get; set; }
 
+        public DbSet<LoteProduto> LotesProdutos { get; set; }
+
+        public DbSet<ProcessamentoProdutoLote> ProcessamentosProdutosLote { get; set; }
+
         public DbSet<ProdutoCategoria> ProdutoCategorias { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

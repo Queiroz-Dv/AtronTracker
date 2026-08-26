@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import {
+  AreaPlataformaConfig,
+  LISTA_AREAS_PLATAFORMA
+} from '../../../core/config/areas-plataforma.config';
 import { DashboardCard } from '../../../core/layout/models/dashboardCard';
 import { VisualizacaoService } from '../../../core/services/visualizacao-service';
 import { MaterialContainerModule } from '../../../material-container.module';
@@ -7,46 +11,6 @@ import { SharedModule } from '../../../shared/modules/shared.module';
 import { ModuloItem } from '../../../shared/utils/modulo-functions.util';
 import { AcessoService } from '../../../core/services/acesso.service';
 import { ModuloModel } from '../modulos/interfaces/modulo.interface';
-
-
-type DashboardModuleGroupConfig = {
-  code: string;
-  title: string;
-  icon: string;
-  description: string;
-  moduleCodes: string[];
-  accessLabel: string;
-  disabled?: boolean;
-};
-
-const GRUPOS_MODULOS_DASHBOARD: DashboardModuleGroupConfig[] = [
-  {
-    code: 'ATRON_TRACKER',
-    title: 'Atron Tracker',
-    icon: 'analytics',
-    description: 'Gestão administrativa e operacional.',
-    moduleCodes: ['DPT', 'CRG', 'PLC', 'USR', 'PERF', 'RPERFUSR', 'TAR', 'TRF'],
-    accessLabel: 'Acessar Tracker'
-  },
-  {
-    code: 'ATRON_STOCK',
-    title: 'Atron Stock',
-    icon: 'inventory_2',
-    description: 'Controle de estoque, patrimônio e rotinas comerciais.',
-    moduleCodes: ['EST', 'STK', 'PRD', 'PROD', 'CAT', 'CLI', 'FOR', 'FRN', 'PAT', 'VEN', 'VND'],
-    accessLabel: 'Acessar Stock',
-    disabled: true
-  },
-  {
-    code: 'ATRON_SALES',
-    title: 'Atron Sales',
-    icon: 'payments',
-    description: 'Gestão financeira e comercial.',
-    moduleCodes: ['SAL', 'SALES', 'VEN', 'VND', 'FIN', 'CMP', 'COM'],
-    accessLabel: 'Acessar Sales',
-    disabled: true
-  }
-];
 
 @Component({
   standalone: true,
@@ -57,35 +21,101 @@ const GRUPOS_MODULOS_DASHBOARD: DashboardModuleGroupConfig[] = [
 })
 export class DashboardComponent implements OnInit {
   cardsView: DashboardCard[] = [];
-  trackerCardsView: DashboardCard[] = [];
-  visualizacao: 'produtos' | 'tracker' = 'produtos';
+  rotinasCardsView: DashboardCard[] = [];
+  areaSelecionada: AreaPlataformaConfig | null = null;
+
+  private modulosAcessiveis: ModuloModel[] = [];
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private acessoService: AcessoService,
-    private visualizacaoService: VisualizacaoService) { }
+    private visualizacaoService: VisualizacaoService
+  ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
-      this.visualizacao = params.get('produto') === 'tracker' ? 'tracker' : 'produtos';
+      this.areaSelecionada = this.obterArea(params.get('area'));
+      this.atualizarCardsDasRotinas();
     });
 
     this.acessoService.modulosAcessiveis$.subscribe(modulos => {
+      this.modulosAcessiveis = modulos;
       this.cardsView = this.criarCardsAgrupados(modulos);
-      this.trackerCardsView = this.criarCardsDoTracker(modulos);
+      this.atualizarCardsDasRotinas();
     });
+  }
+
+  get tituloVisualizacao(): string {
+    return this.areaSelecionada?.titulo ?? 'Áreas da plataforma';
+  }
+
+  get descricaoVisualizacao(): string {
+    return this.areaSelecionada?.descricaoRotinas
+      ?? 'Acesse as rotinas centrais da operação.';
+  }
+
+  navigate(card: DashboardCard): void {
+    if (card.disabled) {
+      return;
+    }
+
+    if (card.area) {
+      this.router.navigate(['/atron/dashboard'], {
+        queryParams: { area: card.area }
+      });
+      return;
+    }
+
+    this.router.navigateByUrl(card.route);
+  }
+
+  voltarParaAreas(): void {
+    this.router.navigate(['/atron/dashboard']);
+  }
+
+  trocarVisualizacao(): void {
+    this.visualizacaoService.setViewMode('menu');
+    this.router.navigate(['/atron/home']);
+  }
+
+  logout(): void {
+    this.acessoService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
+  }
+
+  private obterArea(chave: string | null): AreaPlataformaConfig | null {
+    if (!chave) {
+      return null;
+    }
+
+    return LISTA_AREAS_PLATAFORMA.find(area => area.chave === chave)
+      ?? null;
+  }
+
+  private atualizarCardsDasRotinas(): void {
+    this.rotinasCardsView = this.areaSelecionada
+      ? this.criarCardsDasRotinas(
+          this.modulosAcessiveis,
+          this.areaSelecionada.codigosModulos
+        )
+      : [];
   }
 
   private criarCardsAgrupados(modulos: ModuloModel[]): DashboardCard[] {
     const modulosPorCodigo = new Map(modulos.map(modulo => [modulo.codigo, modulo]));
-    return GRUPOS_MODULOS_DASHBOARD.map(grupo => this.criarCardDoGrupo(grupo, modulosPorCodigo));
+
+    return LISTA_AREAS_PLATAFORMA.map(area =>
+      this.criarCardDaArea(area, modulosPorCodigo)
+    );
   }
 
-  private criarCardDoGrupo(
-    grupo: DashboardModuleGroupConfig,
+  private criarCardDaArea(
+    area: AreaPlataformaConfig,
     modulosPorCodigo: Map<string, ModuloModel>
   ): DashboardCard {
-    const modulosDoGrupo = grupo.moduleCodes
+    const modulosDaArea = area.codigosModulos
       .filter(codigo => modulosPorCodigo.has(codigo))
       .map(codigo => {
         const item = new ModuloItem(codigo);
@@ -97,38 +127,43 @@ export class DashboardComponent implements OnInit {
         };
       });
 
-    const rotaInicial = modulosDoGrupo.find(modulo => modulo.rota !== '/atron/default')?.rota ?? '/atron/dashboard';
-    const grupoSemAcesso = grupo.code === 'ATRON_TRACKER' && modulosDoGrupo.length === 0;
-    const disabled = grupo.disabled || grupoSemAcesso;
+    const rotaInicial = modulosDaArea
+      .find(modulo => modulo.rota !== '/atron/default')?.rota
+      ?? '/atron/dashboard';
+    const areaSemAcesso = modulosDaArea.length === 0;
 
     return {
-      code: grupo.code,
-      title: grupo.title,
-      icon: grupo.icon,
-      description: grupo.description,
-      accessLabel: grupoSemAcesso ? 'Sem acesso' : grupo.accessLabel,
-      disabled,
+      code: area.codigo,
+      title: area.titulo,
+      icon: area.icone,
+      description: area.descricao,
+      accessLabel: areaSemAcesso ? 'Sem acesso' : area.rotuloAcesso,
+      disabled: area.desabilitado || areaSemAcesso,
+      area: area.chave,
       route: rotaInicial,
       cols: 1,
       rows: 1
     };
   }
 
-  private criarCardsDoTracker(modulos: ModuloModel[]): DashboardCard[] {
-    const codigosTracker = GRUPOS_MODULOS_DASHBOARD[0].moduleCodes;
-
+  private criarCardsDasRotinas(
+    modulos: ModuloModel[],
+    codigosDaArea: readonly string[]
+  ): DashboardCard[] {
     return [...modulos]
-      .filter(modulo => codigosTracker.includes(modulo.codigo))
-      .sort((a, b) => codigosTracker.indexOf(a.codigo) - codigosTracker.indexOf(b.codigo))
+      .filter(modulo => codigosDaArea.includes(modulo.codigo))
+      .sort((a, b) =>
+        codigosDaArea.indexOf(a.codigo) - codigosDaArea.indexOf(b.codigo)
+      )
       .map(modulo => this.criarCardDaRotina(modulo));
   }
 
-  private criarCardDaRotina(m: ModuloModel): DashboardCard {
-    const item = new ModuloItem(m.codigo);
+  private criarCardDaRotina(modulo: ModuloModel): DashboardCard {
+    const item = new ModuloItem(modulo.codigo);
 
     return {
-      code: m.codigo,
-      title: item.titulo || m.descricao,
+      code: modulo.codigo,
+      title: item.titulo || modulo.descricao,
       icon: item.icone || 'default-icon',
       description: item.descricao || 'Descrição não disponível',
       accessLabel: 'Acessar rotina',
@@ -136,33 +171,5 @@ export class DashboardComponent implements OnInit {
       cols: 1,
       rows: 1
     };
-  }
-
-  navigate(card: DashboardCard) {
-    if (card.disabled) {
-      return;
-    }
-
-    if (card.code === 'ATRON_TRACKER') {
-      this.router.navigate(['/atron/dashboard'], { queryParams: { produto: 'tracker' } });
-      return;
-    }
-
-    this.router.navigateByUrl(card.route);
-  }
-
-  voltarParaProdutos() {
-    this.router.navigate(['/atron/dashboard']);
-  }
-
-  trocarVisualizacao() {
-    this.visualizacaoService.setViewMode('menu');
-    this.router.navigate(['/atron/home']);
-  }
-
-  logout() {
-    this.acessoService.logout().subscribe(() => {
-      this.router.navigate(['/login']);
-    });
   }
 }

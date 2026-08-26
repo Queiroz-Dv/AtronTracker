@@ -50,43 +50,40 @@ namespace Shared.Domain.ValueObjects
 
         public void MensagemRegistroSalvo(string registro)
         {
-            AddNotification(string.Format(ObterResource("Mensagem_EntidadeSalva"), registro), ENotificationType.Sucesso);
+            AddNotification(string.Format(NotificacoesPadronizadas.Mensagem_EntidadeSalva, registro), ENotificationType.Sucesso);
         }
 
         public void MensagemRegistroAtualizado(string registro)
         {
-            AddNotification(string.Format(ObterResource("Mensagem_RegistroAtualizado"), registro), ENotificationType.Sucesso);
+            AddNotification(string.Format(NotificacoesPadronizadas.Mensagem_RegistroAtualizado, registro), ENotificationType.Sucesso);
         }
 
         public void MensagemRegistroNaoEncontrado(string key = "")
         {
-            AdicionarErro(string.Format(ObterResource("Erro_RegistroComDescricaoNaoEncontrado"), key));
+            AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoNaoEncontrado, key));
         }
 
         public void MensagemRegistroRemovido(string registro = "")
         {
             if (registro.IsNullOrEmpty())
             {
-                AdicionarMensagem(ObterResource("Mensagem_RemocaoSucessoSemRegistro"));
+                AdicionarMensagem(NotificacoesPadronizadas.Mensagem_RemocaoSucessoSemRegistro);
             }
             else
             {
-                AdicionarMensagem(string.Format(ObterResource("Mensagem_RegistroRemovido"), registro));
+                AdicionarMensagem(string.Format(NotificacoesPadronizadas.Mensagem_RegistroRemovido, registro));
             }
 
         }
 
         public void MensagemRegistroInvalido(string key = "")
         {
-            AdicionarErro(string.Format(ObterResource("Erro_RegistroComDescricaoInvalido"), key));
+            AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoInvalido, key));
         }
 
         public void MensagemRegistroNaoExiste(string key)
         {
-            AdicionarErro(string.Format(ObterResource("Erro_RegistroComDescricaoExistente"), key));
+            AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoExistente, key));
         }
-
-        private static string ObterResource(string chave)
-            => NotificacoesPadronizadas.ResourceManager.GetString(chave) ?? throw new System.Resources.MissingManifestResourceException($"Resource não encontrado: {chave}");
     }
 }

@@ -131,6 +131,24 @@ namespace AtronStock.Application.Resources {
                 return ResourceManager.GetString("ErroInesperadoAtualizar", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A categoria {0} não pode ser inativada porque está vinculada a um ou mais produtos..
+        /// </summary>
+        public static string ErroCategoriaEmUso {
+            get {
+                return ResourceManager.GetString("ErroCategoriaEmUso", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Ocorreu um erro inesperado ao remover a categoria..
+        /// </summary>
+        public static string ErroInesperadoRemover {
+            get {
+                return ResourceManager.GetString("ErroInesperadoRemover", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a O status da categoria deve ser informado..
@@ -158,6 +176,15 @@ namespace AtronStock.Application.Resources {
                 return ResourceManager.GetString("HistoricoCriacao", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Categoria {0} removida em {1}..
+        /// </summary>
+        public static string HistoricoRemocao {
+            get {
+                return ResourceManager.GetString("HistoricoRemocao", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Status da categoria {0} alterado para {1} em {2}..
@@ -165,6 +192,15 @@ namespace AtronStock.Application.Resources {
         public static string HistoricoStatusAlterado {
             get {
                 return ResourceManager.GetString("HistoricoStatusAlterado", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Inativação da categoria {0} recusada em {1} porque existem produtos vinculados..
+        /// </summary>
+        public static string HistoricoInativacaoRecusada {
+            get {
+                return ResourceManager.GetString("HistoricoInativacaoRecusada", resourceCulture);
             }
         }
         

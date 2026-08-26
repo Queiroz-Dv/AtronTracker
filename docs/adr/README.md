@@ -19,6 +19,7 @@ proprietário ou o alcance, mas não reinicia a sequência.
 | ADR | Status | Decisão |
 |---|---|---|
 | [0006](./stock/0006-entregar-rotina-de-categorias-no-atron-stock.md) | Suspenso | Retomar Categoria somente após a conclusão das Fases 1 a 9 da reestruturação modular. |
+| [0011](./stock/0011-modelar-produto-patrimonial.md) | Aceito | Modelar Produto patrimonial e evoluir a geração em lote de forma incremental. |
 
 ## Decisões transversais
 

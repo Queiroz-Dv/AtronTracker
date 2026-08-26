@@ -1,0 +1,21 @@
+<div [formGroup]="form" class="container centered-container">
+  <div>
+    <h2>{{ editando ? 'Editar categoria' : 'Nova categoria' }}</h2>
+    <p class="form-description">Informe os dados usados para organizar os produtos do estoque.</p>
+  </div>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Código</mat-label>
+    <input matInput formControlName="codigo" maxlength="25" autocomplete="off" />
+    <mat-hint align="end">{{ form.get('codigo')?.value?.length || 0 }}/25</mat-hint>
+    <c-control-error [control]="form.get('codigo')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Descrição</mat-label>
+    <input matInput formControlName="descricao" maxlength="50" autocomplete="off" />
+    <mat-hint align="end">{{ form.get('descricao')?.value?.length || 0 }}/50</mat-hint>
+    <c-control-error [control]="form.get('descricao')"></c-control-error>
+  </mat-form-field>
+
+</div>

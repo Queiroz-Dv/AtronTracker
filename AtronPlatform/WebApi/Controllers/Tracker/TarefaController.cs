@@ -141,7 +141,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <summary>
         /// Atualiza uma tarefa existente identificada pelo ID.
         /// </summary>
-        /// <param name="id">Identificador numérico da tarefa.</param>
+        /// <param name="id">Id da tarefa.</param>
         /// <param name="tarefa">Objeto com os dados atualizados da tarefa.</param>
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPut("{id}")]
@@ -155,7 +155,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <summary>
         /// Atribui a tarefa diretamente ao usuário autenticado (assumir tarefa disponível).
         /// </summary>
-        /// <param name="id">Identificador numérico da tarefa a ser assumida.</param>
+        /// <param name="id">Id da tarefa a ser assumida.</param>
         /// <returns>200 OK com o DTO da tarefa atualizada ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("{id}/Assumir")]
         [Transactional]
@@ -168,7 +168,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <summary>
         /// Cria uma solicitação para que o usuário autenticado possa obter a tarefa (requer aprovação).
         /// </summary>
-        /// <param name="id">Identificador numérico da tarefa para a qual se está solicitando obtenção.</param>
+        /// <param name="id">Id da tarefa para a qual se está solicitando obtenção.</param>
         /// <returns>200 OK com o DTO da solicitação ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("{id}/SolicitarObtencao")]
         [Transactional]
@@ -181,7 +181,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <summary>
         /// Aprova uma solicitação de obtenção de tarefa pendente, atribuindo a tarefa ao solicitante.
         /// </summary>
-        /// <param name="id">Identificador numérico da solicitação a ser aprovada.</param>
+        /// <param name="id">Id da solicitação a ser aprovada.</param>
         /// <returns>200 OK com o DTO da solicitação atualizada ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("Solicitacoes/{id}/Aprovar")]
         [Transactional]
@@ -194,7 +194,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <summary>
         /// Recusa uma solicitação de obtenção de tarefa pendente.
         /// </summary>
-        /// <param name="id">Identificador numérico da solicitação a ser recusada.</param>
+        /// <param name="id">Id da solicitação a ser recusada.</param>
         /// <returns>200 OK com o DTO da solicitação atualizada ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("Solicitacoes/{id}/Recusar")]
         [Transactional]
@@ -205,9 +205,9 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         }
 
         /// <summary>
-        /// Remove uma tarefa do sistema pelo seu identificador.
+        /// Remove uma tarefa do sistema pelo seu Id.
         /// </summary>
-        /// <param name="id">Identificador da tarefa a ser excluída.</param>
+        /// <param name="id">Id da tarefa a ser excluída.</param>
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
@@ -219,7 +219,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <summary>
         /// Obtém o histórico cronológico de movimentações da tarefa.
         /// </summary>
-        /// <param name="id">Identificador numérico da tarefa.</param>
+        /// <param name="id">Id da tarefa.</param>
         /// <returns>200 OK com as movimentações autorizadas ou 400 BadRequest com mensagens de erro.</returns>
         [HttpGet("{id}/Movimentacoes")]
         public async Task<ActionResult<IReadOnlyCollection<TarefaMovimentacaoDTO>>> ObterHistorico(int id)
@@ -229,9 +229,9 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         }
 
         /// <summary>
-        /// Obtém uma tarefa específica pelo seu identificador numérico.
+        /// Obtém uma tarefa específica pelo seu Id.
         /// </summary>
-        /// <param name="id">Identificador numérico da tarefa.</param>
+        /// <param name="id">Id da tarefa.</param>
         /// <returns>200 OK com o DTO da tarefa ou 404 NotFound se não encontrada.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<TarefaDTO>> Get(int id)

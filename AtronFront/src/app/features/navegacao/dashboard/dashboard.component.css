@@ -127,7 +127,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.tracker-routine-grid {
+.routine-grid {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 

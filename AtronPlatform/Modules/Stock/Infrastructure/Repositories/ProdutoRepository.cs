@@ -1,3 +1,5 @@
+#nullable enable
+
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Interfaces;
 using AtronStock.Infrastructure.Context;
@@ -5,41 +7,38 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AtronStock.Infrastructure.Repositories
 {
-    public class ProdutoRepository : IProdutoRepository
+    public sealed class ProdutoRepository(StockDbContext context) : IProdutoRepository
     {
-        private readonly StockDbContext _context;
+        private readonly StockDbContext _context = context;
 
-        public ProdutoRepository(StockDbContext context)
-        {
-            _context = context;
-        }
+        public Task<Produto?> ObterPorIdAsync(int id)
+            => ConsultaCompleta().FirstOrDefaultAsync(produto => produto.Id == id);
 
-        public async Task<Produto?> ObterPorIdAsync(int id)
-        {
-            return await _context.Produtos.FindAsync(id);
-        }
+        public Task<Produto?> ObterPorCodigoAsync(string codigo)
+            => ConsultaCompleta().FirstOrDefaultAsync(produto => produto.Codigo == codigo);
+
+        public async Task<ICollection<Produto>> ObterTodosAsync()
+            => await ConsultaCompleta()
+                .AsNoTracking()
+                .OrderBy(produto => produto.Codigo)
+                .ToListAsync();
 
         public async Task<bool> AdicionarAsync(Produto produto)
         {
             await _context.Produtos.AddAsync(produto);
-            var salvo = await _context.SaveChangesAsync();
-            return salvo > 0;
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task AtualizarAsync(Produto produto)
+        public async Task<bool> AtualizarAsync(Produto produto)
         {
             _context.Produtos.Update(produto);
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<ICollection<Produto>> ObterTodos()
-        {
-            return await _context.Produtos.ToListAsync();
-        }
-
-        public Task<Produto> ObterPorCodigoAsync(string codigo)
-        {
-            return _context.Produtos.FirstOrDefaultAsync(p => p.Codigo == codigo);
-        }
+        private IQueryable<Produto> ConsultaCompleta()
+            => _context.Produtos
+                .Include(produto => produto.Categorias)
+                    .ThenInclude(relacionamento => relacionamento.Categoria)
+                .Include(produto => produto.LoteProduto);
     }
 }

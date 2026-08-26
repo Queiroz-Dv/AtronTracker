@@ -41,7 +41,9 @@ namespace AtronStock.Infrastructure.Migrations.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
 
                     b.HasKey("Id");
 
@@ -258,6 +260,27 @@ namespace AtronStock.Infrastructure.Migrations.Migrations
                     b.ToTable("ItensVenda", (string)null);
                 });
 
+            modelBuilder.Entity("AtronStock.Domain.Entities.LoteProduto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique();
+
+                    b.ToTable("LotesProdutos");
+                });
+
             modelBuilder.Entity("AtronStock.Domain.Entities.MovimentacaoEstoque", b =>
                 {
                     b.Property<int>("Id")
@@ -296,6 +319,47 @@ namespace AtronStock.Infrastructure.Migrations.Migrations
                     b.ToTable("MovimentacoesEstoque", (string)null);
                 });
 
+            modelBuilder.Entity("AtronStock.Domain.Entities.ProcessamentoProdutoLote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("LoteProdutoId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("ReservaExpiraEm")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("ReservadoEm")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.Property<int>("Tentativas")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("TokenReserva")
+                        .IsConcurrencyToken()
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LoteProdutoId")
+                        .IsUnique();
+
+                    b.HasIndex("Status", "Id");
+
+                    b.HasIndex("Status", "ReservaExpiraEm", "Id");
+
+                    b.ToTable("ProcessamentosProdutosLote");
+                });
+
             modelBuilder.Entity("AtronStock.Domain.Entities.Produto", b =>
                 {
                     b.Property<int>("Id")
@@ -309,12 +373,38 @@ namespace AtronStock.Infrastructure.Migrations.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("character varying(25)");
 
+                    b.Property<DateTime?>("DataAquisicao")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DataEfetivaBaixa")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<string>("DescricaoComplementar")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("LoteProdutoId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("PrecoUnitario")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique();
+
+                    b.HasIndex("LoteProdutoId");
 
                     b.ToTable("Produtos");
                 });
@@ -342,39 +432,6 @@ namespace AtronStock.Infrastructure.Migrations.Migrations
                     b.HasIndex("CategoriaId");
 
                     b.ToTable("ProdutoCategorias");
-                });
-
-            modelBuilder.Entity("AtronStock.Domain.Entities.ProdutoFornecedor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FornecedorCodigo")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("character varying(25)");
-
-                    b.Property<int>("FornecedorId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ProdutoCodigo")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("character varying(25)");
-
-                    b.Property<int>("ProdutoId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FornecedorId");
-
-                    b.HasIndex("ProdutoId");
-
-                    b.ToTable("ProdutoFornecedor");
                 });
 
             modelBuilder.Entity("AtronStock.Domain.Entities.Venda", b =>
@@ -558,6 +615,107 @@ namespace AtronStock.Infrastructure.Migrations.Migrations
                     b.Navigation("Estoque");
                 });
 
+            modelBuilder.Entity("AtronStock.Domain.Entities.ProcessamentoProdutoLote", b =>
+                {
+                    b.HasOne("AtronStock.Domain.Entities.LoteProduto", "LoteProduto")
+                        .WithMany()
+                        .HasForeignKey("LoteProdutoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.OwnsOne("AtronStock.Domain.ValueObjects.ResultadoProcessamentoProdutoLote", "Resultado", b1 =>
+                        {
+                            b1.Property<int>("ProcessamentoProdutoLoteId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Erro")
+                                .HasMaxLength(2000)
+                                .HasColumnType("character varying(2000)")
+                                .HasColumnName("Erro");
+
+                            b1.Property<int>("QuantidadeProcessada")
+                                .HasColumnType("integer")
+                                .HasColumnName("QuantidadeProcessada");
+
+                            b1.HasKey("ProcessamentoProdutoLoteId");
+
+                            b1.ToTable("ProcessamentosProdutosLote");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProcessamentoProdutoLoteId");
+                        });
+
+                    b.OwnsOne("AtronStock.Domain.ValueObjects.SolicitacaoGeracaoProdutosLote", "Solicitacao", b1 =>
+                        {
+                            b1.Property<int>("ProcessamentoProdutoLoteId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("CategoriaCodigos")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("CategoriaCodigos");
+
+                            b1.Property<string>("CodigoBase")
+                                .IsRequired()
+                                .HasMaxLength(25)
+                                .HasColumnType("character varying(25)")
+                                .HasColumnName("CodigoBase");
+
+                            b1.Property<DateTime>("DataAquisicao")
+                                .HasColumnType("timestamp without time zone")
+                                .HasColumnName("DataAquisicao");
+
+                            b1.Property<string>("Descricao")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("Descricao");
+
+                            b1.Property<string>("DescricaoComplementar")
+                                .HasColumnType("text")
+                                .HasColumnName("DescricaoComplementar");
+
+                            b1.Property<decimal>("PrecoUnitario")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("PrecoUnitario");
+
+                            b1.Property<int>("QuantidadeSolicitada")
+                                .HasColumnType("integer")
+                                .HasColumnName("QuantidadeSolicitada");
+
+                            b1.Property<string>("SolicitanteCodigo")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("SolicitanteCodigo");
+
+                            b1.HasKey("ProcessamentoProdutoLoteId");
+
+                            b1.ToTable("ProcessamentosProdutosLote");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProcessamentoProdutoLoteId");
+                        });
+
+                    b.Navigation("LoteProduto");
+
+                    b.Navigation("Resultado")
+                        .IsRequired();
+
+                    b.Navigation("Solicitacao")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AtronStock.Domain.Entities.Produto", b =>
+                {
+                    b.HasOne("AtronStock.Domain.Entities.LoteProduto", "LoteProduto")
+                        .WithMany("Produtos")
+                        .HasForeignKey("LoteProdutoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("LoteProduto");
+                });
+
             modelBuilder.Entity("AtronStock.Domain.Entities.ProdutoCategoria", b =>
                 {
                     b.HasOne("AtronStock.Domain.Entities.Categoria", "Categoria")
@@ -573,25 +731,6 @@ namespace AtronStock.Infrastructure.Migrations.Migrations
                         .IsRequired();
 
                     b.Navigation("Categoria");
-
-                    b.Navigation("Produto");
-                });
-
-            modelBuilder.Entity("AtronStock.Domain.Entities.ProdutoFornecedor", b =>
-                {
-                    b.HasOne("AtronStock.Domain.Entities.Fornecedor", "Fornecedor")
-                        .WithMany()
-                        .HasForeignKey("FornecedorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AtronStock.Domain.Entities.Produto", "Produto")
-                        .WithMany("Fornecedores")
-                        .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Fornecedor");
 
                     b.Navigation("Produto");
                 });
@@ -617,11 +756,14 @@ namespace AtronStock.Infrastructure.Migrations.Migrations
                     b.Navigation("Itens");
                 });
 
+            modelBuilder.Entity("AtronStock.Domain.Entities.LoteProduto", b =>
+                {
+                    b.Navigation("Produtos");
+                });
+
             modelBuilder.Entity("AtronStock.Domain.Entities.Produto", b =>
                 {
                     b.Navigation("Categorias");
-
-                    b.Navigation("Fornecedores");
                 });
 
             modelBuilder.Entity("AtronStock.Domain.Entities.Venda", b =>

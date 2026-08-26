@@ -1,0 +1,106 @@
+.produto-auditoria-card {
+  background: var(--atron-surface) !important;
+  border: 1px solid var(--atron-border);
+  box-shadow: none;
+  color: var(--atron-text) !important;
+  --mat-card-elevated-container-color: var(--atron-surface);
+  --mat-card-elevated-container-elevation: none;
+  --mat-card-outlined-container-color: var(--atron-surface);
+  --mat-table-background-color: var(--atron-surface);
+  --mat-table-header-headline-color: var(--atron-text-muted);
+  --mat-table-row-item-label-text-color: var(--atron-text);
+  --mat-table-row-item-outline-color: var(--atron-border-soft);
+}
+
+.produto-resumo {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 24px;
+}
+
+.produto-resumo div {
+  background: var(--atron-surface-muted);
+  border-radius: var(--atron-radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+}
+
+.produto-resumo span {
+  color: var(--atron-text-muted);
+  font-size: 0.8rem;
+}
+
+.produto-resumo strong {
+  color: var(--atron-text);
+}
+
+h3 {
+  color: var(--atron-title);
+  margin: 0 0 12px;
+}
+
+.produto-historico-grid {
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
+  overflow-x: auto;
+}
+
+.produto-historico-grid table {
+  background: var(--atron-surface) !important;
+  color: var(--atron-text) !important;
+  width: 100%;
+}
+
+.produto-historico-grid .mat-mdc-header-row,
+.produto-historico-grid .mat-mdc-header-cell {
+  background: var(--atron-surface-muted) !important;
+}
+
+.produto-historico-grid .mat-mdc-header-cell {
+  border-bottom-color: var(--atron-border) !important;
+  color: var(--atron-text-muted) !important;
+  font-weight: 700;
+}
+
+.produto-historico-grid .mat-mdc-row,
+.produto-historico-grid .mat-mdc-cell {
+  background: var(--atron-surface) !important;
+}
+
+.produto-historico-grid .mat-mdc-cell {
+  border-bottom-color: var(--atron-border-soft) !important;
+  color: var(--atron-text) !important;
+}
+
+.produto-historico-grid .mat-mdc-row:hover .mat-mdc-cell {
+  background: var(--atron-surface-tinted) !important;
+}
+
+.produto-historico-grid .mat-column-dataCriacao {
+  min-width: 150px;
+  width: 180px;
+}
+
+.produto-historico-estado {
+  align-items: center;
+  color: var(--atron-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+  min-height: 180px;
+  text-align: center;
+}
+
+.produto-historico-erro {
+  color: var(--atron-danger);
+}
+
+@media (max-width: 700px) {
+  .produto-resumo {
+    grid-template-columns: 1fr;
+  }
+}

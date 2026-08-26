@@ -82,7 +82,6 @@ export class TarefaEditComponent implements OnInit {
 
     const tarefaPayload: TarefaRequest = {
       id: formValues.id || 0,
-      identificador: formValues.identificador,
       destinoInicial: formValues.destinoInicial,
       exigeAprovacaoParaObter: formValues.exigeAprovacaoParaObter,
       titulo: formValues.titulo,

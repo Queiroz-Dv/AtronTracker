@@ -28,7 +28,7 @@ namespace Application.Extensions
                 Mensagem = string.Format(
                     TarefaResource.Mensagem_SolicitacaoRecebida,
                     solicitante,
-                    contexto.Identificador),
+                    contexto.TarefaIdTexto),
                 UrlDestino = contexto.UrlSolicitacoes,
                 ReferenciaExterna = contexto.ReferenciaExterna,
                 DataCriacao = DateTimeOffset.UtcNow,
@@ -46,7 +46,7 @@ namespace Application.Extensions
             var usuarioCodigo = solicitacao.SolicitanteCodigo;
             var contexto = ContextoNotificacaoTarefaRecord.Criar(solicitacao);
 
-            var detalhesDecisao = CriarDetalhesDecisao(aprovada, contexto.Identificador);
+            var detalhesDecisao = CriarDetalhesDecisao(aprovada, contexto.TarefaIdTexto);
 
             var tipoEvento = detalhesDecisao.TipoEvento;
             var titulo = detalhesDecisao.Titulo;
@@ -69,7 +69,7 @@ namespace Application.Extensions
             };
         }
 
-        private static (string TipoEvento, string Titulo, string Mensagem) CriarDetalhesDecisao(bool aprovada, string identificador)
+        private static (string TipoEvento, string Titulo, string Mensagem) CriarDetalhesDecisao(bool aprovada, string tarefaId)
         {
             var tipoEvento = aprovada
                ? TarefaNotificacaoEventos.SolicitacaoObtencaoAprovada
@@ -83,7 +83,7 @@ namespace Application.Extensions
                 aprovada
                     ? TarefaResource.Mensagem_NotificacaoSolicitacaoAprovada
                     : TarefaResource.Mensagem_NotificacaoSolicitacaoRecusada,
-                identificador);
+                tarefaId);
 
             return (tipoEvento, titulo, mensagem);
         }

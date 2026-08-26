@@ -10,9 +10,6 @@ namespace Infrastructure.EntitiesConfiguration
         {
             builder.HasKey(key => key.Id);
 
-            builder.Property(trf => trf.Identificador);
-            builder.HasIndex(trf => trf.Identificador);
-
             builder.Property(trf => trf.DestinoInicial)
                    .IsRequired()
                    .HasDefaultValue(1);

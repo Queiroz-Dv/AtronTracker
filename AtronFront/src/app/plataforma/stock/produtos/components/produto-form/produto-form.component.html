@@ -1,0 +1,129 @@
+<div [formGroup]="form" class="container centered-container produto-form-grid">
+  <div class="produto-form-intro">
+    <div>
+      <h2>{{ editando ? 'Editar produto' : (gerarPorLote ? 'Gerar produtos em lote' : 'Novo produto') }}</h2>
+      <p class="form-description">
+        {{ gerarPorLote
+          ? 'Informe os dados comuns aos patrimônios que serão processados em segundo plano.'
+          : 'Informe os dados do patrimônio individual.' }}
+      </p>
+    </div>
+
+    @if (!editando) {
+      <div class="produto-form-mode">
+        <mat-checkbox formControlName="gerarPorLote">Gerar por lote</mat-checkbox>
+      </div>
+    }
+  </div>
+
+  <mat-form-field
+    appearance="fill"
+    class="produto-form-codigo"
+    [class.produto-form-codigo-lote]="gerarPorLote">
+    <mat-label>Código</mat-label>
+    <input matInput formControlName="codigo" [attr.maxlength]="gerarPorLote ? 24 : 25" autocomplete="off" />
+    <c-control-error [control]="form.get('codigo')"></c-control-error>
+  </mat-form-field>
+
+  @if (gerarPorLote) {
+    <mat-form-field appearance="fill" class="produto-form-quantidade">
+      <mat-label>Quantidade</mat-label>
+      <input matInput type="number" min="1" step="1" formControlName="quantidade" />
+      <c-control-error [control]="form.get('quantidade')"></c-control-error>
+    </mat-form-field>
+
+    @if (form.hasError('codigoGeradoMuitoLongo')
+      && (form.get('codigo')?.touched || form.get('quantidade')?.touched)) {
+      <p class="produto-form-wide produto-form-error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        O maior código gerado não pode exceder 25 caracteres.
+      </p>
+    }
+  }
+
+  <mat-form-field appearance="fill" class="produto-form-wide">
+    <mat-label>Descrição</mat-label>
+    <input matInput formControlName="descricao" maxlength="50" autocomplete="off" />
+    <c-control-error [control]="form.get('descricao')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="produto-form-wide">
+    <mat-label>Descrição complementar</mat-label>
+    <textarea matInput formControlName="descricaoComplementar" rows="3"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="produto-form-half">
+    <mat-label>Data de aquisição</mat-label>
+    <input
+      matInput
+      appDateMask
+      [matDatepicker]="dataAquisicaoPicker"
+      placeholder="dd/MM/aaaa"
+      formControlName="dataAquisicao" />
+    <mat-datepicker-toggle matIconSuffix [for]="dataAquisicaoPicker"></mat-datepicker-toggle>
+    <mat-datepicker #dataAquisicaoPicker></mat-datepicker>
+    <c-control-error [control]="form.get('dataAquisicao')"></c-control-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="produto-form-half">
+    <mat-label>Preço unitário</mat-label>
+    <input matInput type="number" min="0.01" step="0.01" formControlName="precoUnitario" />
+    <c-control-error [control]="form.get('precoUnitario')"></c-control-error>
+  </mat-form-field>
+
+  <section class="produto-form-wide produto-categorias" aria-labelledby="produto-categorias-titulo">
+    <div class="produto-categorias-header">
+      <div>
+        <h3 id="produto-categorias-titulo">Categorias</h3>
+        <p>Marque as categorias que deseja vincular ao produto.</p>
+      </div>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="produto-categorias-filtro">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          type="search"
+          aria-label="Filtrar categorias"
+          autocomplete="off"
+          (input)="filtrarCategorias($event)" />
+      </mat-form-field>
+    </div>
+
+    <div class="produto-categorias-grid" role="group" aria-label="Seleção de categorias">
+      @for (categoria of categoriasPaginadas; track categoria.codigo) {
+        <mat-checkbox
+          class="produto-categoria-item"
+          [class.produto-categoria-item-selecionada]="categoriaSelecionada(categoria.codigo)"
+          [checked]="categoriaSelecionada(categoria.codigo)"
+          (change)="alternarCategoria(categoria.codigo, $event.checked)">
+          <span class="produto-categoria-codigo">{{ categoria.codigo }}</span>
+          <span class="produto-categoria-descricao">{{ categoria.descricao }}</span>
+        </mat-checkbox>
+      } @empty {
+        <p class="produto-categorias-vazio">Nenhuma categoria encontrada.</p>
+      }
+    </div>
+
+    <mat-paginator
+      class="produto-categorias-paginador"
+      [length]="totalCategoriasFiltradas"
+      [pageIndex]="paginaCategorias"
+      [pageSize]="tamanhoPaginaCategorias"
+      [hidePageSize]="true"
+      showFirstLastButtons
+      aria-label="Paginação das categorias"
+      (page)="alterarPaginaCategorias($event)">
+    </mat-paginator>
+  </section>
+
+  @if (editando) {
+    <mat-form-field appearance="fill" class="produto-form-half">
+      <mat-label>Status</mat-label>
+      <input matInput [value]="statusDescricao" readonly />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="produto-form-half">
+      <mat-label>Data efetiva de baixa</mat-label>
+      <input matInput [value]="dataEfetivaBaixa ? (dataEfetivaBaixa | date:'dd/MM/yyyy') : 'Não baixado'" readonly />
+    </mat-form-field>
+  }
+</div>

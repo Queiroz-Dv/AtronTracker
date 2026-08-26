@@ -1,0 +1,30 @@
+.processamento-filtros {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(260px, 380px) 190px;
+  padding: 18px 24px 8px;
+}
+
+.processamento-status {
+  background: var(--atron-surface-muted);
+  border: 1px solid var(--atron-border);
+  border-radius: 999px;
+  color: var(--atron-text-muted);
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.status-execucao { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.status-concluido { background: #ecfdf3; border-color: #bbf7d0; color: var(--atron-success); }
+.status-falha { background: #fef2f2; border-color: #fecaca; color: var(--atron-danger); }
+
+@media (max-width: 800px) {
+  .processamento-filtros {
+    grid-template-columns: 1fr;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

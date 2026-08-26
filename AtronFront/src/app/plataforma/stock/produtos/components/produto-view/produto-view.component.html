@@ -1,0 +1,87 @@
+<main class="list-page">
+  <section class="list-panel" aria-labelledby="produtos-title">
+    <header class="list-header">
+      <div>
+        <p class="list-eyebrow">Atron Stock</p>
+        <h1 id="produtos-title">Produtos patrimoniais</h1>
+        <p class="list-description">Acompanhe cada patrimônio individual e sua classificação.</p>
+      </div>
+      <div class="list-actions">
+        <button mat-stroked-button class="list-secondary-action" (click)="router.navigate(['/atron/produtos/processamentos'])">
+          <mat-icon>pending_actions</mat-icon>
+          Processamentos
+        </button>
+        <button mat-flat-button class="list-primary-action" (click)="router.navigate(['/atron/produtos/novo'])">
+          <mat-icon>add</mat-icon>
+          Novo produto
+        </button>
+      </div>
+    </header>
+
+    <div class="produto-filtros">
+      <mat-form-field appearance="outline">
+        <mat-label>Código ou descrição</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (keyup)="filtrarTexto($event)" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select value="" (selectionChange)="filtrarStatus($event.value)">
+          <mat-option value="">Todos</mat-option>
+          <mat-option [value]="ProdutoStatus.Ativo">Ativo</mat-option>
+          <mat-option [value]="ProdutoStatus.Baixado">Baixado</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="list-table-wrap">
+      <table class="list-table" mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+          <td mat-cell *matCellDef="let produto">{{ produto.codigo }}</td>
+        </ng-container>
+        <ng-container matColumnDef="descricao">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Descrição</th>
+          <td mat-cell *matCellDef="let produto">{{ produto.descricao }}</td>
+        </ng-container>
+        <ng-container matColumnDef="aquisicao">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Data de aquisição</th>
+          <td mat-cell *matCellDef="let produto">
+            {{ produto.dataAquisicao ? (produto.dataAquisicao | date:'dd/MM/yyyy') : 'Não informada' }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let produto">
+            <span class="produto-status" [class.produto-status-baixado]="produto.status === ProdutoStatus.Baixado">
+              {{ descricaoStatus(produto.status) }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef aria-label="Ações"></th>
+          <td mat-cell *matCellDef="let produto">
+            <div class="list-row-actions">
+              <button class="list-icon-action" mat-icon-button title="Editar produto" (click)="editar(produto.codigo)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="list-icon-action" mat-icon-button title="Ver histórico do produto" (click)="abrirHistorico(produto)">
+                <mat-icon>history</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="list-no-data" [attr.colspan]="colunas.length">Nenhum produto encontrado.</td>
+        </tr>
+      </table>
+    </div>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    <footer class="list-footer-actions"><c-botao-voltar></c-botao-voltar></footer>
+  </section>
+</main>

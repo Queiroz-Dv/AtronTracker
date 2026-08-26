@@ -4,9 +4,6 @@ using Application.Extensions;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Shared.Authorization;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker

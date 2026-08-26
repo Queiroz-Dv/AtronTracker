@@ -21,7 +21,9 @@ namespace AtronStock.Infrastructure.EntitiesConfiguration
                    .IsRequired()
                    .HasMaxLength(50);
 
-            builder.Property(c => c.Status).IsRequired();
+            builder.Property(c => c.Status)
+                   .HasDefaultValue(AtronStock.Domain.Enums.EStatus.Ativo)
+                   .IsRequired();
         }
     }
 }
