@@ -40,7 +40,9 @@ namespace Application.Services.EntitiesServices.Tarefas
             if (cargo is null)
                 return Resultado<Departamento>.Falha(TarefaResource.Erro_CargoNaoEncontrado);
 
-            if (cargo.DepartamentoId != departamento.Id || cargo.DepartamentoCodigo != departamento.Codigo)
+            if (cargo.DepartamentoId != departamento.Id ||
+                cargo.DepartamentoCodigo != departamento.Codigo)
+
                 return Resultado<Departamento>.Falha(TarefaResource.Erro_CargoNaoPertenceDepartamento);
 
             tarefa.VincularCargo(cargo);            

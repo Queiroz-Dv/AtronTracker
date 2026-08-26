@@ -1,176 +1,42 @@
-﻿using AtronStock.Application.DTO.Request;
+using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Interfaces;
-using AtronStock.Application.Mapping;
-using AtronStock.Domain.Entities;
-using AtronStock.Domain.Enums;
-using AtronStock.Domain.Interfaces;
-using Shared.Application.DTOS.Common;
-using Shared.Application.Interfaces.Service;
-using AtronStock.Application.Resources;
+using AtronStock.Application.UseCases.CategoriaCases;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
 
 namespace AtronStock.Application.Services
 {
-    public class CategoriaService : ICategoriaService
+    public class CategoriaService(
+        CriarCategoriaCase criarCategoria,
+        AtualizarCategoriaCase atualizarCategoria,
+        ExcluirCategoriaCase excluirCategoria,
+        AtivarInativarCategoriaCase ativarInativarCategoria,
+        ObterCategoriaCase obterCategoria) : ICategoriaService
     {
-        private const string CategoriaContexto = nameof(Categoria);
+        private readonly CriarCategoriaCase _criarCategoria = criarCategoria;
+        private readonly AtualizarCategoriaCase _atualizarCategoria = atualizarCategoria;
+        private readonly ExcluirCategoriaCase _excluirCategoria = excluirCategoria;
+        private readonly AtivarInativarCategoriaCase _ativarInativarCategoria = ativarInativarCategoria;
+        private readonly ObterCategoriaCase _obterCategoria = obterCategoria;
 
-        private readonly ICategoriaRepository _repository;
-        private readonly IValidador<CategoriaRequest> _validador;
-        private readonly CategoriaMapping _mapService;
-        private readonly IAuditoriaService _auditoriaService;
+        public Task<Resultado> CriarAsync(CategoriaRequest request)
+            => _criarCategoria.ExecutarAsync(request);
 
-        public CategoriaService(
-            ICategoriaRepository repository,
-            IValidador<CategoriaRequest> validador,
-            CategoriaMapping mapService,
-            IAuditoriaService auditoriaService)
-        {
-            _repository = repository;
-            _validador = validador;
-            _mapService = mapService;
-            _auditoriaService = auditoriaService;
-        }
+        public Task<Resultado> AtualizarAsync(CategoriaRequest request)
+            => _atualizarCategoria.ExecutarAsync(request);
 
-        public async Task<Resultado> CriarAsync(CategoriaRequest request)
-        {
-            var messages = _validador.Validar(request);
-            if (messages.Any()) return Resultado.Falha(messages);
+        public Task<Resultado> ExcluirAsync(string codigo)
+            => _excluirCategoria.ExecutarAsync(codigo);
 
-            var categoriaExistente = await _repository.ObterCategoriaPorCodigoAsync(request.Codigo);
-            if (categoriaExistente != null)
-            {
-                return Resultado.Falha(string.Format(CategoriaResource.ErroCategoriaJaExiste, request.Codigo));
-            }
+        public Task<Resultado> AtivarInativarAsync(string codigo, bool ativar)
+            => _ativarInativarCategoria.ExecutarAsync(codigo, ativar);
 
-            var categoria = _mapService.MapToEntity(request);
-            await _repository.CriarCategoriaAsync(categoria);
+        public Task<Resultado<ICollection<CategoriaRequest>>> ObterTodasAsync()
+            => _obterCategoria.ObterTodasAsync();
 
-            IAuditoriaDTO auditoria = new AuditoriaDTO
-            {
-                CodigoRegistro = categoria.Codigo,
-                Contexto = CategoriaContexto,
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = categoria.Codigo,
-                    Contexto = CategoriaContexto,
-                    Descricao = string.Format(CategoriaResource.HistoricoCriacao, categoria.Codigo, DateTime.Now)
-                }
-            };
+        public Task<Resultado<ICollection<CategoriaRequest>>> ObterInativasAsync()
+            => _obterCategoria.ObterInativasAsync();
 
-            await _auditoriaService.RegistrarServiceAsync(auditoria);
-
-            var context = new NotificationBag();
-            context.MensagemRegistroSalvo(CategoriaResource.SucessoCadastro);
-            return Resultado.Sucesso(request, [.. context.Messages]);
-        }
-
-        public async Task<Resultado> AtualizarAsync(CategoriaRequest dto)
-        {
-            var messages = _validador.Validar(dto);
-            if (messages.TemErros()) return Resultado.Falha(messages);
-
-            var categoria = await _repository.ObterCategoriaPorCodigoAsync(dto.Codigo);
-            if (categoria == null)
-            {
-                return Resultado.Falha(string.Format(CategoriaResource.ErroCategoriaNaoEncontrada, dto.Codigo));
-            }
-
-            _mapService.MapToEntity(dto, categoria);
-
-            var atualizado = await _repository.AtualizarCategoriaAsync(categoria);
-            if (!atualizado)
-            {
-                return Resultado.Falha(CategoriaResource.ErroInesperadoAtualizar);
-            }
-
-            IAuditoriaDTO auditoria = new AuditoriaDTO
-            {
-                CodigoRegistro = categoria.Codigo,
-                Contexto = CategoriaContexto,
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = categoria.Codigo,
-                    Contexto = CategoriaContexto,
-                    Descricao = string.Format(
-                        CategoriaResource.HistoricoAtualizacao,
-                        categoria.Codigo,
-                        DateTime.Now,
-                        dto.Descricao,
-                        dto.Status.GetDescription())
-                }
-            };
-
-            await _auditoriaService.AtualizarServiceAsync(auditoria);
-
-            var context = new NotificationBag();
-            context.MensagemRegistroAtualizado(CategoriaContexto);
-            return Resultado.Sucesso(dto, [.. context.Messages]);
-        }
-
-        public async Task<Resultado> AtivarInativarAsync(string codigo, bool ativar)
-        {
-            var categoria = await _repository.ObterCategoriaPorCodigoAsync(codigo);
-            if (categoria == null)
-            {
-                var bag = new NotificationBag();
-                bag.MensagemRegistroNaoEncontrado(codigo);
-                return Resultado.Falha(bag.Messages.ToList());
-            }
-
-            categoria.Status = ativar ? EStatus.Ativo : EStatus.Inativo;
-            await _repository.AtualizarCategoriaAsync(categoria);
-
-            IAuditoriaDTO auditoria = new AuditoriaDTO
-            {
-                CodigoRegistro = categoria.Codigo,
-                Contexto = CategoriaContexto,
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = categoria.Codigo,
-                    Contexto = CategoriaContexto,
-                    Descricao = string.Format(
-                        CategoriaResource.HistoricoStatusAlterado,
-                        categoria.Codigo,
-                        categoria.Status.GetDescription(),
-                        DateTime.Now)
-                }
-            };
-
-            await _auditoriaService.AtualizarServiceAsync(auditoria);
-
-            var context = new NotificationBag();
-            context.MensagemRegistroAtualizado(codigo);
-            return Resultado.Sucesso(categoria, [.. context.Messages]);
-        }
-
-        public async Task<Resultado<ICollection<CategoriaRequest>>> ObterTodasAsync()
-        {
-            var categorias = await _repository.ObterTodasCategoriasAsync();
-            var dtos = _mapService.MapToDtos(categorias).ToList();
-            return Resultado<ICollection<CategoriaRequest>>.Sucesso(dtos);
-        }
-
-        public async Task<Resultado<ICollection<CategoriaRequest>>> ObterInativasAsync()
-        {
-            var categorias = await _repository.ObterTodasCategoriasInativasAsync();
-            var dtos = _mapService.MapToDtos(categorias).ToList();
-            return Resultado<ICollection<CategoriaRequest>>.Sucesso(dtos);
-        }
-
-        public async Task<Resultado<CategoriaRequest>> ObterPorCodigoAsync(string codigo)
-        {
-            var categoria = await _repository.ObterCategoriaPorCodigoAsync(codigo);
-            if (categoria == null)
-            {
-                var bag = new NotificationBag();
-                bag.MensagemRegistroNaoEncontrado(codigo);
-                return Resultado<CategoriaRequest>.Falhas(bag.Messages.ToList());
-            }
-
-            var dto = _mapService.MapToDto(categoria);
-            return Resultado<CategoriaRequest>.Sucesso(dto);
-        }
+        public Task<Resultado<CategoriaRequest>> ObterPorCodigoAsync(string codigo)
+            => _obterCategoria.ObterPorCodigoAsync(codigo);
     }
 }

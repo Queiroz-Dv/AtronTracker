@@ -17,6 +17,10 @@ using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
 using Application.Services.EntitiesServices.Tarefas.Obtencao;
 using Application.Services.Identity;
+using Application.UseCases.CargoCases;
+using Application.UseCases.DepartamentoCases;
+using Application.UseCases.PerfilDeAcessoCases;
+using Application.UseCases.PlanejamentoCustoCases;
 using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using Application.UseCases.UsuarioCases;
@@ -77,7 +81,6 @@ namespace Infrastructure.DependencyInjection
             services.AddTrackerValidations();
             services.AddTrackerAuthorization();
             ConfigureModuloServices(services);
-            ConfigureTarefaServices(services);
             ConfigureDepartamentoServices(services);
             ConfigureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
@@ -204,25 +207,36 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigureUsuarioServices(IServiceCollection services)
         {
             services.AddScoped<IUsuarioService, UsuarioService>();
-            services.AddScoped<CriarUsuario>();
-            services.AddScoped<AtualizarUsuario>();
-            services.AddScoped<RemoverUsuario>();
-            services.AddScoped<DesativarUsuario>();
-            services.AddScoped<SolicitarReativacao>();
-            services.AddScoped<ReativarUsuario>();
-            services.AddScoped<ObterUsuario>();
-            services.AddScoped<AlterarEmail>();
-            services.AddScoped<ConfirmarAlteracaoEmail>();
-            services.AddScoped<ReenviarConfirmacaoEmail>();
+            services.AddScoped<AssociarUsuarioCargoDepartamentoCase>();
+            services.AddScoped<AtualizarAssociacaoUsuarioCargoDepartamentoCase>();
+            services.AddScoped<AtualizarCredenciaisUsuarioCase>();
+            services.AddScoped<AuditoriaUsuarioCase>();
+            services.AddScoped<CriarUsuarioCase>();
+            services.AddScoped<AtualizarUsuarioCase>();
+            services.AddScoped<EnviarEmailPrimeiroAcessoCase>();
+            services.AddScoped<RemoverUsuarioCase>();
+            services.AddScoped<DesativarUsuarioCase>();
+            services.AddScoped<SolicitarReativacaoCase>();
+            services.AddScoped<ReativarUsuarioCase>();
+            services.AddScoped<ObterUsuarioCase>();
+            services.AddScoped<AlterarEmailCase>();
+            services.AddScoped<ConfirmarAlteracaoEmailCase>();
+            services.AddScoped<ReenviarConfirmacaoEmailCase>();
+            services.AddScoped<VerificarAtualizacaoUsuarioCase>();
+            services.AddScoped<VerificarUsuarioCase>();
+            services.AddScoped<VincularGestorImediatoCase>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IConfirmacaoEmailRepository, ConfirmacaoEmailRepository>();
-            services.AddScoped<IRepository<Usuario>, Repository<Usuario>>();
             services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)
         {
             services.AddScoped<ICargoRepository, CargoRepository>();
+            services.AddScoped<AtualizarCargoCase>();
+            services.AddScoped<CriarCargoCase>();
+            services.AddScoped<ExcluirCargoCase>();
+            services.AddScoped<ObterCargoCase>();
             services.AddScoped<ICargoService, CargoService>();
         }
 
@@ -233,12 +247,21 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IPlanejamentoCustoPreparacaoService, PlanejamentoCustoPreparacaoService>();
             services.AddScoped<IPlanejamentoCustoRelatorioService, PlanejamentoCustoRelatorioService>();
             services.AddScoped<IPlanejamentoCustoRelatorioImpressaoService, PlanejamentoCustoRelatorioImpressaoService>();
+            services.AddScoped<AtualizarPlanejamentoCustoCase>();
+            services.AddScoped<CriarPlanejamentoCustoCase>();
+            services.AddScoped<ExcluirPlanejamentoCustoCase>();
+            services.AddScoped<ObterPlanejamentoCustoCase>();
             services.AddScoped<IPlanejamentoCustoService, PlanejamentoCustoService>();
         }
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {
             services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
+            services.AddScoped<AtualizarDepartamentoCase>();
+            services.AddScoped<CriarDepartamentoCase>();
+            services.AddScoped<ExcluirDepartamentoCase>();
+            services.AddScoped<ObterDepartamentoCase>();
+            services.AddScoped<VincularGestorDepartamentoCase>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
         }
 
@@ -251,15 +274,16 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
         {
             services.AddScoped<IPerfilDeAcessoRepository, PerfilDeAcessoRepository>();
+            services.AddScoped<AtualizarPerfilDeAcessoCase>();
+            services.AddScoped<CriarPerfilDeAcessoCase>();
+            services.AddScoped<ObterPerfilDeAcessoCase>();
+            services.AddScoped<ObterPerfisUsuarioCase>();
+            services.AddScoped<RemoverPerfilDeAcessoCase>();
             services.AddScoped<IPerfilDeAcessoPreparacaoService, PerfilDeAcessoPreparacaoService>();
             services.AddScoped<IPerfilDeAcessoCacheInvalidator, PerfilDeAcessoCacheInvalidator>();
             services.AddScoped<IPerfilDeAcessoUsuarioRelacionamentoService, PerfilDeAcessoUsuarioRelacionamentoService>();
             services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
         }
 
-        private static void ConfigureTarefaServices(IServiceCollection services)
-        {
-            services.AddScoped<IRepository<Tarefa>, Repository<Tarefa>>();
-        }
     }
 }

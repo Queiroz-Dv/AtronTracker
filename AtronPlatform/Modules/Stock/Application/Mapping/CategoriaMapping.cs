@@ -4,7 +4,9 @@ using Shared.Application.Interfaces.Mapping;
 
 namespace AtronStock.Application.Mapping
 {
-    public class CategoriaMapping : Mapper<Categoria, CategoriaRequest>
+    public sealed class CategoriaMapping
+        : Mapper<Categoria, CategoriaRequest>,
+          IUpdateMapper<Categoria, CategoriaRequest>
     {
         public override CategoriaRequest MapToDto(Categoria entity)
         {
@@ -28,7 +30,7 @@ namespace AtronStock.Application.Mapping
 
         }
 
-        public void MapToEntity(CategoriaRequest dto, Categoria entityToUpdate)
+        public void MapToUpdate(CategoriaRequest dto, Categoria entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao;
             entityToUpdate.Status = dto.Status;

@@ -1,4 +1,4 @@
-using AtronTracker.Infrastructure.Authorization;
+using Infrastructure.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 

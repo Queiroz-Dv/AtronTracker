@@ -1,4 +1,3 @@
-﻿using Shared.Application.Resources;
 using Shared.Domain.Enums;
 using System.Text.Json.Serialization;
 
@@ -68,12 +67,6 @@ namespace Shared.Domain.ValueObjects
             return resultado;
         }
 
-        public Resultado<T> ComMensagemRegistroSalvo(string codigo)
-        {
-            AdicionarMensagem(string.Format(NotificacoesPadronizadas.ResourceManager.GetString("Mensagem_RegistroSalvo")!, codigo));
-            return this;
-        }
-
         public new Resultado<T> AdicionarMensagem(string mensagem)
         {
             base.AdicionarMensagem(mensagem);
@@ -103,6 +96,11 @@ namespace Shared.Domain.ValueObjects
             var resultado = new Resultado(false);
             resultado.AdicionarErro(mensagemErro);
             return resultado;
+        }
+
+        public static Resultado Falha()
+        {
+            return new Resultado(false);                        
         }
 
         public static Resultado Falha(NotificationMessage message)

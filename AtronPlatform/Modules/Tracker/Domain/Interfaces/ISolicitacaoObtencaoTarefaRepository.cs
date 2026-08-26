@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface ISolicitacaoObtencaoTarefaRepository : IRepository<SolicitacaoObtencaoTarefa>
+    public interface ISolicitacaoObtencaoTarefaRepository
     {
         Task<bool> ExisteSolicitacaoPendenteParaTarefaAsync(int tarefaId);
 

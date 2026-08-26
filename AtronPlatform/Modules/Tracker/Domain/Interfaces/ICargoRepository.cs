@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface ICargoRepository : IRepository<Cargo>
+    public interface ICargoRepository
     {
         Task<IEnumerable<Cargo>> ObterCargosAsync();
 

@@ -4,7 +4,9 @@ using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Mapping
 {
-    public sealed class CargoMapping : Mapper<Cargo, CargoDTO>
+    public sealed class CargoMapping
+        : Mapper<Cargo, CargoDTO>,
+          IUpdateMapper<Cargo, CargoDTO>
     {
         public override CargoDTO MapToDto(Cargo entity)
         {
@@ -33,7 +35,7 @@ namespace Application.Mapping
             };
         }
 
-        public void MapToEntity(CargoDTO dto, Cargo entityToUpdate)
+        public void MapToUpdate(CargoDTO dto, Cargo entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao.ToUpper();
             entityToUpdate.DepartamentoCodigo = dto.DepartamentoCodigo.ToUpper();

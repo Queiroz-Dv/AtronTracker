@@ -1,37 +1,67 @@
-﻿using AtronStock.Application.DTO.Request;
+#nullable enable
+
+using AtronStock.Application.DTO.Response;
+using AtronStock.Application.Extensions;
 using AtronStock.Domain.Entities;
 using Shared.Application.Interfaces.Mapping;
+using Shared.Extensions;
 
 namespace AtronStock.Application.Mapping
 {
-    public class ProdutoMapping : Mapper<Produto, ProdutoRequest>
-    {       
-        public override ProdutoRequest MapToDto(Produto entity)
-        {
-            return new ProdutoRequest
+    public sealed class ProdutoMapping
+        : Mapper<Produto, ProdutoCriacaoMappingInput, ProdutoResponse>,
+          IUpdateMapper<Produto, ProdutoAtualizacaoMappingInput>
+    {
+        public override ProdutoResponse MapToDto(Produto entity)
+            => new()
             {
+                Id = entity.Id,
                 Codigo = entity.Codigo,
                 Descricao = entity.Descricao,
-                CategoriaCodigos = entity.Categorias.Select(c => c.CategoriaCodigo).ToList()
+                DescricaoComplementar = entity.DescricaoComplementar,
+                DataAquisicao = entity.DataAquisicao,
+                PrecoUnitario = entity.PrecoUnitario,
+                DataEfetivaBaixa = entity.DataEfetivaBaixa,
+                Status = entity.Status,
+                LoteProdutoId = entity.LoteProdutoId,
+                LoteProdutoCodigo = entity.LoteProduto?.Codigo,
+                Categorias = entity.Categorias.MapearCategorias()
             };
-        }
 
-        public void MapToEntity(ProdutoRequest dto, Produto entityToUpdate)
-        {
-            entityToUpdate.Codigo = dto.Codigo;
-            entityToUpdate.Descricao = dto.Descricao;
-            entityToUpdate.Categorias = dto.CategoriaCodigos.Select(codigo => new ProdutoCategoria { CategoriaCodigo = codigo }).ToList();
-        }
-
-        public override Produto MapToEntity(ProdutoRequest request)
-        {
-            return new Produto
+        public override Produto MapToEntity(ProdutoCriacaoMappingInput input)
+            => new()
             {
-                Codigo = request.Codigo,
-                Descricao = request.Descricao,
-                Categorias = request.CategoriaCodigos.Select(codigo => new ProdutoCategoria { CategoriaCodigo = codigo }).ToList()
+                Codigo = input.Request.Codigo.NormalizarCodigo(),
+                Descricao = input.Request.Descricao,
+                DescricaoComplementar = input.Request.DescricaoComplementar,
+                DataAquisicao = input.Request.DataAquisicao,
+                PrecoUnitario = input.Request.PrecoUnitario,
+                Categorias = CriarRelacionamentos(
+                    input.Request.Codigo,
+                    input.Categorias)
             };
 
+        public void MapToUpdate(ProdutoAtualizacaoMappingInput input, Produto produto)
+        {
+            produto.Descricao = input.Request.Descricao;
+            produto.DescricaoComplementar = input.Request.DescricaoComplementar;
+            produto.DataAquisicao = input.Request.DataAquisicao;
+            produto.PrecoUnitario = input.Request.PrecoUnitario;
+            produto.Categorias.Clear();
+            produto.Categorias.AddRange(CriarRelacionamentos(
+                produto.Codigo,
+                input.Categorias));
         }
+
+        private static List<ProdutoCategoria> CriarRelacionamentos(
+            string produtoCodigo,
+            IEnumerable<Categoria> categorias)
+            => categorias.Select(categoria => new ProdutoCategoria
+            {
+                CategoriaId = categoria.Id,
+                CategoriaCodigo = categoria.Codigo,
+                Categoria = categoria,
+                ProdutoCodigo = produtoCodigo.NormalizarCodigo()
+            }).ToList();
     }
 }

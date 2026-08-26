@@ -1,72 +1,86 @@
-﻿using AtronStock.Application.DTO.Request;
-using Shared.Application.Interfaces.Service;
+#nullable enable
+
+using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Resources;
+using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 
 namespace AtronStock.Application.Validacoes
 {
-    public class ProdutoValidador : IValidador<ProdutoRequest>
+    public sealed class ProdutoValidador :
+        IValidador<ProdutoRequest>,
+        IValidador<ProdutoAtualizacaoRequest>
     {
-        public IEnumerable<NotificationMessage> Validar(ProdutoRequest entity)
+        public IEnumerable<NotificationMessage> Validar(ProdutoRequest request)
+            => ValidarCampos(
+                request.Codigo,
+                request.Descricao,
+                request.DataAquisicao,
+                request.PrecoUnitario);
+
+        public IEnumerable<NotificationMessage> Validar(ProdutoAtualizacaoRequest request)
+            => ValidarCampos(
+                null,
+                request.Descricao,
+                request.DataAquisicao,
+                request.PrecoUnitario);
+
+        private static IEnumerable<NotificationMessage> ValidarCampos(
+            string? codigo,
+            string descricao,
+            DateTime dataAquisicao,
+            decimal precoUnitario)
         {
             var context = new NotificationBag();
-            ValidaCodigo(entity, context);
-            ValidaDescricao(entity, context);
+            ValidarCodigo(codigo, context);
+            ValidarDescricao(descricao, context);
 
-            if (entity.Preco <= 0)
-            {
+            if (dataAquisicao == default)
+                context.AdicionarErro(ProdutoResource.ErroDataAquisicaoObrigatoria);
+
+            if (precoUnitario <= 0)
                 context.AdicionarErro(ProdutoResource.ErroPrecoProduto);
-            }
-
-            ValidaRelacionamentos(entity, context);
 
             return [.. context.Messages];
         }
 
-        private static void ValidaCodigo(ProdutoRequest entity, NotificationBag context)
+        private static void ValidarCodigo(string? codigo, NotificationBag context)
         {
-            if (entity.Codigo.IsNullOrEmpty())
+            if (codigo is null) return;
+
+            if (codigo.IsNullOrEmpty())
             {
                 context.AdicionarErro(ProdutoResource.ErroCodigoObrigatorio);
+                return;
             }
-            else if (entity.Codigo.Length > 25)
+
+            if (codigo.Trim().Length > 25)
             {
                 context.AdicionarErro(ProdutoResource.ErroCodigoLimiteMaximoDeCaractere);
+                return;
             }
-            else if (entity.Codigo.Length < 3)
-            {
+
+            if (codigo.Trim().Length < 3)
                 context.AdicionarErro(ProdutoResource.ErroCodigoLimiteMinimoDeCaractere);
-            }
         }
 
-        private static void ValidaDescricao(ProdutoRequest entity, NotificationBag context)
+        private static void ValidarDescricao(string descricao, NotificationBag context)
         {
-            if (entity.Descricao.IsNullOrEmpty())
+            if (descricao.IsNullOrEmpty())
             {
                 context.AdicionarErro(ProdutoResource.ErroDescricaoObrigatoria);
+                return;
             }
-            else if (entity.Descricao.Length > 100)
+
+            if (descricao.Trim().Length > 50)
             {
                 context.AdicionarErro(ProdutoResource.ErroDescricaoLimiteMaximoCaractere);
+                return;
             }
-            else if (entity.Descricao.Length < 5)
-            {
+
+            if (descricao.Trim().Length < 5)
                 context.AdicionarErro(ProdutoResource.ErroDescricaoLimiteMinimoCaractere);
-            }
-        }
-
-        private static void ValidaRelacionamentos(ProdutoRequest entity, NotificationBag context)
-        {
-            if (entity.CategoriaCodigos == null || entity.CategoriaCodigos.Count == 0)
-            {
-                context.AdicionarErro(ProdutoResource.ErroProdutoSemCategoria);
-            }
-
-            if (entity.FornecedoresCodigos == null || entity.FornecedoresCodigos.Count == 0)
-            {
-                context.AdicionarErro(ProdutoResource.ErroProdutoSemFornecedor);
-            }
         }
     }
 }

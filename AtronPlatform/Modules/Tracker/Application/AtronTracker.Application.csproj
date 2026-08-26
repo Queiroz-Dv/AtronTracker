@@ -80,8 +80,4 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="UseCases\DepartamentoCases\" />
-	</ItemGroup>
-
 </Project>

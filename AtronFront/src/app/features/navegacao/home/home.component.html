@@ -1,5 +1,10 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav class="app-sidenav" mode="side" opened>
+  <mat-sidenav
+    #drawer
+    class="app-sidenav"
+    [mode]="isCompact() ? 'over' : 'side'"
+    [opened]="modoMenu && menuAberto()"
+    [fixedInViewport]="isCompact()">
     <div class="side-brand">
       <span class="side-brand-icon">
         <mat-icon>hub</mat-icon>
@@ -22,8 +27,12 @@
     </div>
 
     <mat-nav-list class="module-nav-list">
-      @for (item of modulosView; track $index) {
-        <a mat-list-item (click)="navigate(item.route)">
+      @for (item of modulosView; track item.code) {
+        <a
+          mat-list-item
+          class="module-nav-item"
+          [routerLink]="item.route"
+          (click)="fecharMenuCompacto()">
           <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
           <span matListItemTitle>{{ item.title }}</span>
         </a>
@@ -33,12 +42,96 @@
 
   <mat-sidenav-content class="app-content">
     <header class="app-content-topbar">
-      <span>Atron Platform</span>
-      <button mat-button type="button" (click)="trocarVisualizacao()">
-        <mat-icon>dashboard_customize</mat-icon>
-        Dashboard
-      </button>
+      <div class="topbar-title">
+        @if (modoMenu) {
+          <button
+            mat-icon-button
+            type="button"
+            [attr.aria-label]="menuAberto() ? 'Recolher menu de módulos' : 'Abrir menu de módulos'"
+            [title]="menuAberto() ? 'Recolher menu' : 'Abrir menu'"
+            (click)="alternarMenu()">
+            <mat-icon>{{ menuAberto() ? 'menu_open' : 'menu' }}</mat-icon>
+          </button>
+        }
+        <span>Atron Platform</span>
+      </div>
+      <div class="topbar-actions" aria-label="Ações da navegação">
+        <button
+          class="topbar-notifications"
+          mat-icon-button
+          type="button"
+          [matMenuTriggerFor]="notificacoesMenu"
+          [matBadge]="totalNaoLidas"
+          [matBadgeHidden]="totalNaoLidas === 0"
+          matBadgeColor="warn"
+          aria-label="Abrir notificações">
+          <mat-icon>notifications</mat-icon>
+        </button>
+
+        <button class="topbar-dashboard" mat-button type="button" (click)="trocarVisualizacao()">
+          <mat-icon>dashboard_customize</mat-icon>
+          Dashboard
+        </button>
+
+        <button
+          class="topbar-logout"
+          mat-icon-button
+          type="button"
+          title="Sair do sistema"
+          aria-label="Sair do sistema"
+          (click)="logout()">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
     </header>
+
+    <mat-menu #notificacoesMenu="matMenu" class="app-notifications-menu">
+      <div class="app-notifications-panel" (click)="$event.stopPropagation()">
+        <header class="app-notifications-header">
+          <strong>Notificações</strong>
+          <button mat-button type="button" (click)="abrirCentralNotificacoes()">Ver todas</button>
+        </header>
+
+        <div class="app-notifications-list">
+          @for (notificacao of notificacoes.slice(0, 5); track notificacao.id) {
+            <article class="app-notification-item" [class.app-notification-item-unread]="!notificacao.lida">
+              <span class="app-notification-status" aria-hidden="true">
+                <mat-icon>{{ notificacao.lida ? 'mark_email_read' : 'notifications_active' }}</mat-icon>
+              </span>
+
+              <button class="app-notification-content" type="button" (click)="abrirNotificacao(notificacao)">
+                <span class="app-notification-title">{{ formatarTextoNotificacao(notificacao.titulo) }}</span>
+                <span class="app-notification-message">{{ formatarTextoNotificacao(notificacao.mensagem) }}</span>
+                <span class="app-notification-date">{{ notificacao.modulo }} · {{ notificacao.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</span>
+              </button>
+
+              <button
+                mat-icon-button
+                type="button"
+                title="Marcar como lida"
+                [disabled]="notificacao.lida"
+                (click)="marcarNotificacaoComoLida(notificacao)">
+                <mat-icon>done</mat-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                type="button"
+                title="Excluir notificação"
+                aria-label="Excluir notificação"
+                (click)="excluirNotificacao(notificacao)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </article>
+          } @empty {
+            <div class="app-notifications-empty">
+              <mat-icon>notifications_none</mat-icon>
+              <span>Nenhuma notificação.</span>
+            </div>
+          }
+        </div>
+      </div>
+    </mat-menu>
 
     <div class="app-content-body">
       <router-outlet></router-outlet>

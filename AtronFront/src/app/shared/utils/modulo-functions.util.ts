@@ -18,6 +18,18 @@ export const MODULOS_CONFIG: Record<string, ModuloConfig> = {
     rota: '/atron/cargos',
     descricao: 'Gerencie os cargos da empresa.'
   },
+  CAT: {
+    titulo: 'Categorias',
+    icone: 'category',
+    rota: '/atron/categorias',
+    descricao: 'Organize os produtos do estoque por categoria.'
+  },
+  PRD: {
+    titulo: 'Produtos',
+    icone: 'inventory_2',
+    rota: '/atron/produtos',
+    descricao: 'Cadastre e acompanhe o patrimônio individual da empresa.'
+  },
   PLC: {
     titulo: 'Planejamento de Custos',
     icone: 'account_balance',

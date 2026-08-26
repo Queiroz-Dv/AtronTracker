@@ -6,10 +6,10 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="Erro_ProdutoNaoEncontrado" xml:space="preserve"><value>Produto não encontrado.</value></data>
   <data name="Mensagem_ProdutoCriado" xml:space="preserve"><value>Produto {0} criado com sucesso.</value></data>
-  <data name="ErroCodigoLimiteMaximoDeCaractere" xml:space="preserve"><value>O código do produto não pode exceder 20 caracteres.</value></data>
+  <data name="ErroCodigoLimiteMaximoDeCaractere" xml:space="preserve"><value>O código do produto não pode exceder 25 caracteres.</value></data>
   <data name="ErroCodigoLimiteMinimoDeCaractere" xml:space="preserve"><value>O código do produto deve ter no mínimo 3 caracteres.</value></data>
   <data name="ErroCodigoObrigatorio" xml:space="preserve"><value>O código do produto é obrigatório.</value></data>
-  <data name="ErroDescricaoLimiteMaximoCaractere" xml:space="preserve"><value>A descrição do produto não pode exceder 100 caracteres.</value></data>
+  <data name="ErroDescricaoLimiteMaximoCaractere" xml:space="preserve"><value>A descrição do produto não pode exceder 50 caracteres.</value></data>
   <data name="ErroDescricaoLimiteMinimoCaractere" xml:space="preserve"><value>A descrição do produto deve ter no mínimo 5 caracteres.</value></data>
   <data name="ErroDescricaoObrigatoria" xml:space="preserve"><value>A descrição do produto é obrigatória.</value></data>
   <data name="ErroInesperadoDeGravacao" xml:space="preserve"><value>Erro ao salvar o produto de código {0}.</value></data>
@@ -18,4 +18,19 @@
   <data name="ErroProdutoSemCategoria" xml:space="preserve"><value>O produto deve estar associado a pelo menos uma categoria.</value></data>
   <data name="ErroProdutoSemFornecedor" xml:space="preserve"><value>O produto deve estar associado a pelo menos um fornecedor.</value></data>
   <data name="MensagemProdutoCriado" xml:space="preserve"><value>Produto {0} criado na data {1}.</value></data>
+  <data name="ErroDataAquisicaoObrigatoria" xml:space="preserve"><value>A data de aquisição do produto é obrigatória.</value></data>
+  <data name="ErroCategoriaInvalidaOuInativa" xml:space="preserve"><value>Uma ou mais categorias não existem ou não estão ativas.</value></data>
+  <data name="ErroProdutoNaoEncontrado" xml:space="preserve"><value>Produto não encontrado para o código {0}.</value></data>
+  <data name="ErroInesperadoAtualizar" xml:space="preserve"><value>Ocorreu um erro inesperado ao atualizar o produto.</value></data>
+  <data name="HistoricoProdutoAtualizado" xml:space="preserve"><value>Produto {0} atualizado em {1}.</value></data>
+  <data name="SucessoCadastro" xml:space="preserve"><value>Produto</value></data>
+  <data name="ErroCodigoBaseObrigatorio" xml:space="preserve"><value>O código-base dos produtos é obrigatório.</value></data>
+  <data name="ErroQuantidadeLote" xml:space="preserve"><value>A quantidade de produtos deve ser maior que zero.</value></data>
+  <data name="ErroCodigoGeradoMuitoLongo" xml:space="preserve"><value>O código-base gera códigos de produto com mais de 25 caracteres.</value></data>
+  <data name="ErroCodigosGeradosExistentes" xml:space="preserve"><value>Um ou mais códigos gerados já existem: {0}.</value></data>
+  <data name="ErroInesperadoGerarLote" xml:space="preserve"><value>Ocorreu um erro inesperado ao salvar o lote e seus produtos.</value></data>
+  <data name="ErroSolicitanteNaoIdentificado" xml:space="preserve"><value>Não foi possível identificar o usuário solicitante.</value></data>
+  <data name="ErroInesperadoSolicitarLote" xml:space="preserve"><value>Ocorreu um erro inesperado ao registrar a solicitação de geração em lote.</value></data>
+  <data name="ErroProcessamentoProdutosLote" xml:space="preserve"><value>O processamento dos produtos em lote falhou inesperadamente.</value></data>
+  <data name="ErroProcessamentoProdutoNaoEncontrado" xml:space="preserve"><value>Processamento de produtos não encontrado.</value></data>
 </root>

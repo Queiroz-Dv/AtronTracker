@@ -25,12 +25,4 @@ public class NotificacoesPadronizadasTests
             mensagem => Assert.Equal("Registro PRD001 inválido", mensagem.Descricao),
             mensagem => Assert.Equal("Registro PRD001 já existe.", mensagem.Descricao));
     }
-
-    [Fact]
-    public void ResultadoDeveObterMensagemDeRegistroSalvoDoResource()
-    {
-        var resultado = Resultado<string>.Sucesso("dados").ComMensagemRegistroSalvo("PRD001");
-
-        Assert.Contains(resultado.Messages, mensagem => mensagem.Descricao == "Registro PRD001 salvo com sucesso.");
-    }
 }

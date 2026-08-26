@@ -6,23 +6,14 @@ using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 
-namespace AtronTracker.Infrastructure.Authorization
+namespace Infrastructure.Authorization
 {
-    public class ModuloHandler : AuthorizationHandler<ModuloRequirement>
+    public class ModuloHandler(ICacheService cacheService, IUsuarioService usuarioService, IAccessorService serviceAccessor) 
+        : AuthorizationHandler<ModuloRequirement>
     {
-        private readonly ICacheService _cacheService;
-        private readonly IUsuarioService _usuarioService;
-        private readonly IAccessorService _serviceAccessor;
-
-        public ModuloHandler(
-           ICacheService cacheService,
-           IUsuarioService usuarioService,
-           IAccessorService serviceAccessor)
-        {
-            _cacheService = cacheService;
-            _usuarioService = usuarioService;
-            _serviceAccessor = serviceAccessor;
-        }
+        private readonly ICacheService _cacheService = cacheService;
+        private readonly IUsuarioService _usuarioService = usuarioService;
+        private readonly IAccessorService _serviceAccessor = serviceAccessor;
 
         protected override async Task HandleRequirementAsync(
             AuthorizationHandlerContext context,

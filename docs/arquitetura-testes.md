@@ -22,9 +22,24 @@ O nome do projeto representa o dono da funcionalidade. `Application`, `Domain`, 
 ```text
 Tests/
   Tracker.Tests/
-    Tarefas/
+    Application/
+      Acesso/
+      Cargos/
+      Departamentos/
+      Mapping/
+      PerfisDeAcesso/
+      PlanejamentoCustos/
+      Tarefas/
+      Usuarios/
+    Infrastructure/
+      Authorization/
+      Repositories/
+    Architecture/
     Resources/
-    Acesso/
+    TestSupport/
+      Builders/
+      Fakes/
+      Fixtures/
   Stock.Tests/
     Estoque/
   Shared.Tests/
@@ -37,7 +52,23 @@ Tests/
     Autorizacao/
 ```
 
+As pastas `Application` e `Infrastructure` identificam a camada de produção
+exercitada pelo teste. Elas não recriam essas camadas dentro do projeto de
+testes. Builders, fakes, fixtures e factories exclusivos de teste pertencem a
+`TestSupport`; doubles usados por apenas um cenário podem permanecer privados
+no próprio arquivo para preservar a intenção local.
+
+Os namespaces de teste podem continuar orientados pela capacidade, como
+`Tracker.Tests.Tarefas`, mesmo quando o arquivo está fisicamente em
+`Application/Tarefas`. Isso preserva filtros por nome totalmente qualificado e
+evita transformar a organização física em quebra desnecessária de descoberta.
+
 Uma funcionalidade recebe pasta, não um novo projeto, quando compartilha ciclo de execução, pacotes e fronteira de integração com o restante do módulo. Um novo projeto só é justificado quando há uma diferença real de processo hospedado, banco ou infraestrutura externa, dependência de pacote incompatível, tempo de execução ou ciclo de publicação.
+
+No Tracker, um futuro `Tracker.IntegrationTests` só deve ser criado quando os
+testes de persistência adotarem banco real ou Testcontainers, setup e teardown
+próprios, dependências adicionais e execução separada no pipeline. Reunir
+helpers do mesmo assembly não justifica um `Tracker.TestKit` por si só.
 
 ## Regras de dependência
 

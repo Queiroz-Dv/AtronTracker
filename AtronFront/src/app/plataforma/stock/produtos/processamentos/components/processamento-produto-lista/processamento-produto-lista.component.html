@@ -1,0 +1,83 @@
+<main class="list-page">
+  <section class="list-panel" aria-labelledby="processamentos-title">
+    <header class="list-header">
+      <div>
+        <p class="list-eyebrow">Atron Stock</p>
+        <h1 id="processamentos-title">Processamentos em lote</h1>
+        <p class="list-description">Acompanhe as gerações de produtos solicitadas</p>
+      </div>
+      <div class="list-actions">
+        <button mat-stroked-button class="list-secondary-action" (click)="carregar()" [disabled]="carregando">
+          <mat-icon>refresh</mat-icon>
+          Atualizar
+        </button>
+        <button mat-flat-button class="list-primary-action" (click)="router.navigate(['/atron/produtos/novo'])">
+          <mat-icon>playlist_add</mat-icon>
+          Solicitar geração
+        </button>
+      </div>
+    </header>
+
+    <div class="processamento-filtros">
+      <mat-form-field appearance="outline">
+        <mat-label>Identificador, código ou descrição</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (keyup)="filtrarTexto($event)" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select value="" (selectionChange)="filtrarStatus($event.value)">
+          <mat-option value="">Todos</mat-option>
+          <mat-option [value]="Status.Pendente">Pendente</mat-option>
+          <mat-option [value]="Status.EmExecucao">Em execução</mat-option>
+          <mat-option [value]="Status.Concluido">Concluído</mat-option>
+          <mat-option [value]="Status.Falha">Falha</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="list-table-wrap">
+      <table class="list-table" mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="codigoBase">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Produto</th>
+          <td mat-cell *matCellDef="let item"><strong>{{ item.codigoBase }}</strong><br />{{ item.descricao }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let item">
+            <span class="processamento-status" [class.status-execucao]="item.status === Status.EmExecucao"
+              [class.status-concluido]="item.status === Status.Concluido" [class.status-falha]="item.status === Status.Falha">
+              {{ descreverStatus(item.status) }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="lote">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Lote gerado</th>
+          <td mat-cell *matCellDef="let item">{{ item.loteProdutoCodigo || 'Ainda não gerado' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef aria-label="Ações"></th>
+          <td mat-cell *matCellDef="let item">
+            <div class="list-row-actions">
+              <button class="list-icon-action" mat-icon-button title="Ver processamento" (click)="abrirDetalhe(item.id)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="list-no-data" [attr.colspan]="colunas.length">
+            {{ carregando ? 'Carregando processamentos...' : 'Nenhum processamento encontrado.' }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    <footer class="list-footer-actions">
+      <c-botao-voltar [destino]="['/atron/produtos']"></c-botao-voltar>
+    </footer>
+  </section>
+</main>

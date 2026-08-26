@@ -5,10 +5,9 @@ namespace AtronStock.Domain.Interfaces
     public interface IProdutoRepository
     {
         Task<Produto?> ObterPorIdAsync(int id);
+        Task<Produto?> ObterPorCodigoAsync(string codigo);
+        Task<ICollection<Produto>> ObterTodosAsync();
         Task<bool> AdicionarAsync(Produto produto);
-        Task AtualizarAsync(Produto produto);
-
-        Task<ICollection<Produto>> ObterTodos();
-        Task<Produto> ObterPorCodigoAsync(string codigo);
+        Task<bool> AtualizarAsync(Produto produto);
     }
 }

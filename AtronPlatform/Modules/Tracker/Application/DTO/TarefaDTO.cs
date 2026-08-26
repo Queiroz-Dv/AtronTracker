@@ -6,8 +6,6 @@ namespace Application.DTO
     {
         public int Id { get; set; }
 
-        public int? Identificador { get; set; }
-
         public int DestinoInicial { get; set; }
 
         public bool ExigeAprovacaoParaObter { get; set; }

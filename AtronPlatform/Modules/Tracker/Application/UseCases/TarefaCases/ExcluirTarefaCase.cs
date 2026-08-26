@@ -19,7 +19,7 @@ namespace Application.UseCases.TarefaCases
             if (tarefa is null)
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            if (!await _tarefaRepository.RemoverRepositoryAsync(tarefa))
+            if (!await _tarefaRepository.RemoverTarefaAsync(tarefa))
                 return Resultado.Falha(TarefaResource.Erro_RemoverTarefa);
 
             return Resultado.Sucesso().AdicionarMensagem(TarefaResource.Mensagem_TarefaRemovida);

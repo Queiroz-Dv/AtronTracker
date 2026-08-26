@@ -12,14 +12,9 @@ namespace AtronPlatform.WebApi.Controllers.Stock
     [Authorize(Policy = ModuloPolicies.Categoria)]
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoriaController : ControllerBase
+    public class CategoriaController(ICategoriaService service) : ControllerBase
     {
-        private readonly ICategoriaService _service;
-
-        public CategoriaController(ICategoriaService service)
-        {
-            _service = service;
-        }
+        private readonly ICategoriaService _service = service;
 
         [HttpPost]
         [Transactional]
@@ -47,6 +42,14 @@ namespace AtronPlatform.WebApi.Controllers.Stock
         public async Task<ActionResult> AtivarInativar([FromRoute] string codigo, [FromRoute] bool ativar)
         {
             var resultado = await _service.AtivarInativarAsync(codigo, ativar);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        [HttpDelete("{codigo}")]
+        [Transactional]
+        public async Task<ActionResult> Delete(string codigo)
+        {
+            var resultado = await _service.ExcluirAsync(codigo);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 

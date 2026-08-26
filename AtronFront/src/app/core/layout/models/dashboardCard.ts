@@ -5,6 +5,7 @@ export interface DashboardCard {
   description: string;
   accessLabel: string;
   disabled?: boolean;
+  area?: string;
   route: string;       // rota Angular para navegação
   cols: number;
   rows: number;

@@ -185,5 +185,77 @@ namespace AtronStock.Application.Resources {
                 return ResourceManager.GetString("MensagemProdutoCriado", resourceCulture);
             }
         }
+
+        public static string ErroDataAquisicaoObrigatoria {
+            get {
+                return ResourceManager.GetString("ErroDataAquisicaoObrigatoria", resourceCulture);
+            }
+        }
+
+        public static string ErroCategoriaInvalidaOuInativa {
+            get {
+                return ResourceManager.GetString("ErroCategoriaInvalidaOuInativa", resourceCulture);
+            }
+        }
+
+        public static string ErroProdutoNaoEncontrado {
+            get {
+                return ResourceManager.GetString("ErroProdutoNaoEncontrado", resourceCulture);
+            }
+        }
+
+        public static string ErroInesperadoAtualizar {
+            get {
+                return ResourceManager.GetString("ErroInesperadoAtualizar", resourceCulture);
+            }
+        }
+
+        public static string HistoricoProdutoAtualizado {
+            get {
+                return ResourceManager.GetString("HistoricoProdutoAtualizado", resourceCulture);
+            }
+        }
+
+        public static string SucessoCadastro {
+            get {
+                return ResourceManager.GetString("SucessoCadastro", resourceCulture);
+            }
+        }
+
+        public static string ErroCodigoBaseObrigatorio {
+            get { return ResourceManager.GetString("ErroCodigoBaseObrigatorio", resourceCulture); }
+        }
+
+        public static string ErroQuantidadeLote {
+            get { return ResourceManager.GetString("ErroQuantidadeLote", resourceCulture); }
+        }
+
+        public static string ErroCodigoGeradoMuitoLongo {
+            get { return ResourceManager.GetString("ErroCodigoGeradoMuitoLongo", resourceCulture); }
+        }
+
+        public static string ErroCodigosGeradosExistentes {
+            get { return ResourceManager.GetString("ErroCodigosGeradosExistentes", resourceCulture); }
+        }
+
+        public static string ErroInesperadoGerarLote {
+            get { return ResourceManager.GetString("ErroInesperadoGerarLote", resourceCulture); }
+        }
+
+        public static string ErroSolicitanteNaoIdentificado {
+            get { return ResourceManager.GetString("ErroSolicitanteNaoIdentificado", resourceCulture); }
+        }
+
+        public static string ErroInesperadoSolicitarLote {
+            get { return ResourceManager.GetString("ErroInesperadoSolicitarLote", resourceCulture); }
+        }
+
+        public static string ErroProcessamentoProdutosLote {
+            get { return ResourceManager.GetString("ErroProcessamentoProdutosLote", resourceCulture); }
+        }
+
+        public static string ErroProcessamentoProdutoNaoEncontrado {
+            get { return ResourceManager.GetString("ErroProcessamentoProdutoNaoEncontrado", resourceCulture); }
+        }
     }
 }

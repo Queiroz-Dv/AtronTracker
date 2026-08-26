@@ -3,7 +3,10 @@ using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using AtronNotificacoes.Infrastructure;
 using AtronStock.Application.Interfaces;
+using AtronStock.Application.UseCases.ProdutoCases;
 using AtronStock.Infrastructure.Context;
+using AtronStock.Infrastructure;
+using AtronStock.Infrastructure.Workers;
 using AtronTracker.Infrastructure.Context;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +20,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Application.DTOS.Auth;
@@ -30,6 +34,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Xunit;
 using AtronNotificacoes.Contracts.Interfaces;
 using AtronNotificacoes.Application.Interfaces;
+using Shared.Authorization;
 
 namespace Platform.Tests;
 
@@ -54,7 +59,8 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
         "Cliente",
         "Estoque",
         "Fornecedor",
-        "Produto"
+        "Produto",
+        "ProcessamentoProduto"
     ];
 
     private static readonly HashSet<(string Controller, string Acao)> OperacoesPublicasEsperadas =
@@ -141,6 +147,33 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
         Assert.NotNull(scope.ServiceProvider.GetService<ICategoriaService>());
         Assert.NotNull(scope.ServiceProvider.GetService<IEstoqueService>());
         Assert.NotNull(scope.ServiceProvider.GetService<StockDbContext>());
+    }
+
+    [Fact]
+    public void Stock_DeveRegistrarWorkerSingletonEProcessadorScoped()
+    {
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:DefaultConnection"] =
+                    "Host=localhost;Database=atron_platform_tests;Username=tests;Password=tests",
+                ["ProcessamentosProdutosLote:WorkerHabilitado"] = "true"
+            })
+            .Build();
+
+        services.AddStockModule(configuration);
+
+        var worker = Assert.Single(services, descriptor =>
+            descriptor.ServiceType == typeof(IHostedService)
+            && descriptor.ImplementationType == typeof(GeracaoProdutosLoteWorker));
+        Assert.Equal(ServiceLifetime.Singleton, worker.Lifetime);
+        var processador = Assert.Single(services, descriptor =>
+            descriptor.ServiceType == typeof(ProcessadorProdutosLote));
+        Assert.Equal(ServiceLifetime.Scoped, processador.Lifetime);
+        var criarLote = Assert.Single(services, descriptor =>
+            descriptor.ServiceType == typeof(CriarLoteParaPersistenciaCase));
+        Assert.Equal(ServiceLifetime.Scoped, criarLote.Lifetime);
     }
 
     [Fact]
@@ -361,8 +394,35 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
             .Select(contrato => contrato.Controller)
             .ToHashSet(StringComparer.Ordinal);
 
-        Assert.Equal(19, contratos.Count);
+        Assert.Equal(26, contratos.Count);
         Assert.True(ControllersStock.SetEquals(controllers));
+
+        var contratosProduto = contratos
+            .Where(contrato => contrato.Controller == "Produto")
+            .Select(contrato => (contrato.Metodos, contrato.Rota))
+            .ToHashSet();
+        Assert.True(contratosProduto.SetEquals(
+        [
+            ("GET", "api/Produto"),
+            ("POST", "api/Produto"),
+            ("POST", "api/Produto/lotes"),
+            ("GET", "api/Produto/{codigo}"),
+            ("PUT", "api/Produto/{codigo}")
+        ]));
+        Assert.All(
+            contratos.Where(contrato =>
+                contrato.Controller is "Produto" or "ProcessamentoProduto"),
+            contrato => Assert.Contains(ModuloPolicies.Produto, contrato.Autorizacao));
+
+        var contratosProcessamento = contratos
+            .Where(contrato => contrato.Controller == "ProcessamentoProduto")
+            .Select(contrato => (contrato.Metodos, contrato.Rota))
+            .ToHashSet();
+        Assert.True(contratosProcessamento.SetEquals(
+        [
+            ("GET", "api/processamentos-produtos"),
+            ("GET", "api/processamentos-produtos/{id:int}")
+        ]));
     }
 
     [Fact]
@@ -569,7 +629,8 @@ public sealed class AtronPlatformFactory : WebApplicationFactory<AtronPlatform.W
                 ["Jwt:SecretKey"] =
                     "chave-local-para-testes-do-host-neutro-123456789",
                 ["ConnectionStrings:DefaultConnection"] =
-                    "Host=localhost;Database=atron_platform_tests;Username=tests;Password=tests"
+                    "Host=localhost;Database=atron_platform_tests;Username=tests;Password=tests",
+                ["ProcessamentosProdutosLote:WorkerHabilitado"] = "false"
             });
         });
     }
@@ -587,7 +648,8 @@ public sealed class AtronPlatformProductionFactory : WebApplicationFactory<Atron
                 ["Jwt:SecretKey"] =
                     "chave-local-para-testes-do-host-neutro-123456789",
                 ["ConnectionStrings:DefaultConnection"] =
-                    "Host=localhost;Database=atron_platform_tests;Username=tests;Password=tests"
+                    "Host=localhost;Database=atron_platform_tests;Username=tests;Password=tests",
+                ["ProcessamentosProdutosLote:WorkerHabilitado"] = "false"
             });
         });
     }

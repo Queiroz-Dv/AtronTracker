@@ -2,7 +2,6 @@ import { EstadoTarefa } from "./estadoTarefa.model";
 
 export interface TarefaModel {
   id: number;
-  identificador?: number;
   destinoInicial: number;
   exigeAprovacaoParaObter: boolean;
   titulo: string;

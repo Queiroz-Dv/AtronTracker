@@ -192,6 +192,12 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                             Id = 12,
                             Codigo = "CAT",
                             Descricao = "Categorias"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Codigo = "PRD",
+                            Descricao = "Produtos"
                         });
                 });
 
@@ -448,9 +454,6 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<int?>("Identificador")
-                        .HasColumnType("integer");
-
                     b.Property<int>("TarefaEstadoId")
                         .HasColumnType("integer");
 
@@ -467,8 +470,6 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Identificador");
 
                     b.HasIndex("TarefaEstadoId");
 

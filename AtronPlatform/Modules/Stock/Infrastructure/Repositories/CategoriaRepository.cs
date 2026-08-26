@@ -44,5 +44,19 @@ namespace AtronStock.Infrastructure.Repositories
                                  .Where(c => c.Status == EStatus.Inativo)
                                  .ToListAsync();
         }
+
+        public async Task<ICollection<Categoria>> ObterPorCodigosAsync(
+            IReadOnlyCollection<string> codigos)
+        {
+            return await _context.Categorias
+                .Where(categoria => codigos.Contains(categoria.Codigo.ToUpper()))
+                .ToListAsync();
+        }
+
+        public Task<bool> PossuiProdutosVinculadosAsync(int categoriaId)
+        {
+            return _context.ProdutoCategorias.AnyAsync(
+                produtoCategoria => produtoCategoria.CategoriaId == categoriaId);
+        }
     }
 }

@@ -30,15 +30,13 @@ namespace Application.Interfaces.Services
         /// <summary>
         /// Cria um departamento
         /// </summary>
-        /// <param name="departamentoDTO">Modelo que será criado</param>
 
-        Task<Resultado<DepartamentoDTO>> CriarAsync(DepartamentoDTO departamentoDTO);
+        Task<Resultado> CriarAsync(DepartamentoDTO departamentoDTO);
 
         /// <summary>
         /// Atualiza um departamento existente
         /// </summary>
-        /// <param name="departamentoDTO">Modelo que será atualizado</param>
-        Task<Resultado<DepartamentoDTO>> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO);
+        Task<Resultado> AtualizarAsync(string codigo, DepartamentoDTO departamentoDTO);
 
         /// <summary>
         /// Exclui um departamento existente por código informado

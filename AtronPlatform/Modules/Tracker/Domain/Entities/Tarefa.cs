@@ -11,8 +11,6 @@ namespace Domain.Entities
         private const int EstadoPendenteAprovacaoId = 2;
         private const int EstadoIniciadaId = 5;
 
-        public int? Identificador { get; set; }
-
         public int DestinoInicial { get; set; }
 
         public bool ExigeAprovacaoParaObter { get; set; }

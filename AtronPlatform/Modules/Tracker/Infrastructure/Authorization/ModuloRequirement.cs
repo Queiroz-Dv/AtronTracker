@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace AtronTracker.Infrastructure.Authorization
+namespace Infrastructure.Authorization
 {
     public class ModuloRequirement : IAuthorizationRequirement
     {
-        public string Codigo { get; }
-        public string Acao { get; }
+        public string Codigo { get; }        
 
-        public ModuloRequirement(string codigo, string acao)
+        public ModuloRequirement(string codigo)
         {
             Codigo = codigo;
-            Acao = acao;
         }
     }
 }

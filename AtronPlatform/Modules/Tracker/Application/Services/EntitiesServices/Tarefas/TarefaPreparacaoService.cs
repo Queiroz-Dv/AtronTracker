@@ -6,6 +6,7 @@ using Domain.Interfaces;
 using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,7 +28,7 @@ namespace Application.Services.EntitiesServices.Tarefas
         public async Task<Resultado<Tarefa>> PrepararParaPersistenciaAsync(TarefaDTO tarefaDTO)
         {
             var erros = _validador.Validar(tarefaDTO);
-            if (erros.Any())
+            if (erros.TemErros())
                 return Resultado<Tarefa>.Falhas(erros);
 
             var estado = await _tarefaEstadoRepository.ObterPorIdAsync(tarefaDTO.EstadoDaTarefa.Id);

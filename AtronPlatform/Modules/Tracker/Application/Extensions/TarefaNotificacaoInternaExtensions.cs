@@ -29,7 +29,7 @@ namespace Application.Extensions
                 Titulo = TarefaResource.Titulo_TarefaAtribuida,
                 Mensagem = string.Format(
                     TarefaResource.Mensagem_TarefaAtribuidaUsuario,
-                    contexto.Identificador),
+                    contexto.TarefaIdTexto),
                 UrlDestino = contexto.UrlEdicao,
                 ReferenciaExterna = contexto.ReferenciaExterna,
                 DataCriacao = DateTimeOffset.UtcNow,
@@ -55,7 +55,7 @@ namespace Application.Extensions
                 Titulo = TarefaResource.Titulo_TarefaObtida,
                 Mensagem = string.Format(
                     TarefaResource.Mensagem_TarefaObtida,
-                    contexto.Identificador),
+                    contexto.TarefaIdTexto),
                 UrlDestino = contexto.UrlEdicao,
                 ReferenciaExterna = contexto.ReferenciaExterna,
                 DataCriacao = DateTimeOffset.UtcNow,

@@ -17,7 +17,7 @@
         <p>Informe seus dados para continuar.</p>
       </div>
 
-      <form [formGroup]="form" class="auth-form">
+      <form [formGroup]="form" class="auth-form" (ngSubmit)="autenticar()">
         <mat-form-field appearance="outline">
           <mat-label>Código de usuário</mat-label>
           <mat-icon matPrefix>person_outline</mat-icon>
@@ -35,7 +35,7 @@
           <c-control-error [control]="form.get('senha')"></c-control-error>
         </mat-form-field>
 
-        <button mat-flat-button type="submit" class="primary-action" (click)="autenticar()">
+        <button mat-flat-button type="submit" class="primary-action" [disabled]="autenticando">
           <mat-icon>login</mat-icon>
           Entrar
         </button>

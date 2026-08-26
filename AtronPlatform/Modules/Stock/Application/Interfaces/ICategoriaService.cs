@@ -7,6 +7,7 @@ namespace AtronStock.Application.Interfaces
     {
         Task<Resultado> CriarAsync(CategoriaRequest dto);
         Task<Resultado> AtualizarAsync(CategoriaRequest dto);
+        Task<Resultado> ExcluirAsync(string codigo);
         Task<Resultado> AtivarInativarAsync(string codigo, bool ativar);
 
         Task<Resultado<ICollection<CategoriaRequest>>> ObterTodasAsync();

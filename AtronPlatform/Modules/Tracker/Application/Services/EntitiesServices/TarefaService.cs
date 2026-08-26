@@ -18,13 +18,11 @@ namespace Application.Services.EntitiesServices
         private readonly ExcluirTarefaCase _excluirTarefa = excluirTarefa;
         private readonly ObterTarefaCase _obterTarefa = obterTarefa;
 
-        public async Task<Resultado<TarefaDTO>> CriarAsync(TarefaDTO tarefaDTO)
-            => await _criarTarefa.ExecutarAsync(tarefaDTO);
+        public Task<Resultado> CriarAsync(TarefaDTO tarefaDTO)
+            => _criarTarefa.ExecutarAsync(tarefaDTO);
 
-        public async Task<Resultado<TarefaDTO>> AtualizarAsync(int id, TarefaDTO tarefaDTO)
-        {
-            return await _atualizarTarefa.ExecutarAsync(id, tarefaDTO);
-        }
+        public Task<Resultado> AtualizarAsync(int id, TarefaDTO tarefaDTO)
+            => _atualizarTarefa.ExecutarAsync(id, tarefaDTO);
 
         public async Task<Resultado> ExcluirAsync(string id)
         {

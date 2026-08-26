@@ -22,16 +22,16 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         ILoginService loginUserService,
         IRegistroUsuarioService registroUsuarioService,
         ICookieService cookieService,
-        SolicitarReativacao solicitarReativacao,
-        ReativarUsuario reativarUsuario,
-        ReenviarConfirmacaoEmail reenviarConfirmacaoEmail) : ControllerBase
+        SolicitarReativacaoCase solicitarReativacao,
+        ReativarUsuarioCase reativarUsuario,
+        ReenviarConfirmacaoEmailCase reenviarConfirmacaoEmail) : ControllerBase
     {
         private readonly IRegistroUsuarioService _registroUsuarioService = registroUsuarioService;
         private readonly ILoginService _service = loginUserService;
         private readonly ICookieService _cookieService = cookieService;
-        private readonly SolicitarReativacao _solicitarReativacao = solicitarReativacao;
-        private readonly ReativarUsuario _reativarUsuario = reativarUsuario;
-        private readonly ReenviarConfirmacaoEmail _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
+        private readonly SolicitarReativacaoCase _solicitarReativacao = solicitarReativacao;
+        private readonly ReativarUsuarioCase _reativarUsuario = reativarUsuario;
+        private readonly ReenviarConfirmacaoEmailCase _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
 
         /// <summary>
         /// Autentica o usuário e retorna um token JWT.

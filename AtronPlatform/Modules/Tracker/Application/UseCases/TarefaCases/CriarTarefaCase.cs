@@ -6,8 +6,6 @@ using Application.UseCases.TarefaCases.Movimentacao;
 using Domain.Enums;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases
@@ -28,42 +26,34 @@ namespace Application.UseCases.TarefaCases
 
         private readonly CriarTarefaMovimentacaoCase _criarMovimentacao = criarMovimentacao;
 
-        public async Task<Resultado<TarefaDTO>> ExecutarAsync(TarefaDTO tarefaDTO)
+        public async Task<Resultado> ExecutarAsync(TarefaDTO tarefaDTO)
         {
-            Resultado<Domain.Entities.Usuario>? responsavelResultado = null;
+            var responsavelResultado = await _usuarioService.ObterUsuarioAtual();
+            if (responsavelResultado.TeveFalha)
+                return Resultado.Falha(responsavelResultado.Messages);
+
             if (tarefaDTO.DestinoInicial == (int)DestinoInicialTarefa.Equipe)
             {
-                responsavelResultado = await _usuarioService.ObterUsuarioAtual();
-                if (responsavelResultado.TeveFalha)
-                    return Resultado<TarefaDTO>.Falhas(responsavelResultado.Messages);
-
-                var departamentoEquipeResultado = DefinirDepartamentoDaEquipe(tarefaDTO, responsavelResultado.Dados!);
+                var departamentoEquipeResultado = DefinirDepartamentoEquipePorTarefaCase.Executar(tarefaDTO, responsavelResultado.Dados!);
                 if (departamentoEquipeResultado.TeveFalha)
-                    return Resultado<TarefaDTO>.Falhas(departamentoEquipeResultado.Messages);
+                    return Resultado.Falha(departamentoEquipeResultado.Messages);
             }
 
             var preparacaoResultado = await _tarefaPreparacaoService.PrepararParaPersistenciaAsync(tarefaDTO);
             if (preparacaoResultado.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(preparacaoResultado.Messages);
+                return Resultado.Falha(preparacaoResultado.Messages);
 
             var tarefa = preparacaoResultado.Dados;
-
-            responsavelResultado ??= await _usuarioService.ObterUsuarioAtual();
-            if (responsavelResultado.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(responsavelResultado.Messages);
-
             var responsavel = responsavelResultado.Dados!;
 
             if (!await _tarefaRepository.CriarTarefaAsync(tarefa))
-                return Resultado<TarefaDTO>.Falha(TarefaResource.Erro_GravarTarefa);
+                return Resultado.Falha(TarefaResource.Erro_GravarTarefa);
 
             var movimentacao = await _criarMovimentacao.ExecutarAsync(tarefa, responsavel);
             if (movimentacao.TeveFalha)
-                return Resultado<TarefaDTO>.Falhas(movimentacao.Messages);
+                return Resultado.Falha(movimentacao.Messages);
 
-            tarefaDTO.Id = tarefa.Id;
-            tarefaDTO.Identificador = tarefa.Identificador;
-            var resultado = Resultado<TarefaDTO>.Sucesso(tarefaDTO).AdicionarMensagem(TarefaResource.Mensagem_TarefaCriada);
+            var resultado = Resultado.Sucesso().AdicionarMensagem(TarefaResource.Mensagem_TarefaCriada);
 
             await _notificacaoInternaCase.ExecutarAsync(tarefaDTO.CriarNotificacaoDeAtribuicao());
             var envioEmail = await _tarefaNotificacaoService.NotificarAtribuicaoAsync(tarefaDTO, tarefaDTO.Usuario);
@@ -72,27 +62,6 @@ namespace Application.UseCases.TarefaCases
                 resultado.AdicionarAviso(TarefaResource.Aviso_EmailNotificacaoNaoEnviado);
 
             return resultado;
-        }
-
-        private static Resultado DefinirDepartamentoDaEquipe(TarefaDTO tarefaDTO, Domain.Entities.Usuario responsavel)
-        {
-            if (tarefaDTO.DestinoInicial != (int)DestinoInicialTarefa.Equipe)
-                return Resultado.Sucesso();
-
-            var departamentos = responsavel.UsuarioCargoDepartamentos?
-                .Select(relacionamento => relacionamento.DepartamentoCodigo)
-                .Where(codigo => !string.IsNullOrWhiteSpace(codigo))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList() ?? [];
-
-            if (departamentos.Count != 1)
-                return Resultado.Falha(TarefaResource.Erro_DepartamentoEquipeIndefinido);
-
-            tarefaDTO.UsuarioCodigo = null;
-            tarefaDTO.DepartamentoCodigo = departamentos[0];
-            tarefaDTO.CargoCodigo = null;
-
-            return Resultado.Sucesso();
         }
     }
 }

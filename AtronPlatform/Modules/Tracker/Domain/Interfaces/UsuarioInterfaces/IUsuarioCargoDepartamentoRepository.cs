@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces.UsuarioInterfaces
 {
-    public interface IUsuarioCargoDepartamentoRepository : IRepository<UsuarioCargoDepartamento>
+    public interface IUsuarioCargoDepartamentoRepository
     {
         public Task<UsuarioCargoDepartamento> ObterPorChaveDoUsuario(int usuarioId, string usuarioCodigo);
 
@@ -13,5 +13,7 @@ namespace Domain.Interfaces.UsuarioInterfaces
         public Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorDepartamento(int id, string codigo);
 
         public Task<IEnumerable<UsuarioCargoDepartamento>> ObterPorCargo(int id, string codigo);
+
+        public Task<bool> RemoverAssociacaoUsuarioCargoDepartamento(UsuarioCargoDepartamento associacao);
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class TarefaRepository(AtronDbContext context) : Repository<Tarefa>(context), ITarefaRepository
+    public class TarefaRepository(AtronDbContext context) : ITarefaRepository
     {
         private const int EstadoFinalizadaId = 4;
         private readonly AtronDbContext _context = context;
@@ -22,15 +22,15 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> CriarTarefaAsync(Tarefa tarefa)
         {
-            if (!tarefa.Identificador.HasValue)
-            {
-                var ultimoIdentificador = await _context.Tarefas.MaxAsync(trf => trf.Identificador);
-                tarefa.Identificador = (ultimoIdentificador ?? 0) + 1;
-            }
-
             await _context.Tarefas.AddAsync(tarefa);
             var gravado = await _context.SaveChangesAsync();
             return gravado > 0;
+        }
+
+        public async Task<bool> RemoverTarefaAsync(Tarefa tarefa)
+        {
+            _context.Tarefas.Remove(tarefa);
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<Tarefa> ObterTarefaPorId(int id)
@@ -74,7 +74,7 @@ namespace Infrastructure.Repositories
                     trf.UsuarioId == usuarioId &&
                     trf.UsuarioCodigo == usuarioCodigo &&
                     trf.TarefaEstadoId != EstadoFinalizadaId)
-                .OrderByDescending(trf => trf.Identificador)
+                .OrderByDescending(trf => trf.Id)
                 .ToListAsync();
         }
 
@@ -95,7 +95,7 @@ namespace Infrastructure.Repositories
                             rel.Departamento.GestorDepartamentoCodigo == gestorCodigo)
                     )
                     )
-                .OrderByDescending(trf => trf.Identificador)
+                .OrderByDescending(trf => trf.Id)
                 .ToListAsync();
         }
 
@@ -105,7 +105,7 @@ namespace Infrastructure.Repositories
                 .Where(trf =>
                     trf.UsuarioId == null &&
                     trf.TarefaEstadoId != EstadoFinalizadaId)
-                .OrderByDescending(trf => trf.Identificador)
+                .OrderByDescending(trf => trf.Id)
                 .ToListAsync();
         }
 
@@ -171,7 +171,6 @@ namespace Infrastructure.Repositories
         {
             tarefaBD.UsuarioId = tarefa.UsuarioId;
             tarefaBD.UsuarioCodigo = tarefa.UsuarioCodigo;
-            tarefaBD.Identificador = tarefa.Identificador ?? tarefaBD.Identificador;
             tarefaBD.DestinoInicial = tarefa.DestinoInicial;
             tarefaBD.ExigeAprovacaoParaObter = tarefa.ExigeAprovacaoParaObter;
             tarefaBD.DepartamentoId = tarefa.DepartamentoId;

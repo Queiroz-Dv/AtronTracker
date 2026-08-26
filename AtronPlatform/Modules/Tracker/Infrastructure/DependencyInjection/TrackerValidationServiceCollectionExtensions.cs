@@ -68,6 +68,7 @@ namespace Infrastructure.DependencyInjection
 
         private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
         {
+            services.AddScoped<IValidador<PerfilDeAcessoDTO>, PerfilDeAcessoValidador>();
             services.AddScoped<PerfilDeAcessoMessageValidation>();
             services.AddScoped<IMessageBaseService>(provider => provider.GetRequiredService<PerfilDeAcessoMessageValidation>());
             services.AddScoped<IValidateModelService<PerfilDeAcesso>>(provider => provider.GetRequiredService<PerfilDeAcessoMessageValidation>());

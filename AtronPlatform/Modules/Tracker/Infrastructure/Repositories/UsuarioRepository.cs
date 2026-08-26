@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class UsuarioRepository : Repository<Usuario>, IUsuarioRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
         private AtronDbContext _context;
 
-        public UsuarioRepository(AtronDbContext context) : base(context)
+        public UsuarioRepository(AtronDbContext context)
         {
             _context = context;
         }
