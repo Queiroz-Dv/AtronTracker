@@ -90,7 +90,7 @@ A configuração de desenvolvimento usa `https://localhost:7280/`, conforme [env
 
 ## 6. Conferir o fluxo autenticado
 
-Entre com a conta preparada para desenvolvimento. Verifique a navegação de Tracker e Stock e faça operações apenas nos dados de teste. O [roteiro de avaliação](../guia-avaliacao.md) sugere um percurso pelas rotinas.
+Entre com a conta preparada para desenvolvimento. Verifique a navegação de Tracker e Stock e faça operações apenas nos dados de teste.
 
 | Sintoma | O que conferir primeiro |
 | --- | --- |

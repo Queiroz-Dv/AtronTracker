@@ -3,7 +3,6 @@
 ## Começar e contribuir
 
 - [Apresentação e capturas da plataforma](../README.md).
-- [Roteiro de avaliação do produto e do código](guia-avaliacao.md).
 - [Execução local com Visual Studio e Angular](desenvolvimento/execucao-local.md).
 - [Branches, commits, PRs e critérios de conclusão](../CONTRIBUTING.md).
 - [Fluxo Git](desenvolvimento/fluxo-git.md).

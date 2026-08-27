@@ -9,7 +9,7 @@ O projeto está em desenvolvimento e também serve como formação prática em a
 ![.NET 9](https://img.shields.io/badge/.NET-9.0-purple)
 [![CI da main](https://github.com/Queiroz-Dv/AtronTracker/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Queiroz-Dv/AtronTracker/actions/workflows/ci.yml)
 
-**Comece por aqui:** [roteiro de avaliação](docs/guia-avaliacao.md) · [execução local](docs/desenvolvimento/execucao-local.md) · [índice da documentação](docs/README.md) · [como contribuir](CONTRIBUTING.md).
+**Comece por aqui:** [execução local](docs/desenvolvimento/execucao-local.md) · [índice da documentação](docs/README.md) · [como contribuir](CONTRIBUTING.md).
 
 ## O que está disponível
 

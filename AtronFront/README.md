@@ -47,7 +47,6 @@ A [configuração das áreas](src/app/core/config/areas-plataforma.config.ts) de
 
 ## Leitura complementar
 
-- [Roteiro de avaliação](../docs/guia-avaliacao.md).
 - [Documentação do Stock](../AtronPlatform/Modules/Stock/README.md).
 - [Fluxo de contribuição](../CONTRIBUTING.md).
 - [Workflow de CI](../.github/workflows/ci.yml).
