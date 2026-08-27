@@ -54,6 +54,10 @@ eventos específicos para o sistema. Adotamos então o Angular que está em `Atr
 
 ## Documentação principal
 
+- [CONTRIBUTING.md](CONTRIBUTING.md): branches, commits, pull requests e validações.
+- [docs/README.md](docs/README.md): índice da documentação por finalidade.
+- [docs/operacao/releases.md](docs/operacao/releases.md): versões, publicação e release notes.
+- [CHANGELOG.md](CHANGELOG.md): índice das mudanças e versões formalizadas.
 - [CONTEXT.md](CONTEXT.md): glossário canônico e contratos duráveis de domínio.
 - [docs/visao-produto-atron.md](docs/visao-produto-atron.md): direção de produto da plataforma.
 - [docs/publicacao-render-brevo-supabase.md](docs/publicacao-render-brevo-supabase.md): manual de publicação com Render, Supabase e Brevo.
