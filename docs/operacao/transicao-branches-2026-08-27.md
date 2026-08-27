@@ -4,6 +4,9 @@
 
 Reorganização do Git e implantação da governança de contribuição. Não inclui
 mudanças de domínio, migrations, notificações de versão ou reescrita do histórico.
+O escopo foi ampliado com autorização para atualizar testes desatualizados e
+corrigir o uso do ID persistido nas notificações de criação de tarefas, sem
+reintroduzir a propriedade `Identificador`.
 
 `main` foi criada a partir de `origin/RC2` em
 `413db0046001ae833e463bd1bc27211d7b9d8eeb`. Documentação e CI são preparados em
@@ -66,14 +69,14 @@ divulgação. A localização exata está registrada na entrega ao mantenedor.
 
 Shared: 32 testes aprovados; Notificações: 16; Platform: 63. Tracker e Stock não
 concluíram a compilação dos testes. Isso é baseline, não falha criada pelo CI.
-Qualquer correção adicional deve preservar o código de produção e ser registrada.
+Esse resultado foi registrado antes das correções autorizadas descritas abaixo.
 
 O build Angular de produção passou localmente. Jasmine e fluxos autenticados
 não foram executados. Os dois arquivos de testes foram corrigidos após
 autorização, preservando as asserções e sem alterar código de produção.
 A falha não foi contornada na configuração de CI.
 
-O [PR 74](https://github.com/Queiroz-Dv/AtronTracker/pull/74) está em rascunho.
+O [PR 74](https://github.com/Queiroz-Dv/AtronTracker/pull/74) foi aberto em rascunho.
 Na [primeira execução do CI](https://github.com/Queiroz-Dv/AtronTracker/actions/runs/33098034570),
 o frontend passou, o backend falhou e `Qualidade` bloqueou a integração. Os
 erros de compilação correspondem aos dois arquivos identificados na baseline.
@@ -94,15 +97,24 @@ ambos em `CriarTarefaTests`. A execução isolada dessa classe reproduziu as
 mesmas falhas. Antes, esses testes não chegavam a executar por causa dos erros
 de compilação de Tracker.
 
-- A notificação recebe um DTO sem o ID/identificador da tarefa persistida.
-  A cópia desses campos foi removida de `CriarTarefaCase` no commit `e045d7b2`.
-  Trata-se de uma regressão da aplicação; não deve ser mascarada alterando o
-  texto esperado no teste.
+- A notificação recebia um DTO sem o ID da tarefa persistida. A cópia do ID
+  foi removida de `CriarTarefaCase` no commit `e045d7b2`. A remoção da propriedade
+  paralela `Identificador` foi intencional e deve permanecer; a regressão era
+  somente a falta do ID persistido, não a ausência daquela propriedade.
 - Outro teste exige que o usuário não seja consultado quando a preparação
   falha, mas o fluxo atual consulta o usuário antes da preparação.
 
-Foi solicitada autorização adicional para corrigir o caso de uso e ajustar o
-teste de ordem de chamadas. O PR permanece em rascunho até a resolução e CI verde.
+O mantenedor autorizou a correção usando somente `Tarefa.Id`, sem restaurar
+`Identificador`. O caso de uso copia o ID salvo para o DTO antes de notificar;
+o teste de ordem de chamadas preserva as verificações de ausência de efeitos
+após falha da preparação, mas espera a consulta inicial do usuário.
+
+O teste de notificação cobre entrada com ID zero ou divergente e verifica que
+mensagem, URL, referência, chave idempotente, correlação e e-mail usam o ID
+persistido. Os nove cenários de criação e a suíte completa de 334 testes passaram
+localmente. Não houve mudança em contratos HTTP, migrations ou frontend.
+CI e estado da integração devem ser
+consultados no PR 74, que só pode ser integrado com `Qualidade` aprovado.
 
 ## Render verificado, sem alteração
 
@@ -120,7 +132,7 @@ operacional. RC2 não deve ser excluída antes disso.
 
 - [x] Verificar os checks do PR da governança e registrar seu resultado inicial.
 - [x] Corrigir os dois arquivos de testes autorizados e validar seus dez cenários.
-- [ ] Resolver as duas falhas de criação de tarefas e obter CI verde antes do merge.
+- [x] Resolver as duas falhas de criação de tarefas sem reintroduzir `Identificador`.
 - [x] Configurar e conferir branch padrão e proteções no GitHub.
 - [x] Publicar/verificar arquivos históricos antes de remover branches remotas.
 - [x] Registrar os SHAs em execução na API e no frontend.

@@ -6,9 +6,9 @@
 - Convenções de branches, commits, pull requests e publicação.
 - Esteira inicial de testes .NET e build Angular.
 - Modelo de release notes e procedimento para futuras notificações de versão.
+- Correção das notificações de criação de tarefas para usar o ID persistido, mantendo `Identificador` removido.
 
-Esses itens descrevem a transição de engenharia. Não significam que uma nova
-funcionalidade foi publicada no Render ou anunciada dentro do sistema.
+Esses itens ainda não foram publicados no Render nem anunciados dentro do sistema.
 
 ## Versões publicadas
 

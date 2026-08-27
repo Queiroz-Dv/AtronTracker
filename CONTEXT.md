@@ -235,6 +235,7 @@ _Avoid_: Dado público do usuário, campo comum de cadastro
 
 **Tarefa**:
 Responsabilidade registrada no sistema para acompanhamento. Uma tarefa pode estar vinculada diretamente a um usuário responsável ou a um escopo de responsabilidade por departamento e cargo.
+`Tarefa.Id` é sua única identidade numérica; notificações e URLs usam o ID persistido. A propriedade paralela `Identificador` foi removida e não deve ser reintroduzida.
 _Avoid_: Atividade, demanda
 
 **Escopo de responsabilidade da tarefa**:

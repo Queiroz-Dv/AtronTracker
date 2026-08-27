@@ -66,22 +66,34 @@ public class CriarTarefaTests
             Times.Never);
     }
 
-    [Fact]
-    public async Task CriarAsync_DevePublicarTextoFinalDaNotificacaoInterna()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(999)]
+    public async Task CriarAsync_DevePublicarTextoFinalDaNotificacaoInterna(int idInformado)
     {
         PublicarNotificacaoInternaRequest? capturada = null;
         var cenario = CriarCenario(
             capturarNotificacao: notificacao => capturada = notificacao);
+        var tarefa = CriarTarefaDto();
+        tarefa.Id = idInformado;
 
-        var resultado = await cenario.Case.ExecutarAsync(CriarTarefaDto());
+        var resultado = await cenario.Case.ExecutarAsync(tarefa);
 
         Assert.True(resultado.TeveSucesso);
+        Assert.Equal(cenario.Tarefa.Id, tarefa.Id);
         Assert.NotNull(capturada);
         Assert.Equal(TarefaResource.Titulo_TarefaAtribuida, capturada.Titulo);
         Assert.Equal("A tarefa 42 foi atribuída a você.", capturada.Mensagem);
         Assert.Equal("Tracker", capturada.ModuloOrigem);
         Assert.Equal("TarefaAtribuida", capturada.TipoEvento);
         Assert.Equal("/atron/tarefas/editar/42", capturada.UrlDestino);
+        Assert.Equal("tarefa:42", capturada.ReferenciaExterna);
+        Assert.Equal("tracker:tarefa:42:TarefaAtribuida:USR", capturada.ChaveIdempotencia);
+        Assert.Equal("tracker:TarefaAtribuida:tarefa:42", capturada.CorrelacaoId);
+        cenario.Email.Verify(
+            service => service.NotificarAtribuicaoAsync(
+                It.Is<TarefaDTO>(dto => dto.Id == 42), It.IsAny<UsuarioDTO>()),
+            Times.Once);
     }
 
     [Fact]
@@ -134,7 +146,7 @@ public class CriarTarefaTests
 
         Assert.True(resultado.TeveFalha);
         Assert.Contains(resultado.Messages, mensagem => mensagem.Descricao == "Falha de preparação");
-        cenario.UsuarioService.Verify(service => service.ObterUsuarioAtual(), Times.Never);
+        cenario.UsuarioService.Verify(service => service.ObterUsuarioAtual(), Times.Once);
 
         cenario.Tarefas.Verify(
             repository => repository.CriarTarefaAsync(It.IsAny<Tarefa>()),
