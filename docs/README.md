@@ -2,7 +2,9 @@
 
 ## Começar e contribuir
 
-- [Apresentação e execução local](../README.md).
+- [Apresentação e capturas da plataforma](../README.md).
+- [Roteiro de avaliação do produto e do código](guia-avaliacao.md).
+- [Execução local com Visual Studio e Angular](desenvolvimento/execucao-local.md).
 - [Branches, commits, PRs e critérios de conclusão](../CONTRIBUTING.md).
 - [Fluxo Git](desenvolvimento/fluxo-git.md).
 - [Arquitetura de testes](arquitetura-testes.md).
@@ -14,6 +16,8 @@
 - [Decisões arquiteturais](adr/README.md).
 - [Fronteiras e propriedade da plataforma](arquitetura/fronteiras-e-propriedade-da-plataforma.md).
 - [Responsabilidades dos serviços](padrao-responsabilidades-servicos.md).
+- [Stock: implementação atual e próximos contratos](../AtronPlatform/Modules/Stock/README.md).
+- [Frontend: estrutura, ambientes e scripts](../AtronFront/README.md).
 
 ## Operação e versões
 

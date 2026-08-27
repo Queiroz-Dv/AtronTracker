@@ -14,6 +14,7 @@ Cada projeto de teste usa o nome curto do sistema ou módulo, sem repetir sua ca
 | Atron Stock | `Stock.Tests` |
 | Framework Shared | `Shared.Tests` |
 | Atron Notificacoes | `Notificacoes.Tests` |
+| Host e composição da plataforma | `Platform.Tests` |
 
 O nome do projeto representa o dono da funcionalidade. `Application`, `Domain`, `Infrastructure` e `Client` são detalhes de referência e podem aparecer apenas em pastas internas quando ajudarem a localizar o teste.
 
@@ -21,6 +22,7 @@ O nome do projeto representa o dono da funcionalidade. `Application`, `Domain`, 
 
 ```text
 Tests/
+  Platform.Tests/
   Tracker.Tests/
     Application/
       Acesso/
