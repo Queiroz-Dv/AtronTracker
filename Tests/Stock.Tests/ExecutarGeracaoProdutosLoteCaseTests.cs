@@ -98,8 +98,10 @@ public sealed class ExecutarGeracaoProdutosLoteCaseTests
             repository,
             new GeracaoProdutosLoteValidador(new ProdutoValidador()),
             new SelecionarCategoriasProdutoCase(new CategoriaRepositoryProdutoFake()),
-            new ProdutoMapping(),
-            new FixedTimeProvider(new DateTimeOffset(2026, 8, 24, 12, 0, 0, TimeSpan.Zero)));
+            new CriarLoteParaPersistenciaCase(
+                repository,
+                new ProdutoMapping(),
+                new FixedTimeProvider(new DateTimeOffset(2026, 8, 24, 12, 0, 0, TimeSpan.Zero))));
 
     internal static GeracaoProdutosLoteCommand CriarCommand(string codigoBase, int quantidade)
         => new(codigoBase, quantidade, "Monitor novo", null,

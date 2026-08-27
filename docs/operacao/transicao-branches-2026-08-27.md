@@ -69,8 +69,9 @@ concluíram a compilação dos testes. Isso é baseline, não falha criada pelo 
 Qualquer correção adicional deve preservar o código de produção e ser registrada.
 
 O build Angular de produção passou localmente. Jasmine e fluxos autenticados
-não foram executados. A autorização para corrigir os dois arquivos de testes
-foi solicitada; a falha não foi contornada na configuração de CI.
+não foram executados. Os dois arquivos de testes foram corrigidos após
+autorização, preservando as asserções e sem alterar código de produção.
+A falha não foi contornada na configuração de CI.
 
 O [PR 74](https://github.com/Queiroz-Dv/AtronTracker/pull/74) está em rascunho.
 Na [primeira execução do CI](https://github.com/Queiroz-Dv/AtronTracker/actions/runs/33098034570),
@@ -80,6 +81,28 @@ As actions foram atualizadas para versões atuais, fixadas por SHA, após o
 runner alertar sobre a descontinuação do runtime das versões anteriores.
 Consulte os checks da ponta atual do PR; uma execução anterior não valida um
 commit posterior.
+
+### Correção autorizada dos testes e novo diagnóstico
+
+`ModuloHandlerTests` usa agora o construtor vigente de `ModuloRequirement`.
+`ExecutarGeracaoProdutosLoteCaseTests` compõe `CriarLoteParaPersistenciaCase`
+com o mesmo repositório fake, mapper e relógio fixo do cenário anterior.
+Os dez testes diretamente afetados passaram.
+
+A suíte completa passou a compilar: 331 testes aprovados e dois reprovados,
+ambos em `CriarTarefaTests`. A execução isolada dessa classe reproduziu as
+mesmas falhas. Antes, esses testes não chegavam a executar por causa dos erros
+de compilação de Tracker.
+
+- A notificação recebe um DTO sem o ID/identificador da tarefa persistida.
+  A cópia desses campos foi removida de `CriarTarefaCase` no commit `e045d7b2`.
+  Trata-se de uma regressão da aplicação; não deve ser mascarada alterando o
+  texto esperado no teste.
+- Outro teste exige que o usuário não seja consultado quando a preparação
+  falha, mas o fluxo atual consulta o usuário antes da preparação.
+
+Foi solicitada autorização adicional para corrigir o caso de uso e ajustar o
+teste de ordem de chamadas. O PR permanece em rascunho até a resolução e CI verde.
 
 ## Render verificado, sem alteração
 
@@ -96,7 +119,8 @@ operacional. RC2 não deve ser excluída antes disso.
 ## Pendências para encerrar a transição operacional
 
 - [x] Verificar os checks do PR da governança e registrar seu resultado inicial.
-- [ ] Corrigir a baseline em escopo autorizado e obter CI verde antes do merge.
+- [x] Corrigir os dois arquivos de testes autorizados e validar seus dez cenários.
+- [ ] Resolver as duas falhas de criação de tarefas e obter CI verde antes do merge.
 - [x] Configurar e conferir branch padrão e proteções no GitHub.
 - [x] Publicar/verificar arquivos históricos antes de remover branches remotas.
 - [x] Registrar os SHAs em execução na API e no frontend.
