@@ -72,6 +72,15 @@ O build Angular de produção passou localmente. Jasmine e fluxos autenticados
 não foram executados. A autorização para corrigir os dois arquivos de testes
 foi solicitada; a falha não foi contornada na configuração de CI.
 
+O [PR 74](https://github.com/Queiroz-Dv/AtronTracker/pull/74) está em rascunho.
+Na [primeira execução do CI](https://github.com/Queiroz-Dv/AtronTracker/actions/runs/33098034570),
+o frontend passou, o backend falhou e `Qualidade` bloqueou a integração. Os
+erros de compilação correspondem aos dois arquivos identificados na baseline.
+As actions foram atualizadas para versões atuais, fixadas por SHA, após o
+runner alertar sobre a descontinuação do runtime das versões anteriores.
+Consulte os checks da ponta atual do PR; uma execução anterior não valida um
+commit posterior.
+
 ## Render verificado, sem alteração
 
 O painel identifica o ambiente como **Homologação**. API (`Atron Platform`) e
@@ -86,7 +95,8 @@ operacional. RC2 não deve ser excluída antes disso.
 
 ## Pendências para encerrar a transição operacional
 
-- [ ] Verificar os checks do PR da governança e registrar seu resultado.
+- [x] Verificar os checks do PR da governança e registrar seu resultado inicial.
+- [ ] Corrigir a baseline em escopo autorizado e obter CI verde antes do merge.
 - [x] Configurar e conferir branch padrão e proteções no GitHub.
 - [x] Publicar/verificar arquivos históricos antes de remover branches remotas.
 - [x] Registrar os SHAs em execução na API e no frontend.
