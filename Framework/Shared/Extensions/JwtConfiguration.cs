@@ -23,8 +23,9 @@ namespace Shared.Extensions
             return configuration[EnumJwt.Audience.GetDescription()];
         }
 
-        public static Claim[] GetClaims(DadosDoUsuarioDTO dadosDoUsuario)
+        public static Claim[] GetClaims(DadosComplementaresDoUsuarioDTO dadosComplementares)
         {
+            var dadosDoUsuario = dadosComplementares.DadosDoUsuario;
             var claims = new List<Claim> {
                 new Claim(ClaimTypes.Name, dadosDoUsuario.NomeDoUsuario),
                 new Claim(ClaimTypes.Email, dadosDoUsuario.Email),
@@ -32,6 +33,12 @@ namespace Shared.Extensions
                 new Claim(ClaimCode.CODIGO_CARGO, dadosDoUsuario.CodigoDoCargo.IsNullOrEmpty() ? "" : dadosDoUsuario.CodigoDoCargo),
                 new Claim(ClaimCode.CODIGO_DEPARTAMENTO, dadosDoUsuario.CodigoDoDepartamento.IsNullOrEmpty() ? "" : dadosDoUsuario.CodigoDoDepartamento),
             };
+
+            if (dadosComplementares.DadosDaEmpresa is { } empresa)
+            {
+                claims.Add(new Claim(ClaimCode.CODIGO_EMPRESA, empresa.Codigo));
+                claims.Add(new Claim(ClaimCode.NOME_EMPRESA, empresa.NomeFantasia));
+            }
 
             return claims.ToArray();
         }

@@ -1,9 +1,8 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Resources;
 using Domain.Enums;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
+using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Empresas;
 

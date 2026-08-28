@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.DTO.Request;
 using Application.DTO.Response;
+using Application.Interfaces.Services;
 using Application.Mapping;
 using Application.Resources;
 using Application.Services.EntitiesServices.Empresas;
@@ -17,7 +18,8 @@ namespace Application.UseCases.EmpresaCases
         UsuarioEmpresaAtualService usuarioAtual,
         EmpresaCadastroValidador validador,
         EmpresaMapping mapping,
-        IEmpresaRepository repository)
+        IEmpresaRepository repository,
+        ICacheUsuarioService cacheUsuarioService = null)
     {
         public async Task<Resultado<EmpresaResponse>> ExecutarAsync(EmpresaCadastroRequest request)
         {
@@ -43,6 +45,7 @@ namespace Application.UseCases.EmpresaCases
 
             var vinculo = empresa.ConcluirCadastro(usuario);
             await repository.CriarAsync(empresa);
+            cacheUsuarioService?.RemoverCacheDeAcessoTokenInfo(usuario.Codigo);
             return Resultado<EmpresaResponse>.Sucesso(mapping.MapToDto(vinculo));
         }
     }

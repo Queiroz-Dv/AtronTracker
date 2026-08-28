@@ -55,6 +55,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
 
             if (dadosCache is not null)
             {
+                var empresa = dadosCache.DadosDaEmpresa ?? ObterEmpresaDosClaims(user);
                 return Ok(new
                 {
                     codigoDoUsuario = usuarioCodigo,
@@ -62,6 +63,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                     emailDoUsuario = dadosCache.DadosDoUsuario.Email ?? user.FindFirst(ClaimTypes.Email)?.Value,
                     codigoDoCargo = dadosCache.DadosDoUsuario.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
                     codigoDoDepartamento = dadosCache.DadosDoUsuario.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,
+                    empresa,
                     perfisDeAcesso = dadosCache.DadosDoPerfil
                 });
             }
@@ -89,10 +91,26 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 emailDoUsuario = dto.DadosDoUsuario.Email,
                 codigoDoCargo = dto.DadosDoUsuario.CodigoDoCargo,
                 codigoDoDepartamento = dto.DadosDoUsuario.CodigoDoDepartamento,
+                empresa = dto.DadosDaEmpresa ?? ObterEmpresaDosClaims(user),
                 perfisDeAcesso = dto.DadosDoPerfil
             };
 
             return Ok(jsonAtualizado);
+        }
+
+        private static DadosDaEmpresaDTO? ObterEmpresaDosClaims(ClaimsPrincipal user)
+        {
+            var codigo = user.FindFirst(ClaimCode.CODIGO_EMPRESA)?.Value;
+            var nome = user.FindFirst(ClaimCode.NOME_EMPRESA)?.Value;
+
+            return !string.IsNullOrWhiteSpace(codigo)
+                ? new DadosDaEmpresaDTO
+                {
+                    Codigo = codigo,
+                    NomeFantasia = nome ?? string.Empty,
+                    AcessoPermitido = true
+                }
+                : null;
         }
     }
 }

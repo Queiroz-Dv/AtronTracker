@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Application.DTO.Response;
+using Application.Interfaces.Services;
 using Application.Resources;
 using Application.Services.EntitiesServices.Empresas;
 using AtronNotificacoes.Contracts.DTO.Request;
@@ -15,7 +16,8 @@ namespace Application.UseCases.EmpresaCases;
 public sealed class DecidirSolicitacaoEmpresaCase(
     EmpresaResponsavelService responsavel,
     IEmpresaRepository repository,
-    INotificacoesInternasPublisher notificacoes)
+    INotificacoesInternasPublisher notificacoes,
+    ICacheUsuarioService cacheUsuarioService = null)
 {
     public async Task<Resultado<SolicitacaoEmpresaResponse>> AprovarAsync(int id)
         => await DecidirAsync(id, true);
@@ -51,6 +53,7 @@ public sealed class DecidirSolicitacaoEmpresaCase(
 
     private async Task<Resultado<SolicitacaoEmpresaResponse>> FinalizarAsync(SolicitacaoEmpresa solicitacao, bool aprovar)
     {
+        cacheUsuarioService?.RemoverCacheDeAcessoTokenInfo(solicitacao.UsuarioCodigo);
         await notificacoes.PublicarAsync(new PublicarNotificacaoInternaRequest
         {
             DestinatarioCodigo = solicitacao.UsuarioCodigo,
