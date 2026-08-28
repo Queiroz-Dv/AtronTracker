@@ -1,0 +1,8 @@
+.solicitacoes-page { min-height: 100vh; padding: 32px; background: var(--atron-page-bg); color: var(--atron-text); }
+.solicitacoes-card { max-width: 860px; margin: 0 auto; padding: 32px; background: var(--atron-surface); border: 1px solid var(--atron-border); border-radius: var(--atron-radius-md); box-shadow: var(--atron-shadow-sm); }
+.empresa-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; color: var(--atron-primary); font-weight: 700; }
+h1 { margin-bottom: 8px; } p { color: var(--atron-text-muted); line-height: 1.6; }
+.solicitacao-item { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 16px 0; padding: 16px; border: 1px solid var(--atron-border); border-radius: 8px; }
+.solicitacao-item span, .solicitacao-item small { display: block; margin-top: 4px; color: var(--atron-text-muted); }
+.acoes { display: flex; gap: 8px; } .erro { color: var(--atron-danger, #b42318); } .mensagem { color: var(--atron-primary); }
+@media (max-width: 640px) { .solicitacoes-page { padding: 16px; } .solicitacoes-card { padding: 24px; } .solicitacao-item { align-items: stretch; flex-direction: column; } .acoes { flex-wrap: wrap; } }

@@ -37,6 +37,7 @@ export const routes: Routes = [
           { path: 'usuarios', canActivate: [ModuloGuard], data: { moduloCodigo: 'USR', area: AREAS_PLATAFORMA.Tracker.chave }, loadChildren: () => import('./plataforma/tracker/usuarios/usuario-routing.module').then(m => m.UsuarioRoutingModule) },
           { path: 'tarefas', canActivate: [ModuloGuard], data: { moduloCodigo: 'TAR', area: AREAS_PLATAFORMA.Tracker.chave }, loadChildren: () => import('./plataforma/tracker/tarefas/tarefa-routing.module').then(m => m.TarefaRoutingModule) },
           { path: 'notificacoes', loadComponent: () => import('./plataforma/notificacoes/components/notificacao-interna-view/notificacao-interna-view.component').then(m => m.NotificacaoInternaViewComponent) },
+          { path: 'empresa/solicitacoes', loadComponent: () => import('./plataforma/tracker/empresa/solicitacoes-empresa.component').then(m => m.SolicitacoesEmpresaComponent) },
           { path: 'perfil-de-acesso', canActivate: [ModuloGuard], data: { moduloCodigo: 'PERF', area: AREAS_PLATAFORMA.Tracker.chave }, loadChildren: () => import('./plataforma/tracker/perfil-de-acesso/perfil-de-acesso.module').then(m => m.PerfilModule) }
         ]
       }

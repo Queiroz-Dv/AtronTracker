@@ -1,0 +1,29 @@
+<main class="solicitacoes-page">
+  <section class="solicitacoes-card" aria-labelledby="solicitacoes-title">
+    <header>
+      <div class="empresa-brand"><mat-icon aria-hidden="true">hub</mat-icon> Atron Platform</div>
+      <h1 id="solicitacoes-title">Solicitações de associação</h1>
+      <p>Aprove ou recuse usuários que solicitaram acesso à sua empresa.</p>
+    </header>
+    <div aria-live="polite" [attr.aria-busy]="carregando">
+      @if (carregando) { <p>Consultando solicitações...</p> }
+      @if (erro) { <p class="erro" role="alert">{{ erro }}</p> }
+      @if (mensagem) { <p class="mensagem">{{ mensagem }}</p> }
+      @if (!carregando && !erro && solicitacoes.length === 0) { <p>Nenhuma solicitação pendente.</p> }
+      @for (solicitacao of solicitacoes; track solicitacao.id) {
+        <article class="solicitacao-item">
+          <div>
+            <strong>{{ solicitacao.codigoEmpresa }}</strong>
+            <span>{{ solicitacao.nomeFantasia }}</span>
+            <small>Solicitada em {{ solicitacao.criadaEm | date:'dd/MM/yyyy HH:mm' }}</small>
+          </div>
+          <div class="acoes">
+            <button mat-flat-button type="button" (click)="decidir(solicitacao, true)" [disabled]="processando !== null">Aprovar</button>
+            <button mat-stroked-button type="button" (click)="decidir(solicitacao, false)" [disabled]="processando !== null">Recusar</button>
+          </div>
+        </article>
+      }
+    </div>
+    <button mat-stroked-button type="button" (click)="carregar()" [disabled]="carregando || processando !== null">Atualizar</button>
+  </section>
+</main>
