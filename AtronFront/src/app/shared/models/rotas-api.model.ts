@@ -26,6 +26,7 @@ export class RotasApi {
   public static readonly auditoriaEndpoint: string = environment.apiRoute + 'Auditoria';
 
   // Politicas e Acesso
+  public static readonly empresaContextoEndpoint: string = environment.apiRoute + 'api/Empresa/Contexto';
   public static readonly moduloEndpoint: string = environment.apiRoute + 'api/Modulo';
   public static readonly perfilDeAcessoEndpoint: string = environment.apiRoute + 'api/PerfilDeAcesso';
   public static readonly obter_relacionamentoPerfilUsuarioEndpoint: string = environment.apiRoute + 'api/PerfilDeAcesso/ObterRelacionamentoPerfilUsuario'

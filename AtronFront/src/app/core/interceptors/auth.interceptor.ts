@@ -74,15 +74,15 @@ export class AuthInterceptor implements HttpInterceptor {
         {},
         { withCredentials: true }
       ).pipe(
-        switchMap(response => {
-          this.sessaoService.setUsuarioInfo(response.value, response.expires, response.usuarioCodigo);
-          this.refreshSubject.next(response.value);
-          return next.handle(this.prepararRequisicaoAutenticada(request, response.value));
-        }),
         catchError(error => {
           this.limparSessaoERedirecionar();
           this.refreshSubject.next(null);
           return throwError(() => error);
+        }),
+        switchMap(response => {
+          this.sessaoService.setUsuarioInfo(response.value, response.expires, response.usuarioCodigo);
+          this.refreshSubject.next(response.value);
+          return next.handle(this.prepararRequisicaoAutenticada(request, response.value));
         }),
         finalize(() => { this.isRefreshing = false; })
       );

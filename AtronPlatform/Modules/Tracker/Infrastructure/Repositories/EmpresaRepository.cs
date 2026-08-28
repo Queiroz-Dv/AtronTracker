@@ -4,6 +4,8 @@ using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Infrastructure.Repositories
 {
@@ -30,6 +32,38 @@ namespace Infrastructure.Repositories
             }
 
             context.Empresas.Add(empresa);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<IReadOnlyList<Empresa>> BuscarAtivasAsync(string? termo)
+        {
+            var consulta = context.Empresas.AsNoTracking()
+                .Where(empresa => empresa.Status == Domain.Enums.StatusEmpresa.Ativa);
+
+            if (!string.IsNullOrWhiteSpace(termo))
+                consulta = consulta.Where(empresa => empresa.Codigo.Contains(termo)
+                    || empresa.NomeFantasia.Contains(termo));
+
+            return await consulta.OrderBy(empresa => empresa.NomeFantasia).Take(50).ToListAsync();
+        }
+
+        public Task<Empresa?> ObterAtivaAsync(int id)
+            => context.Empresas.AsNoTracking().SingleOrDefaultAsync(empresa =>
+                empresa.Id == id && empresa.Status == Domain.Enums.StatusEmpresa.Ativa);
+
+        public Task<SolicitacaoEmpresa?> ObterSolicitacaoPendenteAsync(
+            int usuarioId, string usuarioCodigo, int empresaId)
+            => context.SolicitacoesEmpresa.SingleOrDefaultAsync(solicitacao =>
+                solicitacao.UsuarioId == usuarioId
+                && solicitacao.UsuarioCodigo == usuarioCodigo
+                && solicitacao.EmpresaId == empresaId
+                && solicitacao.Status == Domain.Enums.StatusSolicitacaoEmpresa.Pendente);
+
+        public async Task CriarSolicitacaoAsync(SolicitacaoEmpresa solicitacao)
+        {
+            context.Entry(solicitacao.Empresa).State = EntityState.Unchanged;
+            context.Entry(solicitacao.Usuario).State = EntityState.Unchanged;
+            context.SolicitacoesEmpresa.Add(solicitacao);
             await context.SaveChangesAsync();
         }
     }

@@ -1,0 +1,29 @@
+<main class="empresa-page">
+  <section class="empresa-card" aria-labelledby="empresa-title">
+    <div class="empresa-brand"><mat-icon aria-hidden="true">hub</mat-icon> Atron Platform</div>
+    <h1 id="empresa-title">Associação à empresa</h1>
+    <div aria-live="polite" [attr.aria-busy]="carregando">
+      @if (carregando) {
+        <p>Consultando seu acesso...</p>
+      } @else if (erro) {
+        <p role="alert">{{ erro }}</p>
+      } @else if (contexto && !contexto.acessoPermitido) {
+        <p>{{ contexto.motivoBloqueio }}</p>
+        @if (contexto.empresaId !== null) {
+          <p><strong>{{ contexto.nomeFantasia }}</strong> · {{ contexto.codigo }}</p>
+          <p>Entre em contato com o responsável da empresa para verificar seu vínculo.</p>
+        } @else {
+          <p>As telas de cadastro de empresa e solicitação de associação serão disponibilizadas nas próximas etapas desta atualização.</p>
+        }
+      }
+    </div>
+    <div class="empresa-actions">
+      <button mat-flat-button type="button" (click)="verificarAcesso()" [disabled]="carregando || saindo">
+        Verificar acesso
+      </button>
+      <button mat-stroked-button type="button" (click)="sair()" [disabled]="saindo">
+        {{ saindo ? 'Saindo...' : 'Sair' }}
+      </button>
+    </div>
+  </section>
+</main>

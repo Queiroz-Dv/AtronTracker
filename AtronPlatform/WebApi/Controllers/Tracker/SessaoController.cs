@@ -1,4 +1,5 @@
 using Application.Interfaces.Services;
+using AtronPlatform.WebApi.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// </summary>
         /// <returns>200 OK com os dados da sessão, 204 NoContent se o usuário não puder ser identificado.</returns>
         [HttpGet("Info")]
+        [PermitirSemEmpresa]
         public async Task<ActionResult> SesssaoInfoAsync()
         {
             var user = HttpContext.User;

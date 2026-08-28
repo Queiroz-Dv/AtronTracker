@@ -111,8 +111,11 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IValidador<EmpresaCadastroRequest>>(provider =>
                 provider.GetRequiredService<EmpresaCadastroValidador>());
             services.AddScoped<UsuarioEmpresaAtualService>();
+            services.AddScoped<IEmpresaAtualService, EmpresaAtualService>();
             services.AddScoped<CadastrarEmpresaCase>();
             services.AddScoped<ObterEmpresaCase>();
+            services.AddScoped<BuscarEmpresasCase>();
+            services.AddScoped<SolicitarAssociacaoEmpresaCase>();
         }
 
         private static void AddTrackerSharedAdapters(this IServiceCollection services)

@@ -1,0 +1,37 @@
+.empresa-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--atron-page-bg);
+  color: var(--atron-text);
+}
+
+.empresa-card {
+  width: 100%;
+  max-width: 580px;
+  padding: 32px;
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-sm);
+}
+
+.empresa-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  color: var(--atron-primary);
+  font-weight: 700;
+}
+
+h1 { font-size: 1.7rem; line-height: 1.25; }
+p { color: var(--atron-text-muted); line-height: 1.6; }
+.empresa-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+
+@media (max-width: 480px) {
+  .empresa-page { padding: 16px; }
+  .empresa-card { padding: 24px; }
+}

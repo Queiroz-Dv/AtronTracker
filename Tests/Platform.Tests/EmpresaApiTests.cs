@@ -17,6 +17,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Users;
+using Shared.Application.Interfaces.Service;
+using Shared.Domain.Enums;
+using Shared.Domain.ValueObjects;
 using Xunit;
 
 namespace Platform.Tests;
@@ -103,8 +107,26 @@ internal sealed class EmpresaApiFactory : WebApplicationFactory<AtronPlatform.We
         var context = scope.ServiceProvider.GetRequiredService<AtronDbContext>();
         context.Usuarios.Add(new Usuario(codigo, codigo, "Teste", $"{codigo}@example.test", null) { EmailConfirmado = true });
         await context.SaveChangesAsync();
+        DefinirModulos(codigo);
         client.DefaultRequestHeaders.Add("X-Usuario-Teste", codigo);
         return client;
+    }
+
+    public void DefinirModulos(string codigo, params string[] modulos)
+    {
+        using var scope = Services.CreateScope();
+        scope.ServiceProvider.GetRequiredService<ICacheService>().GravarCache(
+            new CacheInfo<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, codigo))
+            {
+                EntityInfo = new DadosComplementaresDoUsuarioDTO
+                {
+                    DadosDoUsuario = new DadosDoUsuarioDTO { CodigoDoUsuario = codigo, NomeDoUsuario = codigo },
+                    DadosDoPerfil = [new DadosDoPerfilDTO("TESTE")
+                    {
+                        Modulos = modulos.Select(modulo => new DadosDoModuloDTO(modulo, modulo)).ToList()
+                    }]
+                }
+            });
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -114,7 +136,8 @@ internal sealed class EmpresaApiFactory : WebApplicationFactory<AtronPlatform.We
         {
             ["Jwt:SecretKey"] = "chave-local-exclusiva-dos-testes-empresa-123456789",
             ["ATRON_CONNECTION_STRING"] = "Host=localhost;Database=empresa_tests;Username=tests;Password=tests",
-            ["ProcessamentosProdutosLote:WorkerHabilitado"] = "false"
+            ["ProcessamentosProdutosLote:WorkerHabilitado"] = "false",
+            ["Cache:Provider"] = "Memory"
         }));
         builder.ConfigureTestServices(services =>
         {
@@ -125,6 +148,7 @@ internal sealed class EmpresaApiFactory : WebApplicationFactory<AtronPlatform.We
             {
                 options.DefaultAuthenticateScheme = "EmpresaTests";
                 options.DefaultChallengeScheme = "EmpresaTests";
+                options.DefaultForbidScheme = "EmpresaTests";
             }).AddScheme<AuthenticationSchemeOptions, EmpresaTestAuthHandler>("EmpresaTests", _ => { });
         });
     }

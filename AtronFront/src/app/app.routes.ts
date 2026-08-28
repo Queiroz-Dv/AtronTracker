@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
+import { EmpresaGuard } from './core/guards/empresa.guard';
 import { ModuloGuard } from './core/guards/modulo.guard';
 import { DashboardComponent } from './features/navegacao/dashboard/dashboard.component';
 import { HomeComponent } from './features/navegacao/home/home.component';
@@ -14,10 +15,12 @@ export const routes: Routes = [
   { path: 'reenviar-confirmacao', loadComponent: () => import('./plataforma/tracker/acesso/reenviar-confirmacao/reenviar-confirmacao.component').then(m => m.ReenviarConfirmacaoComponent) },
   { path: 'esqueci-senha', loadComponent: () => import('./plataforma/tracker/acesso/esqueci-senha/esqueci-senha.component').then(m => m.EsqueciSenhaComponent) },
   { path: 'trocar-senha', loadComponent: () => import('./plataforma/tracker/acesso/trocar-senha/trocar-senha.component').then(m => m.TrocarSenhaComponent) },
-  // Aplica o guard a tudo abaixo de 'atron'
+  { path: 'empresa/acesso', canActivate: [AuthGuard], loadComponent: () => import('./plataforma/tracker/empresa/acesso-empresa.component').then(m => m.AcessoEmpresaComponent) },
+  // Todas as rotinas exigem empresa ativa, além das permissões por módulo.
   {
     path: 'atron',
     canActivate: [AuthGuard],
+    canActivateChild: [EmpresaGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },

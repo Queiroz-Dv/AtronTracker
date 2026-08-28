@@ -194,5 +194,26 @@ namespace Application.Resources {
                 return ResourceManager.GetString("Erro_UsuarioNaoIdentificado", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Seu usuário ainda não está associado a uma empresa. O acesso aos módulos exige um vínculo ativo com uma empresa ativa..
+        /// </summary>
+        public static string Erro_UsuarioSemEmpresa {
+            get {
+                return ResourceManager.GetString("Erro_UsuarioSemEmpresa", resourceCulture);
+            }
+        }
+
+        public static string Erro_EmpresaObrigatoria {
+            get { return ResourceManager.GetString("Erro_EmpresaObrigatoria", resourceCulture); }
+        }
+
+        public static string Erro_EmpresaNaoEncontrada {
+            get { return ResourceManager.GetString("Erro_EmpresaNaoEncontrada", resourceCulture); }
+        }
+
+        public static string Erro_SolicitacaoDuplicada {
+            get { return ResourceManager.GetString("Erro_SolicitacaoDuplicada", resourceCulture); }
+        }
     }
 }
