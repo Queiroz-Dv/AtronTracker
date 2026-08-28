@@ -57,6 +57,14 @@ namespace Infrastructure.Repositories
                 && solicitacao.EmpresaId == empresaId
                 && solicitacao.Status == Domain.Enums.StatusSolicitacaoEmpresa.Pendente);
 
+        public Task<SolicitacaoEmpresa?> ObterUltimaSolicitacaoAsync(int usuarioId, string usuarioCodigo)
+            => context.SolicitacoesEmpresa.AsNoTracking()
+                .Include(solicitacao => solicitacao.Empresa)
+                .Where(solicitacao => solicitacao.UsuarioId == usuarioId
+                    && solicitacao.UsuarioCodigo == usuarioCodigo)
+                .OrderByDescending(solicitacao => solicitacao.CriadaEm)
+                .FirstOrDefaultAsync();
+
         public async Task CriarSolicitacaoAsync(SolicitacaoEmpresa solicitacao)
         {
             context.Entry(solicitacao.Empresa).State = EntityState.Unchanged;

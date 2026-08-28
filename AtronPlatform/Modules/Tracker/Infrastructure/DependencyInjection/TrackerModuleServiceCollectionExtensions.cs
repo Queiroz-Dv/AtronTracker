@@ -117,7 +117,8 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<BuscarEmpresasCase>();
             services.AddScoped<SolicitarAssociacaoEmpresaCase>();
             services.AddScoped<EmpresaResponsavelService>();
-            services.AddScoped<ObterSolicitacoesEmpresaCase>();
+             services.AddScoped<ObterSolicitacoesEmpresaCase>();
+             services.AddScoped<ObterAssociacaoEmpresaCase>();
             services.AddScoped<DecidirSolicitacaoEmpresaCase>();
         }
 

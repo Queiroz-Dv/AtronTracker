@@ -13,6 +13,10 @@
           <p><strong>{{ contexto.nomeFantasia }}</strong> · {{ contexto.codigo }}</p>
           <p>Entre em contato com o responsável da empresa para verificar seu vínculo.</p>
         } @else {
+          @if (associacao) {
+            <p class="mensagem">Solicitação para <strong>{{ associacao.nomeFantasia }}</strong> ({{ associacao.codigoEmpresa }})</p>
+            <p>Status: {{ associacao.status === 0 ? 'Pendente' : associacao.status === 2 ? 'Recusada' : 'Aprovada' }}.</p>
+          }
           <h2>Solicitar associação</h2>
           <mat-form-field appearance="outline">
             <mat-label>Buscar por código ou nome</mat-label>

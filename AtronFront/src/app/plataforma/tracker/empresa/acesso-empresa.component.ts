@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AcessoService } from '../../../core/services/acesso.service';
-import { ContextoEmpresa, EmpresaBusca, EmpresaCadastro, EmpresaContextoService } from '../../../core/services/empresa-contexto.service';
+import { ContextoEmpresa, EmpresaBusca, EmpresaCadastro, EmpresaContextoService, SolicitacaoEmpresa } from '../../../core/services/empresa-contexto.service';
 
 @Component({
   standalone: true,
@@ -22,6 +22,7 @@ export class AcessoEmpresaComponent implements OnInit {
   saindo = false;
   erro = '';
   mensagem = '';
+  associacao: SolicitacaoEmpresa | null = null;
   termoBusca = '';
   empresas: EmpresaBusca[] = [];
   empresaSelecionada: EmpresaBusca | null = null;
@@ -44,9 +45,11 @@ export class AcessoEmpresaComponent implements OnInit {
     this.erro = '';
     this.mensagem = '';
     this.contexto = null;
+    this.associacao = null;
     this.empresa.obter().pipe(finalize(() => this.carregando = false)).subscribe({
       next: contexto => {
         this.contexto = contexto;
+        if (contexto?.empresaId === null) this.carregarAssociacao();
         if (contexto?.acessoPermitido === true) {
           void this.router.navigate(['/atron/dashboard']);
         }
@@ -54,6 +57,13 @@ export class AcessoEmpresaComponent implements OnInit {
       error: () => {
         this.erro = 'Não foi possível consultar sua associação. Tente novamente.';
       }
+    });
+  }
+
+  carregarAssociacao(): void {
+    this.empresa.obterAssociacao().subscribe({
+      next: associacao => this.associacao = associacao,
+      error: () => this.associacao = null
     });
   }
 

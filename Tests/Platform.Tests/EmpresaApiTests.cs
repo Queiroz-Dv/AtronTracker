@@ -6,6 +6,8 @@ using Application.DTO.Request;
 using Application.DTO.Response;
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
+using Domain.Enums;
+using Domain.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -87,6 +89,35 @@ public sealed class EmpresaApiTests
         var context = scope.ServiceProvider.GetRequiredService<AtronDbContext>();
         Assert.Equal(0, await context.Empresas.CountAsync());
         Assert.Equal(0, await context.UsuariosEmpresas.CountAsync());
+    }
+
+    [Fact]
+    public async Task Associacao_DeveRetornarSomenteASolicitacaoDoUsuarioAutenticado()
+    {
+        using var factory = new EmpresaApiFactory();
+        using var ana = await factory.CriarClienteAsync("ANA");
+        using var bruno = await factory.CriarClienteAsync("BRUNO");
+
+        var criado = await ana.PostAsJsonAsync("/api/Empresa", Request());
+        var empresa = await criado.Content.ReadFromJsonAsync<EmpresaResponse>();
+
+        using (var scope = factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AtronDbContext>();
+            var entidadeEmpresa = await context.Empresas.SingleAsync(item => item.Id == empresa!.Id);
+            var usuario = await context.Usuarios.SingleAsync(item => item.Codigo == "BRUNO");
+            context.SolicitacoesEmpresa.Add(entidadeEmpresa.CriarSolicitacao(usuario));
+            await context.SaveChangesAsync();
+        }
+
+        var respostaBruno = await bruno.GetAsync("/api/Empresa/Solicitacoes/Associacao");
+        Assert.Equal(HttpStatusCode.OK, respostaBruno.StatusCode);
+        var solicitacao = await respostaBruno.Content.ReadFromJsonAsync<SolicitacaoEmpresaResponse>();
+        Assert.Equal("Estudo", solicitacao!.CodigoEmpresa);
+        Assert.Equal(StatusSolicitacaoEmpresa.Pendente, solicitacao.Status);
+
+        var respostaAna = await ana.GetAsync("/api/Empresa/Solicitacoes/Associacao");
+        Assert.Equal(HttpStatusCode.NoContent, respostaAna.StatusCode);
     }
 
     private static EmpresaCadastroRequest Request(string codigo = "Estudo") => new()

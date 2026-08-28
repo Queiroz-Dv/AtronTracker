@@ -19,7 +19,8 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         BuscarEmpresasCase buscarEmpresas,
         SolicitarAssociacaoEmpresaCase solicitarAssociacao,
         ObterSolicitacoesEmpresaCase obterSolicitacoes,
-        DecidirSolicitacaoEmpresaCase decidirSolicitacao) : ControllerBase
+        DecidirSolicitacaoEmpresaCase decidirSolicitacao,
+        ObterAssociacaoEmpresaCase obterAssociacao) : ControllerBase
     {
         [HttpPost]
         [PermitirSemEmpresa]
@@ -68,6 +69,14 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         public async Task<ActionResult<IReadOnlyList<SolicitacaoEmpresaResponse>>> Solicitacoes()
         {
             var resultado = await obterSolicitacoes.ExecutarAsync();
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpGet("Solicitacoes/Associacao")]
+        [PermitirSemEmpresa]
+        public async Task<ActionResult<SolicitacaoEmpresaResponse>> Associacao()
+        {
+            var resultado = await obterAssociacao.ExecutarAsync();
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 

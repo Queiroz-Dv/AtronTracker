@@ -130,8 +130,8 @@ public sealed class AcessoEmpresaApiTests
     {
         using var factory = new EmpresaApiFactory();
         using var client = await factory.CriarClienteAsync("ANA");
-        factory.DefinirModulos("ANA", "CRG");
         Assert.Equal(HttpStatusCode.Created, (await client.PostAsJsonAsync("/api/Empresa", Request())).StatusCode);
+        factory.DefinirModulos("ANA", "CRG");
         Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/Cargo")).StatusCode);
 
         using (var scope = factory.Services.CreateScope())
@@ -204,7 +204,7 @@ public sealed class AcessoEmpresaApiTests
             .Where(e => e.Metadata.GetMetadata<PermitirSemEmpresaAttribute>() is not null)
             .Select(e => e.Metadata.GetMetadata<ControllerActionDescriptor>()!)
             .Select(a => $"{a.ControllerName}/{a.ActionName}").Order().ToArray();
-        Assert.Equal(new[] { "Acesso/Logout", "Empresa/Busca", "Empresa/Contexto", "Empresa/Get", "Empresa/Post", "Empresa/Solicitar", "Sessao/SesssaoInfo" }, excecoes);
+        Assert.Equal(new[] { "Acesso/Logout", "Empresa/Associacao", "Empresa/Busca", "Empresa/Contexto", "Empresa/Get", "Empresa/Post", "Empresa/Solicitar", "Sessao/SesssaoInfo" }, excecoes);
     }
 
     private static async Task AssertBloqueio(HttpResponseMessage response)

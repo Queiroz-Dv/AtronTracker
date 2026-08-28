@@ -15,6 +15,7 @@ namespace Domain.Interfaces
         Task<IReadOnlyList<Empresa>> BuscarAtivasAsync(string? termo);
         Task<Empresa?> ObterAtivaAsync(int id);
         Task<SolicitacaoEmpresa?> ObterSolicitacaoPendenteAsync(int usuarioId, string usuarioCodigo, int empresaId);
+        Task<SolicitacaoEmpresa?> ObterUltimaSolicitacaoAsync(int usuarioId, string usuarioCodigo);
         Task CriarSolicitacaoAsync(SolicitacaoEmpresa solicitacao);
         Task<UsuarioEmpresa?> ObterResponsavelAsync(int empresaId);
         Task<IReadOnlyList<SolicitacaoEmpresa>> ObterSolicitacoesPendentesAsync(int empresaId);

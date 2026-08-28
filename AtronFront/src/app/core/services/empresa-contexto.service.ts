@@ -58,6 +58,10 @@ export class EmpresaContextoService {
     return this.http.get<SolicitacaoEmpresa[]>(`${RotasApi.empresaEndpoint}/Solicitacoes`);
   }
 
+  obterAssociacao(): Observable<SolicitacaoEmpresa | null> {
+    return this.http.get<SolicitacaoEmpresa | null>(`${RotasApi.empresaEndpoint}/Solicitacoes/Associacao`);
+  }
+
   aprovarSolicitacao(id: number): Observable<unknown> {
     return this.http.post(`${RotasApi.empresaEndpoint}/Solicitacoes/${id}/Aprovar`, {});
   }
