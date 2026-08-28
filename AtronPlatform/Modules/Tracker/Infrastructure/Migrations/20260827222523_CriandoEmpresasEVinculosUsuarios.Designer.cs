@@ -3,17 +3,19 @@ using System;
 using AtronTracker.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AtronTracker.Infrastructure.Migrations.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260827222523_CriandoEmpresasEVinculosUsuarios")]
+    partial class CriandoEmpresasEVinculosUsuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,6 +143,11 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .HasMaxLength(254)
                         .HasColumnType("character varying(254)");
 
+                    b.Property<string>("Endereco")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<string>("NomeFantasia")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -238,12 +245,6 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                             Id = 13,
                             Codigo = "PRD",
                             Descricao = "Produtos"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Codigo = "EMP",
-                            Descricao = "Empresa"
                         });
                 });
 
@@ -975,31 +976,6 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("GestorDepartamento");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Empresa", b =>
-                {
-                    b.OwnsOne("Domain.ValueObjects.Endereco", "Endereco", b1 =>
-                        {
-                            b1.Property<int>("EmpresaId")
-                                .HasColumnType("integer");
-
-                            b1.Property<string>("Logradouro")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("character varying(200)")
-                                .HasColumnName("Endereco");
-
-                            b1.HasKey("EmpresaId");
-
-                            b1.ToTable("Empresas");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EmpresaId");
-                        });
-
-                    b.Navigation("Endereco")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.PerfilDeAcesso", b =>

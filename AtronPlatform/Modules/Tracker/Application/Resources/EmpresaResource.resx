@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Erro_RegistroNulo" xml:space="preserve">
+    <value>Informe os dados da empresa.</value>
+  </data>
+  <data name="Erro_CampoObrigatorio" xml:space="preserve">
+    <value>O campo {0} é obrigatório.</value>
+  </data>
+  <data name="Erro_CampoLongo" xml:space="preserve">
+    <value>O campo {0} deve ter no máximo {1} caracteres.</value>
+  </data>
+  <data name="Erro_EmailInvalido" xml:space="preserve">
+    <value>Informe um e-mail válido para a empresa.</value>
+  </data>
+  <data name="Erro_UsuarioNaoIdentificado" xml:space="preserve">
+    <value>Não foi possível identificar o usuário autenticado.</value>
+  </data>
+  <data name="Erro_ResponsavelInvalido" xml:space="preserve">
+    <value>O responsável deve possuir uma conta ativa com e-mail confirmado.</value>
+  </data>
+  <data name="Erro_CadastroConcluido" xml:space="preserve">
+    <value>O cadastro da empresa já foi concluído ou possui vínculos.</value>
+  </data>
+  <data name="Erro_UsuarioJaVinculado" xml:space="preserve">
+    <value>O usuário já possui vínculo com uma empresa.</value>
+  </data>
+  <data name="Erro_CodigoExistente" xml:space="preserve">
+    <value>Já existe uma empresa com o código informado.</value>
+  </data>
+  <data name="Erro_AcessoIndisponivel" xml:space="preserve">
+    <value>O vínculo ou a empresa não está ativo.</value>
+  </data>
+  <data name="Campo_Codigo" xml:space="preserve">
+    <value>código</value>
+  </data>
+  <data name="Campo_NomeFantasia" xml:space="preserve">
+    <value>nome fantasia</value>
+  </data>
+  <data name="Campo_Endereco" xml:space="preserve">
+    <value>endereço</value>
+  </data>
+  <data name="Campo_Telefone" xml:space="preserve">
+    <value>telefone</value>
+  </data>
+  <data name="Campo_Email" xml:space="preserve">
+    <value>e-mail</value>
+  </data>
+</root>

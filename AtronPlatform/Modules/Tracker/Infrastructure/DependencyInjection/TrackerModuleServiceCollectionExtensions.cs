@@ -12,6 +12,8 @@ using Application.Records.Usuario;
 using Application.Services.AuthServices;
 using Application.Services.Contexts;
 using Application.Services.EntitiesServices;
+using Application.Services.EntitiesServices.Empresas;
+using Application.UseCases.EmpresaCases;
 using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
@@ -85,6 +87,7 @@ namespace Infrastructure.DependencyInjection
             ConfigureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
             ConfigureUsuarioServices(services);
+            ConfigureEmpresaServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
             ConfigureDefaultUserRoleServices(services);
@@ -98,6 +101,18 @@ namespace Infrastructure.DependencyInjection
                 .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
                 .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
             return services;
+        }
+
+        private static void ConfigureEmpresaServices(IServiceCollection services)
+        {
+            services.AddScoped<IEmpresaRepository, EmpresaRepository>();
+            services.AddScoped<EmpresaMapping>();
+            services.AddScoped<EmpresaCadastroValidador>();
+            services.AddScoped<IValidador<EmpresaCadastroRequest>>(provider =>
+                provider.GetRequiredService<EmpresaCadastroValidador>());
+            services.AddScoped<UsuarioEmpresaAtualService>();
+            services.AddScoped<CadastrarEmpresaCase>();
+            services.AddScoped<ObterEmpresaCase>();
         }
 
         private static void AddTrackerSharedAdapters(this IServiceCollection services)

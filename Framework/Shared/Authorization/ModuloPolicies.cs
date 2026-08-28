@@ -13,5 +13,6 @@ namespace Shared.Authorization
         public const string PlanejamentoCustos = "Modulo:PLC";
         public const string Categoria = "Modulo:CAT";
         public const string Produto = "Modulo:PRD";       
+        public const string Empresa = "Modulo:EMP";
     }
 }

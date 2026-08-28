@@ -3,17 +3,19 @@ using System;
 using AtronTracker.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AtronTracker.Infrastructure.Migrations.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260827230436_ModelandoEnderecoEmpresa")]
+    partial class ModelandoEnderecoEmpresa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,12 +240,6 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                             Id = 13,
                             Codigo = "PRD",
                             Descricao = "Produtos"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Codigo = "EMP",
-                            Descricao = "Empresa"
                         });
                 });
 
