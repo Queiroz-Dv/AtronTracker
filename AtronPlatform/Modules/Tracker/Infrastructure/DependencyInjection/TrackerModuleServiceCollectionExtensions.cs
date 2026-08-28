@@ -116,6 +116,9 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ObterEmpresaCase>();
             services.AddScoped<BuscarEmpresasCase>();
             services.AddScoped<SolicitarAssociacaoEmpresaCase>();
+            services.AddScoped<EmpresaResponsavelService>();
+            services.AddScoped<ObterSolicitacoesEmpresaCase>();
+            services.AddScoped<DecidirSolicitacaoEmpresaCase>();
         }
 
         private static void AddTrackerSharedAdapters(this IServiceCollection services)

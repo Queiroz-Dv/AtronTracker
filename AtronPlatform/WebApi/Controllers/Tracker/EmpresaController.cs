@@ -17,7 +17,9 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         ObterEmpresaCase obterEmpresa,
         IEmpresaAtualService empresaAtual,
         BuscarEmpresasCase buscarEmpresas,
-        SolicitarAssociacaoEmpresaCase solicitarAssociacao) : ControllerBase
+        SolicitarAssociacaoEmpresaCase solicitarAssociacao,
+        ObterSolicitacoesEmpresaCase obterSolicitacoes,
+        DecidirSolicitacaoEmpresaCase decidirSolicitacao) : ControllerBase
     {
         [HttpPost]
         [PermitirSemEmpresa]
@@ -60,6 +62,27 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         {
             var resultado = await solicitarAssociacao.ExecutarAsync(request);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Accepted(resultado.Dados);
+        }
+
+        [HttpGet("Solicitacoes")]
+        public async Task<ActionResult<IReadOnlyList<SolicitacaoEmpresaResponse>>> Solicitacoes()
+        {
+            var resultado = await obterSolicitacoes.ExecutarAsync();
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpPost("Solicitacoes/{id:int}/Aprovar")]
+        public async Task<ActionResult<SolicitacaoEmpresaResponse>> Aprovar(int id)
+        {
+            var resultado = await decidirSolicitacao.AprovarAsync(id);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
+        }
+
+        [HttpPost("Solicitacoes/{id:int}/Recusar")]
+        public async Task<ActionResult<SolicitacaoEmpresaResponse>> Recusar(int id)
+        {
+            var resultado = await decidirSolicitacao.RecusarAsync(id);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
     }
 }

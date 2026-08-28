@@ -2,6 +2,8 @@ using Application.DTO.Request;
 using Application.Services.EntitiesServices.Empresas;
 using Application.UseCases.EmpresaCases;
 using Application.Validador;
+using AtronNotificacoes.Contracts.DTO.Response;
+using AtronNotificacoes.Contracts.Interfaces;
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Extensions;
@@ -121,7 +123,14 @@ public sealed class AssociacaoEmpresaTests
         var repository = new EmpresaRepository(contexto);
         var accessor = new Mock<IUserAccessor>();
         accessor.Setup(item => item.ObterCodigoUsuarioLogado()).Returns(codigo);
-        return new SolicitarAssociacaoEmpresaCase(new UsuarioEmpresaAtualService(accessor.Object, repository, new EmpresaCadastroValidador()), repository);
+        var publisher = new Mock<INotificacoesInternasPublisher>();
+        publisher.Setup(item => item.PublicarAsync(
+                It.IsAny<AtronNotificacoes.Contracts.DTO.Request.PublicarNotificacaoInternaRequest>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ResultadoPublicacaoNotificacaoInterna.Falha("notificação simulada"));
+        return new SolicitarAssociacaoEmpresaCase(
+            new UsuarioEmpresaAtualService(accessor.Object, repository, new EmpresaCadastroValidador()),
+            repository, publisher.Object);
     }
 
     private static AtronDbContext CriarContexto() => new(new DbContextOptionsBuilder<AtronDbContext>()

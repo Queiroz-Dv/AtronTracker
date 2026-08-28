@@ -3,6 +3,8 @@ using Application.DTO.Request;
 using Application.DTO.Response;
 using Application.Resources;
 using Application.Services.EntitiesServices.Empresas;
+using AtronNotificacoes.Contracts.DTO.Request;
+using AtronNotificacoes.Contracts.Interfaces;
 using Domain.Extensions;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
@@ -11,7 +13,8 @@ namespace Application.UseCases.EmpresaCases;
 
 public sealed class SolicitarAssociacaoEmpresaCase(
     UsuarioEmpresaAtualService usuarioAtual,
-    IEmpresaRepository repository)
+    IEmpresaRepository repository,
+    INotificacoesInternasPublisher notificacoes)
 {
     public async Task<Resultado<SolicitacaoEmpresaResponse>> ExecutarAsync(
         SolicitarAssociacaoEmpresaRequest request)
@@ -31,12 +34,26 @@ public sealed class SolicitarAssociacaoEmpresaCase(
         if (empresa is null)
             return Resultado<SolicitacaoEmpresaResponse>.Falha(EmpresaResource.Erro_EmpresaNaoEncontrada);
 
+        var responsavel = await repository.ObterResponsavelAsync(empresa.Id);
+        if (responsavel is null)
+            return Resultado<SolicitacaoEmpresaResponse>.Falha(EmpresaResource.Erro_EmpresaSemResponsavel);
+
         if (await repository.ObterSolicitacaoPendenteAsync(usuario.Id, usuario.Codigo, empresa.Id) is not null)
             return Resultado<SolicitacaoEmpresaResponse>.Falha(EmpresaResource.Erro_SolicitacaoDuplicada);
 
         var solicitacao = empresa.CriarSolicitacao(usuario);
 
         await repository.CriarSolicitacaoAsync(solicitacao);
+        await notificacoes.PublicarAsync(new PublicarNotificacaoInternaRequest
+        {
+            DestinatarioCodigo = responsavel.UsuarioCodigo,
+            ModuloOrigem = "Tracker",
+            TipoEvento = "Empresa.AssociacaoSolicitada",
+            Titulo = "Nova solicitação de associação",
+            Mensagem = $"O usuário {usuario.Codigo} solicitou associação à empresa {empresa.NomeFantasia}.",
+            ReferenciaExterna = solicitacao.Id.ToString(),
+            DataCriacao = solicitacao.CriadaEm
+        });
         return Resultado<SolicitacaoEmpresaResponse>.Sucesso(new SolicitacaoEmpresaResponse(
             solicitacao.Id, empresa.Id, empresa.Codigo, empresa.NomeFantasia,
             solicitacao.Status, solicitacao.CriadaEm));

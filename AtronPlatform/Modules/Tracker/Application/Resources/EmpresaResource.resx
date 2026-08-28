@@ -54,6 +54,33 @@
   <data name="Erro_SolicitacaoDuplicada" xml:space="preserve">
     <value>Já existe uma solicitação pendente para esta empresa.</value>
   </data>
+  <data name="Erro_ResponsavelNecessario" xml:space="preserve">
+    <value>Apenas o responsável ativo da empresa pode analisar solicitações.</value>
+  </data>
+  <data name="Erro_SolicitacaoNaoEncontrada" xml:space="preserve">
+    <value>A solicitação não foi encontrada ou já foi analisada.</value>
+  </data>
+  <data name="Erro_EmpresaSemResponsavel" xml:space="preserve">
+    <value>A empresa não possui um responsável ativo para analisar solicitações.</value>
+  </data>
+  <data name="Evento_AssociacaoAprovada" xml:space="preserve">
+    <value>Empresa.AssociacaoAprovada</value>
+  </data>
+  <data name="Evento_AssociacaoRecusada" xml:space="preserve">
+    <value>Empresa.AssociacaoRecusada</value>
+  </data>
+  <data name="Titulo_AssociacaoAprovada" xml:space="preserve">
+    <value>Associação aprovada</value>
+  </data>
+  <data name="Titulo_AssociacaoRecusada" xml:space="preserve">
+    <value>Associação recusada</value>
+  </data>
+  <data name="Mensagem_AssociacaoAprovada" xml:space="preserve">
+    <value>Sua associação à empresa {0} foi aprovada.</value>
+  </data>
+  <data name="Mensagem_AssociacaoRecusada" xml:space="preserve">
+    <value>Sua solicitação de associação à empresa {0} foi recusada.</value>
+  </data>
   <data name="Campo_Codigo" xml:space="preserve">
     <value>código</value>
   </data>

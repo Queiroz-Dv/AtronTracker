@@ -215,5 +215,41 @@ namespace Application.Resources {
         public static string Erro_SolicitacaoDuplicada {
             get { return ResourceManager.GetString("Erro_SolicitacaoDuplicada", resourceCulture); }
         }
+
+        public static string Erro_ResponsavelNecessario {
+            get { return ResourceManager.GetString("Erro_ResponsavelNecessario", resourceCulture); }
+        }
+
+        public static string Erro_SolicitacaoNaoEncontrada {
+            get { return ResourceManager.GetString("Erro_SolicitacaoNaoEncontrada", resourceCulture); }
+        }
+
+        public static string Erro_EmpresaSemResponsavel {
+            get { return ResourceManager.GetString("Erro_EmpresaSemResponsavel", resourceCulture); }
+        }
+
+        public static string Evento_AssociacaoAprovada {
+            get { return ResourceManager.GetString("Evento_AssociacaoAprovada", resourceCulture); }
+        }
+
+        public static string Evento_AssociacaoRecusada {
+            get { return ResourceManager.GetString("Evento_AssociacaoRecusada", resourceCulture); }
+        }
+
+        public static string Titulo_AssociacaoAprovada {
+            get { return ResourceManager.GetString("Titulo_AssociacaoAprovada", resourceCulture); }
+        }
+
+        public static string Titulo_AssociacaoRecusada {
+            get { return ResourceManager.GetString("Titulo_AssociacaoRecusada", resourceCulture); }
+        }
+
+        public static string Mensagem_AssociacaoAprovada {
+            get { return ResourceManager.GetString("Mensagem_AssociacaoAprovada", resourceCulture); }
+        }
+
+        public static string Mensagem_AssociacaoRecusada {
+            get { return ResourceManager.GetString("Mensagem_AssociacaoRecusada", resourceCulture); }
+        }
     }
 }

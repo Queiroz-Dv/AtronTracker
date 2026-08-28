@@ -16,6 +16,11 @@ namespace Domain.Interfaces
         Task<Empresa?> ObterAtivaAsync(int id);
         Task<SolicitacaoEmpresa?> ObterSolicitacaoPendenteAsync(int usuarioId, string usuarioCodigo, int empresaId);
         Task CriarSolicitacaoAsync(SolicitacaoEmpresa solicitacao);
+        Task<UsuarioEmpresa?> ObterResponsavelAsync(int empresaId);
+        Task<IReadOnlyList<SolicitacaoEmpresa>> ObterSolicitacoesPendentesAsync(int empresaId);
+        Task<SolicitacaoEmpresa?> ObterSolicitacaoPendenteAsync(int solicitacaoId, int empresaId);
+        Task AprovarSolicitacaoAsync(SolicitacaoEmpresa solicitacao, UsuarioEmpresa vinculo);
+        Task AtualizarSolicitacaoAsync(SolicitacaoEmpresa solicitacao);
     }
 }
 
