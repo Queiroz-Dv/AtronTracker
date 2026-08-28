@@ -1,5 +1,4 @@
 using Application.Interfaces.Services;
-using Shared.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Moq;
 using Shared.Application.DTOS.Auth;
@@ -17,11 +16,13 @@ public class ModuloHandlerTests
 {
     private const string CodigoUsuario = "USR-TESTE";
 
-    [Fact]
-    public async Task HandleAsync_DeveAutorizarUsuarioComModuloCategoria()
+    [Theory]
+    [InlineData("CAT")]
+    [InlineData("EMP")]
+    public async Task HandleAsync_DeveAutorizarUsuarioComModulo(string codigo)
     {
-        var handler = CriarHandlerComModulos("CAT");
-        var requirement = new ModuloRequirement("CAT", ModuloPolicies.AcaoAcessar);
+        var handler = CriarHandlerComModulos(codigo);
+        var requirement = new ModuloRequirement(codigo);
         var context = CriarContexto(requirement);
 
         await handler.HandleAsync(context);
@@ -29,11 +30,13 @@ public class ModuloHandlerTests
         Assert.True(context.HasSucceeded);
     }
 
-    [Fact]
-    public async Task HandleAsync_NaoDeveAutorizarUsuarioSemModuloCategoria()
+    [Theory]
+    [InlineData("CAT")]
+    [InlineData("EMP")]
+    public async Task HandleAsync_NaoDeveAutorizarUsuarioSemModulo(string codigo)
     {
         var handler = CriarHandlerComModulos("TAR");
-        var requirement = new ModuloRequirement("CAT", ModuloPolicies.AcaoAcessar);
+        var requirement = new ModuloRequirement(codigo);
         var context = CriarContexto(requirement);
 
         await handler.HandleAsync(context);
@@ -45,7 +48,7 @@ public class ModuloHandlerTests
     public async Task HandleAsync_NaoDeveAutorizarUsuarioSemPerfil()
     {
         var handler = CriarHandler(new DadosComplementaresDoUsuarioDTO());
-        var requirement = new ModuloRequirement("USR", ModuloPolicies.AcaoAcessar);
+        var requirement = new ModuloRequirement("USR");
         var context = CriarContexto(requirement);
 
         await handler.HandleAsync(context);

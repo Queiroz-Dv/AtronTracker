@@ -66,6 +66,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <returns>200 OK com mensagens de confirmação ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("Desconectar")]
         [Authorize]
+        [PermitirSemEmpresa]
         public async Task<ActionResult<bool>> Logout()
         {
             var usuarioCodigo = User.FindFirst(ClaimCode.CODIGO_USUARIO)?.Value;

@@ -44,7 +44,7 @@ Uma tarefa poderá nascer com destino inicial para `Usuário`, `Departamento/Car
 - uma tarefa estrutural pode apontar somente para departamento ou para departamento e cargo;
 - cargo sem departamento não é permitido;
 - uma tarefa sem usuário responsável permanece em uma fila estrutural;
-- o identificador funcional será numérico, sequencial e global, separado do ID técnico.
+- `Tarefa.Id` é a única identidade numérica da tarefa; notificações, referências e URLs usam esse ID, sem a propriedade paralela `Identificador`.
 
 ### Obtenção e aprovação
 

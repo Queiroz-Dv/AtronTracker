@@ -53,6 +53,7 @@ namespace Application.UseCases.TarefaCases
             if (movimentacao.TeveFalha)
                 return Resultado.Falha(movimentacao.Messages);
 
+            tarefaDTO.Id = tarefa.Id;
             var resultado = Resultado.Sucesso().AdicionarMensagem(TarefaResource.Mensagem_TarefaCriada);
 
             await _notificacaoInternaCase.ExecutarAsync(tarefaDTO.CriarNotificacaoDeAtribuicao());
