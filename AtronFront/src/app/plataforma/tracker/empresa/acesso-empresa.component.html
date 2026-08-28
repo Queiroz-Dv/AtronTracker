@@ -13,8 +13,31 @@
           <p><strong>{{ contexto.nomeFantasia }}</strong> · {{ contexto.codigo }}</p>
           <p>Entre em contato com o responsável da empresa para verificar seu vínculo.</p>
         } @else {
-          <p>As telas de cadastro de empresa e solicitação de associação serão disponibilizadas nas próximas etapas desta atualização.</p>
+          <h2>Solicitar associação</h2>
+          <mat-form-field appearance="outline">
+            <mat-label>Buscar por código ou nome</mat-label>
+            <input matInput [(ngModel)]="termoBusca" (keyup.enter)="buscar()">
+          </mat-form-field>
+          <button mat-stroked-button type="button" (click)="buscar()">Buscar empresas</button>
+          @if (empresas.length > 0) {
+            <div class="empresa-lista">
+              @for (empresa of empresas; track empresa.id) {
+                <button type="button" class="empresa-item" [class.selecionada]="empresaSelecionada?.id === empresa.id" (click)="selecionar(empresa)">
+                  <strong>{{ empresa.nomeFantasia }}</strong><span>{{ empresa.codigo }}</span>
+                </button>
+              }
+            </div>
+            <button mat-flat-button type="button" (click)="solicitarAssociacao()" [disabled]="!empresaSelecionada">Solicitar vínculo</button>
+          }
+          <h2>Ou cadastre uma nova empresa</h2>
+          <mat-form-field appearance="outline"><mat-label>Código</mat-label><input matInput [(ngModel)]="cadastro.codigo"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Nome fantasia</mat-label><input matInput [(ngModel)]="cadastro.nomeFantasia"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput type="email" [(ngModel)]="cadastro.email"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Logradouro</mat-label><input matInput [(ngModel)]="cadastro.endereco.logradouro"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Telefone</mat-label><input matInput [(ngModel)]="cadastro.numero"></mat-form-field>
+          <button mat-flat-button type="button" (click)="cadastrarEmpresa()">Cadastrar empresa</button>
         }
+        @if (mensagem) { <p class="mensagem" aria-live="polite">{{ mensagem }}</p> }
       }
     </div>
     <div class="empresa-actions">

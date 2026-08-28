@@ -29,6 +29,13 @@
 
 h1 { font-size: 1.7rem; line-height: 1.25; }
 p { color: var(--atron-text-muted); line-height: 1.6; }
+h2 { margin-top: 28px; font-size: 1.1rem; }
+mat-form-field { display: block; margin-top: 12px; }
+.empresa-lista { display: grid; gap: 8px; margin: 16px 0; }
+.empresa-item { display: flex; justify-content: space-between; gap: 16px; padding: 12px; text-align: left; border: 1px solid var(--atron-border); border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }
+.empresa-item.selecionada { border-color: var(--atron-primary); background: color-mix(in srgb, var(--atron-primary) 8%, transparent); }
+.empresa-item span { color: var(--atron-text-muted); }
+.mensagem { color: var(--atron-primary); }
 .empresa-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
 @media (max-width: 480px) {
