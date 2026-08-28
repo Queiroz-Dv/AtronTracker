@@ -123,6 +123,46 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.ToTable("Departamentos");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Empresa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)");
+
+                    b.Property<string>("NomeFantasia")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("Status")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique();
+
+                    b.ToTable("Empresas");
+                });
+
             modelBuilder.Entity("Domain.Entities.Modulo", b =>
                 {
                     b.Property<int>("Id")
@@ -198,6 +238,12 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                             Id = 13,
                             Codigo = "PRD",
                             Descricao = "Produtos"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Codigo = "EMP",
+                            Descricao = "Empresa"
                         });
                 });
 
@@ -363,6 +409,41 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .IsUnique();
 
                     b.ToTable("PlanejamentosCustoCargo");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SolicitacaoEmpresa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CriadaEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("EmpresaId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UsuarioCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId", "UsuarioCodigo");
+
+                    b.HasIndex("EmpresaId", "UsuarioId", "UsuarioCodigo", "Status")
+                        .IsUnique();
+
+                    b.ToTable("SolicitacoesEmpresa");
                 });
 
             modelBuilder.Entity("Domain.Entities.SolicitacaoObtencaoTarefa", b =>
@@ -660,6 +741,41 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.ToTable("UsuarioCargoDepartamento", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.UsuarioEmpresa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EmpresaId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Papel")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UsuarioCodigo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmpresaId");
+
+                    b.HasIndex("UsuarioId", "UsuarioCodigo")
+                        .IsUnique();
+
+                    b.ToTable("UsuariosEmpresas");
+                });
+
             modelBuilder.Entity("Shared.Domain.Entities.Identity.ApplicationRole", b =>
                 {
                     b.Property<int>("Id")
@@ -896,6 +1012,31 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Navigation("GestorDepartamento");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Empresa", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.Endereco", "Endereco", b1 =>
+                        {
+                            b1.Property<int>("EmpresaId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Logradouro")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("Endereco");
+
+                            b1.HasKey("EmpresaId");
+
+                            b1.ToTable("Empresas");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EmpresaId");
+                        });
+
+                    b.Navigation("Endereco")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Entities.PerfilDeAcesso", b =>
                 {
                     b.HasOne("Domain.Entities.Usuario", "Usuario")
@@ -971,6 +1112,25 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Navigation("Cargo");
 
                     b.Navigation("PlanejamentoCusto");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SolicitacaoEmpresa", b =>
+                {
+                    b.HasOne("Domain.Entities.Empresa", "Empresa")
+                        .WithMany()
+                        .HasForeignKey("EmpresaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Empresa");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Domain.Entities.SolicitacaoObtencaoTarefa", b =>
@@ -1080,6 +1240,25 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Domain.Entities.UsuarioEmpresa", b =>
+                {
+                    b.HasOne("Domain.Entities.Empresa", "Empresa")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("EmpresaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Empresa");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Shared.Domain.Entities.Identity.ApplicationRoleClaim", b =>
                 {
                     b.HasOne("Shared.Domain.Entities.Identity.ApplicationRole", null)
@@ -1145,6 +1324,11 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Navigation("PlanejamentosCusto");
 
                     b.Navigation("UsuarioCargoDepartamentos");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Empresa", b =>
+                {
+                    b.Navigation("Usuarios");
                 });
 
             modelBuilder.Entity("Domain.Entities.Modulo", b =>

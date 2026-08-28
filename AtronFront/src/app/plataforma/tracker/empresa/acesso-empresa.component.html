@@ -1,0 +1,56 @@
+<main class="empresa-page">
+  <section class="empresa-card" aria-labelledby="empresa-title">
+    <div class="empresa-brand"><mat-icon aria-hidden="true">hub</mat-icon> Atron Platform</div>
+    <h1 id="empresa-title">Associação à empresa</h1>
+    <div aria-live="polite" [attr.aria-busy]="carregando">
+      @if (carregando) {
+        <p>Consultando seu acesso...</p>
+      } @else if (erro) {
+        <p role="alert">{{ erro }}</p>
+      } @else if (contexto && !contexto.acessoPermitido) {
+        <p>{{ contexto.motivoBloqueio }}</p>
+        @if (contexto.empresaId !== null) {
+          <p><strong>{{ contexto.nomeFantasia }}</strong> · {{ contexto.codigo }}</p>
+          <p>Entre em contato com o responsável da empresa para verificar seu vínculo.</p>
+        } @else {
+          @if (associacao) {
+            <p class="mensagem">Solicitação para <strong>{{ associacao.nomeFantasia }}</strong> ({{ associacao.codigoEmpresa }})</p>
+            <p>Status: {{ associacao.status === 0 ? 'Pendente' : associacao.status === 2 ? 'Recusada' : 'Aprovada' }}.</p>
+          }
+          <h2>Solicitar associação</h2>
+          <mat-form-field appearance="outline">
+            <mat-label>Buscar por código ou nome</mat-label>
+            <input matInput [(ngModel)]="termoBusca" (keyup.enter)="buscar()">
+          </mat-form-field>
+          <button mat-stroked-button type="button" (click)="buscar()">Buscar empresas</button>
+          @if (empresas.length > 0) {
+            <div class="empresa-lista">
+              @for (empresa of empresas; track empresa.id) {
+                <button type="button" class="empresa-item" [class.selecionada]="empresaSelecionada?.id === empresa.id" (click)="selecionar(empresa)">
+                  <strong>{{ empresa.nomeFantasia }}</strong><span>{{ empresa.codigo }}</span>
+                </button>
+              }
+            </div>
+            <button mat-flat-button type="button" (click)="solicitarAssociacao()" [disabled]="!empresaSelecionada">Solicitar vínculo</button>
+          }
+          <h2>Ou cadastre uma nova empresa</h2>
+          <mat-form-field appearance="outline"><mat-label>Código</mat-label><input matInput [(ngModel)]="cadastro.codigo"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Nome fantasia</mat-label><input matInput [(ngModel)]="cadastro.nomeFantasia"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput type="email" [(ngModel)]="cadastro.email"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Logradouro</mat-label><input matInput [(ngModel)]="cadastro.endereco.logradouro"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Telefone</mat-label><input matInput [(ngModel)]="cadastro.numero"></mat-form-field>
+          <button mat-flat-button type="button" (click)="cadastrarEmpresa()">Cadastrar empresa</button>
+        }
+        @if (mensagem) { <p class="mensagem" aria-live="polite">{{ mensagem }}</p> }
+      }
+    </div>
+    <div class="empresa-actions">
+      <button mat-flat-button type="button" (click)="verificarAcesso()" [disabled]="carregando || saindo">
+        Verificar acesso
+      </button>
+      <button mat-stroked-button type="button" (click)="sair()" [disabled]="saindo">
+        {{ saindo ? 'Saindo...' : 'Sair' }}
+      </button>
+    </div>
+  </section>
+</main>

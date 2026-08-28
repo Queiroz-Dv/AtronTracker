@@ -18,6 +18,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Resources\EmpresaResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>EmpresaResource.resx</DependentUpon>
+		</Compile>
 		<Compile Update="Resources\ModuloResource.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
@@ -65,6 +70,10 @@
 		<EmbeddedResource Update="Resources\ModuloResource.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>ModuloResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\EmpresaResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>EmpresaResource.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Resources\PerfilDeAcessoResource.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>

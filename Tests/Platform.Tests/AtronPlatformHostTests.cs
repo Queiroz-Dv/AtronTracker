@@ -45,6 +45,7 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
         "Acesso",
         "Cargo",
         "Departamento",
+        "Empresa",
         "Modulo",
         "PerfilDeAcesso",
         "PlanejamentoCusto",
@@ -346,7 +347,7 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
             .Select(contrato => contrato.Controller)
             .ToHashSet(StringComparer.Ordinal);
 
-        Assert.Equal(66, contratos.Count);
+        Assert.Equal(75, contratos.Count);
         Assert.True(ControllersTracker.SetEquals(controllers));
     }
 
