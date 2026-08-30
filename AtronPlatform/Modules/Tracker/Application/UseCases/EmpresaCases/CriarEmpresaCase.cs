@@ -20,11 +20,11 @@ namespace Application.UseCases.EmpresaCases
             if (erros.Any())
                 return Resultado<EmpresaDTO>.Falhas(erros);
 
-            var codigo = EmpresaMapping.NormalizarCodigo(empresaDTO.Codigo);
-            if (await repository.CodigoExisteAsync(codigo))
+            
+            if (await repository.CodigoExisteAsync(empresaDTO.Codigo))
                 return Resultado<EmpresaDTO>.Falha(string.Format(
                     NotificacoesPadronizadas.Erro_RegistroComDescricaoExistente,
-                    codigo));
+                    empresaDTO.Codigo));
 
             var empresa = mapping.MapToEntity(empresaDTO);
             if (!await repository.CriarAsync(empresa))
@@ -32,8 +32,7 @@ namespace Application.UseCases.EmpresaCases
 
             return Resultado<EmpresaDTO>
                 .Sucesso(mapping.MapToDto(empresa))
-                .AdicionarMensagem(string.Format(
-                    NotificacoesPadronizadas.ResourceManager.GetString("Mensagem_RegistroSalvo")!,
+                .AdicionarMensagem(string.Format(NotificacoesPadronizadas.Mensagem_EntidadeSalva,
                     empresa.Codigo));
         }
     }

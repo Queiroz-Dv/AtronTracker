@@ -1,11 +1,11 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Application.DTO;
 using Application.Mapping;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
+using System.Threading.Tasks;
 
 namespace Application.UseCases.EmpresaCases
 {
@@ -16,19 +16,18 @@ namespace Application.UseCases.EmpresaCases
     {
         public async Task<Resultado<EmpresaDTO>> ExecutarAsync(string codigo, EmpresaDTO empresaDTO)
         {
-            if (string.IsNullOrWhiteSpace(codigo))
+            if (codigo.IsNullOrEmpty())
                 return Resultado<EmpresaDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var erros = validador.Validar(empresaDTO);
-            if (erros.Any())
+            if (erros.TemErros())
                 return Resultado<EmpresaDTO>.Falhas(erros);
 
-            var codigoNormalizado = EmpresaMapping.NormalizarCodigo(codigo);
-            var empresa = await repository.ObterPorCodigoAsync(codigoNormalizado, rastrear: true);
+            var empresa = await repository.ObterPorCodigoAsync(codigo, rastrear: true);
             if (empresa is null)
                 return Resultado<EmpresaDTO>.Falha(string.Format(
                     NotificacoesPadronizadas.Erro_RegistroComDescricaoNaoEncontrado,
-                    codigoNormalizado));
+                    codigo));
 
             mapping.MapToUpdate(empresaDTO, empresa);
             if (!await repository.AtualizarAsync(empresa))

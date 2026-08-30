@@ -22,13 +22,12 @@ namespace Application.UseCases.EmpresaCases
         {
             if (string.IsNullOrWhiteSpace(codigo))
                 return Resultado<EmpresaDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
-
-            var codigoNormalizado = EmpresaMapping.NormalizarCodigo(codigo);
-            var empresa = await repository.ObterPorCodigoAsync(codigoNormalizado);
+            
+            var empresa = await repository.ObterPorCodigoAsync(codigo);
             return empresa is null
                 ? Resultado<EmpresaDTO>.Falha(string.Format(
                     NotificacoesPadronizadas.Erro_RegistroComDescricaoNaoEncontrado,
-                    codigoNormalizado))
+                    codigo))
                 : Resultado<EmpresaDTO>.Sucesso(mapping.MapToDto(empresa));
         }
     }

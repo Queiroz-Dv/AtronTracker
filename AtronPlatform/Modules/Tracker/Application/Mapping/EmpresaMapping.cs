@@ -21,7 +21,7 @@ namespace Application.Mapping
         public override Empresa MapToEntity(EmpresaDTO dto)
             => new()
             {
-                Codigo = NormalizarCodigo(dto.Codigo),
+                Codigo = dto.Codigo,
                 NomeFantasia = dto.NomeFantasia.Trim(),
                 Endereco = dto.Endereco.Trim(),
                 Numero = dto.Numero.Trim(),
@@ -37,8 +37,5 @@ namespace Application.Mapping
             entity.Email = dto.Email.Trim().ToLowerInvariant();
             entity.Status = dto.Status;
         }
-
-        public static string NormalizarCodigo(string codigo)
-            => codigo.Trim().ToUpperInvariant();
     }
 }

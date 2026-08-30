@@ -1,8 +1,7 @@
-using System.Threading.Tasks;
-using Application.Mapping;
 using Domain.Interfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
+using System.Threading.Tasks;
 
 namespace Application.UseCases.EmpresaCases
 {
@@ -13,12 +12,11 @@ namespace Application.UseCases.EmpresaCases
             if (string.IsNullOrWhiteSpace(codigo))
                 return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            var codigoNormalizado = EmpresaMapping.NormalizarCodigo(codigo);
-            var empresa = await repository.ObterPorCodigoAsync(codigoNormalizado, rastrear: true);
+            var empresa = await repository.ObterPorCodigoAsync(codigo, rastrear: true);
             if (empresa is null)
                 return Resultado.Falha(string.Format(
                     NotificacoesPadronizadas.Erro_RegistroComDescricaoNaoEncontrado,
-                    codigoNormalizado));
+                    codigo));
 
             if (!await repository.RemoverAsync(empresa))
                 return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
@@ -27,7 +25,7 @@ namespace Application.UseCases.EmpresaCases
                 .Sucesso()
                 .AdicionarMensagem(string.Format(
                     NotificacoesPadronizadas.Mensagem_RegistroRemovido,
-                    codigoNormalizado));
+                    codigo));
         }
     }
 }
