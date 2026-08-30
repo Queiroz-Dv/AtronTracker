@@ -19,6 +19,7 @@ using Application.Services.EntitiesServices.Tarefas.Obtencao;
 using Application.Services.Identity;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
+using Application.UseCases.EmpresaCases;
 using Application.UseCases.PerfilDeAcessoCases;
 using Application.UseCases.PlanejamentoCustoCases;
 using Application.UseCases.TarefaCases;
@@ -82,6 +83,7 @@ namespace Infrastructure.DependencyInjection
             services.AddTrackerAuthorization();
             ConfigureModuloServices(services);
             ConfigureDepartamentoServices(services);
+            ConfigureEmpresaServices(services);
             ConfigureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
             ConfigureUsuarioServices(services);
@@ -263,6 +265,16 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ObterDepartamentoCase>();
             services.AddScoped<VincularGestorDepartamentoCase>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
+        }
+
+        private static void ConfigureEmpresaServices(IServiceCollection services)
+        {
+            services.AddScoped<IEmpresaRepository, EmpresaRepository>();
+            services.AddScoped<CriarEmpresaCase>();
+            services.AddScoped<ObterEmpresaCase>();
+            services.AddScoped<AtualizarEmpresaCase>();
+            services.AddScoped<ExcluirEmpresaCase>();
+            services.AddScoped<IEmpresaService, EmpresaService>();
         }
 
         private static void ConfigureModuloServices(IServiceCollection services)

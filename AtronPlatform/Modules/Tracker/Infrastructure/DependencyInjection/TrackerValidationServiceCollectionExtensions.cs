@@ -16,6 +16,7 @@ namespace Infrastructure.DependencyInjection
         {
             ConfigureLoginMessageValidation(services);            
             ConfigureDepartamentoServices(services);
+            ConfigureEmpresaServices(services);
             ConfgureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
             ConfigurarTarefaServices(services);
@@ -47,6 +48,11 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {            
             services.AddScoped<IValidador<DepartamentoDTO>, DepartamentoValidador>();
+        }
+
+        private static void ConfigureEmpresaServices(IServiceCollection services)
+        {
+            services.AddScoped<IValidador<EmpresaDTO>, EmpresaValidador>();
         }
 
         private static void ConfgureCargoServices(IServiceCollection services)

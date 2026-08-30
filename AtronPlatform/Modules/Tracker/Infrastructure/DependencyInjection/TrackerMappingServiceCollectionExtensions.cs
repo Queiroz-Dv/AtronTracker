@@ -13,6 +13,7 @@ namespace Infrastructure.DependencyInjection
         public static IServiceCollection AddTrackerMappings(this IServiceCollection services)
         {
             services.AddMapper<Departamento, DepartamentoDTO, DepartamentoMapping>();
+            services.AddMapper<Empresa, EmpresaDTO, EmpresaMapping>();
             services.AddMapper<Cargo, CargoDTO, CargoMapping>();
             services.AddMapper<Modulo, ModuloDTO, ModuloMapping>();
             services.AddMapper<PerfilDeAcessoUsuario, UsuarioDTO, UsuarioDoPerfilDeAcessoMapping>();
