@@ -3,26 +3,28 @@ using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Resources;
+using Shared.Authorization;
 using Shared.Domain.ValueObjects;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
-    [Authorize]
+    [Authorize(Policy = ModuloPolicies.Empresa)]
     [ApiController]
     [Route("api/[controller]")]
     public sealed class EmpresaController(IEmpresaService empresaService) : ControllerBase
     {
         [HttpPost]
-        public async Task<ActionResult<EmpresaDTO>> Post([FromBody] EmpresaDTO empresa)
+        public async Task<ActionResult> Post([FromBody] EmpresaDTO empresa)
         {
             var resultado = await empresaService.CriarAsync(empresa);
-            return resultado.TeveFalha
-                ? BadRequest(resultado.Messages)
-                : CreatedAtAction(nameof(Get), new { codigo = resultado.Dados!.Codigo }, resultado.Dados);
+
+            return resultado.TeveFalha ?
+                BadRequest(resultado.Messages) :
+                Ok(resultado.Messages);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<EmpresaDTO>>> Get()
+        public async Task<ActionResult<ICollection<EmpresaDTO>>> Get()
         {
             var resultado = await empresaService.ObterTodosAsync();
             return Ok(resultado.Dados);
@@ -38,17 +40,15 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         }
 
         [HttpPut("{codigo}")]
-        public async Task<ActionResult<EmpresaDTO>> Put(string codigo, [FromBody] EmpresaDTO empresa)
+        public async Task<ActionResult> Put(string codigo, [FromBody] EmpresaDTO empresa)
         {
-            if (!string.Equals(codigo, empresa.Codigo, StringComparison.OrdinalIgnoreCase))
+            if (codigo != empresa.Codigo)
                 return BadRequest(Resultado<object>
                     .Falha(NotificacoesPadronizadas.ErroCodigoRotaDivergente)
                     .Messages);
 
             var resultado = await empresaService.AtualizarAsync(codigo, empresa);
-            return resultado.TeveFalha
-                ? BadRequest(resultado.Messages)
-                : Ok(resultado.Dados);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
         [HttpDelete("{codigo}")]

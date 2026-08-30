@@ -27,7 +27,7 @@ namespace AtronStock.Application.UseCases.ProdutoCases
             if (mensagens.TemErros())
                 return Resultado.Falha(mensagens);
 
-            if (await _repository.ObterPorCodigoAsync(request.Codigo.NormalizarCodigo()) is not null)
+            if (await _repository.ObterPorCodigoAsync(request.Codigo) is not null)
             {
                 return Resultado.Falha(string.Format(
                     ProdutoResource.ErroProdutoExistente,

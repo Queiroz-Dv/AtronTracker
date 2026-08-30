@@ -42,7 +42,7 @@ namespace Application.Extensions
             if (!string.Equals(
                 anterior.UsuarioCodigo,
                 atual.UsuarioCodigo,
-                StringComparison.OrdinalIgnoreCase))
+                StringComparison.Ordinal))
             {
                 detalhes.Add(string.Format(
                     TarefaResource.Historico_DetalheResponsavelAlterado,
@@ -58,11 +58,11 @@ namespace Application.Extensions
                 !string.Equals(
                     anterior.DepartamentoCodigo,
                     atual.DepartamentoCodigo,
-                    StringComparison.OrdinalIgnoreCase) ||
+                    StringComparison.Ordinal) ||
                 !string.Equals(
                     anterior.CargoCodigo,
                     atual.CargoCodigo,
-                    StringComparison.OrdinalIgnoreCase))
+                    StringComparison.Ordinal))
             {
                 detalhes.Add(TarefaResource.Historico_DetalheEscopoAtualizado);
             }

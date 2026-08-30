@@ -25,7 +25,7 @@ namespace Application.UseCases.UsuarioCases
             if (mensagens.Any())
                 return Resultado<UsuarioRequest>.Falhas(mensagens);
 
-            var codigoUsuario = request.Codigo.ToUpper();
+            var codigoUsuario = request.Codigo;
             var usuarioExistente = await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(codigoUsuario);
 
             if (usuarioExistente != null)

@@ -15,7 +15,6 @@ namespace AtronStock.Application.UseCases.ProdutoCases
         {
             var codigos = (codigosInformados ?? [])
                 .Where(codigo => !string.IsNullOrWhiteSpace(codigo))
-                .Select(codigo => codigo.Trim().ToUpperInvariant())
                 .Distinct()
                 .ToArray();
 

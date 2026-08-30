@@ -14,7 +14,7 @@ namespace Application.Mapping
             return new DepartamentoDTO
             {
                 Id = entity.Id,
-                Codigo = entity.Codigo.ToUpper(),
+                Codigo = entity.Codigo,
                 Descricao = entity.Descricao.ToUpper(),
                 GestorDepartamentoCodigo = entity.GestorDepartamentoCodigo,
                 GestorDepartamentoNome = entity.GestorDepartamento.ObterNome()
@@ -26,16 +26,16 @@ namespace Application.Mapping
             return new Departamento
             {
                 Id = dto.Id,
-                Codigo = dto.Codigo.ToUpper(),
+                Codigo = dto.Codigo,
                 Descricao = dto.Descricao.ToUpper(),
-                GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo?.ToUpper()
+                GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo
             };
         }
 
         public void MapToUpdate(DepartamentoDTO dto, Departamento entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao;
-            entityToUpdate.GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo?.ToUpper();
+            entityToUpdate.GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo;
         }        
     }
 }

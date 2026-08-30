@@ -13,7 +13,7 @@ public sealed class ExecutarGeracaoProdutosLoteCaseTests
 {
     [Theory]
     [InlineData("152", "152_2026", "1521", "1522", "1523")]
-    [InlineData("mtg", "MTG_2026", "MTG1", "MTG2", "MTG3")]
+    [InlineData("mtg", "mtg_2026", "mtg1", "mtg2", "mtg3")]
     public async Task ExecutarAsync_DeveGerarSequenciaNumericaOuAlfanumerica(
         string codigoBase,
         string codigoLote,

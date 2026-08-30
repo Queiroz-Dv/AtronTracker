@@ -66,7 +66,7 @@ export class PerfilDeAcessoEditComponent implements OnInit {
   }
 
   get codigoInformado(): boolean {
-    return !!this.form?.get('codigo')?.value?.toString().trim();
+    return !!this.form?.get('codigo')?.value?.toString();
   }
 
   salvar() {
@@ -106,7 +106,7 @@ export class PerfilDeAcessoEditComponent implements OnInit {
 
   private observarCodigoInformado(): void {
     this.form.get('codigo')?.valueChanges.subscribe(codigo => {
-      if (!codigo?.toString().trim()) {
+      if (!codigo?.toString()) {
         this.perfilConsultado = false;
         this.perfilEncontrado = false;
         this.codigoExistente = false;
@@ -119,9 +119,9 @@ export class PerfilDeAcessoEditComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        filter(codigo => !!codigo?.toString().trim())
+        filter(codigo => !!codigo?.toString())
       )
-      .subscribe(codigo => this.consultarPerfilPorCodigo(codigo.toString().trim()));
+      .subscribe(codigo => this.consultarPerfilPorCodigo(codigo.toString()));
   }
 
   private consultarPerfilPorCodigo(codigo: string): void {

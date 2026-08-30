@@ -9,15 +9,15 @@ namespace Application.DTO
 
         public CargoDTO(string codigo, string descricao)
         {
-            Codigo = codigo.ToUpper();
+            Codigo = codigo;
             Descricao = descricao.ToUpper();
         }
 
         public CargoDTO(string codigo, string descricao, string departamentoCodigo = null)
         {
-            Codigo = codigo.ToUpper();
+            Codigo = codigo;
             Descricao = descricao.ToUpper();
-            DepartamentoCodigo = departamentoCodigo.ToUpper();
+            DepartamentoCodigo = departamentoCodigo;
         }
 
         public int Id { get; set; }

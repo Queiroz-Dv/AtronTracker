@@ -106,7 +106,7 @@ function validarComprimentoCodigosGerados(
     return null;
   }
 
-  const codigoBase = String(formulario.get('codigo')?.value ?? '').trim();
+  const codigoBase = String(formulario.get('codigo')?.value ?? '');
   const quantidade = Number(formulario.get('quantidade')?.value);
   if (!codigoBase || !Number.isInteger(quantidade) || quantidade < 1) {
     return null;

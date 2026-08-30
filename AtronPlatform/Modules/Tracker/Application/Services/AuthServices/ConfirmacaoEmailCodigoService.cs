@@ -1,4 +1,3 @@
-using Application.Extensions;
 using Application.Interfaces.Services;
 using Domain.Entities;
 using System;
@@ -16,7 +15,7 @@ namespace Application.Services.AuthServices
             => RandomNumberGenerator.GetInt32(MenorCodigo, MaiorCodigoExclusivo).ToString("D6");
 
         public string GerarHash(string valor)
-            => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(valor.NormalizeIdentifier())));
+            => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(valor)));
 
         public (ConfirmacaoEmail ConfirmacaoEmail, string Identificador) CriarDadosConfirmacao(string usuarioCodigo, int validadeEmHoras)
         {

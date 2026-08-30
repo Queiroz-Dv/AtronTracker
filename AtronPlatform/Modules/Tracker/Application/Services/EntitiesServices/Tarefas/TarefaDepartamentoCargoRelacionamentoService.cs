@@ -24,7 +24,7 @@ namespace Application.Services.EntitiesServices.Tarefas
                 return Resultado<Departamento>.Sucesso(null);
             }
 
-            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(tarefaDTO.DepartamentoCodigo.ToUpper());
+            var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(tarefaDTO.DepartamentoCodigo);
             if (departamento is null)
                 return Resultado<Departamento>.Falha(TarefaResource.Erro_DepartamentoNaoEncontrado);
 
@@ -36,7 +36,7 @@ namespace Application.Services.EntitiesServices.Tarefas
                 return Resultado<Departamento>.Sucesso(departamento);
             }
 
-            var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(tarefaDTO.CargoCodigo.ToUpper());
+            var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(tarefaDTO.CargoCodigo);
             if (cargo is null)
                 return Resultado<Departamento>.Falha(TarefaResource.Erro_CargoNaoEncontrado);
 

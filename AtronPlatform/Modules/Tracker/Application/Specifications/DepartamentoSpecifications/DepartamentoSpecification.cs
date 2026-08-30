@@ -8,12 +8,12 @@ namespace Application.Specifications.DepartamentoSpecifications
 
         public DepartamentoSpecification(string codigo)
         {
-            _codigo = codigo.ToUpper();
+            _codigo = codigo;
         }
 
         public bool IsSatisfiedBy(DepartamentoDTO entity)
         {
-            return entity.Codigo.ToUpper().Equals(_codigo);
+            return entity.Codigo.Equals(_codigo);
         }
     }
 }

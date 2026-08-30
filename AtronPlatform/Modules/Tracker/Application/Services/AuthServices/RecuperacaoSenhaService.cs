@@ -21,11 +21,11 @@ namespace Application.Services.AuthServices
             if (string.IsNullOrWhiteSpace(request.Identificador))
                 return respostaPublica;
 
-            var identificador = request.Identificador.NormalizeIdentifier();
+            var identificador = request.Identificador;
 
             var usuario = identificador.IdentifierIsEmail()
                 ? await context.UsuarioRepository.ObterUsuarioGeralPorEmailAsync(identificador)
-                : await context.UsuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificador.NormalizeUserCodeIdentifier());
+                : await context.UsuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificador);
 
             if (usuario == null)
                 return respostaPublica;

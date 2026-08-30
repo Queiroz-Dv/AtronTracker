@@ -13,7 +13,7 @@ namespace Application.Specifications.SecuritySpecifications
 
         public bool IsSatisfiedBy(ModuloDTO dto)
         {
-            return _moduloExistente is not null && _moduloExistente.Codigo == dto.Codigo.ToUpper();
+            return _moduloExistente is not null && _moduloExistente.Codigo == dto.Codigo;
         }
     }
 }

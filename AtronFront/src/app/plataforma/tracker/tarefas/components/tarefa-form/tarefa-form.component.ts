@@ -231,7 +231,7 @@ export class TarefaFormComponent implements OnInit {
     }
 
     return this.todosDepartamentos.some(departamento =>
-      departamento.gestorDepartamentoCodigo?.toUpperCase() === this.usuarioLogadoCodigo?.toUpperCase());
+      departamento.gestorDepartamentoCodigo === this.usuarioLogadoCodigo);
   }
 
   private atualizarAprovacaoParaObter(destinoInicial = this.tarefaForm.get('destinoInicial')?.value): void {

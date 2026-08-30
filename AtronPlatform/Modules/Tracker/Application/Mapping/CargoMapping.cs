@@ -29,16 +29,16 @@ namespace Application.Mapping
         {
             return new Cargo
             {
-                Codigo = dto.Codigo.ToUpper(),
+                Codigo = dto.Codigo,
                 Descricao = dto.Descricao.ToUpper(),
-                DepartamentoCodigo = dto.DepartamentoCodigo.ToUpper()
+                DepartamentoCodigo = dto.DepartamentoCodigo
             };
         }
 
         public void MapToUpdate(CargoDTO dto, Cargo entityToUpdate)
         {
             entityToUpdate.Descricao = dto.Descricao.ToUpper();
-            entityToUpdate.DepartamentoCodigo = dto.DepartamentoCodigo.ToUpper();
+            entityToUpdate.DepartamentoCodigo = dto.DepartamentoCodigo;
         }
     }
 }

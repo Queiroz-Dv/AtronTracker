@@ -24,7 +24,7 @@ public sealed class CriarProdutoCaseTests
         Assert.Null(resultado.Dados);
         Assert.Equal("Produto salvo com sucesso.", Assert.Single(resultado.Messages).Descricao);
         var produto = Assert.IsType<Produto>(repository.ProdutoAdicionado);
-        Assert.Equal("MTG30", produto.Codigo);
+        Assert.Equal(" mtg30 ", produto.Codigo);
         Assert.Equal(EStatusProduto.Ativo, produto.Status);
         Assert.Null(produto.LoteProdutoId);
         Assert.Null(produto.DataEfetivaBaixa);
@@ -33,7 +33,7 @@ public sealed class CriarProdutoCaseTests
     }
 
     [Fact]
-    public async Task DeveRecusarCodigoDuplicadoAposNormalizacao()
+    public async Task DeveConsultarDuplicidadeComCodigoExato()
     {
         var repository = new ProdutoRepositoryFake
         {
@@ -44,6 +44,7 @@ public sealed class CriarProdutoCaseTests
         var resultado = await useCase.ExecutarAsync(CriarRequest("mtg30"));
 
         Assert.True(resultado.TeveFalha);
+        Assert.Equal("mtg30", repository.UltimoCodigoConsultado);
         Assert.Null(repository.ProdutoAdicionado);
     }
 

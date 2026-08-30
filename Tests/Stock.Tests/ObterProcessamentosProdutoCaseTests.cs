@@ -25,7 +25,7 @@ public sealed class ObterProcessamentosProdutoCaseTests
         var resultado = await useCase.ExecutarAsync();
 
         Assert.True(resultado.TeveSucesso);
-        Assert.Equal("USR001", repository.UltimoSolicitanteConsultado);
+        Assert.Equal("usr001", repository.UltimoSolicitanteConsultado);
         var item = Assert.Single(resultado.Dados!);
         Assert.Equal(3, item.QuantidadeSolicitada);
         Assert.Equal(3, item.QuantidadeProcessada);

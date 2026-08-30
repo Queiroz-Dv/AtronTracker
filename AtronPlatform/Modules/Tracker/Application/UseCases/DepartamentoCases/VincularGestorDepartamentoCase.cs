@@ -20,7 +20,7 @@ namespace Application.UseCases.DepartamentoCases
                 return Resultado.Sucesso();
             }
 
-            var gestor = await _usuarioRepository.ObterUsuarioPorCodigoAsync(gestorCodigo.ToUpper());
+            var gestor = await _usuarioRepository.ObterUsuarioPorCodigoAsync(gestorCodigo);
             if (gestor is null)
                 return Resultado.Falha(DepartamentoResource.ErroGestorNaoEncontrado);
 

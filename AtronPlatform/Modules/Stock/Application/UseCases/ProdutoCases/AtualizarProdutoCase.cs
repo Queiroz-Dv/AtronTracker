@@ -28,7 +28,7 @@ namespace AtronStock.Application.UseCases.ProdutoCases
             if (mensagens.TemErros())
                 return Resultado.Falha(mensagens);
 
-            var produto = await _repository.ObterPorCodigoAsync(codigo.NormalizarCodigo());
+            var produto = await _repository.ObterPorCodigoAsync(codigo);
             if (produto is null)
             {
                 return Resultado.Falha(string.Format(ProdutoResource.ErroProdutoNaoEncontrado, codigo));

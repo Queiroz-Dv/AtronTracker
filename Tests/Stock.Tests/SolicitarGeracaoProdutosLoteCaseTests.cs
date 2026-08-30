@@ -22,8 +22,8 @@ public sealed class SolicitarGeracaoProdutosLoteCaseTests
         Assert.Equal(7, resultado.Dados!.ProcessamentoId);
         Assert.Equal(EStatusProcessamentoProdutoLote.Pendente, resultado.Dados.Status);
         var processamento = repository.ProcessamentoAdicionado!;
-        Assert.Equal("USR001", processamento.Solicitacao.SolicitanteCodigo);
-        Assert.Equal("MTG", processamento.Solicitacao.CodigoBase);
+        Assert.Equal("usr001", processamento.Solicitacao.SolicitanteCodigo);
+        Assert.Equal("mtg", processamento.Solicitacao.CodigoBase);
         Assert.Equal(3, processamento.Solicitacao.QuantidadeSolicitada);
         Assert.Null(processamento.LoteProdutoId);
         Assert.Equal(0, processamento.Resultado.QuantidadeProcessada);

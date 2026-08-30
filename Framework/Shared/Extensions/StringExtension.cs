@@ -11,8 +11,5 @@
         {
             return Convert.ToInt32(value);
         }
-
-        public static string NormalizarCodigo(this string value)
-            => value.Trim().ToUpperInvariant();
     }
 }

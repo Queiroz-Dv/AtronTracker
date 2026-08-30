@@ -13,11 +13,11 @@ namespace Tracker.Tests.Empresas;
 public sealed class EmpresaCasesTests
 {
     [Fact]
-    public async Task CriarAsync_DeveNormalizarEPersistirEmpresa()
+    public async Task CriarAsync_DevePreservarCodigoInformado()
     {
         var repository = new Mock<IEmpresaRepository>();
         repository
-            .Setup(item => item.CodigoExisteAsync("ATRON", null))
+            .Setup(item => item.CodigoExisteAsync(" atron ", null))
             .ReturnsAsync(false);
 
         Empresa? empresaPersistida = null;
@@ -36,9 +36,9 @@ public sealed class EmpresaCasesTests
         Assert.True(resultado.TeveSucesso);
         Assert.NotNull(resultado.Dados);
         Assert.NotNull(empresaPersistida);
-        Assert.Equal("ATRON", empresaPersistida.Codigo);
+        Assert.Equal(" atron ", empresaPersistida.Codigo);
         Assert.Equal("contato@atron.com", empresaPersistida.Email);
-        Assert.Equal("ATRON", resultado.Dados.Codigo);
+        Assert.Equal(" atron ", resultado.Dados.Codigo);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public sealed class EmpresaCasesTests
         var empresa = CriarEmpresa();
         var repository = new Mock<IEmpresaRepository>();
         repository
-            .Setup(item => item.ObterPorCodigoAsync("ATRON", true))
+            .Setup(item => item.ObterPorCodigoAsync(" atron ", true))
             .ReturnsAsync(empresa);
         repository
             .Setup(item => item.AtualizarAsync(empresa))
@@ -111,7 +111,7 @@ public sealed class EmpresaCasesTests
         var empresa = CriarEmpresa();
         var repository = new Mock<IEmpresaRepository>();
         repository
-            .Setup(item => item.ObterPorCodigoAsync("ATRON", true))
+            .Setup(item => item.ObterPorCodigoAsync("atron", true))
             .ReturnsAsync(empresa);
         repository
             .Setup(item => item.RemoverAsync(empresa))

@@ -55,13 +55,13 @@ namespace AtronStock.Application.Validacoes
                 return;
             }
 
-            if (codigo.Trim().Length > 25)
+            if (codigo.Length > 25)
             {
                 context.AdicionarErro(ProdutoResource.ErroCodigoLimiteMaximoDeCaractere);
                 return;
             }
 
-            if (codigo.Trim().Length < 3)
+            if (codigo.Length < 3)
                 context.AdicionarErro(ProdutoResource.ErroCodigoLimiteMinimoDeCaractere);
         }
 

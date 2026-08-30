@@ -21,7 +21,7 @@ public sealed class ObterProcessamentoProdutoCase(
 
         var processamento = await repository.ObterPorIdDoSolicitanteAsync(
             id,
-            solicitante.Trim().ToUpperInvariant());
+            solicitante);
         return processamento is null
             ? Resultado<ProcessamentoProdutoResponse>.Falha(
                 ProdutoResource.ErroProcessamentoProdutoNaoEncontrado)

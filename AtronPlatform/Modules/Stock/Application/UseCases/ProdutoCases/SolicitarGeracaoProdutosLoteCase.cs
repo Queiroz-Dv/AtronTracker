@@ -48,9 +48,9 @@ public sealed class SolicitarGeracaoProdutosLoteCase(
         GeracaoProdutosLoteCommand command,
         string solicitanteCodigo)
         => new(new SolicitacaoGeracaoProdutosLote(
-            command.CodigoBase.NormalizarCodigo(),
+            command.CodigoBase,
             command.Quantidade,
-            solicitanteCodigo.Trim().ToUpperInvariant(),
+            solicitanteCodigo,
             command.Descricao.Trim(),
             string.IsNullOrWhiteSpace(command.DescricaoComplementar)
                 ? null
@@ -59,7 +59,6 @@ public sealed class SolicitarGeracaoProdutosLoteCase(
             command.PrecoUnitario,
             command.CategoriaCodigos
                 .Where(codigo => !string.IsNullOrWhiteSpace(codigo))
-                .Select(codigo => codigo.Trim().ToUpperInvariant())
                 .Distinct()
                 .ToList()));
 }

@@ -180,8 +180,7 @@ export class RelacionamentoPerfilUsuarioEditComponent implements OnInit, AfterVi
   private obterCodigoPerfilValido(valor: PerfilDeAcessoModel | string | null): string | null {
     if (!valor) return null;
     if (typeof valor === 'string') {
-      const codigo = valor.trim();
-      const perfil = this.perfis.find(item => item.codigo.toLowerCase() === codigo.toLowerCase());
+      const perfil = this.perfis.find(item => item.codigo === valor);
       return perfil?.codigo ?? null;
     }
 

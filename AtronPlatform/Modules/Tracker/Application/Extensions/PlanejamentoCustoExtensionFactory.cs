@@ -11,16 +11,16 @@ namespace Application.Extensions
         {
             return new PlanejamentoCustoDTO
             {
-                Codigo = request.Codigo?.ToUpperInvariant(),
+                Codigo = request.Codigo,
                 Descricao = request.Descricao,
                 Ano = request.Ano,
                 ValorMinimo = request.ValorMinimo,
                 ValorTeto = request.ValorTeto,
                 ApenasDepartamento = request.ApenasDepartamento,
-                DepartamentoCodigo = request.DepartamentoCodigo?.ToUpperInvariant(),
+                DepartamentoCodigo = request.DepartamentoCodigo,
                 DetalhesCargo = request.ApenasDepartamento ? [] : request.DetalhesCargo?.Select(detalhe => new PlanejamentoCustoCargoDTO
                 {
-                    CargoCodigo = detalhe.CargoCodigo?.ToUpperInvariant(),
+                    CargoCodigo = detalhe.CargoCodigo,
                     Detalhado = detalhe.Detalhado,
                     ValorMinimo = detalhe.ValorMinimo,
                     ValorTeto = detalhe.ValorTeto

@@ -9,14 +9,14 @@ namespace Application.Specifications.CargoSpecifications
 
         public CargoSpecification(string codigo, string codigoDepartamento)
         {
-            _codigo = codigo.ToUpper();
-            _codigoDepartamento = codigoDepartamento.ToUpper();
+            _codigo = codigo;
+            _codigoDepartamento = codigoDepartamento;
         }
 
         public bool IsSatisfiedBy(CargoDTO entity)
         {
-            return entity.Codigo.ToUpper().Equals(_codigo) &&
-                   entity.DepartamentoCodigo.ToUpper().Equals(_codigoDepartamento);
+            return entity.Codigo.Equals(_codigo) &&
+                   entity.DepartamentoCodigo.Equals(_codigoDepartamento);
         }
     }
 }

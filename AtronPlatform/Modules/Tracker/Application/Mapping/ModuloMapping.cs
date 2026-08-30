@@ -16,7 +16,7 @@ namespace Application.Mapping
         {
             return new Modulo
             {
-                Codigo = dto.Codigo.ToUpper(),
+                Codigo = dto.Codigo,
                 Descricao = dto.Descricao.ToUpper()
             };
         }

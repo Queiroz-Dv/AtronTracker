@@ -12,11 +12,5 @@ namespace Application.Extensions
                 && identifier.IndexOf('@') > 0
                 && identifier.IndexOf('@') < identifier.Length - 1;
         }
-
-        public static string NormalizeIdentifier(this string identifier)
-            => identifier?.Trim() ?? string.Empty;
-
-        public static string NormalizeUserCodeIdentifier(this string identifier)
-            => identifier.NormalizeIdentifier().ToUpperInvariant();
     }
 }

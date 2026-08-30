@@ -65,14 +65,6 @@ namespace AtronStock.Infrastructure.Migrations
                     table.PrimaryKey("PK_LotesProdutos", x => x.Id);
                 });
 
-            migrationBuilder.Sql(
-                """
-                UPDATE "Produtos" SET "Codigo" = UPPER(BTRIM("Codigo"));
-                UPDATE "ProdutoCategorias" SET "ProdutoCodigo" = UPPER(BTRIM("ProdutoCodigo"));
-                UPDATE "ItensEntrada" SET "ProdutoCodigo" = UPPER(BTRIM("ProdutoCodigo"));
-                UPDATE "ItensVenda" SET "ProdutoCodigo" = UPPER(BTRIM("ProdutoCodigo"));
-                """);
-
             migrationBuilder.CreateIndex(
                 name: "IX_Produtos_Codigo",
                 table: "Produtos",

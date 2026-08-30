@@ -4,7 +4,6 @@ using AtronStock.Application.Resources;
 using AtronStock.Application.Validacoes;
 using AtronStock.Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
 
 namespace AtronStock.Application.UseCases.ProdutoCases;
 
@@ -26,7 +25,7 @@ public sealed class ExecutarGeracaoProdutosLoteCase(
         if (categorias.TeveFalha)
             return Resultado<GeracaoProdutosLoteResultado>.Falhas(categorias.Messages);
 
-        var codigoBase = command.CodigoBase.NormalizarCodigo();
+        var codigoBase = command.CodigoBase;
         var codigosProdutos = Enumerable.Range(1, command.Quantidade)
             .Select(sequencia => $"{codigoBase}{sequencia}")
             .ToArray();

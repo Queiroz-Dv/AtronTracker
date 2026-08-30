@@ -37,7 +37,7 @@ namespace AtronStock.Application.UseCases.ProdutoCases
 
         private static string ObterProximoCodigoLote(string prefixo, IReadOnlyCollection<string> codigosExistentes)
         {
-            var codigos = codigosExistentes.ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var codigos = codigosExistentes.ToHashSet(StringComparer.Ordinal);
             if (!codigos.Contains(prefixo))
                 return prefixo;
 

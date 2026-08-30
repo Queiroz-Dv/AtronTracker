@@ -49,7 +49,7 @@ namespace AtronStock.Infrastructure.Repositories
             IReadOnlyCollection<string> codigos)
         {
             return await _context.Categorias
-                .Where(categoria => codigos.Contains(categoria.Codigo.ToUpper()))
+                .Where(categoria => codigos.Contains(categoria.Codigo))
                 .ToListAsync();
         }
 

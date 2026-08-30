@@ -71,8 +71,8 @@ namespace Application.Services.AuthServices
 
         public async Task<Resultado> ConfirmarEmailAsync(string codigoUsuario, string identificador)
         {
-            var codigo = codigoUsuario.NormalizeUserCodeIdentifier();
-            var id = identificador.NormalizeIdentifier();
+            var codigo = codigoUsuario;
+            var id = identificador;
 
             if (string.IsNullOrWhiteSpace(codigo) || string.IsNullOrWhiteSpace(id))
                 return Resultado.Falha(AuthResource.Erro_DadosConfirmacaoObrigatorios);

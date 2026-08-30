@@ -12,13 +12,17 @@ internal sealed class ProdutoRepositoryFake : IProdutoRepository
     public Produto? ProdutoPorCodigo { get; set; }
     public Produto? ProdutoAdicionado { get; private set; }
     public Produto? ProdutoAtualizado { get; private set; }
+    public string? UltimoCodigoConsultado { get; private set; }
     public ICollection<Produto> Todos { get; set; } = [];
 
     public Task<Produto?> ObterPorIdAsync(int id)
         => Task.FromResult(Todos.FirstOrDefault(produto => produto.Id == id));
 
     public Task<Produto?> ObterPorCodigoAsync(string codigo)
-        => Task.FromResult(ProdutoPorCodigo);
+    {
+        UltimoCodigoConsultado = codigo;
+        return Task.FromResult(ProdutoPorCodigo);
+    }
 
     public Task<ICollection<Produto>> ObterTodosAsync()
         => Task.FromResult(Todos);

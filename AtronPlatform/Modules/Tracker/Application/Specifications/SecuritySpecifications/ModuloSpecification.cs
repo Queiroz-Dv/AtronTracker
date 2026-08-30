@@ -13,7 +13,7 @@ namespace Application.Specifications.SecuritySpecifications
 
         public bool IsSatisfiedBy(ModuloDTO entity)
         {
-            return entity.Codigo.ToUpper() == _codigo.ToUpper();
+            return entity.Codigo == _codigo;
         }
     }
 }

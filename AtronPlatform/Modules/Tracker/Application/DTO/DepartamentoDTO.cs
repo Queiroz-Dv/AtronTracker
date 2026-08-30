@@ -6,7 +6,7 @@
 
         public DepartamentoDTO(string codigo, string descricao)
         {
-            Codigo = codigo.ToUpper();
+            Codigo = codigo;
             Descricao = descricao.ToUpper();
         }
 

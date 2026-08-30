@@ -4,7 +4,6 @@ using AtronStock.Application.DTO.Response;
 using AtronStock.Application.Extensions;
 using AtronStock.Domain.Entities;
 using Shared.Application.Interfaces.Mapping;
-using Shared.Extensions;
 
 namespace AtronStock.Application.Mapping
 {
@@ -31,7 +30,7 @@ namespace AtronStock.Application.Mapping
         public override Produto MapToEntity(ProdutoCriacaoMappingInput input)
             => new()
             {
-                Codigo = input.Request.Codigo.NormalizarCodigo(),
+                Codigo = input.Request.Codigo,
                 Descricao = input.Request.Descricao,
                 DescricaoComplementar = input.Request.DescricaoComplementar,
                 DataAquisicao = input.Request.DataAquisicao,
@@ -61,7 +60,7 @@ namespace AtronStock.Application.Mapping
                 CategoriaId = categoria.Id,
                 CategoriaCodigo = categoria.Codigo,
                 Categoria = categoria,
-                ProdutoCodigo = produtoCodigo.NormalizarCodigo()
+                ProdutoCodigo = produtoCodigo
             }).ToList();
     }
 }

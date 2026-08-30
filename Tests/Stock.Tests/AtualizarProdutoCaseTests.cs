@@ -42,6 +42,7 @@ public sealed class AtualizarProdutoCaseTests
         var resultado = await useCase.ExecutarAsync("mtg30", request);
 
         Assert.True(resultado.TeveSucesso);
+        Assert.Equal("mtg30", repository.UltimoCodigoConsultado);
         Assert.Null(resultado.Dados);
         Assert.Equal(
             "Registro MTG30 atualizado com sucesso.",

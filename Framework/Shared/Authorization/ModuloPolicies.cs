@@ -12,6 +12,7 @@ namespace Shared.Authorization
         public const string RelacionamentoPerfilUsuario = "Modulo:RPERFUSR";
         public const string PlanejamentoCustos = "Modulo:PLC";
         public const string Categoria = "Modulo:CAT";
-        public const string Produto = "Modulo:PRD";       
+        public const string Produto = "Modulo:PRD";
+        public const string Empresa = "Modulo:EMP";
     }
 }

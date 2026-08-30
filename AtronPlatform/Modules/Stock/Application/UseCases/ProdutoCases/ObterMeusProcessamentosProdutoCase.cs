@@ -20,7 +20,7 @@ public sealed class ObterMeusProcessamentosProdutoCase(
                 ProdutoResource.ErroSolicitanteNaoIdentificado);
 
         var processamentos = await repository.ObterMeusAsync(
-            solicitante.Trim().ToUpperInvariant());
+            solicitante);
         return Resultado<ICollection<ProcessamentoProdutoResponse>>.Sucesso(
             processamentos.Select(mapper.MapToDto).ToList());
     }

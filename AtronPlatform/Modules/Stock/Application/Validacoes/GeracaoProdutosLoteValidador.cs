@@ -25,7 +25,7 @@ public sealed class GeracaoProdutosLoteValidador(
         foreach (var mensagem in mensagensProduto)
             notificacoes.Adicionar(mensagem);
 
-        var codigoBase = command.CodigoBase?.Trim() ?? string.Empty;
+        var codigoBase = command.CodigoBase ?? string.Empty;
         if (codigoBase.Length == 0)
             notificacoes.AdicionarErro(ProdutoResource.ErroCodigoBaseObrigatorio);
 

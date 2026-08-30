@@ -3,7 +3,6 @@ using AtronStock.Application.Mapping;
 using AtronStock.Application.Resources;
 using AtronStock.Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using Shared.Extensions;
 
 namespace AtronStock.Application.UseCases.ProdutoCases
 {
@@ -21,7 +20,7 @@ namespace AtronStock.Application.UseCases.ProdutoCases
 
         public async Task<Resultado<ProdutoResponse>> ObterPorCodigoAsync(string codigo)
         {
-            var produto = await _repository.ObterPorCodigoAsync(codigo.NormalizarCodigo());
+            var produto = await _repository.ObterPorCodigoAsync(codigo);
             return produto is null
                 ? Resultado<ProdutoResponse>.Falha(string.Format(ProdutoResource.ErroProdutoNaoEncontrado, codigo))
                 : Resultado<ProdutoResponse>.Sucesso(_mapper.MapToDto(produto));

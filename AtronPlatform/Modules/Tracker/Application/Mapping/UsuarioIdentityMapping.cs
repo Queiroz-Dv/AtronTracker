@@ -61,7 +61,7 @@ namespace Application.Mapping
         {
             return new UsuarioIdentity
             {
-                Codigo = dto.Codigo.ToUpper(),
+                Codigo = dto.Codigo,
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,
                 Email = dto.Email,

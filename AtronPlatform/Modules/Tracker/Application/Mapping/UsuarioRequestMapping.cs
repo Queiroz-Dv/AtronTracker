@@ -33,12 +33,12 @@ namespace Application.Mapping
         {
             return new Usuario
             {
-                Codigo = dto.Codigo?.ToUpper(),
+                Codigo = dto.Codigo,
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,
                 DataNascimento = dto.DataNascimento,
                 Email = dto.Email,
-                GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper(),
+                GestorImediatoCodigo = dto.GestorImediatoCodigo,
                 ReceberNotificacaoInternaTarefa = true,
                 ReceberNotificacaoTarefaPorEmail = false
             };
@@ -55,7 +55,7 @@ namespace Application.Mapping
             entityToUpdate.Sobrenome = dto.Sobrenome;
             entityToUpdate.DataNascimento = dto.DataNascimento;
             entityToUpdate.Email = dto.Email;
-            entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper();
+            entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo;
 
         }
     }

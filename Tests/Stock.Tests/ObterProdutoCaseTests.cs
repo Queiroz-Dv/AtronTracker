@@ -9,7 +9,7 @@ namespace Stock.Tests;
 public sealed class ObterProdutoCaseTests
 {
     [Fact]
-    public async Task DeveObterProdutoPorCodigoNormalizado()
+    public async Task DeveObterProdutoPorCodigoExato()
     {
         var repository = new ProdutoRepositoryFake
         {
@@ -25,6 +25,7 @@ public sealed class ObterProdutoCaseTests
         var resultado = await useCase.ObterPorCodigoAsync("mtg30");
 
         Assert.True(resultado.TeveSucesso);
+        Assert.Equal("mtg30", repository.UltimoCodigoConsultado);
         Assert.Equal(7, resultado.Dados!.Id);
         Assert.Equal("MTG30", resultado.Dados.Codigo);
     }

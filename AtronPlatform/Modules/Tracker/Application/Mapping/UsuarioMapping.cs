@@ -67,13 +67,13 @@ namespace Application.Mapping
         {
             return new Usuario
             {
-                Codigo = dto.Codigo.ToUpper(),
+                Codigo = dto.Codigo,
                 Nome = dto.Nome,
                 Sobrenome = dto.Sobrenome,
                 Email = dto.Email,
                 EmailConfirmado = dto.EmailConfirmado,
                 DataNascimento = dto.DataNascimento,
-                GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper(),
+                GestorImediatoCodigo = dto.GestorImediatoCodigo,
                 ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa,
                 ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail
             };
@@ -81,13 +81,13 @@ namespace Application.Mapping
 
         public void MapToEntity(UsuarioDTO dto, Usuario entityToUpdate)
         {
-            entityToUpdate.Codigo = dto.Codigo?.ToUpper();
+            entityToUpdate.Codigo = dto.Codigo;
             entityToUpdate.Nome = dto.Nome;
             entityToUpdate.Sobrenome = dto.Sobrenome;
             entityToUpdate.Email = dto.Email;
             entityToUpdate.EmailConfirmado = dto.EmailConfirmado;
             entityToUpdate.DataNascimento = dto.DataNascimento;
-            entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper();
+            entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo;
             entityToUpdate.ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa;
             entityToUpdate.ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail;
 
