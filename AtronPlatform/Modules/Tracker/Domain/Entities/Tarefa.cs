@@ -11,7 +11,7 @@ namespace Domain.Entities
         private const int EstadoPendenteAprovacaoId = 2;
         private const int EstadoIniciadaId = 5;
 
-        public int DestinoInicial { get; set; }
+        public DestinoInicialTarefa DestinoInicial { get; set; }
 
         public bool ExigeAprovacaoParaObter { get; set; }
 
@@ -53,7 +53,7 @@ namespace Domain.Entities
         {
             UsuarioId = usuarioId;
             UsuarioCodigo = usuarioCodigo;
-            DestinoInicial = (int)DestinoInicialTarefa.Usuario;
+            DestinoInicial = DestinoInicialTarefa.Usuario;
             this.RemoverDepartamento();
             this.RemoverCargo();
 

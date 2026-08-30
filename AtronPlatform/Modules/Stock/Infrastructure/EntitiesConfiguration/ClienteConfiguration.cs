@@ -1,6 +1,7 @@
 ﻿using AtronStock.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace AtronStock.Infrastructure.EntitiesConfiguration
 {
@@ -26,7 +27,10 @@ namespace AtronStock.Infrastructure.EntitiesConfiguration
             builder.Property(c => c.CNPJ).IsRequired(false)
                 .HasMaxLength(14);
 
-            builder.Property(c => c.Status).IsRequired();
+            builder.Property(c => c.Status)
+                .HasConversion(EnumStringConverter.Create<AtronStock.Domain.Enums.EStatus>())
+                .HasMaxLength(30)
+                .IsRequired();
 
             builder.OwnsOne(c => c.Endereco, e =>
             {

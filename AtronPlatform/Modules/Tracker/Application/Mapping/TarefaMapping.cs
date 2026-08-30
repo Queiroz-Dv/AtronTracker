@@ -21,7 +21,7 @@ namespace Application.Mapping
             var dto = new TarefaDTO
             {
                 Id = entity.Id,
-                DestinoInicial = entity.DestinoInicial,
+                DestinoInicial = (int)entity.DestinoInicial,
                 ExigeAprovacaoParaObter = entity.ExigeAprovacaoParaObter,
                 Titulo = entity.Titulo,
                 Conteudo = entity.Conteudo,
@@ -44,7 +44,7 @@ namespace Application.Mapping
             return new Tarefa
             {
                 Id = dto.Id,
-                DestinoInicial = dto.DestinoInicial,
+                DestinoInicial = (Domain.Enums.DestinoInicialTarefa)dto.DestinoInicial,
                 ExigeAprovacaoParaObter = dto.ExigeAprovacaoParaObter,
                 UsuarioCodigo = dto.UsuarioCodigo,
                 DepartamentoCodigo = dto.DepartamentoCodigo,

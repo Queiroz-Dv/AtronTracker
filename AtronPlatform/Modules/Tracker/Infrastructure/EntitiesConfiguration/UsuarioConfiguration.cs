@@ -10,6 +10,7 @@ namespace Infrastructure.EntitiesConfiguration
         {
             builder.HasKey(usr => new { usr.Id, usr.Codigo });
             builder.Property(usr => usr.Id).ValueGeneratedOnAdd();
+            builder.HasAlternateKey(usr => usr.Codigo);
 
             builder.Property(usr => usr.Codigo).IsRequired().HasMaxLength(10);
             builder.Property(usr => usr.Nome).IsRequired().HasMaxLength(25);

@@ -2,6 +2,7 @@ using AtronStock.Domain.Entities;
 using AtronStock.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace AtronStock.Infrastructure.EntitiesConfiguration
 {
@@ -23,6 +24,8 @@ namespace AtronStock.Infrastructure.EntitiesConfiguration
                 .HasPrecision(18, 2);
 
             builder.Property(p => p.Status)
+                .HasConversion(EnumStringConverter.Create<AtronStock.Domain.Enums.EStatusProduto>())
+                .HasMaxLength(30)
                 .HasDefaultValue(EStatusProduto.Ativo)
                 .IsRequired();
 

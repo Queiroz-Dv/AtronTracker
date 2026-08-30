@@ -1,6 +1,7 @@
 ﻿using AtronStock.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace AtronStock.Infrastructure.EntitiesConfiguration
 {
@@ -22,6 +23,8 @@ namespace AtronStock.Infrastructure.EntitiesConfiguration
                    .HasMaxLength(50);
 
             builder.Property(c => c.Status)
+                   .HasConversion(EnumStringConverter.Create<AtronStock.Domain.Enums.EStatus>())
+                   .HasMaxLength(30)
                    .HasDefaultValue(AtronStock.Domain.Enums.EStatus.Ativo)
                    .IsRequired();
         }

@@ -40,5 +40,17 @@ namespace Shared.Extensions
 
             return default;
         }
+
+        public static T GetEnumFromDescriptionStrict<T>(string description) where T : struct, Enum
+        {
+            foreach (T value in Enum.GetValues<T>())
+            {
+                if (value.GetDescription() == description)
+                    return value;
+            }
+
+            throw new InvalidOperationException(
+                $"O valor '{description}' não possui correspondência no enum '{typeof(T).Name}'.");
+        }
     }
 }

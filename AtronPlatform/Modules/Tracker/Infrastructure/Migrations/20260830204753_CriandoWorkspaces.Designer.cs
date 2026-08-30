@@ -3,17 +3,19 @@ using System;
 using AtronTracker.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AtronTracker.Infrastructure.Migrations.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260830204753_CriandoWorkspaces")]
+    partial class CriandoWorkspaces
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,10 +158,8 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -463,10 +463,8 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Property<int>("SolicitanteId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TarefaId")
                         .HasColumnType("integer");
@@ -514,12 +512,10 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Property<int?>("DepartamentoId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("DestinoInicial")
-                        .IsRequired()
+                    b.Property<int>("DestinoInicial")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
-                        .HasDefaultValue("Usuario");
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
 
                     b.Property<bool>("ExigeAprovacaoParaObter")
                         .ValueGeneratedOnAdd()
@@ -625,10 +621,8 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Property<int>("TarefaId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -750,10 +744,8 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

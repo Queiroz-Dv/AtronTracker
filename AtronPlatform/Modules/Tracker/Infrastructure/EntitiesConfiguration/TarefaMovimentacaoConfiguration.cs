@@ -1,6 +1,7 @@
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace Infrastructure.EntitiesConfiguration
 {
@@ -11,6 +12,8 @@ namespace Infrastructure.EntitiesConfiguration
             builder.HasKey(movimentacao => movimentacao.Id);
 
             builder.Property(movimentacao => movimentacao.Tipo)
+                .HasConversion(EnumStringConverter.Create<Domain.Enums.TipoMovimentacaoTarefa>())
+                .HasMaxLength(80)
                 .IsRequired();
 
             builder.Property(movimentacao => movimentacao.Descricao)

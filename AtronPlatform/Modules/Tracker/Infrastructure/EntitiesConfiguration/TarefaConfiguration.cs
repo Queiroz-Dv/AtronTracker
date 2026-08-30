@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace Infrastructure.EntitiesConfiguration
 {
@@ -11,8 +12,10 @@ namespace Infrastructure.EntitiesConfiguration
             builder.HasKey(key => key.Id);
 
             builder.Property(trf => trf.DestinoInicial)
+                   .HasConversion(EnumStringConverter.Create<Domain.Enums.DestinoInicialTarefa>())
+                   .HasMaxLength(40)
                    .IsRequired()
-                   .HasDefaultValue(1);
+                   .HasDefaultValue(Domain.Enums.DestinoInicialTarefa.Usuario);
 
             builder.Property(trf => trf.ExigeAprovacaoParaObter)
                    .IsRequired()

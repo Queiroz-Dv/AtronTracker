@@ -1,6 +1,7 @@
 using AtronStock.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace AtronStock.Infrastructure.EntitiesConfiguration
 {
@@ -13,6 +14,11 @@ namespace AtronStock.Infrastructure.EntitiesConfiguration
             builder.HasKey(m => m.Id);
 
             builder.Property(m => m.Quantidade)
+                .IsRequired();
+
+            builder.Property(m => m.TipoMovimentacao)
+                .HasConversion(EnumStringConverter.Create<AtronStock.Domain.Enums.TipoMovimentacao>())
+                .HasMaxLength(30)
                 .IsRequired();
 
             builder.Property(m => m.DataMovimentacao)

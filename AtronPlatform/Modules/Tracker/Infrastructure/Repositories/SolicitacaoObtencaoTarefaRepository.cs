@@ -14,7 +14,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.Set<SolicitacaoObtencaoTarefa>().AnyAsync(sol =>
                         sol.TarefaId == tarefaId &&
-                        sol.Status == (int)StatusSolicitacaoObtencaoTarefa.Pendente);
+                        sol.Status == StatusSolicitacaoObtencaoTarefa.Pendente);
         }
 
         public async Task<SolicitacaoObtencaoTarefa> ObterPorIdAsync(int id)
@@ -28,7 +28,7 @@ namespace Infrastructure.Repositories
                 .Where(sol =>
                     sol.AprovadorId == aprovadorId &&
                     sol.AprovadorCodigo == aprovadorCodigo &&
-                    sol.Status == (int)StatusSolicitacaoObtencaoTarefa.Pendente)
+                    sol.Status == StatusSolicitacaoObtencaoTarefa.Pendente)
                 .OrderByDescending(sol => sol.DataSolicitacao)
                 .ToListAsync();
         }
@@ -47,14 +47,14 @@ namespace Infrastructure.Repositories
                     sol.Id == id &&
                     sol.AprovadorId == usuarioId &&
                     sol.AprovadorCodigo == usuarioCodigo &&
-                    sol.Status == (int)StatusSolicitacaoObtencaoTarefa.Pendente);
+                    sol.Status == StatusSolicitacaoObtencaoTarefa.Pendente);
 
             if (solicitacao is null || solicitacao.Tarefa.UsuarioId.HasValue)
             {
                 return false;
             }
 
-            solicitacao.Status = (int)StatusSolicitacaoObtencaoTarefa.Aprovada;
+            solicitacao.Status = StatusSolicitacaoObtencaoTarefa.Aprovada;
             solicitacao.DataDecisao = DateTime.Now;
             solicitacao.Tarefa.AprovarObtencao(
                 solicitacao.SolicitanteId,
@@ -70,14 +70,14 @@ namespace Infrastructure.Repositories
                     sol.Id == id &&
                     sol.AprovadorId == usuarioId &&
                     sol.AprovadorCodigo == usuarioCodigo &&
-                    sol.Status == (int)StatusSolicitacaoObtencaoTarefa.Pendente);
+                    sol.Status == StatusSolicitacaoObtencaoTarefa.Pendente);
 
             if (solicitacao is null)
             {
                 return false;
             }
 
-            solicitacao.Status = (int)StatusSolicitacaoObtencaoTarefa.Recusada;
+            solicitacao.Status = StatusSolicitacaoObtencaoTarefa.Recusada;
             solicitacao.DataDecisao = DateTime.Now;
 
             return await _context.SaveChangesAsync() > 0;
@@ -113,7 +113,7 @@ namespace Infrastructure.Repositories
 
             return await QueryComRelacionamentos()
                 .Where(sol =>
-                    sol.Status == (int)StatusSolicitacaoObtencaoTarefa.Pendente &&
+                    sol.Status == StatusSolicitacaoObtencaoTarefa.Pendente &&
                     ((sol.AprovadorId == aprovadorId && sol.AprovadorCodigo == aprovadorCodigo) ||
                      (sol.Tarefa.DepartamentoCodigo != null && codigos.Contains(sol.Tarefa.DepartamentoCodigo))))
                 .OrderByDescending(sol => sol.DataSolicitacao)

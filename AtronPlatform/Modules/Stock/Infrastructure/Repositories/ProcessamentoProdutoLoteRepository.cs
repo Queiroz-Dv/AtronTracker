@@ -5,6 +5,7 @@ using AtronStock.Domain.Enums;
 using AtronStock.Domain.Interfaces;
 using AtronStock.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
+using Shared.Extensions;
 using System.Data;
 
 namespace AtronStock.Infrastructure.Repositories;
@@ -27,8 +28,8 @@ public sealed class ProcessamentoProdutoLoteRepository(StockDbContext context)
     {
         await using var transaction = await context.Database.BeginTransactionAsync(
             IsolationLevel.ReadCommitted);
-        var pendente = (int)EStatusProcessamentoProdutoLote.Pendente;
-        var emExecucao = (int)EStatusProcessamentoProdutoLote.EmExecucao;
+        var pendente = EStatusProcessamentoProdutoLote.Pendente.GetDescription();
+        var emExecucao = EStatusProcessamentoProdutoLote.EmExecucao.GetDescription();
         var processamento = await context.ProcessamentosProdutosLote
             .FromSqlInterpolated($$"""
                 SELECT * FROM "ProcessamentosProdutosLote"

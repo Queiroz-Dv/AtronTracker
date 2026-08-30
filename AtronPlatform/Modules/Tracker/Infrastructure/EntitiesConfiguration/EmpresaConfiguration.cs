@@ -1,6 +1,7 @@
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace Infrastructure.EntitiesConfiguration
 {
@@ -15,7 +16,10 @@ namespace Infrastructure.EntitiesConfiguration
             builder.Property(empresa => empresa.Endereco).IsRequired().HasMaxLength(200);
             builder.Property(empresa => empresa.Numero).IsRequired().HasMaxLength(20);
             builder.Property(empresa => empresa.Email).IsRequired().HasMaxLength(254);
-            builder.Property(empresa => empresa.Status).IsRequired();
+            builder.Property(empresa => empresa.Status)
+                .HasConversion(EnumStringConverter.Create<Domain.Enums.StatusEmpresa>())
+                .HasMaxLength(30)
+                .IsRequired();
             builder.HasIndex(empresa => empresa.Codigo).IsUnique();
         }
     }

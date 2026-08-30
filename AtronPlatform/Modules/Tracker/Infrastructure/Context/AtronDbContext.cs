@@ -23,6 +23,10 @@ namespace AtronTracker.Infrastructure.Context
 
         public DbSet<Empresa> Empresas { get; set; }
 
+        public DbSet<Workspace> Workspaces { get; set; }
+
+        public DbSet<MembroWorkspace> MembrosWorkspace { get; set; }
+
         public DbSet<Cargo> Cargos { get; set; }
 
         public DbSet<Usuario> Usuarios { get; set; }

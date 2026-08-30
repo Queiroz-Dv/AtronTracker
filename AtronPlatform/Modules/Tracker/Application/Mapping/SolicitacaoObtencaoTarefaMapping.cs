@@ -19,7 +19,7 @@ namespace Application.Mapping
             {
                 Id = solicitacao.Id,
                 TarefaId = solicitacao.TarefaId,
-                Status = solicitacao.Status,
+                Status = (int)solicitacao.Status,
                 DataSolicitacao = solicitacao.DataSolicitacao,
                 DataDecisao = solicitacao.DataDecisao,
                 Tarefa = solicitacao.Tarefa.MapToDto(_tarefaMapper),

@@ -47,6 +47,47 @@ A preparação para a centralização estabelece estas fronteiras:
 Essa capacidade permanece no mesmo processo. Qualquer proposta de serviço
 independente para identidade ou estrutura funcional exigirá ADR próprio.
 
+## Direção proposta: workspaces e escopo de acesso
+
+Esta seção registra uma proposta em avaliação, não uma decisão aceita nem uma
+alteração já implementada.
+
+O workspace deverá ser a fronteira lógica de dados e acesso para os fluxos de
+uso pessoal, agência e empresa. `Usuario` continuará representando a identidade
+global da pessoa. `Empresa` representará os dados formais do negócio quando o
+workspace tiver esse perfil, sem ser obrigatória para todo workspace.
+
+O pertencimento será representado por um vínculo de usuário com workspace. O
+vínculo deverá ser a origem do contexto ativo, do estado do membro, da
+hierarquia operacional e do escopo do perfil de acesso. O usuário poderá ter
+perfis diferentes em workspaces diferentes.
+
+O RBAC existente baseado em `PerfilDeAcesso`, `PerfilDeAcessoModulo` e
+`ModuloPolicies` permanece como mecanismo de autorização. A evolução prevista é
+associar a avaliação desse RBAC ao workspace ativo, sem criar um segundo modelo
+de papéis. A policy de módulo não substitui a validação de pertencimento ao
+workspace.
+
+Os onboardings previstos são:
+
+- cadastro pessoal ou de agência, que cria o workspace e o primeiro membro
+  proprietário;
+- cadastro empresarial, que cria o workspace, os dados formais de `Empresa` e o
+  primeiro membro proprietário;
+- convite de membro, que permite concluir o cadastro de um novo usuário ou
+  associar um usuário existente ao workspace.
+
+Um convite deverá ser tratado como credencial temporária de entrada, com
+validade, uso único, organização de destino e remetente autorizados. O código
+visível no formulário pode ser conhecido antecipadamente, mas não concede
+acesso por si só. O backend deverá validar o convite e o pertencimento antes de
+criar o vínculo.
+
+Esta proposta exige decisão posterior sobre o modelo físico, a seleção do
+workspace no login, o escopo dos perfis de acesso e a migração dos dados dos
+módulos. Esses pontos serão planejados em fatias pequenas antes de qualquer
+implementação.
+
 ## Contratos transversais
 
 ### Autorização por módulo
@@ -66,6 +107,11 @@ de outro módulo.
 Tracker, Stock e o futuro Sales podem produzir auditoria pelos contratos
 `IAuditoriaService`, `IAuditoriaDTO` e `IHistoricoDTO`. Esses contratos não
 expõem entidades nem serviços dos módulos produtores.
+
+Datas de criação, alteração e outros marcos de rastreabilidade não devem ser
+adicionados às entidades de negócio por padrão. Esses dados pertencem à
+Auditoria. Uma data em uma entidade somente é válida quando representar uma
+regra operacional própria, com exceção explícita e documentada.
 
 A capacidade possui composição própria por `AddAuditoriaCapability` e controla:
 

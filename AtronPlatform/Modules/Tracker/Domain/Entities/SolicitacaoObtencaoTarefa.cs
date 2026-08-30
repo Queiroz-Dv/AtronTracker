@@ -1,4 +1,5 @@
 using System;
+using Domain.Enums;
 
 namespace Domain.Entities
 {
@@ -14,7 +15,7 @@ namespace Domain.Entities
 
         public string AprovadorCodigo { get; set; }
 
-        public int Status { get; set; }
+        public StatusSolicitacaoObtencaoTarefa Status { get; set; }
 
         public DateTime DataSolicitacao { get; set; }
 
@@ -35,7 +36,7 @@ namespace Domain.Entities
                 SolicitanteCodigo = solicitante.Codigo,
                 AprovadorId = aprovador.Id,
                 AprovadorCodigo = aprovador.Codigo,
-                Status = (int)Enums.StatusSolicitacaoObtencaoTarefa.Pendente,
+                Status = StatusSolicitacaoObtencaoTarefa.Pendente,
                 DataSolicitacao = DateTime.Now
             };
         }

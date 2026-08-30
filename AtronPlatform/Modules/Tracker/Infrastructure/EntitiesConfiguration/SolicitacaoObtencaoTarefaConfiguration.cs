@@ -1,6 +1,7 @@
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace Infrastructure.EntitiesConfiguration
 {
@@ -12,7 +13,10 @@ namespace Infrastructure.EntitiesConfiguration
 
             builder.Property(sol => sol.SolicitanteCodigo).IsRequired().HasMaxLength(10);
             builder.Property(sol => sol.AprovadorCodigo).IsRequired().HasMaxLength(10);
-            builder.Property(sol => sol.Status).IsRequired();
+            builder.Property(sol => sol.Status)
+                .HasConversion(EnumStringConverter.Create<Domain.Enums.StatusSolicitacaoObtencaoTarefa>())
+                .HasMaxLength(30)
+                .IsRequired();
             builder.Property(sol => sol.DataSolicitacao).IsRequired();
             builder.Property(sol => sol.DataDecisao).IsRequired(false);
 

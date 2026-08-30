@@ -72,9 +72,25 @@ _Avoid_: Parte interna do Tracker, regra de negócio do produtor, DbContext comp
 Capacidade transversal in-process responsável por consultar ou registrar evidências de operações da plataforma. É composta exclusivamente pelo host neutro, possui contratos e persistência no `Shared` e não acessa entidades ou DbContexts dos módulos auditados.
 _Avoid_: Microsserviço apenas por possuir WebApi, acesso irrestrito aos DbContexts dos módulos, log técnico genérico, justificativa automática para outro deploy
 
+**Temporalidade de entidades**:
+Entidades de negócio não devem possuir `DataCriacao` ou equivalente por padrão. A data de criação, alteração e demais marcos de rastreabilidade pertencem à capacidade de Auditoria. Uma data somente pode existir na entidade quando for parte de uma regra operacional própria, com exceção explícita e documentada.
+_Avoid_: Campo de auditoria repetido em todas as entidades, timestamp adicionado por conveniência técnica, confundir expiração operacional com data de criação, registrar auditoria incompleta fora da capacidade transversal
+
 **Identidade e acesso da plataforma**:
 Capacidade central formada por autenticação, usuários, perfis de acesso, catálogo de módulos e autorização. Sua propriedade é da plataforma, mesmo enquanto a implementação permanece fisicamente no Tracker por compatibilidade. Módulos consumidores usam `IUserAccessor` e `ModuloPolicies`, não os internos do Tracker.
 _Avoid_: Identidade como domínio exclusivo do Tracker, serviço separado sem necessidade, módulo consultando repositório de perfil, configuração JWT duplicada
+
+**Workspace (proposta em avaliação)**:
+Contexto de trabalho que define a fronteira lógica de dados, os usuários participantes, a assinatura e o perfil de uso da aplicação. Um usuário pode participar de vários workspaces e ter permissões diferentes em cada um. O workspace pode ser pessoal ou de agência, ou pode possuir um cadastro formal de `Empresa` associado. Esta proposta ainda não é uma decisão aceita nem uma implementação.
+_Avoid_: Usuário como tenant, empresa formal obrigatória em todo workspace, isolamento decidido pelo tipo do usuário, workspace confiado apenas por valor enviado pelo cliente
+
+**Membro de workspace (proposta em avaliação)**:
+Vínculo entre um usuário e um workspace. O vínculo registra estado, papel operacional, perfis de acesso e, quando aplicável, o superior direto naquele workspace. O `PerfilDeAcesso` existente continua sendo o mecanismo RBAC; o workspace apenas define o escopo em que o perfil é válido.
+_Avoid_: Perfil de acesso global sem escopo, superior salvo apenas no usuário, papel de proprietário confundido com gestor funcional, associação sem validação de pertencimento
+
+**Onboarding de workspace (proposta em avaliação)**:
+Conjunto de entradas para criar ou ingressar em um workspace. O cadastro pessoal ou de agência cria o workspace e associa o usuário como proprietário. O cadastro empresarial cria o workspace, associa os dados formais de `Empresa` e associa o usuário responsável como proprietário. O convite permite que outro usuário conclua o cadastro ou associe uma conta existente ao workspace.
+_Avoid_: Dois mecanismos independentes de multitenancy, convite aceito sem validade ou uso único, código do remetente tratado como autorização, cadastro empresarial duplicando a identidade do usuário
 
 **Estrutura funcional da plataforma**:
 Capacidade central formada por departamentos, cargos, vínculos, gestores e hierarquias usados por mais de um módulo. A implementação atual permanece no Tracker durante a transição, mas sua propriedade não se limita ao domínio de tarefas.
@@ -123,6 +139,10 @@ _Avoid_: Objetivo obrigatório, sinônimo de vários containers, solução autom
 **Usuário**:
 Pessoa cadastrada no sistema que pode receber responsabilidades, acessar módulos e estar vinculada a cargo e departamento.
 _Avoid_: Conta, colaborador
+
+**Código de usuário**:
+Identificador textual global, obrigatório e único de um usuário. O vínculo com outras capacidades pode referenciar o usuário por este código sem repetir o `Id` técnico. A unicidade deve ser garantida pelo banco e pelo fluxo de cadastro, mantendo o valor exatamente como informado.
+_Avoid_: Código repetido, chave técnica duplicada sem necessidade, normalização automática, unicidade apenas na validação da aplicação
 
 **Pessoa remunerada**:
 Pessoa vinculada a custos de trabalho ou prestação de serviço que podem ser planejados, acompanhados ou considerados em orçamento. Nem todo usuário do sistema precisa ser uma pessoa remunerada.

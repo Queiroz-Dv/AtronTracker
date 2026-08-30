@@ -6,6 +6,7 @@ using AtronStock.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace AtronStock.Infrastructure.EntitiesConfiguration;
 
@@ -16,6 +17,8 @@ public sealed class ProcessamentoProdutoLoteConfiguration
     {
         builder.HasKey(item => item.Id);
         builder.Property(item => item.Status)
+            .HasConversion(EnumStringConverter.Create<EStatusProcessamentoProdutoLote>())
+            .HasMaxLength(30)
             .HasDefaultValue(EStatusProcessamentoProdutoLote.Pendente)
             .IsRequired();
         builder.OwnsOne(item => item.Solicitacao, solicitacao =>
