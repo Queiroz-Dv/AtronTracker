@@ -29,7 +29,6 @@ public sealed class SelecionarWorkspaceCase(
         if (workspace.IsNullable())
             return Resultado<WorkspaceInicialResponse>.Falha(WorkspaceResource.Erro_WorkspaceNaoEncontrado);
 
-
         workspaceAtualService.Definir(workspace.Id);
 
         return Resultado<WorkspaceInicialResponse>.Sucesso(mapping.MapToDto(workspace));

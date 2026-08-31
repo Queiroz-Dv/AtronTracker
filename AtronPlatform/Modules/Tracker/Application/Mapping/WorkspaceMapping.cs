@@ -1,6 +1,7 @@
 using Application.DTO.Request;
 using Application.DTO.Response;
 using Domain.Entities;
+using Domain.Enums;
 using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Mapping;
@@ -27,6 +28,7 @@ public sealed class WorkspaceMapping
         workspace.Membros.Add(new MembroWorkspace
         {
             UsuarioCodigo = dto.UsuarioCodigo,
+            Tipo = TipoMembroWorkspace.Proprietario,
             Workspace = workspace
         });
 

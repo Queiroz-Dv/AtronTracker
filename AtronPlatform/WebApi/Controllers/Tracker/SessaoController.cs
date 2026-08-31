@@ -1,16 +1,13 @@
 using Application.Interfaces.Services;
 using Application.UseCases.WorkspaceCases;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -22,21 +19,14 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]
-    public class SessaoController : ControllerBase
+    public class SessaoController(
+        ICacheService cacheService,
+        IPerfilDeAcessoService perfilDeAcessoService,
+        ObterWorkspaceAtualCase obterWorkspaceAtualCase) : ControllerBase
     {
-        private readonly ICacheService _cacheService;
-        private readonly IPerfilDeAcessoService _perfilDeAcessoService;        
-        private readonly ObterWorkspaceAtualCase _obterWorkspaceAtualCase;
-
-        public SessaoController(
-            ICacheService cacheService,
-            IPerfilDeAcessoService perfilDeAcessoService,
-            ObterWorkspaceAtualCase obterWorkspaceAtualCase)
-        {
-            _cacheService = cacheService;
-            _perfilDeAcessoService = perfilDeAcessoService;
-            _obterWorkspaceAtualCase = obterWorkspaceAtualCase;
-        }
+        private readonly ICacheService _cacheService = cacheService;
+        private readonly IPerfilDeAcessoService _perfilDeAcessoService = perfilDeAcessoService;
+        private readonly ObterWorkspaceAtualCase _obterWorkspaceAtualCase = obterWorkspaceAtualCase;
 
         /// <summary>
         /// Retorna as informações da sessão atual do usuário autenticado.

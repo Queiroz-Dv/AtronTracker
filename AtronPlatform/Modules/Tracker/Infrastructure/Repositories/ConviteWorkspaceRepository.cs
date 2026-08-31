@@ -2,6 +2,7 @@
 
 using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Shared.Extensions;
@@ -51,7 +52,8 @@ public sealed class ConviteWorkspaceRepository(AtronDbContext context)
         context.MembrosWorkspace.Add(new MembroWorkspace
         {
             WorkspaceId = convite.WorkspaceId,
-            UsuarioCodigo = usuarioCodigo
+            UsuarioCodigo = usuarioCodigo,
+            Tipo = TipoMembroWorkspace.Membro
         });
 
         return await context.SaveChangesAsync() > 0;

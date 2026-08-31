@@ -47,26 +47,26 @@ A preparação para a centralização estabelece estas fronteiras:
 Essa capacidade permanece no mesmo processo. Qualquer proposta de serviço
 independente para identidade ou estrutura funcional exigirá ADR próprio.
 
-## Direção proposta: workspaces e escopo de acesso
+## Direção proposta: workspaces e estrutura organizacional
 
-Esta seção registra uma proposta em avaliação, não uma decisão aceita nem uma
-alteração já implementada.
+Esta seção registra a direção aprovada para workspaces e sua implementação
+incremental. Os trechos abaixo distinguem o que já foi entregue do que ainda
+permanece para as próximas fatias.
 
-O workspace deverá ser a fronteira lógica de dados e acesso para os fluxos de
+O workspace deverá ser a fronteira lógica de dados e participação para os fluxos de
 uso pessoal, agência e empresa. `Usuario` continuará representando a identidade
 global da pessoa. `Empresa` representará os dados formais do negócio quando o
 workspace tiver esse perfil, sem ser obrigatória para todo workspace.
 
 O pertencimento será representado por um vínculo de usuário com workspace. O
 vínculo deverá ser a origem do contexto ativo, do estado do membro, da
-hierarquia operacional e do escopo do perfil de acesso. O usuário poderá ter
-perfis diferentes em workspaces diferentes.
+hierarquia operacional e da participação na estrutura organizacional. Esse
+vínculo não altera o perfil de acesso global do usuário.
 
 O RBAC existente baseado em `PerfilDeAcesso`, `PerfilDeAcessoModulo` e
-`ModuloPolicies` permanece como mecanismo de autorização. A evolução prevista é
-associar a avaliação desse RBAC ao workspace ativo, sem criar um segundo modelo
-de papéis. A policy de módulo não substitui a validação de pertencimento ao
-workspace.
+`ModuloPolicies` permanece como mecanismo global de autorização no Atron e não
+depende do workspace ativo. A policy de módulo e a validação de pertencimento ao
+workspace são responsabilidades distintas.
 
 Os onboardings previstos são:
 
@@ -124,6 +124,12 @@ essas gravações. Para workspace empresarial, a operação interna exige uma
 também recusa o onboarding inicial quando o usuário já é membro de algum
 workspace.
 
+O vínculo `MembroWorkspace` registra uma classificação organizacional própria,
+persistida como texto. O primeiro usuário criado com o workspace recebe o tipo
+`Proprietario`; usuários que ingressam por convite recebem o tipo `Membro`.
+Essa classificação não altera os módulos liberados ao usuário e não substitui
+o RBAC global baseado em `PerfilDeAcesso`.
+
 O convite é tratado como credencial temporária de entrada. O backend gera um
 identificador aleatório, persiste somente seu hash, define validade de 24 horas
 e permite um único consumo. A criação é aceita apenas para workspaces de
@@ -138,10 +144,9 @@ usuário já autenticado. Nos dois caminhos, o consumo e a criação do vínculo
 `MembroWorkspace` ocorrem em escopo transacional e o banco faz a marcação
 condicional para impedir reutilização concorrente.
 
-Nesta fatia, a autorização para gerar convites está limitada ao pertencimento
-ao workspace. A distinção entre proprietário e outros membros depende do
-futuro escopo do `PerfilDeAcesso` pelo workspace e não foi antecipada com um
-segundo modelo de papéis.
+Nesta fatia, a autorização para gerar convites continua limitada ao
+pertencimento ao workspace. A classificação organizacional já distingue o
+proprietário dos demais membros, mas ainda não participa dessa autorização.
 
 O primeiro passo para o contexto ativo expõe `GET api/Workspace` para o usuário
 autenticado. A consulta parte do código obtido no backend, percorre os vínculos
@@ -164,15 +169,22 @@ código do usuário pela identidade autenticada e o fornece ao caso de uso, sem
 aceitar identificador de workspace do cliente. Nesta fase, policies e módulos
 ainda não usam o workspace atual para autorização ou isolamento.
 
+`PerfilDeAcesso` permanece global ao Atron e define os módulos e acessos de um
+usuário na aplicação. O workspace não é proprietário do perfil, pois representa
+a estrutura organizacional de uma eu-agência ou empresa. O relacionamento
+`PerfilDeAcessoUsuario` permanece responsável pela atribuição do perfil ao
+usuário, sem receber escopo de workspace.
+
 O Angular consulta essa coleção e apresenta o mesmo seletor no dashboard e no
 layout autenticado das rotinas. A sessão retornada pelo backend inicializa a
 indicação visual e uma nova seleção aceita atualiza o contexto em memória. O
 frontend não persiste o identificador em `localStorage` ou `sessionStorage`.
 No logout, o estado em memória e o cookie de seleção são removidos.
 
-A escolha automática de um workspace no login, o escopo dos perfis de acesso
-e a migração dos dados dos módulos ainda exigem decisões posteriores. Esses
-pontos serão planejados em fatias pequenas antes de qualquer implementação.
+A escolha automática de um workspace no login, as regras operacionais baseadas
+no tipo do membro e a migração dos dados dos módulos ainda exigem decisões
+posteriores. Esses pontos serão planejados em fatias pequenas antes de qualquer
+implementação.
 
 ## Contratos transversais
 
