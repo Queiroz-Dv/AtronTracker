@@ -17,4 +17,14 @@
   <data name="Erro_WorkspaceEmpresaExistente" xml:space="preserve"><value>A empresa já possui um workspace.</value></data>
   <data name="Erro_Persistencia" xml:space="preserve"><value>Não foi possível criar o workspace inicial.</value></data>
   <data name="Erro_CadastroTipoNaoDisponivel" xml:space="preserve"><value>O tipo de workspace informado ainda não está disponível para cadastro.</value></data>
+  <data name="Erro_WorkspaceNaoEncontrado" xml:space="preserve"><value>Workspace não encontrado.</value></data>
+  <data name="Erro_ConviteInvalido" xml:space="preserve"><value>O convite é inválido, já foi utilizado ou expirou.</value></data>
+  <data name="Erro_ConviteWorkspacePessoal" xml:space="preserve"><value>Workspaces pessoais não permitem convites de membros.</value></data>
+  <data name="Erro_ConviteRemetenteNaoMembro" xml:space="preserve"><value>O usuário não pertence ao workspace informado.</value></data>
+  <data name="Erro_ConvitePersistencia" xml:space="preserve"><value>Não foi possível criar o convite do workspace.</value></data>
+  <data name="Erro_ConviteUsuarioJaMembro" xml:space="preserve"><value>O usuário já pertence ao workspace do convite.</value></data>
+  <data name="Erro_ConviteConsumo" xml:space="preserve"><value>Não foi possível utilizar o convite do workspace.</value></data>
+  <data name="Erro_ConviteComWorkspace" xml:space="preserve"><value>O cadastro por convite não deve informar a criação de outro workspace.</value></data>
+  <data name="Mensagem_ConviteCriado" xml:space="preserve"><value>Convite do workspace criado com sucesso.</value></data>
+  <data name="Mensagem_ConviteAceito" xml:space="preserve"><value>Convite do workspace aceito com sucesso.</value></data>
 </root>

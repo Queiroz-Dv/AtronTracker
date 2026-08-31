@@ -7,7 +7,7 @@ import { DadosDoUsuario } from '../../plataforma/tracker/acesso/login/models/dad
 import { UserToken } from '../../plataforma/tracker/acesso/login/models/userToken';
 import { LoginRequest } from '../../shared/models/request/login-request.model';
 import { RegistrarRequest } from '../../shared/models/request/registrar-request.model';
-import { RegistrarResponse } from '../../shared/models/response/registrar-response.model';
+import { ConviteWorkspaceResponse, RegistrarResponse } from '../../shared/models/response/registrar-response.model';
 import { RotasApi } from '../../shared/models/rotas-api.model';
 
 
@@ -116,6 +116,14 @@ export class AcessoService {
 
   registrar(dadosDoUsuario: RegistrarRequest): Observable<RegistrarResponse> {
     return this.http.post<RegistrarResponse>(RotasApi.registrarEndpoint, dadosDoUsuario).pipe(
+      catchError((error) => throwError(() => error))
+    );
+  }
+
+  obterConviteWorkspace(identificador: string): Observable<ConviteWorkspaceResponse> {
+    return this.http.get<ConviteWorkspaceResponse>(
+      `${RotasApi.workspaceEndpoint}/convites/${encodeURIComponent(identificador)}`
+    ).pipe(
       catchError((error) => throwError(() => error))
     );
   }

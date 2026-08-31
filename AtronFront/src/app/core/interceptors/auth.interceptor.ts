@@ -37,6 +37,11 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private ehRotaPublica(request: HttpRequest<any>): boolean {
+    if (request.method === 'GET'
+      && request.url.startsWith(`${RotasApi.workspaceEndpoint}/convites/`)) {
+      return true;
+    }
+
     const rotasPublicas = [
       RotasApi.logarEndpoint,
       RotasApi.registrarEndpoint,

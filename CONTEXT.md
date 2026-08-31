@@ -89,7 +89,7 @@ Vínculo entre um usuário e um workspace. No modelo inicial, o vínculo usa `Wo
 _Avoid_: Perfil de acesso global sem escopo, superior salvo apenas no usuário, papel de proprietário confundido com gestor funcional, associação sem validação de pertencimento
 
 **Onboarding de workspace**:
-Conjunto de entradas para criar ou ingressar em um workspace. No cadastro inicial, o usuário, o workspace e o primeiro vínculo de membro são criados no mesmo fluxo. Atualmente, essa integração está habilitada somente para o cadastro pessoal. O cadastro de agência, o cadastro empresarial e o convite para ingresso de outros membros pertencem às próximas fases.
+Conjunto de entradas para criar ou ingressar em um workspace. No cadastro inicial, o usuário, o workspace e o primeiro vínculo de membro são criados no mesmo fluxo. A integração aceita cadastros pessoal, de agência e empresarial. Workspaces de agência e empresa também aceitam ingresso por convite temporário de uso único, tanto durante o cadastro quanto para um usuário existente.
 _Avoid_: Dois mecanismos independentes de multitenancy, convite aceito sem validade ou uso único, código do remetente tratado como autorização, cadastro empresarial duplicando a identidade do usuário
 
 **Estrutura funcional da plataforma**:

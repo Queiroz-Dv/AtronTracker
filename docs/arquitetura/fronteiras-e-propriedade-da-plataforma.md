@@ -108,30 +108,44 @@ seu código e retornar o workspace inicial com `id`, `nome`, `tipo` e
 embora sejam persistidos no banco pela descrição textual. Senha, confirmação
 de senha e identificadores técnicos do usuário nunca compõem a resposta.
 
-A ativação desse contrato no endpoint `Acesso/Registrar` começou pelo cadastro
-pessoal. O payload já exige o objeto `workspace`, mas nesta fatia aceita somente
-o tipo `Pessoal` e não recebe dados de empresa. O endpoint retorna o código do
-usuário, o workspace inicial e as mensagens produzidas durante o cadastro.
-Os tipos `Agencia` e `Empresa` serão habilitados nas próximas fatias.
+A ativação desse contrato no endpoint `Acesso/Registrar` aceita os tipos
+`Pessoal`, `Agencia` e `Empresa`. Os dois primeiros exigem apenas `nome` e
+`tipo` no objeto `workspace`, sem dados formais de empresa. O tipo `Empresa`
+exige o objeto `empresa`; seu status é definido como `Ativa` pela aplicação e
+não faz parte do payload. O endpoint retorna o código do usuário, o workspace
+inicial e as mensagens produzidas durante o cadastro.
 
 A operação interna `CriarWorkspaceInicialCase` cria o workspace e seu primeiro
-membro no mesmo `SaveChangesAsync`. No cadastro pessoal, o endpoint usa um
-escopo transacional que abrange Identity, usuário, workspace, membro e código de
-confirmação; uma resposta de falha não confirma essas gravações. Para workspace
-empresarial, a operação interna exige uma `Empresa` previamente persistida e
-ainda sem workspace. A operação também recusa o onboarding inicial quando o
-usuário já é membro de algum workspace.
+membro no mesmo `SaveChangesAsync`. Nos três tipos de cadastro, o endpoint usa
+um escopo transacional que abrange Identity, usuário, empresa quando aplicável,
+workspace, membro e código de confirmação; uma resposta de falha não confirma
+essas gravações. Para workspace empresarial, a operação interna exige uma
+`Empresa` persistida no mesmo onboarding e ainda sem workspace. A operação
+também recusa o onboarding inicial quando o usuário já é membro de algum
+workspace.
 
-Um convite deverá ser tratado como credencial temporária de entrada, com
-validade, uso único, organização de destino e remetente autorizados. O código
-visível no formulário pode ser conhecido antecipadamente, mas não concede
-acesso por si só. O backend deverá validar o convite e o pertencimento antes de
-criar o vínculo.
+O convite é tratado como credencial temporária de entrada. O backend gera um
+identificador aleatório, persiste somente seu hash, define validade de 24 horas
+e permite um único consumo. A criação é aceita apenas para workspaces de
+`Agencia` ou `Empresa` e exige que o remetente já pertença ao workspace. O
+código visível do remetente tem finalidade informativa e não concede acesso.
 
-Esta proposta exige decisão posterior sobre o modelo físico, a seleção do
-workspace no login, o escopo dos perfis de acesso e a migração dos dados dos
-módulos. Esses pontos serão planejados em fatias pequenas antes de qualquer
-implementação.
+A consulta pública do convite retorna o workspace de destino, o remetente e a
+validade para que a tela de cadastro apresente o contexto conhecido. No
+cadastro por convite, o payload informa o identificador em `convite` e não
+informa um novo objeto `workspace`. A mesma credencial pode ser aceita por um
+usuário já autenticado. Nos dois caminhos, o consumo e a criação do vínculo de
+`MembroWorkspace` ocorrem em escopo transacional e o banco faz a marcação
+condicional para impedir reutilização concorrente.
+
+Nesta fatia, a autorização para gerar convites está limitada ao pertencimento
+ao workspace. A distinção entre proprietário e outros membros depende do
+futuro escopo do `PerfilDeAcesso` pelo workspace e não foi antecipada com um
+segundo modelo de papéis.
+
+A seleção do workspace no login, o escopo dos perfis de acesso e a migração
+dos dados dos módulos ainda exigem decisões posteriores. Esses pontos serão
+planejados em fatias pequenas antes de qualquer implementação.
 
 ## Contratos transversais
 

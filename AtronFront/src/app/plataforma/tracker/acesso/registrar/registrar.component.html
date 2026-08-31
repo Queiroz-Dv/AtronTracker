@@ -27,8 +27,8 @@
             <mat-icon>workspaces</mat-icon>
           </span>
           <div>
-            <strong>2. Nomeie seu workspace</strong>
-            <p>Defina o nome do seu espaço pessoal de trabalho.</p>
+            <strong>2. Configure seu workspace</strong>
+            <p>Escolha um espaço pessoal, de agência ou empresarial e defina seu nome.</p>
           </div>
         </div>
 
@@ -79,16 +79,89 @@
           </mat-form-field>
         </fieldset>
 
-        <fieldset class="form-section">
-          <legend>Workspace pessoal</legend>
+        @if (conviteIdentificador) {
+          <fieldset class="form-section">
+            <legend>Convite de workspace</legend>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Nome do workspace</mat-label>
-            <mat-icon matPrefix>workspaces</mat-icon>
-            <input matInput formControlName="workspaceNome" placeholder="Ex: Meu espaço de trabalho" />
-            <c-control-error [control]="form.get('workspaceNome')"></c-control-error>
-          </mat-form-field>
-        </fieldset>
+            @if (carregandoConvite) {
+              <p>Validando o convite...</p>
+            } @else if (conviteWorkspace) {
+              <p>
+                Você foi convidado por <strong>{{ conviteWorkspace.remetenteCodigo }}</strong>
+                para ingressar no workspace <strong>{{ conviteWorkspace.workspace.nome }}</strong>.
+              </p>
+            } @else {
+              <p>O convite informado não está disponível para cadastro.</p>
+            }
+          </fieldset>
+        } @else {
+          <fieldset class="form-section">
+            <legend>Workspace</legend>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo do workspace</mat-label>
+              <mat-icon matPrefix>category</mat-icon>
+              <mat-select formControlName="workspaceTipo">
+                <mat-option [value]="tipoWorkspace.Pessoal">Pessoal</mat-option>
+                <mat-option [value]="tipoWorkspace.Agencia">Agência</mat-option>
+                <mat-option [value]="tipoWorkspace.Empresa">Empresa</mat-option>
+              </mat-select>
+              <c-control-error [control]="form.get('workspaceTipo')"></c-control-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Nome do workspace</mat-label>
+              <mat-icon matPrefix>workspaces</mat-icon>
+              <input matInput formControlName="workspaceNome" placeholder="Ex: Meu espaço, Minha agência ou Minha empresa" />
+              <c-control-error [control]="form.get('workspaceNome')"></c-control-error>
+            </mat-form-field>
+          </fieldset>
+        }
+
+        @if (!conviteIdentificador && form.get('workspaceTipo')?.value === tipoWorkspace.Empresa) {
+          <fieldset class="form-section" formGroupName="empresa">
+            <legend>Dados da empresa</legend>
+
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Código da empresa</mat-label>
+                <mat-icon matPrefix>business</mat-icon>
+                <input matInput formControlName="codigo" placeholder="Ex: EMP001" />
+                <c-control-error [control]="form.get('empresa.codigo')"></c-control-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Nome fantasia</mat-label>
+                <mat-icon matPrefix>storefront</mat-icon>
+                <input matInput formControlName="nomeFantasia" placeholder="Nome da empresa" />
+                <c-control-error [control]="form.get('empresa.nomeFantasia')"></c-control-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Endereço</mat-label>
+                <mat-icon matPrefix>location_on</mat-icon>
+                <input matInput formControlName="endereco" placeholder="Rua ou avenida" />
+                <c-control-error [control]="form.get('empresa.endereco')"></c-control-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Número</mat-label>
+                <mat-icon matPrefix>tag</mat-icon>
+                <input matInput formControlName="numero" placeholder="Ex: 120" />
+                <c-control-error [control]="form.get('empresa.numero')"></c-control-error>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline">
+              <mat-label>E-mail da empresa</mat-label>
+              <mat-icon matPrefix>alternate_email</mat-icon>
+              <input matInput formControlName="email" type="email" placeholder="contato@empresa.com" />
+              <c-control-error [control]="form.get('empresa.email')"></c-control-error>
+            </mat-form-field>
+          </fieldset>
+        }
 
         <fieldset class="form-section">
           <legend>Informações pessoais</legend>
@@ -138,7 +211,11 @@
           </div>
         </fieldset>
 
-        <button mat-flat-button type="submit" class="primary-action">
+        <button
+          mat-flat-button
+          type="submit"
+          class="primary-action"
+          [disabled]="form.invalid || carregandoConvite || conviteInvalido">
           <mat-icon>how_to_reg</mat-icon>
           Criar minha conta
         </button>

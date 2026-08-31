@@ -30,6 +30,11 @@ namespace Infrastructure.DependencyInjection
                 provider.GetRequiredService<WorkspaceMapping>());
             services.AddScoped<IToDtoMapper<Workspace, WorkspaceInicialResponse>>(provider =>
                 provider.GetRequiredService<WorkspaceMapping>());
+            services.AddScoped<ConviteWorkspaceMapping>();
+            services.AddScoped<IToEntityMapper<ConviteWorkspace, CriarConviteWorkspaceRequest>>(provider =>
+                provider.GetRequiredService<ConviteWorkspaceMapping>());
+            services.AddScoped<IToDtoMapper<ConviteWorkspace, ConviteWorkspaceResponse>>(provider =>
+                provider.GetRequiredService<ConviteWorkspaceMapping>());
 
             services.AddScoped<IPerfilDeAcessoMapping>(provider =>
                 provider.GetRequiredService<PerfilDeAcessoMapping>());

@@ -13,3 +13,9 @@ export interface RegistrarResponse {
   workspace: WorkspaceInicialResponse;
   mensagens: Mensagem[];
 }
+
+export interface ConviteWorkspaceResponse {
+  workspace: WorkspaceInicialResponse;
+  remetenteCodigo: string;
+  expiraEm: string;
+}

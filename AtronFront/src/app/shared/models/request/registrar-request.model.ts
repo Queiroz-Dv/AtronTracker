@@ -7,6 +7,15 @@ export enum TipoWorkspace {
 export interface WorkspaceRegistroRequest {
   nome: string;
   tipo: TipoWorkspace;
+  empresa?: EmpresaRegistroRequest;
+}
+
+export interface EmpresaRegistroRequest {
+  codigo: string;
+  nomeFantasia: string;
+  endereco: string;
+  numero: string;
+  email: string;
 }
 
 export class RegistrarRequest {
@@ -17,7 +26,8 @@ export class RegistrarRequest {
     public email: string,
     public senha: string,
     public confirmaSenha: string,
-    public workspace: WorkspaceRegistroRequest,
-    public dataNascimento?: Date
+    public workspace?: WorkspaceRegistroRequest,
+    public dataNascimento?: Date,
+    public convite?: string
   ) { }
 }

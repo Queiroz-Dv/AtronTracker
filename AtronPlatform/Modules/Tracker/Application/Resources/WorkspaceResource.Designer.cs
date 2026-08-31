@@ -173,5 +173,65 @@ namespace Application.Resources {
                 return ResourceManager.GetString("Erro_WorkspaceInicialUsuarioExistente", resourceCulture);
             }
         }
+
+        public static string Erro_WorkspaceNaoEncontrado {
+            get {
+                return ResourceManager.GetString("Erro_WorkspaceNaoEncontrado", resourceCulture);
+            }
+        }
+
+        public static string Erro_ConviteInvalido {
+            get {
+                return ResourceManager.GetString("Erro_ConviteInvalido", resourceCulture);
+            }
+        }
+
+        public static string Erro_ConviteWorkspacePessoal {
+            get {
+                return ResourceManager.GetString("Erro_ConviteWorkspacePessoal", resourceCulture);
+            }
+        }
+
+        public static string Erro_ConviteRemetenteNaoMembro {
+            get {
+                return ResourceManager.GetString("Erro_ConviteRemetenteNaoMembro", resourceCulture);
+            }
+        }
+
+        public static string Erro_ConvitePersistencia {
+            get {
+                return ResourceManager.GetString("Erro_ConvitePersistencia", resourceCulture);
+            }
+        }
+
+        public static string Erro_ConviteUsuarioJaMembro {
+            get {
+                return ResourceManager.GetString("Erro_ConviteUsuarioJaMembro", resourceCulture);
+            }
+        }
+
+        public static string Erro_ConviteConsumo {
+            get {
+                return ResourceManager.GetString("Erro_ConviteConsumo", resourceCulture);
+            }
+        }
+
+        public static string Erro_ConviteComWorkspace {
+            get {
+                return ResourceManager.GetString("Erro_ConviteComWorkspace", resourceCulture);
+            }
+        }
+
+        public static string Mensagem_ConviteCriado {
+            get {
+                return ResourceManager.GetString("Mensagem_ConviteCriado", resourceCulture);
+            }
+        }
+
+        public static string Mensagem_ConviteAceito {
+            get {
+                return ResourceManager.GetString("Mensagem_ConviteAceito", resourceCulture);
+            }
+        }
     }
 }

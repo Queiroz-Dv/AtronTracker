@@ -16,6 +16,7 @@ export class RotasApi {
   public static readonly departamentoEndpoint: string = environment.apiRoute + 'api/Departamento';
   public static readonly cargoEndpoint: string = environment.apiRoute + 'api/Cargo';
   public static readonly usuarioEndpoint: string = environment.apiRoute + 'api/Usuario';
+  public static readonly workspaceEndpoint: string = environment.apiRoute + 'api/Workspace';
   public static readonly tarefaEndpoint: string = environment.apiRoute + 'api/Tarefa';
   public static readonly tarefaEstadosEndpoint: string = environment.apiRoute + 'api/Tarefa/Estados';
   public static readonly notificacaoInternaEndpoint: string = environment.apiRoute + 'api/notificacoes';

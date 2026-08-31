@@ -8,4 +8,5 @@ public sealed class WorkspaceRegistroRequest
 {
     public string Nome { get; set; } = string.Empty;
     public TipoWorkspace Tipo { get; set; }
+    public EmpresaRegistroRequest? Empresa { get; set; }
 }

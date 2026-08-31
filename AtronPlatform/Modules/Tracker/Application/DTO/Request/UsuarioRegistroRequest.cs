@@ -20,5 +20,7 @@ namespace Application.DTO.Request
         public string ConfirmaSenha { get; set; }
 
         public WorkspaceRegistroRequest? Workspace { get; set; }
+
+        public string? Convite { get; set; }
     }
 }

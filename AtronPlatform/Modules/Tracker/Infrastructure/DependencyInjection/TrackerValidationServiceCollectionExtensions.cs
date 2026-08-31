@@ -60,6 +60,7 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigureWorkspaceServices(IServiceCollection services)
         {
             services.AddScoped<IValidador<CriarWorkspaceInicialRequest>, WorkspaceValidador>();
+            services.AddScoped<IValidador<CriarConviteWorkspaceRequest>, ConviteWorkspaceValidador>();
         }
 
         private static void ConfgureCargoServices(IServiceCollection services)

@@ -276,7 +276,11 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigureWorkspaceServices(IServiceCollection services)
         {
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+            services.AddScoped<IConviteWorkspaceRepository, ConviteWorkspaceRepository>();
             services.AddScoped<CriarWorkspaceInicialCase>();
+            services.AddScoped<CriarConviteWorkspaceCase>();
+            services.AddScoped<ObterConviteWorkspaceCase>();
+            services.AddScoped<AceitarConviteWorkspaceCase>();
         }
 
         private static void ConfigureModuloServices(IServiceCollection services)

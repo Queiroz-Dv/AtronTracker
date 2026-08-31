@@ -1,5 +1,7 @@
+using Application.DTO;
 using Application.DTO.Request;
 using Domain.Entities;
+using Domain.Enums;
 using System;
 
 namespace Application.Extensions;
@@ -31,5 +33,17 @@ public static class UsuarioCadastroExtensions
         => new(
             request.Nome,
             request.Tipo,
-            usuarioCodigo);
+            usuarioCodigo,
+            request.Empresa?.Codigo);
+
+    public static EmpresaDTO MontarEmpresa(this EmpresaRegistroRequest request)
+        => new()
+        {
+            Codigo = request.Codigo,
+            NomeFantasia = request.NomeFantasia,
+            Endereco = request.Endereco,
+            Numero = request.Numero,
+            Email = request.Email,
+            Status = StatusEmpresa.Ativa
+        };
 }
