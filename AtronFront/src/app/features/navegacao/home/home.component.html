@@ -27,14 +27,14 @@
     </div>
 
     <mat-nav-list class="module-nav-list">
-      @for (item of modulosView; track item.code) {
+      @for (item of modulosView(); track item.codigo) {
         <a
           mat-list-item
           class="module-nav-item"
-          [routerLink]="item.route"
+          [routerLink]="item.rota"
           (click)="fecharMenuCompacto()">
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.title }}</span>
+          <mat-icon matListItemIcon>{{ item.icone }}</mat-icon>
+          <span matListItemTitle>{{ item.titulo }}</span>
         </a>
       }
     </mat-nav-list>

@@ -100,6 +100,24 @@ export class AcessoService {
     );
   }
 
+  recarregarSessaoAtual(): Observable<DadosDoUsuario> {
+    const tokenAtual = this.sessaoService.obterAccessToken();
+    if (tokenAtual) {
+      return this.carregarSessaoInfo(tokenAtual.token);
+    }
+
+    return this.http.post<UserToken>(RotasApi.refreshTokenEndpoint, {}, { withCredentials: true }).pipe(
+      switchMap(token => {
+        this.sessaoService.setUsuarioInfo(token.value, token.expires, token.usuarioCodigo);
+        return this.carregarSessaoInfo(token.value);
+      }),
+      catchError(error => {
+        this.limparSessaoLocal();
+        return throwError(() => error);
+      })
+    );
+  }
+
   limparSessaoLocal(): void {
     this.sessaoService.clearSessionInfo();
     this.workspaceContextoService.limpar();
@@ -109,6 +127,7 @@ export class AcessoService {
   private carregarSessaoInfo(token: string): Observable<DadosDoUsuario> {
     if (!token) return throwError(() => new Error('Token de acesso ausente para carregar a sessão.'));
 
+    this.sessaoService.clearInfo();
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     return this.http.get<DadosDoUsuario>(RotasApi.sessionInfoEndpoint, { headers }).pipe(

@@ -183,6 +183,11 @@ indicação visual e uma nova seleção aceita atualiza o contexto em memória. 
 frontend não persiste o identificador em `localStorage` ou `sessionStorage`.
 No logout, o estado em memória e o cookie de seleção são removidos.
 
+Ao trocar o workspace pelo seletor, o Angular chama novamente `Sessao/Info`.
+Essa nova leitura sincroniza o workspace atual e publica novamente os módulos
+acessíveis calculados pela sessão. O dashboard e o menu lateral consomem essa
+coleção reemitida, mantendo a navegação alinhada ao estado atual da sessão.
+
 A escolha automática de um workspace no login, as regras operacionais baseadas
 no tipo do membro e a migração dos dados dos módulos ainda exigem decisões
 posteriores. Esses pontos serão planejados em fatias pequenas antes de qualquer

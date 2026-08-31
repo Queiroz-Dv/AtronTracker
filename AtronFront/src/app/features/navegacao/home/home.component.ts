@@ -9,7 +9,6 @@ import { map } from 'rxjs/operators';
 import { Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { VisualizacaoService } from '../../../core/services/visualizacao-service';
-import { Modulo } from '../modulos.model';
 import { SharedModule } from '../../../shared/modules/shared.module';
 import { AcessoService } from '../../../core/services/acesso.service';
 import { MaterialContainerModule } from '../../../material-container.module';
@@ -20,6 +19,8 @@ import {
 } from '../../../plataforma/notificacoes/models/notificacao-interna.model';
 import { NotificacaoInternaService } from '../../../plataforma/notificacoes/services/notificacao-interna.service';
 import { WorkspaceSeletorComponent } from '../workspace-seletor/workspace-seletor.component';
+import { ModuloModel } from '../modulos/interfaces/modulo.interface';
+import { ModuloItem } from '../../../shared/utils/modulo-functions.util';
 
 
 @Component({
@@ -51,8 +52,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   private notificacoesPolling?: Subscription;
   private notificacoesSubscription?: Subscription;
   private visibilitySubscription?: Subscription;
+  private modulosSubscription?: Subscription;
 
-  readonly modulosView = Modulo.getModulos();
+  readonly modulosView = signal<ModuloItem[]>([]);
   readonly isCompact = toSignal(
     this.breakpointObserver.observe('(max-width: 900px)')
       .pipe(map(result => result.matches)),
@@ -71,6 +73,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.notificacoes = notificacoes;
       this.totalNaoLidas = notificacoes.filter(notificacao => !notificacao.lida).length;
     });
+    this.modulosSubscription = this.authService.modulosAcessiveis$.subscribe(modulos => {
+      this.modulosView.set(this.criarModulosMenu(modulos));
+    });
 
     this.iniciarMonitoramentoNotificacoes();
     this.visibilitySubscription = fromEvent(document, 'visibilitychange').subscribe(() => {
@@ -84,6 +89,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.pararMonitoramentoNotificacoes();
     this.notificacoesSubscription?.unsubscribe();
     this.visibilitySubscription?.unsubscribe();
+    this.modulosSubscription?.unsubscribe();
   }
 
   trocarVisualizacao() {
@@ -167,5 +173,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     this.router.navigateByUrl(urlDestino.startsWith('/') ? urlDestino : `/${urlDestino}`);
+  }
+
+  private criarModulosMenu(modulos: ModuloModel[]): ModuloItem[] {
+    return modulos.map(modulo => new ModuloItem(modulo.codigo));
   }
 }

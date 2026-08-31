@@ -1,7 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatSelectChange } from '@angular/material/select';
-import { finalize } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
+import { AcessoService } from '../../../core/services/acesso.service';
 import { Nivel, NotificacaoService } from '../../../core/services/notification.service';
 import { WorkspaceContextoService } from '../../../core/services/workspace-contexto.service';
 import { SharedModule } from '../../../shared/modules/shared.module';
@@ -23,6 +24,7 @@ export class WorkspaceSeletorComponent implements OnInit {
 
   constructor(
     private workspaceContextoService: WorkspaceContextoService,
+    private acessoService: AcessoService,
     private notificacaoService: NotificacaoService
   ) { }
 
@@ -47,10 +49,11 @@ export class WorkspaceSeletorComponent implements OnInit {
 
     this.selecionando.set(true);
     this.workspaceContextoService.selecionar(workspaceId)
+      .pipe(switchMap(() => this.acessoService.recarregarSessaoAtual()))
       .pipe(finalize(() => this.selecionando.set(false)))
       .subscribe({
-        next: workspace => this.notificacaoService.exibirMensagem(
-          `Workspace ${workspace.nome} selecionado.`,
+        next: sessao => this.notificacaoService.exibirMensagem(
+          `Workspace ${sessao.workspaceAtual?.nome ?? 'selecionado'} selecionado.`,
           Nivel.Sucesso
         ),
         error: () => this.notificacaoService.exibirMensagem(
