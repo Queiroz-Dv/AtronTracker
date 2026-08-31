@@ -1,6 +1,5 @@
 using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
-using Application.Interfaces.Services;
 using Application.UseCases.UsuarioCases;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
@@ -10,7 +9,8 @@ namespace Application.Services.AuthServices
     public class RegistroUsuarioService(
         CadastrarUsuarioCase cadastrarUsuarioCase,
         ConfirmarEmailCase confirmarEmailCase,
-        IRecuperacaoSenhaService recuperacaoSenhaService) : IRegistroUsuarioService
+        SolicitarRecuperacaoSenhaCase solicitarRecuperacaoSenhaCase,
+        TrocarSenhaCase trocarSenhaCase) : IRegistroUsuarioService
     {
         public Task<Resultado> RegistrarUsuario(UsuarioRegistroRequest registroRequest)
             => cadastrarUsuarioCase.ExecutarAsync(registroRequest);
@@ -19,9 +19,9 @@ namespace Application.Services.AuthServices
             => confirmarEmailCase.ExecutarAsync(codigoUsuario, identificador);
 
         public Task<Resultado> SolicitarRecuperacaoSenha(SolicitarRecuperacaoSenhaRequest request)
-            => recuperacaoSenhaService.SolicitarAsync(request);
+            => solicitarRecuperacaoSenhaCase.ExecutarAsync(request);
 
         public Task<Resultado> TrocarSenha(RedefinirSenhaRequest request)
-            => recuperacaoSenhaService.TrocarAsync(request);
+            => trocarSenhaCase.ExecutarAsync(request);
     }
 }

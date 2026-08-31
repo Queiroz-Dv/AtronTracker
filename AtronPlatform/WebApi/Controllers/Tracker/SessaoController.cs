@@ -31,7 +31,6 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         public SessaoController(
             ICacheService cacheService,
             IPerfilDeAcessoService perfilDeAcessoService,
-            IAccessorService serviceAccessor,
             ObterWorkspaceAtualCase obterWorkspaceAtualCase)
         {
             _cacheService = cacheService;

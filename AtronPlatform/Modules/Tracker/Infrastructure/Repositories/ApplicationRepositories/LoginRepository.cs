@@ -1,6 +1,7 @@
 using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
-using Shared.Application.Interfaces.Service;
+using Microsoft.AspNetCore.Identity;
+using Shared.Domain.Entities.Identity;
 using Shared.Extensions;
 using System.Threading.Tasks;
 
@@ -8,47 +9,48 @@ namespace Infrastructure.Repositories.ApplicationRepositories
 {
     public class LoginRepository : ILoginRepository
     {
-        private readonly IAuthManagerService _authManager;
-        public LoginRepository(IAuthManagerService authManagerContext)
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public LoginRepository(UserManager<ApplicationUser> userManager)
         {
-            _authManager = authManagerContext;
+            _userManager = userManager;
         }
 
         public async Task<bool> ValidarCredenciaisAsync(string codigoUsuario, string senha)
         {
-            var usuario = await _authManager.UserManager.FindByNameAsync(codigoUsuario);
-            if (usuario is null || await _authManager.UserManager.IsLockedOutAsync(usuario))
+            var usuario = await _userManager.FindByNameAsync(codigoUsuario);
+            if (usuario is null || await _userManager.IsLockedOutAsync(usuario))
                 return false;
 
             if (!usuario.LockoutEnabled)
             {
                 usuario.LockoutEnabled = true;
-                var lockoutHabilitado = await _authManager.UserManager.UpdateAsync(usuario);
+                var lockoutHabilitado = await _userManager.UpdateAsync(usuario);
                 if (!lockoutHabilitado.Succeeded)
                     return false;
             }
 
-            if (!await _authManager.UserManager.CheckPasswordAsync(usuario, senha))
+            if (!await _userManager.CheckPasswordAsync(usuario, senha))
             {
-                await _authManager.UserManager.AccessFailedAsync(usuario);
+                await _userManager.AccessFailedAsync(usuario);
                 return false;
             }
 
-            var falhasRedefinidas = await _authManager.UserManager.ResetAccessFailedCountAsync(usuario);
+            var falhasRedefinidas = await _userManager.ResetAccessFailedCountAsync(usuario);
             return falhasRedefinidas.Succeeded;
         }
 
         public async Task<bool> AtualizarSenhaUsuario(string codigoDoUsuario, string senha)
         {
-            var usr = await _authManager.UserManager.FindByNameAsync(codigoDoUsuario);
+            var usr = await _userManager.FindByNameAsync(codigoDoUsuario);
 
             if (usr != null)
             {
-                var result = await _authManager.UserManager.RemovePasswordAsync(usr);
+                var result = await _userManager.RemovePasswordAsync(usr);
 
                 if (result.Succeeded)
                 {
-                    result = await _authManager.UserManager.AddPasswordAsync(usr, senha);
+                    result = await _userManager.AddPasswordAsync(usr, senha);
                     return result.Succeeded;
                 }
             }

@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Services;
 using Shared.Application.Services.Accessor;
-using Shared.Application.Services.Contexts;
 using Shared.Application.Services.Factory;
 using Shared.Infrastructure.Repositories;
 using Shared.Repositories;
@@ -25,7 +24,6 @@ namespace Shared.Infrastructure.DependencyInjection
             services.AddScoped<ICookieFactoryService, CookieFactory>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenFactoryService, TokenFactory>();
-            services.AddScoped<IAuthManagerService, AuthManagerContext>();
             return services;
         }
     }

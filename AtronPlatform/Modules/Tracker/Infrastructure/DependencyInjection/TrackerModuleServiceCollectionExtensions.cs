@@ -1,16 +1,13 @@
 ﻿using Application.DTO.Request;
 using Application.Email.Compositores;
 using Application.Interfaces.ApplicationInterfaces;
-using Application.Interfaces.Contexts;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
 using Application.Mapping;
 using Application.Policies.PlanejamentoCustos;
 using Application.Policies.Tarefas;
 using Application.Resolvers.Tarefas;
-using Application.Records.Usuario;
 using Application.Services.AuthServices;
-using Application.Services.Contexts;
 using Application.Services.EntitiesServices;
 using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
@@ -106,9 +103,6 @@ namespace Infrastructure.DependencyInjection
 
         private static void AddTrackerSharedAdapters(this IServiceCollection services)
         {
-            services.AddScoped<ILoginContext, LoginContext>();
-            services.AddScoped<IUsuarioContext, UsuarioContext>();
-            services.AddScoped<IControleDeSessaoContext, ControleDeSessaoContext>();
             services.AddScoped<ICacheUsuarioService, CacheUsuarioService>();
             services.AddScoped<IDadosComplementaresDoUsuarioService, DadosComplementaresDoUsuarioService>();
             services.AddScoped<IUserIdentityService, UserIdentityService>();
@@ -132,18 +126,6 @@ namespace Infrastructure.DependencyInjection
             services.AddSingleton<ITokenTemporarioService, TokenTemporarioService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
-
-            services.AddScoped(provider => new RecuperacaoSenhaContextRecord(
-                provider.GetRequiredService<IUsuarioRepository>(),
-                provider.GetRequiredService<IUsuarioIdentityRepository>(),
-                provider.GetRequiredService<ILoginRepository>(),
-                provider.GetRequiredService<ICacheService>(),
-                provider.GetRequiredService<IEmailService>(),
-                provider.GetRequiredService<IAcessoEmailCompositor>(),
-                provider.GetRequiredService<IEnderecoFrontendService>(),
-                provider.GetRequiredService<ITokenTemporarioService>()));
-
-            services.AddScoped<IRecuperacaoSenhaService, RecuperacaoSenhaService>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
             services.AddScoped<IAcessoEmailCompositor, AcessoEmailCompositor>();
             services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
@@ -223,6 +205,8 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<VerificarAtualizacaoUsuarioCase>();
             services.AddScoped<VerificarUsuarioCase>();
             services.AddScoped<VincularGestorImediatoCase>();
+            services.AddScoped<SolicitarRecuperacaoSenhaCase>();
+            services.AddScoped<TrocarSenhaCase>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IConfirmacaoEmailRepository, ConfirmacaoEmailRepository>();
             services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();

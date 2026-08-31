@@ -14,7 +14,7 @@ public sealed class ObterWorkspaceAtualCase(
     IWorkspaceRepository workspaceRepository,
     WorkspaceMapping mapping)
 {
-    public async Task<WorkspaceInicialResponse?> ExecutarAsync(string usuarioCodigo)
+    public async Task<WorkspaceInicialResponse> ExecutarAsync(string usuarioCodigo)
     {
         if (usuarioCodigo.IsNullOrEmpty())
             return null;

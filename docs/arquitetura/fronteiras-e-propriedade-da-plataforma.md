@@ -159,6 +159,11 @@ autenticado e o workspace antes de retornar `workspaceAtual`. Uma seleção sem
 vínculo deixa de compor a sessão e o cookie correspondente é removido. O dado
 não é incluído no cache de acesso indexado somente pelo usuário.
 
+A resolução validada fica em `ObterWorkspaceAtualCase`. `Sessao/Info` obtém o
+código do usuário pela identidade autenticada e o fornece ao caso de uso, sem
+aceitar identificador de workspace do cliente. Nesta fase, policies e módulos
+ainda não usam o workspace atual para autorização ou isolamento.
+
 O Angular consulta essa coleção e apresenta o mesmo seletor no dashboard e no
 layout autenticado das rotinas. A sessão retornada pelo backend inicializa a
 indicação visual e uma nova seleção aceita atualiza o contexto em memória. O
