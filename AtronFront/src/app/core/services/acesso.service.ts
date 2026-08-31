@@ -112,8 +112,12 @@ export class AcessoService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     return this.http.get<DadosDoUsuario>(RotasApi.sessionInfoEndpoint, { headers }).pipe(
-      tap(info => this.sessionInfoSubject.next(info)),
+      tap(info => {
+        this.workspaceContextoService.sincronizarComSessao(info.workspaceAtual);
+        this.sessionInfoSubject.next(info);
+      }),
       catchError(error => {
+        this.workspaceContextoService.limpar();
         this.sessionInfoSubject.next(null);
         return throwError(() => error);
       })

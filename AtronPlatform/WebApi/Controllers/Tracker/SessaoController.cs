@@ -1,4 +1,5 @@
 using Application.Interfaces.Services;
+using Application.UseCases.WorkspaceCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,19 +25,23 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     public class SessaoController : ControllerBase
     {
         private readonly ICacheService _cacheService;
-        private readonly IPerfilDeAcessoService _perfilDeAcessoService;
-        private readonly IAccessorService _serviceAccessor;
+        private readonly IPerfilDeAcessoService _perfilDeAcessoService;        
+        private readonly ObterWorkspaceAtualCase _obterWorkspaceAtualCase;
 
-        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService, IAccessorService serviceAccessor)
+        public SessaoController(
+            ICacheService cacheService,
+            IPerfilDeAcessoService perfilDeAcessoService,
+            IAccessorService serviceAccessor,
+            ObterWorkspaceAtualCase obterWorkspaceAtualCase)
         {
             _cacheService = cacheService;
             _perfilDeAcessoService = perfilDeAcessoService;
-            _serviceAccessor = serviceAccessor;
+            _obterWorkspaceAtualCase = obterWorkspaceAtualCase;
         }
 
         /// <summary>
         /// Retorna as informações da sessão atual do usuário autenticado.
-        /// Inclui código, nome, e-mail, cargo, departamento e perfis de acesso com seus módulos.
+        /// Inclui código, nome, e-mail, cargo, departamento, workspace atual e perfis de acesso com seus módulos.
         /// Utiliza cache para melhorar performance; popula o cache caso não exista entrada.
         /// </summary>
         /// <returns>200 OK com os dados da sessão, 204 NoContent se o usuário não puder ser identificado.</returns>
@@ -49,6 +54,8 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
             if (string.IsNullOrWhiteSpace(usuarioCodigo))
                 return NoContent();
 
+            var workspaceAtual = await _obterWorkspaceAtualCase.ExecutarAsync(usuarioCodigo);
+
             var dadosCache = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, usuarioCodigo));
 
             if (dadosCache is not null)
@@ -60,7 +67,8 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                     emailDoUsuario = dadosCache.DadosDoUsuario.Email ?? user.FindFirst(ClaimTypes.Email)?.Value,
                     codigoDoCargo = dadosCache.DadosDoUsuario.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
                     codigoDoDepartamento = dadosCache.DadosDoUsuario.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,
-                    perfisDeAcesso = dadosCache.DadosDoPerfil
+                    perfisDeAcesso = dadosCache.DadosDoPerfil,
+                    workspaceAtual
                 });
             }
 
@@ -87,7 +95,8 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 emailDoUsuario = dto.DadosDoUsuario.Email,
                 codigoDoCargo = dto.DadosDoUsuario.CodigoDoCargo,
                 codigoDoDepartamento = dto.DadosDoUsuario.CodigoDoDepartamento,
-                perfisDeAcesso = dto.DadosDoPerfil
+                perfisDeAcesso = dto.DadosDoPerfil,
+                workspaceAtual
             };
 
             return Ok(jsonAtualizado);

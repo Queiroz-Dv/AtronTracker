@@ -20,7 +20,8 @@ public sealed class SelecionarWorkspaceCase(
         string usuarioCodigo)
     {
         if (request.IsNullable() || request.WorkspaceId <= 0)
-            return Resultado<WorkspaceInicialResponse>.Falha(WorkspaceResource.Erro_WorkspaceIdInvalido);
+            return Resultado<WorkspaceInicialResponse>.Falha(
+                WorkspaceResource.Erro_WorkspaceIdInvalido);
 
         if (usuarioCodigo.IsNullOrEmpty())
             return Resultado<WorkspaceInicialResponse>.Falha(WorkspaceResource.Erro_UsuarioCodigoObrigatorio);

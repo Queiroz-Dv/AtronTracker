@@ -61,7 +61,6 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddScoped<IValidador<CriarWorkspaceInicialRequest>, WorkspaceValidador>();
             services.AddScoped<IValidador<CriarConviteWorkspaceRequest>, ConviteWorkspaceValidador>();
-            services.AddScoped<IValidador<SelecionarWorkspaceRequest>, SelecionarWorkspaceValidador>();
         }
 
         private static void ConfgureCargoServices(IServiceCollection services)

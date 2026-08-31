@@ -154,20 +154,20 @@ backend obtém o código do usuário pela identidade autenticada e consulta o
 workspace junto com o vínculo correspondente. Apenas depois dessa consulta a
 seleção é registrada em cookie `HttpOnly`, `Secure` e `SameSite=None`. O cookie
 é restrito à sessão do navegador e não cria preferência permanente no usuário.
-Nesta etapa ele ainda não é lido pela sessão, por policies ou pelos módulos.
-Qualquer consumo posterior deverá validar novamente o pertencimento, pois o
-identificador armazenado não constitui autorização.
+`Sessao/Info` lê esse cookie e consulta novamente o vínculo entre o usuário
+autenticado e o workspace antes de retornar `workspaceAtual`. Uma seleção sem
+vínculo deixa de compor a sessão e o cookie correspondente é removido. O dado
+não é incluído no cache de acesso indexado somente pelo usuário.
 
 O Angular consulta essa coleção e apresenta o mesmo seletor no dashboard e no
-layout autenticado das rotinas. Após uma seleção aceita pelo backend, a aba
-mantém apenas o identificador em `sessionStorage` para restaurar a indicação
-visual durante a navegação. Essa referência é descartada no logout ou quando
-deixa de existir na coleção retornada pelo backend. Ela não é enviada como
-critério de autorização nem substitui o cookie `HttpOnly` da seleção.
+layout autenticado das rotinas. A sessão retornada pelo backend inicializa a
+indicação visual e uma nova seleção aceita atualiza o contexto em memória. O
+frontend não persiste o identificador em `localStorage` ou `sessionStorage`.
+No logout, o estado em memória e o cookie de seleção são removidos.
 
-A seleção do workspace no login, o escopo dos perfis de acesso e a migração
-dos dados dos módulos ainda exigem decisões posteriores. Esses pontos serão
-planejados em fatias pequenas antes de qualquer implementação.
+A escolha automática de um workspace no login, o escopo dos perfis de acesso
+e a migração dos dados dos módulos ainda exigem decisões posteriores. Esses
+pontos serão planejados em fatias pequenas antes de qualquer implementação.
 
 ## Contratos transversais
 

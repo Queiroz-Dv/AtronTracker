@@ -7,7 +7,6 @@ import { RotasApi } from '../../shared/models/rotas-api.model';
 
 @Injectable({ providedIn: 'root' })
 export class WorkspaceContextoService {
-  private readonly workspaceAtualStorageKey = 'atron_workspace_atual_id';
   private readonly workspaceAtualSubject = new BehaviorSubject<WorkspaceResponse | null>(null);
 
   readonly workspaceAtual$ = this.workspaceAtualSubject.asObservable();
@@ -16,7 +15,7 @@ export class WorkspaceContextoService {
 
   listar(): Observable<WorkspaceResponse[]> {
     return this.http.get<WorkspaceResponse[]>(RotasApi.workspaceEndpoint).pipe(
-      tap(workspaces => this.restaurarReferenciaVisual(workspaces))
+      tap(workspaces => this.confirmarWorkspaceAtualNaLista(workspaces))
     );
   }
 
@@ -27,18 +26,23 @@ export class WorkspaceContextoService {
       `${RotasApi.workspaceEndpoint}/selecionar`,
       request
     ).pipe(
-      tap(workspace => this.definirReferenciaVisual(workspace))
+      tap(workspace => this.definirWorkspaceAtual(workspace))
     );
   }
 
   limpar(): void {
-    sessionStorage.removeItem(this.workspaceAtualStorageKey);
     this.workspaceAtualSubject.next(null);
   }
 
-  private restaurarReferenciaVisual(workspaces: WorkspaceResponse[]): void {
-    const workspaceId = Number(sessionStorage.getItem(this.workspaceAtualStorageKey));
-    const workspace = workspaces.find(item => item.id === workspaceId) ?? null;
+  sincronizarComSessao(workspace: WorkspaceResponse | null): void {
+    this.workspaceAtualSubject.next(workspace);
+  }
+
+  private confirmarWorkspaceAtualNaLista(workspaces: WorkspaceResponse[]): void {
+    const workspaceAtual = this.workspaceAtualSubject.value;
+    const workspace = workspaceAtual
+      ? workspaces.find(item => item.id === workspaceAtual.id) ?? null
+      : null;
 
     if (!workspace) {
       this.limpar();
@@ -48,8 +52,7 @@ export class WorkspaceContextoService {
     this.workspaceAtualSubject.next(workspace);
   }
 
-  private definirReferenciaVisual(workspace: WorkspaceResponse): void {
-    sessionStorage.setItem(this.workspaceAtualStorageKey, workspace.id.toString());
+  private definirWorkspaceAtual(workspace: WorkspaceResponse): void {
     this.workspaceAtualSubject.next(workspace);
   }
 }

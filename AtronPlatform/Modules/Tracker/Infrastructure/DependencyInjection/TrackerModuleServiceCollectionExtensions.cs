@@ -283,6 +283,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ObterConviteWorkspaceCase>();
             services.AddScoped<AceitarConviteWorkspaceCase>();
             services.AddScoped<ObterWorkspacesUsuarioCase>();
+            services.AddScoped<ObterWorkspaceAtualCase>();
             services.AddScoped<SelecionarWorkspaceCase>();
         }
 

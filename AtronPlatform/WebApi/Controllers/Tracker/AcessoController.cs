@@ -1,6 +1,7 @@
 using Application.DTO.Request;
 using Application.DTO.Response;
 using Application.Interfaces.ApplicationInterfaces;
+using Application.Interfaces.Services;
 using Application.UseCases.UsuarioCases;
 using AtronPlatform.WebApi.Security;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +25,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         ILoginService loginUserService,
         IRegistroUsuarioService registroUsuarioService,
         ICookieService cookieService,
+        IWorkspaceAtualService workspaceAtualService,
         SolicitarReativacaoCase solicitarReativacao,
         ReativarUsuarioCase reativarUsuario,
         ReenviarConfirmacaoEmailCase reenviarConfirmacaoEmail) : ControllerBase
@@ -31,6 +33,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         private readonly IRegistroUsuarioService _registroUsuarioService = registroUsuarioService;
         private readonly ILoginService _service = loginUserService;
         private readonly ICookieService _cookieService = cookieService;
+        private readonly IWorkspaceAtualService _workspaceAtualService = workspaceAtualService;
         private readonly SolicitarReativacaoCase _solicitarReativacao = solicitarReativacao;
         private readonly ReativarUsuarioCase _reativarUsuario = reativarUsuario;
         private readonly ReenviarConfirmacaoEmailCase _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
@@ -75,6 +78,9 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 return Unauthorized();
 
             var resultado = await _service.Logout(usuarioCodigo);
+            if (resultado.TeveSucesso)
+                _workspaceAtualService.Remover();
+
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
