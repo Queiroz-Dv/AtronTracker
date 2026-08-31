@@ -80,87 +80,88 @@
         </fieldset>
 
         @if (conviteIdentificador) {
-          <fieldset class="form-section">
-            <legend>Convite de workspace</legend>
+        <fieldset class="form-section">
+          <legend>Convite de workspace</legend>
 
-            @if (carregandoConvite) {
-              <p>Validando o convite...</p>
-            } @else if (conviteWorkspace) {
-              <p>
-                Você foi convidado por <strong>{{ conviteWorkspace.remetenteCodigo }}</strong>
-                para ingressar no workspace <strong>{{ conviteWorkspace.workspace.nome }}</strong>.
-              </p>
-            } @else {
-              <p>O convite informado não está disponível para cadastro.</p>
-            }
-          </fieldset>
+          @if (carregandoConvite) {
+          <p>Validando o convite...</p>
+          } @else if (conviteWorkspace) {
+          <p>
+            Você foi convidado por <strong>{{ conviteWorkspace.remetenteCodigo }}</strong>
+            para ingressar no workspace <strong>{{ conviteWorkspace.workspace.nome }}</strong>.
+          </p>
+          } @else {
+          <p>O convite informado não está disponível para cadastro.</p>
+          }
+        </fieldset>
         } @else {
-          <fieldset class="form-section">
-            <legend>Workspace</legend>
+        <fieldset class="form-section">
+          <legend>Workspace</legend>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Tipo do workspace</mat-label>
-              <mat-icon matPrefix>category</mat-icon>
-              <mat-select formControlName="workspaceTipo">
-                <mat-option [value]="tipoWorkspace.Pessoal">Pessoal</mat-option>
-                <mat-option [value]="tipoWorkspace.Agencia">Agência</mat-option>
-                <mat-option [value]="tipoWorkspace.Empresa">Empresa</mat-option>
-              </mat-select>
-              <c-control-error [control]="form.get('workspaceTipo')"></c-control-error>
-            </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo do workspace</mat-label>
+            <mat-icon matPrefix>category</mat-icon>
+            <mat-select formControlName="workspaceTipo">
+              <mat-option [value]="tipoWorkspace.Pessoal">Pessoal</mat-option>
+              <mat-option [value]="tipoWorkspace.Agencia">Agência</mat-option>
+              <mat-option [value]="tipoWorkspace.Empresa">Empresa</mat-option>
+            </mat-select>
+            <c-control-error [control]="form.get('workspaceTipo')"></c-control-error>
+          </mat-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Nome do workspace</mat-label>
-              <mat-icon matPrefix>workspaces</mat-icon>
-              <input matInput formControlName="workspaceNome" placeholder="Ex: Meu espaço, Minha agência ou Minha empresa" />
-              <c-control-error [control]="form.get('workspaceNome')"></c-control-error>
-            </mat-form-field>
-          </fieldset>
+          <mat-form-field appearance="outline">
+            <mat-label>Nome do workspace</mat-label>
+            <mat-icon matPrefix>workspaces</mat-icon>
+            <input matInput formControlName="workspaceNome"
+              placeholder="Ex: Meu espaço, Minha agência ou Minha empresa" />
+            <c-control-error [control]="form.get('workspaceNome')"></c-control-error>
+          </mat-form-field>
+        </fieldset>
         }
 
         @if (!conviteIdentificador && form.get('workspaceTipo')?.value === tipoWorkspace.Empresa) {
-          <fieldset class="form-section" formGroupName="empresa">
-            <legend>Dados da empresa</legend>
+        <fieldset class="form-section" formGroupName="empresa">
+          <legend>Dados da empresa</legend>
 
-            <div class="form-grid">
-              <mat-form-field appearance="outline">
-                <mat-label>Código da empresa</mat-label>
-                <mat-icon matPrefix>business</mat-icon>
-                <input matInput formControlName="codigo" placeholder="Ex: EMP001" />
-                <c-control-error [control]="form.get('empresa.codigo')"></c-control-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Nome fantasia</mat-label>
-                <mat-icon matPrefix>storefront</mat-icon>
-                <input matInput formControlName="nomeFantasia" placeholder="Nome da empresa" />
-                <c-control-error [control]="form.get('empresa.nomeFantasia')"></c-control-error>
-              </mat-form-field>
-            </div>
-
-            <div class="form-grid">
-              <mat-form-field appearance="outline">
-                <mat-label>Endereço</mat-label>
-                <mat-icon matPrefix>location_on</mat-icon>
-                <input matInput formControlName="endereco" placeholder="Rua ou avenida" />
-                <c-control-error [control]="form.get('empresa.endereco')"></c-control-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Número</mat-label>
-                <mat-icon matPrefix>tag</mat-icon>
-                <input matInput formControlName="numero" placeholder="Ex: 120" />
-                <c-control-error [control]="form.get('empresa.numero')"></c-control-error>
-              </mat-form-field>
-            </div>
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Código da empresa</mat-label>
+              <mat-icon matPrefix>business</mat-icon>
+              <input matInput formControlName="codigo" placeholder="Ex: EMP001" />
+              <c-control-error [control]="form.get('empresa.codigo')"></c-control-error>
+            </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>E-mail da empresa</mat-label>
-              <mat-icon matPrefix>alternate_email</mat-icon>
-              <input matInput formControlName="email" type="email" placeholder="contato@empresa.com" />
-              <c-control-error [control]="form.get('empresa.email')"></c-control-error>
+              <mat-label>Nome fantasia</mat-label>
+              <mat-icon matPrefix>storefront</mat-icon>
+              <input matInput formControlName="nomeFantasia" placeholder="Nome da empresa" />
+              <c-control-error [control]="form.get('empresa.nomeFantasia')"></c-control-error>
             </mat-form-field>
-          </fieldset>
+          </div>
+
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Endereço</mat-label>
+              <mat-icon matPrefix>location_on</mat-icon>
+              <input matInput formControlName="endereco" placeholder="Rua ou avenida" />
+              <c-control-error [control]="form.get('empresa.endereco')"></c-control-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Número</mat-label>
+              <mat-icon matPrefix>tag</mat-icon>
+              <input matInput formControlName="numero" placeholder="Ex: 120" />
+              <c-control-error [control]="form.get('empresa.numero')"></c-control-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail da empresa</mat-label>
+            <mat-icon matPrefix>alternate_email</mat-icon>
+            <input matInput formControlName="email" type="email" placeholder="contato@empresa.com" />
+            <c-control-error [control]="form.get('empresa.email')"></c-control-error>
+          </mat-form-field>
+        </fieldset>
         }
 
         <fieldset class="form-section">
@@ -184,7 +185,10 @@
             <mat-form-field appearance="outline">
               <mat-label>Data de nascimento</mat-label>
               <mat-icon matPrefix>calendar_today</mat-icon>
-              <input matInput formControlName="dataNascimento" type="date" />
+              <input matInput appDateMask [matDatepicker]="dataNascimmentoPicker" placeholder="dd/MM/aaaa"
+                formControlName="dataNascimento" />
+              <mat-datepicker-toggle matIconSuffix [for]="dataNascimmentoPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dataNascimmentoPicker></mat-datepicker>
               <c-control-error [control]="form.get('dataNascimento')"></c-control-error>
             </mat-form-field>
 
@@ -198,14 +202,16 @@
             <mat-form-field appearance="outline">
               <mat-label>Senha</mat-label>
               <mat-icon matPrefix>lock_outline</mat-icon>
-              <input type="password" matInput formControlName="senha" placeholder="Crie uma senha" autocomplete="new-password" />
+              <input type="password" matInput formControlName="senha" placeholder="Crie uma senha"
+                autocomplete="new-password" />
               <c-control-error [control]="form.get('senha')"></c-control-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Confirmar senha</mat-label>
               <mat-icon matPrefix>lock</mat-icon>
-              <input type="password" matInput formControlName="confirmaSenha" placeholder="Repita a senha" autocomplete="new-password" />
+              <input type="password" matInput formControlName="confirmaSenha" placeholder="Repita a senha"
+                autocomplete="new-password" />
               <c-control-error [control]="form.get('confirmaSenha')"></c-control-error>
             </mat-form-field>
           </div>

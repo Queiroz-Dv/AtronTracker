@@ -84,12 +84,12 @@ export class RegistrarComponent implements OnInit {
     const workspace = this.conviteIdentificador
       ? undefined
       : {
-          nome: formulario.workspaceNome,
-          tipo: tipoWorkspace,
-          empresa: tipoWorkspace === TipoWorkspace.Empresa
-            ? formulario.empresa
-            : undefined,
-        };
+        nome: formulario.workspaceNome,
+        tipo: tipoWorkspace,
+        empresa: tipoWorkspace === TipoWorkspace.Empresa
+          ? formulario.empresa
+          : undefined,
+      };
     const dadosDoUsuario = new RegistrarRequest(
       formulario.codigo,
       formulario.nome,

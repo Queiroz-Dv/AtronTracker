@@ -10,7 +10,7 @@ namespace Infrastructure.EntitiesConfiguration
     {
         public void Configure(EntityTypeBuilder<MembroWorkspace> builder)
         {
-            builder.ToTable("Membros_Workspace");
+            builder.ToTable("MembrosWorkspace");
             builder.HasKey(membro => new { membro.WorkspaceId, membro.UsuarioCodigo });
             builder.Property(membro => membro.UsuarioCodigo).IsRequired().HasMaxLength(10);
             builder.Property(membro => membro.Tipo)
