@@ -81,7 +81,7 @@ Capacidade central formada por autenticação, usuários, perfis de acesso, cat�
 _Avoid_: Identidade como domínio exclusivo do Tracker, serviço separado sem necessidade, módulo consultando repositório de perfil, configuração JWT duplicada
 
 **Workspace**:
-Contexto de trabalho que define a fronteira lógica de dados, os usuários participantes, a assinatura e o perfil de uso da aplicação. Um usuário pode participar de vários workspaces e ter permissões diferentes em cada um. O workspace possui um tipo explícito: `Pessoal`, `Agencia` ou `Empresa`. Somente o workspace empresarial possui um cadastro formal de `Empresa` associado.
+Contexto de trabalho que define a fronteira lógica de dados, os usuários participantes, a assinatura e o perfil de uso da aplicação. Um usuário pode participar de vários workspaces e ter permissões diferentes em cada um. O workspace possui um tipo explícito: `Pessoal`, `Agencia` ou `Empresa`. Somente o workspace empresarial possui um cadastro formal de `Empresa` associado. O backend já permite ao usuário autenticado consultar os workspaces aos quais pertence, mas ainda não define um workspace ativo.
 _Avoid_: Usuário como tenant, empresa formal obrigatória em todo workspace, isolamento decidido pelo tipo do usuário, workspace confiado apenas por valor enviado pelo cliente
 
 **Membro de workspace**:

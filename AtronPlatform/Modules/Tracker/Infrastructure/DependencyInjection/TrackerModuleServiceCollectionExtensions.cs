@@ -281,6 +281,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<CriarConviteWorkspaceCase>();
             services.AddScoped<ObterConviteWorkspaceCase>();
             services.AddScoped<AceitarConviteWorkspaceCase>();
+            services.AddScoped<ObterWorkspacesUsuarioCase>();
         }
 
         private static void ConfigureModuloServices(IServiceCollection services)

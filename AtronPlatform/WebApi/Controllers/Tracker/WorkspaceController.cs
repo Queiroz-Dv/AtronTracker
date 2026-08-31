@@ -14,8 +14,20 @@ public sealed class WorkspaceController(
     CriarConviteWorkspaceCase criarConviteWorkspaceCase,
     ObterConviteWorkspaceCase obterConviteWorkspaceCase,
     AceitarConviteWorkspaceCase aceitarConviteWorkspaceCase,
+    ObterWorkspacesUsuarioCase obterWorkspacesUsuarioCase,
     IUserAccessor userAccessor) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyCollection<WorkspaceInicialResponse>>> ObterMeusWorkspaces()
+    {
+        var resultado = await obterWorkspacesUsuarioCase.ExecutarAsync(
+            userAccessor.ObterCodigoUsuarioLogado());
+
+        return resultado.TeveFalha
+            ? BadRequest(resultado.Messages)
+            : Ok(resultado.Dados);
+    }
+
     [HttpPost("{workspaceId:int}/convites")]
     public async Task<ActionResult<ConviteWorkspaceCriadoResponse>> CriarConvite(
         int workspaceId)

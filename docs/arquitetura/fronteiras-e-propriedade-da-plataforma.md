@@ -143,6 +143,12 @@ ao workspace. A distinção entre proprietário e outros membros depende do
 futuro escopo do `PerfilDeAcesso` pelo workspace e não foi antecipada com um
 segundo modelo de papéis.
 
+O primeiro passo para o contexto ativo expõe `GET api/Workspace` para o usuário
+autenticado. A consulta parte do código obtido no backend, percorre os vínculos
+de `MembroWorkspace` e retorna somente `id`, `nome`, `tipo` e `empresaCodigo`.
+Uma coleção vazia representa a ausência de vínculos. Essa consulta não escolhe,
+persiste nem presume um workspace ativo e não altera sessão ou RBAC.
+
 A seleção do workspace no login, o escopo dos perfis de acesso e a migração
 dos dados dos módulos ainda exigem decisões posteriores. Esses pontos serão
 planejados em fatias pequenas antes de qualquer implementação.
