@@ -1,3 +1,4 @@
+using Application.DTO.Request;
 using Application.DTO.Response;
 using Application.UseCases.WorkspaceCases;
 using Microsoft.AspNetCore.Authorization;
@@ -15,12 +16,26 @@ public sealed class WorkspaceController(
     ObterConviteWorkspaceCase obterConviteWorkspaceCase,
     AceitarConviteWorkspaceCase aceitarConviteWorkspaceCase,
     ObterWorkspacesUsuarioCase obterWorkspacesUsuarioCase,
+    SelecionarWorkspaceCase selecionarWorkspaceCase,
     IUserAccessor userAccessor) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IReadOnlyCollection<WorkspaceInicialResponse>>> ObterMeusWorkspaces()
     {
         var resultado = await obterWorkspacesUsuarioCase.ExecutarAsync(
+            userAccessor.ObterCodigoUsuarioLogado());
+
+        return resultado.TeveFalha
+            ? BadRequest(resultado.Messages)
+            : Ok(resultado.Dados);
+    }
+
+    [HttpPost("selecionar")]
+    public async Task<ActionResult<WorkspaceInicialResponse>> Selecionar(
+        [FromBody] SelecionarWorkspaceRequest request)
+    {
+        var resultado = await selecionarWorkspaceCase.ExecutarAsync(
+            request,
             userAccessor.ObterCodigoUsuarioLogado());
 
         return resultado.TeveFalha

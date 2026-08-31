@@ -180,6 +180,12 @@ namespace Application.Resources {
             }
         }
 
+        public static string Erro_WorkspaceIdInvalido {
+            get {
+                return ResourceManager.GetString("Erro_WorkspaceIdInvalido", resourceCulture);
+            }
+        }
+
         public static string Erro_ConviteInvalido {
             get {
                 return ResourceManager.GetString("Erro_ConviteInvalido", resourceCulture);

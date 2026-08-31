@@ -9,6 +9,7 @@ import { LoginRequest } from '../../shared/models/request/login-request.model';
 import { RegistrarRequest } from '../../shared/models/request/registrar-request.model';
 import { ConviteWorkspaceResponse, RegistrarResponse } from '../../shared/models/response/registrar-response.model';
 import { RotasApi } from '../../shared/models/rotas-api.model';
+import { WorkspaceContextoService } from './workspace-contexto.service';
 
 
 @Injectable({
@@ -24,7 +25,11 @@ export class AcessoService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  constructor(private http: HttpClient, private sessaoService: SessaoInfoService) { }
+  constructor(
+    private http: HttpClient,
+    private sessaoService: SessaoInfoService,
+    private workspaceContextoService: WorkspaceContextoService
+  ) { }
 
   logout(): Observable<boolean> {
     return this.http.post(RotasApi.desconectarEndpoint, {}, { withCredentials: true }).pipe(
@@ -97,6 +102,7 @@ export class AcessoService {
 
   limparSessaoLocal(): void {
     this.sessaoService.clearSessionInfo();
+    this.workspaceContextoService.limpar();
     this.sessionInfoSubject.next(null);
   }
 

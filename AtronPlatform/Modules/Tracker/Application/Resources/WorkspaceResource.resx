@@ -18,6 +18,7 @@
   <data name="Erro_Persistencia" xml:space="preserve"><value>Não foi possível criar o workspace inicial.</value></data>
   <data name="Erro_CadastroTipoNaoDisponivel" xml:space="preserve"><value>O tipo de workspace informado ainda não está disponível para cadastro.</value></data>
   <data name="Erro_WorkspaceNaoEncontrado" xml:space="preserve"><value>Workspace não encontrado.</value></data>
+  <data name="Erro_WorkspaceIdInvalido" xml:space="preserve"><value>O identificador do workspace é inválido.</value></data>
   <data name="Erro_ConviteInvalido" xml:space="preserve"><value>O convite é inválido, já foi utilizado ou expirou.</value></data>
   <data name="Erro_ConviteWorkspacePessoal" xml:space="preserve"><value>Workspaces pessoais não permitem convites de membros.</value></data>
   <data name="Erro_ConviteRemetenteNaoMembro" xml:space="preserve"><value>O usuário não pertence ao workspace informado.</value></data>

@@ -141,6 +141,10 @@
   color: var(--atron-primary);
 }
 
+.topbar-workspace {
+  margin-left: auto;
+}
+
 .topbar-actions {
   align-items: center;
   display: flex;
@@ -170,12 +174,20 @@
   }
 
   .app-content-topbar {
+    column-gap: 12px;
+    flex-wrap: wrap;
     min-height: 58px;
-    padding: 0 14px;
+    padding: 8px 14px;
   }
 
   .app-content-body {
-    min-height: calc(100vh - 58px);
+    min-height: calc(100vh - 74px);
+  }
+
+  .topbar-workspace {
+    margin-left: 0;
+    order: 3;
+    width: 100%;
   }
 }
 

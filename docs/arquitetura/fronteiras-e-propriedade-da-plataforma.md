@@ -149,6 +149,22 @@ de `MembroWorkspace` e retorna somente `id`, `nome`, `tipo` e `empresaCodigo`.
 Uma coleção vazia representa a ausência de vínculos. Essa consulta não escolhe,
 persiste nem presume um workspace ativo e não altera sessão ou RBAC.
 
+A seleção transitória usa `POST api/Workspace/selecionar` com `workspaceId`. O
+backend obtém o código do usuário pela identidade autenticada e consulta o
+workspace junto com o vínculo correspondente. Apenas depois dessa consulta a
+seleção é registrada em cookie `HttpOnly`, `Secure` e `SameSite=None`. O cookie
+é restrito à sessão do navegador e não cria preferência permanente no usuário.
+Nesta etapa ele ainda não é lido pela sessão, por policies ou pelos módulos.
+Qualquer consumo posterior deverá validar novamente o pertencimento, pois o
+identificador armazenado não constitui autorização.
+
+O Angular consulta essa coleção e apresenta o mesmo seletor no dashboard e no
+layout autenticado das rotinas. Após uma seleção aceita pelo backend, a aba
+mantém apenas o identificador em `sessionStorage` para restaurar a indicação
+visual durante a navegação. Essa referência é descartada no logout ou quando
+deixa de existir na coleção retornada pelo backend. Ela não é enviada como
+critério de autorização nem substitui o cookie `HttpOnly` da seleção.
+
 A seleção do workspace no login, o escopo dos perfis de acesso e a migração
 dos dados dos módulos ainda exigem decisões posteriores. Esses pontos serão
 planejados em fatias pequenas antes de qualquer implementação.

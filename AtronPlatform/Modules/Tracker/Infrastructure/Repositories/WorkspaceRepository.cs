@@ -15,6 +15,17 @@ public sealed class WorkspaceRepository(AtronDbContext context) : IWorkspaceRepo
             .Include(workspace => workspace.Empresa)
             .SingleOrDefaultAsync(workspace => workspace.Id == workspaceId);
 
+    public Task<Workspace?> ObterPorIdDoUsuarioAsync(
+        int workspaceId,
+        string usuarioCodigo)
+        => context.Workspaces
+            .AsNoTracking()
+            .Include(workspace => workspace.Empresa)
+            .SingleOrDefaultAsync(workspace =>
+                workspace.Id == workspaceId
+                && workspace.Membros.Any(membro =>
+                    membro.UsuarioCodigo == usuarioCodigo));
+
     public async Task<IReadOnlyCollection<Workspace>> ObterPorUsuarioAsync(
         string usuarioCodigo)
         => await context.Workspaces

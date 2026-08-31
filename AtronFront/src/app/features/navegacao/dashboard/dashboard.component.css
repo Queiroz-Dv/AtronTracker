@@ -47,6 +47,10 @@
   width: 40px;
 }
 
+.dashboard-workspace {
+  margin-left: auto;
+}
+
 .dashboard-actions {
   align-items: center;
   display: flex;
@@ -244,6 +248,11 @@
   }
 
   .dashboard-actions {
+    width: 100%;
+  }
+
+  .dashboard-workspace {
+    margin-left: 0;
     width: 100%;
   }
 

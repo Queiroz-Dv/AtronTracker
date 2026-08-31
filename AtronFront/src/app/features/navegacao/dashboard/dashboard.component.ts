@@ -11,13 +11,14 @@ import { SharedModule } from '../../../shared/modules/shared.module';
 import { ModuloItem } from '../../../shared/utils/modulo-functions.util';
 import { AcessoService } from '../../../core/services/acesso.service';
 import { ModuloModel } from '../modulos/interfaces/modulo.interface';
+import { WorkspaceSeletorComponent } from '../workspace-seletor/workspace-seletor.component';
 
 @Component({
   standalone: true,
   selector: 'c-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
-  imports: [MaterialContainerModule, SharedModule, RouterModule]
+  imports: [MaterialContainerModule, SharedModule, RouterModule, WorkspaceSeletorComponent]
 })
 export class DashboardComponent implements OnInit {
   cardsView: DashboardCard[] = [];

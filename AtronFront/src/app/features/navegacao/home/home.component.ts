@@ -19,6 +19,7 @@ import {
   normalizarTextoNotificacao
 } from '../../../plataforma/notificacoes/models/notificacao-interna.model';
 import { NotificacaoInternaService } from '../../../plataforma/notificacoes/services/notificacao-interna.service';
+import { WorkspaceSeletorComponent } from '../workspace-seletor/workspace-seletor.component';
 
 
 @Component({
@@ -33,7 +34,8 @@ import { NotificacaoInternaService } from '../../../plataforma/notificacoes/serv
     MatListModule,
     MatIconModule,
     MaterialContainerModule,
-    RouterModule
+    RouterModule,
+    WorkspaceSeletorComponent
   ]
 })
 export class HomeComponent implements OnInit, OnDestroy {
