@@ -144,9 +144,11 @@ usuário já autenticado. Nos dois caminhos, o consumo e a criação do vínculo
 `MembroWorkspace` ocorrem em escopo transacional e o banco faz a marcação
 condicional para impedir reutilização concorrente.
 
-Nesta fatia, a autorização para gerar convites continua limitada ao
-pertencimento ao workspace. A classificação organizacional já distingue o
-proprietário dos demais membros, mas ainda não participa dessa autorização.
+Para gerar um convite, o backend consulta o vínculo do usuário autenticado com
+o workspace informado e exige o tipo organizacional `Proprietario`. Um usuário
+sem vínculo recebe a falha de não pertencimento; um vínculo do tipo `Membro`
+recebe a falha específica de que somente o proprietário pode gerar convites.
+Essa regra não consulta nem altera o `PerfilDeAcesso` global.
 
 O primeiro passo para o contexto ativo expõe `GET api/Workspace` para o usuário
 autenticado. A consulta parte do código obtido no backend, percorre os vínculos

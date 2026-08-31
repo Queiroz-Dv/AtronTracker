@@ -22,6 +22,7 @@
   <data name="Erro_ConviteInvalido" xml:space="preserve"><value>O convite é inválido, já foi utilizado ou expirou.</value></data>
   <data name="Erro_ConviteWorkspacePessoal" xml:space="preserve"><value>Workspaces pessoais não permitem convites de membros.</value></data>
   <data name="Erro_ConviteRemetenteNaoMembro" xml:space="preserve"><value>O usuário não pertence ao workspace informado.</value></data>
+  <data name="Erro_ConviteSomenteProprietario" xml:space="preserve"><value>Somente o proprietário do workspace pode gerar convites.</value></data>
   <data name="Erro_ConvitePersistencia" xml:space="preserve"><value>Não foi possível criar o convite do workspace.</value></data>
   <data name="Erro_ConviteUsuarioJaMembro" xml:space="preserve"><value>O usuário já pertence ao workspace do convite.</value></data>
   <data name="Erro_ConviteConsumo" xml:space="preserve"><value>Não foi possível utilizar o convite do workspace.</value></data>

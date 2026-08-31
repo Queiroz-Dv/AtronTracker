@@ -204,6 +204,12 @@ namespace Application.Resources {
             }
         }
 
+        public static string Erro_ConviteSomenteProprietario {
+            get {
+                return ResourceManager.GetString("Erro_ConviteSomenteProprietario", resourceCulture);
+            }
+        }
+
         public static string Erro_ConvitePersistencia {
             get {
                 return ResourceManager.GetString("Erro_ConvitePersistencia", resourceCulture);

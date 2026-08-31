@@ -10,6 +10,7 @@ public interface IWorkspaceRepository
 {
     Task<Workspace?> ObterPorIdAsync(int workspaceId);
     Task<Workspace?> ObterPorIdDoUsuarioAsync(int workspaceId, string usuarioCodigo);
+    Task<MembroWorkspace?> ObterMembroAsync(int workspaceId, string usuarioCodigo);
     Task<IReadOnlyCollection<Workspace>> ObterPorUsuarioAsync(string usuarioCodigo);
     Task<bool> UsuarioPossuiWorkspaceAsync(string usuarioCodigo);
     Task<bool> UsuarioPertenceAoWorkspaceAsync(int workspaceId, string usuarioCodigo);

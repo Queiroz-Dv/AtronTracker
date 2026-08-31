@@ -85,7 +85,7 @@ Contexto de trabalho que define a fronteira lógica de dados, os usuários parti
 _Avoid_: Usuário como tenant, empresa formal obrigatória em todo workspace, isolamento decidido pelo tipo do usuário, workspace confiado apenas por valor enviado pelo cliente
 
 **Membro de workspace**:
-Vínculo entre um usuário e um workspace. O vínculo usa `WorkspaceId` e o código globalmente único do usuário, sem repetir o `Id` técnico do usuário, e registra o tipo organizacional `Proprietario` ou `Membro`. O primeiro usuário do workspace é proprietário e usuários ingressados por convite são membros. Essa classificação não concede acesso a módulos: o `PerfilDeAcesso` continua sendo o mecanismo RBAC global do Atron.
+Vínculo entre um usuário e um workspace. O vínculo usa `WorkspaceId` e o código globalmente único do usuário, sem repetir o `Id` técnico do usuário, e registra o tipo organizacional `Proprietario` ou `Membro`. O primeiro usuário do workspace é proprietário e usuários ingressados por convite são membros. Somente o proprietário pode gerar novos convites. Essa classificação não concede acesso a módulos: o `PerfilDeAcesso` continua sendo o mecanismo RBAC global do Atron.
 _Avoid_: Atrelar `PerfilDeAcesso` ao workspace, usar o tipo do membro como permissão de módulo, superior salvo apenas no usuário, papel de proprietário confundido com gestor funcional, associação sem validação de pertencimento
 
 **Onboarding de workspace**:
