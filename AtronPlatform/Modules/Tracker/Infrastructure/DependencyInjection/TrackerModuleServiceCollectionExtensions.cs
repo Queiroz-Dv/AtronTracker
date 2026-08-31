@@ -25,6 +25,7 @@ using Application.UseCases.PlanejamentoCustoCases;
 using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using Application.UseCases.UsuarioCases;
+using Application.UseCases.WorkspaceCases;
 using Application.Validador;
 using AtronTracker.Infrastructure.Context;
 using AtronTracker.Infrastructure.Identity;
@@ -84,6 +85,7 @@ namespace Infrastructure.DependencyInjection
             ConfigureModuloServices(services);
             ConfigureDepartamentoServices(services);
             ConfigureEmpresaServices(services);
+            ConfigureWorkspaceServices(services);
             ConfigureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
             ConfigureUsuarioServices(services);
@@ -131,16 +133,6 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
 
-            services.AddScoped(provider => new CadastroUsuarioContextRecord(
-                provider.GetRequiredService<IUsuarioRepository>(),
-                provider.GetRequiredService<IUsuarioIdentityRepository>(),
-                provider.GetRequiredService<IEmailService>(),
-                provider.GetRequiredService<IAcessoEmailCompositor>(),
-                provider.GetRequiredService<IValidador<UsuarioRegistroRequest>>(),
-                provider.GetRequiredService<IEnderecoFrontendService>(),
-                provider.GetRequiredService<IConfirmacaoEmailRepository>(),
-                provider.GetRequiredService<IConfirmacaoEmailCodigoService>()));
-
             services.AddScoped(provider => new RecuperacaoSenhaContextRecord(
                 provider.GetRequiredService<IUsuarioRepository>(),
                 provider.GetRequiredService<IUsuarioIdentityRepository>(),
@@ -151,7 +143,6 @@ namespace Infrastructure.DependencyInjection
                 provider.GetRequiredService<IEnderecoFrontendService>(),
                 provider.GetRequiredService<ITokenTemporarioService>()));
 
-            services.AddScoped<ICadastroUsuarioService, CadastroUsuarioService>();
             services.AddScoped<IRecuperacaoSenhaService, RecuperacaoSenhaService>();
             services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
             services.AddScoped<IAcessoEmailCompositor, AcessoEmailCompositor>();
@@ -214,7 +205,12 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<AtualizarCredenciaisUsuarioCase>();
             services.AddScoped<AuditoriaUsuarioCase>();
             services.AddScoped<CriarUsuarioCase>();
+            services.AddScoped<CadastrarUsuarioCase>();
+            services.AddScoped<ConfirmarEmailCase>();
+            services.AddScoped<CriarConfirmacaoCadastroCase>();
             services.AddScoped<AtualizarUsuarioCase>();
+            services.AddScoped<EnviarEmailConfirmacaoCadastroCase>();
+            services.AddScoped<EnviarEmailConfirmacaoConcluidaCase>();
             services.AddScoped<EnviarEmailPrimeiroAcessoCase>();
             services.AddScoped<RemoverUsuarioCase>();
             services.AddScoped<DesativarUsuarioCase>();
@@ -275,6 +271,12 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<AtualizarEmpresaCase>();
             services.AddScoped<ExcluirEmpresaCase>();
             services.AddScoped<IEmpresaService, EmpresaService>();
+        }
+
+        private static void ConfigureWorkspaceServices(IServiceCollection services)
+        {
+            services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+            services.AddScoped<CriarWorkspaceInicialCase>();
         }
 
         private static void ConfigureModuloServices(IServiceCollection services)

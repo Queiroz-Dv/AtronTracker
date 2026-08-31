@@ -1,5 +1,4 @@
 using Application.DTO.Request;
-using Shared.Application.DTOS.Auth;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 

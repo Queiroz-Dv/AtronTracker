@@ -49,7 +49,7 @@ namespace AtronStock.Application.UseCases.ProdutoCases
 
             await _auditoriaProduto.RegistrarCriacaoAsync(produto);
             
-            return Resultado.Sucesso().CommMensagemRegistroSalvo(ProdutoResource.SucessoCadastro);
+            return Resultado.Sucesso().ComMensagemRegistroSalvo(ProdutoResource.SucessoCadastro);
         }
     }
 }

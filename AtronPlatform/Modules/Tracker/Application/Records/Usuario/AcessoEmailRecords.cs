@@ -5,12 +5,34 @@ namespace Application.Records.Usuario;
 /// <summary>
 /// Dados necessarios para compor o e-mail de confirmacao de cadastro.
 /// </summary>
+public abstract record EmailParametrosRecord(
+    string Destinatario,
+    string Nome);
+
+public abstract record EmailComLinkParametrosRecord(
+    string Destinatario,
+    string Nome,
+    string Link)
+    : EmailParametrosRecord(Destinatario, Nome);
+
+public abstract record EmailComLinkExpiravelParametrosRecord(
+    string Destinatario,
+    string Nome,
+    string Link,
+    int ValidadeHoras)
+    : EmailComLinkParametrosRecord(Destinatario, Nome, Link);
+
 public sealed record ConfirmacaoCadastroEmailParametrosRecord(
     string Destinatario,
     string Nome,
     string Codigo,
     string Link,
-    int ValidadeHoras);
+    int ValidadeHoras)
+    : EmailComLinkExpiravelParametrosRecord(
+        Destinatario,
+        Nome,
+        Link,
+        ValidadeHoras);
 
 /// <summary>
 /// Dados necessarios para compor o e-mail de recuperacao de senha.
@@ -19,7 +41,12 @@ public sealed record RecuperacaoSenhaEmailParametrosRecord(
     string Destinatario,
     string Nome,
     string Link,
-    int ValidadeHoras);
+    int ValidadeHoras)
+    : EmailComLinkExpiravelParametrosRecord(
+        Destinatario,
+        Nome,
+        Link,
+        ValidadeHoras);
 
 /// <summary>
 /// Dados necessarios para compor o e-mail de primeiro acesso.
@@ -28,47 +55,53 @@ public sealed record PrimeiroAcessoEmailParametrosRecord(
     string Destinatario,
     string Nome,
     string Link,
+    int ValidadeHoras)
+    : EmailComLinkExpiravelParametrosRecord(
+        Destinatario,
+        Nome,
+        Link,
+        ValidadeHoras);
+
+public sealed record ConfirmacaoCadastroCriadaRecord(
+    string Link,
+    string Identificador,
     int ValidadeHoras);
 
-public sealed record ConfirmacaoCadastroEmailModelRecord
+public abstract record EmailNomeModelRecord
 {
-    public string Nome { get; init; }
-    public string Codigo { get; init; }
+    public string Nome { get; init; } = string.Empty;
+}
+
+public abstract record EmailComLinkModelRecord : EmailNomeModelRecord
+{
     [EmailTemplateUrl]
-    public string Link { get; init; }
-    public string ValidadeHoras { get; init; }
+    public string Link { get; init; } = string.Empty;
+}
+
+public abstract record EmailComLinkExpiravelModelRecord : EmailComLinkModelRecord
+{
+    public string ValidadeHoras { get; init; } = string.Empty;
+}
+
+public sealed record ConfirmacaoCadastroEmailModelRecord
+    : EmailComLinkExpiravelModelRecord
+{
+    public string Codigo { get; init; } = string.Empty;
 }
 
 public sealed record RecuperacaoSenhaEmailModelRecord
-{
-    public string Nome { get; init; }
-    [EmailTemplateUrl]
-    public string Link { get; init; }
-    public string ValidadeHoras { get; init; }
-}
+    : EmailComLinkExpiravelModelRecord;
 
 public sealed record ConfirmacaoConcluidaEmailModelRecord
-{
-    public string Nome { get; init; }
-}
+    : EmailNomeModelRecord;
 
 public sealed record PrimeiroAcessoEmailModelRecord
-{
-    public string Nome { get; init; }
-    [EmailTemplateUrl]
-    public string Link { get; init; }
-    public string ValidadeHoras { get; init; }
-}
+    : EmailComLinkExpiravelModelRecord;
 
 public sealed record AlteracaoEmailModelRecord
-{
-    public string Nome { get; init; }
-    [EmailTemplateUrl]
-    public string Link { get; init; }
-}
+    : EmailComLinkModelRecord;
 
-public sealed record ReativacaoContaEmailModelRecord
+public sealed record ReativacaoContaEmailModelRecord : EmailNomeModelRecord
 {
-    public string Nome { get; init; }
-    public string Codigo { get; init; }
+    public string Codigo { get; init; } = string.Empty;
 }

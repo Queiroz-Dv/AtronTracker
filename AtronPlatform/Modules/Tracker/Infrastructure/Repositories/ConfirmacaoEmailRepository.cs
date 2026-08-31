@@ -2,28 +2,24 @@ using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Shared.Extensions;
 
 namespace Infrastructure.Repositories
 {
-    public class ConfirmacaoEmailRepository : IConfirmacaoEmailRepository
+    public class ConfirmacaoEmailRepository(AtronDbContext context) : IConfirmacaoEmailRepository
     {
-        private readonly AtronDbContext _context;
-
-        public ConfirmacaoEmailRepository(AtronDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AtronDbContext _context = context;
 
         public async Task<bool> GravarOuSubstituirAsync(ConfirmacaoEmail confirmacaoEmail)
         {
-            confirmacaoEmail.CriadoEm = SemTimezone(confirmacaoEmail.CriadoEm);
-            confirmacaoEmail.ExpiraEm = SemTimezone(confirmacaoEmail.ExpiraEm);
+            confirmacaoEmail.CriadoEm = confirmacaoEmail.CriadoEm.SemTimezone();
+            confirmacaoEmail.ExpiraEm = confirmacaoEmail.ExpiraEm.SemTimezone();
 
             var pendentes = await _context.ConfirmacoesEmail
                 .Where(cfm => cfm.UsuarioCodigo == confirmacaoEmail.UsuarioCodigo && cfm.ConfirmadoEm == null)
                 .ToListAsync();
 
-            if (pendentes.Any())
+            if (pendentes.Count != 0)
             {
                 _context.ConfirmacoesEmail.RemoveRange(pendentes);
             }
@@ -34,7 +30,7 @@ namespace Infrastructure.Repositories
 
         public async Task<ConfirmacaoEmail> ObterAtivaPorUsuarioAsync(string usuarioCodigo)
         {
-            var agora = SemTimezone(DateTime.UtcNow);
+            var agora = DateTime.UtcNow.SemTimezone();
 
             return await _context.ConfirmacoesEmail
                 .AsNoTracking()
@@ -48,15 +44,13 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> MarcarConfirmadaAsync(int id)
         {
-            var confirmacao = await _context.ConfirmacoesEmail
-                .FirstOrDefaultAsync(cfm => cfm.Id == id);
+            var confirmacao = await _context.ConfirmacoesEmail.FirstOrDefaultAsync(cfm => cfm.Id == id);
 
             if (confirmacao is null)
-            {
                 return false;
-            }
 
-            confirmacao.ConfirmadoEm = SemTimezone(DateTime.UtcNow);
+
+            confirmacao.ConfirmadoEm = DateTime.UtcNow.SemTimezone();
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -71,8 +65,5 @@ namespace Infrastructure.Repositories
             confirmacao.TentativasFalhas++;
             await _context.SaveChangesAsync();
         }
-
-        private static DateTime SemTimezone(DateTime data)
-            => DateTime.SpecifyKind(data, DateTimeKind.Unspecified);
     }
 }

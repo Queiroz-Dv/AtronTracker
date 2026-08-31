@@ -77,6 +77,51 @@ Os onboardings previstos são:
 - convite de membro, que permite concluir o cadastro de um novo usuário ou
   associar um usuário existente ao workspace.
 
+### Contrato do cadastro inicial do workspace
+
+O workspace inicial é criado durante o cadastro do usuário, não no primeiro
+acesso. A entrada do cadastro será composta pelos dados atuais do usuário e por
+um objeto `workspace` com os seguintes campos:
+
+- `nome`: obrigatório para qualquer tipo de workspace, com no máximo 150
+  caracteres;
+- `tipo`: enum numérico no contrato HTTP, usando `1` para `Pessoal`, `2` para
+  `Agencia` e `3` para `Empresa`;
+- `empresa`: ausente para `Pessoal` e `Agencia`, e obrigatório para `Empresa`.
+
+O objeto `empresa` do cadastro empresarial contém `codigo`, `nomeFantasia`,
+`endereco`, `numero` e `email`. O status inicial não é informado pelo cliente;
+a aplicação cria a empresa como ativa. O código é utilizado exatamente como
+informado, sem normalização.
+
+As combinações válidas são:
+
+| Tipo de workspace | Nome do workspace | Dados de empresa |
+| --- | --- | --- |
+| `Pessoal` | obrigatório | proibidos |
+| `Agencia` | obrigatório | proibidos |
+| `Empresa` | obrigatório | obrigatórios |
+
+Ao concluir o cadastro, a resposta deverá identificar o usuário criado pelo
+seu código e retornar o workspace inicial com `id`, `nome`, `tipo` e
+`empresaCodigo` quando empresarial. Os enums continuam numéricos no JSON,
+embora sejam persistidos no banco pela descrição textual. Senha, confirmação
+de senha e identificadores técnicos do usuário nunca compõem a resposta.
+
+A ativação desse contrato no endpoint `Acesso/Registrar` começou pelo cadastro
+pessoal. O payload já exige o objeto `workspace`, mas nesta fatia aceita somente
+o tipo `Pessoal` e não recebe dados de empresa. O endpoint retorna o código do
+usuário, o workspace inicial e as mensagens produzidas durante o cadastro.
+Os tipos `Agencia` e `Empresa` serão habilitados nas próximas fatias.
+
+A operação interna `CriarWorkspaceInicialCase` cria o workspace e seu primeiro
+membro no mesmo `SaveChangesAsync`. No cadastro pessoal, o endpoint usa um
+escopo transacional que abrange Identity, usuário, workspace, membro e código de
+confirmação; uma resposta de falha não confirma essas gravações. Para workspace
+empresarial, a operação interna exige uma `Empresa` previamente persistida e
+ainda sem workspace. A operação também recusa o onboarding inicial quando o
+usuário já é membro de algum workspace.
+
 Um convite deverá ser tratado como credencial temporária de entrada, com
 validade, uso único, organização de destino e remetente autorizados. O código
 visível no formulário pode ser conhecido antecipadamente, mas não concede

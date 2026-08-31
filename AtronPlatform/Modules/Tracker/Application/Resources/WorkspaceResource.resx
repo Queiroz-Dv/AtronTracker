@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Erro_RegistroNulo" xml:space="preserve"><value>Os dados do workspace são obrigatórios.</value></data>
+  <data name="Erro_NomeObrigatorio" xml:space="preserve"><value>O nome do workspace é obrigatório.</value></data>
+  <data name="Erro_NomeLongo" xml:space="preserve"><value>O nome do workspace deve possuir no máximo 150 caracteres.</value></data>
+  <data name="Erro_TipoInvalido" xml:space="preserve"><value>O tipo do workspace é inválido.</value></data>
+  <data name="Erro_UsuarioCodigoObrigatorio" xml:space="preserve"><value>O código do usuário é obrigatório.</value></data>
+  <data name="Erro_EmpresaCodigoObrigatorio" xml:space="preserve"><value>O código da empresa é obrigatório para workspace empresarial.</value></data>
+  <data name="Erro_EmpresaNaoPermitida" xml:space="preserve"><value>Dados de empresa não são permitidos para este tipo de workspace.</value></data>
+  <data name="Erro_UsuarioNaoEncontrado" xml:space="preserve"><value>Usuário não encontrado.</value></data>
+  <data name="Erro_WorkspaceInicialUsuarioExistente" xml:space="preserve"><value>O usuário já possui um workspace inicial.</value></data>
+  <data name="Erro_EmpresaNaoEncontrada" xml:space="preserve"><value>Empresa não encontrada.</value></data>
+  <data name="Erro_WorkspaceEmpresaExistente" xml:space="preserve"><value>A empresa já possui um workspace.</value></data>
+  <data name="Erro_Persistencia" xml:space="preserve"><value>Não foi possível criar o workspace inicial.</value></data>
+  <data name="Erro_CadastroTipoNaoDisponivel" xml:space="preserve"><value>O tipo de workspace informado ainda não está disponível para cadastro.</value></data>
+</root>

@@ -4,7 +4,7 @@ namespace Shared.Extensions
 {
     public static class ResultadoExtensions
     {
-        public static Resultado CommMensagemRegistroSalvo(this Resultado resultado, string mensagem)
+        public static Resultado ComMensagemRegistroSalvo(this Resultado resultado, string mensagem)
         {
             resultado.MensagemRegistroSalvo(mensagem);
             return resultado;

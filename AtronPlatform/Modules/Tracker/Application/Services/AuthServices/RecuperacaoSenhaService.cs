@@ -5,6 +5,7 @@ using Application.Records.Usuario;
 using Shared.Application.Resources;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 using System;
 using System.Threading.Tasks;
 
@@ -18,7 +19,7 @@ namespace Application.Services.AuthServices
         {
             var respostaPublica = Resultado.Sucesso(AuthResource.Mensagem_EnvioDeEmail);
 
-            if (string.IsNullOrWhiteSpace(request.Identificador))
+            if (request.Identificador.IsNullOrEmpty())
                 return respostaPublica;
 
             var identificador = request.Identificador;
@@ -27,10 +28,7 @@ namespace Application.Services.AuthServices
                 ? await context.UsuarioRepository.ObterUsuarioGeralPorEmailAsync(identificador)
                 : await context.UsuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificador);
 
-            if (usuario == null)
-                return respostaPublica;
-
-            if (usuario.Inativo)
+            if (usuario == null || usuario.Inativo)
                 return respostaPublica;
 
             var temporario = context.TokenTemporarioService.Criar();
@@ -48,39 +46,34 @@ namespace Application.Services.AuthServices
             context.CacheService.GravarCache(cache, TimeSpan.FromHours(ValidadeEmHoras));
             var uri = context.EnderecoFrontendService.ObterUriBase();
             var link = $"{uri}/trocar-senha#token={temporario.Valor}";
-            try
-            {
-                var recuperacao = new RecuperacaoSenhaEmailParametrosRecord(usuario.Email, usuario.Nome, link, ValidadeEmHoras);
-                var email = context.EmailCompositor.ComporRecuperacaoSenha(recuperacao);
 
-                if (email.TeveFalha)
-                    return respostaPublica;
+            var recuperacao = new RecuperacaoSenhaEmailParametrosRecord(usuario.Email, usuario.Nome, link, ValidadeEmHoras);
+            var email = context.EmailCompositor.ComporRecuperacaoSenha(recuperacao);
 
-                await context.EmailService.EnviarAsync(email.Dados);
-            }
-            catch
-            {
-            }
+            if (email.TeveFalha)
+                return respostaPublica;
+
+            await context.EmailService.EnviarAsync(email.Dados);
 
             return respostaPublica;
         }
 
         public async Task<Resultado> TrocarAsync(RedefinirSenhaRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.IdentificadorTemporario))
+            if (request.IdentificadorTemporario.IsNullOrEmpty())
                 return Resultado.Falha(AuthResource.Erro_IdentificadorTemporario);
 
             var hash = context.TokenTemporarioService.ObterHash(request.IdentificadorTemporario);
             var chave = new ChaveCache(ECacheKeysInfo.DadosTemporarios, hash);
             var dados = context.CacheService.ObterCache<DadosTemporarios>(chave);
 
-            if (dados == null)
+            if (dados.IsNullable())
                 return Resultado.Falha(AuthResource.Erro_CacheExpiradoNaTrocaDeSenha);
 
-            var senha = request.NovaSenha;
-            var repetir = request.RepetirSenha;
+            string senha = request.NovaSenha;
+            string repetir = request.RepetirSenha;
 
-            if (string.IsNullOrEmpty(senha) || string.IsNullOrEmpty(repetir))
+            if (senha.IsNullOrEmpty() || repetir.IsNullOrEmpty())
                 return Resultado.Falha(AuthResource.Erro_SenhaInvalida);
 
             if (senha != repetir)

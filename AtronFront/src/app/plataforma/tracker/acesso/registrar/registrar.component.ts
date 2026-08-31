@@ -5,7 +5,8 @@ import { AcessoService } from '../../../../core/services/acesso.service';
 import { NotificacaoService, Nivel } from '../../../../core/services/notification.service';
 import { senhasIguaisValidator } from '../../../../core/validators/senhasIguaisValidator.validator';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error.component';
-import { RegistrarRequest } from '../../../../shared/models/request/registrar-request.model';
+import { RegistrarRequest, TipoWorkspace } from '../../../../shared/models/request/registrar-request.model';
+import { RegistrarResponse } from '../../../../shared/models/response/registrar-response.model';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 
 @Component({
@@ -29,6 +30,7 @@ export class RegistrarComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       codigo: ['', Validators.required],
+      workspaceNome: ['', Validators.required],
       nome: ['', Validators.required],
       sobrenome: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -46,11 +48,15 @@ export class RegistrarComponent implements OnInit {
       this.form.value.email,
       this.form.value.senha,
       this.form.value.confirmaSenha,
+      {
+        nome: this.form.value.workspaceNome,
+        tipo: TipoWorkspace.Pessoal,
+      },
       this.form.value.dataNascimento);
 
     this.acessoService.registrar(dadosDoUsuario).subscribe({
-      next: (resposta: unknown) => {
-        const mensagens = this.notificacaoService.normalizarMensagens(resposta, Nivel.Sucesso);
+      next: (resposta: RegistrarResponse) => {
+        const mensagens = this.notificacaoService.normalizarMensagens(resposta.mensagens, Nivel.Sucesso);
         const mensagemSucesso = mensagens.length
           ? mensagens.map(mensagem => mensagem.descricao).join('\n')
           : 'Usuário registrado com sucesso! Verifique seu e-mail para confirmar.';

@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.Validador;
+using Application.DTO.Request;
 using Application.Validations;
 using Domain.ApiEntities;
 using Domain.Entities;
@@ -17,6 +18,7 @@ namespace Infrastructure.DependencyInjection
             ConfigureLoginMessageValidation(services);            
             ConfigureDepartamentoServices(services);
             ConfigureEmpresaServices(services);
+            ConfigureWorkspaceServices(services);
             ConfgureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
             ConfigurarTarefaServices(services);
@@ -53,6 +55,11 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigureEmpresaServices(IServiceCollection services)
         {
             services.AddScoped<IValidador<EmpresaDTO>, EmpresaValidador>();
+        }
+
+        private static void ConfigureWorkspaceServices(IServiceCollection services)
+        {
+            services.AddScoped<IValidador<CriarWorkspaceInicialRequest>, WorkspaceValidador>();
         }
 
         private static void ConfgureCargoServices(IServiceCollection services)

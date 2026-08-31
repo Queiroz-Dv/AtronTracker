@@ -24,10 +24,20 @@
 
         <div class="guide-step">
           <span class="guide-step-icon">
+            <mat-icon>workspaces</mat-icon>
+          </span>
+          <div>
+            <strong>2. Nomeie seu workspace</strong>
+            <p>Defina o nome do seu espaço pessoal de trabalho.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <span class="guide-step-icon">
             <mat-icon>person</mat-icon>
           </span>
           <div>
-            <strong>2. Complete seus dados</strong>
+            <strong>3. Complete seus dados</strong>
             <p>Informe nome, sobrenome e data de nascimento.</p>
           </div>
         </div>
@@ -37,7 +47,7 @@
             <mat-icon>mark_email_read</mat-icon>
           </span>
           <div>
-            <strong>3. Confirme pelo e-mail</strong>
+            <strong>4. Confirme pelo e-mail</strong>
             <p>Depois do envio, abra o link recebido para liberar o acesso.</p>
           </div>
         </div>
@@ -66,6 +76,17 @@
             <mat-icon matPrefix>email</mat-icon>
             <input matInput formControlName="email" type="email" placeholder="seu@email.com" autocomplete="email" />
             <c-control-error [control]="form.get('email')"></c-control-error>
+          </mat-form-field>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend>Workspace pessoal</legend>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nome do workspace</mat-label>
+            <mat-icon matPrefix>workspaces</mat-icon>
+            <input matInput formControlName="workspaceNome" placeholder="Ex: Meu espaço de trabalho" />
+            <c-control-error [control]="form.get('workspaceNome')"></c-control-error>
           </mat-form-field>
         </fieldset>
 

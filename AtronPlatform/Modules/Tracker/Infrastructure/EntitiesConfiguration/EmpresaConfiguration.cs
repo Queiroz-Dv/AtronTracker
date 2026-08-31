@@ -20,7 +20,7 @@ namespace Infrastructure.EntitiesConfiguration
                 .HasConversion(EnumStringConverter.Create<Domain.Enums.StatusEmpresa>())
                 .HasMaxLength(30)
                 .IsRequired();
-            builder.HasIndex(empresa => empresa.Codigo).IsUnique();
+            builder.HasAlternateKey(empresa => empresa.Codigo);
         }
     }
 }

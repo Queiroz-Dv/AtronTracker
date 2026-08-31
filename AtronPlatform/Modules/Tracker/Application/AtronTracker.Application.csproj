@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>Application</RootNamespace>
-		<Nullable>enable</Nullable>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -37,6 +37,11 @@
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
 			<DependentUpon>TarefaResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Resources\WorkspaceResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>WorkspaceResource.resx</DependentUpon>
 		</Compile>
 	</ItemGroup>
 
@@ -77,6 +82,10 @@
 		<EmbeddedResource Update="Resources\TarefaResource.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>TarefaResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\WorkspaceResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>WorkspaceResource.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
 

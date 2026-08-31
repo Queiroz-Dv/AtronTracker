@@ -16,10 +16,12 @@ namespace Infrastructure.EntitiesConfiguration
                 .HasConversion(EnumStringConverter.Create<Domain.Enums.TipoWorkspace>())
                 .HasMaxLength(30)
                 .IsRequired();
+            builder.Property(workspace => workspace.EmpresaCodigo).HasMaxLength(25);
 
             builder.HasOne(workspace => workspace.Empresa)
                    .WithOne()
-                   .HasForeignKey<Workspace>(workspace => workspace.EmpresaId)
+                   .HasForeignKey<Workspace>(workspace => workspace.EmpresaCodigo)
+                   .HasPrincipalKey<Empresa>(empresa => empresa.Codigo)
                    .OnDelete(DeleteBehavior.SetNull)
                    .IsRequired(false);
         }

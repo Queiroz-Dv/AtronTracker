@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.DTO.Request;
+using Application.DTO.Response;
 using Application.Interfaces.Mapping;
 using Application.Mapping;
 using Domain.Entities;
@@ -24,6 +25,11 @@ namespace Infrastructure.DependencyInjection
             services.AddMapper<TarefaEstado, TarefaEstadoDTO, TarefaEstadoMapping>();
             services.AddMapper<Tarefa, TarefaDTO, TarefaMapping>();
             services.AddMapper<PlanejamentoCusto, PlanejamentoCustoDTO, PlanejamentoCustoMapping>();
+            services.AddScoped<WorkspaceMapping>();
+            services.AddScoped<IToEntityMapper<Workspace, CriarWorkspaceInicialRequest>>(provider =>
+                provider.GetRequiredService<WorkspaceMapping>());
+            services.AddScoped<IToDtoMapper<Workspace, WorkspaceInicialResponse>>(provider =>
+                provider.GetRequiredService<WorkspaceMapping>());
 
             services.AddScoped<IPerfilDeAcessoMapping>(provider =>
                 provider.GetRequiredService<PerfilDeAcessoMapping>());

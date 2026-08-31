@@ -1,5 +1,4 @@
 ﻿using Application.DTO.Request;
-using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -10,10 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace Application.Validador
 {
-    public class UsuarioRegistroValidador(IAccessorService accessorService) : IValidador<UsuarioRegistroRequest>
+    public class UsuarioRegistroValidador : IValidador<UsuarioRegistroRequest>
     {
-        private readonly IAccessorService _accessorService = accessorService;
-
         public IEnumerable<NotificationMessage> Validar(UsuarioRegistroRequest entity)
         {
             var context = new NotificationBag();
@@ -90,19 +87,11 @@ namespace Application.Validador
             }
         }
 
-        private void ValidarEmail(UsuarioRegistroRequest entity, NotificationBag context)
+        private static void ValidarEmail(UsuarioRegistroRequest entity, NotificationBag context)
         {
             if (entity.Email.IsNullOrEmpty())
             {
                 context.AdicionarErro(UsuarioResource.ErroEmailNulo);
-                return;
-            }
-
-            var usuarioRepository = _accessorService.ObterService<IUsuarioRepository>();
-            var emailExiste = usuarioRepository.VerificarEmailExistenteAsync(entity.Email).Result;
-            if (emailExiste)
-            {
-                context.AdicionarErro(EmailResource.ErroEmailUtilizado);
             }
         }
 

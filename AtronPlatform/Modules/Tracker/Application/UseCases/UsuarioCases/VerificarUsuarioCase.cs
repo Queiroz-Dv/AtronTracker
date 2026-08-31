@@ -5,7 +5,6 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
@@ -22,11 +21,10 @@ namespace Application.UseCases.UsuarioCases
         public async Task<Resultado<UsuarioRequest>> ExecutarAsync(UsuarioRequest request)
         {
             var mensagens = _validador.Validar(request);
-            if (mensagens.Any())
+            if (mensagens.TemErros())
                 return Resultado<UsuarioRequest>.Falhas(mensagens);
 
-            var codigoUsuario = request.Codigo;
-            var usuarioExistente = await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(codigoUsuario);
+            var usuarioExistente = await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(request.Codigo);
 
             if (usuarioExistente != null)
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
@@ -38,7 +36,7 @@ namespace Application.UseCases.UsuarioCases
                     return Resultado<UsuarioRequest>.Falha(EmailResource.ErroEmailUtilizado);
             }
 
-            var contaExiste = await _usuarioIdentityRepository.ContaExisteRepositoryAsync(codigoUsuario, request.Email);
+            var contaExiste = await _usuarioIdentityRepository.ContaExisteRepositoryAsync(request.Codigo, request.Email);
             if (contaExiste)
                 return Resultado<UsuarioRequest>.Falha(UsuarioResource.ErroUsuarioExistente);
 

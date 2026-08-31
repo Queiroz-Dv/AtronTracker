@@ -1,4 +1,5 @@
 using Application.DTO.Request;
+using Application.DTO.Response;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.UseCases.UsuarioCases;
 using AtronPlatform.WebApi.Security;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
+using Shared.Infrastructure.Filters;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -125,10 +127,12 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// <returns>200 OK com mensagens de sucesso ou 400 BadRequest com mensagens de erro.</returns>
         [HttpPost("Registrar")]
         [EnableRateLimiting(AcessoRateLimiting.Registro)]
-        public async Task<ActionResult> Post([FromBody] UsuarioRegistroRequest registroRequest)
+        [Transactional]
+        public async Task<ActionResult<UsuarioRegistroResponse>> Post(
+            [FromBody] UsuarioRegistroRequest registroRequest)
         {
             var resultado = await _registroUsuarioService.RegistrarUsuario(registroRequest);
-            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
         /// <summary>

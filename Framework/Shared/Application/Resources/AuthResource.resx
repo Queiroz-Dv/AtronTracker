@@ -169,7 +169,7 @@
     <value>Sessão encerrada com sucesso.</value>
   </data>
   <data name="Mensagem_UsuarioRegistrado" xml:space="preserve">
-    <value>Usuário {0} {1}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar seu acesso.</value>
+    <value>Usuário {0}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar seu acesso.</value>
   </data>
   <data name="Erro_GerarCodigoConfirmacao" xml:space="preserve">
     <value>Nao foi possivel gerar o codigo de confirmacao do e-mail.</value>

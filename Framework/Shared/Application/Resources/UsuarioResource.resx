@@ -168,28 +168,79 @@
   <data name="Erro_UsuarioNaoEncontrado" xml:space="preserve">
     <value>Usuário não encontrado.</value>
   </data>
-  <data name="ErroRegistroNulo" xml:space="preserve"><value>Registro nulo</value></data>
-  <data name="ErroSenhaNula" xml:space="preserve"><value>Senha vazia ou não informada.</value></data>
-  <data name="ErroSenhaTamanhoMinimo" xml:space="preserve"><value>A senha deve conter mais de 8 caracteres</value></data>
-  <data name="ErroSenhaComposicao" xml:space="preserve"><value>A senha deve conter letras maiúsculas, minúsculas e pelo menos um número.</value></data>
-  <data name="ErroSenhaCaractereEspecial" xml:space="preserve"><value>A senha deve conter pelo menos um caractere especial.</value></data>
-  <data name="ErroSenhasDiferentes" xml:space="preserve"><value>As senhas não são iguais</value></data>
-  <data name="ErroGestorProprio" xml:space="preserve"><value>O usuario nao pode ser gestor imediato dele mesmo.</value></data>
-  <data name="ErroGestorNaoEncontrado" xml:space="preserve"><value>Gestor imediato nao encontrado.</value></data>
-  <data name="ErroNovoEmailVazio" xml:space="preserve"><value>O novo e-mail não pode ser vazio.</value></data>
-  <data name="ErroEmailEmUso" xml:space="preserve"><value>Este e-mail já está em uso por outro usuário.</value></data>
-  <data name="ErroDadosConfirmacaoAlteracaoEmail" xml:space="preserve"><value>Dados inválidos para confirmação.</value></data>
-  <data name="ErroConfirmacaoAlteracaoEmail" xml:space="preserve"><value>Falha ao confirmar alteração. Token inválido ou expirado.</value></data>
-  <data name="ErroUsuarioJaInativo" xml:space="preserve"><value>Usuário já está inativo</value></data>
-  <data name="ErroCodigoReativacaoInvalido" xml:space="preserve"><value>Código de reativação inválido.</value></data>
-  <data name="MensagemUsuarioCriadoPrimeiroAcesso" xml:space="preserve"><value>Usuario {0} {1} salvo com sucesso. O link de primeiro acesso foi enviado por e-mail.</value></data>
-  <data name="MensagemUsuarioAtualizado" xml:space="preserve"><value>Usuário atualizado com sucesso.</value></data>
-  <data name="MensagemUsuarioRemovido" xml:space="preserve"><value>Usuário removido com sucesso.</value></data>
-  <data name="MensagemUsuarioDesativado" xml:space="preserve"><value>Usuário desativado com sucesso.</value></data>
-  <data name="MensagemContaReativada" xml:space="preserve"><value>Conta reativada com sucesso.</value></data>
-  <data name="MensagemCodigoReativacaoEnviado" xml:space="preserve"><value>Código de reativação enviado para o e-mail cadastrado.</value></data>
-  <data name="MensagemSolicitacaoAlteracaoEmail" xml:space="preserve"><value>Solicitação de alteração enviada. Verifique o novo e-mail para confirmar.</value></data>
-  <data name="MensagemEmailAlterado" xml:space="preserve"><value>E-mail alterado com sucesso.</value></data>
-  <data name="ErroRemoverUsuario" xml:space="preserve"><value>Não foi possível remover o usuário.</value></data>
-  <data name="ErroRepassarTarefasUsuario" xml:space="preserve"><value>Não foi possível repassar as tarefas para o quadro do departamento do usuário.</value></data>
+  <data name="ErroRegistroNulo" xml:space="preserve">
+    <value>Registro nulo</value>
+  </data>
+  <data name="ErroSenhaNula" xml:space="preserve">
+    <value>Senha vazia ou não informada.</value>
+  </data>
+  <data name="ErroSenhaTamanhoMinimo" xml:space="preserve">
+    <value>A senha deve conter mais de 8 caracteres</value>
+  </data>
+  <data name="ErroSenhaComposicao" xml:space="preserve">
+    <value>A senha deve conter letras maiúsculas, minúsculas e pelo menos um número.</value>
+  </data>
+  <data name="ErroSenhaCaractereEspecial" xml:space="preserve">
+    <value>A senha deve conter pelo menos um caractere especial.</value>
+  </data>
+  <data name="ErroSenhasDiferentes" xml:space="preserve">
+    <value>As senhas não são iguais</value>
+  </data>
+  <data name="ErroGestorProprio" xml:space="preserve">
+    <value>O usuario nao pode ser gestor imediato dele mesmo.</value>
+  </data>
+  <data name="ErroGestorNaoEncontrado" xml:space="preserve">
+    <value>Gestor imediato nao encontrado.</value>
+  </data>
+  <data name="ErroNovoEmailVazio" xml:space="preserve">
+    <value>O novo e-mail não pode ser vazio.</value>
+  </data>
+  <data name="ErroEmailEmUso" xml:space="preserve">
+    <value>Este e-mail já está em uso por outro usuário.</value>
+  </data>
+  <data name="ErroDadosConfirmacaoAlteracaoEmail" xml:space="preserve">
+    <value>Dados inválidos para confirmação.</value>
+  </data>
+  <data name="ErroConfirmacaoAlteracaoEmail" xml:space="preserve">
+    <value>Falha ao confirmar alteração. Token inválido ou expirado.</value>
+  </data>
+  <data name="ErroUsuarioJaInativo" xml:space="preserve">
+    <value>Usuário já está inativo</value>
+  </data>
+  <data name="ErroCodigoReativacaoInvalido" xml:space="preserve">
+    <value>Código de reativação inválido.</value>
+  </data>
+  <data name="MensagemUsuarioCriadoPrimeiroAcesso" xml:space="preserve">
+    <value>Usuario {0} {1} salvo com sucesso. O link de primeiro acesso foi enviado por e-mail.</value>
+  </data>
+  <data name="MensagemUsuarioAtualizado" xml:space="preserve">
+    <value>Usuário atualizado com sucesso.</value>
+  </data>
+  <data name="MensagemUsuarioRemovido" xml:space="preserve">
+    <value>Usuário removido com sucesso.</value>
+  </data>
+  <data name="MensagemUsuarioDesativado" xml:space="preserve">
+    <value>Usuário desativado com sucesso.</value>
+  </data>
+  <data name="MensagemContaReativada" xml:space="preserve">
+    <value>Conta reativada com sucesso.</value>
+  </data>
+  <data name="MensagemCodigoReativacaoEnviado" xml:space="preserve">
+    <value>Código de reativação enviado para o e-mail cadastrado.</value>
+  </data>
+  <data name="MensagemSolicitacaoAlteracaoEmail" xml:space="preserve">
+    <value>Solicitação de alteração enviada. Verifique o novo e-mail para confirmar.</value>
+  </data>
+  <data name="MensagemEmailAlterado" xml:space="preserve">
+    <value>E-mail alterado com sucesso.</value>
+  </data>
+  <data name="ErroRemoverUsuario" xml:space="preserve">
+    <value>Não foi possível remover o usuário.</value>
+  </data>
+  <data name="ErroRepassarTarefasUsuario" xml:space="preserve">
+    <value>Não foi possível repassar as tarefas para o quadro do departamento do usuário.</value>
+  </data>
+  <data name="Mensagem_UsuarioSalvo" xml:space="preserve">
+    <value>Usuário cadastrado com sucesso.</value>
+  </data>
 </root>
