@@ -117,49 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ErroCampoInvalido" xml:space="preserve">
-    <value>O campo está inválido ou não preenchido.</value>
+  <data name="Erro_CodigoVazioOuInvalido" xml:space="preserve">
+    <value>O código para o cadastramento da não foi devidamente informado.</value>
   </data>
-  <data name="ErroCampoObrigatorio" xml:space="preserve">
-    <value>O campo {0} é obrigatório.</value>
+  <data name="Erro_EmailVazioOuInvalido" xml:space="preserve">
+    <value>O e-mail não foi informado corretamente.</value>
   </data>
-  <data name="ErroRegistroNaoEncontrado" xml:space="preserve">
-    <value>Registro não encontrado.</value>
+  <data name="Erro_EnderecoVazioOuInvalido" xml:space="preserve">
+    <value>O endereço não foi devidamente informado.</value>
   </data>
-  <data name="ErroRegistroNulo" xml:space="preserve">
-    <value>Registro inválido ou não preenchido.</value>
+  <data name="Erro_NomeFantasiaVazioOuInvalido" xml:space="preserve">
+    <value>O nome fantiasia informado está inválido</value>
   </data>
-  <data name="MensagemRemocaoSucesso" xml:space="preserve">
-    <value>Registro removido com sucesso.</value>
+  <data name="Erro_NumeroVazioOuInvalido" xml:space="preserve">
+    <value>O número não foi devidamente informado</value>
   </data>
-  <data name="Mensagem_EntidadeSalva" xml:space="preserve">
-    <value>{0} salvo com sucesso.</value>
+  <data name="Erro_StatusInvalido" xml:space="preserve">
+    <value>O status informado está inválido ou não condiz com o que há no sistema.</value>
   </data>
-  <data name="Mensagem_RegistroSalvo" xml:space="preserve">
-    <value>Registro {0} salvo com sucesso.</value>
+  <data name="Erro_TamanhoCodigo" xml:space="preserve">
+    <value>O tamanho do código é entre 3 até 25 caracteres.</value>
   </data>
-  <data name="Mensagem_RegistroAtualizado" xml:space="preserve">
-    <value>Registro {0} atualizado com sucesso.</value>
+  <data name="Erro_TamanhoEmail" xml:space="preserve">
+    <value>O tamanho do e-mail é entre 10 a 30 caracteres</value>
   </data>
-  <data name="Erro_RegistroComDescricaoNaoEncontrado" xml:space="preserve">
-    <value>Registro {0} não encontrado.</value>
+  <data name="Erro_TamanhoEndereco" xml:space="preserve">
+    <value>O tamanho para endereço é entre 20 a 200 caracteres.</value>
   </data>
-  <data name="Mensagem_RegistroRemovido" xml:space="preserve">
-    <value>Registro {0} removido com sucesso</value>
+  <data name="Erro_TamanhoNomeFantasia" xml:space="preserve">
+    <value>O tamanho do nome fantasia é entre 20 a 150 caracteres.</value>
   </data>
-  <data name="Mensagem_RemocaoSucessoSemRegistro" xml:space="preserve">
-    <value>Removido com sucesso</value>
-  </data>
-  <data name="Erro_RegistroComDescricaoInvalido" xml:space="preserve">
-    <value>Registro {0} inválido</value>
-  </data>
-  <data name="Erro_RegistroComDescricaoExistente" xml:space="preserve">
-    <value>Registro {0} já existe.</value>
-  </data>
-  <data name="ErroCodigoRotaDivergente" xml:space="preserve">
-    <value>O código na URL não corresponde ao código no corpo da requisição.</value>
-  </data>
-  <data name="IntervaloDeTamanhoInvalido" xml:space="preserve">
-    <value>Intervalo de tamanho inválido para o campo {0}.</value>
+  <data name="Erro_TamanhoNumero" xml:space="preserve">
+    <value>O tamanho do número de telefone é de até 16 caracteres.</value>
   </data>
 </root>

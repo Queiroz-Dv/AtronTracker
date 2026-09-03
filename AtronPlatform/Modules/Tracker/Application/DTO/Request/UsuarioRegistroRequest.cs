@@ -7,9 +7,9 @@ namespace Application.DTO.Request
     {
         public string Codigo { get; set; }
 
-        public string Nome { get; set; }
+        public string? Nome { get; set; }
 
-        public string Sobrenome { get; set; }
+        public string? Sobrenome { get; set; }
 
         public DateOnly? DataNascimento { get; set; }
 

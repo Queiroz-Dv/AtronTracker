@@ -2,7 +2,7 @@ using Domain.Enums;
 
 namespace Application.DTO
 {
-    public sealed class EmpresaDTO
+    public class EmpresaDTO
     {
         public int Id { get; set; }
         public string Codigo { get; set; } = string.Empty;

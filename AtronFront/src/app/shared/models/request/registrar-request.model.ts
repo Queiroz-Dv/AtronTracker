@@ -1,6 +1,5 @@
 export enum TipoWorkspace {
   Pessoal = 1,
-  Agencia = 2,
   Empresa = 3,
 }
 
@@ -27,7 +26,7 @@ export class RegistrarRequest {
     public senha: string,
     public confirmaSenha: string,
     public workspace?: WorkspaceRegistroRequest,
-    public dataNascimento?: Date,
+    public dataNascimento?: string,
     public convite?: string
   ) { }
 }

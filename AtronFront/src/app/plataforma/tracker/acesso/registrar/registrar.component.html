@@ -61,23 +61,6 @@
       </div>
 
       <form [formGroup]="form" (ngSubmit)="registrarNovoUsuario()" class="auth-form">
-        <fieldset class="form-section">
-          <legend>Dados de acesso</legend>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Código de acesso</mat-label>
-            <mat-icon matPrefix>badge</mat-icon>
-            <input matInput formControlName="codigo" placeholder="Crie um código único" autocomplete="username" />
-            <c-control-error [control]="form.get('codigo')"></c-control-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>E-mail</mat-label>
-            <mat-icon matPrefix>email</mat-icon>
-            <input matInput formControlName="email" type="email" placeholder="seu@email.com" autocomplete="email" />
-            <c-control-error [control]="form.get('email')"></c-control-error>
-          </mat-form-field>
-        </fieldset>
 
         @if (conviteIdentificador) {
         <fieldset class="form-section">
@@ -103,7 +86,6 @@
             <mat-icon matPrefix>category</mat-icon>
             <mat-select formControlName="workspaceTipo">
               <mat-option [value]="tipoWorkspace.Pessoal">Pessoal</mat-option>
-              <mat-option [value]="tipoWorkspace.Agencia">Agência</mat-option>
               <mat-option [value]="tipoWorkspace.Empresa">Empresa</mat-option>
             </mat-select>
             <c-control-error [control]="form.get('workspaceTipo')"></c-control-error>
@@ -115,6 +97,27 @@
             <input matInput formControlName="workspaceNome"
               placeholder="Ex: Meu espaço, Minha agência ou Minha empresa" />
             <c-control-error [control]="form.get('workspaceNome')"></c-control-error>
+          </mat-form-field>
+        </fieldset>
+        }
+
+        @if (form.get('workspaceTipo')?.value !== tipoWorkspace.Empresa)
+        {
+        <fieldset class="form-section">
+          <legend>Dados de acesso</legend>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Código de acesso</mat-label>
+            <mat-icon matPrefix>badge</mat-icon>
+            <input matInput formControlName="codigo" placeholder="Crie um código único" autocomplete="username" />
+            <c-control-error [control]="form.get('codigo')"></c-control-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input matInput formControlName="email" type="email" placeholder="seu@email.com" autocomplete="email" />
+            <c-control-error [control]="form.get('email')"></c-control-error>
           </mat-form-field>
         </fieldset>
         }
@@ -164,23 +167,22 @@
         </fieldset>
         }
 
+        @if (form.get('workspaceTipo')?.value !== tipoWorkspace.Empresa){
+
         <fieldset class="form-section">
           <legend>Informações pessoais</legend>
-
           <div class="form-grid">
             <mat-form-field appearance="outline">
               <mat-label>Nome</mat-label>
               <input matInput formControlName="nome" placeholder="Seu nome" autocomplete="given-name" />
               <c-control-error [control]="form.get('nome')"></c-control-error>
             </mat-form-field>
-
             <mat-form-field appearance="outline">
               <mat-label>Sobrenome</mat-label>
               <input matInput formControlName="sobrenome" placeholder="Seu sobrenome" autocomplete="family-name" />
               <c-control-error [control]="form.get('sobrenome')"></c-control-error>
             </mat-form-field>
           </div>
-
           <div class="form-grid single-column">
             <mat-form-field appearance="outline">
               <mat-label>Data de nascimento</mat-label>
@@ -191,10 +193,9 @@
               <mat-datepicker #dataNascimmentoPicker></mat-datepicker>
               <c-control-error [control]="form.get('dataNascimento')"></c-control-error>
             </mat-form-field>
-
           </div>
         </fieldset>
-
+        }
         <fieldset class="form-section">
           <legend>Segurança</legend>
 
@@ -217,10 +218,7 @@
           </div>
         </fieldset>
 
-        <button
-          mat-flat-button
-          type="submit"
-          class="primary-action"
+        <button mat-flat-button type="submit" class="primary-action"
           [disabled]="form.invalid || carregandoConvite || conviteInvalido">
           <mat-icon>how_to_reg</mat-icon>
           Criar minha conta

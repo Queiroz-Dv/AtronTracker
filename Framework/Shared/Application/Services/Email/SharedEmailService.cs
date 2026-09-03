@@ -34,7 +34,7 @@ namespace Shared.Application.Services.Email
             try
             {
                 var providerData = EmailProviderIdentifier.IdentificarEObterConfiguracoes(_settings.FromEmail);
-                if (!EmailProviderIdentifier.Messages.HasErrors())
+                if (!EmailProviderIdentifier.Messages.TemErros())
                 {
                     (_provider, _providerSettings) = providerData;
                 }

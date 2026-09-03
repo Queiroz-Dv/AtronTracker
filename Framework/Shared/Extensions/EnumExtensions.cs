@@ -52,5 +52,10 @@ namespace Shared.Extensions
             throw new InvalidOperationException(
                 $"O valor '{description}' não possui correspondência no enum '{typeof(T).Name}'.");
         }
+
+        public static bool IsValidEnum(this Enum value)
+        {
+            return Enum.IsDefined(value.GetType(), value);
+        }
     }
 }

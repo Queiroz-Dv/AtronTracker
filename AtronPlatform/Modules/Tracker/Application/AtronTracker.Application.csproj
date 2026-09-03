@@ -18,6 +18,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Resources\EmpresaResource.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>EmpresaResource.resx</DependentUpon>
+		</Compile>
 		<Compile Update="Resources\ModuloResource.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
@@ -66,6 +71,10 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Email\Templates\pt-BR\tarefa-atribuida.html">
 			<LogicalName>Application.Email.Templates.pt-BR.tarefa-atribuida.html</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\EmpresaResource.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>EmpresaResource.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Resources\ModuloResource.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>

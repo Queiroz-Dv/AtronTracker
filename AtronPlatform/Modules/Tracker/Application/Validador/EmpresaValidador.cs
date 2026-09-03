@@ -1,61 +1,83 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Mail;
 using Application.DTO;
-using Domain.Enums;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Resources;
-using Shared.Domain.ValueObjects;
+using Application.Resources;
+using Shared.Application.Services;
+using Shared.Extensions;
+using Shared.Extensions.RegraExtensions;
 
 namespace Application.Validador
 {
-    public sealed class EmpresaValidador : IValidador<EmpresaDTO>
+    public sealed class EmpresaValidador : Validador<EmpresaDTO>
     {
-        public IEnumerable<NotificationMessage> Validar(EmpresaDTO? empresa)
+        public EmpresaValidador()
         {
-            var notificacoes = new NotificationBag();
-            if (empresa is null)
-            {
-                notificacoes.AdicionarErro(NotificacoesPadronizadas.ErroRegistroNulo);
-                return notificacoes.Messages;
-            }
-
-            ValidarCampo(empresa.Codigo, 3, 25, nameof(empresa.Codigo), notificacoes);
-            ValidarCampo(empresa.NomeFantasia, 3, 150, nameof(empresa.NomeFantasia), notificacoes);
-            ValidarCampo(empresa.Endereco, 3, 200, nameof(empresa.Endereco), notificacoes);
-            ValidarCampo(empresa.Numero, 1, 20, nameof(empresa.Numero), notificacoes);
-            ValidarCampo(empresa.Email, 3, 254, nameof(empresa.Email), notificacoes);
-
-            var emailInformado = empresa.Email?.Trim();
-            if (!string.IsNullOrWhiteSpace(emailInformado)
-                && (!MailAddress.TryCreate(emailInformado, out var email)
-                    || !string.Equals(email.Address, emailInformado, StringComparison.OrdinalIgnoreCase)))
-                notificacoes.AdicionarErro(NotificacoesPadronizadas.ErroCampoInvalido);
-
-            if (!Enum.IsDefined(typeof(StatusEmpresa), empresa.Status))
-                notificacoes.AdicionarErro(NotificacoesPadronizadas.ErroCampoInvalido);
-
-            return notificacoes.Messages;
+            RegrasParaCodigo();
+            RegrasParaNomeFantasia();
+            RegrasParaValidarEndereco();
+            RegrasParaValidarNumero();
+            RegrasParaValidarEmail();
+            RegrasParaValidarStatus();
         }
 
-        private static void ValidarCampo(
-            string? valor,
-            int tamanhoMinimo,
-            int tamanhoMaximo,
-            string nomeCampo,
-            NotificationBag notificacoes)
+        private void RegrasParaCodigo()
         {
-            if (string.IsNullOrWhiteSpace(valor))
-            {
-                notificacoes.AdicionarErro(string.Format(
-                    NotificacoesPadronizadas.ErroCampoObrigatorio,
-                    nomeCampo));
-                return;
-            }
+            RegraPara(x => x.Codigo)
+                .NaoVazio()
+                .ComMensagem(EmpresaResource.Erro_CodigoVazioOuInvalido);
 
-            var tamanho = valor.Trim().Length;
-            if (tamanho < tamanhoMinimo || tamanho > tamanhoMaximo)
-                notificacoes.AdicionarErro(NotificacoesPadronizadas.ErroCampoInvalido);
+            RegraPara(x => x.Codigo)
+                .TamanhoEntre(3, 25)
+                .ComMensagem(EmpresaResource.Erro_TamanhoCodigo);
+        }
+
+        private void RegrasParaNomeFantasia()
+        {
+            RegraPara(x => x.NomeFantasia)
+                .NaoVazio()
+                .ComMensagem(EmpresaResource.Erro_NomeFantasiaVazioOuInvalido);
+
+            RegraPara(x => x.NomeFantasia)
+                .TamanhoEntre(20, 150)
+                .ComMensagem(EmpresaResource.Erro_TamanhoNomeFantasia);
+        }
+
+        private void RegrasParaValidarEndereco()
+        {
+            RegraPara(x => x.Endereco)
+                .NaoVazio()
+                .ComMensagem(EmpresaResource.Erro_EnderecoVazioOuInvalido);
+
+            RegraPara(x => x.Endereco)
+                .TamanhoEntre(3, 200)
+                .ComMensagem(EmpresaResource.Erro_TamanhoEndereco);
+        }
+
+        private void RegrasParaValidarNumero()
+        {
+            RegraPara(x => x.Numero)
+                .NaoVazio()
+                .ComMensagem(EmpresaResource.Erro_NumeroVazioOuInvalido);
+
+            RegraPara(x => x.Numero)
+                .TamanhoEntre(16, 16) // Se não funcionar terei de usar  método DeveSer
+                .ComMensagem(EmpresaResource.Erro_TamanhoNumero);
+        }
+
+        private void RegrasParaValidarEmail()
+        {
+            RegraPara(x => x.Email)
+               .NaoVazio()
+                .EmailValido()
+               .ComMensagem(EmpresaResource.Erro_EmailVazioOuInvalido);
+
+            RegraPara(x => x.Email)
+                .TamanhoEntre(3, 30)
+                .ComMensagem(EmpresaResource.Erro_TamanhoEmail);
+        }
+
+        private void RegrasParaValidarStatus()
+        {
+            RegraPara(x => x.Status)
+             .DeveSer(status => status.IsValidEnum());
         }
     }
 }

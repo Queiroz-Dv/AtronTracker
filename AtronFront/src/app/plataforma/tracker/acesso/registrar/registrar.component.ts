@@ -3,11 +3,11 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AcessoService } from '../../../../core/services/acesso.service';
 import { NotificacaoService, Nivel } from '../../../../core/services/notification.service';
-import { senhasIguaisValidator } from '../../../../core/validators/senhasIguaisValidator.validator';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error.component';
 import { RegistrarRequest, TipoWorkspace } from '../../../../shared/models/request/registrar-request.model';
 import { ConviteWorkspaceResponse, RegistrarResponse } from '../../../../shared/models/response/registrar-response.model';
 import { SharedModule } from '../../../../shared/modules/shared.module';
+import { converterDataParaFormulario, formatarDataParaEnvio } from '../../../../shared/utils/data-form.utils';
 
 @Component({
   selector: 'c-registrar',
@@ -54,16 +54,41 @@ export class RegistrarComponent implements OnInit {
       dataNascimento: ['', Validators.required],
       senha: ['', Validators.required],
       confirmaSenha: ['', Validators.required]
-    }, { validators: [senhasIguaisValidator()] });
+    });
 
     this.form.get('workspaceTipo')?.valueChanges.subscribe(tipo => {
+      // 1. Lógica da empresa (já existente)
       if (tipo === TipoWorkspace.Empresa) {
         empresa.enable();
-        return;
+      } else {
+        empresa.reset();
+        empresa.disable();
       }
 
-      empresa.reset();
-      empresa.disable();
+      // 2. Lógica para os campos pessoais (nome, sobrenome, dataNascimento)
+      const nome = this.form.get('nome');
+      const sobrenome = this.form.get('sobrenome');
+      const dataNasc = this.form.get('dataNascimento');
+
+      if (tipo === TipoWorkspace.Empresa) {        
+        nome?.clearValidators();
+        sobrenome?.clearValidators();
+        dataNasc?.clearValidators();        
+        nome?.reset();
+        sobrenome?.reset();
+        dataNasc?.reset();
+      } else {        
+        nome?.setValidators(Validators.required);
+        sobrenome?.setValidators(Validators.required);
+        dataNasc?.setValidators(Validators.required);        
+        nome?.reset();
+        sobrenome?.reset();
+        dataNasc?.reset();
+      }
+      
+      nome?.updateValueAndValidity();
+      sobrenome?.updateValueAndValidity();
+      dataNasc?.updateValueAndValidity();
     });
 
     this.conviteIdentificador = this.route.snapshot.queryParamMap.get('convite') ?? undefined;
@@ -90,6 +115,8 @@ export class RegistrarComponent implements OnInit {
           ? formulario.empresa
           : undefined,
       };
+
+    const dataNascimentoFormatada = formatarDataParaEnvio(formulario.dataNascimento) ?? '';
     const dadosDoUsuario = new RegistrarRequest(
       formulario.codigo,
       formulario.nome,
@@ -98,7 +125,7 @@ export class RegistrarComponent implements OnInit {
       formulario.senha,
       formulario.confirmaSenha,
       workspace,
-      formulario.dataNascimento,
+      dataNascimentoFormatada,
       this.conviteIdentificador);
 
     this.acessoService.registrar(dadosDoUsuario).subscribe({
