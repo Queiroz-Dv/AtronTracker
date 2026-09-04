@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace Application.UseCases.DepartamentoCases
         public async Task<Resultado> ExecutarAsync(DepartamentoDTO departamentoDTO)
         {
             var erros = _validador.Validar(departamentoDTO);
-            if (erros.Any())
+            if (erros.TemErros())
                 return Resultado.Falha(erros);
 
             var departamentoExiste = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(departamentoDTO.Codigo);

@@ -4,11 +4,11 @@ using Shared.Application.Services;
 using Shared.Extensions;
 using Shared.Extensions.RegraExtensions;
 
-namespace Application.Validador
+namespace Application.Validacoes
 {
-    public sealed class EmpresaValidador : Validador<EmpresaDTO>
+    public sealed class EmpresaValidacoes : Validador<EmpresaDTO>
     {
-        public EmpresaValidador()
+        public EmpresaValidacoes()
         {
             RegrasParaCodigo();
             RegrasParaNomeFantasia();

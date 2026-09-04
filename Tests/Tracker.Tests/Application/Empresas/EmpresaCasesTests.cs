@@ -29,7 +29,7 @@ public sealed class EmpresaCasesTests
         var useCase = new CriarEmpresaCase(
             new EmpresaMapping(),
             repository.Object,
-            new EmpresaValidador());
+            new EmpresaValidacoes());
 
         var resultado = await useCase.ExecutarAsync(CriarDto(codigo: " atron "));
 
@@ -52,7 +52,7 @@ public sealed class EmpresaCasesTests
         var useCase = new CriarEmpresaCase(
             new EmpresaMapping(),
             repository.Object,
-            new EmpresaValidador());
+            new EmpresaValidacoes());
 
         var resultado = await useCase.ExecutarAsync(CriarDto());
 
@@ -75,7 +75,7 @@ public sealed class EmpresaCasesTests
         var useCase = new AtualizarEmpresaCase(
             new EmpresaMapping(),
             repository.Object,
-            new EmpresaValidador());
+            new EmpresaValidacoes());
 
         var dto = CriarDto(nomeFantasia: "Atron Atualizada");
         dto.Status = StatusEmpresa.Suspensa;
@@ -132,7 +132,7 @@ public sealed class EmpresaCasesTests
         dto.Email = "email-invalido";
         dto.Status = (StatusEmpresa)999;
 
-        var mensagens = new EmpresaValidador().Validar(dto);
+        var mensagens = new EmpresaValidacoes().Validar(dto);
 
         Assert.NotEmpty(mensagens);
     }

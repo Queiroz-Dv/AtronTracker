@@ -61,6 +61,42 @@ namespace Shared.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to O tamanho do código de usuário é entre 3 a 10 caracteres..
+        /// </summary>
+        public static string Erro_TamanhoCodigo {
+            get {
+                return ResourceManager.GetString("Erro_TamanhoCodigo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O tamanho do e-mail é entre 5 a 50 caracteres..
+        /// </summary>
+        public static string Erro_TamanhoEmail {
+            get {
+                return ResourceManager.GetString("Erro_TamanhoEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O tamanho do nome de usuário é entre 3 a 25 caracteres..
+        /// </summary>
+        public static string Erro_TamanhoNome {
+            get {
+                return ResourceManager.GetString("Erro_TamanhoNome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O tamanho do sobrenome de usuário é entre 3 a 50 caracteres..
+        /// </summary>
+        public static string Erro_TamanhoSobrenome {
+            get {
+                return ResourceManager.GetString("Erro_TamanhoSobrenome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Usuário inativo..
         /// </summary>
         public static string Erro_UsuarioInativo {

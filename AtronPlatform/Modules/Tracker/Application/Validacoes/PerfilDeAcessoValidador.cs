@@ -4,7 +4,7 @@ using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using System.Collections.Generic;
 
-namespace Application.Validador
+namespace Application.Validacoes
 {
     public sealed class PerfilDeAcessoValidador : IValidador<PerfilDeAcessoDTO>
     {

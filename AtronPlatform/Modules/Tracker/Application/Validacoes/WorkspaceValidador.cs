@@ -7,7 +7,7 @@ using Shared.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Application.Validador;
+namespace Application.Validacoes;
 
 public sealed class WorkspaceValidador : IValidador<CriarWorkspaceInicialRequest>
 {
@@ -38,7 +38,7 @@ public sealed class WorkspaceValidador : IValidador<CriarWorkspaceInicialRequest
             notificacoes.AdicionarErro(WorkspaceResource.Erro_EmpresaCodigoObrigatorio);
 
         if (workspace.Tipo != TipoWorkspace.Empresa
-            && workspace.EmpresaCodigo is not null)
+            && !workspace.EmpresaCodigo.IsNullable())
             notificacoes.AdicionarErro(WorkspaceResource.Erro_EmpresaNaoPermitida);
 
         return notificacoes.Messages;

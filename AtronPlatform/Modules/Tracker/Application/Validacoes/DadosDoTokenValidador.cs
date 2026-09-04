@@ -5,7 +5,7 @@ using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Collections.Generic;
 
-namespace Application.Validador
+namespace Application.Validacoes
 {
     public class DadosDoTokenValidador : IValidador<DadosDoTokenDTO>
     {

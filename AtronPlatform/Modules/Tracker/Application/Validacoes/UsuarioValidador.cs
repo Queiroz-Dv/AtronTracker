@@ -1,23 +1,25 @@
-﻿using Application.DTO.Request;
+﻿using Domain.Entities;
+using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
-namespace Application.Validador
+namespace Application.Validacoes
 {
-    public class UsuarioRegistroValidador : IValidador<UsuarioRegistroRequest>
+    public class UsuarioValidador(IAccessorService accessorService) : IValidador<Usuario>
     {
-        public IEnumerable<NotificationMessage> Validar(UsuarioRegistroRequest entity)
+        private readonly IAccessorService _accessorService = accessorService;
+
+        public IEnumerable<NotificationMessage> Validar(Usuario entity)
         {
             var context = new NotificationBag();
 
             if (entity == null)
             {
-                context.AdicionarErro(UsuarioResource.ErroRegistroNulo);
+                context.AdicionarErro(UsuarioResource.ErroUsuarioNulo);
                 return [.. context.Messages];
             }
 
@@ -26,12 +28,11 @@ namespace Application.Validador
             ValidarSobrenome(entity, context);
             ValidarDataNascimento(entity, context);
             ValidarEmail(entity, context);
-            ValidarSenha(entity, context);
 
             return [.. context.Messages];
         }
 
-        private static void ValidarCodigo(UsuarioRegistroRequest entity, NotificationBag context)
+        private void ValidarCodigo(Usuario entity, NotificationBag context)
         {
             if (entity.Codigo.IsNullOrEmpty())
             {
@@ -47,7 +48,7 @@ namespace Application.Validador
             }
         }
 
-        private void ValidarNome(UsuarioRegistroRequest entity, NotificationBag context)
+        private void ValidarNome(Usuario entity, NotificationBag context)
         {
             if (entity.Nome.IsNullOrEmpty())
             {
@@ -63,7 +64,7 @@ namespace Application.Validador
             }
         }
 
-        private void ValidarSobrenome(UsuarioRegistroRequest entity, NotificationBag context)
+        private void ValidarSobrenome(Usuario entity, NotificationBag context)
         {
             if (entity.Sobrenome.IsNullOrEmpty())
             {
@@ -79,51 +80,27 @@ namespace Application.Validador
             }
         }
 
-        private void ValidarDataNascimento(UsuarioRegistroRequest entity, NotificationBag context)
+        private void ValidarDataNascimento(Usuario entity, NotificationBag context)
         {
-            if (entity.DataNascimento >= DateOnly.FromDateTime(DateTime.Now))
+            if (entity.DataNascimento == DateTime.Now)
             {
                 context.AdicionarErro(UsuarioResource.ErroDataDeNascimento);
             }
         }
 
-        private static void ValidarEmail(UsuarioRegistroRequest entity, NotificationBag context)
+        private void ValidarEmail(Usuario entity, NotificationBag context)
         {
             if (entity.Email.IsNullOrEmpty())
             {
                 context.AdicionarErro(UsuarioResource.ErroEmailNulo);
+                return;
             }
-        }
 
-        private void ValidarSenha(UsuarioRegistroRequest entity, NotificationBag context)
-        {
-            if (entity.Senha.IsNullOrEmpty())
+            var usuarioRepository = _accessorService.ObterService<IUsuarioRepository>();
+            var emailExiste = usuarioRepository.VerificarEmailExistenteAsync(entity.Email).Result;
+            if (emailExiste)
             {
-                context.AdicionarErro(UsuarioResource.ErroSenhaNula);
-            }
-            else
-            {
-                var senha = entity.Senha;
-
-                if (entity.Senha.Length < 9)
-                {
-                context.AdicionarErro(UsuarioResource.ErroSenhaTamanhoMinimo);
-                }
-
-                if (!Regex.IsMatch(senha, @"[a-z]") || !Regex.IsMatch(senha, @"[A-Z]") || !Regex.IsMatch(senha, @"[0-9]"))
-                {
-                context.AdicionarErro(UsuarioResource.ErroSenhaComposicao);
-                }
-
-                if (!Regex.IsMatch(senha, @"[!@#$%^&*(),.?""{}|<>]"))
-                {
-                context.AdicionarErro(UsuarioResource.ErroSenhaCaractereEspecial);
-                }
-
-                if (!entity.Senha.Equals(entity.ConfirmaSenha))
-                {
-                context.AdicionarErro(UsuarioResource.ErroSenhasDiferentes);
-                }
+                context.AdicionarErro(EmailResource.ErroEmailUtilizado);
             }
         }
     }

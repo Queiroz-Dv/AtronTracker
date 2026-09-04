@@ -23,7 +23,7 @@ using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using Application.UseCases.UsuarioCases;
 using Application.UseCases.WorkspaceCases;
-using Application.Validador;
+using Application.Validacoes;
 using AtronTracker.Infrastructure.Context;
 using AtronTracker.Infrastructure.Identity;
 using Domain.Entities;
@@ -130,7 +130,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IAcessoEmailCompositor, AcessoEmailCompositor>();
             services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
             services.AddScoped<IValidador<DadosDoTokenDTO>, DadosDoTokenValidador>();
-            services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidador>();
+            services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidacoes>();
         }
 
         private static void ConfigureDefaultUserRoleServices(IServiceCollection services)

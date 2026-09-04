@@ -6,7 +6,7 @@ using Shared.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Application.Validador
+namespace Application.Validacoes
 {
     /// <summary>
     /// Valida os dados de entrada antes de processar a operação no serviço.

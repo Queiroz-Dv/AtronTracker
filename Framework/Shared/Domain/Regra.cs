@@ -77,6 +77,6 @@ namespace Shared.Domain
                     ?? $"O campo {Propriedade.NomePropriedade} é inválido.",
 
                 Nivel = ENotificationType.Error
-            };
+            };       
     }
 }

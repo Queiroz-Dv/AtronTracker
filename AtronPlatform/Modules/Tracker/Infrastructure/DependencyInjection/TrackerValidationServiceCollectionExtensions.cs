@@ -1,5 +1,4 @@
 ﻿using Application.DTO;
-using Application.Validador;
 using Application.DTO.Request;
 using Application.Validations;
 using Domain.ApiEntities;
@@ -8,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
+using Application.Validacoes;
 
 namespace Infrastructure.DependencyInjection
 {
@@ -49,12 +49,12 @@ namespace Infrastructure.DependencyInjection
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {            
-            services.AddScoped<IValidador<DepartamentoDTO>, DepartamentoValidador>();
+            services.AddScoped<IValidador<DepartamentoDTO>, DepartamentoValidacoes>();
         }
 
         private static void ConfigureEmpresaServices(IServiceCollection services)
         {
-            services.AddScoped<IValidador<EmpresaDTO>, EmpresaValidador>();
+            services.AddScoped<IValidador<EmpresaDTO>, EmpresaValidacoes>();
         }
 
         private static void ConfigureWorkspaceServices(IServiceCollection services)

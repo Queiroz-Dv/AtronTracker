@@ -243,4 +243,16 @@
   <data name="Mensagem_UsuarioSalvo" xml:space="preserve">
     <value>Usuário cadastrado com sucesso.</value>
   </data>
+  <data name="Erro_TamanhoCodigo" xml:space="preserve">
+    <value>O tamanho do código de usuário é entre 3 a 10 caracteres.</value>
+  </data>
+  <data name="Erro_TamanhoNome" xml:space="preserve">
+    <value>O tamanho do nome de usuário é entre 3 a 25 caracteres.</value>
+  </data>
+  <data name="Erro_TamanhoSobrenome" xml:space="preserve">
+    <value>O tamanho do sobrenome de usuário é entre 3 a 50 caracteres.</value>
+  </data>
+  <data name="Erro_TamanhoEmail" xml:space="preserve">
+    <value>O tamanho do e-mail é entre 5 a 50 caracteres.</value>
+  </data>
 </root>

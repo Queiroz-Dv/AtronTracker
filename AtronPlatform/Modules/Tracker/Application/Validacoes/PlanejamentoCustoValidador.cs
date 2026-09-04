@@ -7,7 +7,7 @@ using Shared.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Application.Validador
+namespace Application.Validacoes
 {
     public class PlanejamentoCustoValidador : IValidador<PlanejamentoCustoDTO>
     {
