@@ -18,7 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\AtronNotificacoes\AtronNotificacoes.Core.csproj" />
     <ProjectReference Include="..\..\Framework\Shared\Shared.csproj" />
-    <ProjectReference Include="..\..\Framework\Shared\Migrations\Framework.Shared.Migrations.csproj" />
     <ProjectReference Include="..\Modules\Tracker\Infrastructure\AtronTracker.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Stock\Application\AtronStock.Application.csproj" />
     <ProjectReference Include="..\Modules\Stock\Infrastructure\AtronStock.Infrastructure.csproj" />
