@@ -1,3 +1,3 @@
 export const environment = {
-  apiRoute: 'https://atronplatform.onrender.com/',
+  apiRoute: 'https://localhost:7280',
 };
