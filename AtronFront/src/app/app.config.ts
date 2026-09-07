@@ -33,7 +33,8 @@ function criarPaginadorPtBr(): MatPaginatorIntl {
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }),
   provideRouter(routes),
-  provideHttpClient(withInterceptorsFromDi()), { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  provideHttpClient(withInterceptorsFromDi()),
+  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   provideNativeDateAdapter(),
   provideAnimationsAsync(),
   importProvidersFrom(MatSnackBarModule),

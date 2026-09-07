@@ -3,17 +3,19 @@ using System;
 using AtronTracker.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AtronTracker.Infrastructure.Migrations.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AtronDbContext))]
-    partial class AtronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260828010334_CriandoSolicitacoesEmpresa")]
+    partial class CriandoSolicitacoesEmpresa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,51 +94,6 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.ToTable("ConfirmacoesEmail");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ConviteWorkspace", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ExpiraEm")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("IdentificadorHash")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<string>("RemetenteCodigo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<DateTime?>("UtilizadoEm")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("UtilizadoPorUsuarioCodigo")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<int>("WorkspaceId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdentificadorHash")
-                        .IsUnique();
-
-                    b.HasIndex("RemetenteCodigo");
-
-                    b.HasIndex("UtilizadoPorUsuarioCodigo");
-
-                    b.HasIndex("WorkspaceId", "ExpiraEm", "UtilizadoEm");
-
-                    b.ToTable("ConvitesWorkspace", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.Departamento", b =>
                 {
                     b.Property<int>("Id")
@@ -186,11 +143,6 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .HasMaxLength(254)
                         .HasColumnType("character varying(254)");
 
-                    b.Property<string>("Endereco")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
                     b.Property<string>("NomeFantasia")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -201,35 +153,16 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                    b.Property<int>("Status")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Codigo")
+                        .IsUnique();
+
                     b.ToTable("Empresas");
-                });
-
-            modelBuilder.Entity("Domain.Entities.MembroWorkspace", b =>
-                {
-                    b.Property<int>("WorkspaceId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UsuarioCodigo")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.HasKey("WorkspaceId", "UsuarioCodigo");
-
-                    b.HasIndex("UsuarioCodigo");
-
-                    b.ToTable("MembrosWorkspace", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Modulo", b =>
@@ -312,7 +245,7 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                         {
                             Id = 14,
                             Codigo = "EMP",
-                            Descricao = "Empresas"
+                            Descricao = "Empresa"
                         });
                 });
 
@@ -545,10 +478,8 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Property<int>("SolicitanteId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TarefaId")
                         .HasColumnType("integer");
@@ -596,12 +527,10 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Property<int?>("DepartamentoId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("DestinoInicial")
-                        .IsRequired()
+                    b.Property<int>("DestinoInicial")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
-                        .HasDefaultValue("Usuario");
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
 
                     b.Property<bool>("ExigeAprovacaoParaObter")
                         .ValueGeneratedOnAdd()
@@ -707,10 +636,8 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Property<int>("TarefaId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -816,7 +743,7 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.ToTable("UsuarioCargoDepartamento", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Workspace", b =>
+            modelBuilder.Entity("Domain.Entities.UsuarioEmpresa", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -824,26 +751,31 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("EmpresaCodigo")
-                        .HasMaxLength(25)
-                        .HasColumnType("character varying(25)");
+                    b.Property<int>("EmpresaId")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
+                    b.Property<int>("Papel")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Tipo")
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UsuarioCodigo")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmpresaCodigo")
+                    b.HasIndex("EmpresaId");
+
+                    b.HasIndex("UsuarioId", "UsuarioCodigo")
                         .IsUnique();
 
-                    b.ToTable("Workspaces");
+                    b.ToTable("UsuariosEmpresas");
                 });
 
             modelBuilder.Entity("Shared.Domain.Entities.Identity.ApplicationRole", b =>
@@ -1072,34 +1004,6 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Navigation("Departamento");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ConviteWorkspace", b =>
-                {
-                    b.HasOne("Domain.Entities.Usuario", "Remetente")
-                        .WithMany()
-                        .HasForeignKey("RemetenteCodigo")
-                        .HasPrincipalKey("Codigo")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Usuario", "UtilizadoPorUsuario")
-                        .WithMany()
-                        .HasForeignKey("UtilizadoPorUsuarioCodigo")
-                        .HasPrincipalKey("Codigo")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Workspace", "Workspace")
-                        .WithMany()
-                        .HasForeignKey("WorkspaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Remetente");
-
-                    b.Navigation("UtilizadoPorUsuario");
-
-                    b.Navigation("Workspace");
-                });
-
             modelBuilder.Entity("Domain.Entities.Departamento", b =>
                 {
                     b.HasOne("Domain.Entities.Usuario", "GestorDepartamento")
@@ -1110,24 +1014,29 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Navigation("GestorDepartamento");
                 });
 
-            modelBuilder.Entity("Domain.Entities.MembroWorkspace", b =>
+            modelBuilder.Entity("Domain.Entities.Empresa", b =>
                 {
-                    b.HasOne("Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioCodigo")
-                        .HasPrincipalKey("Codigo")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.OwnsOne("Domain.ValueObjects.Endereco", "Endereco", b1 =>
+                        {
+                            b1.Property<int>("EmpresaId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Logradouro")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("Endereco");
+
+                            b1.HasKey("EmpresaId");
+
+                            b1.ToTable("Empresas");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EmpresaId");
+                        });
+
+                    b.Navigation("Endereco")
                         .IsRequired();
-
-                    b.HasOne("Domain.Entities.Workspace", "Workspace")
-                        .WithMany("Membros")
-                        .HasForeignKey("WorkspaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-
-                    b.Navigation("Workspace");
                 });
 
             modelBuilder.Entity("Domain.Entities.PerfilDeAcesso", b =>
@@ -1333,15 +1242,23 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Workspace", b =>
+            modelBuilder.Entity("Domain.Entities.UsuarioEmpresa", b =>
                 {
                     b.HasOne("Domain.Entities.Empresa", "Empresa")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.Workspace", "EmpresaCodigo")
-                        .HasPrincipalKey("Domain.Entities.Empresa", "Codigo")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .WithMany("Usuarios")
+                        .HasForeignKey("EmpresaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId", "UsuarioCodigo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Empresa");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Shared.Domain.Entities.Identity.ApplicationRoleClaim", b =>
@@ -1449,11 +1366,6 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                     b.Navigation("Tarefas");
 
                     b.Navigation("UsuarioCargoDepartamentos");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Workspace", b =>
-                {
-                    b.Navigation("Membros");
                 });
 #pragma warning restore 612, 618
         }

@@ -6,6 +6,7 @@ using Application.Interfaces.Services.Identity;
 using Application.Mapping;
 using Application.Policies.PlanejamentoCustos;
 using Application.Policies.Tarefas;
+using Application.Records.Usuario;
 using Application.Resolvers.Tarefas;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
@@ -26,7 +27,6 @@ using Application.UseCases.WorkspaceCases;
 using Application.Validacoes;
 using AtronTracker.Infrastructure.Context;
 using AtronTracker.Infrastructure.Identity;
-using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
@@ -86,6 +86,7 @@ namespace Infrastructure.DependencyInjection
             ConfigureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
             ConfigureUsuarioServices(services);
+            ConfigureEmpresaServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
             ConfigureDefaultUserRoleServices(services);
@@ -99,6 +100,12 @@ namespace Infrastructure.DependencyInjection
                 .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
                 .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
             return services;
+        }
+
+        private static void ConfigureEmpresaServices(IServiceCollection services)
+        {
+            services.AddScoped<IEmpresaRepository, EmpresaRepository>();
+            services.AddScoped<EmpresaMapping>();           
         }
 
         private static void AddTrackerSharedAdapters(this IServiceCollection services)

@@ -18,7 +18,7 @@ namespace Shared.Application.Services.Factory
 
             var dadosDoUsuario = dadosComplementaresDoUsuarioDTO.DadosDoUsuario;
 
-            var claims = JwtConfiguration.GetClaims(dadosDoUsuario);
+            var claims = JwtConfiguration.GetClaims(dadosComplementaresDoUsuarioDTO);
             var token = CriarJwtToken(claims, tempoDoToken);
             var refreshToken = await CriarRefreshToken();
 

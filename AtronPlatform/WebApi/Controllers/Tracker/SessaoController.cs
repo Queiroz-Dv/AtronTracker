@@ -35,6 +35,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         /// </summary>
         /// <returns>200 OK com os dados da sessão, 204 NoContent se o usuário não puder ser identificado.</returns>
         [HttpGet("Info")]
+        [PermitirSemEmpresa]
         public async Task<ActionResult> SesssaoInfoAsync()
         {
             var user = HttpContext.User;
@@ -49,6 +50,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
 
             if (dadosCache is not null)
             {
+                var empresa = dadosCache.DadosDaEmpresa ?? ObterEmpresaDosClaims(user);
                 return Ok(new
                 {
                     codigoDoUsuario = usuarioCodigo,
@@ -89,6 +91,21 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
             };
 
             return Ok(jsonAtualizado);
+        }
+
+        private static DadosDaEmpresaDTO? ObterEmpresaDosClaims(ClaimsPrincipal user)
+        {
+            var codigo = user.FindFirst(ClaimCode.CODIGO_EMPRESA)?.Value;
+            var nome = user.FindFirst(ClaimCode.NOME_EMPRESA)?.Value;
+
+            return !string.IsNullOrWhiteSpace(codigo)
+                ? new DadosDaEmpresaDTO
+                {
+                    Codigo = codigo,
+                    NomeFantasia = nome ?? string.Empty,
+                    AcessoPermitido = true
+                }
+                : null;
         }
     }
 }

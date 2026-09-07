@@ -1,5 +1,6 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.Interfaces.Services;
+using Domain.Interfaces;
 using Shared.Application.DTOS.Users;
 using System;
 using System.Linq;
@@ -7,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Application.Services.AuthServices
 {
-    public class DadosComplementaresDoUsuarioService(IPerfilDeAcessoService perfilDeAcessoService) : IDadosComplementaresDoUsuarioService
+    public class DadosComplementaresDoUsuarioService(
+        IPerfilDeAcessoService perfilDeAcessoService) : IDadosComplementaresDoUsuarioService
     {
         private readonly IPerfilDeAcessoService _perfilDeAcessoService = perfilDeAcessoService;
 

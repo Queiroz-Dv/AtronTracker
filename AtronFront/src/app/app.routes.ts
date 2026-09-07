@@ -14,7 +14,7 @@ export const routes: Routes = [
   { path: 'reenviar-confirmacao', loadComponent: () => import('./plataforma/tracker/acesso/reenviar-confirmacao/reenviar-confirmacao.component').then(m => m.ReenviarConfirmacaoComponent) },
   { path: 'esqueci-senha', loadComponent: () => import('./plataforma/tracker/acesso/esqueci-senha/esqueci-senha.component').then(m => m.EsqueciSenhaComponent) },
   { path: 'trocar-senha', loadComponent: () => import('./plataforma/tracker/acesso/trocar-senha/trocar-senha.component').then(m => m.TrocarSenhaComponent) },
-  // Aplica o guard a tudo abaixo de 'atron'
+  // Todas as rotinas exigem empresa ativa, além das permissões por módulo.
   {
     path: 'atron',
     canActivate: [AuthGuard],

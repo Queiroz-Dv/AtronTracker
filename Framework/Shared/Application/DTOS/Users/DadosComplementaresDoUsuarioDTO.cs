@@ -6,7 +6,17 @@
 
         public List<DadosDoPerfilDTO> DadosDoPerfil { get; init; } = new();
 
+        public DadosDaEmpresaDTO? DadosDaEmpresa { get; init; }
+
         public TempoDosTokensDoUsuarioDTO DadosDoToken { get; init; }
+    }
+
+    public sealed class DadosDaEmpresaDTO
+    {
+        public int Id { get; init; }
+        public string Codigo { get; init; } = string.Empty;
+        public string NomeFantasia { get; init; } = string.Empty;
+        public bool AcessoPermitido { get; init; }
     }
 
     public class DadosDoUsuarioDTO

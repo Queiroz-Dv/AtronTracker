@@ -29,7 +29,7 @@ namespace Infrastructure.EntitiesConfiguration.ControleDeAcessoConfiguration
             new Modulo { Id = 11, Codigo = "PLC", Descricao = "Planejamento de Custos" },
             new Modulo { Id = 12, Codigo = "CAT", Descricao = "Categorias" },
             new Modulo { Id = 13, Codigo = "PRD", Descricao = "Produtos" },
-            new Modulo { Id = 14, Codigo = "EMP", Descricao = "Empresas" });
+            new Modulo { Id = 14, Codigo = "EMP", Descricao = "Empresa" });
         }
     }
 }
