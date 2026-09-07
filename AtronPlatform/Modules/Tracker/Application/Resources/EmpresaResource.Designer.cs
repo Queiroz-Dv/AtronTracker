@@ -160,6 +160,33 @@ namespace Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A empresa não foi encontrada ou não está disponível para associação..
+        /// </summary>
+        public static string Erro_EmpresaNaoEncontrada {
+            get {
+                return ResourceManager.GetString("Erro_EmpresaNaoEncontrada", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selecione uma empresa para solicitar a associação..
+        /// </summary>
+        public static string Erro_EmpresaObrigatoria {
+            get {
+                return ResourceManager.GetString("Erro_EmpresaObrigatoria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A empresa não possui um responsável ativo para analisar solicitações..
+        /// </summary>
+        public static string Erro_EmpresaSemResponsavel {
+            get {
+                return ResourceManager.GetString("Erro_EmpresaSemResponsavel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Informe os dados da empresa..
         /// </summary>
         public static string Erro_RegistroNulo {
@@ -174,6 +201,33 @@ namespace Application.Resources {
         public static string Erro_ResponsavelInvalido {
             get {
                 return ResourceManager.GetString("Erro_ResponsavelInvalido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apenas o responsável ativo da empresa pode analisar solicitações..
+        /// </summary>
+        public static string Erro_ResponsavelNecessario {
+            get {
+                return ResourceManager.GetString("Erro_ResponsavelNecessario", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Já existe uma solicitação pendente para esta empresa..
+        /// </summary>
+        public static string Erro_SolicitacaoDuplicada {
+            get {
+                return ResourceManager.GetString("Erro_SolicitacaoDuplicada", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A solicitação não foi encontrada ou já foi analisada..
+        /// </summary>
+        public static string Erro_SolicitacaoNaoEncontrada {
+            get {
+                return ResourceManager.GetString("Erro_SolicitacaoNaoEncontrada", resourceCulture);
             }
         }
         
@@ -194,62 +248,68 @@ namespace Application.Resources {
                 return ResourceManager.GetString("Erro_UsuarioNaoIdentificado", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Seu usuário ainda não está associado a uma empresa. O acesso aos módulos exige um vínculo ativo com uma empresa ativa..
+        ///   Looks up a localized string similar to Seu usuário ainda não está associado a uma empresa. O acesso aos módulos exige um vínculo ativo com uma empresa ativa..
         /// </summary>
         public static string Erro_UsuarioSemEmpresa {
             get {
                 return ResourceManager.GetString("Erro_UsuarioSemEmpresa", resourceCulture);
             }
         }
-
-        public static string Erro_EmpresaObrigatoria {
-            get { return ResourceManager.GetString("Erro_EmpresaObrigatoria", resourceCulture); }
-        }
-
-        public static string Erro_EmpresaNaoEncontrada {
-            get { return ResourceManager.GetString("Erro_EmpresaNaoEncontrada", resourceCulture); }
-        }
-
-        public static string Erro_SolicitacaoDuplicada {
-            get { return ResourceManager.GetString("Erro_SolicitacaoDuplicada", resourceCulture); }
-        }
-
-        public static string Erro_ResponsavelNecessario {
-            get { return ResourceManager.GetString("Erro_ResponsavelNecessario", resourceCulture); }
-        }
-
-        public static string Erro_SolicitacaoNaoEncontrada {
-            get { return ResourceManager.GetString("Erro_SolicitacaoNaoEncontrada", resourceCulture); }
-        }
-
-        public static string Erro_EmpresaSemResponsavel {
-            get { return ResourceManager.GetString("Erro_EmpresaSemResponsavel", resourceCulture); }
-        }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empresa.AssociacaoAprovada.
+        /// </summary>
         public static string Evento_AssociacaoAprovada {
-            get { return ResourceManager.GetString("Evento_AssociacaoAprovada", resourceCulture); }
+            get {
+                return ResourceManager.GetString("Evento_AssociacaoAprovada", resourceCulture);
+            }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empresa.AssociacaoRecusada.
+        /// </summary>
         public static string Evento_AssociacaoRecusada {
-            get { return ResourceManager.GetString("Evento_AssociacaoRecusada", resourceCulture); }
+            get {
+                return ResourceManager.GetString("Evento_AssociacaoRecusada", resourceCulture);
+            }
         }
-
-        public static string Titulo_AssociacaoAprovada {
-            get { return ResourceManager.GetString("Titulo_AssociacaoAprovada", resourceCulture); }
-        }
-
-        public static string Titulo_AssociacaoRecusada {
-            get { return ResourceManager.GetString("Titulo_AssociacaoRecusada", resourceCulture); }
-        }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sua associação à empresa {0} foi aprovada..
+        /// </summary>
         public static string Mensagem_AssociacaoAprovada {
-            get { return ResourceManager.GetString("Mensagem_AssociacaoAprovada", resourceCulture); }
+            get {
+                return ResourceManager.GetString("Mensagem_AssociacaoAprovada", resourceCulture);
+            }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sua solicitação de associação à empresa {0} foi recusada..
+        /// </summary>
         public static string Mensagem_AssociacaoRecusada {
-            get { return ResourceManager.GetString("Mensagem_AssociacaoRecusada", resourceCulture); }
+            get {
+                return ResourceManager.GetString("Mensagem_AssociacaoRecusada", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Associação aprovada.
+        /// </summary>
+        public static string Titulo_AssociacaoAprovada {
+            get {
+                return ResourceManager.GetString("Titulo_AssociacaoAprovada", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Associação recusada.
+        /// </summary>
+        public static string Titulo_AssociacaoRecusada {
+            get {
+                return ResourceManager.GetString("Titulo_AssociacaoRecusada", resourceCulture);
+            }
         }
     }
 }
