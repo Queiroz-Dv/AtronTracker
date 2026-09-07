@@ -7,13 +7,11 @@ using Application.Interfaces.Services.Identity;
 using Application.Mapping;
 using Application.Policies.PlanejamentoCustos;
 using Application.Policies.Tarefas;
-using Application.Resolvers.Tarefas;
 using Application.Records.Usuario;
+using Application.Resolvers.Tarefas;
 using Application.Services.AuthServices;
 using Application.Services.Contexts;
 using Application.Services.EntitiesServices;
-using Application.Services.EntitiesServices.Empresas;
-using Application.UseCases.EmpresaCases;
 using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
@@ -29,7 +27,6 @@ using Application.UseCases.UsuarioCases;
 using Application.Validador;
 using AtronTracker.Infrastructure.Context;
 using AtronTracker.Infrastructure.Identity;
-using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
@@ -106,20 +103,7 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigureEmpresaServices(IServiceCollection services)
         {
             services.AddScoped<IEmpresaRepository, EmpresaRepository>();
-            services.AddScoped<EmpresaMapping>();
-            services.AddScoped<EmpresaCadastroValidador>();
-            services.AddScoped<IValidador<EmpresaCadastroRequest>>(provider =>
-                provider.GetRequiredService<EmpresaCadastroValidador>());
-            services.AddScoped<UsuarioEmpresaAtualService>();
-            services.AddScoped<IEmpresaAtualService, EmpresaAtualService>();
-            services.AddScoped<CadastrarEmpresaCase>();
-            services.AddScoped<ObterEmpresaCase>();
-            services.AddScoped<BuscarEmpresasCase>();
-            services.AddScoped<SolicitarAssociacaoEmpresaCase>();
-            services.AddScoped<EmpresaResponsavelService>();
-             services.AddScoped<ObterSolicitacoesEmpresaCase>();
-             services.AddScoped<ObterAssociacaoEmpresaCase>();
-            services.AddScoped<DecidirSolicitacaoEmpresaCase>();
+            services.AddScoped<EmpresaMapping>();           
         }
 
         private static void AddTrackerSharedAdapters(this IServiceCollection services)

@@ -1,16 +1,14 @@
 using Application.DTO.Request;
-using System.Collections.Generic;
-using System.Linq;
-using Application.DTO.Response;
 using Domain.Entities;
 using Domain.ValueObjects;
 using Shared.Application.Interfaces.Mapping;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Application.Mapping
 {
     public sealed class EmpresaMapping :
-        IToEntityMapper<Empresa, EmpresaCadastroRequest>,
-        IToDtoMapper<UsuarioEmpresa, EmpresaResponse>
+        IToEntityMapper<Empresa, EmpresaCadastroRequest>
     {
         public Empresa MapToEntity(EmpresaCadastroRequest request)
             => new()
@@ -22,19 +20,8 @@ namespace Application.Mapping
                 Email = request.Email
             };
 
-        public EmpresaResponse MapToDto(UsuarioEmpresa vinculo)
-        {
-            var empresa = vinculo.Empresa;
-            return new EmpresaResponse(
-                empresa.Id, empresa.Codigo, empresa.NomeFantasia,
-                new EnderecoEmpresaResponse(empresa.Endereco.Logradouro),
-                empresa.Numero, empresa.Email, empresa.Status, vinculo.Papel);
-        }
 
         public IEnumerable<Empresa> MapToEntities(IEnumerable<EmpresaCadastroRequest>? requests)
             => requests?.Select(MapToEntity).ToArray() ?? [];
-
-        public IEnumerable<EmpresaResponse> MapToDtos(IEnumerable<UsuarioEmpresa>? vinculos)
-            => vinculos?.Select(MapToDto).ToArray() ?? [];
     }
 }
