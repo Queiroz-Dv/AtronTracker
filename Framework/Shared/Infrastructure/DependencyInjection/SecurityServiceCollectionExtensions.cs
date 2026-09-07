@@ -42,7 +42,7 @@ namespace Shared.Infrastructure.DependencyInjection
                 var allowedOrigins = configuration
                     .GetSection("Cors:AllowedOrigins")
                     .Get<string[]>()
-                    ?.Where(origin => !string.IsNullOrWhiteSpace(origin))
+                    ?.Where(origin => !origin.IsNullOrEmpty())
                     .ToArray();
 
                 if (allowedOrigins is null || allowedOrigins.Length == 0)

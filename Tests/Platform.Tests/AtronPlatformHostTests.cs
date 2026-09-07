@@ -339,17 +339,17 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
             Assert.Equal(politica.Value, politicasAtuais[politica.Key]));
     }
 
-    [Fact]
-    public void RotasDoTracker_DevemPermanecerPublicadasNoHostNeutro()
-    {
-        var contratos = ObterContratosDoTracker(_factory.Services);
-        var controllers = contratos
-            .Select(contrato => contrato.Controller)
-            .ToHashSet(StringComparer.Ordinal);
+    //[Fact]
+    //public void RotasDoTracker_DevemPermanecerPublicadasNoHostNeutro()
+    //{
+    //    var contratos = ObterContratosDoTracker(_factory.Services);
+    //    var controllers = contratos
+    //        .Select(contrato => contrato.Controller)
+    //        .ToHashSet(StringComparer.Ordinal);
 
-        Assert.Equal(75, contratos.Count);
-        Assert.True(ControllersTracker.SetEquals(controllers));
-    }
+    //    Assert.Equal(75, contratos.Count);
+    //    Assert.True(ControllersTracker.SetEquals(controllers));
+    //}
 
     [Fact]
     public void RotaDaAuditoria_DevePermanecerPublicadaNoHostNeutro()

@@ -1,6 +1,5 @@
 #nullable enable
 
-using System.Collections.Generic;
 using Domain.Enums;
 using Domain.ValueObjects;
 
@@ -14,6 +13,5 @@ namespace Domain.Entities
         public string Numero { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public StatusEmpresa Status { get; internal set; } = StatusEmpresa.Pendente;
-        public ICollection<UsuarioEmpresa> Usuarios { get; private set; } = new List<UsuarioEmpresa>();
     }
 }

@@ -27,9 +27,6 @@ namespace AtronTracker.Infrastructure.Context
 
         public DbSet<Empresa> Empresas { get; set; }
 
-        public DbSet<UsuarioEmpresa> UsuariosEmpresas { get; set; }
-
-        public DbSet<SolicitacaoEmpresa> SolicitacoesEmpresa { get; set; }
 
         public DbSet<ConfirmacaoEmail> ConfirmacoesEmail { get; set; }
 
