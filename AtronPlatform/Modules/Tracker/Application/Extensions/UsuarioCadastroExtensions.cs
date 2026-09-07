@@ -33,8 +33,7 @@ public static class UsuarioCadastroExtensions
         => new(
             request.Nome,
             request.Tipo,
-            usuarioCodigo,
-            request.Empresa?.Codigo);
+            usuarioCodigo);
 
     public static EmpresaDTO MontarEmpresa(this EmpresaRegistroRequest request)
         => new()
