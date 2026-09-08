@@ -1,0 +1,20 @@
+<mat-form-field class="workspace-field" appearance="outline" subscriptSizing="dynamic">
+  <mat-label>Workspace</mat-label>
+  <mat-icon matPrefix>workspaces</mat-icon>
+  <mat-select
+    aria-label="Selecionar workspace"
+    [disabled]="carregando() || selecionando() || workspaces().length === 0"
+    [placeholder]="carregando() ? 'Carregando...' : workspaces().length === 0 ? 'Nenhum workspace' : 'Selecione'"
+    [value]="workspaceAtual()?.id ?? null"
+    (selectionChange)="selecionar($event)">
+    @if (carregando()) {
+      <mat-option disabled>Carregando...</mat-option>
+    } @else {
+      @for (workspace of workspaces(); track workspace.id) {
+        <mat-option [value]="workspace.id">{{ workspace.nome }}</mat-option>
+      } @empty {
+        <mat-option disabled>Nenhum workspace</mat-option>
+      }
+    }
+  </mat-select>
+</mat-form-field>

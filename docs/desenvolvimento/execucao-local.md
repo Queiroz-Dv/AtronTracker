@@ -104,5 +104,3 @@ Entre com a conta preparada para desenvolvimento. Verifique a navegação de Tra
 ## Validação e limites
 
 Os projetos .NET podem ser explorados no Test Explorer do Visual Studio. Para reproduzir as etapas automatizadas, consulte o [workflow de CI](../../.github/workflows/ci.yml) e a [organização dos testes](../arquitetura-testes.md).
-
-Esta documentação foi conferida com a configuração e o código do repositório. Sua atualização não incluiu provisionar uma nova base, executar a aplicação ou validar um login real. A suíte Jasmine não foi executada nesta revisão e não integra o workflow atual.

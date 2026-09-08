@@ -41,7 +41,7 @@ Categoria ativa e registrará a tentativa no histórico.
   `{BASE}_{ANO}_3`;
 - a solicitação não terá limite funcional máximo de Produtos e exigirá somente
   uma quantidade positiva;
-- os Produtos usarão o código-base normalizado seguido de sequência iniciada
+- os Produtos usarão o código seguido de sequência iniciada
   em 1;
 - quantidade e valor total serão derivados dos Produtos relacionados.
 
