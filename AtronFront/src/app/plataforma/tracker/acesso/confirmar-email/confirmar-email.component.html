@@ -1,9 +1,6 @@
 <main class="auth-page">
   <section class="auth-shell" aria-labelledby="confirmar-email-title">
-    <div class="auth-brand">
-      <span class="brand-mark">
-        <mat-icon>{{ confirmado && !sucesso ? 'error_outline' : 'mark_email_read' }}</mat-icon>
-      </span>
+    <div class="auth-brand">    
       <p class="brand-kicker">Confirmação de acesso</p>
       <h1 id="confirmar-email-title">Confirmar e-mail</h1>
       <p class="brand-copy" *ngIf="!confirmado">
@@ -21,8 +18,6 @@
       <div class="confirmation-status" *ngIf="!confirmado">
         <h2>Código de confirmação</h2>
         <p>Digite o identificador temporário enviado para seu e-mail.</p>
-
-        <p class="feedback-message error" *ngIf="mensagem && !sucesso">{{ mensagem }}</p>
 
         <mat-form-field appearance="outline">
           <mat-label>Código recebido</mat-label>

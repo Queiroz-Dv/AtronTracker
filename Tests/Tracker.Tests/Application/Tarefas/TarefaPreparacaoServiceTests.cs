@@ -1,7 +1,8 @@
 using Application.DTO;
 using Application.Mapping;
+using Application.Resources;
 using Application.Services.EntitiesServices.Tarefas;
-using Application.Validador;
+using Application.Validacoes;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
@@ -107,7 +108,7 @@ public class TarefaPreparacaoServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == Application.Resources.TarefaResource.Erro_EstadoNaoEncontrado);
+            mensagem => mensagem.Descricao == TarefaResource.Erro_EstadoNaoEncontrado);
     }
 
     [Fact]
@@ -155,7 +156,7 @@ public class TarefaPreparacaoServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == Application.Resources.TarefaResource.Erro_DepartamentoNaoEncontrado);
+            mensagem => mensagem.Descricao == TarefaResource.Erro_DepartamentoNaoEncontrado);
     }
 
     private static TarefaPreparacaoService CriarService(

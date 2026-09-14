@@ -1,23 +1,9 @@
-export enum TipoWorkspace {
-  Pessoal = 1,
-  Empresa = 3,
+export class WorkspaceRegistroRequest {
+  constructor(public codigo: string, public descricao: string) {
+  }
 }
-
-export interface WorkspaceRegistroRequest {
-  nome: string;
-  tipo: TipoWorkspace;
-  empresa?: EmpresaRegistroRequest;
-}
-
-export interface EmpresaRegistroRequest {
-  codigo: string;
-  nomeFantasia: string;
-  endereco: string;
-  numero: string;
-  email: string;
-}
-
 export class RegistrarRequest {
+  workspace: WorkspaceRegistroRequest;
   constructor(
     public codigo: string,
     public nome: string,
@@ -25,7 +11,6 @@ export class RegistrarRequest {
     public email: string,
     public senha: string,
     public confirmaSenha: string,
-    public workspace?: WorkspaceRegistroRequest,
     public dataNascimento?: string,
     public convite?: string
   ) { }

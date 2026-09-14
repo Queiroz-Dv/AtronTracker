@@ -1,8 +1,8 @@
 #nullable enable
 
-using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -15,9 +15,9 @@ namespace Infrastructure.Repositories
         public Task<bool> CodigoExisteAsync(string codigo)
             => context.Empresas.AnyAsync(empresa => empresa.Codigo == codigo);
 
-   
+
         public async Task CriarAsync(Empresa empresa)
-        {           
+        {
             context.Empresas.Add(empresa);
             await context.SaveChangesAsync();
         }
@@ -36,6 +36,6 @@ namespace Infrastructure.Repositories
 
         public Task<Empresa?> ObterAtivaAsync(int id)
             => context.Empresas.AsNoTracking().SingleOrDefaultAsync(empresa =>
-                empresa.Id == id && empresa.Status == Domain.Enums.StatusEmpresa.Ativa);      
+                empresa.Id == id && empresa.Status == Domain.Enums.StatusEmpresa.Ativa);
     }
 }

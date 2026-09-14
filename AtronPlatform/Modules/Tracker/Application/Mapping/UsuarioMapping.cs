@@ -1,24 +1,18 @@
 ﻿using Application.DTO;
 using Domain.Entities;
+using Domain.Extensions;
 using Shared.Application.Interfaces.Mapping;
 
 namespace Application.Mapping
 {
-    public sealed class UsuarioMapping : Mapper<Usuario, UsuarioDTO>
+    public sealed class UsuarioMapping(
+        IToDtoMapper<Cargo, CargoDTO> cargoMap,
+        IToDtoMapper<Departamento, DepartamentoDTO> departamentoMap,
+        IToDtoMapper<PerfilDeAcesso, PerfilDeAcessoDTO> perfilDeAcessoMap) : Mapper<Usuario, UsuarioDTO>
     {
-        private readonly IToDtoMapper<Cargo, CargoDTO> _cargoMap;
-        private readonly IToDtoMapper<Departamento, DepartamentoDTO> _departamentoMap;
-        private readonly IToDtoMapper<PerfilDeAcesso, PerfilDeAcessoDTO> _perfilDeAcessoMap;
-
-        public UsuarioMapping(
-            IToDtoMapper<Cargo, CargoDTO> cargoMap,
-            IToDtoMapper<Departamento, DepartamentoDTO> departamentoMap,
-            IToDtoMapper<PerfilDeAcesso, PerfilDeAcessoDTO> perfilDeAcessoMap)
-        {
-            _cargoMap = cargoMap;
-            _departamentoMap = departamentoMap;
-            _perfilDeAcessoMap = perfilDeAcessoMap;
-        }
+        private readonly IToDtoMapper<Cargo, CargoDTO> _cargoMap = cargoMap;
+        private readonly IToDtoMapper<Departamento, DepartamentoDTO> _departamentoMap = departamentoMap;
+        private readonly IToDtoMapper<PerfilDeAcesso, PerfilDeAcessoDTO> _perfilDeAcessoMap = perfilDeAcessoMap;
 
         public override UsuarioDTO MapToDto(Usuario entity)
         {
@@ -34,7 +28,7 @@ namespace Application.Mapping
                 ReceberNotificacaoInternaTarefa = entity.ReceberNotificacaoInternaTarefa,
                 ReceberNotificacaoTarefaPorEmail = entity.ReceberNotificacaoTarefaPorEmail,
                 GestorImediatoCodigo = entity.GestorImediatoCodigo,
-                GestorImediatoNome = ObterNomeGestor(entity.GestorImediato),
+                GestorImediatoNome = entity.GestorImediato.ObterNome(),
                 PerfisDeAcesso = []
             };
 
@@ -77,30 +71,6 @@ namespace Application.Mapping
                 ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa,
                 ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail
             };
-        }
-
-        public void MapToEntity(UsuarioDTO dto, Usuario entityToUpdate)
-        {
-            entityToUpdate.Codigo = dto.Codigo?.ToUpper();
-            entityToUpdate.Nome = dto.Nome;
-            entityToUpdate.Sobrenome = dto.Sobrenome;
-            entityToUpdate.Email = dto.Email;
-            entityToUpdate.EmailConfirmado = dto.EmailConfirmado;
-            entityToUpdate.DataNascimento = dto.DataNascimento;
-            entityToUpdate.GestorImediatoCodigo = dto.GestorImediatoCodigo?.ToUpper();
-            entityToUpdate.ReceberNotificacaoInternaTarefa = dto.ReceberNotificacaoInternaTarefa;
-            entityToUpdate.ReceberNotificacaoTarefaPorEmail = dto.ReceberNotificacaoTarefaPorEmail;
-
-        }
-
-        private static string ObterNomeGestor(Usuario gestor)
-        {
-            if (gestor is null)
-            {
-                return null;
-            }
-
-            return $"{gestor.Nome} {gestor.Sobrenome}".Trim();
         }
     }
 }

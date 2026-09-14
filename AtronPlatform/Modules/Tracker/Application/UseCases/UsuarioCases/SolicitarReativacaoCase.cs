@@ -1,10 +1,11 @@
 ﻿using Domain.Interfaces.UsuarioInterfaces;
-using Application.Email.Compositores;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Threading.Tasks;
+using Application.EmailCompositor.Compositores;
+using Application.DTO;
 
 namespace Application.UseCases.UsuarioCases
 {
@@ -28,10 +29,14 @@ namespace Application.UseCases.UsuarioCases
 
             try
             {
-                var emailReativacao = _emailCompositor.ComporReativacaoConta(
-                    usuario.Email,
-                    usuario.Nome,
-                    usuario.CodigoReativacao);
+                var parametroEmailDto = new ParametrosEmailDTO()
+                {
+                    Email = usuario.Email,
+                    UsuarioNome = usuario.Nome,
+                    Identificador = usuario.CodigoReativacao,
+                };
+
+                var emailReativacao = _emailCompositor.ComporReativacaoConta(parametroEmailDto);
 
                 if (emailReativacao.TeveFalha)
                     return Resultado.Falha(emailReativacao.Messages);

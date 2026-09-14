@@ -169,7 +169,7 @@
     <value>Sessão encerrada com sucesso.</value>
   </data>
   <data name="Mensagem_UsuarioRegistrado" xml:space="preserve">
-    <value>Usuário {0} {1}: cadastro realizado com sucesso! Verifique seu e-mail para confirmar seu acesso.</value>
+    <value>Seu cadastro foi realizado com sucesso! Verifique seu e-mail para confirmar seu acesso.</value>
   </data>
   <data name="Erro_GerarCodigoConfirmacao" xml:space="preserve">
     <value>Nao foi possivel gerar o codigo de confirmacao do e-mail.</value>
@@ -195,12 +195,28 @@
   <data name="Campo_CodigoUsuario" xml:space="preserve">
     <value>Código do Usuário</value>
   </data>
-  <data name="Erro_RefreshTokenInvalido" xml:space="preserve"><value>Refresh token inválido ou expirado.</value></data>
-  <data name="Erro_TokenNaoPreenchido" xml:space="preserve"><value>Token não preenchido para processamento.</value></data>
-  <data name="Erro_InformacoesTokenInvalidas" xml:space="preserve"><value>Informações do token inválidas para processamento.</value></data>
-  <data name="Erro_EmailVazio" xml:space="preserve"><value>E-mail vazio</value></data>
-  <data name="Erro_SenhaVazia" xml:space="preserve"><value>Senha vazia.</value></data>
-  <data name="Erro_AcessoNegado" xml:space="preserve"><value>Acesso negado. Você não tem permissão para acessar este recurso.</value></data>
-  <data name="Erro_TokenInvalidoOuAusente" xml:space="preserve"><value>Token inválido ou ausente.</value></data>
-  <data name="Erro_MuitasTentativas" xml:space="preserve"><value>Muitas tentativas foram realizadas. Aguarde antes de tentar novamente.</value></data>
+  <data name="Erro_RefreshTokenInvalido" xml:space="preserve">
+    <value>Refresh token inválido ou expirado.</value>
+  </data>
+  <data name="Erro_TokenNaoPreenchido" xml:space="preserve">
+    <value>Token não preenchido para processamento.</value>
+  </data>
+  <data name="Erro_InformacoesTokenInvalidas" xml:space="preserve">
+    <value>Informações do token inválidas para processamento.</value>
+  </data>
+  <data name="Erro_EmailVazio" xml:space="preserve">
+    <value>E-mail vazio</value>
+  </data>
+  <data name="Erro_SenhaVazia" xml:space="preserve">
+    <value>Senha vazia.</value>
+  </data>
+  <data name="Erro_AcessoNegado" xml:space="preserve">
+    <value>Acesso negado. Você não tem permissão para acessar este recurso.</value>
+  </data>
+  <data name="Erro_TokenInvalidoOuAusente" xml:space="preserve">
+    <value>Token inválido ou ausente.</value>
+  </data>
+  <data name="Erro_MuitasTentativas" xml:space="preserve">
+    <value>Muitas tentativas foram realizadas. Aguarde antes de tentar novamente.</value>
+  </data>
 </root>

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 
 namespace Shared.Extensions
@@ -27,18 +29,9 @@ namespace Shared.Extensions
             return value.ToString();
         }
 
-
-        public static T GetEnumFromDescription<T>(string description) where T : Enum
+        public static bool IsValidEnum<T>(this T value) where T : struct, Enum
         {
-            foreach (T value in Enum.GetValues(typeof(T)))
-            {
-                if (value.GetDescription() == description)
-                {
-                    return value;
-                }
-            }
-
-            return default;
+            return Enum.IsDefined(typeof(T), value);
         }
     }
 }

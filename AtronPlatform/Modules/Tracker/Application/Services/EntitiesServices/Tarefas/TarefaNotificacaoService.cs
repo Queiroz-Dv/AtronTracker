@@ -1,5 +1,5 @@
 using Application.DTO;
-using Application.Email.Compositores;
+using Application.EmailCompositor.Compositores;
 using Application.Interfaces.Services;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;

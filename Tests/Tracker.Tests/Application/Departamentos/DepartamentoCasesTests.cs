@@ -1,14 +1,14 @@
 using Application.DTO;
 using Application.Mapping;
 using Application.UseCases.DepartamentoCases;
-using Application.Validador;
+using Application.Validacoes;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
 using Xunit;
 
-namespace Tracker.Tests.Departamentos;
+namespace Tracker.Tests.Application.Departamentos;
 
 public sealed class DepartamentoCasesTests
 {
@@ -64,7 +64,7 @@ public sealed class DepartamentoCasesTests
             CriarVinculacaoGestor(),
             new DepartamentoMapping(),
             repository,
-            new DepartamentoValidador());
+            new DepartamentoValidacoes());
     }
 
     private static AtualizarDepartamentoCase AtualizarCase(IDepartamentoRepository repository)
@@ -73,7 +73,7 @@ public sealed class DepartamentoCasesTests
             CriarVinculacaoGestor(),
             new DepartamentoMapping(),
             repository,
-            new DepartamentoValidador());
+            new DepartamentoValidacoes());
     }
 
     private static VincularGestorDepartamentoCase CriarVinculacaoGestor()

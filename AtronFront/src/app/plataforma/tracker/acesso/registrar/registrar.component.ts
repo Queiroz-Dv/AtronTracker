@@ -5,7 +5,7 @@ import { AcessoService } from '../../../../core/services/acesso.service';
 import { NotificacaoService, Nivel } from '../../../../core/services/notification.service';
 import { senhasIguaisValidator } from '../../../../core/validators/senhasIguaisValidator.validator';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error.component';
-import { RegistrarRequest } from '../../../../shared/models/request/registrar-request.model';
+import { RegistrarRequest, WorkspaceRegistroRequest } from '../../../../shared/models/request/registrar-request.model';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 
 @Component({
@@ -31,6 +31,8 @@ export class RegistrarComponent implements OnInit {
       codigo: ['', Validators.required],
       nome: ['', Validators.required],
       sobrenome: ['', Validators.required],
+      codigoWorkspace: ['', Validators.required],
+      descricaoWorkspace: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       dataNascimento: ['', Validators.required],
       senha: ['', Validators.required],
@@ -39,7 +41,7 @@ export class RegistrarComponent implements OnInit {
   }
 
   registrarNovoUsuario(): void {
-    const dadosDoUsuario = new RegistrarRequest(
+    let dadosDoUsuario = new RegistrarRequest(
       this.form.value.codigo,
       this.form.value.nome,
       this.form.value.sobrenome,
@@ -48,12 +50,14 @@ export class RegistrarComponent implements OnInit {
       this.form.value.confirmaSenha,
       this.form.value.dataNascimento);
 
+    dadosDoUsuario.workspace = new WorkspaceRegistroRequest(
+      this.form.value.codigoWorkspace,
+      this.form.value.descricaoWorkspace);
+
     this.acessoService.registrar(dadosDoUsuario).subscribe({
       next: (resposta: unknown) => {
         const mensagens = this.notificacaoService.normalizarMensagens(resposta, Nivel.Sucesso);
-        const mensagemSucesso = mensagens.length
-          ? mensagens.map(mensagem => mensagem.descricao).join('\n')
-          : 'Usuário registrado com sucesso! Verifique seu e-mail para confirmar.';
+        const mensagemSucesso =  mensagens.map(mensagem => mensagem.descricao).join('\n');
 
         this.notificacaoService.exibirMensagem(mensagemSucesso, Nivel.Sucesso, 5000);
 

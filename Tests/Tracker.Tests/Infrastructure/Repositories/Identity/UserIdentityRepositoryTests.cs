@@ -1,4 +1,4 @@
-using AtronTracker.Infrastructure.Context;
+using Infrastructure.Context;
 using Infrastructure.Repositories.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Domain.Entities.Identity;

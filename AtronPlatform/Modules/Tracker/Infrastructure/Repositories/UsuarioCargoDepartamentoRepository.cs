@@ -1,6 +1,6 @@
-﻿using AtronTracker.Infrastructure.Context;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
+using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories

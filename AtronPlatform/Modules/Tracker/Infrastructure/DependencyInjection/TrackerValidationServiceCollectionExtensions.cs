@@ -1,12 +1,14 @@
 ﻿using Application.DTO;
-using Application.Validador;
-using Application.Validations;
+using Application.DTO.Request;
 using Domain.ApiEntities;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
+using Application.Validacoes;
+using Application.Validations;
+// Ensure Application.Validacoes is referenced
 
 namespace Infrastructure.DependencyInjection
 {
@@ -16,6 +18,8 @@ namespace Infrastructure.DependencyInjection
         {
             ConfigureLoginMessageValidation(services);            
             ConfigureDepartamentoServices(services);
+            ConfigureEmpresaServices(services);
+            ConfigureWorkspaceServices(services);
             ConfgureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
             ConfigurarTarefaServices(services);
@@ -46,7 +50,18 @@ namespace Infrastructure.DependencyInjection
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)
         {            
-            services.AddScoped<IValidador<DepartamentoDTO>, DepartamentoValidador>();
+            services.AddScoped<IValidador<DepartamentoDTO>, DepartamentoValidacoes>();
+        }
+
+        private static void ConfigureEmpresaServices(IServiceCollection services)
+        {
+            services.AddScoped<IValidador<EmpresaDTO>, EmpresaValidacoes>();
+        }
+
+        private static void ConfigureWorkspaceServices(IServiceCollection services)
+        {
+            services.AddScoped<IValidador<WorkspaceDTO>, WorkspaceValidacoes>();
+           
         }
 
         private static void ConfgureCargoServices(IServiceCollection services)

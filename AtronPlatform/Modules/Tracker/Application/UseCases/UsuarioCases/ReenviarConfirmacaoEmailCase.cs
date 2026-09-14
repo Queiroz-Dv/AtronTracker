@@ -1,7 +1,8 @@
-using Application.Email.Compositores;
+using Application.DTO;
+using Application.EmailCompositor.Compositores;
 using Application.Extensions;
 using Application.Interfaces.Services;
-using Application.Records.Usuario;
+using Application.Records.Email;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
@@ -80,12 +81,17 @@ namespace Application.UseCases.UsuarioCases
 
             try
             {
-                var email = _emailCompositor.ComporConfirmacaoCadastro(new ConfirmacaoCadastroEmailParametrosRecord(
-                    usuario.Email,
-                    usuario.Nome,
-                    confirmacao.Identificador,
-                    link,
-                    ValidadeConfirmacaoEmailEmHoras));
+                var parametroEmailDto = new ParametrosEmailDTO()
+                {
+                    Email = usuario.Email,
+                    UsuarioNome = usuario.Nome,
+                    Destinatario = usuario.Email,
+                    Identificador = confirmacao.Identificador,
+                    Link = link,
+                    Validade = ValidadeConfirmacaoEmailEmHoras
+                };
+
+                var email = _emailCompositor.ComporConfirmacaoCadastro(parametroEmailDto);
 
                 if (email.TeveFalha)
                     return Resultado.Falha(email.Messages);

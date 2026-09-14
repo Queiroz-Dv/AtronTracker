@@ -2,7 +2,7 @@ using Application.DTO;
 using Application.Mapping;
 using Application.Resources;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
-using Application.Validador;
+using Application.Validacoes;
 using Domain.Entities;
 using Tracker.Tests.TestSupport.Fakes.PlanejamentoCustos;
 using Xunit;

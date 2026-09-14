@@ -141,10 +141,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [AllowAnonymous]
         [EnableRateLimiting(AcessoRateLimiting.ConfirmacaoEmail)]
         public async Task<ActionResult> ConfirmarEmail([FromBody] ConfirmarEmailRequest request)
-        {
-            if (string.IsNullOrWhiteSpace(request.UsuarioCodigo) || string.IsNullOrWhiteSpace(request.Identificador))
-                return BadRequest(AuthResource.Erro_DadosConfirmacaoObrigatorios);
-
+        {            
             var resultado = await _registroUsuarioService.ConfirmarEmail(request.UsuarioCodigo, request.Identificador);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }

@@ -1,7 +1,9 @@
+using Application.DTO;
 using Application.DTO.Request;
 using Application.Extensions;
 using Application.Interfaces.Services;
-using Application.Records.Usuario;
+using Application.Records.Email;
+using Application.Records.Facade;
 using Shared.Application.Resources;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services.AuthServices
 {
-    public class RecuperacaoSenhaService(RecuperacaoSenhaContextRecord context) : IRecuperacaoSenhaService
+    public class RecuperacaoSenhaService(RecuperacaoSenhaFacadeRecord context) : IRecuperacaoSenhaService
     {
         private const int ValidadeEmHoras = 24;
 
@@ -50,8 +52,15 @@ namespace Application.Services.AuthServices
             var link = $"{uri}/trocar-senha#token={temporario.Valor}";
             try
             {
-                var recuperacao = new RecuperacaoSenhaEmailParametrosRecord(usuario.Email, usuario.Nome, link, ValidadeEmHoras);
-                var email = context.EmailCompositor.ComporRecuperacaoSenha(recuperacao);
+                var parametrosEmailDTO = new ParametrosEmailDTO()
+                {
+                    Link = link,
+                    Email = usuario.Email,
+                    UsuarioNome = usuario.Nome,
+                    Validade = ValidadeEmHoras
+                };
+
+                var email = context.EmailCompositor.ComporRecuperacaoSenha(parametrosEmailDTO);
 
                 if (email.TeveFalha)
                     return respostaPublica;

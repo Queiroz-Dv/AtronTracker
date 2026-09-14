@@ -17,8 +17,19 @@
           </span>
           <div>
             <strong>1. Identifique seu acesso</strong>
-            <p>Use um código único e um e-mail válido.
-              Ex: "ATR" ou "LIS"</p>
+            <p style="margin-bottom: 5px;">Use um código único e um e-mail válido.</p>
+            <p>Ex: "QRZ" ou LSG"</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <span class="guide-step-icon">
+            <mat-icon>group_work</mat-icon>
+          </span>
+          <div>
+            <strong>3. Identifique seu workspace</strong>
+            <p style="margin-bottom: 5px;">Use um código diferente para criar seu ambiente de gestão. </p>
+            <p>Ex: "SPACE" ou "QRZ-ATR"</p>
           </div>
         </div>
 
@@ -41,6 +52,8 @@
             <p>Depois do envio, abra o link recebido para liberar o acesso.</p>
           </div>
         </div>
+
+
       </div>
     </div>
 
@@ -66,6 +79,26 @@
             <mat-icon matPrefix>email</mat-icon>
             <input matInput formControlName="email" type="email" placeholder="seu@email.com" autocomplete="email" />
             <c-control-error [control]="form.get('email')"></c-control-error>
+          </mat-form-field>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend>Dados do workspace</legend>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Código do workspace</mat-label>
+            <mat-icon matPrefix>workspaces</mat-icon>
+            <input matInput formControlName="codigoWorkspace" placeholder="Crie um código único"
+              autocomplete="workspace-code" />
+            <c-control-error [control]="form.get('codigoWorkspace')"></c-control-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Descrição</mat-label>
+            <mat-icon matPrefix>article</mat-icon>
+            <input matInput formControlName="descricaoWorkspace" placeholder="Espaço Alfa"
+              autocomplete="workspace-description" />
+            <c-control-error [control]="form.get('descricaoWorkspace')"></c-control-error>
           </mat-form-field>
         </fieldset>
 
@@ -104,14 +137,16 @@
             <mat-form-field appearance="outline">
               <mat-label>Senha</mat-label>
               <mat-icon matPrefix>lock_outline</mat-icon>
-              <input type="password" matInput formControlName="senha" placeholder="Crie uma senha" autocomplete="new-password" />
+              <input type="password" matInput formControlName="senha" placeholder="Crie uma senha"
+                autocomplete="new-password" />
               <c-control-error [control]="form.get('senha')"></c-control-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Confirmar senha</mat-label>
               <mat-icon matPrefix>lock</mat-icon>
-              <input type="password" matInput formControlName="confirmaSenha" placeholder="Repita a senha" autocomplete="new-password" />
+              <input type="password" matInput formControlName="confirmaSenha" placeholder="Repita a senha"
+                autocomplete="new-password" />
               <c-control-error [control]="form.get('confirmaSenha')"></c-control-error>
             </mat-form-field>
           </div>
