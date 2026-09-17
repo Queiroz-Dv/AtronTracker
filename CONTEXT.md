@@ -1,10 +1,10 @@
-# AtronRC
+# Atron Platform
 
 Este contexto descreve a linguagem de domínio usada no AtronRC para alinhar regras de negócio, documentação e implementação entre os módulos da plataforma Atron.
 
-## Product Direction
+## Visão de Produto
 
-O Atron é uma plataforma comercial simples para negócios locais e pequenos empresários que desejam centralizar a gestão com custo inicial reduzido e tecnologia suficiente para lidar com fluxos reais da empresa.
+O Atron foi projetado para ser uma plataforma comercial simples para negócios locais e pequenos empresários que desejam centralizar a gestão com custo inicial reduzido e tecnologia suficiente para lidar com fluxos reais da empresa.
 
 O produto deve crescer como uma plataforma modular, não como um conjunto solto de cadastros. A documentação deve diferenciar o que já existe, o que está em planejamento e o que é direção futura. Quando uma regra de negócio virar contrato durável, ela deve aparecer neste contexto ou em documento específico em `docs/`. Quando uma decisão mudar a arquitetura ou o domínio, ela deve ser registrada em ADR.
 
@@ -16,13 +16,19 @@ Os módulos de produto são:
 
 O objetivo de evolução do projeto também é formar repertório real de arquitetura de software: escalar, manter, corrigir e documentar um sistema com qualidade e compromisso.
 
-O produto adota um monólito modular. Tracker, Stock, AtronAuditoria, Notificações Internas e o futuro Sales são compostos por um único host neutro da Atron Platform e publicados no mesmo processo. Essa unidade de execução não autoriza mistura de entidades, regras, persistência ou migrations. Os hosts transitórios, o IoC global e o host independente de notificações foram removidos conforme os ADRs 0007 e 0008.
+O produto adota um monólito modular. Tracker, Stock, AtronAuditoria, Notificações Internas e o futuro Sales são compostos por um único host neutro da Atron Platform e publicados no mesmo processo.
+
+Essa unidade de execução não autoriza mistura de entidades, regras, persistência ou migrations. Os hosts transitórios, o IoC global e o host independente de notificações foram removidos conforme os ADRs 0007 e 0008.
 
 Identidade, autenticação, usuários, perfis de acesso, catálogo de módulos e estrutura funcional pertencem conceitualmente à plataforma. A implementação permanece fisicamente no Tracker durante a transição, mas módulos consumidores devem usar os contratos transversais de usuário atual e autorização por módulo, sem depender de entidades, serviços, repositórios ou DbContext internos do Tracker.
 
-A arquitetura deve priorizar baixo custo operacional e evolução incremental. Microsserviços permanecem como direção condicionada a necessidade comprovada de escala, isolamento de falhas, disponibilidade, equipe ou ciclo de publicação independente. Estudos de sistemas distribuídos podem ocorrer em Docker Compose e protótipos sem impor essa complexidade ao produto principal.
+A arquitetura deve priorizar baixo custo operacional e evolução incremental.
 
-## Language
+Microsserviços permanecem como direção condicionada a necessidade comprovada de escala, isolamento de falhas, disponibilidade, equipe ou ciclo de publicação independente. Estudos de sistemas distribuídos podem ocorrer em Docker Compose e protótipos sem impor essa complexidade ao produto principal.
+
+## Linguagem De Domínio Central 
+
+Essa seção destina-se a centralizar todo o vocabulário e conhecimento do projeto desde saus migrações e transições estruturais.
 
 **Atron**:
 Plataforma comercial simples para centralizar a gestão de negócios locais e pequenos empresários, com custo inicial reduzido, arquitetura modular e foco em fluxos reais da empresa.
@@ -436,26 +442,3 @@ _Avoid_: Consulta simples renomeada como resolver, policy escondida, `IResolver<
 **Atron.WebViews**:
 Estrutura legada de front MVC/Razor deletada para evitar dois projetos de front diferentes evoluindo em paralelo.
 _Avoid_: Front secundário, duplicação de tela
-
-## Example Dialogue
-
-Dev: Quando crio uma tarefa para a Maria, isso conta como atribuição de tarefa?
-Especialista: Sim. A tarefa nasceu vinculada a ela, então ela deve receber a notificação se a preferência dela permitir.
-
-Dev: Se eu mudar a tarefa de "Aberta" para "Em andamento", envio outro e-mail?
-Especialista: Não. Mudança de estado terá regras próprias no futuro, especialmente quando houver checklists.
-
-Dev: Quem altera a preferência de notificação da Maria agora?
-Especialista: A própria Maria, como usuário logado. No futuro, isso pode respeitar a estrutura funcional dela.
-
-Dev: Onde a Maria altera essa preferência no front?
-Especialista: Em Configurações, dentro do módulo de usuário.
-
-Dev: Quando criarmos o Sales, ele deve ficar dentro do Tracker?
-Especialista: Não. Tracker, Stock e Sales são módulos pares compostos pelo AtronPlatform.WebApi.
-
-Dev: Se Tracker e Stock usam o mesmo processo, podem acessar os mesmos repositórios?
-Especialista: Não. O processo é compartilhado, mas entidades, DbContexts, migrations e regras continuam pertencendo ao módulo proprietário.
-
-Dev: Todo módulo novo deve receber um Web Service próprio?
-Especialista: Não. O padrão é o monólito modular; uma extração exige contrato, estado e necessidade operacional comprovados em ADR.

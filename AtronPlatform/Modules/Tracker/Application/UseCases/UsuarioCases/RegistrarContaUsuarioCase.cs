@@ -9,6 +9,7 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
@@ -40,22 +41,34 @@ namespace Application.UseCases.UsuarioCases
                 return Resultado.Falha(UsuarioResource.ErroInesperadoGravacao);
 
             var usuario = await UsuarioRepository.ObterUsuarioPorCodigoAsync(entidade.Codigo);
-            var workspaceDTO = new WorkspaceDTO()
+            
+            if (request.Workspace != null && registrarWorkspaceCase != null)
             {
-                Codigo = request.Workspace.Codigo,
-                Descricao = request.Workspace.Descricao,
-                Responsavel = new UsuarioDTO() { 
-                    Id = usuario.Id,
-                    Codigo = request.Codigo, 
-                    Email = request.Email },
-            };
+                var workspaceDTO = new WorkspaceDTO()
+                {
+                    Codigo = request.Workspace.Codigo,
+                    Descricao = request.Workspace.Descricao,
+                    Responsavel = new UsuarioDTO()
+                    {
+                        Id = usuario.Id,
+                        Codigo = request.Codigo,
+                        Email = request.Email
+                    },
+                };
 
-            var workspaceResultado = await registrarWorkspaceCase.ExecutarAsync(workspaceDTO);
-            if (workspaceResultado.TeveFalha)
-            {
-                return Resultado.Falha(workspaceResultado.Messages);
+                var workspaceResultado = await registrarWorkspaceCase.ExecutarAsync(workspaceDTO);
+                if (workspaceResultado.TeveFalha)
+                {
+                    return Resultado.Falha(workspaceResultado.Messages);
+                }
             }
+
             var processoEnvioResultado = await ProcessarEnvioEmailConfirmacaoCase.ExecutarAsync(usuario);
+           
+            if (processoEnvioResultado != null && processoEnvioResultado.Messages != null && processoEnvioResultado.Messages.Any())
+            {
+                return Resultado.Sucesso(AuthResource.Mensagem_UsuarioRegistrado, processoEnvioResultado.Messages);
+            }
 
             return Resultado.Sucesso(AuthResource.Mensagem_UsuarioRegistrado);
         }

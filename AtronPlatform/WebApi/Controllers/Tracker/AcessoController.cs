@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
-using Shared.Application.Resources;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -141,7 +140,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [AllowAnonymous]
         [EnableRateLimiting(AcessoRateLimiting.ConfirmacaoEmail)]
         public async Task<ActionResult> ConfirmarEmail([FromBody] ConfirmarEmailRequest request)
-        {            
+        {
             var resultado = await _registroUsuarioService.ConfirmarEmail(request.UsuarioCodigo, request.Identificador);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }

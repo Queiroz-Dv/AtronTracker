@@ -5,6 +5,8 @@ O Atron é uma plataforma de gestão para negócios locais e pequenos empresári
 O projeto está em desenvolvimento e também serve como formação prática em arquitetura, implementação, testes e manutenção de software. A documentação diferencia as funcionalidades existentes da direção de evolução do produto.
 
 ![Status do projeto](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow)
+![RC2 Homologada](https://img.shields.io/badge/RC2-Homologada-green)
+![Desenvolvimento contínuo](https://img.shields.io/badge/Dev%20Cont%C3%ADnuo-Ativo-brightgreen)
 ![Licença MIT](https://img.shields.io/badge/Licenca-MIT-blue)
 ![.NET 9](https://img.shields.io/badge/.NET-9.0-purple)
 [![CI da main](https://github.com/Queiroz-Dv/AtronTracker/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Queiroz-Dv/AtronTracker/actions/workflows/ci.yml)
@@ -29,19 +31,22 @@ As capturas abaixo foram fornecidas pelo mantenedor. Elas apresentam a organiza�
 
 ### Áreas da plataforma
 
-O ponto de entrada organiza o produto em Tracker, Stock e Sales. Na captura, Sales aparece como “Sem acesso”; a configuração atual também mantém essa área desabilitada.
+O ponto de entrada organiza o produto em Tracker, Stock e Sales.
+Aqui é onde listamos todos os módulos específicos, com a evolução do sistema cada módulo ganhará rotinas únicas englobadas no contexto dele.
 
 <img src="docs/assets/screenshots/plataforma-areas.png" alt="Página de áreas da plataforma, com cartões de Tracker, Stock e Sales" width="650">
 
 ### Atron Tracker
 
-A área administrativa reúne a estrutura da empresa, os acessos dos colaboradores, as tarefas e o planejamento de custos por departamento.
+O Tracker é tem as rotinas principais da administração da empresa onde reune os acessos dos colaboradores, as tarefas e outros.
+É  nele que definmos como e quais outros módulos acessar.
 
 <img src="docs/assets/screenshots/tracker-rotinas.png" alt="Rotinas do Tracker: departamentos, cargos, planejamento de custos, usuários, perfis, relacionamentos e tarefas" width="650">
 
 ### Atron Stock
 
-A entrada do Stock apresenta Produtos e Categorias. O cadastro de Produto representa um bem individual; o formulário também permite solicitar a geração de vários bens por lote.
+O Stock tem como foco as rotina voltadas a patrimônio, bens e serviços. O funcionamento desse módulo é independente do Tracker, porém a parte de autorização e autenticação depende dele.
+
 
 <img src="docs/assets/screenshots/stock-rotinas.png" alt="Rotinas do Stock com os cartões Produtos e Categorias" width="650">
 
@@ -52,7 +57,7 @@ O backend adota um **monólito modular**, publicado por um único host, `AtronPl
 ```mermaid
 flowchart LR
     Front["Angular"] --> API["AtronPlatform.WebApi"]
-    subgraph Backend["Um processo de backend"]
+    subgraph Backend["Backend"]
         API --> Tracker["Tracker"]
         API --> Stock["Stock"]
         API --> Notificacoes["Notificações internas"]
@@ -61,9 +66,7 @@ flowchart LR
     Tracker --> Banco["PostgreSQL: contextos por proprietário"]
     Stock --> Banco
     Notificacoes --> Banco
-    Auditoria --> Banco
-    API --> Cache["Cache: Memory, JsonFile ou Redis"]
-    API --> Email["Provedor de e-mail configurado"]
+    Auditoria --> Banco    
 ```
 
 O diagrama resume a composição da plataforma; não representa todas as chamadas internas. Sales ainda não aparece como módulo implementado no host.

@@ -48,7 +48,7 @@ selecionadas e verificadas.
 
 ## Proteções
 
-A principal deve exigir PR, resolução de discussões e o check `Qualidade`, sem
+A principal(RC2) deve exigir PR, resolução de discussões e o check `Qualidade`, sem
 force push ou exclusão. Não exigir aprovação de outra pessoa enquanto houver
 somente um mantenedor. As proteções são configuração do GitHub, não consequência
 automática da existência deste documento. O registro da transição informa a
