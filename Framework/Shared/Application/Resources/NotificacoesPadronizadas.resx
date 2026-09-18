@@ -156,5 +156,13 @@
   <data name="Erro_RegistroComDescricaoExistente" xml:space="preserve">
     <value>Registro {0} já existe.</value>
   </data>
-  <data name="ErroCodigoRotaDivergente" xml:space="preserve"><value>O código na URL não corresponde ao código no corpo da requisição.</value></data>
+  <data name="ErroCodigoRotaDivergente" xml:space="preserve">
+    <value>O código na URL não corresponde ao código no corpo da requisição.</value>
+  </data>
+  <data name="IntervaloDeTamanhoInvalido" xml:space="preserve">
+    <value>Intervalo de tamanho inválido para o campo {0}.</value>
+  </data>
+  <data name="Erro_FalhaNaGravacao" xml:space="preserve">
+    <value>Ocorreu um erro inesperado na gravação do registro {0}.</value>
+  </data>
 </root>

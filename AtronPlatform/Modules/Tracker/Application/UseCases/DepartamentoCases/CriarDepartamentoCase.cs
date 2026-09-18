@@ -45,7 +45,7 @@ namespace Application.UseCases.DepartamentoCases
             return Resultado
                 .Sucesso()
                 .AdicionarMensagem(string.Format(
-                    NotificacoesPadronizadas.ResourceManager.GetString("Mensagem_RegistroSalvo")!,
+                    NotificacoesPadronizadas.Mensagem_RegistroSalvo,
                     departamento.Codigo));
         }
     }

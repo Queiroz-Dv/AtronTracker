@@ -32,6 +32,7 @@ namespace Shared.Extensions
                 new Claim(ClaimCode.CODIGO_USUARIO, dadosDoUsuario.CodigoDoUsuario),
                 new Claim(ClaimCode.CODIGO_CARGO, dadosDoUsuario.CodigoDoCargo.IsNullOrEmpty() ? "" : dadosDoUsuario.CodigoDoCargo),
                 new Claim(ClaimCode.CODIGO_DEPARTAMENTO, dadosDoUsuario.CodigoDoDepartamento.IsNullOrEmpty() ? "" : dadosDoUsuario.CodigoDoDepartamento),
+                new Claim(ClaimCode.CODIGO_WORKSPACE, dadosDoUsuario.Workspace.Codigo.IsNullOrEmpty() ? "" : dadosDoUsuario.Workspace.Codigo),
             };
 
             if (dadosComplementares.DadosDaEmpresa is { } empresa)

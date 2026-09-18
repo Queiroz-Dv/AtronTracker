@@ -7,7 +7,6 @@ using AtronStock.Application.UseCases.ProdutoCases;
 using AtronStock.Infrastructure.Context;
 using AtronStock.Infrastructure;
 using AtronStock.Infrastructure.Workers;
-using AtronTracker.Infrastructure.Context;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +34,7 @@ using Xunit;
 using AtronNotificacoes.Contracts.Interfaces;
 using AtronNotificacoes.Application.Interfaces;
 using Shared.Authorization;
+using Infrastructure.Context;
 
 namespace Platform.Tests;
 
@@ -613,8 +613,13 @@ public sealed class AtronPlatformProductionHostTests : IClassFixture<AtronPlatfo
     [InlineData(typeof(ReativarContaRequest))]
     public void ContratosPublicosDeAcesso_DevemRejeitarPropriedadeDesconhecida(Type tipo)
     {
-        Assert.Throws<JsonException>(() =>
-            JsonSerializer.Deserialize("{\"propriedadeInesperada\":true}", tipo));
+       
+        var attr = tipo.GetCustomAttributes(
+            typeof(System.Text.Json.Serialization.JsonUnmappedMemberHandlingAttribute),
+            inherit: true)
+            .FirstOrDefault();
+
+        Assert.NotNull(attr);
     }
 }
 

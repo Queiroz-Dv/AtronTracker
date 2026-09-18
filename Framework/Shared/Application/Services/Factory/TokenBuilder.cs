@@ -48,8 +48,7 @@ namespace Shared.Application.Services.Factory
             }
 
             var refreshToken = Convert.ToBase64String(randomNumber);
-            var refreshTokenExiste =
-                await _refreshTokenUnicidadeService.ExisteAsync(refreshToken);
+            var refreshTokenExiste = await _refreshTokenUnicidadeService.ExisteAsync(refreshToken);
 
             if (refreshTokenExiste)
             {

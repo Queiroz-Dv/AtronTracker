@@ -1,14 +1,10 @@
-# ADR 0001: Substituir salários por planejamento de custos
-
-## Status
-
-Aceito.
+# ADR 0001: Substituir módulo de salários por planejamento de custos
 
 ## Contexto
 
 O módulo de salários tratava valores remuneratórios individuais como parte do cadastro de usuários. Essa abordagem ampliava a exposição de dados sensíveis e não representava a necessidade de produto: planejar custos futuros de uma estrutura, e não reutilizar salários históricos como projeção automática.
 
-O novo módulo precisa trabalhar com valores agregados por departamento e pelos cargos vinculados a esse departamento. O código canônico escolhido para essa capacidade é `PLC`.
+O novo módulo precisa trabalhar com valores agregados por departamento e pelos cargos vinculados a esse departamento. O código canônico escolhido para esse módulo foi definido como `PLC`.
 
 ## Decisão
 
@@ -43,7 +39,7 @@ Rejeitada porque preservaria conceitos concorrentes, permissões duplicadas e um
 
 ### Planejar apenas por departamento
 
-Rejeitada porque impediria detalhar a composição do custo pelos cargos vinculados à estrutura.
+Rejeitada porque impediria detalhar a composição do custo pelos cargos vinculados à estrutura. Além de evolução futura.
 
 ## Consequências
 

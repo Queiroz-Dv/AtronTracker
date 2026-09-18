@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>Application</RootNamespace>
-		<Nullable>enable</Nullable>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -43,28 +43,33 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>TarefaResource.resx</DependentUpon>
 		</Compile>
+		<Compile Update="Resources\WorkspaceResource.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>WorkspaceResource.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Email\Templates\pt-BR\confirmacao-cadastro.html">
+		<EmbeddedResource Include="EmailCompositor\Templates\pt-BR\confirmacao-cadastro.html">
 			<LogicalName>Application.Email.Templates.pt-BR.confirmacao-cadastro.html</LogicalName>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Email\Templates\pt-BR\recuperacao-senha.html">
+		<EmbeddedResource Include="EmailCompositor\Templates\pt-BR\recuperacao-senha.html">
 			<LogicalName>Application.Email.Templates.pt-BR.recuperacao-senha.html</LogicalName>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Email\Templates\pt-BR\confirmacao-concluida.html">
+		<EmbeddedResource Include="EmailCompositor\Templates\pt-BR\confirmacao-concluida.html">
 			<LogicalName>Application.Email.Templates.pt-BR.confirmacao-concluida.html</LogicalName>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Email\Templates\pt-BR\primeiro-acesso.html">
+		<EmbeddedResource Include="EmailCompositor\Templates\pt-BR\primeiro-acesso.html">
 			<LogicalName>Application.Email.Templates.pt-BR.primeiro-acesso.html</LogicalName>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Email\Templates\pt-BR\alteracao-email.html">
+		<EmbeddedResource Include="EmailCompositor\Templates\pt-BR\alteracao-email.html">
 			<LogicalName>Application.Email.Templates.pt-BR.alteracao-email.html</LogicalName>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Email\Templates\pt-BR\reativacao-conta.html">
+		<EmbeddedResource Include="EmailCompositor\Templates\pt-BR\reativacao-conta.html">
 			<LogicalName>Application.Email.Templates.pt-BR.reativacao-conta.html</LogicalName>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Email\Templates\pt-BR\tarefa-atribuida.html">
+		<EmbeddedResource Include="EmailCompositor\Templates\pt-BR\tarefa-atribuida.html">
 			<LogicalName>Application.Email.Templates.pt-BR.tarefa-atribuida.html</LogicalName>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Resources\ModuloResource.resx">
@@ -86,6 +91,10 @@
 		<EmbeddedResource Update="Resources\TarefaResource.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>TarefaResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\WorkspaceResource.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>WorkspaceResource.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
 

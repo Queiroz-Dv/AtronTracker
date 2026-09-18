@@ -1,11 +1,11 @@
-using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Enums;
+using Infrastructure.Context;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace Tracker.Tests.Tarefas;
+namespace Tracker.Tests.Infrastructure.Repositories.Tarefas;
 
 public class TarefaMovimentacaoRepositoryTests
 {

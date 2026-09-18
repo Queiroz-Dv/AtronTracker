@@ -1,11 +1,12 @@
 ﻿using Domain.Interfaces.Identity;
-using Application.Email.Compositores;
 using Application.Interfaces.Services;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
+using Application.EmailCompositor.Compositores;
+using Application.DTO;
 
 namespace Application.UseCases.UsuarioCases
 {
@@ -42,7 +43,14 @@ namespace Application.UseCases.UsuarioCases
 
             try
             {
-                var email = _emailCompositor.ComporAlteracaoEmail(emailNovo, usuario.Nome, link);
+                var parametroEmailDto = new ParametrosEmailDTO()
+                {
+                    Email = emailNovo,
+                    UsuarioNome = usuario.Nome,
+                    Link = link,
+                };
+
+                var email = _emailCompositor.ComporAlteracaoEmail(parametroEmailDto);
                 if (email.TeveFalha)
                     return Resultado.Falha(email.Messages);
 

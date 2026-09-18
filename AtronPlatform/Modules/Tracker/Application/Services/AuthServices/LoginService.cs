@@ -11,6 +11,7 @@ using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System;
 using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.Services.AuthServices
 {
@@ -51,6 +52,9 @@ namespace Application.Services.AuthServices
             var dadosComplementares = await _dadosComplementaresDoUsuarioService
                 .ObterInformacoesComplementaresDoUsuario(resultadoUsuario.Dados);
 
+            if (dadosComplementares.DadosDoUsuario.Workspace.IsNullable())
+                return Resultado<DadosDoTokenDTO>.Falha("Não foi possível realizar o login pois o usuário não possui vínculo com algum workspace.");
+
             var dadosDoToken = await _tokenService.ObterTokenComRefreshToken(dadosComplementares);
 
             var usuarioAutenticado = await _userIdentityService.GravarRefreshTokenAsync(
@@ -84,10 +88,9 @@ namespace Application.Services.AuthServices
             if (usuario?.Dados == null)
                 return Resultado<DadosDoTokenDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            var dadosComplementares = await _dadosComplementaresDoUsuarioService
-                .ObterInformacoesComplementaresDoUsuario(usuario.Dados);
+            var dadosComplementares = await _dadosComplementaresDoUsuarioService.ObterInformacoesComplementaresDoUsuario(usuario.Dados);
 
-            if (dadosComplementares == null)
+            if (dadosComplementares.IsNullable() || dadosComplementares.DadosDoUsuario.Workspace.IsNullable())
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
 
             var dadosDeToken = await _tokenService.ObterTokenComRefreshToken(dadosComplementares);
@@ -101,10 +104,7 @@ namespace Application.Services.AuthServices
             if (!autenticado)
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
 
-            var token = new DadosDoTokenDTO(dadosDeToken.TokenDTO.Value, dadosDeToken.TokenDTO.Expires)
-            {
-                UsuarioCodigo = codigoUsuario
-            };
+            var token = new DadosDoTokenDTO(dadosDeToken.TokenDTO.Value, dadosDeToken.TokenDTO.Expires) { UsuarioCodigo = codigoUsuario };
 
             _cacheUsuarioService.GravarCacheDeAcesso(dadosComplementares, dadosDeToken.TokenDTO.Expires);
             _cookieService.CriarCookieDeRefreshToken(dadosDeToken.RefrehTokenDTO);

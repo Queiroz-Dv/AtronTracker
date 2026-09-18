@@ -13,11 +13,3 @@
 .confirmation-status mat-form-field {
   width: 100%;
 }
-
-.feedback-message {
-  margin: 0;
-}
-
-.feedback-message.error {
-  color: #b42318;
-}

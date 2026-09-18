@@ -7,8 +7,8 @@ import { DadosDoUsuario } from '../../plataforma/tracker/acesso/login/models/dad
 import { UserToken } from '../../plataforma/tracker/acesso/login/models/userToken';
 import { LoginRequest } from '../../shared/models/request/login-request.model';
 import { RegistrarRequest } from '../../shared/models/request/registrar-request.model';
+import { RegistrarResponse } from '../../shared/models/response/registrar-response.model';
 import { RotasApi } from '../../shared/models/rotas-api.model';
-
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,10 @@ export class AcessoService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  constructor(private http: HttpClient, private sessaoService: SessaoInfoService) { }
+  constructor(
+    private http: HttpClient,
+    private sessaoService: SessaoInfoService    
+  ) { }
 
   logout(): Observable<boolean> {
     return this.http.post(RotasApi.desconectarEndpoint, {}, { withCredentials: true }).pipe(
@@ -94,18 +97,39 @@ export class AcessoService {
     );
   }
 
+  recarregarSessaoAtual(): Observable<DadosDoUsuario> {
+    const tokenAtual = this.sessaoService.obterAccessToken();
+    if (tokenAtual) {
+      return this.carregarSessaoInfo(tokenAtual.token);
+    }
+
+    return this.http.post<UserToken>(RotasApi.refreshTokenEndpoint, {}, { withCredentials: true }).pipe(
+      switchMap(token => {
+        this.sessaoService.setUsuarioInfo(token.value, token.expires, token.usuarioCodigo);
+        return this.carregarSessaoInfo(token.value);
+      }),
+      catchError(error => {
+        this.limparSessaoLocal();
+        return throwError(() => error);
+      })
+    );
+  }
+
   limparSessaoLocal(): void {
-    this.sessaoService.clearSessionInfo();
+    this.sessaoService.clearSessionInfo();    
     this.sessionInfoSubject.next(null);
   }
 
   private carregarSessaoInfo(token: string): Observable<DadosDoUsuario> {
     if (!token) return throwError(() => new Error('Token de acesso ausente para carregar a sessão.'));
 
+    this.sessaoService.clearInfo();
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     return this.http.get<DadosDoUsuario>(RotasApi.sessionInfoEndpoint, { headers }).pipe(
-      tap(info => this.sessionInfoSubject.next(info)),
+      tap(info => {
+        this.sessionInfoSubject.next(info);
+      }),
       catchError(error => {
         this.sessionInfoSubject.next(null);
         return throwError(() => error);
@@ -113,9 +137,8 @@ export class AcessoService {
     );
   }
 
-  registrar(dadosDoUsuario: RegistrarRequest): Observable<string[]> {
-    return this.http.post<string[]>(RotasApi.registrarEndpoint, dadosDoUsuario).pipe(
-      map((response) => response || []),
+  registrar(dadosDoUsuario: RegistrarRequest): Observable<RegistrarResponse> {
+    return this.http.post<RegistrarResponse>(RotasApi.registrarEndpoint, dadosDoUsuario).pipe(
       catchError((error) => throwError(() => error))
     );
   }

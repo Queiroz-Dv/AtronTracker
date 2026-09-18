@@ -37,6 +37,8 @@ namespace Domain.Entities
         public ICollection<Tarefa> Tarefas { get; set; }
         public ICollection<Usuario> SubordinadosDiretos { get; set; }
         public ICollection<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
+
+        public Workspace Workspace { get; set; }
         public ICollection<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario { get; set; }
     }
 }

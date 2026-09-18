@@ -1,0 +1,291 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Atron Platform - Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#6366F1",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#e0e7ff",
+                        "on-primary-container": "#1e1b4b",
+                        "surface": "#ffffff",
+                        "on-surface": "#111827",
+                        "surface-variant": "#f3f4f6",
+                        "on-surface-variant": "#4b5563",
+                        "background": "#ffffff",
+                        "on-background": "#111827",
+                        "outline": "#d1d5db",
+                        "outline-variant": "#e5e7eb",
+                        "surface-container-low": "#f9fafb",
+                        "surface-container": "#f3f4f6",
+                        "surface-container-high": "#e5e7eb",
+                        "surface-container-highest": "#d1d5db"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "0.5rem",
+                        "xs": "0.25rem",
+                        "gutter": "1.5rem",
+                        "container-margin": "2rem",
+                        "md": "1rem",
+                        "xl": "2.5rem",
+                        "base": "4px",
+                        "lg": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Segoe UI", "Arial", "Helvetica", "sans-serif"],
+                        "headline-md": ["Segoe UI", "Arial", "Helvetica", "sans-serif"],
+                        "headline-lg-mobile": ["Segoe UI", "Arial", "Helvetica", "sans-serif"],
+                        "body-md": ["Segoe UI", "Arial", "Helvetica", "sans-serif"],
+                        "label-sm": ["Segoe UI", "Arial", "Helvetica", "sans-serif"],
+                        "display-lg": ["Segoe UI", "Arial", "Helvetica", "sans-serif"],
+                        "label-md": ["Segoe UI", "Arial", "Helvetica", "sans-serif"],
+                        "headline-lg": ["Segoe UI", "Arial", "Helvetica", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: "Segoe UI", Arial, Helvetica, sans-serif; background-color: #ffffff; }
+        .glass-panel {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .glow-hover:hover {
+            box-shadow: 0 10px 15px -3px rgb(99 102 241 / 0.1);
+            border-color: #6366F1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-h-screen relative">
+<!-- TopAppBar -->
+<header class="bg-white border-b border-outline-variant backdrop-blur-md shadow-sm w-full z-40 sticky top-0">
+<div class="flex justify-between items-center w-full px-container-margin py-md mx-auto max-w-7xl">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
+<span class="font-bold text-on-surface">Atron Platform</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-medium">Tracker</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIsg2MEcNsaCoCi9fkBrbZLBTR8PLMlB2KCvmnLeZRb6IQMf3k5PmmzPap1wuKpYOXdnnxSXFqhkNiY_u0C3uGFu2c2zARs7NAtMpbFUBZWfcKthszwZigdk95qzzbFFK7nBphtbXWW5FujRJ4eaoOGzQr-vckDQyHQUnD4Sliz7rvpzdBGH8kW-SLeOE6xJnPAoOHhcUwEde8Yr1ELV_ldXR2US2QCEeTbn_mEElwVViSGsBfhTJr"/>
+</div>
+</div>
+</div>
+</header>
+<div class="p-container-margin flex-1 max-w-7xl mx-auto w-full flex flex-col gap-lg">
+<!-- Dashboard Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-1">VisÃ£o Geral do Tracker</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Gerencie estruturas, usuÃ¡rios e acompanhe o planejamento.</p>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    Nova Tarefa
+                </button>
+</div>
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="glass-panel p-md rounded-xl flex items-center gap-4 glow-hover transition-all duration-300">
+<div class="w-12 h-12 rounded-lg bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">group</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Total de UsuÃ¡rios</p>
+<p class="font-headline-md text-headline-md text-on-surface mt-1">1,248</p>
+</div>
+</div>
+<div class="glass-panel p-md rounded-xl flex items-center gap-4 glow-hover transition-all duration-300">
+<div class="w-12 h-12 rounded-lg bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">corporate_fare</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Departamentos Ativos</p>
+<p class="font-headline-md text-headline-md text-on-surface mt-1">42</p>
+</div>
+</div>
+<div class="glass-panel p-md rounded-xl flex items-center gap-4 glow-hover transition-all duration-300">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tarefas Pendentes</p>
+<p class="font-headline-md text-headline-md text-on-surface mt-1">156</p>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Modules & Activity -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg flex-1">
+<!-- Modules Grid -->
+<div class="lg:col-span-2 flex flex-col gap-md">
+<h3 class="font-headline-md text-[20px] text-on-surface border-b border-outline-variant pb-2">Rotinas de GestÃ£o</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md mt-2">
+<!-- Module Card 1 -->
+<div class="glass-panel p-lg rounded-xl flex flex-col gap-4 group cursor-pointer glow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_outward</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[18px] text-on-surface mb-1 group-hover:text-primary transition-colors">Planejamento de Custos</h4>
+<p class="font-body-md text-label-md text-on-surface-variant">AnÃ¡lise de orÃ§amento e distribuiÃ§Ã£o por centro de custo.</p>
+</div>
+</div>
+<!-- Module Card 2 -->
+<div class="glass-panel p-lg rounded-xl flex flex-col gap-4 group cursor-pointer glow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">manage_accounts</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_outward</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[18px] text-on-surface mb-1 group-hover:text-primary transition-colors">Perfis &amp; Acessos</h4>
+<p class="font-body-md text-label-md text-on-surface-variant">ConfiguraÃ§Ã£o de permissÃµes e perfis de sistema.</p>
+</div>
+</div>
+<!-- Module Card 3 -->
+<div class="glass-panel p-lg rounded-xl flex flex-col gap-4 group cursor-pointer glow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">work</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_outward</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[18px] text-on-surface mb-1 group-hover:text-primary transition-colors">Cargos &amp; Estrutura</h4>
+<p class="font-body-md text-label-md text-on-surface-variant">Hierarquia corporativa e definiÃ§Ã£o de atribuiÃ§Ãµes.</p>
+</div>
+</div>
+<!-- Module Card 4 -->
+<div class="glass-panel p-lg rounded-xl flex flex-col gap-4 group cursor-pointer glow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">task</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_outward</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[18px] text-on-surface mb-1 group-hover:text-primary transition-colors">GestÃ£o de Tarefas</h4>
+<p class="font-body-md text-label-md text-on-surface-variant">Acompanhamento de execuÃ§Ãµes e workflows.</p>
+</div>
+</div>
+<!-- Module Card 5: UsuÃ¡rios -->
+<div class="glass-panel p-lg rounded-xl flex flex-col gap-4 group cursor-pointer glow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">person_search</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_outward</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[18px] text-on-surface mb-1 group-hover:text-primary transition-colors">UsuÃ¡rios</h4>
+<p class="font-body-md text-label-md text-on-surface-variant">Cadastro e manutenÃ§Ã£o da base de usuÃ¡rios ativos.</p>
+</div>
+</div>
+<!-- Module Card 6: Relacionamento -->
+<div class="glass-panel p-lg rounded-xl flex flex-col gap-4 group cursor-pointer glow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">join_inner</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_outward</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[18px] text-on-surface mb-1 group-hover:text-primary transition-colors">Relacionamento Perfil &amp; UsuÃ¡rio</h4>
+<p class="font-body-md text-label-md text-on-surface-variant">VinculaÃ§Ã£o de perfis de acesso a colaboradores.</p>
+</div>
+</div>
+<!-- Module Card 7: Departamentos -->
+<div class="glass-panel p-lg rounded-xl flex flex-col gap-4 group cursor-pointer glow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">hub</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_outward</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[18px] text-on-surface mb-1 group-hover:text-primary transition-colors">Departamentos</h4>
+<p class="font-body-md text-label-md text-on-surface-variant">GestÃ£o de unidades de negÃ³cio e Ã¡reas.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Widget -->
+<div class="glass-panel rounded-xl flex flex-col h-fit overflow-hidden sticky top-[88px]">
+<div class="p-md border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<h3 class="font-headline-md text-[18px] text-on-surface">Atividade Recente</h3>
+<button class="text-primary font-label-sm hover:underline">Ver tudo</button>
+</div>
+<div class="p-md flex flex-col gap-4">
+<!-- Activity Item 1 -->
+<div class="flex gap-3 relative pb-4">
+<div class="absolute left-[15px] top-8 bottom-0 w-[1px] bg-outline-variant"></div>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 z-10 text-primary">
+<span class="material-symbols-outlined text-[16px]">person_add</span>
+</div>
+<div>
+<p class="font-body-md text-label-md text-on-surface"><span class="font-medium text-primary">Novo usuÃ¡rio</span> adicionado ao financeiro.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">HÃ¡ 15 min</p>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="flex gap-3 relative pb-4">
+<div class="absolute left-[15px] top-8 bottom-0 w-[1px] bg-outline-variant"></div>
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant flex items-center justify-center shrink-0 z-10 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+</div>
+<div>
+<p class="font-body-md text-label-md text-on-surface"><span class="font-medium">SincronizaÃ§Ã£o</span> de custos concluÃ­da.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">HÃ¡ 1 hora</p>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="flex gap-3 relative">
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant flex items-center justify-center shrink-0 z-10 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+</div>
+<div>
+<p class="font-body-md text-label-md text-on-surface">Perfil <span class="font-medium">Gestor_TI</span> atualizado.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Ontem, 14:30</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

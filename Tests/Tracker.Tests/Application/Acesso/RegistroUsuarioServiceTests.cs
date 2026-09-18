@@ -1,27 +1,26 @@
 using Application.DTO.Request;
-using Application.Email.Compositores;
+using Application.EmailCompositor.Compositores;
 using Application.Extensions;
 using Application.Interfaces.Services;
-using Application.Records.Usuario;
+using Application.Records.Facade;
 using Application.Services.AuthServices;
 using Application.UseCases.UsuarioCases;
-using Domain.Entities;
+using Application.UseCases.EmailCases;
+using Domain.Entities;    
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
-using Infrastructure.Configuration;
-using Microsoft.Extensions.Configuration;
 using Shared.Application.DTOS.Auth;
-using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Tracker.Tests.TestSupport.Fakes.Email;
 using Xunit;
+using Application.UseCases.WorkspaceCases;
 
-namespace Tracker.Tests.Acesso;
+namespace Tracker.Tests.Application.Acesso;
 
 public class RegistroUsuarioServiceTests
 {
@@ -229,7 +228,8 @@ public class RegistroUsuarioServiceTests
         var confirmacao = codigoService.CriarDadosConfirmacao("USR001", 24);
         await confirmacaoRepository.GravarOuSubstituirAsync(confirmacao.ConfirmacaoEmail);
         var codigoInvalido = confirmacao.Identificador == "999999" ? "000000" : "999999";
-        var cadastro = new CadastroUsuarioService(new CadastroUsuarioContextRecord(
+        var cadastro = new CadastroUsuarioService(new CadastroUsuarioFacadeRecord(  
+            null, null,
             usuarioRepository,
             new UsuarioIdentityRepositoryFake(),
             new EmailServiceFake(),
@@ -338,7 +338,7 @@ public class RegistroUsuarioServiceTests
         Assert.True(resultado.TeveFalha);
         Assert.Contains(
             resultado.Messages,
-            mensagem => mensagem.Descricao == UsuarioResource.ErroUsuarioExistente);
+            mensagem => mensagem.Descricao == string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoExistente, request.Codigo));
     }
 
     [Fact]
@@ -369,7 +369,7 @@ public class RegistroUsuarioServiceTests
             ConfirmaSenha = "Senha@123"
         };
 
-    private static RegistroUsuarioService CriarService(
+        private static RegistroUsuarioService CriarService(
         UsuarioRepositoryFake usuarioRepository,
         Resultado? resultadoEmail = null)
     {
@@ -378,16 +378,18 @@ public class RegistroUsuarioServiceTests
         var compositor = new AcessoEmailCompositor(new EmailTemplateRenderer());
         var enderecoFrontend = new EnderecoFrontendServiceFake();
         var tokenTemporario = new TokenTemporarioService();
-        var cadastro = new CadastroUsuarioService(new CadastroUsuarioContextRecord(
-            usuarioRepository,
-            identidade,
-            email,
-            compositor,
+        var verificar = new VerificarUsuarioExistenteCase(usuarioRepository, identidade);
+        var confirmar = new ConfirmarEmailContaUsuarioCase(new ConfirmacaoEmailRepositoryFake(), new ConfirmacaoEmailCodigoService(), usuarioRepository, compositor, email);
+        var criarConfirmacao = new CriarConfirmacaoEmailCase(enderecoFrontend, new ConfirmacaoEmailCodigoService(), new ConfirmacaoEmailRepositoryFake());
+        var processarEnvio = new ProcessarEnvioEmailConfirmacaoCase(compositor, email, criarConfirmacao);
+        var registrar = new RegistrarContaUsuarioCase(
             new ValidadorFake(),
-            enderecoFrontend,
-            new ConfirmacaoEmailRepositoryFake(),
-            new ConfirmacaoEmailCodigoService()));
-        var recuperacao = new RecuperacaoSenhaService(new RecuperacaoSenhaContextRecord(
+            verificar,
+            processarEnvio,
+            null, // provide the missing parameter
+            identidade,
+            usuarioRepository);
+            var recuperacao = new RecuperacaoSenhaService(new RecuperacaoSenhaFacadeRecord(
             usuarioRepository,
             identidade,
             new LoginRepositoryFake(),
@@ -397,7 +399,7 @@ public class RegistroUsuarioServiceTests
             enderecoFrontend,
             tokenTemporario));
 
-        return new RegistroUsuarioService(cadastro, recuperacao);
+        return new RegistroUsuarioService(registrar, confirmar, recuperacao);
     }
 
     private static ReenviarConfirmacaoEmailCase CriarReenviarConfirmacaoEmail(
@@ -410,7 +412,7 @@ public class RegistroUsuarioServiceTests
             confirmacaoRepository,
             new ConfirmacaoEmailCodigoService(),
             emailService ?? new EmailServiceFake(),
-            new AcessoEmailCompositor(new EmailTemplateRenderer()),
+            new AcessoEmailCompositorFake(),
             new EnderecoFrontendServiceFake());
     }
 
@@ -419,13 +421,13 @@ public class RegistroUsuarioServiceTests
         EmailServiceFake emailService,
         CacheServiceFake cacheService)
     {
-        return new RecuperacaoSenhaService(new RecuperacaoSenhaContextRecord(
+        return new RecuperacaoSenhaService(new RecuperacaoSenhaFacadeRecord(
             usuarioRepository,
             new UsuarioIdentityRepositoryFake(),
             new LoginRepositoryFake(),
             cacheService,
             emailService,
-            new AcessoEmailCompositor(new EmailTemplateRenderer()),
+            new AcessoEmailCompositorFake(),
             new EnderecoFrontendServiceFake(),
             new TokenTemporarioService()));
     }
@@ -575,6 +577,27 @@ public class RegistroUsuarioServiceTests
         public Task<bool> CriarRelacionamentoRepositoryAsync(PerfilDeAcessoUsuario perfilDeAcesso) => Task.FromResult(false);
         public Task<PerfilDeAcessoUsuario> ObterPerfilDeAcessoPorCodigoRepositoryAsync(string codigo) => Task.FromResult<PerfilDeAcessoUsuario>(null);
         public Task DeletarRelacionamento(PerfilDeAcessoUsuario relacionamento) => Task.CompletedTask;
+    }
+
+    private sealed class AcessoEmailCompositorFake : IAcessoEmailCompositor
+    {
+        public Resultado<global::Shared.Application.DTOS.Requests.EmailRequest> ComporConfirmacaoCadastro(global::Application.DTO.ParametrosEmailDTO parametros)
+            => Resultado<global::Shared.Application.DTOS.Requests.EmailRequest>.Sucesso(new global::Shared.Application.DTOS.Requests.EmailRequest { Assunto = parametros.UsuarioNome, Mensagem = $"<a href=\"{parametros.Link}\">", EmailsDestino = new System.Collections.Generic.List<string> { parametros.Email } });
+
+        public Resultado<global::Shared.Application.DTOS.Requests.EmailRequest> ComporRecuperacaoSenha(global::Application.DTO.ParametrosEmailDTO parametros)
+            => Resultado<global::Shared.Application.DTOS.Requests.EmailRequest>.Sucesso(new global::Shared.Application.DTOS.Requests.EmailRequest { Assunto = parametros.UsuarioNome, Mensagem = $"<a href=\"{parametros.Link}\">", EmailsDestino = new System.Collections.Generic.List<string> { parametros.Email } });
+
+        public Resultado<global::Shared.Application.DTOS.Requests.EmailRequest> ComporConfirmacaoConcluida(global::Application.DTO.ParametrosEmailDTO parametros)
+            => Resultado<global::Shared.Application.DTOS.Requests.EmailRequest>.Sucesso(new global::Shared.Application.DTOS.Requests.EmailRequest { Assunto = parametros.UsuarioNome, Mensagem = $"<a href=\"{parametros.Link}\">", EmailsDestino = new System.Collections.Generic.List<string> { parametros.Email } });
+
+        public Resultado<global::Shared.Application.DTOS.Requests.EmailRequest> ComporPrimeiroAcesso(global::Application.DTO.ParametrosEmailDTO parametros)
+            => Resultado<global::Shared.Application.DTOS.Requests.EmailRequest>.Sucesso(new global::Shared.Application.DTOS.Requests.EmailRequest { Assunto = parametros.UsuarioNome, Mensagem = $"<a href=\"{parametros.Link}\">", EmailsDestino = new System.Collections.Generic.List<string> { parametros.Email } });
+
+        public Resultado<global::Shared.Application.DTOS.Requests.EmailRequest> ComporAlteracaoEmail(global::Application.DTO.ParametrosEmailDTO parametrosEmailDTO)
+            => Resultado<global::Shared.Application.DTOS.Requests.EmailRequest>.Sucesso(new global::Shared.Application.DTOS.Requests.EmailRequest { Assunto = parametrosEmailDTO.UsuarioNome, Mensagem = $"<a href=\"{parametrosEmailDTO.Link}\">", EmailsDestino = new System.Collections.Generic.List<string> { parametrosEmailDTO.Email } });
+
+        public Resultado<global::Shared.Application.DTOS.Requests.EmailRequest> ComporReativacaoConta(global::Application.DTO.ParametrosEmailDTO parametros)
+            => Resultado<global::Shared.Application.DTOS.Requests.EmailRequest>.Sucesso(new global::Shared.Application.DTOS.Requests.EmailRequest { Assunto = parametros.UsuarioNome, Mensagem = parametros.Link, EmailsDestino = new System.Collections.Generic.List<string> { parametros.Email } });
     }
 
     private sealed class EnderecoFrontendServiceFake : IEnderecoFrontendService

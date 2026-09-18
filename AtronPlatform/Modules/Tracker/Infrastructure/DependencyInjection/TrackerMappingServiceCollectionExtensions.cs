@@ -23,6 +23,7 @@ namespace Infrastructure.DependencyInjection
             services.AddMapper<TarefaEstado, TarefaEstadoDTO, TarefaEstadoMapping>();
             services.AddMapper<Tarefa, TarefaDTO, TarefaMapping>();
             services.AddMapper<PlanejamentoCusto, PlanejamentoCustoDTO, PlanejamentoCustoMapping>();
+            services.AddMapper<Workspace, WorkspaceDTO, WorkspaceMapping>();
 
             services.AddScoped<IPerfilDeAcessoMapping>(provider =>
                 provider.GetRequiredService<PerfilDeAcessoMapping>());

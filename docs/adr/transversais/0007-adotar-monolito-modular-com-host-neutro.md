@@ -1,4 +1,4 @@
-# ADR 0007: Adotar monólito modular com host neutro
+# ADR 0007: Adotação do monólito modular com host neutro
 
 ## Status
 

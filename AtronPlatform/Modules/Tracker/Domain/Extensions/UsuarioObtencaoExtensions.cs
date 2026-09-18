@@ -14,5 +14,5 @@ namespace Domain.Extensions
 
             return string.Empty;
         }
-    }
+    }    
 }

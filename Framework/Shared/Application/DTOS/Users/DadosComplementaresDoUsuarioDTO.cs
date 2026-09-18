@@ -6,7 +6,7 @@
 
         public List<DadosDoPerfilDTO> DadosDoPerfil { get; init; } = new();
 
-        public DadosDaEmpresaDTO? DadosDaEmpresa { get; init; }
+        public DadosDaEmpresaDTO? DadosDaEmpresa { get; init; }        
 
         public TempoDosTokensDoUsuarioDTO DadosDoToken { get; init; }
     }
@@ -30,6 +30,14 @@
         public string CodigoDoDepartamento { get; set; } = string.Empty;
 
         public string CodigoDoCargo { get; set; } = string.Empty;
+
+        public WorkspaceDoUsuarioDTO Workspace { get; set; }
+    }
+
+    public class WorkspaceDoUsuarioDTO
+    {
+        public string Codigo { get; set; }
+        public string Descricao { get; set; }
     }
 
     public class DadosDoPerfilDTO(string codigoPerfil = null)

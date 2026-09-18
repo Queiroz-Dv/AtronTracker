@@ -1,13 +1,13 @@
-using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
+using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
     public class UsuarioRepository : IUsuarioRepository
     {
-        private AtronDbContext _context;
+        private readonly AtronDbContext _context;
 
         public UsuarioRepository(AtronDbContext context)
         {

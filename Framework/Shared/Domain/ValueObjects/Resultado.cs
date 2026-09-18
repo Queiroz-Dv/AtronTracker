@@ -33,6 +33,18 @@ namespace Shared.Domain.ValueObjects
             return new Resultado<T>(true, data);
         }
 
+        public static new Resultado<T> Falha(T data, IEnumerable<NotificationMessage> messages)
+        {
+            var resultado = new Resultado<T>(false, data);
+
+            foreach (var message in messages)
+            {
+                resultado.Adicionar(message);
+            }
+
+            return resultado;
+        }
+
         public static new Resultado<T> Sucesso(T data, IEnumerable<NotificationMessage> messages)
         {
             var resultado = new Resultado<T>(true, data);
@@ -166,6 +178,6 @@ namespace Shared.Domain.ValueObjects
         {
             AddNotification(mensagem, ENotificationType.Sucesso);
             return this;
-        }
+        }       
     }
 }

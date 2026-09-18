@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Atron Platform - Painel de GestÃ£o</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-surface": "#131b2e",
+                "surface-container-low": "#f2f3ff",
+                "primary-container": "#6063ee",
+                "primary": "#6366f1", /* Updated to match user request */
+                "secondary": "#5b598c",
+                "on-secondary-fixed": "#181445",
+                "secondary-container": "#c7c3fe",
+                "surface-container-highest": "#dae2fd",
+                "on-surface-variant": "#464554",
+                "primary-fixed-dim": "#c0c1ff",
+                "on-primary": "#ffffff",
+                "surface-variant": "#dae2fd",
+                "surface-tint": "#494bd6",
+                "on-primary-fixed": "#07006c",
+                "tertiary-container": "#b55d00",
+                "surface": "#ffffff", /* Updated to match pure white background request */
+                "on-tertiary": "#ffffff",
+                "tertiary": "#904900",
+                "on-primary-fixed-variant": "#2f2ebe",
+                "inverse-on-surface": "#eef0ff",
+                "error": "#ba1a1a",
+                "surface-bright": "#faf8ff",
+                "background": "#ffffff",
+                "outline-variant": "#c7c4d7",
+                "on-primary-container": "#fffbff",
+                "surface-container-lowest": "#ffffff",
+                "secondary-fixed-dim": "#c4c1fb",
+                "primary-fixed": "#e1e0ff",
+                "surface-container-high": "#e2e7ff",
+                "on-background": "#111827", /* Updated to match user request */
+                "secondary-fixed": "#e3dfff",
+                "inverse-surface": "#283044",
+                "surface-container": "#eaedff",
+                "on-tertiary-container": "#fffbff",
+                "on-error-container": "#93000a",
+                "on-tertiary-fixed-variant": "#703700",
+                "on-secondary-container": "#514f81",
+                "outline": "#767586",
+                "tertiary-fixed-dim": "#ffb783",
+                "on-secondary": "#ffffff",
+                "on-error": "#ffffff",
+                "on-tertiary-fixed": "#301400",
+                "surface-dim": "#d2d9f4",
+                "on-secondary-fixed-variant": "#444173",
+                "inverse-primary": "#c0c1ff",
+                "tertiary-fixed": "#ffdcc5",
+                "error-container": "#ffdad6"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "xl": "40px",
+                "xs": "4px",
+                "2xl": "64px",
+                "unit": "4px",
+                "sm": "8px",
+                "gutter": "24px",
+                "margin-desktop": "48px",
+                "lg": "24px",
+                "md": "16px",
+                "margin-mobile": "16px"
+        },
+        "fontFamily": {
+                "body-lg": [
+                        "Segoe UI", "Arial", "Helvetica", "sans-serif"
+                ],
+                "label-md": [
+                        "Segoe UI", "Arial", "Helvetica", "sans-serif"
+                ],
+                "label-sm": [
+                        "Segoe UI", "Arial", "Helvetica", "sans-serif"
+                ],
+                "headline-lg": [
+                        "Segoe UI", "Arial", "Helvetica", "sans-serif"
+                ],
+                "body-sm": [
+                        "Segoe UI", "Arial", "Helvetica", "sans-serif"
+                ],
+                "body-md": [
+                        "Segoe UI", "Arial", "Helvetica", "sans-serif"
+                ],
+                "headline-md": [
+                        "Segoe UI", "Arial", "Helvetica", "sans-serif"
+                ],
+                "headline-lg-mobile": [
+                        "Segoe UI", "Arial", "Helvetica", "sans-serif"
+                ],
+                "display": [
+                        "Segoe UI", "Arial", "Helvetica", "sans-serif"
+                ]
+        },
+        "fontSize": {
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "letterSpacing": "0",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "1.5",
+                                "letterSpacing": "0",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "letterSpacing": "0",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.04em",
+                                "fontWeight": "700"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            background-color: theme('colors.surface');
+            color: theme('colors.on-background');
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface docked full-width top-0 border-b border-outline-variant shadow-sm z-50 sticky">
+<div class="flex justify-between items-center w-full px-margin-desktop py-md mx-auto max-w-7xl">
+<div class="flex items-center gap-md">
+<span class="text-headline-md font-headline-md font-bold text-on-background">Atron Platform</span>
+</div>
+<nav class="hidden md:flex gap-lg">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Tracker</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Stock</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Sales</a>
+</nav>
+<div class="flex items-center gap-sm">
+<button class="text-primary hover:text-primary transition-colors duration-200 p-2 rounded-full hover:bg-surface-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+<button class="text-primary hover:text-primary transition-colors duration-200 p-2 rounded-full hover:bg-surface-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">logout</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-7xl mx-auto px-margin-desktop py-xl flex flex-col gap-xl">
+<!-- Header Section -->
+<section class="flex flex-col gap-sm mb-lg">
+<h1 class="font-display text-display text-on-background">MÃ³dulos do Sistema</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Acesse as rotinas centrais da sua operaÃ§Ã£o</p>
+</section>
+<!-- Bento Grid / Cards Section -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Module 1: Tracker -->
+<div class="bg-surface-container-lowest border border-outline-variant shadow-sm hover:shadow-md transition-shadow rounded-xl p-lg flex flex-col h-full group relative overflow-hidden">
+<div class="flex items-center gap-md mb-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center border border-outline-variant group-hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background group-hover:text-primary transition-colors">Atron Tracker</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg flex-grow">GestÃ£o administrativa e operacional.</p>
+<div class="flex flex-col gap-sm mb-xl">
+<h3 class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Recursos</h3>
+<ul class="flex flex-wrap gap-2">
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Departamentos</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Cargos</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">UsuÃ¡rios</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Planejamento</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Perfis</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Tarefas</li>
+</ul>
+</div>
+<button class="w-full py-3 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold hover:bg-primary-container transition-colors mt-auto flex items-center justify-center gap-2 group/btn">
+                    Acessar Tracker
+                    <span class="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<!-- Module 2: Stock -->
+<div class="bg-surface-container-lowest border border-outline-variant shadow-sm hover:shadow-md transition-shadow rounded-xl p-lg flex flex-col h-full group relative overflow-hidden">
+<div class="flex items-center gap-md mb-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center border border-outline-variant group-hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background group-hover:text-primary transition-colors">Atron Stock</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg flex-grow">Controle de mercadorias e catÃ¡logo.</p>
+<div class="flex flex-col gap-sm mb-xl">
+<h3 class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Recursos</h3>
+<ul class="flex flex-wrap gap-2">
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Estoque</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Produtos</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Categorias</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Clientes</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Fornecedores</li>
+</ul>
+</div>
+<button class="w-full py-3 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold hover:bg-primary-container transition-colors mt-auto flex items-center justify-center gap-2 group/btn">
+                    Acessar Stock
+                    <span class="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<!-- Module 3: Sales -->
+<div class="bg-surface-container-lowest border border-outline-variant shadow-sm hover:shadow-md transition-shadow rounded-xl p-lg flex flex-col h-full group relative overflow-hidden">
+<div class="flex items-center gap-md mb-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center border border-outline-variant group-hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background group-hover:text-primary transition-colors">Atron Sales</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg flex-grow">GestÃ£o financeira e comercial.</p>
+<div class="flex flex-col gap-sm mb-xl">
+<h3 class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Recursos</h3>
+<ul class="flex flex-wrap gap-2">
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">ContÃ¡bil</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Financeiro</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Vendas</li>
+<li class="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-background font-label-sm text-label-sm">Compras</li>
+</ul>
+</div>
+<button class="w-full py-3 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold hover:bg-primary-container transition-colors mt-auto flex items-center justify-center gap-2 group/btn">
+                    Acessar Sales
+                    <span class="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface full-width bottom-0 border-t border-outline-variant mt-auto">
+<div class="w-full py-xl px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-md max-w-7xl mx-auto">
+<span class="font-bold text-on-background">Atron Platform</span>
+<div class="flex gap-md">
+<a class="text-on-surface-variant hover:text-on-background transition-colors font-body-md text-body-md" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-on-background transition-colors font-body-md text-body-md" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-on-background transition-colors font-body-md text-body-md" href="#">Documentation</a>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Â© 2024 Atron Platform. All rights reserved.</span>
+</div>
+</footer>
+</body></html>

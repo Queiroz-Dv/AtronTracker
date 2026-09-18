@@ -1,9 +1,5 @@
 # ADR 0002: Remodelar tarefas com gestão e notificações internas
 
-## Status
-
-Aceito.
-
 ## Contexto
 
 O módulo de tarefas nasceu como uma listagem geral de tarefas atribuídas diretamente a usuários. Esse modelo mistura responsabilidade pessoal, acompanhamento de equipe e decisões de aprovação, além de exigir carregamentos amplos para responder a contextos diferentes.

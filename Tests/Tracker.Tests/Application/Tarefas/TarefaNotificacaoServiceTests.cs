@@ -1,5 +1,5 @@
 using Application.DTO;
-using Application.Email.Compositores;
+using Application.EmailCompositor.Compositores;
 using Application.Services.EntitiesServices.Tarefas;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;

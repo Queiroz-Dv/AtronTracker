@@ -4,7 +4,7 @@ using Application.Policies.PlanejamentoCustos;
 using Application.Resources;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
-using Application.Validador;
+using Application.Validacoes;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Tracker.Tests.TestSupport.Fakes.PlanejamentoCustos;

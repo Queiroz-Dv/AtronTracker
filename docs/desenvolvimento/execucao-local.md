@@ -12,7 +12,7 @@ Este guia descreve a preparação do Atron para desenvolvimento. O backend ativo
 | PostgreSQL de desenvolvimento | Base isolada, credenciais próprias e esquema compatível com as migrations. |
 | Conta de acesso e permissões | Necessárias para explorar as rotinas autenticadas. |
 
-Estas versões descrevem a configuração do projeto, não uma recomendação de versões mais recentes. Não use a base de produção para experimentar cadastros, lotes ou migrations.
+Estas versões descrevem a configuração do projeto, não uma recomendação de versões mais recentes.
 
 ## 1. Abrir a solução no Visual Studio
 
@@ -24,7 +24,7 @@ O uso do Git integrado ao Visual Studio está no [guia de branches](fluxo-git.md
 
 ## 2. Configurar o host sem versionar segredos
 
-Use User Secrets do projeto `AtronPlatform.WebApi`, variáveis de ambiente ou `AtronPlatform/WebApi/appsettings.Local.json`. O host possui `UserSecretsId`, e `appsettings.Local.json` está ignorado pelo Git. Não coloque credenciais em arquivos versionados ou em capturas de tela.
+Use User Secrets do projeto `AtronPlatform.WebApi`, variáveis de ambiente ou `AtronPlatform/WebApi/appsettings.Local.json`. O host possui `UserSecretsId`, e `appsettings.Local.json` está ignorado pelo Git.
 
 | Chave de configuração | Variável de ambiente equivalente | Finalidade |
 | --- | --- | --- |
@@ -35,7 +35,7 @@ Use User Secrets do projeto `AtronPlatform.WebApi`, variáveis de ambiente ou `A
 | `Cache:Provider` | `Cache__Provider` | Use `Memory` para começar sem Redis. |
 | `Cors:AllowedOrigins:0` | `Cors__AllowedOrigins__0` | Origem da interface, normalmente `http://localhost:4200`. |
 
-Para preencher a conexão, use os dados do seu PostgreSQL. Para o JWT, gere um segredo privado para desenvolvimento e mantenha emissor e audiência consistentes com a configuração do host. Não reutilize segredos encontrados no histórico Git.
+Para preencher a conexão, use os dados do seu PostgreSQL. Para o JWT, gere um segredo privado para desenvolvimento e mantenha emissor e audiência consistentes com a configuração do host.
 
 **Atenção à precedência:** o [Program.cs](../../AtronPlatform/WebApi/Program.cs) acrescenta `appsettings.Local.json` depois dos provedores padrão. Um valor nesse arquivo pode sobrescrever o mesmo nome vindo de User Secrets ou variáveis de ambiente. Evite manter a mesma chave em vários lugares.
 
@@ -91,6 +91,7 @@ A configuração de desenvolvimento usa `https://localhost:7280/`, conforme [env
 ## 6. Conferir o fluxo autenticado
 
 Entre com a conta preparada para desenvolvimento. Verifique a navegação de Tracker e Stock e faça operações apenas nos dados de teste.
+Se não funciona crie uma conta para entender o fluxo do sistema.
 
 | Sintoma | O que conferir primeiro |
 | --- | --- |
@@ -104,5 +105,3 @@ Entre com a conta preparada para desenvolvimento. Verifique a navegação de Tra
 ## Validação e limites
 
 Os projetos .NET podem ser explorados no Test Explorer do Visual Studio. Para reproduzir as etapas automatizadas, consulte o [workflow de CI](../../.github/workflows/ci.yml) e a [organização dos testes](../arquitetura-testes.md).
-
-Esta documentação foi conferida com a configuração e o código do repositório. Sua atualização não incluiu provisionar uma nova base, executar a aplicação ou validar um login real. A suíte Jasmine não foi executada nesta revisão e não integra o workflow atual.
