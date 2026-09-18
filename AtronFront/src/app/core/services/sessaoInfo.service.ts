@@ -19,10 +19,9 @@ export interface AccessTokenInfo {
 
 export class SessaoInfoService {
   private readonly usuarioCodigoStorageKey = 'atron_usuario_codigo';
-  private readonly usuarioCodigoStorageKeyLegado = 'usuarioInfo';
 
   constructor(private http: HttpClient) { }
-  
+
   private usuarioInfoToken: UsuarioInfoToken | null = null;
 
   private usuarioInfo: Observable<DadosDoUsuario>;
@@ -39,7 +38,6 @@ export class SessaoInfoService {
     this.usuarioInfoToken = null;
     localStorage.removeItem(this.usuarioCodigoStorageKey);
     sessionStorage.removeItem(this.usuarioCodigoStorageKey);
-    localStorage.removeItem(this.usuarioCodigoStorageKeyLegado);
   }
 
   setUsuarioInfo(token: string, expires: Date, usuarioCodigo: string): void {
@@ -51,7 +49,6 @@ export class SessaoInfoService {
   definirUsuarioCodigo(usuarioCodigo: string): void {
     localStorage.setItem(this.usuarioCodigoStorageKey, usuarioCodigo);
     sessionStorage.removeItem(this.usuarioCodigoStorageKey);
-    localStorage.removeItem(this.usuarioCodigoStorageKeyLegado);
   }
 
   obterUsuarioCodigo(): string | null {
@@ -63,12 +60,7 @@ export class SessaoInfoService {
       this.definirUsuarioCodigo(usuarioCodigoSessao);
       return usuarioCodigoSessao;
     }
-
-    const usuarioCodigoLegado = localStorage.getItem(this.usuarioCodigoStorageKeyLegado);
-    if (!usuarioCodigoLegado) return null;
-
-    this.definirUsuarioCodigo(usuarioCodigoLegado);
-    return usuarioCodigoLegado;
+    return null;
   }
 
   obterAccessToken(): AccessTokenInfo | null {

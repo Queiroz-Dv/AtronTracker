@@ -39,11 +39,12 @@ public class LoginServiceSecurityTests
         dependencias.UserIdentityService
             .Setup(service => service.RotacionarRefreshTokenAsync(It.IsAny<RotacaoRefreshTokenRecord>()))
             .ReturnsAsync(true);
+        dadosComplementares.DadosDoUsuario.Workspace = new WorkspaceDoUsuarioDTO { Codigo = "WS001", Descricao = "Workspace" };
         dependencias.DadosComplementaresService
-            .Setup(service => service.ObterInformacoesComplementaresDoUsuario(usuario))
+            .Setup(service => service.ObterInformacoesComplementaresDoUsuario(It.IsAny<UsuarioDTO>()))
             .ReturnsAsync(dadosComplementares);
         dependencias.TokenService
-            .Setup(service => service.ObterTokenComRefreshToken(dadosComplementares))
+            .Setup(service => service.ObterTokenComRefreshToken(It.IsAny<DadosComplementaresDoUsuarioDTO>()))
             .ReturnsAsync(novosTokens);
 
         var cookie = new DadosDoRefreshTokenCookieDTO { RefreshToken = "refresh-antigo" };

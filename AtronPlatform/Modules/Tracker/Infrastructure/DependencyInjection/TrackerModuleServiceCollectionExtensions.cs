@@ -25,13 +25,13 @@ using Application.UseCases.TarefaCases.Movimentacao;
 using Application.UseCases.UsuarioCases;
 using Application.UseCases.WorkspaceCases;
 using Application.Validacoes;
-using AtronTracker.Infrastructure.Identity;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Infrastructure.Configuration;
 using Infrastructure.Context;
+using Infrastructure.Identity;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.ApplicationRepositories;
 using Infrastructure.Repositories.Identity;
@@ -240,6 +240,7 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();            
             services.AddScoped<RegistrarWorkspaceCase>();
+            services.AddScoped<ObterWorkspaceCase>();
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)

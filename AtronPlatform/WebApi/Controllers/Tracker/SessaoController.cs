@@ -1,16 +1,15 @@
 using Application.Interfaces.Services;
+using Application.UseCases.WorkspaceCases;
 using AtronPlatform.WebApi.Security;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
-using System.Linq;
+using Shared.Extensions;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -26,13 +25,13 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     {
         private readonly ICacheService _cacheService;
         private readonly IPerfilDeAcessoService _perfilDeAcessoService;
-        private readonly IAccessorService _serviceAccessor;
+        private readonly ObterWorkspaceCase _obterWorkspaceCase;
 
-        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService, IAccessorService serviceAccessor)
+        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService, ObterWorkspaceCase obterWorkspaceCase)
         {
             _cacheService = cacheService;
             _perfilDeAcessoService = perfilDeAcessoService;
-            _serviceAccessor = serviceAccessor;
+            _obterWorkspaceCase = obterWorkspaceCase;
         }
 
         /// <summary>
@@ -47,28 +46,30 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         {
             var user = HttpContext.User;
             var usuarioCodigo = user.FindFirst(ClaimCode.CODIGO_USUARIO)?.Value;
+            var usuarioEmail = user.FindFirst(ClaimTypes.Email)?.Value;
 
-            if (string.IsNullOrWhiteSpace(usuarioCodigo))
+            if (usuarioCodigo.IsNullOrEmpty() || usuarioEmail.IsNullOrEmpty())
                 return NoContent();
 
             var dadosCache = _cacheService.ObterCache<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, usuarioCodigo));
 
-            if (dadosCache is not null)
+            if (!dadosCache.IsNullable())
             {
-                var empresa = dadosCache.DadosDaEmpresa ?? ObterEmpresaDosClaims(user);
+                var workspaceDaClaim = dadosCache.DadosDoUsuario.Workspace ?? ObterWorkspaceDosClaims(user);
                 return Ok(new
                 {
                     codigoDoUsuario = usuarioCodigo,
-                    nomeDoUsuario = dadosCache.DadosDoUsuario.NomeDoUsuario ?? user.FindFirst(ClaimTypes.Name)?.Value,
                     emailDoUsuario = dadosCache.DadosDoUsuario.Email ?? user.FindFirst(ClaimTypes.Email)?.Value,
                     codigoDoCargo = dadosCache.DadosDoUsuario.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
                     codigoDoDepartamento = dadosCache.DadosDoUsuario.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,
-                    empresa,
+                    workspace = workspaceDaClaim.Codigo,
                     perfisDeAcesso = dadosCache.DadosDoPerfil
                 });
             }
 
             var perfisModulos = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioAsync(usuarioCodigo);
+            var workspaceResultado = await _obterWorkspaceCase.ObterPorDadosDoUsuario(usuarioCodigo, usuarioEmail);
+
             var dto = new DadosComplementaresDoUsuarioDTO
             {
                 DadosDoUsuario = new DadosDoUsuarioDTO() { CodigoDoUsuario = usuarioCodigo, NomeDoUsuario = user.FindFirst(ClaimTypes.Name)?.Value },
@@ -78,6 +79,9 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                     Modulos = p.Modulos.Select(x => new DadosDoModuloDTO(x.Codigo, x.Descricao)).ToList()
                 }).ToList(),
             };
+
+            var workspace = workspaceResultado.Dados!;
+            dto.DadosDoUsuario.Workspace = new WorkspaceDoUsuarioDTO() { Codigo = workspace.Codigo };
 
             _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, usuarioCodigo))
             {
@@ -91,26 +95,18 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 emailDoUsuario = dto.DadosDoUsuario.Email,
                 codigoDoCargo = dto.DadosDoUsuario.CodigoDoCargo,
                 codigoDoDepartamento = dto.DadosDoUsuario.CodigoDoDepartamento,
-                empresa = dto.DadosDaEmpresa ?? ObterEmpresaDosClaims(user),
+                empresa = dto.DadosDoUsuario.Workspace ?? ObterWorkspaceDosClaims(user),
                 perfisDeAcesso = dto.DadosDoPerfil
             };
 
             return Ok(jsonAtualizado);
         }
 
-        private static DadosDaEmpresaDTO? ObterEmpresaDosClaims(ClaimsPrincipal user)
+        private static WorkspaceDoUsuarioDTO? ObterWorkspaceDosClaims(ClaimsPrincipal user)
         {
-            var codigo = user.FindFirst(ClaimCode.CODIGO_EMPRESA)?.Value;
-            var nome = user.FindFirst(ClaimCode.NOME_EMPRESA)?.Value;
+            var codigo = user.FindFirst(ClaimCode.CODIGO_WORKSPACE)?.Value;
 
-            return !string.IsNullOrWhiteSpace(codigo)
-                ? new DadosDaEmpresaDTO
-                {
-                    Codigo = codigo,
-                    NomeFantasia = nome ?? string.Empty,
-                    AcessoPermitido = true
-                }
-                : null;
+            return !codigo.IsNullOrEmpty() ? new WorkspaceDoUsuarioDTO { Codigo = codigo, } : null;
         }
     }
 }

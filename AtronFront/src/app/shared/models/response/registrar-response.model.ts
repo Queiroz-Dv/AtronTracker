@@ -1,15 +1,11 @@
 import { Mensagem } from '../../../core/services/notification.service';
 
-export interface WorkspaceResponse {
-  id: number;
-  nome: string;
-  empresaCodigo: string | null;
+export interface WorkspaceResponse {  
+  codigo: string; 
 }
-
-export interface WorkspaceInicialResponse extends WorkspaceResponse { }
 
 export interface RegistrarResponse {
   usuarioCodigo: string;
-  workspace: WorkspaceInicialResponse;
+  workspace: WorkspaceResponse;
   mensagens: Mensagem[];
 }
