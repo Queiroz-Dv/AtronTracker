@@ -1,6 +1,8 @@
 using Application.DTO;
 using Application.Mapping;
 using Domain.Interfaces;
+using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -11,6 +13,8 @@ using System.Threading.Tasks;
 namespace Application.UseCases.DepartamentoCases
 {
     public sealed class ObterDepartamentoCase(
+        IUserAccessor _userAccessor,
+        IWorkspaceRepository _workspaceRepository,
         DepartamentoMapping mapper,
         IDepartamentoRepository departamentoRepository)
     {
@@ -19,7 +23,9 @@ namespace Application.UseCases.DepartamentoCases
 
         public async Task<Resultado<List<DepartamentoDTO>>> ObterTodosAsync()
         {
-            var entidades = await _departamentoRepository.ObterDepartmentosAsync();
+            var dadosWorkspace = _userAccessor.ObterDadosDoTenant();
+            var workspace = await _workspaceRepository.ObterWorkspacePorCodigo(dadosWorkspace.CodigoWorkspace);
+            var entidades = await _departamentoRepository.ObterDepartmentosAsync(workspace.Codigo, workspace.Id);
             var departamentos = _mapper.MapToDtos(entidades).ToList();
 
             return Resultado<List<DepartamentoDTO>>.Sucesso(departamentos);

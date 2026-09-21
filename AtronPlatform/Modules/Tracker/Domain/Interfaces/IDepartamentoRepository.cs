@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Tenants;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -50,6 +51,9 @@ namespace Domain.Interfaces
         /// <param name="departamento">Entidade que será removida</param>
         Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento);
 
+        Task<bool> CriarTenant(DepartamentoWorkspace departamentoWorkspace);
+
         Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo);
+        Task<IEnumerable<Departamento>> ObterDepartmentosAsync(string workspaceCodigo, int workspaceId);
     }
 }

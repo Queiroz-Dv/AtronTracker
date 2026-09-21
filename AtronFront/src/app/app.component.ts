@@ -5,9 +5,9 @@ import { RouterOutlet } from '@angular/router';
   standalone: true,
   selector: 'app-root',
   imports: [RouterOutlet],
-  templateUrl: './app.component.html',
+  template: `<router-outlet></router-outlet>`,
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'atron-manager-webview';
+  title = 'Atron Platform';
 }

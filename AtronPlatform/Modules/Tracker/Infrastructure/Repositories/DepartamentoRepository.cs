@@ -1,5 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Tenants;
+using Infrastructure.Consultas;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,13 @@ namespace Infrastructure.Repositories
         {
             var atualizado = await _context.SaveChangesAsync();
             return atualizado > 0;
+        }
+
+        public async Task<bool> CriarTenant(DepartamentoWorkspace departamentoWorkspace)
+        {
+            await _context.DepartamentoWorkspaces.AddAsync(departamentoWorkspace);
+            var gravado = await _context.SaveChangesAsync();
+            return gravado > 0;
         }
 
         public async Task<bool> CriarDepartamentoRepositoryAsync(Departamento departamento)
@@ -48,8 +57,17 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
         {
             return await _context.Departamentos
-                .Include(dpt => dpt.GestorDepartamento)
-                .OrderByDescending(order => order.Codigo)
+                 .Include(dpt => dpt.GestorDepartamento)
+                 .OrderByDescending(order => order.Codigo)
+                 .AsNoTracking()
+                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync(string workspaceCodigo, int workspaceId)
+        {
+            return await _context.Departamentos
+                .FromSqlRaw(FunctionObterDepartamentos.Comando, workspaceCodigo, workspaceId)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -64,6 +82,6 @@ namespace Infrastructure.Repositories
         {
             return await _context.Departamentos
                 .Where(dpt => dpt.GestorDepartamentoCodigo == usuarioCodigo).ToListAsync();
-        }
+        }       
     }
 }

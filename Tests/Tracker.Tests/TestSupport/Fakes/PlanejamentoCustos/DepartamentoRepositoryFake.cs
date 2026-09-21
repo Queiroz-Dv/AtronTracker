@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Tenants;
 
 namespace Tracker.Tests.TestSupport.Fakes.PlanejamentoCustos;
 
@@ -37,4 +38,9 @@ internal sealed class DepartamentoRepositoryFake : IDepartamentoRepository
         => Task.FromResult<IEnumerable<Departamento>>([]);
 
     public Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento) => Task.FromResult(true);
+
+    public Task<bool> CriarTenant(DepartamentoWorkspace departamentoWorkspace)
+    {
+        throw new NotImplementedException();
+    }
 }

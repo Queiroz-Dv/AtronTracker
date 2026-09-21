@@ -9,10 +9,7 @@ namespace Shared.Application.Services.Accessor
     {
         private readonly IHttpContextAccessor _accessor;
 
-        public UserAccessor(IHttpContextAccessor accessor)
-        {
-            _accessor = accessor;
-        }
+        public UserAccessor(IHttpContextAccessor accessor) => _accessor = accessor;
 
         public string ObterLogadoUsuario()
         {
@@ -37,13 +34,28 @@ namespace Shared.Application.Services.Accessor
             return "Anonimo";
         }
 
+        public (string CodigoUsuario, string CodigoWorkspace) ObterDadosDoTenant()
+        {
+            var usuarioCodigo = ObterCodigoUsuarioLogado();
+            var codigoWorkspace = ObterCodigoWorkspace();
+
+            return (usuarioCodigo,  codigoWorkspace);
+        }
+
+        public string ObterCodigoWorkspace()
+        {
+            var user = _accessor.HttpContext?.User;
+            if (user?.Identity?.IsAuthenticated != true)            
+                return string.Empty;
+            
+            return user.FindFirst(ClaimCode.CODIGO_WORKSPACE)?.Value ?? string.Empty;
+        }
+
         public string ObterCodigoUsuarioLogado()
         {
             var user = _accessor.HttpContext?.User;
             if (user?.Identity?.IsAuthenticated != true)
-            {
                 return string.Empty;
-            }
 
             return user.FindFirst(ClaimCode.CODIGO_USUARIO)?.Value ?? string.Empty;
         }

@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Tenants;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Shared.Domain.Entities.Identity;
@@ -54,6 +55,8 @@ namespace Infrastructure.Context
         public DbSet<PlanejamentoCusto> PlanejamentosCusto { get; set; }
 
         public DbSet<PlanejamentoCustoCargo> PlanejamentosCustoCargo { get; set; }
+
+        public DbSet<DepartamentoWorkspace> DepartamentoWorkspaces { get; set; }
          
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
