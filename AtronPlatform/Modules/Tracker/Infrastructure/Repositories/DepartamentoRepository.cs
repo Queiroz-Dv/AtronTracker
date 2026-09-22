@@ -38,6 +38,13 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
         }
 
+        public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo, string worksapceCodigo, int workspaceId)
+        {
+            var departamentos = await ObterDepartmentosAsync(worksapceCodigo, workspaceId);
+
+            return departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
+        }
+
         public async Task<Departamento> ObterDepartamentoPorCodigoRepository(string codigo)
         {
             return await _context.Departamentos
@@ -82,6 +89,19 @@ namespace Infrastructure.Repositories
         {
             return await _context.Departamentos
                 .Where(dpt => dpt.GestorDepartamentoCodigo == usuarioCodigo).ToListAsync();
-        }       
+        }
+
+        public async Task<bool> RemoverTenant(DepartamentoWorkspace departamentoWorkspace)
+        {
+            var entidade = await _context.DepartamentoWorkspaces
+                    .FirstOrDefaultAsync(dpt => dpt.DepartamentoId == departamentoWorkspace.DepartamentoId &&
+                                         dpt.DepartamentoCodigo == departamentoWorkspace.DepartamentoCodigo &&
+                                         dpt.WorkspaceCodigo == departamentoWorkspace.WorkspaceCodigo &&
+                                         dpt.WorkspaceId == departamentoWorkspace.WorkspaceId);
+
+            _context.Remove(entidade);
+            var removido = await _context.SaveChangesAsync();
+            return removido > 0;
+        }
     }
 }

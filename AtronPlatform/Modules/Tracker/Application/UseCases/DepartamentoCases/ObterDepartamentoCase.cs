@@ -1,8 +1,7 @@
 using Application.DTO;
 using Application.Mapping;
+using Application.Resolvers;
 using Domain.Interfaces;
-using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -13,18 +12,13 @@ using System.Threading.Tasks;
 namespace Application.UseCases.DepartamentoCases
 {
     public sealed class ObterDepartamentoCase(
-        IUserAccessor _userAccessor,
-        IWorkspaceRepository _workspaceRepository,
-        DepartamentoMapping mapper,
-        IDepartamentoRepository departamentoRepository)
+        WorkspaceResolver workspaceResolver,
+        DepartamentoMapping _mapper,
+        IDepartamentoRepository _departamentoRepository)
     {
-        private readonly DepartamentoMapping _mapper = mapper;
-        private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
-
         public async Task<Resultado<List<DepartamentoDTO>>> ObterTodosAsync()
         {
-            var dadosWorkspace = _userAccessor.ObterDadosDoTenant();
-            var workspace = await _workspaceRepository.ObterWorkspacePorCodigo(dadosWorkspace.CodigoWorkspace);
+            var workspace = await workspaceResolver.ObterWorkspaceAtual();
             var entidades = await _departamentoRepository.ObterDepartmentosAsync(workspace.Codigo, workspace.Id);
             var departamentos = _mapper.MapToDtos(entidades).ToList();
 
@@ -36,8 +30,10 @@ namespace Application.UseCases.DepartamentoCases
             if (codigo.IsNullOrEmpty())
                 return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
+            var workspace = await workspaceResolver.ObterWorkspaceAtual();
+
             var departamento = await _departamentoRepository
-                .ObterDepartamentoPorCodigoRepositoryAsync(codigo);
+                .ObterDepartamentoPorCodigoRepositoryAsync(codigo, workspace.Codigo, workspace.Id);
 
             return departamento is null
                 ? Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado)

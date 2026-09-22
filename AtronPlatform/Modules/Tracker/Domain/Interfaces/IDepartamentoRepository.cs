@@ -52,8 +52,11 @@ namespace Domain.Interfaces
         Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento);
 
         Task<bool> CriarTenant(DepartamentoWorkspace departamentoWorkspace);
+        Task<bool> RemoverTenant(DepartamentoWorkspace departamentoWorkspace);
 
         Task<IEnumerable<Departamento>> ObterDepartamentosPorCodigoGestorAsync(string usuarioCodigo);
         Task<IEnumerable<Departamento>> ObterDepartmentosAsync(string workspaceCodigo, int workspaceId);
+        Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo, string worksapceCodigo, int workspaceId);
+
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Application.DTO;
 using Application.Mapping;
+using Application.Services.EntitiesServices;
+using Application.Services.EntitiesServices.Tenancy;
 using Domain.Interfaces;
-using Domain.Interfaces.UsuarioInterfaces;
-using Domain.Tenants;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -12,9 +12,8 @@ using System.Threading.Tasks;
 namespace Application.UseCases.DepartamentoCases
 {
     public sealed class CriarDepartamentoCase(
-        IUserAccessor _userAccessor,
-        IWorkspaceRepository _workspaceRepository,
-        VincularGestorDepartamentoCase _vincularGestorDepartamento,
+        DepartamentoWorkspaceService _vincularDepartamentoWorkspaceService,
+        VincularGestorDepartamentoService _vincularGestorDepartamento,
         DepartamentoMapping _mapper,
         IDepartamentoRepository _departamentoRepository,
         IValidador<DepartamentoDTO> _validador)
@@ -39,21 +38,13 @@ namespace Application.UseCases.DepartamentoCases
                 return Resultado.Falha(resultadoGestor.Messages);
 
             var entidadeGravada = await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
-            if (!entidadeGravada) return Resultado.Falha(DepartamentoResource.ErroGravacao);
+            if (!entidadeGravada)
+                return Resultado.Falha(DepartamentoResource.ErroGravacao);
 
-            var dadosWorkspace = _userAccessor.ObterDadosDoTenant();
-            var entidade = await _departamentoRepository.ObterDepartamentoPorCodigoRepository(departamentoDTO.Codigo);
-            var workspace = await _workspaceRepository.ObterWorkspacePorCodigo(dadosWorkspace.CodigoWorkspace);
-            var tenant = new DepartamentoWorkspace()
-            {
-                WorkspaceId = workspace.Id,
-                WorkspaceCodigo = workspace.Codigo,
-                DepartamentoId = entidade.Id,
-                DepartamentoCodigo = entidade.Codigo,
-            };
+            var resultadoTenant = await _vincularDepartamentoWorkspaceService.ExecutarAsync(departamentoDTO.Codigo);
+            if (resultadoTenant.TeveFalha)
+                return Resultado.Falha(resultadoTenant.Messages);
 
-            var tenantGravado = await _departamentoRepository.CriarTenant(tenant);
-            if (!tenantGravado) return Resultado.Falha(DepartamentoResource.ErroGravacao);
 
             return Resultado
                 .Sucesso()

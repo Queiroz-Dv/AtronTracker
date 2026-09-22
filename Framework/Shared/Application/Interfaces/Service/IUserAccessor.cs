@@ -4,6 +4,5 @@
     {
         string ObterLogadoUsuario();
         string ObterCodigoUsuarioLogado();
-        (string CodigoUsuario, string CodigoWorkspace) ObterDadosDoTenant();
     }
 }

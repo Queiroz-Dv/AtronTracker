@@ -43,4 +43,19 @@ internal sealed class DepartamentoRepositoryFake : IDepartamentoRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<bool> RemoverTenant(DepartamentoWorkspace departamentoWorkspace)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<Departamento>> ObterDepartmentosAsync(string workspaceCodigo, int workspaceId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo, string worksapceCodigo, int workspaceId)
+    {
+        throw new NotImplementedException();
+    }
 }

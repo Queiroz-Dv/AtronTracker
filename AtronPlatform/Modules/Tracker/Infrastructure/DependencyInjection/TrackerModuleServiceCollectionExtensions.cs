@@ -7,6 +7,7 @@ using Application.Interfaces.Services.Identity;
 using Application.Policies.PlanejamentoCustos;
 using Application.Policies.Tarefas;
 using Application.Records.Facade;
+using Application.Resolvers;
 using Application.Resolvers.Tarefas;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
@@ -14,6 +15,7 @@ using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
 using Application.Services.EntitiesServices.Tarefas.Obtencao;
+using Application.Services.EntitiesServices.Tenancy;
 using Application.Services.Identity;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
@@ -238,9 +240,11 @@ namespace Infrastructure.DependencyInjection
 
         private static void ConfigureWorkspaceServices(IServiceCollection services)
         {
-            services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();            
+            services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
             services.AddScoped<RegistrarWorkspaceCase>();
             services.AddScoped<ObterWorkspaceCase>();
+            services.AddScoped<WorkspaceResolver>();
+            services.AddScoped<IUserAccessor, WorkspaceResolver>();
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)
@@ -274,7 +278,8 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<CriarDepartamentoCase>();
             services.AddScoped<ExcluirDepartamentoCase>();
             services.AddScoped<ObterDepartamentoCase>();
-            services.AddScoped<VincularGestorDepartamentoCase>();
+            services.AddScoped<VincularGestorDepartamentoService>();
+            services.AddScoped<DepartamentoWorkspaceService>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
         }
 
