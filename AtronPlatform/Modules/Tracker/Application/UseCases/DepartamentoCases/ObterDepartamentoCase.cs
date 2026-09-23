@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 namespace Application.UseCases.DepartamentoCases
 {
     public sealed class ObterDepartamentoCase(
-        WorkspaceResolver workspaceResolver,
         DepartamentoMapping _mapper,
         IDepartamentoRepository _departamentoRepository)
     {

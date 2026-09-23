@@ -1,8 +1,11 @@
+using Domain.Attributes;
+using Domain.Constants;
 using Domain.Interfaces;
 using System.Collections.Generic;
 
 namespace Domain.Entities
 {
+    [TenantModule(TrackerModulos.Departamento)]
     public sealed class Departamento : ITenantScoped
     {
         public int Id { get; set; }
@@ -11,8 +14,6 @@ namespace Domain.Entities
         public int? GestorDepartamentoId { get; set; }
         public string GestorDepartamentoCodigo { get; set; }
         public Usuario GestorDepartamento { get; set; }
-
-        public string ModuloCodigo => "Modulo:DPT";
 
         public List<Cargo> Cargos { get; set; }
         public List<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }

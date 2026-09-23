@@ -4,6 +4,5 @@ namespace Domain.Interfaces
     {
         int Id { get; }
         string? Codigo { get; }
-        string ModuloCodigo { get; }
     }
 }

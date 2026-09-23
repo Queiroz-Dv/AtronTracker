@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using Domain.Attributes;
+using Domain.Constants;
+using Domain.Interfaces;
+using System.Collections.Generic;
 
 namespace Domain.Entities
 {
-    public sealed class Cargo
+    [TenantModule(TrackerModulos.Cargo)]
+    public sealed class Cargo : ITenantScoped
     {
         public int Id { get; set; }
         public string Codigo { get; set; }
         public string Descricao { get; set; }
-        public int DepartamentoId_Antigo { get; set; }
         public int DepartamentoId { get; set; }
         public string DepartamentoCodigo { get; set; }
 

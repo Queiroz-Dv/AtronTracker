@@ -59,8 +59,9 @@ namespace Infrastructure.DependencyInjection
             var database = DatabaseProviderResolver.Resolve(configuration);
             var migrationsAssembly = typeof(AtronDbContext).Assembly.GetName().Name!;
 
-            services.AddDbContext<AtronDbContext>(options =>
-                options.UseConfiguredDatabase(database, migrationsAssembly));
+            services.AddDbContext<AtronDbContext>(options =>            
+            options.UseConfiguredDatabase(database, migrationsAssembly)
+            );
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
                     {
