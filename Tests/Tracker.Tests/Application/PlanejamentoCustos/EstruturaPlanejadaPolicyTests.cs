@@ -2,7 +2,6 @@ using Application.DTO;
 using Application.Mapping;
 using Application.Policies.PlanejamentoCustos;
 using Application.Resources;
-using Application.Services.EntitiesServices.Tenancy;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
 using Application.Validacoes;
@@ -11,7 +10,7 @@ using Domain.Interfaces.UsuarioInterfaces;
 using Tracker.Tests.TestSupport.Fakes.PlanejamentoCustos;
 using Xunit;
 
-namespace Tracker.Tests.PlanejamentoCustos;
+namespace Tracker.Tests.Application.PlanejamentoCustos;
 
 public class EstruturaPlanejadaPolicyTests
 {
@@ -20,7 +19,6 @@ public class EstruturaPlanejadaPolicyTests
     {
         var departamento = new Departamento { Id = 10, Codigo = "DPT", Descricao = "Departamento" };
         var useCase = new ExcluirDepartamentoCase(
-            null,
             new EstruturaPlanejadaPolicy(new PlanejamentoCustoRepositoryFake(possuiDepartamentoPlanejado: true)),
             new DepartamentoRepositoryFake(departamentos: [departamento]),
             new CargoRepositoryFake(),

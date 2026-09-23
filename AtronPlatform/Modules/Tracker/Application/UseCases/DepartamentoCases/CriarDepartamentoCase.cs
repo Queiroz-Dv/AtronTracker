@@ -1,7 +1,6 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.Mapping;
 using Application.Services.EntitiesServices;
-using Application.Services.EntitiesServices.Tenancy;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
@@ -12,7 +11,6 @@ using System.Threading.Tasks;
 namespace Application.UseCases.DepartamentoCases
 {
     public sealed class CriarDepartamentoCase(
-        DepartamentoWorkspaceService _vincularDepartamentoWorkspaceService,
         VincularGestorDepartamentoService _vincularGestorDepartamento,
         DepartamentoMapping _mapper,
         IDepartamentoRepository _departamentoRepository,
@@ -40,11 +38,6 @@ namespace Application.UseCases.DepartamentoCases
             var entidadeGravada = await _departamentoRepository.CriarDepartamentoRepositoryAsync(departamento);
             if (!entidadeGravada)
                 return Resultado.Falha(DepartamentoResource.ErroGravacao);
-
-            var resultadoTenant = await _vincularDepartamentoWorkspaceService.ExecutarAsync(departamentoDTO.Codigo);
-            if (resultadoTenant.TeveFalha)
-                return Resultado.Falha(resultadoTenant.Messages);
-
 
             return Resultado
                 .Sucesso()

@@ -18,8 +18,7 @@ namespace Application.UseCases.DepartamentoCases
     {
         public async Task<Resultado<List<DepartamentoDTO>>> ObterTodosAsync()
         {
-            var workspace = await workspaceResolver.ObterWorkspaceAtual();
-            var entidades = await _departamentoRepository.ObterDepartmentosAsync(workspace.Codigo, workspace.Id);
+            var entidades = await _departamentoRepository.ObterDepartmentosAsync();
             var departamentos = _mapper.MapToDtos(entidades).ToList();
 
             return Resultado<List<DepartamentoDTO>>.Sucesso(departamentos);
@@ -30,10 +29,8 @@ namespace Application.UseCases.DepartamentoCases
             if (codigo.IsNullOrEmpty())
                 return Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            var workspace = await workspaceResolver.ObterWorkspaceAtual();
-
             var departamento = await _departamentoRepository
-                .ObterDepartamentoPorCodigoRepositoryAsync(codigo, workspace.Codigo, workspace.Id);
+                .ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
             return departamento is null
                 ? Resultado<DepartamentoDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado)

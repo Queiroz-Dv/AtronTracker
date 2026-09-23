@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.DTO.Request;
 using Application.EmailCompositor.Compositores;
 using Application.Interfaces.ApplicationInterfaces;
@@ -15,7 +15,6 @@ using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
 using Application.Services.EntitiesServices.Tarefas.Obtencao;
-using Application.Services.EntitiesServices.Tenancy;
 using Application.Services.Identity;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
@@ -279,7 +278,6 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ExcluirDepartamentoCase>();
             services.AddScoped<ObterDepartamentoCase>();
             services.AddScoped<VincularGestorDepartamentoService>();
-            services.AddScoped<DepartamentoWorkspaceService>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
         }
 

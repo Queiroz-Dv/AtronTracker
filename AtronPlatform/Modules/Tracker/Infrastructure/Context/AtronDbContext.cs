@@ -1,8 +1,11 @@
-﻿using Domain.Entities;
-using Domain.Tenants;
+using Domain.Entities;
+using Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Shared.Application.DTOS.Auth;
 using Shared.Domain.Entities.Identity;
+using System.Reflection;
 
 namespace Infrastructure.Context
 {
@@ -16,7 +19,14 @@ namespace Infrastructure.Context
         ApplicationRoleClaim,
         ApplicationUserToken>
     {
-        public AtronDbContext(DbContextOptions<AtronDbContext> options) : base(options) { }
+        private readonly IHttpContextAccessor? _httpContextAccessor;
+
+        public AtronDbContext(DbContextOptions<AtronDbContext> options, IHttpContextAccessor? httpContextAccessor = null) : base(options)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public string WorkspaceCodigoAtual => _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimCode.CODIGO_WORKSPACE)?.Value ?? string.Empty;
 
         public DbSet<ApplicationUser> AppUsers { get; set; }
 
@@ -56,12 +66,16 @@ namespace Infrastructure.Context
 
         public DbSet<PlanejamentoCustoCargo> PlanejamentosCustoCargo { get; set; }
 
-        public DbSet<DepartamentoWorkspace> DepartamentoWorkspaces { get; set; }
-         
+        public DbSet<RecursoWorkspace> RecursosWorkspace { get; set; }
+
+       
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AtronDbContext).Assembly);
+
+            ApplyTenantFilters(modelBuilder);
 
             if (Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL")
             {
@@ -74,5 +88,7 @@ namespace Infrastructure.Context
                 }
             }
         }
+
+       
     }
 }

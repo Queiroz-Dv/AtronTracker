@@ -1,7 +1,5 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces;
-using Domain.Tenants;
-using Infrastructure.Consultas;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,13 +15,6 @@ namespace Infrastructure.Repositories
             return atualizado > 0;
         }
 
-        public async Task<bool> CriarTenant(DepartamentoWorkspace departamentoWorkspace)
-        {
-            await _context.DepartamentoWorkspaces.AddAsync(departamentoWorkspace);
-            var gravado = await _context.SaveChangesAsync();
-            return gravado > 0;
-        }
-
         public async Task<bool> CriarDepartamentoRepositoryAsync(Departamento departamento)
         {
             await _context.AddAsync(departamento);
@@ -36,13 +27,6 @@ namespace Infrastructure.Repositories
             return await _context.Departamentos
                 .Include(dpt => dpt.GestorDepartamento)
                 .FirstOrDefaultAsync(dpt => dpt.Codigo == codigo);
-        }
-
-        public async Task<Departamento> ObterDepartamentoPorCodigoRepositoryAsync(string codigo, string worksapceCodigo, int workspaceId)
-        {
-            var departamentos = await ObterDepartmentosAsync(worksapceCodigo, workspaceId);
-
-            return departamentos.FirstOrDefault(dpt => dpt.Codigo == codigo);
         }
 
         public async Task<Departamento> ObterDepartamentoPorCodigoRepository(string codigo)
@@ -70,14 +54,6 @@ namespace Infrastructure.Repositories
                  .ToListAsync();
         }
 
-        public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync(string workspaceCodigo, int workspaceId)
-        {
-            return await _context.Departamentos
-                .FromSqlRaw(FunctionObterDepartamentos.Comando, workspaceCodigo, workspaceId)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
         public async Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento)
         {
             _context.Remove(departamento);
@@ -89,19 +65,6 @@ namespace Infrastructure.Repositories
         {
             return await _context.Departamentos
                 .Where(dpt => dpt.GestorDepartamentoCodigo == usuarioCodigo).ToListAsync();
-        }
-
-        public async Task<bool> RemoverTenant(DepartamentoWorkspace departamentoWorkspace)
-        {
-            var entidade = await _context.DepartamentoWorkspaces
-                    .FirstOrDefaultAsync(dpt => dpt.DepartamentoId == departamentoWorkspace.DepartamentoId &&
-                                         dpt.DepartamentoCodigo == departamentoWorkspace.DepartamentoCodigo &&
-                                         dpt.WorkspaceCodigo == departamentoWorkspace.WorkspaceCodigo &&
-                                         dpt.WorkspaceId == departamentoWorkspace.WorkspaceId);
-
-            _context.Remove(entidade);
-            var removido = await _context.SaveChangesAsync();
-            return removido > 0;
         }
     }
 }

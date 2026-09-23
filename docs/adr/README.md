@@ -12,6 +12,7 @@ proprietário ou o alcance, mas não reinicia a sequência.
 |---|---|---|
 | [0001](./tracker/0001-substituir-salarios-por-planejamento-de-custos.md) | Aceito | Substituir salários por planejamento de custos. |
 | [0002](./tracker/0002-remodelar-tarefas-com-gestao-e-notificacoes-internas.md) | Aceito | Remodelar tarefas com gestão e notificações internas. |
+| [0012](./tracker/0012-isolar-tenant-via-interceptor-e-global-query-filter.md) | Aceito | Isolar tenant via interceptor e Global Query Filter com tabela polimórfica RecursoWorkspace. |
 
 ## Atron Stock
 

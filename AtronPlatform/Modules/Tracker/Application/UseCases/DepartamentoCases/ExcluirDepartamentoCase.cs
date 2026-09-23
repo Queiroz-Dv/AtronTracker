@@ -1,5 +1,4 @@
 using Application.Policies.PlanejamentoCustos;
-using Application.Services.EntitiesServices.Tenancy;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Resources;
@@ -11,7 +10,6 @@ using System.Threading.Tasks;
 namespace Application.UseCases.DepartamentoCases
 {
     public sealed class ExcluirDepartamentoCase(
-        DepartamentoWorkspaceService _departamentoWorkspaceService,
         EstruturaPlanejadaPolicy _estruturaPlanejadaPolicy,
         IDepartamentoRepository _departamentoRepository,
         ICargoRepository _cargoRepository,
@@ -44,12 +42,10 @@ namespace Application.UseCases.DepartamentoCases
                 return Resultado.Falha(
                     string.Format(DepartamentoResource.ErroDepartamentoContemRelacionamento, codigo));
 
-            var tenantRemovido = await _departamentoWorkspaceService.DesvincularAsync(codigo);
-
             var removido = await _departamentoRepository
                 .RemoverDepartmentoRepositoryAsync(departamento);
 
-            if (!removido && tenantRemovido.TeveFalha)
+            if (!removido)
                 return Resultado.Falha(string.Format(DepartamentoResource.ErroRemocao, codigo));
 
             return Resultado
