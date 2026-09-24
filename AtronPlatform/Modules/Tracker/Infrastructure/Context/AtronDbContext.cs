@@ -138,6 +138,7 @@ namespace Infrastructure.Context
         {            
             string moduloCodigo = ObterModuloCodigo(typeof(TEntity));
 
+            // Configura o filtro onde qualquer consulta vai uar esse bloco
             modelBuilder.Entity<TEntity>().HasQueryFilter(e =>
                 string.IsNullOrEmpty(CurrentWorkspaceCodigo) ||
                 this.RecursosWorkspace.Any(rw =>
@@ -146,6 +147,7 @@ namespace Infrastructure.Context
                     rw.WorkspaceCodigo == CurrentWorkspaceCodigo));
         }
 
+        // Obtém o código do atributo do módulo
         private string ObterModuloCodigo(Type entityType)
         {
             return entityType.ObterDescricaoDoModulo();

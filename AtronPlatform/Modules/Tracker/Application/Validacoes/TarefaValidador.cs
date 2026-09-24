@@ -41,15 +41,15 @@ namespace Application.Validacoes
                 return;
             }
 
-            var destino = (DestinoInicialTarefa)tarefa.DestinoInicial;
 
-            if (destino == DestinoInicialTarefa.Usuario)
+
+            if (tarefa.DestinoInicial == DestinoInicialTarefa.Usuario.ToString())
             {
                 ValidarCodigoObrigatorio(tarefa.UsuarioCodigo, TarefaResource.Campo_Usuario, notificacoes);
                 return;
             }
 
-            if (destino == DestinoInicialTarefa.DepartamentoCargo)
+            if (tarefa.DestinoInicial == DestinoInicialTarefa.DepartamentoCargo.ToString())
             {
                 ValidarCodigoObrigatorio(tarefa.DepartamentoCodigo, TarefaResource.Campo_Departamento, notificacoes);
                 ValidarCodigoOpcional(tarefa.CargoCodigo, TarefaResource.Campo_Cargo.ToLower(), notificacoes);

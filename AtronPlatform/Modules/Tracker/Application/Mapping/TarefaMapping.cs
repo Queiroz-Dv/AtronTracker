@@ -44,7 +44,7 @@ namespace Application.Mapping
             return new Tarefa
             {
                 Id = dto.Id,
-                DestinoInicial = dto.DestinoInicial,
+                DestinoInicial = dto.DestinoInicial.ToString(),
                 ExigeAprovacaoParaObter = dto.ExigeAprovacaoParaObter,
                 UsuarioCodigo = dto.UsuarioCodigo?.ToUpper(),
                 DepartamentoCodigo = dto.DepartamentoCodigo?.ToUpper(),

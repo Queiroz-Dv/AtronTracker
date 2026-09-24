@@ -61,6 +61,7 @@ namespace Application.UseCases.UsuarioCases
             {
                 var parametroEmailDTO = new ParametrosEmailDTO()
                 {
+                    Destinatario = usuario.Email,
                     Email = usuario.Email,
                     UsuarioNome = usuario.Nome,
                     Link = link,

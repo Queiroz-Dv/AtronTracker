@@ -11,7 +11,7 @@ namespace Application.UseCases.TarefaCases
     {
         public static Resultado Executar(TarefaDTO tarefaDTO, Usuario responsavel)
         {
-            if (tarefaDTO.DestinoInicial != (int)DestinoInicialTarefa.Equipe)
+            if (tarefaDTO.DestinoInicial != DestinoInicialTarefa.Equipe.ToString())
                 return Resultado.Sucesso();
 
             var departamentos = responsavel.UsuarioCargoDepartamentos?

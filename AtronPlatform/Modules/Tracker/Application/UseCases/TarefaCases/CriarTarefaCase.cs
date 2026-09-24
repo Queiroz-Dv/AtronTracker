@@ -32,7 +32,7 @@ namespace Application.UseCases.TarefaCases
             if (responsavelResultado.TeveFalha)
                 return Resultado.Falha(responsavelResultado.Messages);
 
-            if (tarefaDTO.DestinoInicial == (int)DestinoInicialTarefa.Equipe)
+            if (tarefaDTO.DestinoInicial == DestinoInicialTarefa.Equipe.ToString())
             {
                 var departamentoEquipeResultado = DefinirDepartamentoEquipePorTarefaCase.Executar(tarefaDTO, responsavelResultado.Dados!);
                 if (departamentoEquipeResultado.TeveFalha)

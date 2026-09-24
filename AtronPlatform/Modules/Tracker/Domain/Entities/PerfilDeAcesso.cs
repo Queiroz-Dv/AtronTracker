@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Domain.Attributes;
+using Domain.Constants;
+using Domain.Interfaces;
+using System.Collections.Generic;
 
 namespace Domain.Entities
 {
-    public class PerfilDeAcesso
+    [TenantModule(TrackerModulos.PerfilDeAcesso)]
+    public class PerfilDeAcesso : ITenantScoped
     {
         public int Id { get; set; }
         public string Codigo { get; set; }

@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Domain.Attributes;
+using Domain.Constants;
+using Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Entities
 {
-    public class Usuario : EntityBase
+    [TenantModule(TrackerModulos.Usuario)]
+    public class Usuario : ITenantScoped
     {
         public Usuario()
         {
-            
+
         }
 
         public Usuario(string codigo, string nome, string sobrenome, string email, DateTime? dataNascimento)
@@ -19,6 +23,8 @@ namespace Domain.Entities
             DataNascimento = dataNascimento;
             Inativo = false;
         }
+
+        public int Id { get; set; }
 
         public string Codigo { get; set; }
         public string Nome { get; set; }
@@ -40,5 +46,6 @@ namespace Domain.Entities
 
         public Workspace Workspace { get; set; }
         public ICollection<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario { get; set; }
+
     }
 }
