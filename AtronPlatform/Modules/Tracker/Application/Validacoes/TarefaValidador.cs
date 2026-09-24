@@ -43,13 +43,13 @@ namespace Application.Validacoes
 
 
 
-            if (tarefa.DestinoInicial == DestinoInicialTarefa.Usuario.ToString())
+            if (tarefa.DestinoInicial == DestinoInicialTarefa.Usuario.GetDescription())
             {
                 ValidarCodigoObrigatorio(tarefa.UsuarioCodigo, TarefaResource.Campo_Usuario, notificacoes);
                 return;
             }
 
-            if (tarefa.DestinoInicial == DestinoInicialTarefa.DepartamentoCargo.ToString())
+            if (tarefa.DestinoInicial == DestinoInicialTarefa.DepartamentoCargo.GetDescription())
             {
                 ValidarCodigoObrigatorio(tarefa.DepartamentoCodigo, TarefaResource.Campo_Departamento, notificacoes);
                 ValidarCodigoOpcional(tarefa.CargoCodigo, TarefaResource.Campo_Cargo.ToLower(), notificacoes);

@@ -1,6 +1,8 @@
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace Infrastructure.EntitiesConfiguration
 {
@@ -11,7 +13,11 @@ namespace Infrastructure.EntitiesConfiguration
             builder.HasKey(movimentacao => movimentacao.Id);
 
             builder.Property(movimentacao => movimentacao.Tipo)
-                .IsRequired();
+                .HasMaxLength(80)
+                .HasConversion(
+                    tipo => tipo.GetDescription(), 
+                    descricao => ParseTipoMovimentacao(descricao)
+                ).IsRequired();
 
             builder.Property(movimentacao => movimentacao.Descricao)
                 .IsRequired()
@@ -38,6 +44,19 @@ namespace Infrastructure.EntitiesConfiguration
                 .WithMany(tarefa => tarefa.Movimentacoes)
                 .HasForeignKey(movimentacao => movimentacao.TarefaId)
                 .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        private static TipoMovimentacaoTarefa ParseTipoMovimentacao(string descricao)
+        {
+            foreach (TipoMovimentacaoTarefa tipo in Enum.GetValues(typeof(TipoMovimentacaoTarefa)))
+            {
+                if (tipo.GetDescription().Equals(descricao, StringComparison.OrdinalIgnoreCase) ||
+                    tipo.ToString().Equals(descricao, StringComparison.OrdinalIgnoreCase))
+                {
+                    return tipo;
+                }
+            }
+            return TipoMovimentacaoTarefa.Criacao;
         }
     }
 }

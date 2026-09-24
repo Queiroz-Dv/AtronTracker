@@ -6,6 +6,8 @@ using Application.UseCases.TarefaCases.Movimentacao;
 using Domain.Enums;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
+using System;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases
@@ -32,7 +34,7 @@ namespace Application.UseCases.TarefaCases
             if (responsavelResultado.TeveFalha)
                 return Resultado.Falha(responsavelResultado.Messages);
 
-            if (tarefaDTO.DestinoInicial == DestinoInicialTarefa.Equipe.ToString())
+            if (tarefaDTO.DestinoInicial == DestinoInicialTarefa.Equipe.GetDescription())
             {
                 var departamentoEquipeResultado = DefinirDepartamentoEquipePorTarefaCase.Executar(tarefaDTO, responsavelResultado.Dados!);
                 if (departamentoEquipeResultado.TeveFalha)
