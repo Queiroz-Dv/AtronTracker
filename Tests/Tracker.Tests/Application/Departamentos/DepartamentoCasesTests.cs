@@ -61,8 +61,7 @@ public sealed class DepartamentoCasesTests
 
     private static CriarDepartamentoCase CriarCase(IDepartamentoRepository repository)
     {
-        return new CriarDepartamentoCase( null,
-            CriarVinculacaoGestor(),
+        return new CriarDepartamentoCase(CriarVinculacaoGestor(),
             new DepartamentoMapping(),
             repository,
             new DepartamentoValidacoes());

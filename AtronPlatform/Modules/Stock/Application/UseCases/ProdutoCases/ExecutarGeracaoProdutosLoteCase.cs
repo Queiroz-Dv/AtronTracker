@@ -44,9 +44,12 @@ public sealed class ExecutarGeracaoProdutosLoteCase(
             return Resultado<GeracaoProdutosLoteResultado>.Falha(
                 ProdutoResource.ErroInesperadoGerarLote);
 
-        foreach (var produto in lote.Produtos)
+        if (!auditoriaProduto.IsNullable())
         {
-            await auditoriaProduto.RegistrarCriacaoAsync(produto);
+            foreach (var produto in lote.Produtos)
+            {
+                await auditoriaProduto.RegistrarCriacaoAsync(produto);
+            }
         }
 
         return Resultado<GeracaoProdutosLoteResultado>.Sucesso(new(
