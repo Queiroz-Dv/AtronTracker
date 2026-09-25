@@ -10,6 +10,7 @@ using Domain.Interfaces;
 using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases
@@ -54,7 +55,7 @@ namespace Application.UseCases.TarefaCases
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_SolicitacaoPendenteExistente);
 
             var aprovador = await _aprovadorResolver.ResolverAsync(usuario.Dados, tarefa);
-            if (aprovador is null)
+            if (aprovador.IsNullable() && !possuiResponsabilidadeGestao)
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falha(TarefaResource.Erro_AprovadorIndisponivel);
 
             var solicitacao = SolicitacaoObtencaoTarefa.CriarPendente(tarefa, usuario.Dados, aprovador);
@@ -66,7 +67,10 @@ namespace Application.UseCases.TarefaCases
             if (movimentacao.TeveFalha)
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falhas(movimentacao.Messages);
 
-            await _notificacaoCase.ExecutarAsync(solicitacaoGravada.CriarNotificacaoDeRecebimento());
+            if (!possuiResponsabilidadeGestao)
+            {
+                await _notificacaoCase.ExecutarAsync(solicitacaoGravada.CriarNotificacaoDeRecebimento());
+            }
 
             var dto = _mapper.MapToDto(solicitacaoGravada);
             return Resultado<SolicitacaoObtencaoTarefaDTO>.Sucesso(dto).AdicionarMensagem(TarefaResource.Mensagem_SolicitacaoEnviada);

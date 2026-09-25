@@ -1,8 +1,7 @@
 # Decisões arquiteturais do Atron
 
 Os ADRs são organizados pelo módulo proprietário da decisão. Contratos que
-afetam mais de um módulo ficam em `transversais/` para não atribuir uma decisão
-da plataforma artificialmente ao Tracker ou ao Stock.
+afetam mais de um módulo ficam em `transversais/` para não atribuir uma decisão da plataforma artificialmente aos módulos base.
 
 A numeração continua sendo global e sequencial. A pasta identifica o
 proprietário ou o alcance, mas não reinicia a sequência.
@@ -13,12 +12,13 @@ proprietário ou o alcance, mas não reinicia a sequência.
 |---|---|---|
 | [0001](./tracker/0001-substituir-salarios-por-planejamento-de-custos.md) | Aceito | Substituir salários por planejamento de custos. |
 | [0002](./tracker/0002-remodelar-tarefas-com-gestao-e-notificacoes-internas.md) | Aceito | Remodelar tarefas com gestão e notificações internas. |
+| [0012](./tracker/0012-isolar-tenant-via-interceptor-e-global-query-filter.md) | Aceito | Isolar tenant via interceptor e Global Query Filter com tabela polimórfica RecursoWorkspace. |
 
 ## Atron Stock
 
 | ADR | Status | Decisão |
 |---|---|---|
-| [0006](./stock/0006-entregar-rotina-de-categorias-no-atron-stock.md) | Suspenso | Retomar Categoria somente após a conclusão das Fases 1 a 9 da reestruturação modular. |
+| [0006](./stock/0006-entregar-rotina-de-categorias-no-atron-stock.md) | Aceito | Retomar Categoria somente após a conclusão das Fases 1 a 9 da reestruturação modular. |
 | [0011](./stock/0011-modelar-produto-patrimonial.md) | Aceito | Modelar Produto patrimonial e evoluir a geração em lote de forma incremental. |
 
 ## Decisões transversais

@@ -12,7 +12,7 @@ public sealed class GeracaoProdutosLoteWorker(
     TimeProvider timeProvider,
     ILogger<GeracaoProdutosLoteWorker> logger) : BackgroundService
 {
-    private static readonly TimeSpan IntervaloSemTrabalho = TimeSpan.FromSeconds(2);
+    private static readonly TimeSpan IntervaloSemTrabalho = TimeSpan.FromMinutes(5);
     private static readonly TimeSpan DuracaoReserva = TimeSpan.FromMinutes(15);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

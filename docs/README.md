@@ -1,6 +1,6 @@
 # Documentação do Atron
 
-## Começar e contribuir
+## Início
 
 - [Apresentação e capturas da plataforma](../README.md).
 - [Execução local com Visual Studio e Angular](desenvolvimento/execucao-local.md).
@@ -27,7 +27,7 @@
 - [Operação das notificações](operacao-notificacoes-internas.md).
 - [Notas de versão](releases/README.md) e [changelog](../CHANGELOG.md).
 
-## Como manter
+## Como mantenho
 
 `CONTEXT.md` descreve regras duráveis; ADRs registram decisões e alternativas;
 guias de operação descrevem procedimentos; planos descrevem trabalho ainda não

@@ -1,23 +1,18 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
+﻿using Domain.Constants;
+using Shared.Attributes;
+using Shared.Domain.Entities.Identity;
+using System.Collections.Generic;
 
 namespace Domain.Entities
 {
-    public sealed class Cargo
+    [TenantModule(TrackerModulos.Cargo)]
+    public sealed class Cargo : ITenantScoped
     {
-        [Key] public int Id { get; set; }
-        [MaxLength(10)] public string Codigo { get; set; }
-        [MaxLength(50)] public string Descricao { get; set; }
-
-        [NotMapped] public int DepartamentoId_Antigo { get; set; }
-
-        [ForeignKey(nameof(DepartamentoId))]
-        [NotNull] public int DepartamentoId { get; set; }
-
-        [ForeignKey(nameof(DepartamentoCodigo))]
-        [NotNull][MaxLength(10)] public string DepartamentoCodigo { get; set; }
+        public int Id { get; set; }
+        public string Codigo { get; set; }
+        public string Descricao { get; set; }
+        public int DepartamentoId { get; set; }
+        public string DepartamentoCodigo { get; set; }
 
         public Departamento Departamento { get; set; }
 

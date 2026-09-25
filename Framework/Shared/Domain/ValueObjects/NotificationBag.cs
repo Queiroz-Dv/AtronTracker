@@ -27,9 +27,25 @@ namespace Shared.Domain.ValueObjects
             AddNotification(description, ENotificationType.Error);
         }
 
+        public void AdicionarErros(IEnumerable<NotificationMessage> erros)
+        {
+            foreach (var erro in erros)
+            {
+                AdicionarErro(erro.Descricao);
+            }
+        }
+
         public void AdicionarAviso(string description)
         {
             AddNotification(description, ENotificationType.Aviso);
+        }
+
+        public void AdicionarAvisos(IEnumerable<NotificationMessage> avisos)
+        {
+            foreach (var aviso in avisos)
+            {
+                AdicionarAviso(aviso.Descricao);
+            }
         }
 
         public void AdicionarErroCampoObrigatorio(string campo)
@@ -58,9 +74,19 @@ namespace Shared.Domain.ValueObjects
             AddNotification(string.Format(NotificacoesPadronizadas.Mensagem_RegistroAtualizado, registro), ENotificationType.Sucesso);
         }
 
+        public void MesagemFalhaNaGravacao(string registro)
+        {
+            AddNotification(string.Format(NotificacoesPadronizadas.Erro_FalhaNaGravacao, registro), ENotificationType.Sucesso);
+        }
+
         public void MensagemRegistroNaoEncontrado(string key = "")
         {
             AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoNaoEncontrado, key));
+        }
+
+        public void MensagemRegistroExistente(string key = "")
+        {
+            AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoExistente, key));
         }
 
         public void MensagemRegistroRemovido(string registro = "")
@@ -83,6 +109,7 @@ namespace Shared.Domain.ValueObjects
 
         public void MensagemRegistroNaoExiste(string key)
         {
+            // Consertar depois 
             AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoExistente, key));
         }
     }

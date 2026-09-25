@@ -1,7 +1,6 @@
 using Application.DTO;
 using Application.Interfaces.Services;
-using Domain.Enums;
-using Domain.Interfaces;
+using Application.UseCases.WorkspaceCases;
 using Shared.Application.DTOS.Users;
 using System;
 using System.Linq;
@@ -10,27 +9,14 @@ using System.Threading.Tasks;
 namespace Application.Services.AuthServices
 {
     public class DadosComplementaresDoUsuarioService(
-        IPerfilDeAcessoService perfilDeAcessoService,
-        IEmpresaRepository empresaRepository = null) : IDadosComplementaresDoUsuarioService
+        ObterWorkspaceCase workspaceCase,
+        IPerfilDeAcessoService perfilDeAcessoService) : IDadosComplementaresDoUsuarioService
     {
-        private readonly IPerfilDeAcessoService _perfilDeAcessoService = perfilDeAcessoService;
-        private readonly IEmpresaRepository _empresaRepository = empresaRepository;
 
         public async Task<DadosComplementaresDoUsuarioDTO> ObterInformacoesComplementaresDoUsuario(UsuarioDTO usuarioDTO)
         {
-            var vinculo = _empresaRepository is null
-                ? null
-                : await _empresaRepository.ObterVinculoAsync(usuarioDTO.Id, usuarioDTO.Codigo);
-            var dadosDaEmpresa = vinculo is null
-                ? null
-                : new DadosDaEmpresaDTO
-                {
-                    Id = vinculo.EmpresaId,
-                    Codigo = vinculo.Empresa.Codigo,
-                    NomeFantasia = vinculo.Empresa.NomeFantasia,
-                    AcessoPermitido = vinculo.Status == StatusUsuarioEmpresa.Ativo
-                        && vinculo.Empresa.Status == StatusEmpresa.Ativa
-                };
+            var workspaceResultado = await workspaceCase.ObterPorDadosDoUsuario(usuarioDTO.Codigo, usuarioDTO.Email);
+            var workspace = workspaceResultado.Dados!;
 
             var dadosComplementares = new DadosComplementaresDoUsuarioDTO
             {
@@ -41,14 +27,17 @@ namespace Application.Services.AuthServices
                     Email = usuarioDTO.Email,
                     CodigoDoCargo = usuarioDTO.CargoCodigo,
                     CodigoDoDepartamento = usuarioDTO.DepartamentoCodigo,
+                    Workspace = workspace != null ? new WorkspaceDoUsuarioDTO()
+                    {
+                        Codigo = workspace.Codigo,
+                        Descricao = workspace.Descricao
+                    } : null,
                 },
-
                 DadosDoPerfil = [],
-                DadosDaEmpresa = dadosDaEmpresa,
                 DadosDoToken = new TempoDosTokensDoUsuarioDTO(DateTime.UtcNow.AddMinutes(15), DateTime.UtcNow.AddDays(7))
             };
 
-            var perfisAssociados = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioAsync(usuarioDTO.Codigo);
+            var perfisAssociados = await perfilDeAcessoService.ObterPerfisPorCodigoUsuarioAsync(usuarioDTO.Codigo);
 
             foreach (var perf in perfisAssociados)
             {

@@ -36,6 +36,6 @@ namespace Application.Mapping
         {
             entityToUpdate.Descricao = dto.Descricao;
             entityToUpdate.GestorDepartamentoCodigo = dto.GestorDepartamentoCodigo?.ToUpper();
-        }        
+        }
     }
 }

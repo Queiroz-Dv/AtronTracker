@@ -13,6 +13,7 @@ using Domain.Interfaces;
 using Moq;
 using Shared.Application.Interfaces.Mapping;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 using Xunit;
 
 namespace Tracker.Tests.Tarefas;
@@ -36,7 +37,7 @@ public class DecidirTarefaCaseTests
         Assert.Equal((int)StatusSolicitacaoObtencaoTarefa.Aprovada, resultado.Dados!.Status);
         Assert.Equal(cenario.Solicitante.Id, cenario.Tarefa.UsuarioId);
         Assert.Equal(cenario.Solicitante.Codigo, cenario.Tarefa.UsuarioCodigo);
-        Assert.Equal((int)DestinoInicialTarefa.Usuario, cenario.Tarefa.DestinoInicial);
+        Assert.Equal(DestinoInicialTarefa.Usuario.GetDescription(), cenario.Tarefa.DestinoInicial);
         Assert.Null(cenario.Tarefa.DepartamentoId);
         Assert.Null(cenario.Tarefa.CargoId);
         Assert.Equal(5, cenario.Tarefa.TarefaEstadoId);
@@ -180,7 +181,7 @@ public class DecidirTarefaCaseTests
         var tarefa = new Tarefa
         {
             Id = 30,
-            DestinoInicial = (int)DestinoInicialTarefa.DepartamentoCargo,
+            DestinoInicial = DestinoInicialTarefa.DepartamentoCargo.GetDescription(),
             DepartamentoId = 100,
             DepartamentoCodigo = "DPT",
             Departamento = new Departamento { Id = 100, Codigo = "DPT" },

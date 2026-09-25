@@ -2,7 +2,7 @@ using Domain.Interfaces.Identity;
 using Shared.Application.Security;
 using Shared.Application.Interfaces.Service;
 
-namespace AtronTracker.Infrastructure.Identity;
+namespace Infrastructure.Identity;
 
 internal sealed class RefreshTokenUnicidadeService(
     IUsuarioIdentityRepository usuarioIdentityRepository)

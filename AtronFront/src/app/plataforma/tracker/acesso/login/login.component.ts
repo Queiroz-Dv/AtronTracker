@@ -10,7 +10,6 @@ import { ControlErrorComponent } from '../../../../shared/components/control-err
 import { LoginRequest } from '../../../../shared/models/request/login-request.model';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 
-
 @Component({
   standalone: true,
   selector: 'c-login',
@@ -20,10 +19,12 @@ import { SharedModule } from '../../../../shared/modules/shared.module';
 })
 
 export class LoginComponent implements OnInit {
+
   form!: FormGroup;
   id?: number;
   passwordType: string = 'password';
   autenticando = false;
+
   constructor(
     private fb: FormBuilder,
     private loginService: AcessoService,
@@ -56,8 +57,10 @@ export class LoginComponent implements OnInit {
 
     this.autenticando = true;
     const loginPayload = new LoginRequest();
+
     loginPayload.codigoDoUsuario = this.form.value.codigo;
     loginPayload.senha = this.form.value.senha;
+
     this.loginService.autenticar(loginPayload)
       .pipe(finalize(() => this.autenticando = false))
       .subscribe({

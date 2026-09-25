@@ -1,19 +1,16 @@
-﻿using Application.DTO.Request;
-using Application.Email.Compositores;
+using Application.DTO;
+using Application.DTO.Request;
+using Application.EmailCompositor.Compositores;
 using Application.Interfaces.ApplicationInterfaces;
-using Application.Interfaces.Contexts;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
-using Application.Mapping;
 using Application.Policies.PlanejamentoCustos;
 using Application.Policies.Tarefas;
+using Application.Records.Facade;
+using Application.Resolvers;
 using Application.Resolvers.Tarefas;
-using Application.Records.Usuario;
 using Application.Services.AuthServices;
-using Application.Services.Contexts;
 using Application.Services.EntitiesServices;
-using Application.Services.EntitiesServices.Empresas;
-using Application.UseCases.EmpresaCases;
 using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
@@ -21,20 +18,21 @@ using Application.Services.EntitiesServices.Tarefas.Obtencao;
 using Application.Services.Identity;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
+using Application.UseCases.EmailCases;
 using Application.UseCases.PerfilDeAcessoCases;
 using Application.UseCases.PlanejamentoCustoCases;
 using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using Application.UseCases.UsuarioCases;
-using Application.Validador;
-using AtronTracker.Infrastructure.Context;
-using AtronTracker.Infrastructure.Identity;
-using Domain.Entities;
+using Application.UseCases.WorkspaceCases;
+using Application.Validacoes;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Infrastructure.Configuration;
+using Infrastructure.Context;
+using Infrastructure.Identity;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.ApplicationRepositories;
 using Infrastructure.Repositories.Identity;
@@ -61,8 +59,9 @@ namespace Infrastructure.DependencyInjection
             var database = DatabaseProviderResolver.Resolve(configuration);
             var migrationsAssembly = typeof(AtronDbContext).Assembly.GetName().Name!;
 
-            services.AddDbContext<AtronDbContext>(options =>
-                options.UseConfiguredDatabase(database, migrationsAssembly));
+            services.AddDbContext<AtronDbContext>(options =>            
+            options.UseConfiguredDatabase(database, migrationsAssembly)
+            );
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
                     {
@@ -84,10 +83,11 @@ namespace Infrastructure.DependencyInjection
             services.AddTrackerAuthorization();
             ConfigureModuloServices(services);
             ConfigureDepartamentoServices(services);
+            ConfigureEmpresaServices(services);
+            ConfigureWorkspaceServices(services);
             ConfigureCargoServices(services);
             ConfigurePlanejamentoCustoServices(services);
             ConfigureUsuarioServices(services);
-            ConfigureEmpresaServices(services);
             ConfigureUsuarioCargoDepartamentoServices(services);
             ConfigureTarefaRepositoryServices(services);
             ConfigureDefaultUserRoleServices(services);
@@ -103,30 +103,8 @@ namespace Infrastructure.DependencyInjection
             return services;
         }
 
-        private static void ConfigureEmpresaServices(IServiceCollection services)
-        {
-            services.AddScoped<IEmpresaRepository, EmpresaRepository>();
-            services.AddScoped<EmpresaMapping>();
-            services.AddScoped<EmpresaCadastroValidador>();
-            services.AddScoped<IValidador<EmpresaCadastroRequest>>(provider =>
-                provider.GetRequiredService<EmpresaCadastroValidador>());
-            services.AddScoped<UsuarioEmpresaAtualService>();
-            services.AddScoped<IEmpresaAtualService, EmpresaAtualService>();
-            services.AddScoped<CadastrarEmpresaCase>();
-            services.AddScoped<ObterEmpresaCase>();
-            services.AddScoped<BuscarEmpresasCase>();
-            services.AddScoped<SolicitarAssociacaoEmpresaCase>();
-            services.AddScoped<EmpresaResponsavelService>();
-             services.AddScoped<ObterSolicitacoesEmpresaCase>();
-             services.AddScoped<ObterAssociacaoEmpresaCase>();
-            services.AddScoped<DecidirSolicitacaoEmpresaCase>();
-        }
-
         private static void AddTrackerSharedAdapters(this IServiceCollection services)
         {
-            services.AddScoped<ILoginContext, LoginContext>();
-            services.AddScoped<IUsuarioContext, UsuarioContext>();
-            services.AddScoped<IControleDeSessaoContext, ControleDeSessaoContext>();
             services.AddScoped<ICacheUsuarioService, CacheUsuarioService>();
             services.AddScoped<IDadosComplementaresDoUsuarioService, DadosComplementaresDoUsuarioService>();
             services.AddScoped<IUserIdentityService, UserIdentityService>();
@@ -150,8 +128,17 @@ namespace Infrastructure.DependencyInjection
             services.AddSingleton<ITokenTemporarioService, TokenTemporarioService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
+            services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
+            services.AddScoped<ICadastroUsuarioService, CadastroUsuarioService>();
+            services.AddScoped<IRecuperacaoSenhaService, RecuperacaoSenhaService>();
+            services.AddScoped<IAcessoEmailCompositor, AcessoEmailCompositor>();
+            services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
+            services.AddScoped<IValidador<DadosDoTokenDTO>, DadosDoTokenValidador>();
+            services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidacoes>();
 
-            services.AddScoped(provider => new CadastroUsuarioContextRecord(
+            services.AddScoped(provider => new CadastroUsuarioFacadeRecord(
+                null,
+                null,
                 provider.GetRequiredService<IUsuarioRepository>(),
                 provider.GetRequiredService<IUsuarioIdentityRepository>(),
                 provider.GetRequiredService<IEmailService>(),
@@ -159,9 +146,10 @@ namespace Infrastructure.DependencyInjection
                 provider.GetRequiredService<IValidador<UsuarioRegistroRequest>>(),
                 provider.GetRequiredService<IEnderecoFrontendService>(),
                 provider.GetRequiredService<IConfirmacaoEmailRepository>(),
-                provider.GetRequiredService<IConfirmacaoEmailCodigoService>()));
+                provider.GetRequiredService<IConfirmacaoEmailCodigoService>()
+            ));
 
-            services.AddScoped(provider => new RecuperacaoSenhaContextRecord(
+            services.AddScoped(provider => new RecuperacaoSenhaFacadeRecord(
                 provider.GetRequiredService<IUsuarioRepository>(),
                 provider.GetRequiredService<IUsuarioIdentityRepository>(),
                 provider.GetRequiredService<ILoginRepository>(),
@@ -169,15 +157,8 @@ namespace Infrastructure.DependencyInjection
                 provider.GetRequiredService<IEmailService>(),
                 provider.GetRequiredService<IAcessoEmailCompositor>(),
                 provider.GetRequiredService<IEnderecoFrontendService>(),
-                provider.GetRequiredService<ITokenTemporarioService>()));
-
-            services.AddScoped<ICadastroUsuarioService, CadastroUsuarioService>();
-            services.AddScoped<IRecuperacaoSenhaService, RecuperacaoSenhaService>();
-            services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
-            services.AddScoped<IAcessoEmailCompositor, AcessoEmailCompositor>();
-            services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
-            services.AddScoped<IValidador<DadosDoTokenDTO>, DadosDoTokenValidador>();
-            services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidador>();
+                provider.GetRequiredService<ITokenTemporarioService>()
+            ));
         }
 
         private static void ConfigureDefaultUserRoleServices(IServiceCollection services)
@@ -236,6 +217,8 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<CriarUsuarioCase>();
             services.AddScoped<AtualizarUsuarioCase>();
             services.AddScoped<EnviarEmailPrimeiroAcessoCase>();
+            services.AddScoped<ProcessarEnvioEmailConfirmacaoCase>();
+            services.AddScoped<CriarConfirmacaoEmailCase>();
             services.AddScoped<RemoverUsuarioCase>();
             services.AddScoped<DesativarUsuarioCase>();
             services.AddScoped<SolicitarReativacaoCase>();
@@ -247,9 +230,21 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<VerificarAtualizacaoUsuarioCase>();
             services.AddScoped<VerificarUsuarioCase>();
             services.AddScoped<VincularGestorImediatoCase>();
+            services.AddScoped<RegistrarContaUsuarioCase>();
+            services.AddScoped<ConfirmarEmailContaUsuarioCase>();
+            services.AddScoped<VerificarUsuarioExistenteCase>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IConfirmacaoEmailRepository, ConfirmacaoEmailRepository>();
             services.AddScoped<IValidador<UsuarioRequest>, UsuarioRequestValidador>();
+        }
+
+        private static void ConfigureWorkspaceServices(IServiceCollection services)
+        {
+            services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+            services.AddScoped<RegistrarWorkspaceCase>();
+            services.AddScoped<ObterWorkspaceCase>();
+            services.AddScoped<WorkspaceResolver>();
+            services.AddScoped<IUserAccessor, WorkspaceResolver>();
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)
@@ -283,8 +278,13 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<CriarDepartamentoCase>();
             services.AddScoped<ExcluirDepartamentoCase>();
             services.AddScoped<ObterDepartamentoCase>();
-            services.AddScoped<VincularGestorDepartamentoCase>();
+            services.AddScoped<VincularGestorDepartamentoService>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
+        }
+
+        private static void ConfigureEmpresaServices(IServiceCollection services)
+        {
+            services.AddScoped<IEmpresaRepository, EmpresaRepository>();
         }
 
         private static void ConfigureModuloServices(IServiceCollection services)
@@ -306,6 +306,5 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IPerfilDeAcessoUsuarioRelacionamentoService, PerfilDeAcessoUsuarioRelacionamentoService>();
             services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
         }
-
     }
 }

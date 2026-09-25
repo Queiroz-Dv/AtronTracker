@@ -1,13 +1,15 @@
 using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Services.AuthServices;
+using Application.UseCases.WorkspaceCases;
 using Moq;
 using Xunit;
 
-namespace Tracker.Tests;
+namespace Tracker.Tests.Application.Acesso;
 
 public class DadosComplementaresDoUsuarioServiceTests
 {
+
     [Fact]
     public async Task ObterInformacoesComplementaresDoUsuario_DevePropagarModuloCategoria()
     {
@@ -23,7 +25,12 @@ public class DadosComplementaresDoUsuarioServiceTests
                     Modulos = [new ModuloDTO { Codigo = "CAT", Descricao = "Categorias" }]
                 }
             ]);
-        var service = new DadosComplementaresDoUsuarioService(perfis.Object);
+        var usuarioMapper = new Mock<global::Shared.Application.Interfaces.Mapping.IToDtoMapper<global::Domain.Entities.Usuario, global::Application.DTO.UsuarioDTO>>();
+        var mapping = new global::Application.Mapping.WorkspaceMapping(usuarioMapper.Object);
+        var workspaceRepo = new Mock<global::Domain.Interfaces.UsuarioInterfaces.IWorkspaceRepository>();
+        workspaceRepo.Setup(r => r.ObterWorkspacePorResponsavelEmailAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((global::Domain.Entities.Workspace?)null);
+        var obterWorkspaceCase = new global::Application.UseCases.WorkspaceCases.ObterWorkspaceCase(mapping, workspaceRepo.Object);
+        var service = new DadosComplementaresDoUsuarioService(obterWorkspaceCase, perfis.Object);
 
         var dados = await service.ObterInformacoesComplementaresDoUsuario(new UsuarioDTO
         {
@@ -53,7 +60,12 @@ public class DadosComplementaresDoUsuarioServiceTests
                     Modulos = [new ModuloDTO { Codigo = "TAR", Descricao = "Tarefas" }]
                 }
             ]);
-        var service = new DadosComplementaresDoUsuarioService(perfis.Object);
+        var usuarioMapper = new Mock<global::Shared.Application.Interfaces.Mapping.IToDtoMapper<global::Domain.Entities.Usuario, global::Application.DTO.UsuarioDTO>>();
+        var mapping = new global::Application.Mapping.WorkspaceMapping(usuarioMapper.Object);
+        var workspaceRepo = new Mock<global::Domain.Interfaces.UsuarioInterfaces.IWorkspaceRepository>();
+        workspaceRepo.Setup(r => r.ObterWorkspacePorResponsavelEmailAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((global::Domain.Entities.Workspace?)null);
+        var obterWorkspaceCase = new global::Application.UseCases.WorkspaceCases.ObterWorkspaceCase(mapping, workspaceRepo.Object);
+        var service = new DadosComplementaresDoUsuarioService(obterWorkspaceCase, perfis.Object);
 
         var dados = await service.ObterInformacoesComplementaresDoUsuario(new UsuarioDTO
         {

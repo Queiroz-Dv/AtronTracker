@@ -6,8 +6,8 @@
 abra um pull request e integre somente alterações revisadas e verificadas.
 
 Durante a transição de 27/08/2026, o Render continua acompanhando `RC2`.
-Não faça merge nem push em `RC2` apenas para sincronizar branches: isso pode
-iniciar um deploy. Consulte o [registro da transição](docs/operacao/transicao-branches-2026-08-27.md).
+Não faça merge nem push em `RC2` apenas para sincronizar branches. 
+Consulte o [registro da transição](docs/operacao/transicao-branches-2026-08-27.md).
 
 | Tipo | Exemplo |
 | --- | --- |
@@ -17,10 +17,11 @@ iniciar um deploy. Consulte o [registro da transição](docs/operacao/transicao-
 | Documentação | `docs/fluxo-de-publicacao` |
 | Automação | `ci/validacao-backend` |
 | Correção urgente | `hotfix/correcao-login` |
+| Data de Corte | `RC/070926` |
 
 Branches criadas por agentes usam `codex/`, por exemplo
 `codex/feat-stock-recebimento`. Não reutilize branches numeradas para acumular
-entregas sem relação. Versões publicadas são identificadas por tags `vX.Y.Z`.
+entregas sem relação a não ser que use a forma de data de corte para grandes atualizações. Versões publicadas são identificadas por tags `vX.Y.Z`.
 
 ```powershell
 git fetch origin
@@ -37,11 +38,11 @@ Nunca use `reset --hard`, `clean` ou force push como rotina de sincronização.
 Use Conventional Commits, com descrição em português e escopo quando útil:
 
 ```text
-feat(stock): adicionar recebimento parcial
-fix(stock): impedir entrada duplicada
-refactor(tracker): separar regras de atribuicao
-docs: documentar o processo de publicacao
-ci: validar backend e frontend nos pull requests
+FEAT: adicionar recebimento parcial
+FIX: impedir entrada duplicada
+REFACT: separar regras de atribuicao
+DOCSs: documentar o processo de publicacao
+CI: validar backend e frontend nos pull requests
 ```
 
 Use `!` e explique `BREAKING CHANGE` quando houver incompatibilidade de contrato.

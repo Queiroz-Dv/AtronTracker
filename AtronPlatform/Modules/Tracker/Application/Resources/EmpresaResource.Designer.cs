@@ -61,195 +61,102 @@ namespace Application.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to código.
+        ///   Looks up a localized string similar to O código para o cadastramento da não foi devidamente informado..
         /// </summary>
-        public static string Campo_Codigo {
+        public static string Erro_CodigoVazioOuInvalido {
             get {
-                return ResourceManager.GetString("Campo_Codigo", resourceCulture);
+                return ResourceManager.GetString("Erro_CodigoVazioOuInvalido", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to e-mail.
+        ///   Looks up a localized string similar to O e-mail não foi informado corretamente..
         /// </summary>
-        public static string Campo_Email {
+        public static string Erro_EmailVazioOuInvalido {
             get {
-                return ResourceManager.GetString("Campo_Email", resourceCulture);
+                return ResourceManager.GetString("Erro_EmailVazioOuInvalido", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to endereço.
+        ///   Looks up a localized string similar to O endereço não foi devidamente informado..
         /// </summary>
-        public static string Campo_Endereco {
+        public static string Erro_EnderecoVazioOuInvalido {
             get {
-                return ResourceManager.GetString("Campo_Endereco", resourceCulture);
+                return ResourceManager.GetString("Erro_EnderecoVazioOuInvalido", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to nome fantasia.
+        ///   Looks up a localized string similar to O nome fantiasia informado está inválido.
         /// </summary>
-        public static string Campo_NomeFantasia {
+        public static string Erro_NomeFantasiaVazioOuInvalido {
             get {
-                return ResourceManager.GetString("Campo_NomeFantasia", resourceCulture);
+                return ResourceManager.GetString("Erro_NomeFantasiaVazioOuInvalido", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to telefone.
+        ///   Looks up a localized string similar to O número não foi devidamente informado.
         /// </summary>
-        public static string Campo_Telefone {
+        public static string Erro_NumeroVazioOuInvalido {
             get {
-                return ResourceManager.GetString("Campo_Telefone", resourceCulture);
+                return ResourceManager.GetString("Erro_NumeroVazioOuInvalido", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to O vínculo ou a empresa não está ativo..
+        ///   Looks up a localized string similar to O status informado está inválido ou não condiz com o que há no sistema..
         /// </summary>
-        public static string Erro_AcessoIndisponivel {
+        public static string Erro_StatusInvalido {
             get {
-                return ResourceManager.GetString("Erro_AcessoIndisponivel", resourceCulture);
+                return ResourceManager.GetString("Erro_StatusInvalido", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to O cadastro da empresa já foi concluído ou possui vínculos..
+        ///   Looks up a localized string similar to O tamanho do código é entre 3 até 25 caracteres..
         /// </summary>
-        public static string Erro_CadastroConcluido {
+        public static string Erro_TamanhoCodigo {
             get {
-                return ResourceManager.GetString("Erro_CadastroConcluido", resourceCulture);
+                return ResourceManager.GetString("Erro_TamanhoCodigo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to O campo {0} deve ter no máximo {1} caracteres..
+        ///   Looks up a localized string similar to O tamanho do e-mail é entre 10 a 30 caracteres.
         /// </summary>
-        public static string Erro_CampoLongo {
+        public static string Erro_TamanhoEmail {
             get {
-                return ResourceManager.GetString("Erro_CampoLongo", resourceCulture);
+                return ResourceManager.GetString("Erro_TamanhoEmail", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to O campo {0} é obrigatório..
+        ///   Looks up a localized string similar to O tamanho para endereço é entre 20 a 200 caracteres..
         /// </summary>
-        public static string Erro_CampoObrigatorio {
+        public static string Erro_TamanhoEndereco {
             get {
-                return ResourceManager.GetString("Erro_CampoObrigatorio", resourceCulture);
+                return ResourceManager.GetString("Erro_TamanhoEndereco", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Já existe uma empresa com o código informado..
+        ///   Looks up a localized string similar to O tamanho do nome fantasia é entre 20 a 150 caracteres..
         /// </summary>
-        public static string Erro_CodigoExistente {
+        public static string Erro_TamanhoNomeFantasia {
             get {
-                return ResourceManager.GetString("Erro_CodigoExistente", resourceCulture);
+                return ResourceManager.GetString("Erro_TamanhoNomeFantasia", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Informe um e-mail válido para a empresa..
+        ///   Looks up a localized string similar to O tamanho do número de telefone é de até 16 caracteres..
         /// </summary>
-        public static string Erro_EmailInvalido {
+        public static string Erro_TamanhoNumero {
             get {
-                return ResourceManager.GetString("Erro_EmailInvalido", resourceCulture);
+                return ResourceManager.GetString("Erro_TamanhoNumero", resourceCulture);
             }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Informe os dados da empresa..
-        /// </summary>
-        public static string Erro_RegistroNulo {
-            get {
-                return ResourceManager.GetString("Erro_RegistroNulo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to O responsável deve possuir uma conta ativa com e-mail confirmado..
-        /// </summary>
-        public static string Erro_ResponsavelInvalido {
-            get {
-                return ResourceManager.GetString("Erro_ResponsavelInvalido", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to O usuário já possui vínculo com uma empresa..
-        /// </summary>
-        public static string Erro_UsuarioJaVinculado {
-            get {
-                return ResourceManager.GetString("Erro_UsuarioJaVinculado", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Não foi possível identificar o usuário autenticado..
-        /// </summary>
-        public static string Erro_UsuarioNaoIdentificado {
-            get {
-                return ResourceManager.GetString("Erro_UsuarioNaoIdentificado", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Seu usuário ainda não está associado a uma empresa. O acesso aos módulos exige um vínculo ativo com uma empresa ativa..
-        /// </summary>
-        public static string Erro_UsuarioSemEmpresa {
-            get {
-                return ResourceManager.GetString("Erro_UsuarioSemEmpresa", resourceCulture);
-            }
-        }
-
-        public static string Erro_EmpresaObrigatoria {
-            get { return ResourceManager.GetString("Erro_EmpresaObrigatoria", resourceCulture); }
-        }
-
-        public static string Erro_EmpresaNaoEncontrada {
-            get { return ResourceManager.GetString("Erro_EmpresaNaoEncontrada", resourceCulture); }
-        }
-
-        public static string Erro_SolicitacaoDuplicada {
-            get { return ResourceManager.GetString("Erro_SolicitacaoDuplicada", resourceCulture); }
-        }
-
-        public static string Erro_ResponsavelNecessario {
-            get { return ResourceManager.GetString("Erro_ResponsavelNecessario", resourceCulture); }
-        }
-
-        public static string Erro_SolicitacaoNaoEncontrada {
-            get { return ResourceManager.GetString("Erro_SolicitacaoNaoEncontrada", resourceCulture); }
-        }
-
-        public static string Erro_EmpresaSemResponsavel {
-            get { return ResourceManager.GetString("Erro_EmpresaSemResponsavel", resourceCulture); }
-        }
-
-        public static string Evento_AssociacaoAprovada {
-            get { return ResourceManager.GetString("Evento_AssociacaoAprovada", resourceCulture); }
-        }
-
-        public static string Evento_AssociacaoRecusada {
-            get { return ResourceManager.GetString("Evento_AssociacaoRecusada", resourceCulture); }
-        }
-
-        public static string Titulo_AssociacaoAprovada {
-            get { return ResourceManager.GetString("Titulo_AssociacaoAprovada", resourceCulture); }
-        }
-
-        public static string Titulo_AssociacaoRecusada {
-            get { return ResourceManager.GetString("Titulo_AssociacaoRecusada", resourceCulture); }
-        }
-
-        public static string Mensagem_AssociacaoAprovada {
-            get { return ResourceManager.GetString("Mensagem_AssociacaoAprovada", resourceCulture); }
-        }
-
-        public static string Mensagem_AssociacaoRecusada {
-            get { return ResourceManager.GetString("Mensagem_AssociacaoRecusada", resourceCulture); }
         }
     }
 }

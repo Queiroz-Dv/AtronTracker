@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Domain.Constants;
+using Shared.Attributes;
+using Shared.Domain.Entities.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Entities
 {
-    public class Usuario : EntityBase
+    [TenantModule(TrackerModulos.Usuario)]
+    public class Usuario : ITenantScoped
     {
         public Usuario()
         {
-            
+
         }
 
         public Usuario(string codigo, string nome, string sobrenome, string email, DateTime? dataNascimento)
@@ -19,6 +23,8 @@ namespace Domain.Entities
             DataNascimento = dataNascimento;
             Inativo = false;
         }
+
+        public int Id { get; set; }
 
         public string Codigo { get; set; }
         public string Nome { get; set; }
@@ -37,6 +43,9 @@ namespace Domain.Entities
         public ICollection<Tarefa> Tarefas { get; set; }
         public ICollection<Usuario> SubordinadosDiretos { get; set; }
         public ICollection<UsuarioCargoDepartamento> UsuarioCargoDepartamentos { get; set; }
+
+        public Workspace Workspace { get; set; }
         public ICollection<PerfilDeAcessoUsuario> PerfisDeAcessoUsuario { get; set; }
+
     }
 }

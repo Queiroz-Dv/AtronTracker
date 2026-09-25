@@ -2381,7 +2381,6 @@ Atron.WebViews/assets/fontawesome/webfonts/fa-v4compatibility.woff2
 /Atron.WebApi/appsettings.json
 /Atron.WebViews/appsettings.json
 /artifacts/codex-build/WebApi
-/docs/Branding
 **/appsettings.Local.json
 **/keys/
 **/.env

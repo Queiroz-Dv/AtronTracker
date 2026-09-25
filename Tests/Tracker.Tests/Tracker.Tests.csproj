@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -20,5 +20,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\AtronPlatform\Modules\Tracker\Application\AtronTracker.Application.csproj" />
     <ProjectReference Include="..\..\AtronPlatform\Modules\Tracker\Infrastructure\AtronTracker.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructure\Repositories\Empresas\" />
   </ItemGroup>
 </Project>

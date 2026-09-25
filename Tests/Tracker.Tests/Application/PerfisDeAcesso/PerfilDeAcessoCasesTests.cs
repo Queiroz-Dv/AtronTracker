@@ -4,7 +4,7 @@ using Application.Interfaces.Services;
 using Application.Resources;
 using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.UseCases.PerfilDeAcessoCases;
-using Application.Validador;
+using Application.Validacoes;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;

@@ -18,42 +18,6 @@ Cada projeto de teste usa o nome curto do sistema ou módulo, sem repetir sua ca
 
 O nome do projeto representa o dono da funcionalidade. `Application`, `Domain`, `Infrastructure` e `Client` são detalhes de referência e podem aparecer apenas em pastas internas quando ajudarem a localizar o teste.
 
-## Estrutura
-
-```text
-Tests/
-  Platform.Tests/
-  Tracker.Tests/
-    Application/
-      Acesso/
-      Cargos/
-      Departamentos/
-      Mapping/
-      PerfisDeAcesso/
-      PlanejamentoCustos/
-      Tarefas/
-      Usuarios/
-    Infrastructure/
-      Authorization/
-      Repositories/
-    Architecture/
-    Resources/
-    TestSupport/
-      Builders/
-      Fakes/
-      Fixtures/
-  Stock.Tests/
-    Estoque/
-  Shared.Tests/
-    Email/
-    Resources/
-  Notificacoes.Tests/
-    Contratos/
-    Cliente/
-    Integracao/
-    Autorizacao/
-```
-
 As pastas `Application` e `Infrastructure` identificam a camada de produção
 exercitada pelo teste. Elas não recriam essas camadas dentro do projeto de
 testes. Builders, fakes, fixtures e factories exclusivos de teste pertencem a
@@ -68,7 +32,7 @@ evita transformar a organização física em quebra desnecessária de descoberta
 Uma funcionalidade recebe pasta, não um novo projeto, quando compartilha ciclo de execução, pacotes e fronteira de integração com o restante do módulo. Um novo projeto só é justificado quando há uma diferença real de processo hospedado, banco ou infraestrutura externa, dependência de pacote incompatível, tempo de execução ou ciclo de publicação.
 
 No Tracker, um futuro `Tracker.IntegrationTests` só deve ser criado quando os
-testes de persistência adotarem banco real ou Testcontainers, setup e teardown
+testes de persistência adotarem banco real ou TestContainers, setup e teardown
 próprios, dependências adicionais e execução separada no pipeline. Reunir
 helpers do mesmo assembly não justifica um `Tracker.TestKit` por si só.
 

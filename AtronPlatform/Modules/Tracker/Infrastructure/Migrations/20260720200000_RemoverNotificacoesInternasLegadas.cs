@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using AtronTracker.Infrastructure.Context;
+using Infrastructure.Context;
 
 #nullable disable
 

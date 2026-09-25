@@ -1,7 +1,8 @@
-﻿using Application.DTO.Request;
-using Application.Email.Compositores;
+﻿using Application.DTO;
+using Application.DTO.Request;
+using Application.EmailCompositor.Compositores;
 using Application.Interfaces.Services;
-using Application.Records.Usuario;
+using Application.Records.Email;
 using Domain.Entities;
 using Domain.Interfaces.Identity;
 using Shared.Application.Interfaces.Service;
@@ -58,11 +59,16 @@ namespace Application.UseCases.UsuarioCases
             Resultado resultadoEmail;
             try
             {
-                var email = _emailCompositor.ComporPrimeiroAcesso(new PrimeiroAcessoEmailParametrosRecord(
-                    usuario.Email,
-                    usuario.Nome,
-                    link,
-                    ValidadeConvitePrimeiroAcessoEmHoras));
+                var parametroEmailDTO = new ParametrosEmailDTO()
+                {
+                    Destinatario = usuario.Email,
+                    Email = usuario.Email,
+                    UsuarioNome = usuario.Nome,
+                    Link = link,
+                    Validade = ValidadeConvitePrimeiroAcessoEmHoras
+                };
+
+                var email = _emailCompositor.ComporPrimeiroAcesso(parametroEmailDTO);
 
                 if (email.TeveFalha)
                     return Resultado.Falha(email.Messages);

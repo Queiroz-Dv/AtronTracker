@@ -1,6 +1,7 @@
 using Application.Extensions;
 using Application.Interfaces.Services;
 using Domain.Entities;
+using Shared.Extensions;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -39,7 +40,7 @@ namespace Application.Services.AuthServices
 
         public bool ConfirmacaoValida(ConfirmacaoEmail confirmacaoEmail, string usuarioCodigo, string identificador)
         {
-            if (confirmacaoEmail is null)
+            if (confirmacaoEmail.IsNullable())
             {
                 return false;
             }

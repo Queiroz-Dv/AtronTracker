@@ -8,7 +8,6 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from '@angular/mater
 import { importProvidersFrom } from '@angular/core'; 
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
-import { EmpresaInterceptor } from './core/interceptors/empresa.interceptor';
 
 function criarPaginadorPtBr(): MatPaginatorIntl {
   const paginador = new MatPaginatorIntl();
@@ -35,7 +34,6 @@ export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }),
   provideRouter(routes),
   provideHttpClient(withInterceptorsFromDi()),
-  { provide: HTTP_INTERCEPTORS, useClass: EmpresaInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   provideNativeDateAdapter(),
   provideAnimationsAsync(),

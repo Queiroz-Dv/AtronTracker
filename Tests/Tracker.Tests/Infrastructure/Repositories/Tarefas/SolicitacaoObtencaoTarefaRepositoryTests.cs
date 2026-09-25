@@ -1,8 +1,9 @@
-using AtronTracker.Infrastructure.Context;
 using Domain.Entities;
 using Domain.Enums;
+using Infrastructure.Context;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Shared.Extensions;
 using Xunit;
 
 namespace Tracker.Tests.Tarefas;
@@ -60,7 +61,7 @@ public class SolicitacaoObtencaoTarefaRepositoryTests
         => new()
         {
             Id = id,
-            DestinoInicial = (int)DestinoInicialTarefa.Equipe,
+            DestinoInicial = DestinoInicialTarefa.Equipe.GetDescription(),
             Titulo = $"Tarefa {id}",
             Conteudo = "Conteudo",
             DataInicial = new DateTime(2026, 8, 20),

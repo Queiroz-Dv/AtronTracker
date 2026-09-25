@@ -2,6 +2,8 @@ using Application.Extensions;
 using Application.Records.Tarefa;
 using Application.Resources;
 using Domain.Entities;
+using Domain.Enums;
+using Shared.Extensions;
 using Xunit;
 
 namespace Tracker.Tests.Tarefas;
@@ -145,7 +147,7 @@ public class TarefaMovimentacaoDetalhesExtensionsTests
             TarefaEstadoId = 1,
             EstadoDaTarefa = new TarefaEstado { Id = 1, Descricao = "Em atividade" },
             UsuarioCodigo = "USR001",
-            DestinoInicial = 1,
+            DestinoInicial = DestinoInicialTarefa.Usuario.GetDescription(),
             DepartamentoCodigo = "DPT001",
             CargoCodigo = "CRG001",
             ExigeAprovacaoParaObter = false

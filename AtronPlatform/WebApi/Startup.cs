@@ -68,7 +68,6 @@ public class Startup(IConfiguration configuration)
         app.UseCors("CorsPolicy");
         app.UseRateLimiter();
         app.UseAuthentication();
-        app.UseMiddleware<AcessoEmpresaMiddleware>();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>

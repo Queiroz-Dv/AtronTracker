@@ -1,99 +1,153 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
     <value>2.0</value>
   </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
   <resheader name="reader">
     <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Erro_RegistroNulo" xml:space="preserve">
-    <value>Informe os dados da empresa.</value>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Erro_CodigoVazioOuInvalido" xml:space="preserve">
+    <value>O código para o cadastramento da não foi devidamente informado.</value>
   </data>
-  <data name="Erro_CampoObrigatorio" xml:space="preserve">
-    <value>O campo {0} é obrigatório.</value>
+  <data name="Erro_EmailVazioOuInvalido" xml:space="preserve">
+    <value>O e-mail não foi informado corretamente.</value>
   </data>
-  <data name="Erro_CampoLongo" xml:space="preserve">
-    <value>O campo {0} deve ter no máximo {1} caracteres.</value>
+  <data name="Erro_EnderecoVazioOuInvalido" xml:space="preserve">
+    <value>O endereço não foi devidamente informado.</value>
   </data>
-  <data name="Erro_EmailInvalido" xml:space="preserve">
-    <value>Informe um e-mail válido para a empresa.</value>
+  <data name="Erro_NomeFantasiaVazioOuInvalido" xml:space="preserve">
+    <value>O nome fantiasia informado está inválido</value>
   </data>
-  <data name="Erro_UsuarioNaoIdentificado" xml:space="preserve">
-    <value>Não foi possível identificar o usuário autenticado.</value>
+  <data name="Erro_NumeroVazioOuInvalido" xml:space="preserve">
+    <value>O número não foi devidamente informado</value>
   </data>
-  <data name="Erro_ResponsavelInvalido" xml:space="preserve">
-    <value>O responsável deve possuir uma conta ativa com e-mail confirmado.</value>
+  <data name="Erro_StatusInvalido" xml:space="preserve">
+    <value>O status informado está inválido ou não condiz com o que há no sistema.</value>
   </data>
-  <data name="Erro_CadastroConcluido" xml:space="preserve">
-    <value>O cadastro da empresa já foi concluído ou possui vínculos.</value>
+  <data name="Erro_TamanhoCodigo" xml:space="preserve">
+    <value>O tamanho do código é entre 3 até 25 caracteres.</value>
   </data>
-  <data name="Erro_UsuarioJaVinculado" xml:space="preserve">
-    <value>O usuário já possui vínculo com uma empresa.</value>
+  <data name="Erro_TamanhoEmail" xml:space="preserve">
+    <value>O tamanho do e-mail é entre 10 a 30 caracteres</value>
   </data>
-  <data name="Erro_CodigoExistente" xml:space="preserve">
-    <value>Já existe uma empresa com o código informado.</value>
+  <data name="Erro_TamanhoEndereco" xml:space="preserve">
+    <value>O tamanho para endereço é entre 20 a 200 caracteres.</value>
   </data>
-  <data name="Erro_AcessoIndisponivel" xml:space="preserve">
-    <value>O vínculo ou a empresa não está ativo.</value>
+  <data name="Erro_TamanhoNomeFantasia" xml:space="preserve">
+    <value>O tamanho do nome fantasia é entre 20 a 150 caracteres.</value>
   </data>
-  <data name="Erro_UsuarioSemEmpresa" xml:space="preserve">
-    <value>Seu usuário ainda não está associado a uma empresa. O acesso aos módulos exige um vínculo ativo com uma empresa ativa.</value>
-  </data>
-  <data name="Erro_EmpresaObrigatoria" xml:space="preserve">
-    <value>Selecione uma empresa para solicitar a associação.</value>
-  </data>
-  <data name="Erro_EmpresaNaoEncontrada" xml:space="preserve">
-    <value>A empresa não foi encontrada ou não está disponível para associação.</value>
-  </data>
-  <data name="Erro_SolicitacaoDuplicada" xml:space="preserve">
-    <value>Já existe uma solicitação pendente para esta empresa.</value>
-  </data>
-  <data name="Erro_ResponsavelNecessario" xml:space="preserve">
-    <value>Apenas o responsável ativo da empresa pode analisar solicitações.</value>
-  </data>
-  <data name="Erro_SolicitacaoNaoEncontrada" xml:space="preserve">
-    <value>A solicitação não foi encontrada ou já foi analisada.</value>
-  </data>
-  <data name="Erro_EmpresaSemResponsavel" xml:space="preserve">
-    <value>A empresa não possui um responsável ativo para analisar solicitações.</value>
-  </data>
-  <data name="Evento_AssociacaoAprovada" xml:space="preserve">
-    <value>Empresa.AssociacaoAprovada</value>
-  </data>
-  <data name="Evento_AssociacaoRecusada" xml:space="preserve">
-    <value>Empresa.AssociacaoRecusada</value>
-  </data>
-  <data name="Titulo_AssociacaoAprovada" xml:space="preserve">
-    <value>Associação aprovada</value>
-  </data>
-  <data name="Titulo_AssociacaoRecusada" xml:space="preserve">
-    <value>Associação recusada</value>
-  </data>
-  <data name="Mensagem_AssociacaoAprovada" xml:space="preserve">
-    <value>Sua associação à empresa {0} foi aprovada.</value>
-  </data>
-  <data name="Mensagem_AssociacaoRecusada" xml:space="preserve">
-    <value>Sua solicitação de associação à empresa {0} foi recusada.</value>
-  </data>
-  <data name="Campo_Codigo" xml:space="preserve">
-    <value>código</value>
-  </data>
-  <data name="Campo_NomeFantasia" xml:space="preserve">
-    <value>nome fantasia</value>
-  </data>
-  <data name="Campo_Endereco" xml:space="preserve">
-    <value>endereço</value>
-  </data>
-  <data name="Campo_Telefone" xml:space="preserve">
-    <value>telefone</value>
-  </data>
-  <data name="Campo_Email" xml:space="preserve">
-    <value>e-mail</value>
+  <data name="Erro_TamanhoNumero" xml:space="preserve">
+    <value>O tamanho do número de telefone é de até 16 caracteres.</value>
   </data>
 </root>

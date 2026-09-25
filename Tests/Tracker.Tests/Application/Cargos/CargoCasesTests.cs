@@ -2,14 +2,14 @@ using Application.DTO;
 using Application.Mapping;
 using Application.Policies.PlanejamentoCustos;
 using Application.UseCases.CargoCases;
-using Application.Validador;
+using Application.Validacoes;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
 using Xunit;
 
-namespace Tracker.Tests.Cargos;
+namespace Tracker.Tests.Application.Cargos;
 
 public sealed class CargoCasesTests
 {

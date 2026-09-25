@@ -1,20 +1,18 @@
+using Application.DTO;
 using Application.DTO.Request;
 using Application.Extensions;
 using Application.Interfaces.Services;
-using Application.Records.Usuario;
-using Domain.Entities;
+using Application.Records.Facade;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.AuthServices
 {
-    public class CadastroUsuarioService(CadastroUsuarioContextRecord context) : ICadastroUsuarioService
+    public class CadastroUsuarioService(CadastroUsuarioFacadeRecord context) : ICadastroUsuarioService
     {
-        private const int ValidadeConfirmacaoEmHoras = 24;
         private const int MaximoTentativasConfirmacao = 5;
 
         public async Task<Resultado> RegistrarAsync(UsuarioRegistroRequest request)
@@ -23,50 +21,22 @@ namespace Application.Services.AuthServices
             if (notificacoes.TemErros())
                 return Resultado.Falha(notificacoes);
 
-            var usuarioExistente = await context.UsuarioRepository
-                .ObterUsuarioGeralPorCodigoAsync(request.Codigo);
-            if (usuarioExistente is not null)
-                return Resultado.Falha(UsuarioResource.ErroUsuarioExistente);
-
-            if (await context.UsuarioRepository.VerificarEmailExistenteAsync(request.Email))
-                return Resultado.Falha(EmailResource.ErroEmailUtilizado);
-
-            if (await context.IdentityRepository.ContaExisteRepositoryAsync(request.Codigo, request.Email))
-                return Resultado.Falha(UsuarioResource.ErroUsuarioExistente);
+            var resultadoVerificacao = await context.VerificarUsuarioExistenteCase.ExecutarAsync(request.Codigo, request.Email);
+            if (resultadoVerificacao.TeveFalha)
+                return Resultado.Falha(resultadoVerificacao.Messages);
 
             if (!await context.IdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(request.Codigo, request.Email, request.Senha))
                 return Resultado.Falha(AuthResource.Erro_GravacaoConta);
 
-            var usuario = new Usuario(request.Codigo, request.Nome, request.Sobrenome, request.Email,
-                request.DataNascimento?.ToDateTime(TimeOnly.MinValue));
+            var entidade = request.MapearRequestParaEntidade();
 
-            if (!await context.UsuarioRepository.CriarUsuarioAsync(usuario))
+            if (!await context.UsuarioRepository.CriarUsuarioAsync(entidade))
                 return Resultado.Falha(UsuarioResource.ErroInesperadoGravacao);
 
-            var usuarioGravado = await context.UsuarioRepository.ObterUsuarioPorCodigoAsync(usuario.Codigo);
-            var confirmacao = await CriarConfirmacaoAsync(usuarioGravado.Codigo);
-            if (!confirmacao.Gravado)
-                return Resultado.Falha(AuthResource.Erro_GerarCodigoConfirmacao);
+            var usuario = await context.UsuarioRepository.ObterUsuarioPorCodigoAsync(entidade.Codigo);
+            var processoEnvioResultado = await context.ProcessarEnvioEmailConfirmacaoCase.ExecutarAsync(usuario);
 
-            var resultado = Resultado.Sucesso(string.Format(AuthResource.Mensagem_UsuarioRegistrado, usuario.Nome, usuario.Sobrenome));
-            try
-            {
-                var confirmacaoDeCadastrao = new ConfirmacaoCadastroEmailParametrosRecord(
-                    request.Email, usuario.Nome, confirmacao.Identificador, confirmacao.Link, ValidadeConfirmacaoEmHoras);
-
-                var email = context.EmailCompositor.ComporConfirmacaoCadastro(confirmacaoDeCadastrao);
-
-                if (email.TeveFalha)
-                    resultado.AdicionarAviso(string.Join(" | ", email.Messages.Select(m => m.Descricao)));
-
-                if ((await context.EmailService.EnviarAsync(email.Dados)).TeveFalha)
-                    resultado.AdicionarAviso(AuthResource.Aviso_CadastroCriadoEmailNaoEnviado);
-            }
-            catch
-            {
-                resultado.AdicionarAviso(AuthResource.Aviso_CadastroCriadoEmailNaoEnviado);
-            }
-            return resultado;
+            return Resultado.Sucesso(processoEnvioResultado.Messages);
         }
 
         public async Task<Resultado> ConfirmarEmailAsync(string codigoUsuario, string identificador)
@@ -99,7 +69,13 @@ namespace Application.Services.AuthServices
             {
                 try
                 {
-                    var email = context.EmailCompositor.ComporConfirmacaoConcluida(usuario.Email, usuario.Nome);
+                    var parametrosEmailDto = new ParametrosEmailDTO()
+                    {
+                        Email = usuario.Email,
+                        UsuarioNome = usuario.Nome,
+                    };
+
+                    var email = context.EmailCompositor.ComporConfirmacaoConcluida(parametrosEmailDto);
                     if (email.TeveFalha)
                         resultado.AdicionarAviso(string.Join(" | ", email.Messages.Select(m => m.Descricao)));
 
@@ -112,14 +88,6 @@ namespace Application.Services.AuthServices
                 }
             }
             return resultado;
-        }
-
-        private async Task<(string Link, string Identificador, bool Gravado)> CriarConfirmacaoAsync(string codigo)
-        {
-            var dados = context.ConfirmacaoCodigoService.CriarDadosConfirmacao(codigo, ValidadeConfirmacaoEmHoras);
-            var gravado = await context.ConfirmacaoRepository.GravarOuSubstituirAsync(dados.ConfirmacaoEmail);
-            var uriBase = context.EnderecoFrontendService.ObterUriBase();
-            return ($"{uriBase}/confirmar-email?usuarioCodigo={codigo}", dados.Identificador, gravado);
         }
     }
 }

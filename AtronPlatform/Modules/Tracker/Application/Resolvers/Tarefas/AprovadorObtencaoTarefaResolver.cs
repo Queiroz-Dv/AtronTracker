@@ -13,12 +13,10 @@ namespace Application.Resolvers.Tarefas
 
         public async Task<Usuario> ResolverAsync(Usuario solicitante, Tarefa tarefa)
         {
-            var codigosCandidatos = ObterCodigosCandidatos(solicitante, tarefa)
-                .Where(codigo => !codigo.IsNullOrEmpty() &&
-                !string.Equals(codigo, solicitante.Codigo))
-                .Distinct();
-
-            foreach (var codigo in codigosCandidatos)
+            var codigosCandidatos = await ObterCodigosCandidatos(solicitante, tarefa);
+            var codigosHash = codigosCandidatos.Where(x => !x.IsNullOrEmpty()).ToHashSet();
+            
+            foreach (var codigo in codigosHash)
             {
                 var aprovador = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
                 if (aprovador is not null)
@@ -28,7 +26,7 @@ namespace Application.Resolvers.Tarefas
             return null;
         }
 
-        private static List<string> ObterCodigosCandidatos(Usuario solicitante, Tarefa tarefa)
+        private async Task<List<string>> ObterCodigosCandidatos(Usuario solicitante, Tarefa tarefa)
         {
             var codigos = new List<string>
             {
@@ -37,13 +35,13 @@ namespace Application.Resolvers.Tarefas
             };
 
             var gestoresDosDepartamentos = solicitante.UsuarioCargoDepartamentos?
-                .Where(relacao => relacao.Departamento is not null)
+                .Where(relacao => !relacao.Departamento.IsNullable())
                 .OrderBy(relacao => relacao.DepartamentoCodigo)
-                .Select(relacao => relacao.Departamento.GestorDepartamentoCodigo);
+                .Select(relacao => relacao.Departamento.GestorDepartamentoCodigo);           
 
-            if (gestoresDosDepartamentos is not null)
+            if (!gestoresDosDepartamentos.IsNullable())            
                 codigos.AddRange(gestoresDosDepartamentos);
-
+            
             return codigos;
         }
     }

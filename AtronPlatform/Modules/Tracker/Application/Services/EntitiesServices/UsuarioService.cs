@@ -79,5 +79,5 @@ namespace Application.Services.EntitiesServices
 
         public async Task<Resultado<Usuario>> ObterUsuarioAtual()
             => await _obterUsuario.ObterAsync();
-    }
+    }    
 }

@@ -28,14 +28,17 @@ public class ModularArchitectureTests
         Assert.DoesNotContain("Framework/IoC", conteudo);
     }
 
-    [Fact]
-    public void DomainDoTrackerNaoPossuiReferenciasDeProjeto()
-    {
-        var referencias = LerReferenciasDeProjeto(
-            "AtronPlatform/Modules/Tracker/Domain/AtronTracker.Domain.csproj");
 
-        Assert.Empty(referencias);
-    }
+    // O Tracker agora terá apenas referências de objetos cross-cutting para evitar referência cruzada
+
+    //[Fact]
+    //public void DomainDoTrackerNaoPossuiReferenciasDeProjeto()
+    //{
+    //    var referencias = LerReferenciasDeProjeto(
+    //        "AtronPlatform/Modules/Tracker/Domain/AtronTracker.Domain.csproj");
+
+    //    Assert.Empty(referencias);
+    //}
 
     [Fact]
     public void ApplicationDoTrackerNaoReferenciaInfrastructureOuWebApi()

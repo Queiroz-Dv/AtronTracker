@@ -10,16 +10,11 @@ using System.Threading.Tasks;
 namespace Application.UseCases.DepartamentoCases
 {
     public sealed class ExcluirDepartamentoCase(
-        IDepartamentoRepository departamentoRepository,
-        ICargoRepository cargoRepository,
-        EstruturaPlanejadaPolicy estruturaPlanejadaPolicy,
-        IUsuarioCargoDepartamentoRepository relacionamentoRepository)
-    {
-        private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
-        private readonly ICargoRepository _cargoRepository = cargoRepository;
-        private readonly EstruturaPlanejadaPolicy _estruturaPlanejadaPolicy = estruturaPlanejadaPolicy;
-        private readonly IUsuarioCargoDepartamentoRepository _relacionamentoRepository = relacionamentoRepository;
-
+        EstruturaPlanejadaPolicy _estruturaPlanejadaPolicy,
+        IDepartamentoRepository _departamentoRepository,
+        ICargoRepository _cargoRepository,
+        IUsuarioCargoDepartamentoRepository _relacionamentoRepository)
+    {       
         public async Task<Resultado> ExecutarAsync(string codigo)
         {
             if (codigo.IsNullOrEmpty())
@@ -28,7 +23,7 @@ namespace Application.UseCases.DepartamentoCases
             var departamento = await _departamentoRepository
                 .ObterDepartamentoPorCodigoRepositoryAsync(codigo);
 
-            if (departamento is null)
+            if (departamento.IsNullable())
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             var estruturaPlanejada = await _estruturaPlanejadaPolicy

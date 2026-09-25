@@ -8,20 +8,16 @@ using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Services.EntitiesServices;
 
 namespace Application.UseCases.DepartamentoCases
 {
     public sealed class AtualizarDepartamentoCase(
-        VincularGestorDepartamentoCase vincularGestorDepartamento,
-        DepartamentoMapping mapper,
-        IDepartamentoRepository repository,
-        IValidador<DepartamentoDTO> validador)
+        VincularGestorDepartamentoService _vincularGestorDepartamento,
+        DepartamentoMapping _mapper,
+        IDepartamentoRepository _departamentoRepository,
+        IValidador<DepartamentoDTO> _validador)
     {
-        private readonly VincularGestorDepartamentoCase _vincularGestorDepartamento = vincularGestorDepartamento;
-        private readonly IDepartamentoRepository _departamentoRepository = repository;
-        private readonly IValidador<DepartamentoDTO> _validador = validador;
-        private readonly DepartamentoMapping _mapper = mapper;
-
         public async Task<Resultado> ExecutarAsync(string codigo, DepartamentoDTO departamentoDTO)
         {
             if (codigo.IsNullOrEmpty())
@@ -38,8 +34,8 @@ namespace Application.UseCases.DepartamentoCases
 
             entidade.MapToUpdate(departamentoDTO, _mapper);
 
-            var resultadoGestor = await _vincularGestorDepartamento
-                .ExecutarAsync(entidade, departamentoDTO.GestorDepartamentoCodigo);
+            var resultadoGestor = await _vincularGestorDepartamento.ExecutarAsync(entidade, departamentoDTO.GestorDepartamentoCodigo);
+
             if (resultadoGestor.TeveFalha)
                 return Resultado.Falha(resultadoGestor.Messages);
 

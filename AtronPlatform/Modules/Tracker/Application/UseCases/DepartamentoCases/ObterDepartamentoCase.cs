@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Mapping;
+using Application.Resolvers;
 using Domain.Interfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -11,12 +12,9 @@ using System.Threading.Tasks;
 namespace Application.UseCases.DepartamentoCases
 {
     public sealed class ObterDepartamentoCase(
-        DepartamentoMapping mapper,
-        IDepartamentoRepository departamentoRepository)
+        DepartamentoMapping _mapper,
+        IDepartamentoRepository _departamentoRepository)
     {
-        private readonly DepartamentoMapping _mapper = mapper;
-        private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
-
         public async Task<Resultado<List<DepartamentoDTO>>> ObterTodosAsync()
         {
             var entidades = await _departamentoRepository.ObterDepartmentosAsync();

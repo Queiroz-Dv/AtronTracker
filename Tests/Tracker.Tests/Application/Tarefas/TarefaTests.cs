@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Enums;
+using Shared.Extensions;
 using Xunit;
 
 namespace Tracker.Tests.Tarefas;
@@ -13,7 +14,7 @@ public class TarefaTests
         {
             TarefaEstadoId = 2,
             ExigeAprovacaoParaObter = true,
-            DestinoInicial = (int)DestinoInicialTarefa.DepartamentoCargo,
+            DestinoInicial = DestinoInicialTarefa.DepartamentoCargo.GetDescription(),
             DepartamentoId = 10,
             DepartamentoCodigo = "DPT-10",
             Departamento = new Departamento { Id = 10, Codigo = "DPT-10" },
@@ -26,7 +27,7 @@ public class TarefaTests
 
         Assert.Equal(42, tarefa.UsuarioId);
         Assert.Equal("USR-42", tarefa.UsuarioCodigo);
-        Assert.Equal((int)DestinoInicialTarefa.Usuario, tarefa.DestinoInicial);
+        Assert.Equal(DestinoInicialTarefa.Usuario.GetDescription(), tarefa.DestinoInicial);
         Assert.Null(tarefa.DepartamentoId);
         Assert.Null(tarefa.DepartamentoCodigo);
         Assert.Null(tarefa.Departamento);
@@ -44,7 +45,7 @@ public class TarefaTests
         {
             TarefaEstadoId = 1,
             ExigeAprovacaoParaObter = true,
-            DestinoInicial = (int)DestinoInicialTarefa.DepartamentoCargo,
+            DestinoInicial = DestinoInicialTarefa.DepartamentoCargo.GetDescription(),
             DepartamentoId = 10,
             DepartamentoCodigo = "DPT-10",
             CargoId = 20,
@@ -55,7 +56,7 @@ public class TarefaTests
 
         Assert.Equal(42, tarefa.UsuarioId);
         Assert.Equal("USR-42", tarefa.UsuarioCodigo);
-        Assert.Equal((int)DestinoInicialTarefa.Usuario, tarefa.DestinoInicial);
+        Assert.Equal(DestinoInicialTarefa.Usuario.GetDescription(), tarefa.DestinoInicial);
         Assert.Null(tarefa.DepartamentoId);
         Assert.Null(tarefa.DepartamentoCodigo);
         Assert.Null(tarefa.CargoId);

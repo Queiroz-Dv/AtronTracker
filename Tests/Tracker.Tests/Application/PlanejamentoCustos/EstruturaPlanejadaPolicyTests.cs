@@ -4,13 +4,13 @@ using Application.Policies.PlanejamentoCustos;
 using Application.Resources;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
-using Application.Validador;
+using Application.Validacoes;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Tracker.Tests.TestSupport.Fakes.PlanejamentoCustos;
 using Xunit;
 
-namespace Tracker.Tests.PlanejamentoCustos;
+namespace Tracker.Tests.Application.PlanejamentoCustos;
 
 public class EstruturaPlanejadaPolicyTests
 {
@@ -19,9 +19,9 @@ public class EstruturaPlanejadaPolicyTests
     {
         var departamento = new Departamento { Id = 10, Codigo = "DPT", Descricao = "Departamento" };
         var useCase = new ExcluirDepartamentoCase(
+            new EstruturaPlanejadaPolicy(new PlanejamentoCustoRepositoryFake(possuiDepartamentoPlanejado: true)),
             new DepartamentoRepositoryFake(departamentos: [departamento]),
             new CargoRepositoryFake(),
-            new EstruturaPlanejadaPolicy(new PlanejamentoCustoRepositoryFake(possuiDepartamentoPlanejado: true)),
             new UsuarioCargoDepartamentoRepositoryFake());
 
         var resultado = await useCase.ExecutarAsync("DPT");
