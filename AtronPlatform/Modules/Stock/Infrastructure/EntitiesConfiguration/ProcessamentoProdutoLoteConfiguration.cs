@@ -1,11 +1,12 @@
 #nullable enable
 
-using System.Text.Json;
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
+using System.Text.Json;
 
 namespace AtronStock.Infrastructure.EntitiesConfiguration;
 
@@ -17,7 +18,12 @@ public sealed class ProcessamentoProdutoLoteConfiguration
         builder.HasKey(item => item.Id);
         builder.Property(item => item.Status)
             .HasDefaultValue(EStatusProcessamentoProdutoLote.Pendente)
-            .IsRequired();
+            .HasConversion(
+                      tipo => tipo.GetDescription(),
+                      descricao => ParseTipoStatus(descricao)
+                   ).IsRequired();
+
+
         builder.OwnsOne(item => item.Solicitacao, solicitacao =>
         {
             solicitacao.Property(item => item.CodigoBase)
@@ -72,12 +78,28 @@ public sealed class ProcessamentoProdutoLoteConfiguration
         builder.Property(item => item.ReservadoEm).HasColumnType("timestamp with time zone");
         builder.Property(item => item.ReservaExpiraEm).HasColumnType("timestamp with time zone");
         builder.Property(item => item.TokenReserva).IsConcurrencyToken();
+
         builder.HasIndex(item => new { item.Status, item.Id });
         builder.HasIndex(item => new { item.Status, item.ReservaExpiraEm, item.Id });
+
         builder.HasIndex(item => item.LoteProdutoId).IsUnique();
         builder.HasOne(item => item.LoteProduto)
             .WithMany()
             .HasForeignKey(item => item.LoteProdutoId)
             .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    private static EStatusProcessamentoProdutoLote ParseTipoStatus(string descricao)
+    {
+        foreach (EStatusProcessamentoProdutoLote tipo in Enum.GetValues(typeof(EStatusProcessamentoProdutoLote)))
+        {
+            if (tipo.GetDescription().Equals(descricao, StringComparison.OrdinalIgnoreCase) ||
+                tipo.ToString().Equals(descricao, StringComparison.OrdinalIgnoreCase))
+            {
+                return tipo;
+            }
+        }
+
+        return EStatusProcessamentoProdutoLote.Pendente;
     }
 }

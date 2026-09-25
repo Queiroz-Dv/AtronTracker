@@ -85,12 +85,9 @@
   text-transform: uppercase;
 }
 
-.usuario-info-item strong {
-  color: var(--atron-text);
-  font-size: 0.98rem;
-  font-weight: 700;
-  line-height: 1.25;
-  overflow-wrap: anywhere;
+.usuario-info-item p {
+  font-size: 0.72rem;
+  font-weight: 500;
 }
 
 @media (max-width: 980px) {

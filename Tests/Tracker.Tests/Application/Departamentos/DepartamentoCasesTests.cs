@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Mapping;
+using Application.Services.EntitiesServices;
 using Application.UseCases.DepartamentoCases;
 using Application.Validacoes;
 using Domain.Entities;
@@ -60,8 +61,7 @@ public sealed class DepartamentoCasesTests
 
     private static CriarDepartamentoCase CriarCase(IDepartamentoRepository repository)
     {
-        return new CriarDepartamentoCase(
-            CriarVinculacaoGestor(),
+        return new CriarDepartamentoCase(CriarVinculacaoGestor(),
             new DepartamentoMapping(),
             repository,
             new DepartamentoValidacoes());
@@ -76,9 +76,9 @@ public sealed class DepartamentoCasesTests
             new DepartamentoValidacoes());
     }
 
-    private static VincularGestorDepartamentoCase CriarVinculacaoGestor()
+    private static VincularGestorDepartamentoService CriarVinculacaoGestor()
     {
-        return new VincularGestorDepartamentoCase(new Mock<IUsuarioRepository>().Object);
+        return new VincularGestorDepartamentoService(new Mock<IUsuarioRepository>().Object);
     }
 
     private static DepartamentoDTO CriarDto(string descricao = "Departamento")

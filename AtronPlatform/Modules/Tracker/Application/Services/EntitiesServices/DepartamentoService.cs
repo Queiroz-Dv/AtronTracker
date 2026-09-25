@@ -8,16 +8,11 @@ using System.Threading.Tasks;
 namespace Application.Services.EntitiesServices
 {
     public class DepartamentoService(
-        CriarDepartamentoCase criarDepartamento,
-        AtualizarDepartamentoCase atualizarDepartamento,
-        ExcluirDepartamentoCase excluirDepartamento,
-        ObterDepartamentoCase obterDepartamento) : IDepartamentoService
-    {
-        private readonly CriarDepartamentoCase _criarDepartamento = criarDepartamento;
-        private readonly AtualizarDepartamentoCase _atualizarDepartamento = atualizarDepartamento;
-        private readonly ExcluirDepartamentoCase _excluirDepartamento = excluirDepartamento;
-        private readonly ObterDepartamentoCase _obterDepartamento = obterDepartamento;
-
+        CriarDepartamentoCase _criarDepartamento,
+        AtualizarDepartamentoCase _atualizarDepartamento,
+        ExcluirDepartamentoCase _excluirDepartamento,
+        ObterDepartamentoCase _obterDepartamento) : IDepartamentoService
+    {       
         public Task<Resultado> CriarAsync(DepartamentoDTO departamentoDTO)
             => _criarDepartamento.ExecutarAsync(departamentoDTO);
 

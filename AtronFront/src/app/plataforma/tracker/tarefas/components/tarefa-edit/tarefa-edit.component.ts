@@ -8,6 +8,7 @@ import { TarefaRequest } from '../../models/request/tarefa-request.model';
 import { Nivel, NotificacaoService } from '../../../../../core/services/notification.service';
 import { converterDataParaFormulario, formatarDataParaEnvio } from '../../../../../shared/utils/data-form.utils';
 import { TarefaHistoricoComponent } from '../tarefa-historico/tarefa-historico.component';
+import { DestinoInicialTarefa } from '../../models/destino-inicial-tarefa.model';
 
 @Component({
   selector: 'c-tarefa-edit',
@@ -49,6 +50,11 @@ export class TarefaEditComponent implements OnInit {
     this.id = +(this.route.snapshot.paramMap.get('id') || 0);
     if (this.id) {
       this.service.obterTarefaPorIdService(this.id).subscribe(trf => {
+
+        const destinoId = typeof trf.destinoInicial === 'string'
+          ? DestinoInicialTarefa.obterIdPorValorEnvio(trf.destinoInicial)
+          : (trf.destinoInicial || 1);
+
         const tarefa = {
           ...trf,
           id: trf.id,
@@ -60,7 +66,7 @@ export class TarefaEditComponent implements OnInit {
           cargoDescricao: trf.usuario?.cargo?.descricao ?? '',
           departamentoDescricao: trf.usuario?.departamento?.descricao ?? '',
           estadoId: trf.estadoDaTarefa.id,
-          destinoInicial: trf.destinoInicial || 1,
+          destinoInicial: destinoId,
           exigeAprovacaoParaObter: trf.exigeAprovacaoParaObter,
           departamentoCodigo: trf.departamentoCodigo,
           cargoCodigo: trf.cargoCodigo
@@ -80,9 +86,11 @@ export class TarefaEditComponent implements OnInit {
 
     const formValues = this.form.getRawValue();
 
+    const destinoInicialDescricao = DestinoInicialTarefa.obterValorEnvioPorId(formValues.destinoInicial);
+
     const tarefaPayload: TarefaRequest = {
       id: formValues.id || 0,
-      destinoInicial: formValues.destinoInicial,
+      destinoInicial: destinoInicialDescricao,
       exigeAprovacaoParaObter: formValues.exigeAprovacaoParaObter,
       titulo: formValues.titulo,
       conteudo: formValues.conteudo,
@@ -93,6 +101,8 @@ export class TarefaEditComponent implements OnInit {
       departamentoCodigo: formValues.departamentoCodigo,
       cargoCodigo: formValues.cargoCodigo,
     };
+
+    console.log(tarefaPayload);
 
     const operacao = this.id
       ? this.service.atualizar(this.id, tarefaPayload)

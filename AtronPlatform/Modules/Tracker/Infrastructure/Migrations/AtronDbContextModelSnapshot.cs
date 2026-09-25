@@ -31,12 +31,10 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Codigo")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasColumnType("text");
 
                     b.Property<string>("DepartamentoCodigo")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasColumnType("text");
 
                     b.Property<int>("DepartamentoId")
                         .HasColumnType("integer");
@@ -101,8 +99,7 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Codigo")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -447,6 +444,39 @@ namespace Infrastructure.Migrations
                     b.ToTable("PlanejamentosCustoCargo");
                 });
 
+            modelBuilder.Entity("Domain.Entities.RecursoWorkspace", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ModuloCodigo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecursoCodigo")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RecursoId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("WorkspaceCodigo")
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int>("WorkspaceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkspaceId", "WorkspaceCodigo");
+
+                    b.HasIndex("RecursoId", "ModuloCodigo", "WorkspaceId")
+                        .HasDatabaseName("ix_recurso_workspace_pesquisa");
+
+                    b.ToTable("RecursoWorkspace", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.SolicitacaoObtencaoTarefa", b =>
                 {
                     b.Property<int>("Id")
@@ -725,13 +755,13 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("CargoCodigo")
-                        .HasColumnType("character varying(10)");
+                        .HasColumnType("text");
 
                     b.Property<int>("DepartamentoId")
                         .HasColumnType("integer");
 
                     b.Property<string>("DepartamentoCodigo")
-                        .HasColumnType("character varying(10)");
+                        .HasColumnType("text");
 
                     b.HasKey("UsuarioId", "UsuarioCodigo", "CargoId", "CargoCodigo", "DepartamentoId", "DepartamentoCodigo");
 
@@ -1131,6 +1161,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("Cargo");
 
                     b.Navigation("PlanejamentoCusto");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RecursoWorkspace", b =>
+                {
+                    b.HasOne("Domain.Entities.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId", "WorkspaceCodigo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Workspace");
                 });
 
             modelBuilder.Entity("Domain.Entities.SolicitacaoObtencaoTarefa", b =>

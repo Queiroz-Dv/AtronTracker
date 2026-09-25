@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -48,9 +48,10 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Departamento>> ObterDepartmentosAsync()
         {
             return await _context.Departamentos
-                .Include(dpt => dpt.GestorDepartamento)
-                .OrderByDescending(order => order.Codigo)
-                .ToListAsync();
+                 .Include(dpt => dpt.GestorDepartamento)
+                 .OrderByDescending(order => order.Codigo)
+                 .AsNoTracking()
+                 .ToListAsync();
         }
 
         public async Task<bool> RemoverDepartmentoRepositoryAsync(Departamento departamento)

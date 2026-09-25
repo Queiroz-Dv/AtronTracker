@@ -1,7 +1,9 @@
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Context;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Shared.Extensions;
 using Xunit;
 
 namespace Tracker.Tests.Infrastructure.Repositories.Tarefas;
@@ -21,6 +23,7 @@ public sealed class TarefaRepositoryTests
             Id = 10,
             Titulo = "Tarefa para remocao",
             Conteudo = "Conteudo",
+            DestinoInicial = DestinoInicialTarefa.Equipe.GetDescription(),
             DataInicial = new DateTime(2026, 8, 23),
             DataFinal = new DateTime(2026, 8, 24),
             TarefaEstadoId = estado.Id,

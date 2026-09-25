@@ -76,6 +76,9 @@ export class TarefaFormComponent implements OnInit {
       this.sincronizarDestinoSelecionado();
       this.sincronizarDepartamentoSelecionado();
       this.sincronizarCargoSelecionado();
+
+      // Executa a validação de aprovação com base no estado inicial carregado
+      this.atualizarAprovacaoPorEstado(this.tarefaForm.get('estadoId')?.value);
     });
 
     this.destinoControl.valueChanges.subscribe(value => {
@@ -156,13 +159,45 @@ export class TarefaFormComponent implements OnInit {
     });
 
     this.estadoControl.valueChanges.subscribe(value => {
-      const estado = value as EstadoTarefa;
+      const estado = typeof value === 'object' && value !== null ? value as EstadoTarefa : null;
+      const estadoId = estado?.id ?? null;
       this.tarefaForm.patchValue({
         estadoId: estado?.id,
         estadoDescricao: estado?.descricao
       });
+
+      this.atualizarAprovacaoPorEstado(estadoId);
     });
   }
+
+  private atualizarAprovacaoPorEstado(estadoId: number | null): void {
+  const aprovacaoControl = this.tarefaForm.get('exigeAprovacaoParaObter');
+  if (!aprovacaoControl) return;
+
+  const destinoInicial = this.tarefaForm.get('destinoInicial')?.value;
+  const ehDestinoUsuario = destinoInicial === DestinoInicialTarefa.Usuario;
+
+  // Busca o estado selecionado
+  const estadoSelecionado = this.estadosDaTarefa.find(e => e.id === estadoId);
+  const ehPendenteDeAprovacao = estadoSelecionado 
+    ? estadoSelecionado.descricao.toLowerCase().includes('pendente') 
+    : false;
+
+  if (ehPendenteDeAprovacao) {
+    // Quando for "Pendente de aprovação": marca TRUE e DESABILITA
+    aprovacaoControl.setValue(true, { emitEvent: false });
+    aprovacaoControl.disable({ emitEvent: false });
+  } else {
+    // Se for outro estado e o destino NÃO for Usuário: desmarca e HABILITA
+    aprovacaoControl.setValue(false, { emitEvent: false });
+
+    if (ehDestinoUsuario) {
+      aprovacaoControl.disable({ emitEvent: false });
+    } else {
+      aprovacaoControl.enable({ emitEvent: false });
+    }
+  }
+}
 
   exibirUsuario(usuario: UsuarioResponse | string): string {
     if (typeof usuario === 'string') return usuario;
@@ -234,19 +269,9 @@ export class TarefaFormComponent implements OnInit {
       departamento.gestorDepartamentoCodigo?.toUpperCase() === this.usuarioLogadoCodigo?.toUpperCase());
   }
 
-  private atualizarAprovacaoParaObter(destinoInicial = this.tarefaForm.get('destinoInicial')?.value): void {
-    const aprovacaoControl = this.tarefaForm.get('exigeAprovacaoParaObter');
-    if (!aprovacaoControl) {
-      return;
-    }
-
-    if (destinoInicial === DestinoInicialTarefa.Usuario) {
-      aprovacaoControl.setValue(false, { emitEvent: false });
-      aprovacaoControl.disable({ emitEvent: false });
-      return;
-    }
-
-    aprovacaoControl.enable({ emitEvent: false });
+ private atualizarAprovacaoParaObter(destinoInicial = this.tarefaForm.get('destinoInicial')?.value): void {
+  const estadoId = this.tarefaForm.get('estadoId')?.value;
+  this.atualizarAprovacaoPorEstado(estadoId);
   }
 
   private filtrarUsuarios(valor: string): UsuarioResponse[] {

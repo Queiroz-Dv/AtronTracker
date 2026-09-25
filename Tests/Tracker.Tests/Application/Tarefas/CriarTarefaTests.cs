@@ -12,6 +12,7 @@ using Domain.Enums;
 using Domain.Interfaces;
 using Moq;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 using Xunit;
 
 namespace Tracker.Tests.Tarefas;
@@ -32,7 +33,7 @@ public class CriarTarefaTests
             }
         ];
         var tarefa = CriarTarefaDto();
-        tarefa.DestinoInicial = (int)DestinoInicialTarefa.Equipe;
+        tarefa.DestinoInicial = DestinoInicialTarefa.Equipe.GetDescription();
 
         var resultado = await cenario.Case.ExecutarAsync(tarefa);
 
@@ -54,7 +55,7 @@ public class CriarTarefaTests
             new UsuarioCargoDepartamento { DepartamentoId = 20, DepartamentoCodigo = "FIN" }
         ];
         var tarefa = CriarTarefaDto();
-        tarefa.DestinoInicial = (int)DestinoInicialTarefa.Equipe;
+        tarefa.DestinoInicial = DestinoInicialTarefa.Equipe.GetDescription();
 
         var resultado = await cenario.Case.ExecutarAsync(tarefa);
 

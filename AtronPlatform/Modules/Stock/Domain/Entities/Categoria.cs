@@ -1,21 +1,17 @@
-﻿using AtronStock.Domain.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using AtronStock.Domain.Constants;
+using AtronStock.Domain.Enums;
+using Shared.Attributes;
+using Shared.Domain.Entities.Identity;
 
 namespace AtronStock.Domain.Entities
 {
-    public sealed class Categoria
+    [TenantModule(StockModulos.Categoria)]
+    public sealed class Categoria : ITenantScoped
     {
-        [Key]
         public int Id { get; set; }
-
-        [MaxLength(25), Required]
         public string Codigo { get; set; } = string.Empty;
-
-        [MaxLength(50), Required]
         public string Descricao { get; set; } = string.Empty;
-
         public EStatus Status { get; set; }
-
         public List<ProdutoCategoria> Produtos { get; set; } = [];
     }
 }

@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.DTO.Request;
 using Application.EmailCompositor.Compositores;
 using Application.Interfaces.ApplicationInterfaces;
@@ -7,6 +7,7 @@ using Application.Interfaces.Services.Identity;
 using Application.Policies.PlanejamentoCustos;
 using Application.Policies.Tarefas;
 using Application.Records.Facade;
+using Application.Resolvers;
 using Application.Resolvers.Tarefas;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
@@ -58,8 +59,9 @@ namespace Infrastructure.DependencyInjection
             var database = DatabaseProviderResolver.Resolve(configuration);
             var migrationsAssembly = typeof(AtronDbContext).Assembly.GetName().Name!;
 
-            services.AddDbContext<AtronDbContext>(options =>
-                options.UseConfiguredDatabase(database, migrationsAssembly));
+            services.AddDbContext<AtronDbContext>(options =>            
+            options.UseConfiguredDatabase(database, migrationsAssembly)
+            );
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
                     {
@@ -238,9 +240,11 @@ namespace Infrastructure.DependencyInjection
 
         private static void ConfigureWorkspaceServices(IServiceCollection services)
         {
-            services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();            
+            services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
             services.AddScoped<RegistrarWorkspaceCase>();
             services.AddScoped<ObterWorkspaceCase>();
+            services.AddScoped<WorkspaceResolver>();
+            services.AddScoped<IUserAccessor, WorkspaceResolver>();
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)
@@ -274,7 +278,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<CriarDepartamentoCase>();
             services.AddScoped<ExcluirDepartamentoCase>();
             services.AddScoped<ObterDepartamentoCase>();
-            services.AddScoped<VincularGestorDepartamentoCase>();
+            services.AddScoped<VincularGestorDepartamentoService>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
         }
 

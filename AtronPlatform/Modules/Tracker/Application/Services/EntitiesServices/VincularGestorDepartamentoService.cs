@@ -5,9 +5,9 @@ using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.DepartamentoCases
+namespace Application.Services.EntitiesServices
 {
-    public sealed class VincularGestorDepartamentoCase(IUsuarioRepository usuarioRepository)
+    public sealed class VincularGestorDepartamentoService(IUsuarioRepository usuarioRepository)
     {
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
 

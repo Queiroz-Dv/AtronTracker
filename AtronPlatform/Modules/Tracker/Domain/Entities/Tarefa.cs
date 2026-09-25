@@ -1,17 +1,24 @@
-﻿using System;
-
-using System.Collections.Generic;
+﻿using Domain.Constants;
 using Domain.Enums;
 using Domain.Extensions;
+using Shared.Attributes;
+using Shared.Domain.Entities.Identity;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
-    public class Tarefa : EntityBase
+    [TenantModule(TrackerModulos.Tarefa)]
+    public class Tarefa : ITenantScoped
     {
+        public int Id { get; set; }
+        [NotMapped]
+        public string Codigo { get; set; } = null;
         private const int EstadoPendenteAprovacaoId = 2;
         private const int EstadoIniciadaId = 5;
 
-        public int DestinoInicial { get; set; }
+        public string DestinoInicial { get; set; }
 
         public bool ExigeAprovacaoParaObter { get; set; }
 
@@ -48,12 +55,13 @@ namespace Domain.Entities
         public ICollection<SolicitacaoObtencaoTarefa> SolicitacoesObtencao { get; set; }
 
         public ICollection<TarefaMovimentacao> Movimentacoes { get; set; }
-        
+
+
         public void AprovarObtencao(int usuarioId, string usuarioCodigo)
         {
             UsuarioId = usuarioId;
             UsuarioCodigo = usuarioCodigo;
-            DestinoInicial = (int)DestinoInicialTarefa.Usuario;
+            DestinoInicial = DestinoInicialTarefa.Usuario.ToString();
             this.RemoverDepartamento();
             this.RemoverCargo();
 

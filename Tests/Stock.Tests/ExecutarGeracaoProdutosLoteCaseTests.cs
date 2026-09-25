@@ -95,6 +95,7 @@ public sealed class ExecutarGeracaoProdutosLoteCaseTests
     private static ExecutarGeracaoProdutosLoteCase CriarUseCase(
         LoteProdutoRepositoryFake repository)
         => new(
+            null,
             repository,
             new GeracaoProdutosLoteValidador(new ProdutoValidador()),
             new SelecionarCategoriasProdutoCase(new CategoriaRepositoryProdutoFake()),

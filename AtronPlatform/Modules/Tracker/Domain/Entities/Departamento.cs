@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
+using Domain.Constants;
+using Shared.Attributes;
+using Shared.Domain.Entities.Identity;
+using System.Collections.Generic;
 
 namespace Domain.Entities
 {
-    public sealed class Departamento
+    [TenantModule(TrackerModulos.Departamento)]
+    public sealed class Departamento : ITenantScoped
     {
-        [Key]
         public int Id { get; set; }
-
-        [MaxLength(10)][NotNull] public string Codigo { get; set; }
-        [MaxLength(50)][NotNull] public string Descricao { get; set; }
+        public string Codigo { get; set; }
+        public string Descricao { get; set; }
         public int? GestorDepartamentoId { get; set; }
         public string GestorDepartamentoCodigo { get; set; }
         public Usuario GestorDepartamento { get; set; }
