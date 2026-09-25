@@ -2,6 +2,7 @@ using AtronStock.Domain.Entities;
 using AtronStock.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Extensions;
 
 namespace AtronStock.Infrastructure.EntitiesConfiguration
 {
@@ -24,7 +25,10 @@ namespace AtronStock.Infrastructure.EntitiesConfiguration
 
             builder.Property(p => p.Status)
                 .HasDefaultValue(EStatusProduto.Ativo)
-                .IsRequired();
+                .HasConversion(
+                      tipo => tipo.GetDescription(),
+                      descricao => ParseTipoStatus(descricao)
+                   ).IsRequired();
 
             builder.HasIndex(p => p.Codigo)
                 .IsUnique();
@@ -33,6 +37,20 @@ namespace AtronStock.Infrastructure.EntitiesConfiguration
                 .WithMany(lote => lote.Produtos)
                 .HasForeignKey(p => p.LoteProdutoId)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private static EStatusProduto ParseTipoStatus(string descricao)
+        {
+            foreach (EStatusProduto tipo in Enum.GetValues(typeof(EStatusProduto)))
+            {
+                if (tipo.GetDescription().Equals(descricao, StringComparison.OrdinalIgnoreCase) ||
+                    tipo.ToString().Equals(descricao, StringComparison.OrdinalIgnoreCase))
+                {
+                    return tipo;
+                }
+            }
+
+            return EStatusProduto.Ativo;
         }
     }
 }

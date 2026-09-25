@@ -9,6 +9,7 @@ using Shared.Extensions;
 namespace AtronStock.Application.UseCases.ProdutoCases;
 
 public sealed class ExecutarGeracaoProdutosLoteCase(
+    AuditoriaProdutoCase auditoriaProduto,
     ILoteProdutoRepository loteRepository,
     GeracaoProdutosLoteValidador validador,
     SelecionarCategoriasProdutoCase selecionarCategorias,
@@ -38,9 +39,15 @@ public sealed class ExecutarGeracaoProdutosLoteCase(
                 string.Join(", ", existentes.Take(5)))); // Obtém os cinco primeiros
 
         var lote = await criarLoteParaPersistenciaCase.ExecutarAsync(codigoBase, command, categorias.Dados!);
+
         if (!await loteRepository.AdicionarAsync(lote))
             return Resultado<GeracaoProdutosLoteResultado>.Falha(
                 ProdutoResource.ErroInesperadoGerarLote);
+
+        foreach (var produto in lote.Produtos)
+        {
+            await auditoriaProduto.RegistrarCriacaoAsync(produto);
+        }
 
         return Resultado<GeracaoProdutosLoteResultado>.Sucesso(new(
             lote.Id,

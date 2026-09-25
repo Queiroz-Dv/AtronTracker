@@ -1,6 +1,5 @@
 using Domain.Entities;
 using Domain.Extensions;
-using Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

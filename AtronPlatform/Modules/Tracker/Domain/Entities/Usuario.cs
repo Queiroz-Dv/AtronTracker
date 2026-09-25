@@ -1,6 +1,6 @@
-﻿using Domain.Attributes;
-using Domain.Constants;
-using Domain.Interfaces;
+﻿using Domain.Constants;
+using Shared.Attributes;
+using Shared.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
 

@@ -1,4 +1,4 @@
-﻿using Domain.Attributes;
+﻿using Shared.Attributes;
 using System;
 using System.Reflection;
 

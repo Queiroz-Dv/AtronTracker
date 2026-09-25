@@ -1,8 +1,8 @@
-﻿using Domain.Attributes;
-using Domain.Constants;
+﻿using Domain.Constants;
 using Domain.Enums;
 using Domain.Extensions;
-using Domain.Interfaces;
+using Shared.Attributes;
+using Shared.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,7 +12,7 @@ namespace Domain.Entities
     [TenantModule(TrackerModulos.Tarefa)]
     public class Tarefa : ITenantScoped
     {
-        public int Id {  get; set; }
+        public int Id { get; set; }
         [NotMapped]
         public string Codigo { get; set; } = null;
         private const int EstadoPendenteAprovacaoId = 2;

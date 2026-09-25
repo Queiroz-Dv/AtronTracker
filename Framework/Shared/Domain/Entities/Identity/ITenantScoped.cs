@@ -1,4 +1,4 @@
-namespace Domain.Interfaces
+namespace Shared.Domain.Entities.Identity
 {
     public interface ITenantScoped
     {
