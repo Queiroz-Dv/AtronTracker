@@ -14,9 +14,7 @@ namespace Application.Services.EntitiesServices
     public class ModuloService : IModuloService
     {
         private readonly IToDtoMapper<Modulo, ModuloDTO> _map;
-        private readonly IModuloRepository _moduloRepository;
-        private readonly IValidateModelService<Modulo> _validateModel;
-        private readonly Notifiable messageModel;
+        private readonly IModuloRepository _moduloRepository;        
 
         public ModuloService(
             IToDtoMapper<Modulo, ModuloDTO> map,
@@ -25,9 +23,7 @@ namespace Application.Services.EntitiesServices
             Notifiable messageModel)
         {
             _map = map;
-            _moduloRepository = moduloRepository;
-            _validateModel = validateModel;
-            this.messageModel = messageModel;
+            _moduloRepository = moduloRepository;            
         }
 
         public async Task<ModuloDTO> ObterPorIdService(int id)

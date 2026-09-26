@@ -1,0 +1,277 @@
+/* ==========================================================================
+   Configuração de Perfil de Acesso
+   Usa somente os tokens globais já definidos em main.css (--atron-*).
+   Não redeclara nada que o main.css já aplica globalmente:
+   - checkbox (.mat-mdc-checkbox) já vem com as cores do Atron
+   - botão flat (.mat-mdc-unelevated-button) já vem com cor/raio/hover/disabled
+   - form-field outline já herda outline-color, label, foco e caret do body
+   Aqui só entram as pequenas peças que main.css ainda não cobre.
+   ========================================================================== */
+
+:host {
+  display: block;
+}
+
+/* ---------- Layout da página (mesmo padrão de .list-page) ---------- */
+.configure-profile-page {
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  background: var(--atron-page-bg);
+  color: var(--atron-text);
+  font-family: var(--atron-font-sans);
+}
+
+.profile-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 960px;
+}
+
+/* Banner de contexto da página (substitui a navbar) */
+.page-title-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.page-icon {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--atron-radius-lg);
+  background: var(--atron-primary-soft);
+  border: 1px solid #c7d2fe;
+  color: var(--atron-primary);
+}
+
+.page-icon mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.page-title-text h1 {
+  margin: 0 0 6px;
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--atron-title);
+}
+
+.page-description {
+  margin: 0;
+  max-width: 640px;
+  font-size: .875rem;
+  color: var(--atron-text-muted);
+}
+
+/* Mesmo padrão de .list-eyebrow do main.css */
+.perfil-eyebrow {
+  display: block;
+  margin: 0 0 6px;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--atron-primary);
+}
+
+/* ---------- Cards (mesmo padrão de .form-container / .list-panel) ---------- */
+.perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.perfil-card {
+  background: var(--atron-surface);
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-md);
+  box-shadow: var(--atron-shadow-sm);
+  padding: 24px;
+}
+
+.perfil-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.perfil-section-icon {
+  flex-shrink: 0;
+  margin-top: 3px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--atron-primary);
+}
+
+.perfil-section-header h2 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--atron-title);
+}
+
+.perfil-section-description {
+  margin: 0;
+  font-size: .8125rem;
+  color: var(--atron-text-muted);
+}
+
+.perfil-section-header--with-action {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.perfil-section-header-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* ---------- Campos — mesma receita de .list-filter, só o que falta ---------- */
+.perfil-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.perfil-codigo-input,
+.perfil-descricao-input,
+.perfil-busca-modulo {
+  display: block;
+  width: 100%;
+}
+
+.perfil-codigo-input {
+  flex: 1 1 160px;
+  max-width: 220px;
+}
+
+.perfil-descricao-input {
+  flex: 2 1 260px;
+}
+
+.perfil-busca-modulo {
+  max-width: 280px;
+}
+
+/* input-text/label/outline/focus/caret já vêm do body (main.css); só
+   completamos o hover e o raio, que .list-filter também define à parte */
+.perfil-fields mat-form-field,
+.perfil-busca-modulo {
+  --mdc-outlined-text-field-hover-outline-color: var(--atron-primary);
+  --mdc-outlined-text-field-container-shape: var(--atron-radius-sm);
+}
+
+.perfil-fields .mat-mdc-text-field-wrapper,
+.perfil-busca-modulo .mat-mdc-text-field-wrapper {
+  background: var(--atron-surface);
+  border-radius: var(--atron-radius-sm);
+}
+
+mat-icon[matPrefix] {
+  color: var(--atron-text-subtle);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}
+
+/* ---------- Tabela de módulos — cores/hover vêm de .list-table (main.css) ---------- */
+.perfil-modulos-grid {
+  margin-top: 4px;
+  border: 1px solid var(--atron-border);
+  border-radius: var(--atron-radius-sm);
+  overflow: hidden;
+}
+
+.perfil-modulos-table {
+  width: 100%;
+}
+
+.perfil-modulos-table .mat-column-selecionar {
+  width: 64px;
+  text-align: center;
+}
+
+.perfil-modulo-codigo {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-weight: 700;
+  font-size: .75rem;
+  color: var(--atron-primary-hover);
+}
+
+.perfil-modulos-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 16px;
+  color: var(--atron-text-muted);
+  text-align: center;
+}
+
+.perfil-modulos-empty mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: var(--atron-text-subtle);
+}
+
+.perfil-modulos-empty p {
+  margin: 0;
+  font-size: .875rem;
+}
+
+/* ---------- Ações globais — cor/raio/hover/disabled já vêm do botão global ---------- */
+.relacionamento-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.relacionamento-primary-action {
+  gap: 8px;
+  padding: 0 24px;
+  min-height: 44px;
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 640px) {
+  .configure-profile-page {
+    padding: 16px;
+  }
+
+  .perfil-card {
+    padding: 18px;
+  }
+
+  .page-title-banner {
+    flex-direction: column;
+  }
+
+  .perfil-section-header--with-action {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .perfil-busca-modulo {
+    max-width: none;
+  }
+
+  .perfil-codigo-input,
+  .perfil-descricao-input {
+    flex-basis: 100%;
+    max-width: none;
+  }
+}

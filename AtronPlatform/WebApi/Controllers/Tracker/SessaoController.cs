@@ -59,6 +59,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 return Ok(new
                 {
                     codigoDoUsuario = usuarioCodigo,
+                    nomeDoUsuario = dadosCache.DadosDoUsuario.NomeDoUsuario,
                     emailDoUsuario = dadosCache.DadosDoUsuario.Email ?? user.FindFirst(ClaimTypes.Email)?.Value,
                     codigoDoCargo = dadosCache.DadosDoUsuario.CodigoDoCargo ?? user.FindFirst(ClaimCode.CODIGO_CARGO)?.Value,
                     codigoDoDepartamento = dadosCache.DadosDoUsuario.CodigoDoDepartamento ?? user.FindFirst(ClaimCode.CODIGO_DEPARTAMENTO)?.Value,

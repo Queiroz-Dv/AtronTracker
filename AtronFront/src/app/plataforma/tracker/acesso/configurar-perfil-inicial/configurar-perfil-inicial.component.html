@@ -1,0 +1,158 @@
+<main class="configure-profile-page">
+  <section class="profile-shell" aria-labelledby="profile-title">
+
+    <!-- Cabeçalho de contexto da página (substitui a navbar do mockup) -->
+    <header class="page-title-banner">
+      <div class="page-icon" aria-hidden="true">
+        <mat-icon>admin_panel_settings</mat-icon>
+      </div>
+      <div class="page-title-text">
+        <span class="perfil-eyebrow">Gestão de Segurança e Acessos</span>
+        <h1 id="profile-title">Configuração de Perfil de Acesso</h1>
+        <p class="page-description">
+          Defina os dados estruturais do perfil, vincule as credenciais de usuário e workspace,
+          e selecione as permissões granulares dos módulos permitidos.
+        </p>
+      </div>
+    </header>
+
+    <form [formGroup]="form" class="perfil-form">
+      <!-- Card de Informações do Usuário & Workspace (Sessão Atual) -->
+      <section class="perfil-card">
+        <header class="perfil-section-header">
+          <mat-icon class="perfil-section-icon">badge</mat-icon>
+          <div>
+            <p class="perfil-eyebrow">Sessão atual</p>
+            <h2>Configuração de Acesso</h2>
+            <p class="perfil-section-description">
+              Identificação do usuário e do workspace vinculados a esta sessão.
+            </p>
+          </div>
+        </header>
+
+        <div class="perfil-fields">
+          <mat-form-field appearance="outline" class="perfil-codigo-input" subscriptSizing="dynamic">
+            <mat-label>Código do Usuário</mat-label>
+            <mat-icon matPrefix>badge</mat-icon>
+            <input matInput [value]="usuarioCodigo" readonly />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="perfil-codigo-input" subscriptSizing="dynamic">
+            <mat-label>Código do Workspace</mat-label>
+            <mat-icon matPrefix>workspaces</mat-icon>
+            <input matInput [value]="workspaceCodigo" readonly />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="perfil-descricao-input" subscriptSizing="dynamic">
+            <mat-label>Nome do Usuário</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput [value]="usuarioNome" readonly />
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Card de Dados do Novo Perfil -->
+      <section class="perfil-card">
+        <header class="perfil-section-header">
+          <mat-icon class="perfil-section-icon">vpn_key</mat-icon>
+          <div>
+            <p class="perfil-eyebrow">Perfil de Acesso</p>
+            <h2>Dados do Perfil</h2>
+            <p class="perfil-section-description">
+              Chave primária do perfil de autorização e detalhamento de sua finalidade.
+            </p>
+          </div>
+        </header>
+
+        <div class="perfil-fields">
+          <mat-form-field appearance="outline" class="perfil-codigo-input" subscriptSizing="dynamic">
+            <mat-label>Código</mat-label>
+            <mat-icon matPrefix>tag</mat-icon>
+            <input matInput formControlName="codigo" autocomplete="off" />
+            <mat-error *ngIf="form.get('codigo')?.hasError('required')">
+              O código é obrigatório.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="perfil-descricao-input" subscriptSizing="dynamic">
+            <mat-label>Descrição</mat-label>
+            <mat-icon matPrefix>article</mat-icon>
+            <input matInput formControlName="descricao" autocomplete="off" />
+            <mat-error *ngIf="form.get('descricao')?.hasError('required')">
+              A descrição é obrigatória.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Card do Grid de Módulos com Busca e Paginação -->
+      <section class="perfil-card perfil-modulos-card">
+        <header class="perfil-section-header perfil-section-header--with-action">
+          <div class="perfil-section-header-main">
+            <mat-icon class="perfil-section-icon">shield_lock</mat-icon>
+            <div>
+              <p class="perfil-eyebrow">Permissões</p>
+              <h2>Módulos do Perfil</h2>
+              <p class="perfil-section-description">
+                Selecione quais áreas do ecossistema estarão disponíveis para este perfil.
+              </p>
+            </div>
+          </div>
+
+          <mat-form-field appearance="outline" class="perfil-busca-modulo" subscriptSizing="dynamic">
+            <mat-label>Buscar módulo</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput [formControl]="buscaModuloControl" placeholder="Pesquise por código ou descrição" />
+          </mat-form-field>
+        </header>
+
+        @if (dataSource.data.length > 0) {
+        <div class="perfil-modulos-grid">
+          <table mat-table [dataSource]="dataSource" matSort class="perfil-modulos-table list-table"
+            aria-label="Módulos disponíveis para o perfil inicial">
+            <ng-container matColumnDef="selecionar">
+              <th mat-header-cell *matHeaderCellDef>Selecionar</th>
+              <td mat-cell *matCellDef="let mod">
+                <mat-checkbox [checked]="estaSelecionado(mod.codigo)"
+                  (change)="onToggleModulo(mod.codigo, $event.checked)">
+                </mat-checkbox>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="moduloCodigo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+              <td mat-cell *matCellDef="let mod" class="perfil-modulo-codigo">{{ mod.codigo }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="moduloDescricao">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Descrição</th>
+              <td mat-cell *matCellDef="let mod">{{ mod.descricao }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+          </table>
+
+          <mat-paginator class="perfil-modulos-paginator list-paginator" [length]="dataSource.filteredData.length" [pageIndex]="0"
+            [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" aria-label="Selecione a página de módulos">
+          </mat-paginator>
+        </div>
+        } @else {
+        <div class="perfil-modulos-empty">
+          <mat-icon>manage_search</mat-icon>
+          <p>{{ mensagemEstado }}</p>
+        </div>
+        }
+      </section>
+
+      <!-- Ações Globais -->
+      <footer class="relacionamento-actions">
+        <button mat-flat-button class="relacionamento-primary-action" type="button" (click)="salvar()"
+          [disabled]="form.invalid || salvando">
+          <mat-icon>save</mat-icon>
+          Salvar e Continuar
+        </button>
+      </footer>
+    </form>
+  </section>
+</main>

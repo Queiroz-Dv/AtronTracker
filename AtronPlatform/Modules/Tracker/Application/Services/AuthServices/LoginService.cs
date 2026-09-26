@@ -1,17 +1,15 @@
 using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
 using Application.Interfaces.Services.Identity;
-using Application.DTO.Request;
 using Application.Records.Autenticacao;
-using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 using System;
 using System.Threading.Tasks;
-using Shared.Extensions;
 
 namespace Application.Services.AuthServices
 {
@@ -39,14 +37,14 @@ namespace Application.Services.AuthServices
             if (resultadoUsuario?.Dados == null)
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
 
+            if (!resultadoUsuario.Dados.EmailConfirmado)
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
+
             var credenciaisValidas = await _loginRepository.ValidarCredenciaisAsync(
                 resultadoUsuario.Dados.Codigo,
                 loginRequest.Senha);
 
             if (!credenciaisValidas)
-                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
-
-            if (!resultadoUsuario.Dados.EmailConfirmado)
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
 
             var dadosComplementares = await _dadosComplementaresDoUsuarioService
