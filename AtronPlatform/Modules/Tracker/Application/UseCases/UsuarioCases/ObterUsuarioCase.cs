@@ -39,7 +39,7 @@ namespace Application.UseCases.UsuarioCases
             if (usuarioCodigo.IsNullOrEmpty())
                 return Resultado<Usuario>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioCodigo);
+            var usuario = await _usuarioRepository.ObterUsuarioGeralPorCodigoAsync(usuarioCodigo);
             return usuario is null
                 ? Resultado<Usuario>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado)
                 : Resultado<Usuario>.Sucesso(usuario);

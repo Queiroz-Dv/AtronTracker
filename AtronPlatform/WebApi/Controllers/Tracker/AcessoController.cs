@@ -1,3 +1,4 @@
+using Application.DTO;
 using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.UseCases.UsuarioCases;
@@ -18,20 +19,14 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     [Route("api/[controller]")]
     [ApiController]
     public class AcessoController(
-        ILoginService loginUserService,
-        IRegistroUsuarioService registroUsuarioService,
-        ICookieService cookieService,
-        SolicitarReativacaoCase solicitarReativacao,
-        ReativarUsuarioCase reativarUsuario,
-        ReenviarConfirmacaoEmailCase reenviarConfirmacaoEmail) : ControllerBase
+        ILoginService _service,
+        IRegistroUsuarioService _registroUsuarioService,
+        ICookieService _cookieService,
+        SolicitarReativacaoCase _solicitarReativacao,
+        ReativarUsuarioCase _reativarUsuario,
+        ReenviarConfirmacaoEmailCase _reenviarConfirmacaoEmail,
+        CriarRelacaoPerfilModuloUsuarioCase _criarRelacaoPerfilModuloUsuarioCase) : ControllerBase
     {
-        private readonly IRegistroUsuarioService _registroUsuarioService = registroUsuarioService;
-        private readonly ILoginService _service = loginUserService;
-        private readonly ICookieService _cookieService = cookieService;
-        private readonly SolicitarReativacaoCase _solicitarReativacao = solicitarReativacao;
-        private readonly ReativarUsuarioCase _reativarUsuario = reativarUsuario;
-        private readonly ReenviarConfirmacaoEmailCase _reenviarConfirmacaoEmail = reenviarConfirmacaoEmail;
-
         /// <summary>
         /// Autentica o usuário e retorna um token JWT.
         /// </summary>
@@ -73,6 +68,20 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 return Unauthorized();
 
             var resultado = await _service.Logout(usuarioCodigo);
+            return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
+        }
+
+        /// <summary>
+        /// Cria o perfil de acesso inicial com os módulos e vincula ao usuário autenticado que não possui perfis.
+        /// </summary>
+        [HttpPost("ConfigurarPerfilInicial")]
+        [Authorize]
+        public async Task<ActionResult> ConfigurarPerfilInicial([FromBody] PerfilDeAcessoDTO perfilDTO)
+        {
+            var user = HttpContext.User;
+            var usuarioCodigo = user.FindFirst(ClaimCode.CODIGO_USUARIO)?.Value;
+            var resultado = await _criarRelacaoPerfilModuloUsuarioCase.ExecutarAsync(perfilDTO, usuarioCodigo);
+
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 

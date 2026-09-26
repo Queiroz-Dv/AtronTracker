@@ -25,7 +25,7 @@ export class AcessoService {
 
   constructor(
     private http: HttpClient,
-    private sessaoService: SessaoInfoService    
+    private sessaoService: SessaoInfoService
   ) { }
 
   logout(): Observable<boolean> {
@@ -116,8 +116,12 @@ export class AcessoService {
   }
 
   limparSessaoLocal(): void {
-    this.sessaoService.clearSessionInfo();    
+    this.sessaoService.clearSessionInfo();
     this.sessionInfoSubject.next(null);
+  }
+
+  configurarPerfilInicial(payload: any): Observable<any> {
+    return this.http.post<any>(RotasApi.configurarPerfilInicialEndpoint, payload);
   }
 
   private carregarSessaoInfo(token: string): Observable<DadosDoUsuario> {

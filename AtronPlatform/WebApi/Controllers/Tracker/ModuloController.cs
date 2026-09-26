@@ -2,8 +2,6 @@ using Application.DTO;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {

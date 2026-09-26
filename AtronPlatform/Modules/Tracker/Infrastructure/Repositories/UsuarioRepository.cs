@@ -93,7 +93,7 @@ namespace Infrastructure.Repositories
 
         public async Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo)
         {
-            return await _context.Usuarios
+            return await  _context.Usuarios
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(crg => crg.Cargo)
                         .ThenInclude(dpt => dpt.Departamento)
@@ -101,7 +101,7 @@ namespace Infrastructure.Repositories
                     .ThenInclude(rel => rel.Departamento)
                 .Include(usr => usr.GestorImediato)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(usr => usr.Codigo == codigo && !usr.Inativo);
+                .Where(usr => usr.Codigo.ToUpper() == codigo.ToUpper() && !usr.Inativo).FirstOrDefaultAsync();           
         }
 
         public async Task<Usuario> ObterUsuarioGeralPorCodigoAsync(string codigo)

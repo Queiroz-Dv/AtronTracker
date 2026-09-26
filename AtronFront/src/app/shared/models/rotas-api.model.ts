@@ -9,6 +9,8 @@ export class RotasApi {
   public static readonly refreshTokenEndpoint: string = `${environment.apiRoute}/api/Acesso/RefreshToken`;
   public static readonly sessionInfoEndpoint: string = `${environment.apiRoute}/api/Sessao/Info`;
 
+  public static readonly configurarPerfilInicialEndpoint: string = `${environment.apiRoute}/api/Acesso/ConfigurarPerfilInicial`;
+
   public static readonly recuperarSenhaEndpoint: string = `${environment.apiRoute}/api/Acesso/RecuperarSenha`;
   public static readonly trocarSenhaEndpoint: string = `${environment.apiRoute}/api/Acesso/TrocarSenha`;
 

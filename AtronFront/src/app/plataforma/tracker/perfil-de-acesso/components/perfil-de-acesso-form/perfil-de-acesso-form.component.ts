@@ -1,6 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -9,7 +8,7 @@ import { ModuloModel } from '../../../../../features/navegacao/modulos/interface
 
 @Component({
   selector: 'c-perfil-de-acesso-form',
-  imports: [SharedModule, ReactiveFormsModule, MatCheckboxModule],
+  imports: [SharedModule, ReactiveFormsModule],
   templateUrl: './perfil-de-acesso-form.component.html',
   styleUrls: ['../perfil-de-acesso.component.css']
 })

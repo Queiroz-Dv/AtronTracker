@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { ModuloGuard } from './core/guards/modulo.guard';
+import { PerfilInicialGuard } from './core/guards/perfil.guard';
 import { DashboardComponent } from './features/navegacao/dashboard/dashboard.component';
 import { HomeComponent } from './features/navegacao/home/home.component';
 import { MenuInicioComponent } from './features/navegacao/home/menu-inicio.component';
@@ -14,10 +15,19 @@ export const routes: Routes = [
   { path: 'reenviar-confirmacao', loadComponent: () => import('./plataforma/tracker/acesso/reenviar-confirmacao/reenviar-confirmacao.component').then(m => m.ReenviarConfirmacaoComponent) },
   { path: 'esqueci-senha', loadComponent: () => import('./plataforma/tracker/acesso/esqueci-senha/esqueci-senha.component').then(m => m.EsqueciSenhaComponent) },
   { path: 'trocar-senha', loadComponent: () => import('./plataforma/tracker/acesso/trocar-senha/trocar-senha.component').then(m => m.TrocarSenhaComponent) },
-  // Todas as rotinas exigem empresa ativa, além das permissões por módulo.
+
+  // Rota de Onboarding Inicial (Fora do layout principal, mas protegida por AuthGuard + PerfilInicialGuard)
+  {
+    path: 'configurar-perfil-inicial',
+    canActivate: [AuthGuard, PerfilInicialGuard],
+    loadComponent: () => import('./plataforma/tracker/acesso/configurar-perfil-inicial/configurar-perfil-inicial.component')
+      .then(m => m.ConfigurarPerfilInicialComponent)
+  },
+
+  // Rotas Internas da Aplicação (Com validação do Perfil no nó pai)
   {
     path: 'atron',
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, PerfilInicialGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
@@ -40,6 +50,5 @@ export const routes: Routes = [
     ]
   },
 
-  // Rota coringa se precisar
   { path: '**', redirectTo: 'login' }
 ];

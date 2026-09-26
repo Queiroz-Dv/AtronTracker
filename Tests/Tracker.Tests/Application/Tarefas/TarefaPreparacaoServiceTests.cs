@@ -13,7 +13,7 @@ using Shared.Extensions;
 using Tracker.Tests.TestSupport.Fakes.PlanejamentoCustos;
 using Xunit;
 
-namespace Tracker.Tests.Tarefas;
+namespace Tracker.Tests.Application.Tarefas;
 
 public class TarefaPreparacaoServiceTests
 {

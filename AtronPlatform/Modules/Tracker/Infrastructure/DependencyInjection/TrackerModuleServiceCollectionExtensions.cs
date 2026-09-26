@@ -135,6 +135,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
             services.AddScoped<IValidador<DadosDoTokenDTO>, DadosDoTokenValidador>();
             services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidacoes>();
+            services.AddScoped<CriarRelacaoPerfilModuloUsuarioCase>();
 
             services.AddScoped(provider => new CadastroUsuarioFacadeRecord(
                 null,
