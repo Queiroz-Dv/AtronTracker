@@ -29,11 +29,7 @@
 
 ## Como mantenho
 
-`CONTEXT.md` descreve regras duráveis; ADRs registram decisões e alternativas;
-guias de operação descrevem procedimentos; planos descrevem trabalho ainda não
-entregue. Todo plano deve informar seu status e limites de validação.
-
-Não mova documentos antigos em massa. Reorganize por assunto em mudanças
-pequenas e atualize seus links. Conteúdo substituído deve apontar para a decisão
-atual, sem apagar a justificativa histórica. Notas de release descrevem entregas,
-não promessas de um plano.
+- `CONTEXT.md` descreve regras duráveis
+- [ADRs](./adr/) essa pasta define as regras e decisões arquiteturais
+- [Operação](./operacao/) guias de operação descrevem procedimentos importantes
+- [Planos](./planos/) planos descrevem trabalho ainda não entregues

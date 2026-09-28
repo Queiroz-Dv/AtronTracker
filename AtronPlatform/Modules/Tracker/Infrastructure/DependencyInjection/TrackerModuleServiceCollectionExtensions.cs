@@ -7,8 +7,6 @@ using Application.Interfaces.Services.Identity;
 using Application.Policies.PlanejamentoCustos;
 using Application.Policies.Tarefas;
 using Application.Records.Facade;
-using Application.Resolvers;
-using Application.Resolvers.Tarefas;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
 using Application.Services.EntitiesServices.PerfisDeAcesso;
@@ -179,7 +177,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<TarefaRelacionamentoService>();
             services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
             services.AddScoped<ITarefaObtencaoPolicy, TarefaObtencaoPolicy>();
-            services.AddScoped<AprovadorObtencaoTarefaResolver>();
+            services.AddScoped<AprovadorObtencaoTarefaService>();
             services.AddScoped<ITarefaConfiguracoesService, TarefaConfiguracoesService>();
             services.AddScoped<ITarefaObtencaoService, TarefaObtencaoService>();
             services.AddScoped<ITarefaEmailCompositor, TarefaEmailCompositor>();
@@ -244,8 +242,8 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
             services.AddScoped<RegistrarWorkspaceCase>();
             services.AddScoped<ObterWorkspaceCase>();
-            services.AddScoped<WorkspaceResolver>();
-            services.AddScoped<IUserAccessor, WorkspaceResolver>();
+            services.AddScoped<WorkspaceService>();
+            services.AddScoped<IUserAccessor, WorkspaceService>();
         }
 
         private static void ConfigureCargoServices(IServiceCollection services)

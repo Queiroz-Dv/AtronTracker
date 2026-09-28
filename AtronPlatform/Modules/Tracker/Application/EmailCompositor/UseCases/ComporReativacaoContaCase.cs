@@ -1,5 +1,5 @@
 ﻿using Application.DTO;
-using Application.Statics;
+using Application.Constants;
 using Shared.Application.DTOS.Email;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
