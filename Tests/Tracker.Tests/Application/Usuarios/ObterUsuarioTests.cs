@@ -61,11 +61,11 @@ public class ObterUsuarioTests
     [Fact]
     public async Task ExecutarAsync_DeveRetornarUsuarioMapeado()
     {
-        var usuario = new Domain.Entities.Usuario { Codigo = "USR" };
+        var usuario = new Usuario { Codigo = "USR" };
         var usuarioDto = new UsuarioDTO { Codigo = "USR" };
         var repositorio = new Mock<IUsuarioRepository>();
         repositorio
-            .Setup(item => item.ObterUsuarioPorCodigoAsync("USR"))
+            .Setup(item => item.ObterUsuarioPorCodigoAsync("USR", false))
             .ReturnsAsync(usuario);
         var mapa = new Mock<IToDtoMapper<Usuario, UsuarioDTO>>();
         mapa

@@ -9,6 +9,7 @@ namespace Domain.Interfaces.UsuarioInterfaces
         Task<IEnumerable<Usuario>> ObterUsuariosAsync();
         Task<Usuario> ObterUsuarioPorIdAsync(int? id);
         Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo);
+        Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo, bool semFiltro);
         Task<Usuario> ObterUsuarioGeralPorCodigoAsync(string codigo);
         Task<Usuario> ObterInativoPorEmailAsync(string email);
         Task<Usuario> ObterUsuarioGeralPorEmailAsync(string email);

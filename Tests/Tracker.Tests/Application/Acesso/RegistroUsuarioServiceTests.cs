@@ -481,6 +481,11 @@ public class RegistroUsuarioServiceTests
         public Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity() => Task.FromResult(new List<UsuarioIdentity>());
         public Task<bool> VerificarEmailExistenteAsync(string email)
             => Task.FromResult(_emailJaExiste);
+
+        public Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo, bool semFiltro)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private sealed class UsuarioIdentityRepositoryFake : IUsuarioIdentityRepository

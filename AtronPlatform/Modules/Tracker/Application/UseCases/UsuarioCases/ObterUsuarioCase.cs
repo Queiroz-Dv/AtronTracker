@@ -20,12 +20,12 @@ namespace Application.UseCases.UsuarioCases
 
         private readonly IToDtoMapper<Usuario, UsuarioDTO> _mapper = usuarioMapper;
 
-        public async Task<Resultado<UsuarioDTO>> ExecutarAsync(string codigo)
+        public async Task<Resultado<UsuarioDTO>> ExecutarAsync(string codigo, bool buscarSemFiltro =  false)
         {
             if (codigo.IsNullOrEmpty())
                 return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            var entidade = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
+            var entidade = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo, buscarSemFiltro);
             if (entidade is null)
                 return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 

@@ -79,5 +79,8 @@ namespace Application.Services.EntitiesServices
 
         public async Task<Resultado<Usuario>> ObterUsuarioAtual()
             => await _obterUsuario.ObterAsync();
+
+        public async Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo, bool buscarSemFiltro)
+       => await _obterUsuario.ExecutarAsync(codigo, buscarSemFiltro);
     }    
 }
