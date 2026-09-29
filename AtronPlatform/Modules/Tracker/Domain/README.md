@@ -1,14 +1,14 @@
-﻿# 🏛️ Atron.Domain
+# Atron.Domain
 
 O projeto **Atron.Domain** é o coração da aplicação, projetado seguindo os princípios do **Domain-Driven Design (DDD)**. Ele encapsula a lógica de negócios, regras, entidades e contratos essenciais para o funcionamento do sistema.
 
 ---
 
-## 📂 Estrutura de Pastas
+## Estrutura de Pastas
 
 A organização do projeto reflete a separação de responsabilidades e a clareza do domínio:
 
-### 🔐 ApiEntities
+### ApiEntities
 
 Focada em entidades relacionadas aos processos de autenticação e rotas da API.
 
@@ -18,7 +18,7 @@ Focada em entidades relacionadas aos processos de autenticação e rotas da API.
 
 ---
 
-### 🧩 Componentes
+### Componentes
 
 Entidades auxiliares e objetos de valor que dão suporte a outros fluxos do sistema.
 
@@ -27,7 +27,7 @@ Entidades auxiliares e objetos de valor que dão suporte a outros fluxos do sist
 
 ---
 
-### 📦 Entities
+### Entities
 
 Aqui residem as **Entidades de Domínio** principais.
 
@@ -36,7 +36,7 @@ Aqui residem as **Entidades de Domínio** principais.
 
 ---
 
-### 📝 Interfaces
+### Interfaces
 
 Define os contratos (interfaces) para os repositórios e serviços.
 
@@ -45,7 +45,7 @@ Define os contratos (interfaces) para os repositórios e serviços.
 
 ---
 
-## 💡 Princípios Aplicados
+## Princípios Aplicados
 
 - **Ignorância da Persistência**: As entidades não sabem como são salvas no banco de dados.
 - **Linguagem Ubíqua**: Os nomes de classes e métodos refletem a linguagem usada pelos especialistas do negócio.
