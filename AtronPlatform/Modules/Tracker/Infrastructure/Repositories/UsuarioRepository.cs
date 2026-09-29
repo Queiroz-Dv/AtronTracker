@@ -178,7 +178,7 @@ namespace Infrastructure.Repositories
 
         public async Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo, bool semFiltro)
         {
-            if (semFiltro)
+            if (!semFiltro)
             {
                 return await ObterUsuarioPorCodigoAsync(codigo);
             }
