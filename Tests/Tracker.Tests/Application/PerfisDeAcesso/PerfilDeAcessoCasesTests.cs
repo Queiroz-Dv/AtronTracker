@@ -106,7 +106,7 @@ public class PerfilDeAcessoCasesTests
             .Setup(repositorio => repositorio.ObterPerfilPorCodigoRepositoryAsync("PRF"))
             .ReturnsAsync(perfil);
         cenario.Usuarios
-            .Setup(repositorio => repositorio.ObterUsuarioPorCodigoAsync("USR-NOVO"))
+            .Setup(repositorio => repositorio.ObterUsuarioPorCodigoAsync("USR-NOVO", true))
             .ReturnsAsync(new Usuario { Id = 7, Codigo = "USR-NOVO" });
         cenario.PerfisUsuarios
             .Setup(repositorio => repositorio.CriarPerfilRepositoryAsync(It.IsAny<PerfilDeAcessoUsuario>()))
