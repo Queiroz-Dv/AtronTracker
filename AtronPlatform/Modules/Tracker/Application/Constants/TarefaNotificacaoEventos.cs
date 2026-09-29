@@ -1,4 +1,4 @@
-namespace Application.Statics
+namespace Application.Constants
 {
     public static class TarefaNotificacaoEventos
     {

@@ -2,8 +2,8 @@ using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Mapping;
 using Application.Policies.Tarefas;
-using Application.Resolvers.Tarefas;
 using Application.Resources;
+using Application.Services.EntitiesServices;
 using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using AtronNotificacoes.Contracts.DTO.Request;
@@ -273,7 +273,7 @@ public class SolicitarTarefaCaseTests
                 new TarefaMovimentacaoMapping()),
             mapper.Object,
             new TarefaNotificacaoInternaCase(publisher.Object),
-            new AprovadorObtencaoTarefaResolver(usuarios.Object));
+            new AprovadorObtencaoTarefaService(usuarios.Object));
 
         return new CenarioSolicitacao(
             caseDeSolicitacao,

@@ -32,11 +32,11 @@ As notificações internas nasceram no Atron Tracker para acompanhar eventos de 
 
 O Atron precisa que a mesma capacidade atenda Tracker, Stock e Sales. Mover somente NotificacaoInternaController para outro projeto não atende esse objetivo: o novo host continuaria dependente do domínio e da persistência do Tracker, sem oferecer reuso real.
 
-O ADR 0002 já define a central de notificações como uma capacidade própria do produto. O ADR 0003 define que cada notificação persiste título e mensagem finais em pt-BR e que o histórico não deve ser reinterpretado por resources futuros. Esta decisão torna a fronteira técnica compatível com essas regras.
+O [ADR 0002](../tracker/0002-remodelar-tarefas-com-gestao-e-notificacoes-internas.md) do tracker já define a central de notificações como uma capacidade própria do produto. O [ADR 0003](0003-padronizar-resources-notificacoes-e-templates-email.md) define que cada notificação persiste título e mensagem finais em pt-BR e que o histórico não deve ser reinterpretado por resources futuros. Esta decisão torna a fronteira técnica compatível com essas regras.
 
 ## Decisão
 
-Será criado o módulo vertical AtronNotificacoes, com host HTTP próprio e responsabilidade por publicar, consultar e marcar notificações internas como lidas.
+Foi criado o módulo vertical AtronNotificacoes, com host HTTP próprio e responsabilidade por publicar, consultar e marcar notificações internas como lidas.
 
 O módulo será dono de seu contrato, aplicação, persistência, migrations e API. As migrations ficam na pasta `Migrations/` do projeto `AtronNotificacoes.Infrastructure`, sem um projeto separado apenas para migrations. Ele não referenciará entidades, repositórios ou DbContext de Tracker, Stock ou Sales.
 
@@ -62,17 +62,51 @@ Tracker será o primeiro consumidor migrado. Stock e Sales adotarão o mesmo con
 ### Visão arquitetural
 
 ```mermaid
-flowchart LR
-    T["Tracker"] --> P["Contrato de publicação"]
-    S["Stock"] --> P
-    V["Sales futuro"] --> P
-    P --> N["AtronNotificacoes"]
-    N --> D["Persistência própria"]
-    U["Usuário autenticado"] --> Q["API de consulta e leitura"]
-    Q --> N
-    N -.->|Sem referência de domínio| T
-    N -.->|Sem referência de domínio| S
-    N -.->|Sem referência de domínio| V
+flowchart TD
+    %% Módulos Produtores
+    subgraph Produtores ["1. Módulos Produtores"]
+        Tracker["Tracker (Tarefas)"]
+        Stock["Stock (Estoque)"]
+        Sales["Sales (Vendas)"]
+    end
+
+    %% Contrato e Publicador
+    subgraph Publisher ["2. Framework de Publicação"]
+        INotif["INotificacoesInternasPublisher"]
+        DTO["Contrato v1 (DTO)\n• Titulo / Mensagem em pt-BR\n• ModuloOrigem + Evento\n• DestinatarioCodigo"]
+    end
+
+    %% Módulo Central de Notificações
+    subgraph Central ["3. Módulo AtronNotificacoes"]
+        API["API de Notificações\n(Publicar / Consultar / Ler)"]
+        DbContext["NotificacoesDbContext"]
+        Tabela[("Tabela NotificacoesInternas\n(Sem FKs externas)")]
+    end
+
+    %% Cliente
+    Cliente["4. Usuário Autenticado\n(Angular / JWT)"]
+
+    %% Fluxos de Comunicação
+    Tracker --> INotif
+    Stock --> INotif
+    Sales -.-> INotif
+
+    INotif --- DTO
+    INotif ==>|"Publica evento"| API
+
+    Cliente -->|"Consulta / Marca como lida"| API
+
+    API --> DbContext
+    DbContext --> Tabela
+
+    %% Estilos Limpos
+    classDef clean fill:#ffffff,stroke:#334155,color:#0f172a,stroke-width:1px;
+    classDef primary fill:#f8fafc,stroke:#0284c7,color:#0369a1,stroke-width:2px;
+    classDef db fill:#f8fafc,stroke:#16a34a,color:#15803d,stroke-width:2px;
+
+    class Tracker,Stock,Sales,DTO,API,DbContext clean;
+    class INotif,Cliente primary;
+    class Tabela db;
 ```
 
 Cada seta de publicação transporta apenas dados do contrato. Nenhuma entidade de domínio atravessa a fronteira do módulo produtor.

@@ -62,11 +62,10 @@ reduz métodos inflados e protege a entrada de um fluxo; o segundo protege a
 invariante mesmo quando a entidade for usada por outro caso de uso.
 
 As diferenças entre Policy, Specification e Validation, incluindo a estrutura
-de pastas adotada, estão em
-`docs/padrao-policies-specifications-validacoes.md`.
+de pastas adotada, estão em [Padrão de policies](padrao-policies-specifications-validacoes.md).
 
 A seleção contextual de um resultado e os critérios para classes concretas ou
-interfaces estão em `docs/padrao-resolvers.md`.
+interfaces estão em [Padronização de resolvers](padrao-resolvers.md).
 
 ## Sinais de extração obrigatória
 

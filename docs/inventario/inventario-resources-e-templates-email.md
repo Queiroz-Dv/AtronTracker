@@ -2,11 +2,11 @@
 
 ## Finalidade
 
-Este inventario e a linha de base classificavel da Fase 0 do plano de resources e templates de e-mail. Ele separa texto observavel de texto tecnico e registra o destino esperado de cada grupo antes de qualquer migracao.
+Este inventario e a linha de base classificavel da Fase 0 do plano de resources e templates de e-mail. Ele separa texto observável de texto técnico e registra o destino esperado de cada grupo antes de qualquer migracao.
 
-A contagem e diagnostica, nao um criterio isolado de qualidade. Um mesmo literal pode gerar mais de uma ocorrencia em uma busca textual, e um corpo HTML multilinha e contado como um template, nao como cada linha de texto.
+A contagem é diagnóstica, não um critério isolado de qualidade. Um mesmo literal pode gerar mais de uma ocorrencia em uma busca textual, e um corpo HTML multilinha e contado como um template, nao como cada linha de texto.
 
-## Escopo e criterio reproduzivel
+## Escopo
 
 Foram analisados arquivos `.cs` de:
 

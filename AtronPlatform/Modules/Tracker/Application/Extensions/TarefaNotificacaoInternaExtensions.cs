@@ -1,7 +1,7 @@
+using Application.Constants;
 using Application.DTO;
 using Application.Records.Tarefa;
 using Application.Resources;
-using Application.Statics;
 using AtronNotificacoes.Contracts.DTO;
 using AtronNotificacoes.Domain.Enums;
 using Domain.Entities;

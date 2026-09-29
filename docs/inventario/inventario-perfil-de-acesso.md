@@ -3,9 +3,7 @@
 ## Finalidade
 
 Este inventário registra o comportamento preservado de
-`PerfilDeAcessoService` antes da extração das responsabilidades previstas nas
-Fases 4 e 5. Não altera políticas de autorização, contratos HTTP ou o modelo de
-perfis.
+`PerfilDeAcessoService` antes da extração das responsabilidades para use cases.
 
 ## Entradas públicas
 

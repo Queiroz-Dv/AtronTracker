@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.Resolvers.Tarefas
+namespace Application.Services.EntitiesServices
 {
-    public sealed class AprovadorObtencaoTarefaResolver(IUsuarioRepository usuarioRepository)
+    public sealed class AprovadorObtencaoTarefaService(IUsuarioRepository usuarioRepository)
     {
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
 

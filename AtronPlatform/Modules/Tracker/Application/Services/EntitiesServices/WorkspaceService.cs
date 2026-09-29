@@ -6,14 +6,14 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Services.Accessor;
 using System.Threading.Tasks;
 
-namespace Application.Resolvers
+namespace Application.Services.EntitiesServices
 {
-    public class WorkspaceResolver : UserAccessor, IUserAccessor
+    public class WorkspaceService : UserAccessor, IUserAccessor
     {
         private readonly IWorkspaceRepository _repository;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public WorkspaceResolver(IHttpContextAccessor accessor, IWorkspaceRepository repository) : base(accessor)
+        public WorkspaceService(IHttpContextAccessor accessor, IWorkspaceRepository repository) : base(accessor)
         {
             _repository = repository;
             httpContextAccessor = accessor;

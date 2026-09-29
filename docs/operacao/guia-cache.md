@@ -1,4 +1,4 @@
-# Cache Redis no Atron
+# Guia de Caching no Atron
 
 ## Objetivo
 
@@ -10,9 +10,9 @@ monólito modular publicado pelo `AtronPlatform.WebApi`. Redis é uma dependênc
 externa e transversal usada por meio do contrato `ICacheService`.
 
 A decisão arquitetural e seus trade-offs estão registrados no
-[ADR 0009](adr/transversais/0009-adotar-redis-como-cache-distribuido.md).
+[ADR 0009](../adr/transversais/0009-adotar-redis-como-cache-distribuido.md).
 
-## Por que o Atron usa Redis
+## Por que o Atron usa Redis?
 
 O Atron já possuía três características que justificavam um provider
 distribuído:
@@ -35,14 +35,71 @@ dependência de rede e compartilhamento de estado efêmero.
 ## Fluxo implementado
 
 ```mermaid
-flowchart LR
-    Cliente["Angular ou cliente HTTP"] --> Api["AtronPlatform.WebApi"]
-    Api --> Contrato["ICacheService"]
-    Contrato --> Memoria["Memory"]
-    Contrato --> Arquivo["JsonFile"]
-    Contrato --> Redis["RedisCacheService"]
-    Redis --> Local["Redis em Docker, desenvolvimento"]
-    Redis --> Render["Render Key Value, produção"]
+flowchart TD
+    %% Clientes da Aplicação
+    subgraph Client ["Cliente"]
+        HTTP["Angular / Cliente HTTP"]
+    end
+
+    %% Camada WebApi e Injeção de Dependência
+    subgraph WebApi ["AtronPlatform.WebApi"]
+        API["WebApi (ASP.NET Core)"]
+        DI["AddAtronCache\n(Injeção de Dependência)"]
+        APP_SETTINGS["appsettings / Env Vars / UserSecrets\nCache:Provider"]
+    end
+
+    %% Contrato e Abstração de Cache
+    subgraph Core ["Contrato Transversal"]
+        CONTRACT["ICacheService"]
+        KEY_BUILDER["ChaveCache\n(Ex: acesso:QRZ)"]
+    end
+
+    %% Implementações dos Providers
+    subgraph Providers ["Providers de Cache"]
+        MEM["CacheService\n(MemoryCache)"]
+        JSON["JsonFileCacheService\n(Arquivo JSON)"]
+        REDIS_SERVICE["RedisCacheService\n(IDistributedCache / StackExchange.Redis)"]
+    end
+
+    %% Ambiência e Destinos do Redis
+    subgraph External ["Infraestrutura Externa de Cache"]
+        subgraph DevEnv ["Ambiente Local (Desenvolvimento)"]
+            DOCKER["Docker Compose\n(atron-redis:6379)\nPrefix: atron:dev:"]
+        end
+        
+        subgraph ProdEnv ["Ambiente Publicado (Produção)"]
+            RENDER["Render Key Value\n(red-exemplo:6379)\nPrefix: atron:prod:"]
+        end
+    end
+
+    %% Conexões do Fluxo
+    HTTP -->|"1. Requisição HTTP"| API
+    API -->|"2. Resolve serviço via DI"| CONTRACT
+    APP_SETTINGS -.->|"Lê configuração"| DI
+    DI -.->|"Registra provider ativo"| CONTRACT
+
+    CONTRACT --- KEY_BUILDER
+    CONTRACT ==>|"Provider: Memory"| MEM
+    CONTRACT ==>|"Provider: JsonFile"| JSON
+    CONTRACT ==>|"Provider: Redis"| REDIS_SERVICE
+
+    REDIS_SERVICE -->|"Conecta via localhost:6379"| DOCKER
+    REDIS_SERVICE -->|"Conecta via URL Interna"| RENDER
+
+    %% Estilização Visual
+    classDef client fill:#3b82f6,stroke:#1d4ed8,color:#fff,font-weight:bold;
+    classDef webapi fill:#f8fafc,stroke:#94a3b8,color:#0f172a;
+    classDef core fill:#0284c7,stroke:#0369a1,color:#fff,font-weight:bold;
+    classDef provider fill:#f1f5f9,stroke:#64748b,color:#0f172a;
+    classDef redisService fill:#8b5cf6,stroke:#6d28d9,color:#fff,font-weight:bold;
+    classDef env fill:#dc2626,stroke:#991b1b,color:#fff,font-weight:bold;
+
+    class HTTP client;
+    class API,DI,APP_SETTINGS webapi;
+    class CONTRACT,KEY_BUILDER core;
+    class MEM,JSON provider;
+    class REDIS_SERVICE redisService;
+    class DOCKER,RENDER env;
 ```
 
 Responsabilidades:
@@ -137,7 +194,10 @@ docker compose -f compose.redis.yaml down
 
 ## Configuração local da WebApi
 
-O projeto `AtronPlatform.WebApi` já possui `UserSecretsId`. Configure:
+O projeto `AtronPlatform.WebApi` já possui `UserSecretsId`. 
+O uso de user secrets é opcional mas o uso facilita no dia a dia e evita subir dados nos `appsettings.json`.
+
+Coom cofigurar:
 
 ```powershell
 dotnet user-secrets set "Cache:Provider" "Redis" --project AtronPlatform/WebApi/AtronPlatform.WebApi.csproj
@@ -192,9 +252,6 @@ Valide também:
 - expiração e reconstrução da chave;
 - remoção de dados temporários depois do uso.
 
-Não use `FLUSHALL` em ambiente compartilhado. Remova somente chaves de teste
-com nome conhecido.
-
 ## Configuração no Render
 
 ### Criar o serviço
@@ -236,7 +293,7 @@ Cache__Redis__InstanceName=atron:prod:
 
 Escolha `Save and deploy`. User Secrets locais não são publicados no Render.
 
-### Por que o Dockerfile não muda
+### Por que o Dockerfile não muda?
 
 O Dockerfile da raiz continua publicando e executando apenas
 `AtronPlatform.WebApi.dll`. Ele já restaura o pacote NuGet adicionado ao
@@ -280,17 +337,6 @@ de Redis. Um readiness check do cache permanece uma evolução separada.
   remoção pode manter permissões antigas até o TTL expirar.
 - Pub/Sub, Streams, filas, locks distribuídos e rate limiting não fazem parte
   desta decisão.
-
-## Quando não usar Redis
-
-Não use Redis apenas porque a tecnologia é comum no mercado. Evite-o quando:
-
-- a consulta já é barata e pouco frequente;
-- existe apenas uma instância e `IMemoryCache` atende o requisito;
-- o dado precisa de durabilidade e consistência como fonte oficial;
-- não há estratégia de TTL ou invalidação;
-- o custo operacional e de rede supera o ganho medido;
-- o sistema não consegue reconstruir o dado descartado.
 
 ## Rollback do provider
 

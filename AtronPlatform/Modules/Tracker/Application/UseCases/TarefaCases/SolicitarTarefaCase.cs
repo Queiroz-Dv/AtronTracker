@@ -2,8 +2,8 @@
 using Application.Extensions;
 using Application.Interfaces.Services;
 using Application.Policies.Tarefas;
-using Application.Resolvers.Tarefas;
 using Application.Resources;
+using Application.Services.EntitiesServices;
 using Application.UseCases.TarefaCases.Movimentacao;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -23,7 +23,7 @@ namespace Application.UseCases.TarefaCases
         RegistrarSolicitacaoTarefaMovimentacaoCase registrarMovimentacaoCase,
         IToDtoMapper<SolicitacaoObtencaoTarefa, SolicitacaoObtencaoTarefaDTO> mapper,
         TarefaNotificacaoInternaCase tarefaNotificacao,
-        AprovadorObtencaoTarefaResolver aprovadorResolver)
+        AprovadorObtencaoTarefaService aprovadorResolver)
     {
         private readonly IUsuarioService _usuarioService = usuarioService;
         private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
@@ -33,7 +33,7 @@ namespace Application.UseCases.TarefaCases
 
         private readonly IToDtoMapper<SolicitacaoObtencaoTarefa, SolicitacaoObtencaoTarefaDTO> _mapper = mapper;
         private readonly TarefaNotificacaoInternaCase _notificacaoCase = tarefaNotificacao;
-        private readonly AprovadorObtencaoTarefaResolver _aprovadorResolver = aprovadorResolver;
+        private readonly AprovadorObtencaoTarefaService _aprovadorResolver = aprovadorResolver;
 
         public async Task<Resultado<SolicitacaoObtencaoTarefaDTO>> ExecutarAsync(int tarefaId)
         {

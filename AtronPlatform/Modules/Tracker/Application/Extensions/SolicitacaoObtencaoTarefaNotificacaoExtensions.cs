@@ -1,11 +1,11 @@
 using Application.Resources;
 using Application.Records.Tarefa;
-using Application.Statics;
 using AtronNotificacoes.Contracts.DTO;
 using AtronNotificacoes.Domain.Enums;
 using Domain.Entities;
 using Domain.Extensions;
 using System;
+using Application.Constants;
 
 namespace Application.Extensions
 {

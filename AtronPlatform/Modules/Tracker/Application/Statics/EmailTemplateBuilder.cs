@@ -3,7 +3,7 @@ using Shared.Application.DTOS.Email;
 using Shared.Application.Email.Rendering;
 using Shared.Extensions;
 
-namespace Application.Statics
+namespace Application.Constants
 {
     public class EmailTemplateBuilder
     {
