@@ -159,7 +159,7 @@ public class LoginServiceSecurityTests
         var userIdentityService = new Mock<IUserIdentityService>();
 
         usuarioService
-            .Setup(service => service.ObterPorCodigoAsync(It.IsAny<string>()))
+            .Setup(service => service.ObterPorCodigoAsync(It.IsAny<string>(), true))
             .ReturnsAsync(usuario is null
                 ? Resultado<UsuarioDTO>.Falha(AuthResource.Erro_Autenticacao)
                 : Resultado<UsuarioDTO>.Sucesso(usuario));
