@@ -1,10 +1,7 @@
-# Diretrizes para o Uso de Modelos de Contrato (Request/Response) no Projeto Atron
-
-**Versão:** 1.0
+# Diretrizes para o Uso de Modelos de Contrato (Request/Response)
 
 **Data:** 06 de agosto de 2025
 
-**Autor:** Arquitetura Atron
 ## 1. Objetivo
 Este documento estabelece as diretrizes para o uso de classes `Request` e `Response` na camada de API do projeto Atron. O objetivo é equilibrar a segurança, clareza e robustez da aplicação com a produtividade do desenvolvimento, garantindo um design de API consistente e de longo prazo.
 
@@ -32,6 +29,7 @@ As classes `Request` e `Response` são a materialização deste contrato e atuam
     -   **Validação Específica do Caso de Uso:** Permite a aplicação de regras de validação (`Data Annotations` ou `FluentValidation`) que são relevantes apenas para aquele contexto. Por exemplo, a propriedade `Senha` é obrigatória no `CreateUsuarioRequest`, mas pode não existir no `UpdateUsuarioRequest`.
 
     -   **Clareza de Intenção:** O nome da classe documenta explicitamente a operação que está sendo realizada, melhorando a legibilidade do `Controller`.
+
 ---
 ### 3.2. Use `Response` Models para a Maioria das Operações de Leitura (`GET`)
 
@@ -41,7 +39,7 @@ As classes `Request` e `Response` são a materialização deste contrato e atuam
 
 -   **Justificativa Técnica:**
 
-    -   **Ocultação de Dados (Information Hiding):** Impede o vazamento de dados internos ou sensíveis que não são relevantes para o cliente (ex: chaves estrangeiras, hashes de senha, estruturas de dados internas, etc.).
+    -   **Ocultação de Dados (Information Hiding):** Impede o vazamento de dados internos ou sensíveis que não são relevantes para o cliente (ex: chaves estrangeiras, hashes de senha, estruturas de dados internas, etc.). Além disso e vedado a exposiçãod e campos Ids das entidades mas com excessão como as rotinas de `Tarefa` do módulo `Tracker` que depende exclusivamente do Id.
 
     -   **Formato Otimizado para o Cliente:** Permite "achatar" ou remodelar a estrutura dos dados para que ela seja consumida da forma mais fácil e performática possível pelo cliente. Um `Response` pode combinar campos de várias entidades, calcular valores derivados ou simplificar hierarquias complexas, reduzindo a carga de trabalho no front-end.
 
@@ -55,7 +53,7 @@ As classes `Request` e `Response` são a materialização deste contrato e atuam
 
 -   **Exemplo Ideal:** Um endpoint administrativo que lista todos os `Departamentos`. Se o `DepartamentoDTO` contém apenas `Codigo` e `Descricao`, ele é seguro e ideal para o consumo direto.
 
-    ```csharp
+ ```csharp
 
     [HttpGet]
 
@@ -70,8 +68,7 @@ As classes `Request` e `Response` são a materialização deste contrato e atuam
         return Ok(await _departamentoService.ObterTodosAsync());
 
     }
-
-    ```
+```
 
 -   **Critério de Decisão:** Antes de aplicar esta exceção, responda: "Este DTO contém alguma informação que não deveria ser pública? O formato dele é exatamente o que o cliente precisa, sem exigir manipulação adicional no front-end?". Se a resposta para ambas for "sim", o uso direto é justificável. Caso contrário, a regra padrão (`Response` model) deve ser aplicada.
 

@@ -1,8 +1,8 @@
-# Contrato de notificações internas v1
+# Plano de Notificações Internas
 
 ## Publicação
 
-PublicarNotificacaoInternaRequest é enviado por um módulo produtor para registrar uma notificação.
+O objeto `NotificacaoInternaRequest` é enviado por um módulo produtor para registrar uma notificação.
 
 | Campo | Regra |
 | --- | --- |
@@ -18,7 +18,7 @@ PublicarNotificacaoInternaRequest é enviado por um módulo produtor para regist
 
 ## Consulta
 
-NotificacaoInternaResponse é a representação de uma notificação para o destinatário autenticado. A identidade do destinatário é obtida exclusivamente do JWT da requisição de consulta e não integra o payload de resposta.
+`NotificacaoInternaResponse` é a representação de uma notificação para o destinatário autenticado. A identidade do destinatário é obtida exclusivamente do JWT da requisição de consulta e não integra o payload de resposta.
 
 ## Leitura e exclusão pelo destinatário
 
@@ -43,3 +43,6 @@ A exclusão não faz parte do contrato de publicação e não adiciona entidades
 - A sequence pode começar em um valor inicial aleatório, definido uma única vez na criação do banco, sem comprometer a geração monotônica posterior.
 - Números aleatórios por registro não serão usados como chave primária: exigem controle adicional de colisão e não oferecem autorização.
 - O identificador não concede acesso. Consulta e alteração sempre são limitadas ao destinatário autenticado.
+
+## Referências
+Verifique os ADRs de implementação e correções aqui [ADRs](../adr/README.md)
