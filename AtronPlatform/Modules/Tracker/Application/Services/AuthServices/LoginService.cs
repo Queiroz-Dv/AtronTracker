@@ -82,7 +82,7 @@ namespace Application.Services.AuthServices
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_TokenExpiradoInvalido);
 
             var codigoUsuario = sessaoRefreshToken.UsuarioCodigo;
-            var usuario = await _usuarioService.ObterPorCodigoAsync(codigoUsuario);
+            var usuario = await _usuarioService.ObterPorCodigoAsync(codigoUsuario, true);
             if (usuario?.Dados == null)
                 return Resultado<DadosDoTokenDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
