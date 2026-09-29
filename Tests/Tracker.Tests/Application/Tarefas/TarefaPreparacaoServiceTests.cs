@@ -301,6 +301,11 @@ public class TarefaPreparacaoServiceTests
         public Task<bool> RemoverUsuarioAsync(Usuario usuario) => Task.FromResult(true);
 
         public Task<bool> VerificarEmailExistenteAsync(string email) => Task.FromResult(false);
+
+        public Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo, bool semFiltro)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
