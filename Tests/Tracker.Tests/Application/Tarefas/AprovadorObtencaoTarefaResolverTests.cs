@@ -1,4 +1,4 @@
-using Application.Resolvers.Tarefas;
+using Application.Services.EntitiesServices;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
@@ -21,7 +21,7 @@ public class AprovadorObtencaoTarefaResolverTests
             .Setup(item => item.ObterUsuarioPorCodigoAsync("GST-IMEDIATO"))
             .ReturnsAsync(gestorImediato);
 
-        var resolver = new AprovadorObtencaoTarefaResolver(repositorio.Object);
+        var resolver = new AprovadorObtencaoTarefaService(repositorio.Object);
 
         var resultado = await resolver.ResolverAsync(solicitante, tarefa);
 
@@ -53,7 +53,7 @@ public class AprovadorObtencaoTarefaResolverTests
             .Setup(item => item.ObterUsuarioPorCodigoAsync("GST-TAREFA"))
             .ReturnsAsync(gestorTarefa);
 
-        var resolver = new AprovadorObtencaoTarefaResolver(repositorio.Object);
+        var resolver = new AprovadorObtencaoTarefaService(repositorio.Object);
 
         var resultado = await resolver.ResolverAsync(solicitante, tarefa);
 
@@ -80,7 +80,7 @@ public class AprovadorObtencaoTarefaResolverTests
             .Setup(item => item.ObterUsuarioPorCodigoAsync("GST-B"))
             .ReturnsAsync(gestorB);
 
-        var resolver = new AprovadorObtencaoTarefaResolver(repositorio.Object);
+        var resolver = new AprovadorObtencaoTarefaService(repositorio.Object);
 
         var resultado = await resolver.ResolverAsync(solicitante, tarefa);
 
@@ -124,7 +124,7 @@ public class AprovadorObtencaoTarefaResolverTests
             ("DPT-SOLICITANTE", "GST-SOLICITANTE"));
         var tarefa = CriarTarefa("GST-TAREFA");
         var repositorio = new Mock<IUsuarioRepository>();
-        var resolver = new AprovadorObtencaoTarefaResolver(repositorio.Object);
+        var resolver = new AprovadorObtencaoTarefaService(repositorio.Object);
 
         var resultado = await resolver.ResolverAsync(solicitante, tarefa);
 
