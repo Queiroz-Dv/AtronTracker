@@ -16,7 +16,7 @@ namespace Application.UseCases.UsuarioCases
     {
         public async Task<Resultado> ExecutarAsync(PerfilDeAcessoDTO perfil, string usuarioCodigo)
         {
-            var usuarioResultado = await usuarioService.ObterPorCodigoAsync(usuarioCodigo, true);
+            var usuarioResultado = await usuarioService.ObterPorCodigoAsync(usuarioCodigo);
 
             if (usuarioResultado.TeveFalha)
                 return Resultado.Falha(usuarioResultado.Messages);

@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Domain.Entities;
 using Shared.Application.Interfaces.Mapping;
 
@@ -15,7 +15,7 @@ namespace Application.Mapping
             {
                 Codigo = entity.Codigo,
                 Descricao = entity.Descricao,
-                Responsavel = entity.Responsavel.MapToDto(usuarioMap)
+                Responsavel = entity.Responsavel?.MapToDto(usuarioMap)
             };
         }
 
@@ -25,7 +25,7 @@ namespace Application.Mapping
             {
                 Codigo = dto.Codigo,
                 Descricao = dto.Descricao,
-                ResponsavelId = dto.Responsavel.Id,
+                ResponsavelId = dto.Responsavel.Id > 0 ? dto.Responsavel.Id : null,
                 ResponsavelCodigo = dto.Responsavel.Codigo,
                 ResponsavelEmail = dto.Responsavel.Email
             };

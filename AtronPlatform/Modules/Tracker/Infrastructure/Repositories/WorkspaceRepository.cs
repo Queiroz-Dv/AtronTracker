@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +18,16 @@ namespace Infrastructure.Repositories
         public async Task<Workspace> ObterWorkspacePorCodigo(string codigo)
         {
             return await _context.Workspaces.Where(work => work.Codigo == codigo).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> AtualizarResponsavelAsync(string workspaceCodigo, int responsavelId)
+        {
+            var workspace = await _context.Workspaces.FirstOrDefaultAsync(w => w.Codigo == workspaceCodigo);
+            if (workspace is null)
+                return false;
+
+            workspace.ResponsavelId = responsavelId;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<Workspace> ObterWorkspacePorResponsavelEmailAsync(string codigoResponsavel, string email)

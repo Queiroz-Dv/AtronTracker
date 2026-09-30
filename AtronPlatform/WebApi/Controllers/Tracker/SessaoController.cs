@@ -81,8 +81,9 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 }).ToList(),
             };
 
-            var workspace = workspaceResultado.Dados!;
-            dto.DadosDoUsuario.Workspace = new WorkspaceDoUsuarioDTO() { Codigo = workspace.Codigo };
+            var workspace = workspaceResultado.Dados;
+            if (workspace != null)
+                dto.DadosDoUsuario.Workspace = new WorkspaceDoUsuarioDTO() { Codigo = workspace.Codigo };
 
             _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, usuarioCodigo))
             {

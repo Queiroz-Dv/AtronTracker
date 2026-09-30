@@ -4,9 +4,9 @@ using Application.Extensions;
 using Application.Interfaces.Services;
 using Application.Records.Facade;
 using Application.Services.AuthServices;
-using Application.UseCases.UsuarioCases;
 using Application.UseCases.EmailCases;
-using Domain.Entities;    
+using Application.UseCases.UsuarioCases;
+using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.ApplicationInterfaces;
 using Domain.Interfaces.Identity;
@@ -18,60 +18,11 @@ using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Tracker.Tests.TestSupport.Fakes.Email;
 using Xunit;
-using Application.UseCases.WorkspaceCases;
 
 namespace Tracker.Tests.Application.Acesso;
 
 public class RegistroUsuarioServiceTests
 {
-    //[Fact]
-    //public void EnderecoFrontend_DevePriorizarEnderecoConfigurado()
-    //{
-    //    var configuration = new ConfigurationBuilder()
-    //        .AddInMemoryCollection(new Dictionary<string, string?>
-    //        {
-    //            ["Auth:ClientBaseUri"] = "https://front.atron.test/caminho-ignorado",
-    //            ["Cors:AllowedOrigins:0"] = "https://origem-alternativa.test"
-    //        })
-    //        .Build();
-
-    //    var service = new EnderecoFrontendService(configuration);
-
-    //    Assert.Equal("https://front.atron.test", service.ObterUriBase());
-    //}
-
-    //[Fact]
-    //public void EnderecoFrontend_DeveUsarOrigemCorsUnicaComoFallback()
-    //{
-    //    var configuration = new ConfigurationBuilder()
-    //        .AddInMemoryCollection(new Dictionary<string, string?>
-    //        {
-    //            ["Cors:AllowedOrigins:0"] = "https://front.atron.test"
-    //        })
-    //        .Build();
-
-    //    var service = new EnderecoFrontendService(configuration);
-
-    //    Assert.Equal("https://front.atron.test", service.ObterUriBase());
-    //}
-
-    //[Fact]
-    //public void EnderecoFrontend_DeveExigirEnderecoExplicitoQuandoHaMultiplasOrigensCors()
-    //{
-    //    var configuration = new ConfigurationBuilder()
-    //        .AddInMemoryCollection(new Dictionary<string, string?>
-    //        {
-    //            ["Cors:AllowedOrigins:0"] = "https://front.atron.test",
-    //            ["Cors:AllowedOrigins:1"] = "https://outro-front.atron.test"
-    //        })
-    //        .Build();
-
-    //    var excecao = Assert.Throws<InvalidOperationException>(
-    //        () => new EnderecoFrontendService(configuration));
-
-    //    Assert.Equal(AuthResource.Erro_UriFrontendNaoConfigurada, excecao.Message);
-    //}
-
     [Fact]
     public void TokenTemporario_DeveSerOpacoAleatorioEArmazenavelPorHash()
     {
@@ -106,7 +57,13 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task RecuperacaoSenha_DeveUsarOrigemConfiavelETokenDeUsoUnico()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com"
+        });
         var emailService = new EmailServiceFake();
         var cacheService = new CacheServiceFake();
         var service = CriarRecuperacaoSenha(usuarioRepository, emailService, cacheService);
@@ -145,8 +102,13 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task RecuperacaoSenha_NaoDeveRevelarSeUsuarioExiste()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(
-            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com"
+        });
         var service = CriarService(usuarioRepository);
 
         var existente = await service.SolicitarRecuperacaoSenha(new SolicitarRecuperacaoSenhaRequest
@@ -168,7 +130,13 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task SolicitarRecuperacaoSenha_DeveBuscarPorCodigoQuandoIdentificadorNaoForEmail()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com"
+        });
         var service = CriarService(usuarioRepository);
 
         var resultado = await service.SolicitarRecuperacaoSenha(new SolicitarRecuperacaoSenhaRequest
@@ -184,7 +152,13 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task SolicitarRecuperacaoSenha_DeveBuscarPorEmailQuandoIdentificadorForEmail()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com"
+        });
         var service = CriarService(usuarioRepository);
 
         var resultado = await service.SolicitarRecuperacaoSenha(new SolicitarRecuperacaoSenhaRequest
@@ -221,14 +195,19 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task ConfirmacaoEmail_DeveBloquearAposCincoTentativasInvalidas()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(
-            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com"
+        });
         var confirmacaoRepository = new ConfirmacaoEmailRepositoryFake();
         var codigoService = new ConfirmacaoEmailCodigoService();
         var confirmacao = codigoService.CriarDadosConfirmacao("USR001", 24);
         await confirmacaoRepository.GravarOuSubstituirAsync(confirmacao.ConfirmacaoEmail);
         var codigoInvalido = confirmacao.Identificador == "999999" ? "000000" : "999999";
-        var cadastro = new CadastroUsuarioService(new CadastroUsuarioFacadeRecord(  
+        var cadastro = new CadastroUsuarioService(new CadastroUsuarioFacadeRecord(
             null, null,
             usuarioRepository,
             new UsuarioIdentityRepositoryFake(),
@@ -251,7 +230,13 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task ReenviarConfirmacaoEmail_DeveBuscarCodigoUsuarioInformado()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com"
+        });
         var confirmacaoRepository = new ConfirmacaoEmailRepositoryFake();
         var service = CriarReenviarConfirmacaoEmail(usuarioRepository, confirmacaoRepository);
 
@@ -266,8 +251,13 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task ReenviarConfirmacaoEmail_NaoDeveRevelarSeUsuarioExiste()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(
-            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com"
+        });
         var confirmacaoRepository = new ConfirmacaoEmailRepositoryFake();
         var service = CriarReenviarConfirmacaoEmail(usuarioRepository, confirmacaoRepository);
 
@@ -284,8 +274,13 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task ReenviarConfirmacaoEmail_DeveRespeitarIntervaloMinimo()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(
-            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com"
+        });
         var confirmacaoRepository = new ConfirmacaoEmailRepositoryFake();
         var emailService = new EmailServiceFake();
         var service = CriarReenviarConfirmacaoEmail(
@@ -304,7 +299,13 @@ public class RegistroUsuarioServiceTests
     public async Task RegistrarUsuario_DeveManterCadastroEAdicionarAvisoQuandoEmailFalha()
     {
         var usuarioRepository = new UsuarioRepositoryFake(
-            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null),
+            new Usuario
+            {
+                Codigo = "USR001",
+                Nome = "Usuario",
+                Sobrenome = "Teste",
+                Email = "usuario@teste.com"
+            },
             codigoJaExiste: false);
         var service = CriarService(usuarioRepository, Resultado.Falha("falha de transporte"));
 
@@ -326,8 +327,13 @@ public class RegistroUsuarioServiceTests
     [Fact]
     public async Task RegistrarUsuario_DeveReservarCodigoQueJaExisteNoCadastroDeNegocio()
     {
-        var usuarioRepository = new UsuarioRepositoryFake(
-            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null));
+        var usuarioRepository = new UsuarioRepositoryFake(new Usuario
+        {
+            Codigo = "USR001",
+            Nome = "Usuario",
+            Sobrenome = "Teste",
+            Email = "usuario@teste.com"
+        });
         var service = CriarService(usuarioRepository);
 
         var request = CriarRequestRegistro();
@@ -345,7 +351,13 @@ public class RegistroUsuarioServiceTests
     public async Task RegistrarUsuario_DeveBloquearEmailDeUsuarioOperacional()
     {
         var usuarioRepository = new UsuarioRepositoryFake(
-            new Usuario("USR001", "Usuario", "Teste", "usuario@teste.com", null),
+            new Usuario
+            {
+                Codigo = "USR001",
+                Nome = "Usuario",
+                Sobrenome = "Teste",
+                Email = "usuario@teste.com"
+            },
             codigoJaExiste: false,
             emailJaExiste: true);
         var service = CriarService(usuarioRepository);
@@ -356,6 +368,20 @@ public class RegistroUsuarioServiceTests
         Assert.Contains(
             resultado.Messages,
             mensagem => mensagem.Descricao == EmailResource.ErroEmailUtilizado);
+    }
+
+    [Fact]
+    public async Task Cadastro_SemWorkspace_DeveCompletarComSucesso()
+    {
+        var usuarioCriado = new Usuario { Codigo = "USR001", Nome = "Usuario", Sobrenome = "Teste", Email = "usuario@teste.com" };
+        var usuarioRepository = new UsuarioRepositoryFake(usuarioCriado, false, false);
+        var service = CriarService(usuarioRepository);
+        var request = CriarRequestRegistro();
+        request.Workspace = null;
+
+        var resultado = await service.RegistrarUsuario(request);
+
+        Assert.False(resultado.TeveFalha);
     }
 
     private static UsuarioRegistroRequest CriarRequestRegistro()
@@ -369,7 +395,7 @@ public class RegistroUsuarioServiceTests
             ConfirmaSenha = "Senha@123"
         };
 
-        private static RegistroUsuarioService CriarService(
+    private static RegistroUsuarioService CriarService(
         UsuarioRepositoryFake usuarioRepository,
         Resultado? resultadoEmail = null)
     {
@@ -386,10 +412,11 @@ public class RegistroUsuarioServiceTests
             new ValidadorFake(),
             verificar,
             processarEnvio,
-            null, // provide the missing parameter
+            null,
             identidade,
-            usuarioRepository);
-            var recuperacao = new RecuperacaoSenhaService(new RecuperacaoSenhaFacadeRecord(
+            usuarioRepository,
+            null);
+        var recuperacao = new RecuperacaoSenhaService(new RecuperacaoSenhaFacadeRecord(
             usuarioRepository,
             identidade,
             new LoginRepositoryFake(),
@@ -470,7 +497,7 @@ public class RegistroUsuarioServiceTests
 
         public Task<IEnumerable<Usuario>> ObterUsuariosAsync() => Task.FromResult(Enumerable.Empty<Usuario>());
         public Task<Usuario> ObterUsuarioPorIdAsync(int? id) => Task.FromResult<Usuario>(null);
-        public Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo) => Task.FromResult(codigo == _usuario.Codigo ? _usuario : null);
+        public Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo) => Task.FromResult(codigo == _usuario?.Codigo ? _usuario : null);
         public Task<Usuario> ObterInativoPorEmailAsync(string email) => Task.FromResult<Usuario>(null);
         public Task<bool> CriarUsuarioAsync(Usuario usuario) => Task.FromResult(true);
         public Task<bool> AtualizarUsuarioAsync(Usuario usuario) => Task.FromResult(false);

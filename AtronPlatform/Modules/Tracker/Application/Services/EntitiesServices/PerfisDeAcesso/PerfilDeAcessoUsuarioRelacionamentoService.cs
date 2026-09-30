@@ -8,9 +8,6 @@ using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Infrastructure.Repositories;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.PerfisDeAcesso
 {
@@ -77,7 +74,7 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
 
             foreach (var usuarioDTO in usuarios)
             {
-                var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioDTO.Codigo, true);
+                var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioDTO.Codigo);
                 if (usuario is null)
                     return Resultado<List<PerfilDeAcessoUsuario>>.Falha(MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_Usuario));
 

@@ -100,7 +100,6 @@ namespace Infrastructure.Repositories
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(rel => rel.Departamento)
                 .Include(usr => usr.GestorImediato)
-                .AsNoTracking()
                 .Where(usr => usr.Codigo.ToUpper() == codigo.ToUpper() && !usr.Inativo).FirstOrDefaultAsync();           
         }
 
@@ -113,7 +112,6 @@ namespace Infrastructure.Repositories
                 .Include(rel => rel.UsuarioCargoDepartamentos)
                     .ThenInclude(rel => rel.Departamento)
                 .Include(usr => usr.GestorImediato)
-                .AsNoTracking()
                 .FirstOrDefaultAsync(usr => usr.Codigo == codigo);
         }
 
@@ -174,24 +172,6 @@ namespace Infrastructure.Repositories
                           })
                           .OrderByDescending(c => c.Codigo)
                           .ToListAsync();
-        }
-
-        public async Task<Usuario> ObterUsuarioPorCodigoAsync(string codigo, bool semFiltro)
-        {
-            if (!semFiltro)
-            {
-                return await ObterUsuarioPorCodigoAsync(codigo);
-            }
-
-            return await _context.Usuarios
-            .Include(rel => rel.UsuarioCargoDepartamentos)
-                .ThenInclude(crg => crg.Cargo)
-                    .ThenInclude(dpt => dpt.Departamento)
-            .Include(rel => rel.UsuarioCargoDepartamentos)
-                .ThenInclude(rel => rel.Departamento)
-            .Include(usr => usr.GestorImediato)
-            .IgnoreQueryFilters()
-            .Where(usr => usr.Codigo.ToUpper() == codigo.ToUpper() && !usr.Inativo).FirstOrDefaultAsync();
-        }
+        }       
     }
 }

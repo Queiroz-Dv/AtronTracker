@@ -2,8 +2,6 @@
 using Application.DTO.Request;
 using Domain.Entities;
 using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Application.Interfaces.Services
 {
@@ -12,7 +10,6 @@ namespace Application.Interfaces.Services
         Task<Resultado<List<UsuarioDTO>>> ObterTodosAsync();
 
         Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo);
-        Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo, bool buscarSemFiltro);
 
         Task<Resultado<UsuarioRequest>> CriarAsync(UsuarioRequest request);
 

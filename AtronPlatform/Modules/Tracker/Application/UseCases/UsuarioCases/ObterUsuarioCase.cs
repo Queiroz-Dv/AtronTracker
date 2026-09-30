@@ -6,7 +6,6 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
@@ -20,12 +19,12 @@ namespace Application.UseCases.UsuarioCases
 
         private readonly IToDtoMapper<Usuario, UsuarioDTO> _mapper = usuarioMapper;
 
-        public async Task<Resultado<UsuarioDTO>> ExecutarAsync(string codigo, bool buscarSemFiltro =  false)
+        public async Task<Resultado<UsuarioDTO>> ExecutarAsync(string codigo)
         {
             if (codigo.IsNullOrEmpty())
                 return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
-            var entidade = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo, buscarSemFiltro);
+            var entidade = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
             if (entidade is null)
                 return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
@@ -43,6 +42,6 @@ namespace Application.UseCases.UsuarioCases
             return usuario is null
                 ? Resultado<Usuario>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado)
                 : Resultado<Usuario>.Sucesso(usuario);
-        }       
+        }
     }
 }
