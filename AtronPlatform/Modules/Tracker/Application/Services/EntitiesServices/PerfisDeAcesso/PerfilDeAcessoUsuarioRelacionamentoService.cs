@@ -77,7 +77,7 @@ namespace Application.Services.EntitiesServices.PerfisDeAcesso
 
             foreach (var usuarioDTO in usuarios)
             {
-                var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioDTO.Codigo);
+                var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(usuarioDTO.Codigo, true);
                 if (usuario is null)
                     return Resultado<List<PerfilDeAcessoUsuario>>.Falha(MensagemRegistroNaoEncontrado(PerfilDeAcessoResource.Descricao_Usuario));
 
