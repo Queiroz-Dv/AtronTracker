@@ -65,7 +65,7 @@ public class ObterUsuarioTests
         var usuarioDto = new UsuarioDTO { Codigo = "USR" };
         var repositorio = new Mock<IUsuarioRepository>();
         repositorio
-            .Setup(item => item.ObterUsuarioPorCodigoAsync("USR", false))
+            .Setup(item => item.ObterUsuarioPorCodigoAsync("USR"))
             .ReturnsAsync(usuario);
         var mapa = new Mock<IToDtoMapper<Usuario, UsuarioDTO>>();
         mapa

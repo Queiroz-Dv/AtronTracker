@@ -1,4 +1,4 @@
-﻿namespace Shared.Application.DTOS.Users
+namespace Shared.Application.DTOS.Users
 {
     public class DadosComplementaresDoUsuarioDTO
     {
@@ -32,6 +32,8 @@
         public string CodigoDoCargo { get; set; } = string.Empty;
 
         public WorkspaceDoUsuarioDTO Workspace { get; set; }
+
+        public bool EhResponsavelDoWorkspace { get; set; }
     }
 
     public class WorkspaceDoUsuarioDTO

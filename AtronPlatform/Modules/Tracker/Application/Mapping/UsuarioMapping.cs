@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Domain.Entities;
 using Domain.Extensions;
 using Shared.Application.Interfaces.Mapping;
@@ -37,10 +37,10 @@ namespace Application.Mapping
                 foreach (var item in entity.UsuarioCargoDepartamentos)
                 {
                     usuario.CargoCodigo = item.CargoCodigo;
-                    usuario.Cargo = item.Cargo.MapToDto(_cargoMap);
+                    usuario.Cargo = item.Cargo?.MapToDto(_cargoMap);
 
                     usuario.DepartamentoCodigo = item.DepartamentoCodigo;
-                    usuario.Departamento = item.Departamento.MapToDto(_departamentoMap);
+                    usuario.Departamento = item.Departamento?.MapToDto(_departamentoMap);
                 }
             }
 
@@ -48,9 +48,10 @@ namespace Application.Mapping
             {
                 foreach (var item in entity.PerfisDeAcessoUsuario)
                 {
-                    var perfilDeAcesso = item.PerfilDeAcesso.MapToDto(_perfilDeAcessoMap);
+                    var perfilDeAcesso = item.PerfilDeAcesso?.MapToDto(_perfilDeAcessoMap);
 
-                    usuario.PerfisDeAcesso.Add(perfilDeAcesso);
+                    if (perfilDeAcesso != null)
+                        usuario.PerfisDeAcesso.Add(perfilDeAcesso);
                 }
             }
 

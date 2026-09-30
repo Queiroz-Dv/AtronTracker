@@ -16,7 +16,8 @@ namespace Application.Services.AuthServices
         public async Task<DadosComplementaresDoUsuarioDTO> ObterInformacoesComplementaresDoUsuario(UsuarioDTO usuarioDTO)
         {
             var workspaceResultado = await workspaceCase.ObterPorDadosDoUsuario(usuarioDTO.Codigo, usuarioDTO.Email);
-            var workspace = workspaceResultado.Dados!;
+            var workspace = workspaceResultado.Dados;
+            var ehResponsavel = workspace != null;
 
             var dadosComplementares = new DadosComplementaresDoUsuarioDTO
             {
@@ -32,6 +33,7 @@ namespace Application.Services.AuthServices
                         Codigo = workspace.Codigo,
                         Descricao = workspace.Descricao
                     } : null,
+                    EhResponsavelDoWorkspace = ehResponsavel,
                 },
                 DadosDoPerfil = [],
                 DadosDoToken = new TempoDosTokensDoUsuarioDTO(DateTime.UtcNow.AddMinutes(15), DateTime.UtcNow.AddDays(7))

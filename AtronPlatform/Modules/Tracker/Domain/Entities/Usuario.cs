@@ -8,22 +8,7 @@ namespace Domain.Entities
 {
     [TenantModule(TrackerModulos.Usuario)]
     public class Usuario : ITenantScoped
-    {
-        public Usuario()
-        {
-
-        }
-
-        public Usuario(string codigo, string nome, string sobrenome, string email, DateTime? dataNascimento)
-        {
-            Codigo = codigo;
-            Nome = nome;
-            Sobrenome = sobrenome;
-            Email = email;
-            DataNascimento = dataNascimento;
-            Inativo = false;
-        }
-
+    {                
         public int Id { get; set; }
 
         public string Codigo { get; set; }

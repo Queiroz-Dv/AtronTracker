@@ -8,8 +8,6 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
-using System.Threading.Tasks;
 
 namespace Application.Services.AuthServices
 {
@@ -37,9 +35,6 @@ namespace Application.Services.AuthServices
             if (resultadoUsuario?.Dados == null)
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
 
-            if (!resultadoUsuario.Dados.EmailConfirmado)
-                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
-
             var credenciaisValidas = await _loginRepository.ValidarCredenciaisAsync(
                 resultadoUsuario.Dados.Codigo,
                 loginRequest.Senha);
@@ -47,11 +42,21 @@ namespace Application.Services.AuthServices
             if (!credenciaisValidas)
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
 
+            if (!resultadoUsuario.Dados.EmailConfirmado)
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
+
             var dadosComplementares = await _dadosComplementaresDoUsuarioService
                 .ObterInformacoesComplementaresDoUsuario(resultadoUsuario.Dados);
 
             if (dadosComplementares.DadosDoUsuario.Workspace.IsNullable())
-                return Resultado<DadosDoTokenDTO>.Falha("Não foi possível realizar o login pois o usuário não possui vínculo com algum workspace.");
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_AcessoBloqueadoUsuarioSemWorkspace);
+
+            if (!dadosComplementares.DadosDoUsuario.EhResponsavelDoWorkspace
+                && (dadosComplementares.DadosDoUsuario.CodigoDoCargo.IsNullOrEmpty()
+                    || dadosComplementares.DadosDoUsuario.CodigoDoDepartamento.IsNullOrEmpty()))
+            {
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_AcessoBloqueadoMembroSemVinculo);
+            }
 
             var dadosDoToken = await _tokenService.ObterTokenComRefreshToken(dadosComplementares);
 
@@ -90,6 +95,13 @@ namespace Application.Services.AuthServices
 
             if (dadosComplementares.IsNullable() || dadosComplementares.DadosDoUsuario.Workspace.IsNullable())
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
+
+            if (!dadosComplementares.DadosDoUsuario.EhResponsavelDoWorkspace
+                && (dadosComplementares.DadosDoUsuario.CodigoDoCargo.IsNullOrEmpty()
+                    || dadosComplementares.DadosDoUsuario.CodigoDoDepartamento.IsNullOrEmpty()))
+            {
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
+            }
 
             var dadosDeToken = await _tokenService.ObterTokenComRefreshToken(dadosComplementares);
 

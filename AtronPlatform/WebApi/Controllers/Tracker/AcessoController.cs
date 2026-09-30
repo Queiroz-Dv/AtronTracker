@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
+using System.Security.Claims;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -136,6 +137,13 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [EnableRateLimiting(AcessoRateLimiting.Registro)]
         public async Task<ActionResult> Post([FromBody] UsuarioRegistroRequest registroRequest)
         {
+            string codigoWorkspace = registroRequest.Workspace.Codigo;
+
+            if (HttpContext.User.Identity is ClaimsIdentity identity)
+            {
+                identity.AddClaim(new Claim(ClaimCode.CODIGO_WORKSPACE, codigoWorkspace));
+            }
+
             var resultado = await _registroUsuarioService.RegistrarUsuario(registroRequest);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }

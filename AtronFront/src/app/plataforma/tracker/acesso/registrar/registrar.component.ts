@@ -41,6 +41,17 @@ export class RegistrarComponent implements OnInit {
   }
 
   registrarNovoUsuario(): void {
+
+  if (this.form.invalid) {
+    this.notificacaoService.exibirMensagem(
+      "O formulário está inválido. Verifique os dados e realize o processo novamente",
+      Nivel.Error, 
+      5000
+    );
+    this.form.markAllAsTouched();
+    return; 
+  }
+
     let dadosDoUsuario = new RegistrarRequest(
       this.form.value.codigo,
       this.form.value.nome,
@@ -57,7 +68,7 @@ export class RegistrarComponent implements OnInit {
     this.acessoService.registrar(dadosDoUsuario).subscribe({
       next: (resposta: unknown) => {
         const mensagens = this.notificacaoService.normalizarMensagens(resposta, Nivel.Sucesso);
-        const mensagemSucesso =  mensagens.map(mensagem => mensagem.descricao).join('\n');
+        const mensagemSucesso = mensagens.map(mensagem => mensagem.descricao).join('\n');
 
         this.notificacaoService.exibirMensagem(mensagemSucesso, Nivel.Sucesso, 5000);
 

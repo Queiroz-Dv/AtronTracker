@@ -5,11 +5,7 @@ using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Mapping;
-using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices
 {
@@ -79,8 +75,5 @@ namespace Application.Services.EntitiesServices
 
         public async Task<Resultado<Usuario>> ObterUsuarioAtual()
             => await _obterUsuario.ObterAsync();
-
-        public async Task<Resultado<UsuarioDTO>> ObterPorCodigoAsync(string codigo, bool buscarSemFiltro)
-       => await _obterUsuario.ExecutarAsync(codigo, buscarSemFiltro);
-    }    
+    }
 }

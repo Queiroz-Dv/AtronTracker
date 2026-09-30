@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>Domain</RootNamespace>
 		

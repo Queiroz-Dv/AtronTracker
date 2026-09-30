@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -218,5 +218,14 @@
   </data>
   <data name="Erro_MuitasTentativas" xml:space="preserve">
     <value>Muitas tentativas foram realizadas. Aguarde antes de tentar novamente.</value>
+  </data>
+  <data name="Erro_EmailNaoConfirmadoParaAcesso" xml:space="preserve">
+    <value>O seu e-mail ainda não foi confirmado para acessar a aplicação. Solicite o reenvio ou verifique sua caixa de e-mail para realizar a confirmação.</value>
+  </data>
+  <data name="Erro_AcessoBloqueadoUsuarioSemWorkspace" xml:space="preserve">
+    <value>Não foi possível realizar o login pois o usuário não possui vínculo com algum workspace.</value>
+  </data>
+  <data name="Erro_AcessoBloqueadoMembroSemVinculo" xml:space="preserve">
+    <value>Membro do workspace sem cargo ou departamento vinculado não pode acessar a plataforma.</value>
   </data>
 </root>

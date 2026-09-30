@@ -40,6 +40,7 @@ public class LoginServiceSecurityTests
             .Setup(service => service.RotacionarRefreshTokenAsync(It.IsAny<RotacaoRefreshTokenRecord>()))
             .ReturnsAsync(true);
         dadosComplementares.DadosDoUsuario.Workspace = new WorkspaceDoUsuarioDTO { Codigo = "WS001", Descricao = "Workspace" };
+        dadosComplementares.DadosDoUsuario.EhResponsavelDoWorkspace = true;
         dependencias.DadosComplementaresService
             .Setup(service => service.ObterInformacoesComplementaresDoUsuario(It.IsAny<UsuarioDTO>()))
             .ReturnsAsync(dadosComplementares);
@@ -146,6 +147,153 @@ public class LoginServiceSecurityTests
         emailNaoConfirmado.TokenService.Verify(
             service => service.ObterTokenComRefreshToken(It.IsAny<Shared.Application.DTOS.Users.DadosComplementaresDoUsuarioDTO>()),
             Times.Never);
+    }
+
+    [Fact]
+    public async Task Dono_SemCargoDepartamento_DeveConseguirLogar()
+    {
+        var usuario = new UsuarioDTO { Codigo = "USR001", EmailConfirmado = true };
+        var dependencias = CriarDependencias(usuario);
+        dependencias.LoginRepository
+            .Setup(repository => repository.ValidarCredenciaisAsync("USR001", "senha"))
+            .ReturnsAsync(true);
+            
+        var dadosComplementares = new DadosComplementaresDoUsuarioDTO
+        {
+            DadosDoUsuario = new DadosDoUsuarioDTO 
+            { 
+                CodigoDoUsuario = "USR001",
+                Workspace = new WorkspaceDoUsuarioDTO { Codigo = "WS001" },
+                EhResponsavelDoWorkspace = true,
+                CodigoDoCargo = "", // Sem cargo
+                CodigoDoDepartamento = "" // Sem departamento
+            }
+        };
+        
+        dependencias.DadosComplementaresService
+            .Setup(service => service.ObterInformacoesComplementaresDoUsuario(It.IsAny<UsuarioDTO>()))
+            .ReturnsAsync(dadosComplementares);
+            
+        dependencias.TokenService
+            .Setup(service => service.ObterTokenComRefreshToken(It.IsAny<DadosComplementaresDoUsuarioDTO>()))
+            .ReturnsAsync(new DadosDeTokenComRefreshToken
+            {
+                TokenDTO = new DadosDoTokenDTO("access", DateTime.UtcNow.AddMinutes(15)),
+                RefrehTokenDTO = new DadosDoRefrehTokenDTO("refresh", DateTime.UtcNow.AddDays(7))
+            });
+
+        dependencias.UserIdentityService
+            .Setup(service => service.GravarRefreshTokenAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+            .ReturnsAsync(true);
+
+        var request = new LoginRequestDTO { CodigoDoUsuario = "USR001", Senha = "senha" };
+        var resultado = await dependencias.Service.Autenticar(request);
+
+        Assert.False(resultado.TeveFalha);
+    }
+
+    [Fact]
+    public async Task Membro_SemCargoDepartamento_NaoDeveLogar()
+    {
+        var usuario = new UsuarioDTO { Codigo = "USR001", EmailConfirmado = true };
+        var dependencias = CriarDependencias(usuario);
+        dependencias.LoginRepository
+            .Setup(repository => repository.ValidarCredenciaisAsync("USR001", "senha"))
+            .ReturnsAsync(true);
+            
+        var dadosComplementares = new DadosComplementaresDoUsuarioDTO
+        {
+            DadosDoUsuario = new DadosDoUsuarioDTO 
+            { 
+                CodigoDoUsuario = "USR001",
+                Workspace = new WorkspaceDoUsuarioDTO { Codigo = "WS001" },
+                EhResponsavelDoWorkspace = false, // É membro comum
+                CodigoDoCargo = "", // Sem cargo
+                CodigoDoDepartamento = "" // Sem departamento
+            }
+        };
+        
+        dependencias.DadosComplementaresService
+            .Setup(service => service.ObterInformacoesComplementaresDoUsuario(It.IsAny<UsuarioDTO>()))
+            .ReturnsAsync(dadosComplementares);
+
+        var request = new LoginRequestDTO { CodigoDoUsuario = "USR001", Senha = "senha" };
+        var resultado = await dependencias.Service.Autenticar(request);
+
+        Assert.True(resultado.TeveFalha);
+        Assert.Equal(AuthResource.Erro_AcessoBloqueadoMembroSemVinculo, resultado.Messages.First().Descricao);
+    }
+
+    [Fact]
+    public async Task Refresh_Dono_SemCargoDepartamento_DeveRenovarToken()
+    {
+        var usuario = new UsuarioDTO { Codigo = "USR001", EmailConfirmado = true };
+        var dependencias = CriarDependencias(usuario);
+        var dadosComplementares = new DadosComplementaresDoUsuarioDTO
+        {
+            DadosDoUsuario = new DadosDoUsuarioDTO 
+            { 
+                CodigoDoUsuario = "USR001",
+                Workspace = new WorkspaceDoUsuarioDTO { Codigo = "WS001" },
+                EhResponsavelDoWorkspace = true,
+                CodigoDoCargo = "",
+                CodigoDoDepartamento = ""
+            }
+        };
+
+        dependencias.UserIdentityService
+            .Setup(service => service.ObterSessaoRefreshTokenAsync("refresh-antigo"))
+            .ReturnsAsync(new Domain.Entities.SessaoRefreshToken("USR001", DateTime.UtcNow.AddDays(1)));
+        dependencias.UserIdentityService
+            .Setup(service => service.RotacionarRefreshTokenAsync(It.IsAny<RotacaoRefreshTokenRecord>()))
+            .ReturnsAsync(true);
+        dependencias.DadosComplementaresService
+            .Setup(service => service.ObterInformacoesComplementaresDoUsuario(It.IsAny<UsuarioDTO>()))
+            .ReturnsAsync(dadosComplementares);
+        dependencias.TokenService
+            .Setup(service => service.ObterTokenComRefreshToken(It.IsAny<DadosComplementaresDoUsuarioDTO>()))
+            .ReturnsAsync(new DadosDeTokenComRefreshToken
+            {
+                TokenDTO = new DadosDoTokenDTO("access", DateTime.UtcNow.AddMinutes(15)),
+                RefrehTokenDTO = new DadosDoRefrehTokenDTO("refresh", DateTime.UtcNow.AddDays(7))
+            });
+
+        var cookie = new DadosDoRefreshTokenCookieDTO { RefreshToken = "refresh-antigo" };
+        var resultado = await dependencias.Service.RefreshAcesso(cookie);
+
+        Assert.False(resultado.TeveFalha);
+    }
+
+    [Fact]
+    public async Task Refresh_Membro_SemCargoDepartamento_NaoDeveRenovar()
+    {
+        var usuario = new UsuarioDTO { Codigo = "USR001", EmailConfirmado = true };
+        var dependencias = CriarDependencias(usuario);
+        var dadosComplementares = new DadosComplementaresDoUsuarioDTO
+        {
+            DadosDoUsuario = new DadosDoUsuarioDTO 
+            { 
+                CodigoDoUsuario = "USR001",
+                Workspace = new WorkspaceDoUsuarioDTO { Codigo = "WS001" },
+                EhResponsavelDoWorkspace = false,
+                CodigoDoCargo = "",
+                CodigoDoDepartamento = ""
+            }
+        };
+
+        dependencias.UserIdentityService
+            .Setup(service => service.ObterSessaoRefreshTokenAsync("refresh-antigo"))
+            .ReturnsAsync(new Domain.Entities.SessaoRefreshToken("USR001", DateTime.UtcNow.AddDays(1)));
+            
+        dependencias.DadosComplementaresService
+            .Setup(service => service.ObterInformacoesComplementaresDoUsuario(It.IsAny<UsuarioDTO>()))
+            .ReturnsAsync(dadosComplementares);
+
+        var cookie = new DadosDoRefreshTokenCookieDTO { RefreshToken = "refresh-antigo" };
+        var resultado = await dependencias.Service.RefreshAcesso(cookie);
+
+        Assert.True(resultado.TeveFalha);
+        Assert.Equal(AuthResource.Erro_Autenticacao, resultado.Messages.First().Descricao);
     }
 
     private static DependenciasLogin CriarDependencias(UsuarioDTO? usuario)

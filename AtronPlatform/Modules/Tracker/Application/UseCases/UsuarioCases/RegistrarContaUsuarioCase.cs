@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.DTO.Request;
 using Application.Extensions;
 using Application.UseCases.EmailCases;
@@ -9,8 +9,6 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
@@ -20,7 +18,8 @@ namespace Application.UseCases.UsuarioCases
         ProcessarEnvioEmailConfirmacaoCase ProcessarEnvioEmailConfirmacaoCase,
         RegistrarWorkspaceCase registrarWorkspaceCase,
         IUsuarioIdentityRepository IdentityRepository,
-        IUsuarioRepository UsuarioRepository)
+        IUsuarioRepository UsuarioRepository,
+        IWorkspaceRepository WorkspaceRepository)
     {
         public async Task<Resultado> ExecutarAsync(UsuarioRegistroRequest request)
         {
@@ -35,13 +34,6 @@ namespace Application.UseCases.UsuarioCases
             if (!await IdentityRepository.RegistrarContaDeUsuarioRepositoryAsync(request.Codigo, request.Email, request.Senha))
                 return Resultado.Falha(AuthResource.Erro_GravacaoConta);
 
-            var entidade = request.MapearRequestParaEntidade();
-            var gravado = await UsuarioRepository.CriarUsuarioAsync(entidade);
-            if (!gravado)
-                return Resultado.Falha(UsuarioResource.ErroInesperadoGravacao);
-
-            var usuario = await UsuarioRepository.ObterUsuarioPorCodigoAsync(entidade.Codigo);
-            
             if (request.Workspace != null && registrarWorkspaceCase != null)
             {
                 var workspaceDTO = new WorkspaceDTO()
@@ -50,7 +42,6 @@ namespace Application.UseCases.UsuarioCases
                     Descricao = request.Workspace.Descricao,
                     Responsavel = new UsuarioDTO()
                     {
-                        Id = usuario.Id,
                         Codigo = request.Codigo,
                         Email = request.Email
                     },
@@ -63,8 +54,20 @@ namespace Application.UseCases.UsuarioCases
                 }
             }
 
+            var entidade = request.MapearRequestParaEntidade();
+            var gravado = await UsuarioRepository.CriarUsuarioAsync(entidade);
+            if (!gravado)
+                return Resultado.Falha(UsuarioResource.ErroInesperadoGravacao);
+
+            var usuario = await UsuarioRepository.ObterUsuarioPorCodigoAsync(entidade.Codigo);
+
+            if (request.Workspace != null && usuario != null)
+            {
+                await WorkspaceRepository.AtualizarResponsavelAsync(request.Workspace.Codigo, usuario.Id);
+            }
+
             var processoEnvioResultado = await ProcessarEnvioEmailConfirmacaoCase.ExecutarAsync(usuario);
-           
+
             if (processoEnvioResultado != null && processoEnvioResultado.Messages != null && processoEnvioResultado.Messages.Any())
             {
                 return Resultado.Sucesso(AuthResource.Mensagem_UsuarioRegistrado, processoEnvioResultado.Messages);
@@ -73,4 +76,4 @@ namespace Application.UseCases.UsuarioCases
             return Resultado.Sucesso(AuthResource.Mensagem_UsuarioRegistrado);
         }
     }
-}
+}

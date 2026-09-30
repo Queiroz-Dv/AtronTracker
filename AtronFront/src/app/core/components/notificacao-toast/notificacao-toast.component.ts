@@ -36,9 +36,9 @@ export class NotificacaoToastComponent {
 
   obterTitulo(): string {
     switch (this.data.nivel) {
-      case Nivel.Sucesso: return 'Operacao concluida';
-      case Nivel.Error: return 'Nao foi possivel concluir';
-      case Nivel.Aviso: return 'Atencao';
+      case Nivel.Sucesso: return 'Operação concluída';
+      case Nivel.Error: return 'Não foi possível concluir';
+      case Nivel.Aviso: return 'Atenção';
       default: return 'Mensagem do sistema';
     }
   }
