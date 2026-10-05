@@ -1,23 +1,21 @@
-﻿using Domain.Interfaces.Identity;
+using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Application.DTOS.Common;
-using Shared.Application.Interfaces.Service;
+using Shared.Application.Messaging;
 using Shared.Application.Resources;
+using Shared.Domain.Events.Auditoria;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
     public class ReativarUsuarioCase(
         IUsuarioRepository usuarioRepository,
         IUsuarioIdentityRepository usuarioIdentityRepository,
-        IAuditoriaService auditoriaService)
+        IEventBus eventBus)
     {
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
-        private readonly IAuditoriaService _auditoriaService = auditoriaService;
+        private readonly IEventBus _eventBus = eventBus;
 
         public async Task<Resultado> ExecutarAsync(string email, string codigoReativacao)
         {
@@ -37,17 +35,11 @@ namespace Application.UseCases.UsuarioCases
             await _usuarioRepository.AtualizarUsuarioAsync(usuario);
             await _usuarioIdentityRepository.ReativarContaAsync(usuario.Codigo);
 
-            await _auditoriaService.AtualizarServiceAsync(new AuditoriaDTO
-            {
-                CodigoRegistro = usuario.Codigo,
-                Contexto = nameof(Domain.Entities.Usuario),
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = usuario.Codigo,
-                    Contexto = nameof(Domain.Entities.Usuario),
-                    Descricao = $"Usuário {usuario.Codigo} reativado em {DateTime.Now:dd/MM/yyyy HH:mm}."
-                }
-            });
+            await _eventBus.PublicarAsync(new AuditoriaAtualizadaEvent(
+                usuario.Codigo,
+                nameof(Domain.Entities.Usuario),
+                "Usu�rio $({usuario.Codigo}) reativado em $({DateTime.Now:dd/MM/yyyy HH:mm})."
+            ));
 
             return Resultado.Sucesso().AdicionarMensagem(UsuarioResource.MensagemContaReativada);
         }

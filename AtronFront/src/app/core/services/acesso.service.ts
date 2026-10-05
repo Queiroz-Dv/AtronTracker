@@ -45,7 +45,7 @@ export class AcessoService {
     return this.http.post<UserToken>(RotasApi.logarEndpoint, login, { withCredentials: true }).pipe(
       switchMap(response => {
         this.sessaoService.setUsuarioInfo(response.value, response.expires, response.usuarioCodigo);
-        return this.carregarSessaoInfo(response.value);
+        return this.carregarSessaoInfo();
       }),
       map((): void => undefined),
       catchError(error => throwError(() => error))
@@ -57,22 +57,7 @@ export class AcessoService {
       return of(true);
     }
 
-    const tokenAtual = this.sessaoService.obterAccessToken();
-    if (tokenAtual) {
-      return this.carregarSessaoInfo(tokenAtual.token).pipe(
-        map(() => true),
-        catchError(() => {
-          this.limparSessaoLocal();
-          return of(false);
-        })
-      );
-    }
-
-    return this.http.post<UserToken>(RotasApi.refreshTokenEndpoint, {}, { withCredentials: true }).pipe(
-      switchMap(token => {
-        this.sessaoService.setUsuarioInfo(token.value, token.expires, token.usuarioCodigo);
-        return this.carregarSessaoInfo(token.value);
-      }),
+    return this.carregarSessaoInfo().pipe(
       map(() => true),
       catchError(() => {
         this.limparSessaoLocal();
@@ -98,16 +83,7 @@ export class AcessoService {
   }
 
   recarregarSessaoAtual(): Observable<DadosDoUsuario> {
-    const tokenAtual = this.sessaoService.obterAccessToken();
-    if (tokenAtual) {
-      return this.carregarSessaoInfo(tokenAtual.token);
-    }
-
-    return this.http.post<UserToken>(RotasApi.refreshTokenEndpoint, {}, { withCredentials: true }).pipe(
-      switchMap(token => {
-        this.sessaoService.setUsuarioInfo(token.value, token.expires, token.usuarioCodigo);
-        return this.carregarSessaoInfo(token.value);
-      }),
+    return this.carregarSessaoInfo().pipe(
       catchError(error => {
         this.limparSessaoLocal();
         return throwError(() => error);
@@ -124,13 +100,10 @@ export class AcessoService {
     return this.http.post<any>(RotasApi.configurarPerfilInicialEndpoint, payload);
   }
 
-  private carregarSessaoInfo(token: string): Observable<DadosDoUsuario> {
-    if (!token) return throwError(() => new Error('Token de acesso ausente para carregar a sessão.'));
-
+  private carregarSessaoInfo(): Observable<DadosDoUsuario> {
     this.sessaoService.clearInfo();
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.get<DadosDoUsuario>(RotasApi.sessionInfoEndpoint, { headers }).pipe(
+    return this.http.get<DadosDoUsuario>(RotasApi.sessionInfoEndpoint).pipe(
       tap(info => {
         this.sessionInfoSubject.next(info);
       }),

@@ -1,42 +1,33 @@
 using AtronStock.Application.Resources;
 using AtronStock.Domain.Entities;
-using Shared.Application.DTOS.Common;
-using Shared.Application.Interfaces.Service;
+using Shared.Application.Messaging;
+using Shared.Domain.Events.Auditoria;
+using System;
+using System.Threading.Tasks;
 
 namespace AtronStock.Application.UseCases.ProdutoCases
 {
-    public sealed class AuditoriaProdutoCase(IAuditoriaService auditoriaService)
+    public sealed class AuditoriaProdutoCase(IEventBus eventBus)
     {
         private const string ProdutoContexto = nameof(Produto);
-        private readonly IAuditoriaService _auditoriaService = auditoriaService;
+        private readonly IEventBus _eventBus = eventBus;
 
         public Task RegistrarCriacaoAsync(Produto produto)
-            => _auditoriaService.RegistrarServiceAsync(CriarAuditoria(
+            => _eventBus.PublicarAsync(new AuditoriaRegistradaEvent(
                 produto.Codigo,
+                ProdutoContexto,
                 string.Format(
                     ProdutoResource.MensagemProdutoCriado,
                     produto.Codigo,
-                    DateTime.Now)));
+                    DateTime.Now))).AsTask();
 
         public Task RegistrarAtualizacaoAsync(Produto produto)
-            => _auditoriaService.AtualizarServiceAsync(CriarAuditoria(
+            => _eventBus.PublicarAsync(new AuditoriaAtualizadaEvent(
                 produto.Codigo,
+                ProdutoContexto,
                 string.Format(
                     ProdutoResource.HistoricoProdutoAtualizado,
                     produto.Codigo,
-                    DateTime.Now)));
-
-        private static AuditoriaDTO CriarAuditoria(string codigo, string descricao)
-            => new()
-            {
-                CodigoRegistro = codigo,
-                Contexto = ProdutoContexto,
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = codigo,
-                    Contexto = ProdutoContexto,
-                    Descricao = descricao
-                }
-            };
+                    DateTime.Now))).AsTask();
     }
 }

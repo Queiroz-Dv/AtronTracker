@@ -1,4 +1,4 @@
-Ôªøusing Domain.Entities;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,10 +22,10 @@ namespace Infrastructure.EntitiesConfiguration.ControleDeAcessoConfiguration
             builder.HasData(
             new Modulo { Id = 1, Codigo = "DPT", Descricao = "Departamentos" },
             new Modulo { Id = 2, Codigo = "CRG", Descricao = "Cargos" },
-            new Modulo { Id = 3, Codigo = "USR", Descricao = "Usu√°rios" },
+            new Modulo { Id = 3, Codigo = "USR", Descricao = "Usu·rios" },
             new Modulo { Id = 4, Codigo = "TAR", Descricao = "Tarefas" },
             new Modulo { Id = 6, Codigo = "PERF", Descricao = "Perfil de acesso" },
-            new Modulo { Id = 10, Codigo = "RPERFUSR", Descricao = "Relacionamento de perfil e usu√°rios" },
+            new Modulo { Id = 10, Codigo = "RPERFUSR", Descricao = "Relacionamento de perfil e usu·rios" },
             new Modulo { Id = 11, Codigo = "PLC", Descricao = "Planejamento de Custos" },
             new Modulo { Id = 12, Codigo = "CAT", Descricao = "Categorias" },
             new Modulo { Id = 13, Codigo = "PRD", Descricao = "Produtos" },

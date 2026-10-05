@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -6,15 +6,15 @@ using System.Reflection;
 namespace Shared.Extensions
 {
     /// <summary>
-    /// Classe de extens√£o para obter informa√ß√µes de enumeradores
+    /// Classe de extens„o para obter informaÁıes de enumeradores
     /// </summary>
     public static class EnumExtensions
     {
         /// <summary>
-        /// Obt√©m a descri√ß√£o do enum atual
+        /// ObtÈm a descriÁ„o do enum atual
         /// </summary>
-        /// <param name="value">Enum que ser√° processado</param>
-        /// <returns>O valor da descri√ß√£o do enumerado</returns>
+        /// <param name="value">Enum que ser· processado</param>
+        /// <returns>O valor da descriÁ„o do enumerado</returns>
         public static string GetDescription(this Enum value)
         {
             FieldInfo fi = value.GetType().GetField(value.ToString());

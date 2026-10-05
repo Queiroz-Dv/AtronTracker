@@ -3,9 +3,6 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Mapping;
 using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases
 {

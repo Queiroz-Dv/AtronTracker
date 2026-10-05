@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Application.Services.AuthServices;
 using Application.UseCases.WorkspaceCases;
 using Moq;
@@ -13,9 +14,9 @@ public class DadosComplementaresDoUsuarioServiceTests
     [Fact]
     public async Task ObterInformacoesComplementaresDoUsuario_DevePropagarModuloCategoria()
     {
-        var perfis = new Mock<IPerfilDeAcessoService>();
+        var perfis = new Mock<global::Application.UseCases.PerfilDeAcessoCases.ObterPerfisUsuarioCase>();
         perfis
-            .Setup(servico => servico.ObterPerfisPorCodigoUsuarioAsync("USR-CAT"))
+            .Setup(servico => servico.ExecutarAsync("USR-CAT"))
             .ReturnsAsync(
             [
                 new PerfilDeAcessoDTO
@@ -48,9 +49,9 @@ public class DadosComplementaresDoUsuarioServiceTests
     [Fact]
     public async Task ObterInformacoesComplementaresDoUsuario_NaoDeveAdicionarCategoriaSemRelacionamento()
     {
-        var perfis = new Mock<IPerfilDeAcessoService>();
+        var perfis = new Mock<global::Application.UseCases.PerfilDeAcessoCases.ObterPerfisUsuarioCase>();
         perfis
-            .Setup(servico => servico.ObterPerfisPorCodigoUsuarioAsync("USR-SEM-CAT"))
+            .Setup(servico => servico.ExecutarAsync("USR-SEM-CAT"))
             .ReturnsAsync(
             [
                 new PerfilDeAcessoDTO
@@ -82,9 +83,9 @@ public class DadosComplementaresDoUsuarioServiceTests
     [Fact]
     public async Task DadosComplementares_Dono_DeveRetornarEhResponsavelTrue()
     {
-        var perfis = new Mock<IPerfilDeAcessoService>();
+        var perfis = new Mock<global::Application.UseCases.PerfilDeAcessoCases.ObterPerfisUsuarioCase>();
         perfis
-            .Setup(servico => servico.ObterPerfisPorCodigoUsuarioAsync(It.IsAny<string>()))
+            .Setup(servico => servico.ExecutarAsync(It.IsAny<string>()))
             .ReturnsAsync(new List<PerfilDeAcessoDTO>());
             
         var usuarioMapper = new Mock<global::Shared.Application.Interfaces.Mapping.IToDtoMapper<global::Domain.Entities.Usuario, global::Application.DTO.UsuarioDTO>>();
@@ -113,9 +114,9 @@ public class DadosComplementaresDoUsuarioServiceTests
     [Fact]
     public async Task DadosComplementares_SemWorkspace_DeveRetornarEhResponsavelFalse()
     {
-        var perfis = new Mock<IPerfilDeAcessoService>();
+        var perfis = new Mock<global::Application.UseCases.PerfilDeAcessoCases.ObterPerfisUsuarioCase>();
         perfis
-            .Setup(servico => servico.ObterPerfisPorCodigoUsuarioAsync(It.IsAny<string>()))
+            .Setup(servico => servico.ExecutarAsync(It.IsAny<string>()))
             .ReturnsAsync(new List<PerfilDeAcessoDTO>());
             
         var usuarioMapper = new Mock<global::Shared.Application.Interfaces.Mapping.IToDtoMapper<global::Domain.Entities.Usuario, global::Application.DTO.UsuarioDTO>>();
@@ -140,3 +141,8 @@ public class DadosComplementaresDoUsuarioServiceTests
         Assert.Null(dados.DadosDoUsuario.Workspace);
     }
 }
+
+
+
+
+

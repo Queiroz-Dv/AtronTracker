@@ -1,42 +1,41 @@
 using Application.DTO;
 using Application.Resources;
-using Shared.Application.Interfaces.Service;
-using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
+using Shared.Application.Services;
+using Shared.Extensions.RegraExtensions;
 
 namespace Application.Validacoes
 {
-    public sealed class PerfilDeAcessoValidador : IValidador<PerfilDeAcessoDTO>
+    public sealed class PerfilDeAcessoValidador : Validador<PerfilDeAcessoDTO>
     {
-        public IEnumerable<NotificationMessage> Validar(PerfilDeAcessoDTO perfil)
+        public PerfilDeAcessoValidador()
         {
-            var notificacoes = new NotificationBag();
+            RegraPara(x => x)
+                .DeveSer(p => !string.IsNullOrEmpty(p.Codigo) && !string.IsNullOrEmpty(p.Descricao))
+                .ComMensagem(PerfilDeAcessoResource.Erro_DadosObrigatorios);
 
-            if (perfil is null)
-            {
-                notificacoes.AdicionarErro(PerfilDeAcessoResource.Erro_PerfilInvalido);
-                return notificacoes.Messages;
-            }
+            RegraPara(x => x.Codigo)
+                .Quando(x => !string.IsNullOrEmpty(x.Codigo))
+                .TamanhoMenorOuIgualA(10)
+                .ComMensagem(PerfilDeAcessoResource.Erro_CodigoLongo);
 
-            if (string.IsNullOrEmpty(perfil.Codigo) || string.IsNullOrEmpty(perfil.Descricao))
-                notificacoes.AdicionarErro(PerfilDeAcessoResource.Erro_DadosObrigatorios);
+            RegraPara(x => x.Codigo)
+                .Quando(x => !string.IsNullOrEmpty(x.Codigo))
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(PerfilDeAcessoResource.Erro_CodigoPequeno);
 
-            if (!string.IsNullOrEmpty(perfil.Codigo) && perfil.Codigo.Length > 10)
-                notificacoes.AdicionarErro(PerfilDeAcessoResource.Erro_CodigoLongo);
+            RegraPara(x => x.Descricao)
+                .Quando(x => !string.IsNullOrEmpty(x.Descricao))
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(PerfilDeAcessoResource.Erro_DescricaoPequena);
 
-            if (!string.IsNullOrEmpty(perfil.Codigo) && perfil.Codigo.Length < 3)
-                notificacoes.AdicionarErro(PerfilDeAcessoResource.Erro_CodigoPequeno);
+            RegraPara(x => x.Descricao)
+                .Quando(x => !string.IsNullOrEmpty(x.Descricao))
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(PerfilDeAcessoResource.Erro_DescricaoLonga);
 
-            if (!string.IsNullOrEmpty(perfil.Descricao) && perfil.Descricao.Length < 3)
-                notificacoes.AdicionarErro(PerfilDeAcessoResource.Erro_DescricaoPequena);
-
-            if (!string.IsNullOrEmpty(perfil.Descricao) && perfil.Descricao.Length > 50)
-                notificacoes.AdicionarErro(PerfilDeAcessoResource.Erro_DescricaoLonga);
-
-            if (perfil.Modulos is null || perfil.Modulos.Count == 0)
-                notificacoes.AdicionarErro(PerfilDeAcessoResource.Erro_SemModulos);
-
-            return notificacoes.Messages;
+            RegraPara(x => x.Modulos)
+                .DeveSer(m => m != null && m.Count > 0)
+                .ComMensagem(PerfilDeAcessoResource.Erro_SemModulos);
         }
     }
 }

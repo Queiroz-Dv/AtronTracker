@@ -1,4 +1,4 @@
-﻿using Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -7,7 +7,7 @@ using System;
 
 namespace Application.Validations
 {
-    public class InfoTokenMessageValidation : Notifiable, IMessageBaseService, IValidateModelService<DadosDoTokenDTO>
+    public class InfoTokenMessageValidation : Resultado, IMessageBaseService, IValidateModelService<DadosDoTokenDTO>
     {
         public void Validate(DadosDoTokenDTO entity)
         {
@@ -20,7 +20,7 @@ namespace Application.Validations
 
                 //if (entity.InfoRefreshToken.IsNullOrEmpty())
                 //{
-                //    AddError("Refresh token não preenchido para processamento.");
+                //    AddError("Refresh token n�o preenchido para processamento.");
                 //}
 
                 if (entity.Expires <= DateTime.Now)

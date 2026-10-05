@@ -1,4 +1,4 @@
-ï»¿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Application.DTO.Response
 {
@@ -15,16 +15,16 @@ namespace Application.DTO.Response
             DepartamentoDescricao = departamentoDescricao;
         }
 
-        [DisplayName("CÃ³digo")]
+        [DisplayName("Código")]
         public string Codigo { get; set; }
 
-        [DisplayName("DescriÃ§Ã£o")]
+        [DisplayName("Descrição")]
         public string Descricao { get; set; }
 
-        [DisplayName("CÃ³digo do departamento")]
+        [DisplayName("Código do departamento")]
         public string DepartamentoCodigo { get; set; }
 
-        [DisplayName("DescriÃ§Ã£o do departamento")]
+        [DisplayName("Descrição do departamento")]
         public string DepartamentoDescricao { get; set; }
     }
 }

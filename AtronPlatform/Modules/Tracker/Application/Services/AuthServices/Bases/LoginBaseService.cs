@@ -1,7 +1,8 @@
-﻿using Application.Interfaces.Contexts;
+using Application.Interfaces.Contexts;
 using Application.Interfaces.Services;
-using Application.Interfaces.Services.Identity;
+using Application.UseCases.UsuarioCases;
 using Domain.Interfaces.ApplicationInterfaces;
+using Domain.Interfaces.Identity;
 using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.AuthServices.Bases
@@ -23,7 +24,7 @@ namespace Application.Services.AuthServices.Bases
                                        .ControleDeSessaoContext
                                        .TokenService;
 
-        protected IUsuarioService UsuarioService => ObterService<ILoginContext>()
+        protected ObterUsuarioCase UsuarioService => ObterService<ILoginContext>()
                     .UsuarioContext
                     .UsuarioService;
 
@@ -34,8 +35,8 @@ namespace Application.Services.AuthServices.Bases
         protected IDadosComplementaresDoUsuarioService DadosComplementaresDoUsuarioService => ObterService<IUsuarioContext>()
                     .DadosComplementaresDoUsuarioService;
 
-        protected IUserIdentityService UserIdentityService => ObterService<ILoginContext>()
+        protected IUsuarioIdentityRepository UserIdentityRepository => ObterService<ILoginContext>()
                     .ControleDeSessaoContext
-                    .UserIdentityService;
+                    .UserIdentityRepository;
     }
 }

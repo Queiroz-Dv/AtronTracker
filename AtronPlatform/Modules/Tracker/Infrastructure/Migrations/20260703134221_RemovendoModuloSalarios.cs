@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -58,7 +58,7 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
             migrationBuilder.InsertData(
                 table: "Modulos",
                 columns: new[] { "Codigo", "Id", "Descricao" },
-                values: new object[] { "SAL", 5, "Salários" });
+                values: new object[] { "SAL", 5, "Sal�rios" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Salarios_UsuarioId_UsuarioCodigo",

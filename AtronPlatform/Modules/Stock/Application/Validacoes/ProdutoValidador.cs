@@ -2,85 +2,68 @@
 
 using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Resources;
-using Shared.Application.Interfaces.Service;
+using Shared.Application.Services;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
+using Shared.Extensions.RegraExtensions;
 
 namespace AtronStock.Application.Validacoes
 {
-    public sealed class ProdutoValidador :
-        IValidador<ProdutoRequest>,
-        IValidador<ProdutoAtualizacaoRequest>
+    public sealed class ProdutoRequestValidador : Validador<ProdutoRequest>
     {
-        public IEnumerable<NotificationMessage> Validar(ProdutoRequest request)
-            => ValidarCampos(
-                request.Codigo,
-                request.Descricao,
-                request.DataAquisicao,
-                request.PrecoUnitario);
-
-        public IEnumerable<NotificationMessage> Validar(ProdutoAtualizacaoRequest request)
-            => ValidarCampos(
-                null,
-                request.Descricao,
-                request.DataAquisicao,
-                request.PrecoUnitario);
-
-        private static IEnumerable<NotificationMessage> ValidarCampos(
-            string? codigo,
-            string descricao,
-            DateTime dataAquisicao,
-            decimal precoUnitario)
+        public ProdutoRequestValidador()
         {
-            var context = new NotificationBag();
-            ValidarCodigo(codigo, context);
-            ValidarDescricao(descricao, context);
+            RegraPara(x => x.Codigo)
+                .NaoVazio()
+                .ComMensagem(ProdutoResource.ErroCodigoObrigatorio);
+            RegraPara(x => x.Codigo)
+                .TamanhoMenorOuIgualA(25)
+                .ComMensagem(ProdutoResource.ErroCodigoLimiteMaximoDeCaractere);
+            RegraPara(x => x.Codigo)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(ProdutoResource.ErroCodigoLimiteMinimoDeCaractere);
 
-            if (dataAquisicao == default)
-                context.AdicionarErro(ProdutoResource.ErroDataAquisicaoObrigatoria);
+            RegraPara(x => x.Descricao)
+                .NaoVazio()
+                .ComMensagem(ProdutoResource.ErroDescricaoObrigatoria);
+            RegraPara(x => x.Descricao)
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(ProdutoResource.ErroDescricaoLimiteMaximoCaractere);
+            RegraPara(x => x.Descricao)
+                .TamanhoMaiorOuIgualA(5)
+                .ComMensagem(ProdutoResource.ErroDescricaoLimiteMinimoCaractere);
 
-            if (precoUnitario <= 0)
-                context.AdicionarErro(ProdutoResource.ErroPrecoProduto);
+            RegraPara(x => x.DataAquisicao)
+                .DeveSer(d => d != default)
+                .ComMensagem(ProdutoResource.ErroDataAquisicaoObrigatoria);
 
-            return [.. context.Messages];
+            RegraPara(x => x.PrecoUnitario)
+                .DeveSer(p => p > 0)
+                .ComMensagem(ProdutoResource.ErroPrecoProduto);
         }
+    }
 
-        private static void ValidarCodigo(string? codigo, NotificationBag context)
+    public sealed class ProdutoAtualizacaoRequestValidador : Validador<ProdutoAtualizacaoRequest>
+    {
+        public ProdutoAtualizacaoRequestValidador()
         {
-            if (codigo is null) return;
+            RegraPara(x => x.Descricao)
+                .NaoVazio()
+                .ComMensagem(ProdutoResource.ErroDescricaoObrigatoria);
+            RegraPara(x => x.Descricao)
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(ProdutoResource.ErroDescricaoLimiteMaximoCaractere);
+            RegraPara(x => x.Descricao)
+                .TamanhoMaiorOuIgualA(5)
+                .ComMensagem(ProdutoResource.ErroDescricaoLimiteMinimoCaractere);
 
-            if (codigo.IsNullOrEmpty())
-            {
-                context.AdicionarErro(ProdutoResource.ErroCodigoObrigatorio);
-                return;
-            }
+            RegraPara(x => x.DataAquisicao)
+                .DeveSer(d => d != default)
+                .ComMensagem(ProdutoResource.ErroDataAquisicaoObrigatoria);
 
-            if (codigo.Trim().Length > 25)
-            {
-                context.AdicionarErro(ProdutoResource.ErroCodigoLimiteMaximoDeCaractere);
-                return;
-            }
-
-            if (codigo.Trim().Length < 3)
-                context.AdicionarErro(ProdutoResource.ErroCodigoLimiteMinimoDeCaractere);
-        }
-
-        private static void ValidarDescricao(string descricao, NotificationBag context)
-        {
-            if (descricao.IsNullOrEmpty())
-            {
-                context.AdicionarErro(ProdutoResource.ErroDescricaoObrigatoria);
-                return;
-            }
-
-            if (descricao.Trim().Length > 50)
-            {
-                context.AdicionarErro(ProdutoResource.ErroDescricaoLimiteMaximoCaractere);
-                return;
-            }
-
-            if (descricao.Trim().Length < 5)
-                context.AdicionarErro(ProdutoResource.ErroDescricaoLimiteMinimoCaractere);
+            RegraPara(x => x.PrecoUnitario)
+                .DeveSer(p => p > 0)
+                .ComMensagem(ProdutoResource.ErroPrecoProduto);
         }
     }
 }

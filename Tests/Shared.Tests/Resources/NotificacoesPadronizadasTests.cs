@@ -8,7 +8,7 @@ public class NotificacoesPadronizadasTests
     [Fact]
     public void NotificationBagDeveObterMensagensGenericasDoResource()
     {
-        var notificacoes = new NotificationBag();
+        var notificacoes = new Resultado();
 
         notificacoes.MensagemRegistroSalvo("Produto");
         notificacoes.MensagemRegistroAtualizado("Produto");

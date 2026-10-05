@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 
 namespace Application.DTO.ApiDTO
 {
     public class UsuarioRegistroDTO
     {
-        [DisplayName("Código")]
+        [DisplayName("C�digo")]
         public string Codigo { get; set; }
 
         public string Nome { get; set; }

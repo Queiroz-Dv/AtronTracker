@@ -1,8 +1,9 @@
 using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Application.UseCases.TarefaCases;
 using Application.UseCases.TarefaCases.Movimentacao;
 using AtronNotificacoes.Infrastructure;
-using AtronStock.Application.Interfaces;
+
 using AtronStock.Application.UseCases.ProdutoCases;
 using AtronStock.Infrastructure.Context;
 using AtronStock.Infrastructure;
@@ -23,7 +24,7 @@ using Microsoft.Extensions.Hosting;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Application.DTOS.Auth;
-using Shared.Infrastructure.Context;
+using AtronAuditoria.Infrastructure.Context;
 using AtronPlatform.WebApi.Security;
 using Application.DTO.Request;
 using System.Net;
@@ -35,6 +36,8 @@ using AtronNotificacoes.Contracts.Interfaces;
 using AtronNotificacoes.Application.Interfaces;
 using Shared.Authorization;
 using Infrastructure.Context;
+
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace Platform.Tests;
 
@@ -57,9 +60,7 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
     private static readonly HashSet<string> ControllersStock =
     [
         "Categoria",
-        "Cliente",
-        "Estoque",
-        "Fornecedor",
+
         "Produto",
         "ProcessamentoProduto"
     ];
@@ -96,7 +97,7 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
     {
         using var scope = _factory.Services.CreateScope();
 
-        Assert.NotNull(scope.ServiceProvider.GetService<IModuloService>());
+        Assert.NotNull(scope.ServiceProvider.GetService<global::Application.UseCases.ModuloCases.ObterModuloCase>());
         Assert.NotNull(scope.ServiceProvider.GetService<AtronDbContext>());
     }
 
@@ -136,8 +137,8 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
     {
         using var scope = _factory.Services.CreateScope();
 
-        Assert.NotNull(scope.ServiceProvider.GetService<IAuditoriaService>());
-        Assert.NotNull(scope.ServiceProvider.GetService<SharedDbContext>());
+        Assert.NotNull(scope.ServiceProvider.GetService<AtronAuditoria.Application.UseCases.ObterAuditoriaCase>());
+        Assert.NotNull(scope.ServiceProvider.GetService<AtronAuditoriaContext>());
     }
 
     [Fact]
@@ -145,9 +146,8 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
     {
         using var scope = _factory.Services.CreateScope();
 
-        Assert.NotNull(scope.ServiceProvider.GetService<ICategoriaService>());
-        Assert.NotNull(scope.ServiceProvider.GetService<IEstoqueService>());
-        Assert.NotNull(scope.ServiceProvider.GetService<StockDbContext>());
+        Assert.NotNull(scope.ServiceProvider.GetService<AtronStock.Application.UseCases.CategoriaCases.ObterCategoriaCase>());
+Assert.NotNull(scope.ServiceProvider.GetService<StockDbContext>());
     }
 
     [Fact]
@@ -395,7 +395,7 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
             .Select(contrato => contrato.Controller)
             .ToHashSet(StringComparer.Ordinal);
 
-        Assert.Equal(26, contratos.Count);
+        Assert.Equal(14, contratos.Count);
         Assert.True(ControllersStock.SetEquals(controllers));
 
         var contratosProduto = contratos
@@ -421,8 +421,8 @@ public sealed class AtronPlatformHostTests : IClassFixture<AtronPlatformFactory>
             .ToHashSet();
         Assert.True(contratosProcessamento.SetEquals(
         [
-            ("GET", "api/processamentos-produtos"),
-            ("GET", "api/processamentos-produtos/{id:int}")
+            ("GET", "api/ProcessamentoProduto"),
+            ("GET", "api/ProcessamentoProduto/{id:int}")
         ]));
     }
 
@@ -660,3 +660,6 @@ public sealed class AtronPlatformProductionFactory : WebApplicationFactory<Atron
         });
     }
 }
+
+
+

@@ -4,8 +4,9 @@ using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
-using Shared.Application.DTOS.Common;
+using Shared.Application.Messaging;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.Events.Auditoria;
 using Shared.Domain.ValueObjects;
 using Xunit;
 
@@ -69,13 +70,13 @@ public class RemocaoUsuarioTests
 
         var identityRepository = new Mock<IUsuarioIdentityRepository>();
         identityRepository
-            .Setup(repository => repository.ObterUsuarioIdentityPorCodigo(CodigoUsuario))
+            .Setup(repository => repository.UsuarioServiceIdentityPorCodigo(CodigoUsuario))
             .ReturnsAsync((UsuarioIdentity)null!);
 
-        var auditoriaService = new Mock<IAuditoriaService>();
+        var auditoriaService = new Mock<IEventBus>();
         auditoriaService
-            .Setup(service => service.RemoverServiceAsync(It.IsAny<IAuditoriaDTO>()))
-            .ReturnsAsync(Resultado.Sucesso());
+            .Setup(bus => bus.PublicarAsync(It.IsAny<AuditoriaRemovidaEvent>(), It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
 
         var casoDeUso = new RemoverUsuarioCase(
             usuarioRepository.Object,
@@ -106,11 +107,11 @@ public class RemocaoUsuarioTests
             repository => repository.RemoverUsuarioAsync(usuario),
             Times.Once);
         auditoriaService.Verify(
-            service => service.RemoverServiceAsync(It.Is<IAuditoriaDTO>(
-                auditoria =>
-                    auditoria.CodigoRegistro == CodigoUsuario &&
-                    auditoria.Contexto == "Usuario" &&
-                    auditoria.Historico.Descricao.Contains("removido"))),
+            bus => bus.PublicarAsync(It.Is<AuditoriaRemovidaEvent>(
+                evento =>
+                    evento.CodigoRegistro == CodigoUsuario &&
+                    evento.Contexto == "Usuario" &&
+                    evento.DescricaoHistorico.Contains("removido")), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -145,7 +146,7 @@ public class RemocaoUsuarioTests
             associacaoRepository.Object,
             tarefaRepository.Object,
             identityRepository.Object,
-            Mock.Of<IAuditoriaService>());
+            Mock.Of<IEventBus>());
 
         var resultado = await casoDeUso.ExecutarAsync(CodigoUsuario);
 
@@ -175,7 +176,7 @@ public class RemocaoUsuarioTests
 
         var identityRepository = new Mock<IUsuarioIdentityRepository>();
         identityRepository
-            .Setup(repository => repository.ObterUsuarioIdentityPorCodigo(CodigoUsuario))
+            .Setup(repository => repository.UsuarioServiceIdentityPorCodigo(CodigoUsuario))
             .ReturnsAsync(new UsuarioIdentity { Codigo = CodigoUsuario });
         identityRepository
             .Setup(repository => repository.DeletarContaUserRepositoryAsync(CodigoUsuario))
@@ -186,7 +187,7 @@ public class RemocaoUsuarioTests
             Mock.Of<IUsuarioCargoDepartamentoRepository>(),
             Mock.Of<ITarefaRepository>(),
             identityRepository.Object,
-            Mock.Of<IAuditoriaService>());
+            Mock.Of<IEventBus>());
 
         var resultado = await casoDeUso.ExecutarAsync(CodigoUsuario);
 
@@ -196,3 +197,7 @@ public class RemocaoUsuarioTests
             Times.Never);
     }
 }
+
+
+
+

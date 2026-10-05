@@ -2,7 +2,6 @@ using Application.Resources;
 using Domain.Entities;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Linq;
 
 namespace Application.Policies.Tarefas
 {

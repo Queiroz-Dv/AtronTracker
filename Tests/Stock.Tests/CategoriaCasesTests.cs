@@ -1,3 +1,6 @@
+using Shared.Application.Messaging;
+using Shared.Domain.Events;
+using Shared.Domain.Events.Auditoria;
 using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Mapping;
 using AtronStock.Application.UseCases.CategoriaCases;
@@ -103,7 +106,7 @@ public sealed class CategoriaCasesTests
         Assert.Equal("Antes", categoria.Descricao);
         Assert.Null(repository.CategoriaAtualizada);
         var registro = Assert.Single(auditoria.Atualizacoes);
-        Assert.Contains("recusada", registro.Historico.Descricao);
+        Assert.Contains("recusada", registro.DescricaoHistorico);
     }
 
     [Fact]
@@ -160,7 +163,7 @@ public sealed class CategoriaCasesTests
         Assert.Equal(EStatus.Ativo, categoria.Status);
         Assert.Null(repository.CategoriaAtualizada);
         var registro = Assert.Single(auditoria.Atualizacoes);
-        Assert.Contains("recusada", registro.Historico.Descricao);
+        Assert.Contains("recusada", registro.DescricaoHistorico);
     }
 
     [Fact]
@@ -300,31 +303,20 @@ public sealed class CategoriaCasesTests
         }
     }
 
-    private sealed class AuditoriaServiceFake : IAuditoriaService
+    private sealed class AuditoriaServiceFake : IEventBus
     {
-        public List<IAuditoriaDTO> Registros { get; } = [];
-        public List<IAuditoriaDTO> Atualizacoes { get; } = [];
-        public List<IAuditoriaDTO> Remocoes { get; } = [];
+        public List<AuditoriaRegistradaEvent> Registros { get; } = [];
+        public List<AuditoriaAtualizadaEvent> Atualizacoes { get; } = [];
+        public List<AuditoriaRemovidaEvent> Remocoes { get; } = [];
 
-        public Task<Resultado> RegistrarServiceAsync(IAuditoriaDTO auditoria)
+        public ValueTask PublicarAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : IEvent
         {
-            Registros.Add(auditoria);
-            return Task.FromResult(Resultado.Sucesso());
+            if (@event is AuditoriaRegistradaEvent r) Registros.Add(r);
+            if (@event is AuditoriaAtualizadaEvent a) Atualizacoes.Add(a);
+            if (@event is AuditoriaRemovidaEvent d) Remocoes.Add(d);
+            return ValueTask.CompletedTask;
         }
-
-        public Task<Resultado> AtualizarServiceAsync(IAuditoriaDTO auditoriaDTO)
-        {
-            Atualizacoes.Add(auditoriaDTO);
-            return Task.FromResult(Resultado.Sucesso());
-        }
-
-        public Task<Resultado> RemoverServiceAsync(IAuditoriaDTO auditoriaDTO)
-        {
-            Remocoes.Add(auditoriaDTO);
-            return Task.FromResult(Resultado.Sucesso());
-        }
-
-        public Task<Resultado<Auditoria>> ObterPorChaveServiceAsync(IAuditoriaDTO documento)
-            => Task.FromResult(Resultado<Auditoria>.Falha("Não implementado no fake."));
     }
 }
+
+

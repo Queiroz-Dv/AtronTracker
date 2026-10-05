@@ -4,6 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>AtronNotificacoes</RootNamespace>
+      <NoWarn>$(NoWarn);CS8632</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,3 +45,4 @@
     <Folder Include="Client\" />
   </ItemGroup>
 </Project>
+

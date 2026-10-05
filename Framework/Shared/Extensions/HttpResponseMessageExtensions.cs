@@ -1,10 +1,10 @@
-Ôªøusing Newtonsoft.Json;
+using Newtonsoft.Json;
 using Shared.Application.DTOS.Responses;
 
 namespace Shared.Extensions
 {
     /// <summary>
-    /// Classe com m√©todos utilit√°rios para as respostas HTTP
+    /// Classe com mÈtodos utilit·rios para as respostas HTTP
     /// </summary>
     public static class HttpResponseMessageExtensions
     {

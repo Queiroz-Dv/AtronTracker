@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Application.Resources;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Application.Validations
 {
-    public class PerfilDeAcessoMessageValidation : Notifiable, IMessageBaseService, IValidateModelService<PerfilDeAcesso>
+    public class PerfilDeAcessoMessageValidation : Resultado, IMessageBaseService, IValidateModelService<PerfilDeAcesso>
     {
         public void Validate(PerfilDeAcesso entity)
         {

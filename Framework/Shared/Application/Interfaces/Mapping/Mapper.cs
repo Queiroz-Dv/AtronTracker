@@ -1,4 +1,4 @@
-﻿namespace Shared.Application.Interfaces.Mapping
+namespace Shared.Application.Interfaces.Mapping
 {
     public abstract class Mapper<TEntity, TDto>
         : Mapper<TEntity, TDto, TDto>, IMapper<TEntity, TDto>

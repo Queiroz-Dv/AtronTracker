@@ -7,14 +7,22 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.PerfilDeAcessoCases
 {
-    public sealed class ObterPerfisUsuarioCase(
-        IPerfilDeAcessoMapping map,
-        IPerfilDeAcessoRepository perfilDeAcessoRepository)
+    public class ObterPerfisUsuarioCase
     {
-        private readonly IPerfilDeAcessoMapping _map = map;
-        private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository = perfilDeAcessoRepository;
+        private readonly IPerfilDeAcessoMapping _map;
+        private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository;
 
-        public async Task<List<PerfilDeAcessoDTO>> ExecutarAsync(string usuarioCodigo)
+        protected ObterPerfisUsuarioCase() { }
+
+        public ObterPerfisUsuarioCase(
+            IPerfilDeAcessoMapping map,
+            IPerfilDeAcessoRepository perfilDeAcessoRepository)
+        {
+            _map = map;
+            _perfilDeAcessoRepository = perfilDeAcessoRepository;
+        }
+
+        public virtual async Task<List<PerfilDeAcessoDTO>> ExecutarAsync(string usuarioCodigo)
         {
             var perfis = await _perfilDeAcessoRepository
                 .ObterPerfisPorCodigoDeUsuarioRepositoryAsync(usuarioCodigo);

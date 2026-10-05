@@ -1,8 +1,8 @@
-﻿using Application.Resources;
+using Application.Resources;
 using Domain.Interfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.UseCases.TarefaCases
 {
@@ -16,7 +16,7 @@ namespace Application.UseCases.TarefaCases
                 return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var tarefa = await _tarefaRepository.ObterTarefaPorId(tarefaId);
-            if (tarefa is null)
+            if (tarefa.IsNullable())
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             if (!await _tarefaRepository.RemoverTarefaAsync(tarefa))

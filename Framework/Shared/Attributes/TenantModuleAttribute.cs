@@ -1,4 +1,4 @@
-﻿namespace Shared.Attributes
+namespace Shared.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     public sealed class TenantModuleAttribute : Attribute

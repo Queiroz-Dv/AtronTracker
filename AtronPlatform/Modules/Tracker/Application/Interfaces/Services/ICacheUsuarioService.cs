@@ -1,4 +1,4 @@
-﻿using Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
 using System;
 
@@ -11,3 +11,4 @@ namespace Application.Interfaces.Services
         void RemoverCacheDeAcessoTokenInfo(string codigoUsuario);
     }
 }
+

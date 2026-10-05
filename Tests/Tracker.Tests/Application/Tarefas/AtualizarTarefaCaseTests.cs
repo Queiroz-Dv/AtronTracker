@@ -1,3 +1,4 @@
+using Application.UseCases.UsuarioCases;
 using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Mapping;
@@ -36,13 +37,13 @@ public class AtualizarTarefaCaseTests
         tarefas
             .Setup(repository => repository.AtualizarTarefaAsync(tarefaAnterior.Id, tarefaAtual))
             .ReturnsAsync(true);
-        var preparacao = new Mock<ITarefaPreparacaoService>();
+        var preparacao = new Mock<global::Application.Services.EntitiesServices.Tarefas.TarefaPreparacaoService>();
         preparacao
             .Setup(service => service.PrepararParaPersistenciaAsync(tarefaDto))
             .ReturnsAsync(Resultado<Tarefa>.Sucesso(tarefaAtual));
-        var usuarioService = new Mock<IUsuarioService>();
+        var usuarioService = new Mock<ObterUsuarioCase>();
         usuarioService
-            .Setup(service => service.ObterUsuarioAtual())
+            .Setup(service => service.ObterAsync())
             .ReturnsAsync(Resultado<Usuario>.Sucesso(responsavel));
         var movimentacoes = new Mock<ITarefaMovimentacaoRepository>();
         movimentacoes
@@ -86,3 +87,7 @@ public class AtualizarTarefaCaseTests
         };
     }
 }
+
+
+
+

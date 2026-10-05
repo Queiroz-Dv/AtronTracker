@@ -1,26 +1,51 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 
 namespace Shared.Application.Services
 {
-    public class CookieService(ICookieFactoryService cookieFactory) : ICookieService
+    public class CookieService : ICookieService
     {
-        private readonly ICookieFactoryService _cookieFactory = cookieFactory;
+        public const string NomeCookieRefreshToken = "ATRON_REFRESH_TOKEN";
+        private readonly IResponseCookies _cookies;
 
-        public async Task<DadosDoRefreshTokenCookieDTO> ObterRefreshTokenPorRequest(HttpRequest httpRequest)
+        public CookieService(IResponseCookies cookies)
         {
-            return await _cookieFactory.ObterRefreshTokenPorRequest(httpRequest);
+            _cookies = cookies;
         }
 
         public void CriarCookieDeRefreshToken(DadosDoRefrehTokenDTO dadosDoRefreshToken)
         {
-            _cookieFactory.CriarCookieDeRefreshToken(dadosDoRefreshToken);
+            _cookies.Append(NomeCookieRefreshToken, dadosDoRefreshToken.Value, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Path = "/",
+                Expires = dadosDoRefreshToken.Expires
+            });
+        }
+
+        public Task<DadosDoRefreshTokenCookieDTO> ObterRefreshTokenPorRequest(HttpRequest request)
+        {
+            if (!request.Cookies.TryGetValue(NomeCookieRefreshToken, out var refreshToken))
+                return Task.FromResult<DadosDoRefreshTokenCookieDTO>(null);
+
+            return Task.FromResult(new DadosDoRefreshTokenCookieDTO
+            {
+                RefreshToken = refreshToken
+            });
         }
 
         public void RemoverCookieDeRefreshToken()
         {
-            _cookieFactory.RemoverCookieDeRefreshToken();
+            _cookies.Delete(NomeCookieRefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Path = "/"
+            });
         }
     }
 }

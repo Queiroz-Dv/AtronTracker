@@ -1,42 +1,44 @@
-﻿using Application.DTO;
+using Application.DTO;
+using Application.Events;
 using Application.Extensions;
-using Application.Interfaces.Services;
 using Application.Policies.Tarefas;
 using Application.Resources;
 using Application.UseCases.TarefaCases.Movimentacao;
+using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Mapping;
+using Shared.Application.Messaging;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.UseCases.TarefaCases
 {
     public class AssumirTarefaCase(
         ITarefaRepository tarefaRepository,
-        IUsuarioService usuarioService,
+        ObterUsuarioCase usuarioService,
         ITarefaObtencaoPolicy tarefaObtencaoPolicy,
-        TarefaNotificacaoInternaCase notificacaoInternaCase,
+        IEventBus eventBus,
         IToDtoMapper<Tarefa, TarefaDTO> tarefaMapper,
         RegistrarObtencaoTarefaMovimentacaoCase registrarMovimentacaoCase)
     {
         private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
-        private readonly IUsuarioService _usuarioService = usuarioService;
+        private readonly ObterUsuarioCase _usuarioService = usuarioService;
         private readonly ITarefaObtencaoPolicy _tarefaObtencaoPolicy = tarefaObtencaoPolicy;
-        private readonly TarefaNotificacaoInternaCase _notificacaoInternaCase = notificacaoInternaCase;
+        private readonly IEventBus _eventBus = eventBus;
         private readonly IToDtoMapper<Tarefa, TarefaDTO> _tarefaMapper = tarefaMapper;
         private readonly RegistrarObtencaoTarefaMovimentacaoCase _registrarMovimentacaoCase = registrarMovimentacaoCase;
 
         public async Task<Resultado<TarefaDTO>> ExecutarAsync(int tarefaId)
         {
-            var usuarioResultado = await _usuarioService.ObterUsuarioAtual();
+            var usuarioResultado = await _usuarioService.ObterAsync();
             if (usuarioResultado.TeveFalha)
                 return Resultado<TarefaDTO>.Falhas(usuarioResultado.Messages);
 
             var usuario = usuarioResultado.Dados;
             var entidade = await _tarefaRepository.ObterTarefaPorId(tarefaId);
-            if (entidade is null)
+            if (entidade.IsNullable())
                 return Resultado<TarefaDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             var possuiResponsabilidadeGestao = await _tarefaRepository.PossuiResponsabilidadeGestaoAsync(usuario.Id, usuario.Codigo);
@@ -54,7 +56,8 @@ namespace Application.UseCases.TarefaCases
                 return Resultado<TarefaDTO>.Falhas(movimentacao.Messages);
 
             var publicacaoDto = tarefaAtualizada.CriarNotificacaoDeObtencao(usuario);
-            await _notificacaoInternaCase.ExecutarAsync(publicacaoDto);
+            var notificacaoEvent = new TarefaNotificacaoEvent(publicacaoDto);
+            await _eventBus.PublicarAsync(notificacaoEvent);
 
             var tarefa = _tarefaMapper.MapToDto(tarefaAtualizada);
 

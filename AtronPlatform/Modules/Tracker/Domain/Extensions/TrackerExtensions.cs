@@ -1,4 +1,4 @@
-Ôªøusing Shared.Attributes;
+using Shared.Attributes;
 using System;
 using System.Reflection;
 
@@ -18,7 +18,7 @@ namespace Domain.Extensions
         {
             if (obj == null) return string.Empty;
 
-            // Se 'obj' j√° for do tipo 'Type', usa ele diretamente. Caso contr√°rio, pega o GetType()
+            // Se 'obj' j· for do tipo 'Type', usa ele diretamente. Caso contr·rio, pega o GetType()
             var tipo = obj as Type ?? obj.GetType();
             return tipo.ObterDescricaoDoModulo();
         }

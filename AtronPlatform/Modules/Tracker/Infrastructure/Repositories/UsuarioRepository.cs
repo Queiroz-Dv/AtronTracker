@@ -152,7 +152,7 @@ namespace Infrastructure.Repositories
 
         public async Task<List<UsuarioIdentity>> ObterTodosUsuariosDoIdentity()
         {
-            return await (from au in _context.Users
+            return await (from au in _context.AppUsers
                           join u in _context.Usuarios
                               .Include(r => r.UsuarioCargoDepartamentos)
                                   .ThenInclude(crg => crg.Cargo)

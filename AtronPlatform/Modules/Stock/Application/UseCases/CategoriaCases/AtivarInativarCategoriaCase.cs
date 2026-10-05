@@ -15,7 +15,7 @@ namespace AtronStock.Application.UseCases.CategoriaCases
         public async Task<Resultado> ExecutarAsync(string codigo, bool ativar)
         {
             var categoria = await _repository.ObterCategoriaPorCodigoAsync(codigo);
-            if (categoria == null)
+            if (categoria.IsNullable())
             {                
                 return Resultado.Falha().ComMensagemRegistroNaoEncontrado(codigo);
             }

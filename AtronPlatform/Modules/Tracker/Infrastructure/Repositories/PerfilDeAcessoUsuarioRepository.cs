@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -14,27 +14,24 @@ namespace Infrastructure.Repositories
             try
             {
                 await _context.PerfilDeAcessoUsuarios.AddAsync(perfilDeAcesso);
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
         public async Task<bool> CriarRelacionamentoRepositoryAsync(PerfilDeAcessoUsuario perfilDeAcesso)
         {
             await _context.PerfilDeAcessoUsuarios.AddAsync(perfilDeAcesso);
-            var result = await _context.SaveChangesAsync();
-            return result > 0;
+            return true;
         }
 
-        public async Task DeletarRelacionamento(PerfilDeAcessoUsuario relacionamento)
+        public Task DeletarRelacionamento(PerfilDeAcessoUsuario relacionamento)
         {
             _context.PerfilDeAcessoUsuarios.Remove(relacionamento);
-            await _context.SaveChangesAsync();
-            return;
+            return Task.CompletedTask;
         }
 
         public async Task<PerfilDeAcessoUsuario> ObterPerfilDeAcessoPorCodigoRepositoryAsync(string codigo)

@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.Contexts;
+using Application.Interfaces.Contexts;
 using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.Contexts

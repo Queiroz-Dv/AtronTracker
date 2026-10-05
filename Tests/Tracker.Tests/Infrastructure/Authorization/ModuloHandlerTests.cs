@@ -1,3 +1,4 @@
+using Application.UseCases.UsuarioCases;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Moq;
@@ -88,7 +89,7 @@ public class ModuloHandlerTests
 
         return new ModuloHandler(
             cacheService.Object,
-            Mock.Of<IUsuarioService>(),
+            Mock.Of<ObterUsuarioCase>(),
             Mock.Of<IAccessorService>());
     }
 
@@ -102,3 +103,5 @@ public class ModuloHandlerTests
         return new AuthorizationHandlerContext([requirement], usuario, resource: null);
     }
 }
+
+

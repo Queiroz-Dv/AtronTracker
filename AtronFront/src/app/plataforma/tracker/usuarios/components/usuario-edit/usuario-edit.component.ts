@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SharedModule } from '../../../../../shared/modules/shared.module';
 import { UsuarioRequest } from '../../models/request/usuario-request';
 import { converterDataParaFormulario, formatarDataParaEnvio } from '../../../../../shared/utils/data-form.utils';
+import { NotificacaoService, Nivel } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'c-usuario-edit',
@@ -19,6 +20,7 @@ export class UsuarioEditComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private service: UsuarioService,
+    private notificacaoService: NotificacaoService,
     private route: ActivatedRoute,
     public router: Router,
   ) { }
@@ -61,6 +63,16 @@ export class UsuarioEditComponent implements OnInit {
       ? this.service.atualizar(this.codigo, usuarioPayload)
       : this.service.gravar(usuarioPayload);
 
-    operacao.subscribe(() => this.router.navigate(['atron/usuarios']));
+    operacao.subscribe({
+      next: () => this.router.navigate(['atron/usuarios']),
+      error: (error) => {
+        const mensagens = this.notificacaoService.normalizarMensagens(error);
+        if (mensagens.length) {
+          this.notificacaoService.exibirMensagens(mensagens);
+        } else {
+          this.notificacaoService.exibirMensagem('Erro inesperado ao salvar usuário.', Nivel.Error);
+        }
+      }
+    });
   }
 }

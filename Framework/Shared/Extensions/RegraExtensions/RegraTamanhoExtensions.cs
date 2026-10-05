@@ -1,4 +1,4 @@
-﻿using Shared.Application.Resources;
+using Shared.Application.Resources;
 using Shared.Domain;
 using Shared.Extensions;
 

@@ -125,7 +125,7 @@ public class PlanejamentoCustoCasesTests
 
     private static Cenario CriarCenario()
     {
-        var preparacao = new Mock<IPlanejamentoCustoPreparacaoService>();
+        var preparacao = new Mock<global::Application.Services.EntitiesServices.PlanejamentoCustos.PlanejamentoCustoPreparacaoService>();
         var repositorio = new Mock<IPlanejamentoCustoRepository>();
 
         return new Cenario(
@@ -158,6 +158,8 @@ public class PlanejamentoCustoCasesTests
         AtualizarPlanejamentoCustoCase Atualizar,
         ExcluirPlanejamentoCustoCase Excluir,
         ObterPlanejamentoCustoCase Obter,
-        Mock<IPlanejamentoCustoPreparacaoService> Preparacao,
+        Mock<global::Application.Services.EntitiesServices.PlanejamentoCustos.PlanejamentoCustoPreparacaoService> Preparacao,
         Mock<IPlanejamentoCustoRepository> Repositorio);
 }
+
+

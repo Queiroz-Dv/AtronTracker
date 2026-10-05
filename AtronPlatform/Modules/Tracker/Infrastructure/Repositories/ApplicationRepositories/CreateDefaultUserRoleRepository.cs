@@ -1,4 +1,4 @@
-﻿using Domain.Interfaces.ApplicationInterfaces;
+using Domain.Interfaces.ApplicationInterfaces;
 using Microsoft.AspNetCore.Identity;
 using Shared.Domain.Entities.Identity;
 using System;

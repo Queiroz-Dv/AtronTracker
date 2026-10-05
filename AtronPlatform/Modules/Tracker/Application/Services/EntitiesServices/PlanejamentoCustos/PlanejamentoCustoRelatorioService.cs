@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Application.Resources;

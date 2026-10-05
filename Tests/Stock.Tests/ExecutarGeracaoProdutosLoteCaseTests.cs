@@ -97,7 +97,7 @@ public sealed class ExecutarGeracaoProdutosLoteCaseTests
         => new(
             null,
             repository,
-            new GeracaoProdutosLoteValidador(new ProdutoValidador()),
+            new GeracaoProdutosLoteValidador(new ProdutoAtualizacaoRequestValidador()),
             new SelecionarCategoriasProdutoCase(new CategoriaRepositoryProdutoFake()),
             new CriarLoteParaPersistenciaCase(
                 repository,

@@ -1,3 +1,4 @@
+using Application.UseCases.UsuarioCases;
 using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Mapping;
@@ -72,7 +73,7 @@ public class CriarTarefaTests
     [InlineData(999)]
     public async Task CriarAsync_DevePublicarTextoFinalDaNotificacaoInterna(int idInformado)
     {
-        PublicarNotificacaoInternaRequest? capturada = null;
+        global::Application.Events.TarefaNotificacaoEvent? capturada = null;
         var cenario = CriarCenario(
             capturarNotificacao: notificacao => capturada = notificacao);
         var tarefa = CriarTarefaDto();
@@ -83,31 +84,14 @@ public class CriarTarefaTests
         Assert.True(resultado.TeveSucesso);
         Assert.Equal(cenario.Tarefa.Id, tarefa.Id);
         Assert.NotNull(capturada);
-        Assert.Equal(TarefaResource.Titulo_TarefaAtribuida, capturada.Titulo);
-        Assert.Equal("A tarefa 42 foi atribuída a você.", capturada.Mensagem);
-        Assert.Equal("Tracker", capturada.ModuloOrigem);
-        Assert.Equal("TarefaAtribuida", capturada.TipoEvento);
-        Assert.Equal("/atron/tarefas/editar/42", capturada.UrlDestino);
-        Assert.Equal("tarefa:42", capturada.ReferenciaExterna);
-        Assert.Equal("tracker:tarefa:42:TarefaAtribuida:USR", capturada.ChaveIdempotencia);
-        Assert.Equal("tracker:TarefaAtribuida:tarefa:42", capturada.CorrelacaoId);
-        cenario.Email.Verify(
-            service => service.NotificarAtribuicaoAsync(
-                It.Is<TarefaDTO>(dto => dto.Id == 42), It.IsAny<UsuarioDTO>()),
-            Times.Once);
-    }
-
-    [Fact]
-    public async Task CriarAsync_DeveManterSucessoEAdicionarAvisoQuandoEmailFalha()
-    {
-        var cenario = CriarCenario(
-            resultadoEmail: Resultado.Falha("Falha simulada"));
-
-        var resultado = await cenario.Case.ExecutarAsync(CriarTarefaDto());
-
-        Assert.True(resultado.TeveSucesso);
-        Assert.Contains(resultado.Messages, mensagem =>
-            mensagem.Descricao == TarefaResource.Aviso_EmailNotificacaoNaoEnviado);
+        Assert.Equal(TarefaResource.Titulo_TarefaAtribuida, capturada.NotificacaoInterna.Titulo);
+        Assert.Equal("A tarefa 42 foi atribuída a você.", capturada.NotificacaoInterna.Mensagem);
+        Assert.Equal(AtronNotificacoes.Domain.Enums.ENotificacaoModulos.Tracker, capturada.NotificacaoInterna.ModuloOrigem);
+        Assert.Equal("TarefaAtribuida", capturada.NotificacaoInterna.TipoEvento);
+        Assert.Equal("/atron/tarefas/editar/42", capturada.NotificacaoInterna.UrlDestino);
+        Assert.Equal("tarefa:42", capturada.NotificacaoInterna.ReferenciaExterna);
+        Assert.Equal("tracker:tarefa:42:TarefaAtribuida:USR", capturada.NotificacaoInterna.ChaveIdempotencia);
+        Assert.Equal("tracker:TarefaAtribuida:tarefa:42", capturada.NotificacaoInterna.CorrelacaoId);
     }
 
     [Fact]
@@ -147,7 +131,7 @@ public class CriarTarefaTests
 
         Assert.True(resultado.TeveFalha);
         Assert.Contains(resultado.Messages, mensagem => mensagem.Descricao == "Falha de preparação");
-        cenario.UsuarioService.Verify(service => service.ObterUsuarioAtual(), Times.Once);
+        cenario.UsuarioService.Verify(service => service.ObterAsync(), Times.Once);
 
         cenario.Tarefas.Verify(
             repository => repository.CriarTarefaAsync(It.IsAny<Tarefa>()),
@@ -155,12 +139,10 @@ public class CriarTarefaTests
         cenario.Movimentacoes.Verify(
             repository => repository.RegistrarAsync(It.IsAny<TarefaMovimentacao>()),
             Times.Never);
-        cenario.Email.Verify(
-            service => service.NotificarAtribuicaoAsync(It.IsAny<TarefaDTO>(), It.IsAny<UsuarioDTO>()),
-            Times.Never);
+        
         cenario.Publisher.Verify(
             service => service.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
     }
@@ -181,12 +163,10 @@ public class CriarTarefaTests
         cenario.Movimentacoes.Verify(
             repository => repository.RegistrarAsync(It.IsAny<TarefaMovimentacao>()),
             Times.Never);
-        cenario.Email.Verify(
-            service => service.NotificarAtribuicaoAsync(It.IsAny<TarefaDTO>(), It.IsAny<UsuarioDTO>()),
-            Times.Never);
+        
         cenario.Publisher.Verify(
             service => service.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
     }
@@ -207,19 +187,17 @@ public class CriarTarefaTests
         cenario.Tarefas.Verify(
             repository => repository.CriarTarefaAsync(cenario.Tarefa),
             Times.Once);
-        cenario.Email.Verify(
-            service => service.NotificarAtribuicaoAsync(It.IsAny<TarefaDTO>(), It.IsAny<UsuarioDTO>()),
-            Times.Never);
+        
         cenario.Publisher.Verify(
             service => service.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
     private static CenarioCriacao CriarCenario(
-        Resultado? resultadoEmail = null,
-        Action<PublicarNotificacaoInternaRequest>? capturarNotificacao = null,
+        
+        Action<global::Application.Events.TarefaNotificacaoEvent>? capturarNotificacao = null,
         Action<TarefaDTO>? capturarTarefa = null)
     {
         var usuario = new UsuarioDTO { Id = 7, Codigo = "USR", Nome = "Usuario" };
@@ -237,7 +215,7 @@ public class CriarTarefaTests
             EstadoDaTarefa = new TarefaEstado { Id = 1, Descricao = "Aberta" }
         };
 
-        var preparacao = new Mock<ITarefaPreparacaoService>();
+        var preparacao = new Mock<global::Application.Services.EntitiesServices.Tarefas.TarefaPreparacaoService>();
         preparacao
             .Setup(service => service.PrepararParaPersistenciaAsync(It.IsAny<TarefaDTO>()))
             .ReturnsAsync((TarefaDTO tarefa) =>
@@ -250,18 +228,12 @@ public class CriarTarefaTests
         var tarefaRepository = new Mock<ITarefaRepository>();
         tarefaRepository.Setup(repository => repository.CriarTarefaAsync(entidade)).ReturnsAsync(true);
 
-        var publisher = new Mock<INotificacoesInternasPublisher>();
+        var publisher = new Mock<Shared.Application.Messaging.IEventBus>();
         publisher
-            .Setup(service => service.PublicarAsync(It.IsAny<PublicarNotificacaoInternaRequest>(), It.IsAny<CancellationToken>()))
-            .Callback<PublicarNotificacaoInternaRequest, CancellationToken>((valor, _) => capturarNotificacao?.Invoke(valor))
-            .ReturnsAsync(ResultadoPublicacaoNotificacaoInterna.Sucesso(new NotificacaoInternaResponse(
-                1000001, "Tracker", "TarefaAtribuida", "", "", null, null, false, DateTimeOffset.UtcNow, null)));
-        var notificacao = new TarefaNotificacaoInternaCase(publisher.Object);
-
-        var email = new Mock<ITarefaNotificacaoService>();
-        email
-            .Setup(service => service.NotificarAtribuicaoAsync(It.IsAny<TarefaDTO>(), usuario))
-            .ReturnsAsync(resultadoEmail ?? Resultado.Sucesso());
+            .Setup(service => service.PublicarAsync(It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(), It.IsAny<CancellationToken>()))
+            .Callback<global::Application.Events.TarefaNotificacaoEvent, CancellationToken>((valor, _) => capturarNotificacao?.Invoke(valor))
+            .Returns(System.Threading.Tasks.ValueTask.CompletedTask);
+        var notificacao = publisher.Object;
 
         var movimentacaoRepository = new Mock<ITarefaMovimentacaoRepository>();
         movimentacaoRepository
@@ -271,16 +243,16 @@ public class CriarTarefaTests
             movimentacaoRepository.Object,
             new TarefaMovimentacaoMapping());
 
-        var usuarioAtual = new Mock<IUsuarioService>();
+        var usuarioAtual = new Mock<ObterUsuarioCase>();
         usuarioAtual
-            .Setup(service => service.ObterUsuarioAtual())
+            .Setup(service => service.ObterAsync())
             .ReturnsAsync(Resultado<Usuario>.Sucesso(responsavel));
 
         return new CenarioCriacao(
             new CriarTarefaCase(
                 tarefaRepository.Object,
                 preparacao.Object,
-                email.Object,
+                
                 notificacao,
                 usuarioAtual.Object,
                 movimentacao),
@@ -288,7 +260,7 @@ public class CriarTarefaTests
             tarefaRepository,
             movimentacaoRepository,
             usuarioAtual,
-            email,
+            
             publisher,
             entidade,
             responsavel);
@@ -308,12 +280,17 @@ public class CriarTarefaTests
 
     private sealed record CenarioCriacao(
         CriarTarefaCase Case,
-        Mock<ITarefaPreparacaoService> Preparacao,
+        Mock<global::Application.Services.EntitiesServices.Tarefas.TarefaPreparacaoService> Preparacao,
         Mock<ITarefaRepository> Tarefas,
         Mock<ITarefaMovimentacaoRepository> Movimentacoes,
-        Mock<IUsuarioService> UsuarioService,
-        Mock<ITarefaNotificacaoService> Email,
-        Mock<INotificacoesInternasPublisher> Publisher,
+        Mock<ObterUsuarioCase> UsuarioService,
+        
+        Mock<Shared.Application.Messaging.IEventBus> Publisher,
         Tarefa Tarefa,
         Usuario Responsavel);
 }
+
+
+
+
+

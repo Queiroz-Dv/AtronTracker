@@ -17,7 +17,8 @@ public sealed class ExecutarGeracaoProdutosLoteCase(
     )
 {
     public async Task<Resultado<GeracaoProdutosLoteResultado>> ExecutarAsync(
-        GeracaoProdutosLoteCommand command)
+        GeracaoProdutosLoteCommand command,
+        Func<int, Task>? onProgressAsync = null)
     {
         var mensagens = validador.Validar(command).ToList();
         if (mensagens.Count > 0)
@@ -39,6 +40,20 @@ public sealed class ExecutarGeracaoProdutosLoteCase(
                 string.Join(", ", existentes.Take(5)))); // Obtém os cinco primeiros
 
         var lote = await criarLoteParaPersistenciaCase.ExecutarAsync(codigoBase, command, categorias.Dados!);
+
+        if (onProgressAsync != null)
+        {
+            int total = lote.Produtos.Count;
+            int passos = command.Quantidade;
+            int tamanhoPasso = Math.Max(1, total / 5); // 5 chunks
+            
+            for (int processado = 0; processado < total; processado += tamanhoPasso)
+            {
+                int atual = Math.Min(processado + tamanhoPasso, total);
+                await onProgressAsync(atual);
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
+        }
 
         if (!await loteRepository.AdicionarAsync(lote))
             return Resultado<GeracaoProdutosLoteResultado>.Falha(

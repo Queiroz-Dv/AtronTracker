@@ -1,3 +1,4 @@
+using Application.Interfaces.Services;
 using Application.DTO;
 using Application.DTO.Request;
 using Application.Interfaces.ApplicationInterfaces;
@@ -9,19 +10,21 @@ using Microsoft.AspNetCore.RateLimiting;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using System.Security.Claims;
+using Shared.Extensions;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
     /// <summary>
     /// Controller de acesso e autenticação de usuários.
     /// Contém endpoints para login, refresh de token, logout, troca de senha, registro e confirmação de e-mail.
-    /// Os endpoints de recuperação de senha, confirmação de e-mail e reativação de conta são públicos (AllowAnonymous).
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AcessoController(
         ILoginService _service,
-        IRegistroUsuarioService _registroUsuarioService,
+        IRecuperacaoSenhaService _recuperacaoSenhaService, 
+        RegistrarContaUsuarioCase _registrarContaUsuarioCase, 
+        ConfirmarEmailContaUsuarioCase _confirmarEmailContaUsuarioCase,
         ICookieService _cookieService,
         SolicitarReativacaoCase _solicitarReativacao,
         ReativarUsuarioCase _reativarUsuario,
@@ -65,7 +68,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         public async Task<ActionResult<bool>> Logout()
         {
             var usuarioCodigo = User.FindFirst(ClaimCode.CODIGO_USUARIO)?.Value;
-            if (string.IsNullOrWhiteSpace(usuarioCodigo))
+            if (usuarioCodigo.IsNullOrEmpty())
                 return Unauthorized();
 
             var resultado = await _service.Logout(usuarioCodigo);
@@ -110,7 +113,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [EnableRateLimiting(AcessoRateLimiting.TrocaSenha)]
         public async Task<ActionResult<bool>> TrocarSenha([FromBody] RedefinirSenhaRequest request)
         {
-            var resultado = await _registroUsuarioService.TrocarSenha(request);
+            var resultado = await _recuperacaoSenhaService.TrocarAsync(request);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
@@ -124,7 +127,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [EnableRateLimiting(AcessoRateLimiting.RecuperacaoSenha)]
         public async Task<ActionResult> RecuperarSenha([FromBody] SolicitarRecuperacaoSenhaRequest request)
         {
-            var resultado = await _registroUsuarioService.SolicitarRecuperacaoSenha(request);
+            var resultado = await _recuperacaoSenhaService.SolicitarAsync(request);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
@@ -144,7 +147,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 identity.AddClaim(new Claim(ClaimCode.CODIGO_WORKSPACE, codigoWorkspace));
             }
 
-            var resultado = await _registroUsuarioService.RegistrarUsuario(registroRequest);
+            var resultado = await _registrarContaUsuarioCase.ExecutarAsync(registroRequest);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
@@ -158,7 +161,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [EnableRateLimiting(AcessoRateLimiting.ConfirmacaoEmail)]
         public async Task<ActionResult> ConfirmarEmail([FromBody] ConfirmarEmailRequest request)
         {
-            var resultado = await _registroUsuarioService.ConfirmarEmail(request.UsuarioCodigo, request.Identificador);
+            var resultado = await _confirmarEmailContaUsuarioCase.ExecutarAsync(request.UsuarioCodigo, request.Identificador);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 

@@ -1,4 +1,4 @@
-ï»¿namespace Domain.Entities
+namespace Domain.Entities
 {
     public class UsuarioCargoDepartamento
     {
@@ -17,7 +17,7 @@
 
         public string DepartamentoCodigo { get; set; }
 
-        // NavegaÃ§Ã£o
+        // Navegação
         public Usuario Usuario { get; set; }
         public Cargo Cargo { get; set; }
         public Departamento Departamento { get; set; }

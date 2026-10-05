@@ -8,10 +8,11 @@ namespace Domain.Interfaces
 {
     public interface IEmpresaRepository
     {
-        Task<Usuario?> ObterUsuarioAsync(string codigo);
+        Task<Usuario?> UsuarioServiceAsync(string codigo);
         Task<bool> CodigoExisteAsync(string codigo);
         Task CriarAsync(Empresa empresa);
         Task<IReadOnlyList<Empresa>> BuscarAtivasAsync(string? termo);
         Task<Empresa?> ObterAtivaAsync(int id);                
     }
 }
+

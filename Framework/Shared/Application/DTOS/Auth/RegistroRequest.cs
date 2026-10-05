@@ -1,4 +1,4 @@
-﻿namespace Shared.Application.DTOS.Auth
+namespace Shared.Application.DTOS.Auth
 {
     public class RegistroRequest
     {

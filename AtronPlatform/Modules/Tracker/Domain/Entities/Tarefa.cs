@@ -1,4 +1,4 @@
-﻿using Domain.Constants;
+using Domain.Constants;
 using Domain.Enums;
 using Domain.Extensions;
 using Shared.Attributes;

@@ -1,4 +1,4 @@
-ï»¿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Shared.Infrastructure.Repositories;
 
@@ -19,7 +19,7 @@ namespace Shared.Repositories
         {
             if (_currentTransaction != null) return;
 
-            // Cria a transaÃ§Ã£o no banco especÃ­fico deste contexto
+            // Cria a transação no banco específico deste contexto
             _currentTransaction = await _context.Database.BeginTransactionAsync();
         }
 
@@ -27,7 +27,7 @@ namespace Shared.Repositories
         {
             try
             {
-                // Commit da transaÃ§Ã£o
+                // Commit da transação
                 await _currentTransaction.CommitAsync();
             }
             catch
@@ -64,7 +64,7 @@ namespace Shared.Repositories
 
         public void Dispose()
         {
-            // NÃ£o damos dispose no Context aqui, pois o ciclo de vida dele Ã© gerenciado pelo DI (Scoped)
+            // Não damos dispose no Context aqui, pois o ciclo de vida dele é gerenciado pelo DI (Scoped)
             DisposeTransaction();
             GC.SuppressFinalize(this);
         }

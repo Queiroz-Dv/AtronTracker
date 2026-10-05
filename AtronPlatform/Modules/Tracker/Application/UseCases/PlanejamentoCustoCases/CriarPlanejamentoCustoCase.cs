@@ -1,17 +1,16 @@
 using Application.DTO;
-using Application.Interfaces.Services;
 using Application.Resources;
+using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.PlanejamentoCustoCases
 {
     public sealed class CriarPlanejamentoCustoCase(
-        IPlanejamentoCustoPreparacaoService preparacaoService,
+        PlanejamentoCustoPreparacaoService preparacaoService,
         IPlanejamentoCustoRepository planejamentoCustoRepository)
     {
-        private readonly IPlanejamentoCustoPreparacaoService _preparacaoService = preparacaoService;
+        private readonly PlanejamentoCustoPreparacaoService _preparacaoService = preparacaoService;
         private readonly IPlanejamentoCustoRepository _planejamentoCustoRepository = planejamentoCustoRepository;
 
         public async Task<Resultado> ExecutarAsync(PlanejamentoCustoDTO planejamentoCustoDTO)

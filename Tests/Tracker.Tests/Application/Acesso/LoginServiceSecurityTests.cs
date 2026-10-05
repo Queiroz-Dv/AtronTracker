@@ -1,15 +1,19 @@
+using Application.UseCases.UsuarioCases;
 using Application.DTO;
 using Application.DTO.Request;
 using Application.Interfaces.Services;
-using Application.Interfaces.Services.Identity;
+using Application.UseCases.UsuarioCases;
 using Application.Records.Autenticacao;
 using Application.Services.AuthServices;
 using Domain.Interfaces.ApplicationInterfaces;
+using Domain.Entities;
+using Domain.Interfaces.Identity;
 using Moq;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
+using Shared.Application.Security;
 using Shared.Domain.ValueObjects;
 using Xunit;
 
@@ -32,12 +36,12 @@ public class LoginServiceSecurityTests
             RefrehTokenDTO = new DadosDoRefrehTokenDTO("refresh-novo", DateTime.UtcNow.AddDays(7))
         };
 
-        dependencias.UserIdentityService
-            .SetupSequence(service => service.ObterSessaoRefreshTokenAsync("refresh-antigo"))
+        dependencias.UserIdentityRepository
+            .SetupSequence(repo => repo.ObterSessaoRefreshTokenRepositoryAsync(RefreshTokenHash.Obter("refresh-antigo")))
             .ReturnsAsync(new Domain.Entities.SessaoRefreshToken("USR001", DateTime.UtcNow.AddDays(1)))
             .ReturnsAsync((Domain.Entities.SessaoRefreshToken)null!);
-        dependencias.UserIdentityService
-            .Setup(service => service.RotacionarRefreshTokenAsync(It.IsAny<RotacaoRefreshTokenRecord>()))
+        dependencias.UserIdentityRepository
+            .Setup(repo => repo.RotacionarRefreshTokenRepositoryAsync(It.IsAny<RotacaoRefreshTokenHash>()))
             .ReturnsAsync(true);
         dadosComplementares.DadosDoUsuario.Workspace = new WorkspaceDoUsuarioDTO { Codigo = "WS001", Descricao = "Workspace" };
         dadosComplementares.DadosDoUsuario.EhResponsavelDoWorkspace = true;
@@ -55,11 +59,11 @@ public class LoginServiceSecurityTests
         Assert.False(primeiraTentativa.TeveFalha);
         Assert.Equal("USR001", primeiraTentativa.Dados.UsuarioCodigo);
         Assert.True(reuso.TeveFalha);
-        dependencias.UserIdentityService.Verify(
-            service => service.RotacionarRefreshTokenAsync(It.Is<RotacaoRefreshTokenRecord>(rotacao =>
+        dependencias.UserIdentityRepository.Verify(
+            repo => repo.RotacionarRefreshTokenRepositoryAsync(It.Is<RotacaoRefreshTokenHash>(rotacao =>
                 rotacao.UsuarioCodigo == "USR001" &&
-                rotacao.RefreshTokenAtual == "refresh-antigo" &&
-                rotacao.NovoRefreshToken == "refresh-novo")),
+                rotacao.HashAtual == RefreshTokenHash.Obter("refresh-antigo") &&
+                rotacao.NovoHash == RefreshTokenHash.Obter("refresh-novo"))),
             Times.Once);
         dependencias.CookieService.Verify(
             service => service.CriarCookieDeRefreshToken(novosTokens.RefrehTokenDTO),
@@ -70,8 +74,8 @@ public class LoginServiceSecurityTests
     public async Task Logout_DeveRevogarSessaoDoUsuarioAutenticadoELimparCookieECache()
     {
         var dependencias = CriarDependencias(null);
-        dependencias.UserIdentityService
-            .Setup(service => service.RevogarRefreshTokenAsync("USR001"))
+        dependencias.UserIdentityRepository
+            .Setup(repo => repo.RedefinirRefreshTokenRepositoryAsync("USR001"))
             .ReturnsAsync(true);
 
         var resultado = await dependencias.Service.Logout("USR001");
@@ -106,8 +110,8 @@ public class LoginServiceSecurityTests
         dependencias.TokenService.Verify(
             service => service.ObterTokenComRefreshToken(It.IsAny<Shared.Application.DTOS.Users.DadosComplementaresDoUsuarioDTO>()),
             Times.Never);
-        dependencias.UserIdentityService.Verify(
-            service => service.GravarRefreshTokenAsync(
+        dependencias.UserIdentityRepository.Verify(
+            repo => repo.AtualizarRefreshTokenUsuarioRepositoryAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<DateTime>()),
@@ -182,8 +186,8 @@ public class LoginServiceSecurityTests
                 RefrehTokenDTO = new DadosDoRefrehTokenDTO("refresh", DateTime.UtcNow.AddDays(7))
             });
 
-        dependencias.UserIdentityService
-            .Setup(service => service.GravarRefreshTokenAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+        dependencias.UserIdentityRepository
+            .Setup(repo => repo.AtualizarRefreshTokenUsuarioRepositoryAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
             .ReturnsAsync(true);
 
         var request = new LoginRequestDTO { CodigoDoUsuario = "USR001", Senha = "senha" };
@@ -241,11 +245,11 @@ public class LoginServiceSecurityTests
             }
         };
 
-        dependencias.UserIdentityService
-            .Setup(service => service.ObterSessaoRefreshTokenAsync("refresh-antigo"))
+        dependencias.UserIdentityRepository
+            .Setup(repo => repo.ObterSessaoRefreshTokenRepositoryAsync(RefreshTokenHash.Obter("refresh-antigo")))
             .ReturnsAsync(new Domain.Entities.SessaoRefreshToken("USR001", DateTime.UtcNow.AddDays(1)));
-        dependencias.UserIdentityService
-            .Setup(service => service.RotacionarRefreshTokenAsync(It.IsAny<RotacaoRefreshTokenRecord>()))
+        dependencias.UserIdentityRepository
+            .Setup(repo => repo.RotacionarRefreshTokenRepositoryAsync(It.IsAny<RotacaoRefreshTokenHash>()))
             .ReturnsAsync(true);
         dependencias.DadosComplementaresService
             .Setup(service => service.ObterInformacoesComplementaresDoUsuario(It.IsAny<UsuarioDTO>()))
@@ -281,8 +285,8 @@ public class LoginServiceSecurityTests
             }
         };
 
-        dependencias.UserIdentityService
-            .Setup(service => service.ObterSessaoRefreshTokenAsync("refresh-antigo"))
+        dependencias.UserIdentityRepository
+            .Setup(repo => repo.ObterSessaoRefreshTokenRepositoryAsync(RefreshTokenHash.Obter("refresh-antigo")))
             .ReturnsAsync(new Domain.Entities.SessaoRefreshToken("USR001", DateTime.UtcNow.AddDays(1)));
             
         dependencias.DadosComplementaresService
@@ -299,15 +303,15 @@ public class LoginServiceSecurityTests
     private static DependenciasLogin CriarDependencias(UsuarioDTO? usuario)
     {
         var loginRepository = new Mock<ILoginRepository>();
-        var usuarioService = new Mock<IUsuarioService>();
+        var usuarioService = new Mock<ObterUsuarioCase>();
         var dadosComplementaresService = new Mock<IDadosComplementaresDoUsuarioService>();
         var tokenService = new Mock<ITokenService>();
         var cacheUsuarioService = new Mock<ICacheUsuarioService>();
         var cookieService = new Mock<ICookieService>();
-        var userIdentityService = new Mock<IUserIdentityService>();
+        var userIdentityRepository = new Mock<IUsuarioIdentityRepository>();
 
         usuarioService
-            .Setup(service => service.ObterPorCodigoAsync(It.IsAny<string>()))
+            .Setup(service => service.ExecutarAsync(It.IsAny<string>()))
             .ReturnsAsync(usuario is null
                 ? Resultado<UsuarioDTO>.Falha(AuthResource.Erro_Autenticacao)
                 : Resultado<UsuarioDTO>.Sucesso(usuario));
@@ -319,14 +323,14 @@ public class LoginServiceSecurityTests
             tokenService.Object,
             cacheUsuarioService.Object,
             cookieService.Object,
-            userIdentityService.Object);
+            userIdentityRepository.Object);
 
         return new DependenciasLogin(
             service,
             loginRepository,
             tokenService,
             cookieService,
-            userIdentityService,
+            userIdentityRepository,
             dadosComplementaresService,
             cacheUsuarioService);
     }
@@ -336,7 +340,11 @@ public class LoginServiceSecurityTests
         Mock<ILoginRepository> LoginRepository,
         Mock<ITokenService> TokenService,
         Mock<ICookieService> CookieService,
-        Mock<IUserIdentityService> UserIdentityService,
+        Mock<IUsuarioIdentityRepository> UserIdentityRepository,
         Mock<IDadosComplementaresDoUsuarioService> DadosComplementaresService,
         Mock<ICacheUsuarioService> CacheUsuarioService);
 }
+
+
+
+

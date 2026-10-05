@@ -1,4 +1,4 @@
-﻿using Shared.Infrastructure.Repositories;
+using Shared.Infrastructure.Repositories;
 using System.Transactions;
 
 namespace Shared.Repositories

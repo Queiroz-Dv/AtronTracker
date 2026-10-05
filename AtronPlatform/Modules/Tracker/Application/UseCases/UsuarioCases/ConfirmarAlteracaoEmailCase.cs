@@ -1,9 +1,9 @@
-﻿using Domain.Interfaces.Identity;
-using Domain.Interfaces.UsuarioInterfaces;
 using Application.Interfaces.Services;
+using Domain.Interfaces.Identity;
+using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.UseCases.UsuarioCases
 {
@@ -18,7 +18,7 @@ namespace Application.UseCases.UsuarioCases
 
         public async Task<Resultado> ExecutarAsync(string codigoUsuario, string emailNovo, string token)
         {
-            if (string.IsNullOrWhiteSpace(emailNovo) || string.IsNullOrWhiteSpace(token))
+            if (emailNovo.IsNullOrEmpty() || token.IsNullOrEmpty())
                 return Resultado.Falha(UsuarioResource.ErroDadosConfirmacaoAlteracaoEmail);
 
             var emailJaExiste = await _usuarioRepository.VerificarEmailExistenteAsync(emailNovo);
@@ -30,7 +30,7 @@ namespace Application.UseCases.UsuarioCases
                 return Resultado.Falha(UsuarioResource.ErroConfirmacaoAlteracaoEmail);
 
             var usuario = await _usuarioRepository.ObterUsuarioPorCodigoAsync(codigoUsuario);
-            if (usuario == null)
+            if (usuario.IsNullable())
                 return Resultado.Falha(UsuarioResource.Erro_UsuarioNaoEncontrado);
 
             usuario.Email = emailNovo;

@@ -1,9 +1,8 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {

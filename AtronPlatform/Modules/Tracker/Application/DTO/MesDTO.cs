@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Application.DTO
 {
@@ -13,7 +13,7 @@ namespace Application.DTO
             {
                 new() { Id = 1, Descricao = "Janeiro" },
                 new() { Id = 2, Descricao = "Fevereiro" },
-                new() { Id = 3, Descricao = "Março" },
+                new() { Id = 3, Descricao = "Mar�o" },
                 new() { Id = 4, Descricao = "Abril" },
                 new() { Id = 5, Descricao = "Maio" },
                 new() { Id = 6, Descricao = "Junho" },

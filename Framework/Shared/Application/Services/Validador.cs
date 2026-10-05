@@ -1,4 +1,4 @@
-﻿using Shared.Application.Interfaces.Service;
+using Shared.Application.Interfaces.Service;
 using Shared.Domain;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -20,9 +20,9 @@ namespace Shared.Application.Services
             return regra;
         }
 
-        public NotificationBag Validar(T entity)
+        public Resultado Validar(T entity)
         {
-            var bag = new NotificationBag();
+            var bag = new Resultado();
 
             if (entity is null)
             {

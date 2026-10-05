@@ -1,7 +1,7 @@
 using Application.DTO;
 using Application.DTO.Request;
-using Application.Interfaces.Services;
 using Application.Resources;
+using Application.UseCases.PerfilDeAcessoCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Resources;
@@ -17,7 +17,12 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class PerfilDeAcessoController(IPerfilDeAcessoService perfilDeAcessoService) : ControllerBase
+    public class PerfilDeAcessoController(
+        CriarPerfilDeAcessoCase criarPerfil,
+        AtualizarPerfilDeAcessoCase atualizarPerfil,
+        RemoverPerfilDeAcessoCase removerPerfil,
+        ObterPerfilDeAcessoCase obterPerfil,
+        RelacionarPerfilUsuarioCase relacionarPerfilUsuario) : ControllerBase
     {
         /// <summary>
         /// Cria um novo perfil de acesso.
@@ -28,7 +33,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Post([FromBody] PerfilDeAcessoDTO perfilDeAcessoDTO)
         {
-            var resultado = await perfilDeAcessoService.CriarAsync(perfilDeAcessoDTO);
+            var resultado = await criarPerfil.ExecutarAsync(perfilDeAcessoDTO);
 
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
@@ -51,7 +56,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
             if (codigo != perfilDeAcessoDTO.Codigo)
                 return BadRequest(Resultado<object>.Falha(NotificacoesPadronizadas.ErroCodigoRotaDivergente).Messages);
 
-            var resultado = await perfilDeAcessoService.AtualizarAsync(codigo, perfilDeAcessoDTO);
+            var resultado = await atualizarPerfil.ExecutarAsync(codigo, perfilDeAcessoDTO);
 
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
@@ -66,7 +71,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult<ICollection<PerfilDeAcessoDTO>>> Get()
         {
-            var resultado = await perfilDeAcessoService.ObterTodosAsync();
+            var resultado = await obterPerfil.ObterTodosAsync();
             return Ok(resultado.Dados);
         }
 
@@ -79,7 +84,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult<PerfilDeAcessoDTO>> Get(string codigo)
         {
-            var resultado = await perfilDeAcessoService.ObterPorCodigoAsync(codigo);
+            var resultado = await obterPerfil.ObterPorCodigoAsync(codigo);
 
             return resultado.TeveFalha ?
                 NotFound(resultado.Messages) :
@@ -95,7 +100,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Authorize(Policy = ModuloPolicies.PerfilDeAcesso)]
         public async Task<ActionResult> Delete(string codigo)
         {
-            var resultado = await perfilDeAcessoService.RemoverAsync(codigo);
+            var resultado = await removerPerfil.ExecutarAsync(codigo);
 
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
@@ -121,7 +126,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 Usuarios = (request.Usuarios ?? []).Select(usuario => new UsuarioDTO { Codigo = usuario.Codigo }).ToList()
             };
 
-            var resultado = await perfilDeAcessoService.RelacionarPerfilDeAcessoUsuarioAsync(dto);
+            var resultado = await relacionarPerfilUsuario.ExecutarAsync(dto);
 
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
@@ -137,7 +142,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Authorize(Policy = ModuloPolicies.RelacionamentoPerfilUsuario)]
         public async Task<ActionResult<PerfilDeAcessoUsuarioDTO>> ObterRelacionamentosPerfilUsuario([FromRoute] string codigo)
         {
-            var resultado = await perfilDeAcessoService.ObterRelacionamentoDePerfilUsuarioPorCodigoAsync(codigo);
+            var resultado = await obterPerfil.ObterRelacionamentoAsync(codigo);
 
             return resultado.TeveFalha ?
                 NotFound(resultado.Messages) :

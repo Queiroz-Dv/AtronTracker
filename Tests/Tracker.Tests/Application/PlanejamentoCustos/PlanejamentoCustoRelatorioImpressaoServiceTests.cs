@@ -1,5 +1,6 @@
 using Application.DTO;
 using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
@@ -108,3 +109,5 @@ public class PlanejamentoCustoRelatorioImpressaoServiceTests
             => Task.FromResult(_resultado);
     }
 }
+
+

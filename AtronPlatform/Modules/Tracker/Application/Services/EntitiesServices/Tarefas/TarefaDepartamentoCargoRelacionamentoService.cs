@@ -5,7 +5,6 @@ using Domain.Extensions;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
@@ -25,10 +24,10 @@ namespace Application.Services.EntitiesServices.Tarefas
             }
 
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(tarefaDTO.DepartamentoCodigo.ToUpper());
-            if (departamento is null)
+            if (departamento.IsNullable())
                 return Resultado<Departamento>.Falha(TarefaResource.Erro_DepartamentoNaoEncontrado);
 
-            tarefa.VincularDepartamento(departamento);            
+            tarefa.VincularDepartamento(departamento);
 
             if (tarefaDTO.CargoCodigo.IsNullOrEmpty())
             {
@@ -37,7 +36,7 @@ namespace Application.Services.EntitiesServices.Tarefas
             }
 
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(tarefaDTO.CargoCodigo.ToUpper());
-            if (cargo is null)
+            if (cargo.IsNullable())
                 return Resultado<Departamento>.Falha(TarefaResource.Erro_CargoNaoEncontrado);
 
             if (cargo.DepartamentoId != departamento.Id ||
@@ -45,9 +44,9 @@ namespace Application.Services.EntitiesServices.Tarefas
 
                 return Resultado<Departamento>.Falha(TarefaResource.Erro_CargoNaoPertenceDepartamento);
 
-            tarefa.VincularCargo(cargo);            
+            tarefa.VincularCargo(cargo);
 
             return Resultado<Departamento>.Sucesso(departamento);
-        }        
+        }
     }
 }

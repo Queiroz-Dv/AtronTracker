@@ -1,4 +1,4 @@
-﻿using Domain.Constants;
+using Domain.Constants;
 using Shared.Attributes;
 using Shared.Domain.Entities.Identity;
 using System;

@@ -160,42 +160,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Empresas");
                 });
 
-            modelBuilder.Entity("Domain.Entities.MembroWorkspace", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("UsuarioCodigo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<string>("UsuarioCodigo1")
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<int?>("UsuarioId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("WorkspaceCodigo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<int>("WorkspaceId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId", "UsuarioCodigo1");
-
-                    b.HasIndex("WorkspaceId", "WorkspaceCodigo");
-
-                    b.ToTable("MembrosWorkspace");
-                });
-
             modelBuilder.Entity("Domain.Entities.Modulo", b =>
                 {
                     b.Property<int>("Id")
@@ -556,10 +520,11 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("DepartamentoId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DestinoInicial")
+                    b.Property<string>("DestinoInicial")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
+                        .HasColumnType("text")
+                        .HasDefaultValue("1");
 
                     b.Property<bool>("ExigeAprovacaoParaObter")
                         .ValueGeneratedOnAdd()
@@ -665,8 +630,10 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TarefaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Tipo")
-                        .HasColumnType("integer");
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
 
                     b.HasKey("Id");
 
@@ -875,7 +842,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -1067,23 +1033,6 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Endereco")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Entities.MembroWorkspace", b =>
-                {
-                    b.HasOne("Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId", "UsuarioCodigo1");
-
-                    b.HasOne("Domain.Entities.Workspace", "Workspace")
-                        .WithMany("Membros")
-                        .HasForeignKey("WorkspaceId", "WorkspaceCodigo")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-
-                    b.Navigation("Workspace");
                 });
 
             modelBuilder.Entity("Domain.Entities.PerfilDeAcesso", b =>
@@ -1392,11 +1341,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("UsuarioCargoDepartamentos");
 
                     b.Navigation("Workspace");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Workspace", b =>
-                {
-                    b.Navigation("Membros");
                 });
 #pragma warning restore 612, 618
         }

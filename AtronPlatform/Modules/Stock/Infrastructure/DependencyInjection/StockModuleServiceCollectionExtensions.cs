@@ -1,9 +1,7 @@
 using AtronStock.Application.DTO.Request;
 using AtronStock.Application.DTO.Response;
-using AtronStock.Application.Interfaces;
 using AtronStock.Application.Mapping;
 using AtronStock.Application.Providers.Notificacoes;
-using AtronStock.Application.Services;
 using AtronStock.Application.UseCases.CategoriaCases;
 using AtronStock.Application.UseCases.ProdutoCases;
 using AtronStock.Application.Validacoes;
@@ -35,31 +33,16 @@ public static class StockModuleServiceCollectionExtensions
         services.AddDbContext<StockDbContext>(options =>
             options.UseConfiguredDatabase(database, migrationsAssembly));
 
-        services.AddScoped<IClienteService, ClienteService>();
-        services.AddScoped<IClienteRepository, ClienteRepository>();
         ConfigureCategoriaServices(services);
-        services.AddScoped<IFornecedorService, FornecedorService>();
-        services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+
         ConfigureProdutoServices(services);
         if (configuration.GetValue("ProcessamentosProdutosLote:WorkerHabilitado", true))
             services.AddHostedService<GeracaoProdutosLoteWorker>();
-        services.AddScoped<IEstoqueService, EstoqueService>();
-        services.AddScoped<IEstoqueRepository, EstoqueRepository>();
 
-        services.AddScoped<ResponsavelNotificacaoEstoqueProvider>(_ =>
-            new ResponsavelNotificacaoEstoqueProvider(
-                configuration["NotificacoesEstoque:ResponsavelCodigo"]));
-        services.AddScoped<IEstoqueNotificacaoService, EstoqueNotificacaoService>();
+services.AddMapper<Categoria, CategoriaRequest, CategoriaMapping>();
 
-        services.AddMapper<Cliente, ClienteRequest, ClienteMapping>();
-        services.AddMapper<Categoria, CategoriaRequest, CategoriaMapping>();
-        services.AddMapper<Fornecedor, FornecedorRequest, FornecedorMapping>();
-
-        services.AddScoped<IValidador<ClienteRequest>, ClienteValidador>();
         services.AddScoped<IValidador<CategoriaRequest>, CategoriaValidador>();
-        services.AddScoped<IValidador<FornecedorRequest>, FornecedorValidador>();
-
-        return services;
+return services;
     }
 
     private static void ConfigureCategoriaServices(IServiceCollection services)
@@ -71,7 +54,6 @@ public static class StockModuleServiceCollectionExtensions
         services.AddScoped<CriarCategoriaCase>();
         services.AddScoped<ExcluirCategoriaCase>();
         services.AddScoped<ObterCategoriaCase>();
-        services.AddScoped<ICategoriaService, CategoriaService>();
     }
 
     private static void ConfigureProdutoServices(IServiceCollection services)
@@ -87,11 +69,8 @@ public static class StockModuleServiceCollectionExtensions
             provider.GetRequiredService<ProdutoMapping>());
         services.AddScoped<IUpdateMapper<Produto, ProdutoAtualizacaoMappingInput>>(provider =>
             provider.GetRequiredService<ProdutoMapping>());
-        services.AddScoped<ProdutoValidador>();
-        services.AddScoped<IValidador<ProdutoRequest>>(provider =>
-            provider.GetRequiredService<ProdutoValidador>());
-        services.AddScoped<IValidador<ProdutoAtualizacaoRequest>>(provider =>
-            provider.GetRequiredService<ProdutoValidador>());
+        services.AddScoped<IValidador<ProdutoRequest>, ProdutoRequestValidador>();
+        services.AddScoped<IValidador<ProdutoAtualizacaoRequest>, ProdutoAtualizacaoRequestValidador>();
         services.AddScoped<GeracaoProdutosLoteValidador>();
         services.AddScoped<AuditoriaProdutoCase>();
         services.AddScoped<SelecionarCategoriasProdutoCase>();
@@ -105,9 +84,7 @@ public static class StockModuleServiceCollectionExtensions
         services.AddScoped<ProcessamentoProdutoMapping>();
         services.AddScoped<ObterMeusProcessamentosProdutoCase>();
         services.AddScoped<ObterProcessamentoProdutoCase>();
-        services.AddScoped<IProcessamentoProdutoService, ProcessamentoProdutoService>();
         services.TryAddSingleton(TimeProvider.System);
-        services.AddScoped<IProdutoService, ProdutoService>();
     }
 
     private static void AddMapper<TEntity, TDto, TMapper>(this IServiceCollection services)
@@ -124,3 +101,5 @@ public static class StockModuleServiceCollectionExtensions
             provider.GetRequiredService<TMapper>());
     }
 }
+
+

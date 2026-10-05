@@ -1,13 +1,13 @@
 using Application.DTO.Request;
 using Application.Records.Autenticacao;
-using Application.Services.Identity;
+using Tracker.Tests.Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces.Identity;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Security;
-using Shared.Application.Services.Factory;
+using Shared.Application.Services;
 using Xunit;
 
 namespace Tracker.Tests.Acesso;
@@ -30,7 +30,7 @@ public class RefreshTokenSecurityTests
     public async Task UserIdentityService_DevePersistirEBuscarSomenteHash()
     {
         var repository = new Mock<IUsuarioIdentityRepository>();
-        var service = new UserIdentityService(repository.Object);
+        var service = new GerenciarIdentidadeUsuarioCase(repository.Object);
         var expiracao = DateTime.UtcNow.AddDays(7);
 
         await service.GravarRefreshTokenAsync("USR001", "token-bruto", expiracao);
@@ -50,7 +50,7 @@ public class RefreshTokenSecurityTests
     public async Task UserIdentityService_NaoDevePersistirRefreshTokenComDadosInvalidos()
     {
         var repository = new Mock<IUsuarioIdentityRepository>();
-        var service = new UserIdentityService(repository.Object);
+        var service = new GerenciarIdentidadeUsuarioCase(repository.Object);
         var expiracaoValida = DateTime.UtcNow.AddDays(7);
 
         var codigoVazio = await service.GravarRefreshTokenAsync("", "token-valido", expiracaoValida);
@@ -75,13 +75,13 @@ public class RefreshTokenSecurityTests
     public async Task CookieFixo_DeveSerLidoPorNovaInstanciaSemDataProtection()
     {
         var cookiesResposta = new Mock<IResponseCookies>();
-        var primeiraInstancia = new CookieFactory(cookiesResposta.Object);
+        var primeiraInstancia = new CookieService(cookiesResposta.Object);
         var expiracao = DateTime.UtcNow.AddDays(7);
         CookieOptions? opcoes = null;
 
         cookiesResposta
             .Setup(cookies => cookies.Append(
-                CookieFactory.NomeCookieRefreshToken,
+                CookieService.NomeCookieRefreshToken,
                 "token-opaco",
                 It.IsAny<CookieOptions>()))
             .Callback<string, string, CookieOptions>((_, _, valor) => opcoes = valor);
@@ -89,8 +89,8 @@ public class RefreshTokenSecurityTests
         primeiraInstancia.CriarCookieDeRefreshToken(new DadosDoRefrehTokenDTO("token-opaco", expiracao));
 
         var contextoReiniciado = new DefaultHttpContext();
-        contextoReiniciado.Request.Headers.Cookie = $"{CookieFactory.NomeCookieRefreshToken}=token-opaco";
-        var novaInstancia = new CookieFactory(new Mock<IResponseCookies>().Object);
+        contextoReiniciado.Request.Headers.Cookie = $"{CookieService.NomeCookieRefreshToken}=token-opaco";
+        var novaInstancia = new CookieService(new Mock<IResponseCookies>().Object);
         var lido = await novaInstancia.ObterRefreshTokenPorRequest(contextoReiniciado.Request);
 
         Assert.Equal("token-opaco", lido.RefreshToken);
@@ -100,3 +100,5 @@ public class RefreshTokenSecurityTests
         Assert.Equal("/", opcoes.Path);
     }
 }
+
+

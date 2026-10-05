@@ -1,20 +1,17 @@
 using Application.DTO;
-using Application.Interfaces.Services;
 using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.PerfisDeAcesso
 {
     public class PerfilDeAcessoPreparacaoService(
         IToEntityMapper<PerfilDeAcesso, PerfilDeAcessoDTO> map,
         IModuloRepository moduloRepository,
-        IValidador<PerfilDeAcessoDTO> validador) : IPerfilDeAcessoPreparacaoService
+        IValidador<PerfilDeAcessoDTO> validador)
     {
         private readonly IToEntityMapper<PerfilDeAcesso, PerfilDeAcessoDTO> _map = map;
         private readonly IModuloRepository _moduloRepository = moduloRepository;

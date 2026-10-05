@@ -1,80 +1,57 @@
 using Application.DTO;
-using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
-using Shared.Domain.ValueObjects;
-using Shared.Extensions;
-using System.Collections.Generic;
+using Shared.Application.Services;
+using Shared.Extensions.RegraExtensions;
 
 namespace Application.Validacoes
 {
     /// <summary>
     /// Validador para CargoDTO seguindo o padrão IValidador
     /// </summary>
-    public class CargoValidador : IValidador<CargoDTO>
+    public class CargoValidador : Validador<CargoDTO>
     {
-        public IEnumerable<NotificationMessage> Validar(CargoDTO entity)
+        public CargoValidador()
         {
-            var notificacoes = new NotificationBag();
-
-            if (entity == null)
-            {
-                notificacoes.AdicionarErro(NotificacoesPadronizadas.ErroRegistroNulo);
-                return [.. notificacoes.Messages];
-            }
-
-            ValidarCodigo(entity, notificacoes);
-
-            ValidarDescricao(entity, notificacoes);
-
-            ValidarDepartamento(entity, notificacoes);
-
-            return [.. notificacoes.Messages];
+            RegrasParaCodigo();
+            RegrasParaDescricao();
+            RegrasParaDepartamento();
         }
 
-        private static void ValidarCodigo(CargoDTO entity, NotificationBag notificacoes)
+        private void RegrasParaCodigo()
         {
-            if (entity.Codigo.IsNullOrEmpty())
-            {
-                notificacoes.AdicionarErro(CargoResource.ErroCodigoNulo);
-                return;
-            }
+            RegraPara(x => x.Codigo)
+                .NaoVazio()
+                .ComMensagem(CargoResource.ErroCodigoNulo);
 
-            if (entity.Codigo.Length > 10)
-            {
-                notificacoes.AdicionarErro(CargoResource.ErroCodigoLongo);
-            }
+            RegraPara(x => x.Codigo)
+                .TamanhoMenorOuIgualA(10)
+                .ComMensagem(CargoResource.ErroCodigoLongo);
 
-            if (entity.Codigo.Length < 3)
-            {
-                notificacoes.AdicionarErro(CargoResource.ErroCodigoPequeno);
-            }
+            RegraPara(x => x.Codigo)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(CargoResource.ErroCodigoPequeno);
         }
 
-        private static void ValidarDescricao(CargoDTO entity, NotificationBag notificacoes)
+        private void RegrasParaDescricao()
         {
-            if (entity.Descricao.IsNullOrEmpty())
-            {
-                notificacoes.AdicionarErro(CargoResource.ErroDescricaoNula);
-                return;
-            }
+            RegraPara(x => x.Descricao)
+                .NaoVazio()
+                .ComMensagem(CargoResource.ErroDescricaoNula);
 
-            if (entity.Descricao.Length < 3)
-            {
-                notificacoes.AdicionarErro(CargoResource.ErroDescricaoPequena);
-            }
+            RegraPara(x => x.Descricao)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(CargoResource.ErroDescricaoPequena);
 
-            if (entity.Descricao.Length > 50)
-            {
-                notificacoes.AdicionarErro(CargoResource.ErroDescricaoLonga);
-            }
+            RegraPara(x => x.Descricao)
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(CargoResource.ErroDescricaoLonga);
         }
 
-        private static void ValidarDepartamento(CargoDTO entity, NotificationBag notificacoes)
+        private void RegrasParaDepartamento()
         {
-            if (entity.DepartamentoCodigo.IsNullOrEmpty())
-            {
-                notificacoes.AdicionarErro(CargoResource.ErroDepartamentoObrigatorio);
-            }
+            RegraPara(x => x.DepartamentoCodigo)
+                .NaoVazio()
+                .ComMensagem(CargoResource.ErroDepartamentoObrigatorio);
         }
     }
 }

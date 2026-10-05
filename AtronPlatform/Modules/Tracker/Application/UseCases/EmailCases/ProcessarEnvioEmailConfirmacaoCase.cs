@@ -1,5 +1,6 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.EmailCompositor.Compositores;
+using Application.Interfaces.Services;
 using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Shared.Application.Interfaces.Service;

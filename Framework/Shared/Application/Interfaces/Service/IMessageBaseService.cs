@@ -1,9 +1,10 @@
-﻿using Shared.Domain.ValueObjects;
+using Shared.Domain.ValueObjects;
+using System.Collections.Generic;
 
 namespace Shared.Application.Interfaces.Service
 {
     public interface IMessageBaseService
     {
-        public List<NotificationMessage> Notificacoes { get; }
+        IReadOnlyCollection<NotificationMessage> Messages { get; }
     }
 }

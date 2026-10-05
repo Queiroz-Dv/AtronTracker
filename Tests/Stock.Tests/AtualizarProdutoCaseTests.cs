@@ -28,7 +28,7 @@ public sealed class AtualizarProdutoCaseTests
         var auditoria = new AuditoriaServiceProdutoFake();
         var useCase = new AtualizarProdutoCase(
             repository,
-            new ProdutoValidador(),
+            new ProdutoAtualizacaoRequestValidador(),
             new ProdutoMapping(),
             new SelecionarCategoriasProdutoCase(new CategoriaRepositoryProdutoFake()),
             new AuditoriaProdutoCase(auditoria));

@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Domain.Entities;
 
 namespace Domain.Interfaces
 {
@@ -14,7 +12,7 @@ namespace Domain.Interfaces
 
         Task<IEnumerable<Tarefa>> ObterTarefasAtivasPorUsuarioAsync(int usuarioId, string usuarioCodigo);
 
-        Task<IEnumerable<Tarefa>> ObterTarefasAtivasPorSubordinadosDiretosAsync(int gestorId, string gestorCodigo);       
+        Task<IEnumerable<Tarefa>> ObterTarefasAtivasPorSubordinadosDiretosAsync(int gestorId, string gestorCodigo);
 
         Task<IEnumerable<Tarefa>> ObterTarefasAtivasDisponiveisAsync();
 

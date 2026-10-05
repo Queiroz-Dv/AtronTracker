@@ -19,12 +19,7 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
-    "lib": ["ES2022", "dom"],
-    "typeRoots": [
-      "node_modules/@angular/material",
-      "./src/app/bootstrap/dist/css",
-      "./src/app/bootstrap/dist/js"
-    ]
+    "lib": ["ES2022", "dom"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

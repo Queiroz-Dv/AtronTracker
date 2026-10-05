@@ -1,4 +1,4 @@
-Ôªøusing System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Application.DTO
@@ -22,20 +22,20 @@ namespace Application.DTO
 
         public int Id { get; set; }
 
-        [MaxLength(10, ErrorMessage = "O tamanho m√°ximo do c√≥digo √© de at√© 10 caracteres.")]
-        [MinLength(3, ErrorMessage = "O tamanho m√≠nimo do c√≥digo √© de 3 caracteres.")]
-        [Required(ErrorMessage = "O campo C√≥digo √© obrigat√≥rio.")]
-        [DisplayName("C√≥digo")]
+        [MaxLength(10, ErrorMessage = "O tamanho m·ximo do cÛdigo È de atÈ 10 caracteres.")]
+        [MinLength(3, ErrorMessage = "O tamanho mÌnimo do cÛdigo È de 3 caracteres.")]
+        [Required(ErrorMessage = "O campo CÛdigo È obrigatÛrio.")]
+        [DisplayName("CÛdigo")]
         public string Codigo { get; set; }
 
-        [MaxLength(50, ErrorMessage = "O tamanho m√°ximo do c√≥digo √© de at√© 50 caracteres.")]
-        [MinLength(3, ErrorMessage = "O tamanho m√≠nimo do c√≥digo √© de 3 caracteres.")]
-        [Required(ErrorMessage = "O campo Descri√ß√£o √© obrigat√≥rio.")]
-        [DisplayName("Descri√ß√£o")]
+        [MaxLength(50, ErrorMessage = "O tamanho m·ximo do cÛdigo È de atÈ 50 caracteres.")]
+        [MinLength(3, ErrorMessage = "O tamanho mÌnimo do cÛdigo È de 3 caracteres.")]
+        [Required(ErrorMessage = "O campo DescriÁ„o È obrigatÛrio.")]
+        [DisplayName("DescriÁ„o")]
         public string Descricao { get; set; }
 
         public int DepartamentoId { get; set; }
-        [MaxLength(10, ErrorMessage = "C√≥digo do departamento √© maior que 10 caracteres.")]
+        [MaxLength(10, ErrorMessage = "CÛdigo do departamento È maior que 10 caracteres.")]
         [Required(ErrorMessage = "Um departamento precisa ser selecionado")]
         public string DepartamentoCodigo { get; set; }
         public string DepartamentoDescricao { get; set; }

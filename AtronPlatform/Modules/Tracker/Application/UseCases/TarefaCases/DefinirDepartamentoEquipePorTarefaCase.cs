@@ -1,11 +1,9 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.Resources;
 using Domain.Entities;
 using Domain.Enums;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
-using System.Linq;
 
 namespace Application.UseCases.TarefaCases
 {

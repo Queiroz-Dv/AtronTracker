@@ -27,7 +27,7 @@ namespace AtronStock.Application.UseCases.CategoriaCases
 
             await _auditoriaCategoria.RegistrarRemocaoAsync(categoria);
 
-            var mensagens = new NotificationBag();
+            var mensagens = new Resultado();
             mensagens.MensagemRegistroRemovido(codigo);
             return Resultado.Sucesso([.. mensagens.Messages]);
         }

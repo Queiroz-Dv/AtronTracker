@@ -1,13 +1,13 @@
-﻿using Application.Interfaces.Contexts;
+using Application.Interfaces.Contexts;
 using Application.Interfaces.Services;
-using Application.Interfaces.Services.Identity;
+using Domain.Interfaces.Identity;
 using Shared.Application.Interfaces.Service;
 
 namespace Application.Services.Contexts
 {
     public class ControleDeSessaoContext : IControleDeSessaoContext
     {
-        public ControleDeSessaoContext(IUserIdentityService userIdentityService,
+        public ControleDeSessaoContext(IUsuarioIdentityRepository userIdentityRepository,
                                        ICacheUsuarioService cacheUsuarioService,
                                        ITokenService tokenService,
                                        ICookieService cookieService,
@@ -17,6 +17,7 @@ namespace Application.Services.Contexts
             TokenService = tokenService;
             CookieService = cookieService;
             CacheService = cacheService;
+            UserIdentityRepository = userIdentityRepository;
         }
 
         public ITokenService TokenService { get; }
@@ -27,6 +28,8 @@ namespace Application.Services.Contexts
 
         public ICacheService CacheService { get; }
 
-        public IUserIdentityService UserIdentityService { get; }
+        public IUsuarioIdentityRepository UserIdentityRepository { get; }
     }
 }
+
+

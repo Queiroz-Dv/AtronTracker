@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Contexts;
+using Application.UseCases.UsuarioCases;
+using Application.Interfaces.Contexts;
 using Application.Interfaces.Services;
 using Domain.Interfaces.UsuarioInterfaces;
 
@@ -6,7 +7,7 @@ namespace Application.Services.Contexts
 {
     public class UsuarioContext : IUsuarioContext
     {
-        public UsuarioContext(IUsuarioService usuarioService,
+        public UsuarioContext(ObterUsuarioCase usuarioService,
                               IUsuarioRepository usuarioRepository,
                               ICacheUsuarioService cacheUsuarioService,
                               IDadosComplementaresDoUsuarioService dadosComplementaresDoUsuarioService)
@@ -17,7 +18,7 @@ namespace Application.Services.Contexts
             DadosComplementaresDoUsuarioService = dadosComplementaresDoUsuarioService;
         }
 
-        public IUsuarioService UsuarioService { get; }
+        public ObterUsuarioCase UsuarioService { get; }
 
         public IUsuarioRepository UsuarioRepository { get; }
 

@@ -1,8 +1,7 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.Interfaces.Mapping;
 using Domain.Entities;
 using Shared.Application.Interfaces.Mapping;
-using System.Linq;
 
 namespace Application.Mapping
 {

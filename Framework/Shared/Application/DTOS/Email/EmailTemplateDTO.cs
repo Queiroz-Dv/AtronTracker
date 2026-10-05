@@ -1,4 +1,4 @@
-﻿namespace Shared.Application.DTOS.Email
+namespace Shared.Application.DTOS.Email
 {
     public class EmailTemplateDTO
     {

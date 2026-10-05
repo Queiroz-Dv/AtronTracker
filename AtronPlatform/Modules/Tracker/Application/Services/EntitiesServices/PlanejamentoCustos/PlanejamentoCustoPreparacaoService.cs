@@ -1,5 +1,4 @@
 using Application.DTO;
-using Application.Interfaces.Services;
 using Application.Mapping;
 using Application.Records.PlanejamentoCusto;
 using Application.Resources;
@@ -9,13 +8,10 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.PlanejamentoCustos
 {
-    public class PlanejamentoCustoPreparacaoService : IPlanejamentoCustoPreparacaoService
+    public class PlanejamentoCustoPreparacaoService
     {
         private readonly IValidador<PlanejamentoCustoDTO> _validador;
         private readonly PlanejamentoCustoMapping _planejamentoCustoMapping;
@@ -23,6 +19,8 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
         private readonly IDepartamentoRepository _departamentoRepository;
         private readonly PlanejamentoCustoDetalhesCargoPreparador _detalhesCargoPreparador;
         private readonly PlanejamentoCustoIdentidadeAtualizacao _identidadeAtualizacao;
+
+        protected PlanejamentoCustoPreparacaoService() { }
 
         public PlanejamentoCustoPreparacaoService(
             IValidador<PlanejamentoCustoDTO> validador,
@@ -39,18 +37,18 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
             _identidadeAtualizacao = new PlanejamentoCustoIdentidadeAtualizacao();
         }
 
-        public async Task<Resultado<PlanejamentoCustoPreparadoRecord>> PrepararCriacaoAsync(PlanejamentoCustoDTO planejamentoCustoDTO)
+        public virtual async Task<Resultado<PlanejamentoCustoPreparadoRecord>> PrepararCriacaoAsync(PlanejamentoCustoDTO planejamentoCustoDTO)
         {
             var erros = _validador.Validar(planejamentoCustoDTO);
             if (erros.Any())
                 return Resultado<PlanejamentoCustoPreparadoRecord>.Falhas(erros);
 
             var planejamentoComMesmoCodigo = await _planejamentoCustoRepository.ObterPorCodigoAsNoTrackingAsync(planejamentoCustoDTO.Codigo);
-            if (planejamentoComMesmoCodigo != null)
+            if (planejamentoComMesmoCodigo.IsNotNull())
                 return Resultado<PlanejamentoCustoPreparadoRecord>.Falha(PlanejamentoCustoResource.Erro_CodigoExistente);
 
             var departamento = await _departamentoRepository.ObterDepartamentoPorCodigoRepositoryAsync(planejamentoCustoDTO.DepartamentoCodigo);
-            if (departamento == null)
+            if (departamento.IsNullable())
                 return Resultado<PlanejamentoCustoPreparadoRecord>.Falha(PlanejamentoCustoResource.Erro_DepartamentoNaoEncontrado);
 
             var planejamentoExistente = await _planejamentoCustoRepository.ObterPorDepartamentoEAnoAsync(
@@ -58,7 +56,7 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 departamento.Codigo,
                 planejamentoCustoDTO.Ano);
 
-            if (planejamentoExistente != null)
+            if (planejamentoExistente.IsNotNull())
                 return Resultado<PlanejamentoCustoPreparadoRecord>.Falha(PlanejamentoCustoResource.Erro_DepartamentoAnoExistente);
 
             var planejamento = _planejamentoCustoMapping.MapToEntity(planejamentoCustoDTO);
@@ -72,13 +70,13 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 new PlanejamentoCustoPreparadoRecord(planejamentoCustoDTO, planejamento, resultadoDetalhes));
         }
 
-        public async Task<Resultado<PlanejamentoCustoPreparadoRecord>> PrepararAtualizacaoAsync(string codigo, PlanejamentoCustoDTO planejamentoCustoDTO)
+        public virtual async Task<Resultado<PlanejamentoCustoPreparadoRecord>> PrepararAtualizacaoAsync(string codigo, PlanejamentoCustoDTO planejamentoCustoDTO)
         {
             if (codigo.IsNullOrEmpty())
                 return Resultado<PlanejamentoCustoPreparadoRecord>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var planejamento = await _planejamentoCustoRepository.ObterPorCodigoAsync(codigo);
-            if (planejamento == null)
+            if (planejamento.IsNullable())
                 return Resultado<PlanejamentoCustoPreparadoRecord>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             if (planejamento.Ano < DateTime.Today.Year)
@@ -102,13 +100,13 @@ namespace Application.Services.EntitiesServices.PlanejamentoCustos
                 new PlanejamentoCustoPreparadoRecord(planejamentoCustoDTO, planejamento, resultadoDetalhes));
         }
 
-        public async Task<Resultado<PlanejamentoCusto>> PrepararRemocaoAsync(string codigo)
+        public virtual async Task<Resultado<PlanejamentoCusto>> PrepararRemocaoAsync(string codigo)
         {
             if (codigo.IsNullOrEmpty())
                 return Resultado<PlanejamentoCusto>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var planejamento = await _planejamentoCustoRepository.ObterPorCodigoAsync(codigo);
-            if (planejamento == null)
+            if (planejamento.IsNullable())
                 return Resultado<PlanejamentoCusto>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             if (planejamento.Ano < DateTime.Today.Year)

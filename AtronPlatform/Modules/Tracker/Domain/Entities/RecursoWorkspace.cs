@@ -1,16 +1,16 @@
-ï»¿namespace Domain.Entities
+namespace Domain.Entities
 {
     public class RecursoWorkspace
     {
         public int Id { get; set; }
 
-        // IdentificaÃ§Ã£o do Tenant / Workspace
+        // Identificação do Tenant / Workspace
         public int WorkspaceId { get; set; }
         public string WorkspaceCodigo { get; set; }
 
         public Workspace Workspace { get; set; }
 
-        // IdentificaÃ§Ã£o do MÃ³dulo
+        // Identificação do Módulo
         public string ModuloCodigo { get; set; }
 
         // Registro

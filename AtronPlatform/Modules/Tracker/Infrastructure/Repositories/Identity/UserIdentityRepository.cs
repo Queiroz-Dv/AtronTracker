@@ -149,7 +149,7 @@ namespace Infrastructure.Repositories.Identity
             return await _userManager.Users.AnyAsync(x => x.UserName == codigoUsuario || x.Email == email);
         }
 
-        public async Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario)
+        public async Task<UsuarioIdentity> UsuarioServiceIdentityPorCodigo(string codigoUsuario)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == codigoUsuario);
             if (user is null) return null;

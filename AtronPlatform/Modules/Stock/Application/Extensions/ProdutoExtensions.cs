@@ -1,4 +1,4 @@
-﻿using AtronStock.Application.DTO.Response;
+using AtronStock.Application.DTO.Response;
 using AtronStock.Domain.Entities;
 
 namespace AtronStock.Application.Extensions

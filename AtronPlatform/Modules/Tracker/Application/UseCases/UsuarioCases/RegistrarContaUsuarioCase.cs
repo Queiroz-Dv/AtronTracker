@@ -76,4 +76,4 @@ namespace Application.UseCases.UsuarioCases
             return Resultado.Sucesso(AuthResource.Mensagem_UsuarioRegistrado);
         }
     }
-}
+}

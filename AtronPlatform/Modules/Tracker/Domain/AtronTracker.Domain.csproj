@@ -1,14 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>Domain</RootNamespace>
 		
-	</PropertyGroup>
+	    <NoWarn>$(NoWarn);CS8632</NoWarn>
+  </PropertyGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\..\Framework\Shared\Shared.csproj" />
 	</ItemGroup>
 
 </Project>
+

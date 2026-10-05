@@ -1,15 +1,12 @@
-ï»¿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
     /// <summary>
-    /// Repository para operaÃ§Ãµes de persistÃªncia de Cargo
+    /// Repository para operações de persistência de Cargo
     /// </summary>
     public class CargoRepository(AtronDbContext context) : ICargoRepository
     {
@@ -19,7 +16,7 @@ namespace Infrastructure.Repositories
         /// Cria um novo cargo no banco de dados
         /// </summary>
         /// <param name="cargo">Entidade Cargo a ser criada</param>
-        /// <returns>True se a operaÃ§Ã£o foi bem sucedida</returns>
+        /// <returns>True se a operação foi bem sucedida</returns>
         public async Task<bool> CriarCargoAsync(Cargo cargo)
         {
             await _context.Cargos.AddAsync(cargo);
@@ -28,7 +25,7 @@ namespace Infrastructure.Repositories
         }
 
         /// <summary>
-        /// ObtÃ©m um cargo pelo ID
+        /// Obtém um cargo pelo ID
         /// </summary>
         /// <param name="id">Identificador do cargo</param>
         /// <returns>Cargo encontrado ou null</returns>
@@ -39,7 +36,7 @@ namespace Infrastructure.Repositories
         }
 
         /// <summary>
-        /// ObtÃ©m um cargo com seu departamento pelo ID
+        /// Obtém um cargo com seu departamento pelo ID
         /// </summary>
         /// <param name="id">Identificador do cargo</param>
         /// <returns>Cargo com departamento ou null</returns>
@@ -59,7 +56,7 @@ namespace Infrastructure.Repositories
         }
 
         /// <summary>
-        /// ObtÃ©m todos os cargos com seus departamentos
+        /// Obtém todos os cargos com seus departamentos
         /// </summary>
         /// <returns>Lista de cargos</returns>
         public async Task<IEnumerable<Cargo>> ObterCargosAsync()
@@ -76,7 +73,7 @@ namespace Infrastructure.Repositories
         /// Remove um cargo do banco de dados
         /// </summary>
         /// <param name="cargo">Entidade Cargo a ser removida</param>
-        /// <returns>True se a operaÃ§Ã£o foi bem sucedida</returns>
+        /// <returns>True se a operação foi bem sucedida</returns>
         public async Task<bool> RemoverCargoAsync(Cargo cargo)
         {
             _context.Cargos.Remove(cargo);
@@ -88,7 +85,7 @@ namespace Infrastructure.Repositories
         /// Atualiza um cargo existente no banco de dados
         /// </summary>
         /// <param name="cargo">Entidade Cargo com os dados atualizados</param>
-        /// <returns>True se a operaÃ§Ã£o foi bem sucedida</returns>
+        /// <returns>True se a operação foi bem sucedida</returns>
         public async Task<bool> AtualizarCargoAsync(Cargo cargo)
         {
             var atualizado = await _context.SaveChangesAsync();
@@ -96,22 +93,22 @@ namespace Infrastructure.Repositories
         }
 
         /// <summary>
-        /// ObtÃ©m um cargo pelo cÃ³digo
+        /// Obtém um cargo pelo código
         /// </summary>
-        /// <param name="codigo">CÃ³digo do cargo</param>
+        /// <param name="codigo">Código do cargo</param>
         /// <returns>Cargo encontrado ou null</returns>
         public async Task<Cargo> ObterCargoPorCodigoAsync(string codigo)
         {
             return await _context.Cargos
                 .Include(dpt => dpt.Departamento)
                 .FirstOrDefaultAsync(crg => crg.Codigo == codigo);
-        }       
+        }
 
         /// <summary>
-        /// ObtÃ©m cargos por departamento
+        /// Obtém cargos por departamento
         /// </summary>
         /// <param name="departamentoId">ID do departamento</param>
-        /// <param name="departamentoCodigo">CÃ³digo do departamento</param>
+        /// <param name="departamentoCodigo">Código do departamento</param>
         /// <returns>Lista de cargos do departamento</returns>
         public async Task<IEnumerable<Cargo>> ObterCargosPorDepartamento(int departamentoId, string departamentoCodigo)
         {

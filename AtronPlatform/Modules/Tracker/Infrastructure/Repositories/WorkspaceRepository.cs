@@ -36,5 +36,14 @@ namespace Infrastructure.Repositories
                 work => work.ResponsavelCodigo == codigoResponsavel &&
                 work.ResponsavelEmail == email).FirstOrDefaultAsync();
         }
+
+        public async Task<Workspace> ObterWorkspacePorMembroAsync(string usuarioCodigo)
+        {
+            var recurso = await _context.RecursosWorkspace
+                .Include(r => r.Workspace)
+                .FirstOrDefaultAsync(r => r.RecursoCodigo == usuarioCodigo && r.ModuloCodigo == Domain.Constants.TrackerModulos.Usuario);
+            
+            return recurso?.Workspace;
+        }
     }
 }

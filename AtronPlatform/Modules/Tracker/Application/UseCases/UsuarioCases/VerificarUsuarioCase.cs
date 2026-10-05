@@ -1,8 +1,6 @@
-﻿using Application.DTO.Request;
+using Application.DTO.Request;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {

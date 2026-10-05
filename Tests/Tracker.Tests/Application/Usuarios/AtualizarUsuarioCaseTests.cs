@@ -7,8 +7,9 @@ using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Moq;
-using Shared.Application.DTOS.Common;
+using Shared.Application.Messaging;
 using Shared.Application.Interfaces.Service;
+using Shared.Domain.Events.Auditoria;
 using Shared.Domain.ValueObjects;
 using Xunit;
 
@@ -33,7 +34,7 @@ public sealed class AtualizarUsuarioCaseTests
             repository => repository.AtualizarUsuarioAsync(usuario),
             Times.Once);
         cenario.Auditoria.Verify(
-            service => service.AtualizarServiceAsync(It.IsAny<IAuditoriaDTO>()),
+            bus => bus.PublicarAsync(It.IsAny<AuditoriaAtualizadaEvent>(), It.IsAny<CancellationToken>()),
             Times.Once);
         cenario.Cache.Verify(
             service => service.RemoverCacheDeAcessoTokenInfo(usuario.Codigo),
@@ -52,7 +53,7 @@ public sealed class AtualizarUsuarioCaseTests
 
         Assert.True(resultado.TeveFalha);
         cenario.Auditoria.Verify(
-            service => service.AtualizarServiceAsync(It.IsAny<IAuditoriaDTO>()),
+            bus => bus.PublicarAsync(It.IsAny<AuditoriaAtualizadaEvent>(), It.IsAny<CancellationToken>()),
             Times.Never);
         cenario.Cache.Verify(
             service => service.RemoverCacheDeAcessoTokenInfo(It.IsAny<string>()),
@@ -138,10 +139,10 @@ public sealed class AtualizarUsuarioCaseTests
         var cargos = new Mock<ICargoRepository>();
         var relacionamentos = new Mock<IUsuarioCargoDepartamentoRepository>();
 
-        var auditoria = new Mock<IAuditoriaService>();
+        var auditoria = new Mock<IEventBus>();
         auditoria
-            .Setup(service => service.AtualizarServiceAsync(It.IsAny<IAuditoriaDTO>()))
-            .ReturnsAsync(Resultado.Sucesso());
+            .Setup(bus => bus.PublicarAsync(It.IsAny<AuditoriaAtualizadaEvent>(), It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
 
         var cache = new Mock<ICacheUsuarioService>();
 
@@ -187,6 +188,10 @@ public sealed class AtualizarUsuarioCaseTests
     private sealed record Cenario(
         AtualizarUsuarioCase UseCase,
         Mock<IUsuarioRepository> UsuarioRepository,
-        Mock<IAuditoriaService> Auditoria,
+        Mock<IEventBus> Auditoria,
         Mock<ICacheUsuarioService> Cache);
 }
+
+
+
+

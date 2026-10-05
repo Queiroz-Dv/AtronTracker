@@ -4,9 +4,6 @@ using Domain.Interfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.DepartamentoCases
 {

@@ -1,44 +1,30 @@
-﻿using Domain.Entities;
-using Shared.Application.DTOS.Common;
-using Shared.Application.Interfaces.Service;
-using System;
-using System.Threading.Tasks;
+using Domain.Entities;
+using Shared.Application.Messaging;
+using Shared.Domain.Events.Auditoria;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public sealed class AuditoriaUsuarioCase(IAuditoriaService auditoriaService)
+    public sealed class AuditoriaUsuarioCase(IEventBus eventBus)
     {
-        private readonly IAuditoriaService _auditoriaService = auditoriaService;
+        private readonly IEventBus _eventBus = eventBus;
         private const string UsuarioContexto = nameof(Usuario);
 
-        public async Task  ExecutarAsync(Usuario usuario)
+        public async Task ExecutarAsync(Usuario usuario)
         {
-            await _auditoriaService.RegistrarServiceAsync(new AuditoriaDTO
-            {
-                CodigoRegistro = usuario.Codigo,
-                Contexto = UsuarioContexto,
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = usuario.Codigo,
-                    Contexto = UsuarioContexto,
-                    Descricao = $"Usuario {usuario.Codigo} criado em {DateTime.Now:dd/MM/yyyy HH:mm}."
-                }
-            });
+            await _eventBus.PublicarAsync(new AuditoriaRegistradaEvent(
+                usuario.Codigo,
+                UsuarioContexto,
+                "Usuario $({usuario.Codigo}) criado em $({DateTime.Now:dd/MM/yyyy HH:mm})."
+            ));
         }
 
         public async Task RegistrarAtualizacaoAsync(Usuario usuario)
         {
-            await _auditoriaService.AtualizarServiceAsync(new AuditoriaDTO
-            {
-                CodigoRegistro = usuario.Codigo,
-                Contexto = UsuarioContexto,
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = usuario.Codigo,
-                    Contexto = UsuarioContexto,
-                    Descricao = $"Usuário {usuario.Codigo} atualizado em {DateTime.Now:dd/MM/yyyy HH:mm}."
-                }
-            });
+            await _eventBus.PublicarAsync(new AuditoriaAtualizadaEvent(
+                usuario.Codigo,
+                UsuarioContexto,
+                "Usu�rio $({usuario.Codigo}) atualizado em $({DateTime.Now:dd/MM/yyyy HH:mm})."
+            ));
         }
     }
 }

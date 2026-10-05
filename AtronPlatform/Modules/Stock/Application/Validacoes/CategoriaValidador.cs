@@ -1,41 +1,34 @@
-﻿using AtronStock.Application.DTO.Request; 
-using Shared.Application.Interfaces.Service;
+using AtronStock.Application.DTO.Request; 
+using Shared.Application.Services;
 using AtronStock.Application.Resources;
-using Shared.Domain.ValueObjects;
+using Shared.Extensions.RegraExtensions;
 using Shared.Extensions;
 
 namespace AtronStock.Application.Validacoes
 {
-    public class CategoriaValidador : IValidador<CategoriaRequest>
+    public class CategoriaValidador : Validador<CategoriaRequest>
     {
-        public IEnumerable<NotificationMessage> Validar(CategoriaRequest entity)
+        public CategoriaValidador()
         {
-            var context = new NotificationBag();
+            RegraPara(x => x.Codigo)
+                .NaoVazio()
+                .ComMensagem(CategoriaResource.ErroCodigoObrigatorio);
 
-            if (entity.Codigo.IsNullOrEmpty())
-            {
-                context.AdicionarErro(CategoriaResource.ErroCodigoObrigatorio);
-            }
-            else if (entity.Codigo.Length > 25)
-            {
-                context.AdicionarErro(CategoriaResource.ErroCodigoTamanho);
-            }
+            RegraPara(x => x.Codigo)
+                .TamanhoMenorOuIgualA(25)
+                .ComMensagem(CategoriaResource.ErroCodigoTamanho);
 
-            if (entity.Descricao.IsNullOrEmpty())
-            {
-                context.AdicionarErro(CategoriaResource.ErroDescricaoObrigatoria);
-            }
-            else if (entity.Descricao.Length > 50)
-            {
-                context.AdicionarErro(CategoriaResource.ErroDescricaoTamanho);
-            }
+            RegraPara(x => x.Descricao)
+                .NaoVazio()
+                .ComMensagem(CategoriaResource.ErroDescricaoObrigatoria);
 
-            if (entity.Status.GetDescription().IsNullOrEmpty())
-            {
-                context.AdicionarErro(CategoriaResource.ErroStatusObrigatorio);
-            }
+            RegraPara(x => x.Descricao)
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(CategoriaResource.ErroDescricaoTamanho);
 
-            return context.Messages.ToList();
+            RegraPara(x => x.Status)
+                .DeveSer(status => !status.GetDescription().IsNullOrEmpty())
+                .ComMensagem(CategoriaResource.ErroStatusObrigatorio);
         }
     }
 }

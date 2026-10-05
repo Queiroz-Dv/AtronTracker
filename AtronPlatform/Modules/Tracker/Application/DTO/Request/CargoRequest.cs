@@ -1,4 +1,4 @@
-﻿namespace Application.DTO.Request
+namespace Application.DTO.Request
 {
     public class CargoRequest
     {

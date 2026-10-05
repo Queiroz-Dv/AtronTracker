@@ -1,10 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
-	</PropertyGroup>
+	    <NoWarn>$(NoWarn);CS8632</NoWarn>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
@@ -38,10 +39,7 @@
 		<EmbeddedResource Remove="Migrations\obj\**" />
 		<None Remove="Migrations\bin\**" />
 		<None Remove="Migrations\obj\**" />
-		<Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.cs" />
-		<Compile Include="Migrations\20260623030029_InitialSharedPostgreSql.Designer.cs" />
-		<Compile Include="Migrations\SharedDbContextModelSnapshot.cs" />
-		<Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
+				<Compile Update="Application\Resources\AtronStock\CategoriaResource.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
 			<DependentUpon>CategoriaResource.resx</DependentUpon>
@@ -51,12 +49,7 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>ProdutoResource.resx</DependentUpon>
 		</Compile>
-		<Compile Update="Application\Resources\AuditoriaResource.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>AuditoriaResource.resx</DependentUpon>
-		</Compile>
-		<Compile Update="Application\Resources\AtronStock\ClienteResource.Designer.cs">
+				<Compile Update="Application\Resources\AtronStock\ClienteResource.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
 			<DependentUpon>ClienteResource.resx</DependentUpon>
@@ -81,12 +74,7 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>EmailDiagnosticResource.resx</DependentUpon>
 		</Compile>
-		<Compile Update="Application\Resources\HistoricoResource.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>HistoricoResource.resx</DependentUpon>
-		</Compile>
-		<Compile Update="Application\Resources\NotificacoesPadronizadas.Designer.cs">
+				<Compile Update="Application\Resources\NotificacoesPadronizadas.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
 			<DependentUpon>NotificacoesPadronizadas.resx</DependentUpon>
@@ -107,11 +95,7 @@
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>ProdutoResource.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
-		<EmbeddedResource Update="Application\Resources\AuditoriaResource.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>AuditoriaResource.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Application\Resources\AtronStock\ClienteResource.resx">
+				<EmbeddedResource Update="Application\Resources\AtronStock\ClienteResource.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>ClienteResource.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
@@ -131,11 +115,7 @@
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>EmailDiagnosticResource.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
-		<EmbeddedResource Update="Application\Resources\HistoricoResource.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>HistoricoResource.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Application\Resources\NotificacoesPadronizadas.resx">
+				<EmbeddedResource Update="Application\Resources\NotificacoesPadronizadas.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>NotificacoesPadronizadas.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
@@ -145,3 +125,5 @@
 		</EmbeddedResource>
 	</ItemGroup>
 </Project>
+
+

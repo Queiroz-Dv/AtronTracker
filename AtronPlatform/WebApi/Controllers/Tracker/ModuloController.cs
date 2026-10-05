@@ -1,5 +1,7 @@
 using Application.DTO;
 using Application.Interfaces.Services;
+using Application.UseCases.ModuloCases;
+using Application.UseCases.UsuarioCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,11 +17,11 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     [Route("api/[controller]")]
     public class ModuloController : ControllerBase
     {
-        private readonly IModuloService _service;
+        private readonly ObterModuloCase _obterModuloCase;
 
-        public ModuloController(IModuloService service)
+        public ModuloController(ObterModuloCase obterModuloCase)
         {
-            _service = service;
+            _obterModuloCase = obterModuloCase;
         }
 
         /// <summary>
@@ -29,7 +31,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ModuloDTO>>> Get()
         {
-            var dtos = await _service.ObterTodosService();
+            var dtos = await _obterModuloCase.ObterTodosAsync();
             return Ok(dtos);
         }
 
@@ -41,7 +43,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("{codigo}")]
         public async Task<ActionResult<ModuloDTO>> Get(string codigo)
         {
-            var modulo = await _service.ObterPorCodigoService(codigo);
+            var modulo = await _obterModuloCase.ObterPorCodigoAsync(codigo);
             return modulo is null ? NotFound() : Ok(modulo);
         }
     }

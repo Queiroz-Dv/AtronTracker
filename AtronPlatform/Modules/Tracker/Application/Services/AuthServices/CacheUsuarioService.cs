@@ -1,9 +1,8 @@
-﻿using Application.Interfaces.Services;
+using Application.Interfaces.Services;
 using Shared.Application.DTOS.Users;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
-using System;
 
 namespace Application.Services.AuthServices
 {

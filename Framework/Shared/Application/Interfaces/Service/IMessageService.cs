@@ -1,4 +1,4 @@
-﻿namespace Shared.Application.Interfaces.Service
+namespace Shared.Application.Interfaces.Service
 {
     public interface IMessageService : IMessageBaseService
     {

@@ -1,4 +1,4 @@
-﻿namespace Shared.Application.Interfaces.Mapping
+namespace Shared.Application.Interfaces.Mapping
 {
     public interface IToDtoMapper<TEntity, TDto>
         where TEntity : class

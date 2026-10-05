@@ -1,10 +1,10 @@
-Ôªøusing Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Shared.Domain.Entities.Identity;
 
 namespace Shared.Application.Interfaces.Service
 {
     /// <summary>
-    /// Exemplo de facade para gerenciar autentica√ß√£o e usu√°rios.
+    /// Exemplo de facade para gerenciar autenticaÁ„o e usu·rios.
     /// </summary>
     public interface IAuthManagerService
     {

@@ -1,15 +1,15 @@
-ï»¿using Shared.Extensions;
+using Shared.Extensions;
 
 namespace Shared.Application.DTOS.Auth
 {
     public abstract class TokenBaseDTO
     {
         /// <summary>
-        /// Token de acesso do usuÃ¡rio.
+        /// Token de acesso do usuário.
         /// </summary>
         public string Value { get; set; }
         /// <summary>
-        /// Tempo de expiraÃ§Ã£o do token de acesso.
+        /// Tempo de expiração do token de acesso.
         /// </summary>
         public DateTime Expires { get; set; }
 
@@ -17,14 +17,14 @@ namespace Shared.Application.DTOS.Auth
     }
 
     /// <summary>
-    /// Classe representa as informaÃ§Ãµes do token de acesso e, opcionalmente, do token de atualizaÃ§Ã£o.
+    /// Classe representa as informações do token de acesso e, opcionalmente, do token de atualização.
     /// </summary>
     public class DadosDoTokenDTO : TokenBaseDTO
     {
         /// <summary>
-        /// Classe representa as informaÃ§Ãµes do token de acesso e, opcionalmente, do token de atualizaÃ§Ã£o.
+        /// Classe representa as informações do token de acesso e, opcionalmente, do token de atualização.
         /// </summary>
-        /// <param name="token">Token de acesso que Ã© autenticado</param>
+        /// <param name="token">Token de acesso que é autenticado</param>
         /// <param name="expires">Tempo de vida do token</param>
         public DadosDoTokenDTO(string token, DateTime expires, string usuarioCodigo = null)
         {
@@ -42,14 +42,14 @@ namespace Shared.Application.DTOS.Auth
     }
 
     /// <summary>
-    /// Classe representa as informaÃ§Ãµes do token de acesso e, opcionalmente, do token de atualizaÃ§Ã£o.
+    /// Classe representa as informações do token de acesso e, opcionalmente, do token de atualização.
     /// </summary>
     public class DadosDoRefrehTokenDTO : TokenBaseDTO
     {
         /// <summary>
-        /// Classe representa as informaÃ§Ãµes do token de acesso e, opcionalmente, do token de atualizaÃ§Ã£o.
+        /// Classe representa as informações do token de acesso e, opcionalmente, do token de atualização.
         /// </summary>
-        /// <param name="token">Token de acesso que Ã© autenticado</param>
+        /// <param name="token">Token de acesso que é autenticado</param>
         /// <param name="expires">Tempo de vida do token</param>
         public DadosDoRefrehTokenDTO(string token, DateTime expires)
         {

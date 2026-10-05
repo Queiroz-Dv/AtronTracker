@@ -1,10 +1,11 @@
-﻿using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
+using Application.Interfaces.Services;
 
 namespace Application.Interfaces.Contexts
 {
     public interface IUsuarioContext
     {
-        IUsuarioService UsuarioService { get; }
+        ObterUsuarioCase UsuarioService { get; }
 
         ICacheUsuarioService CacheUsuarioService { get; }
 

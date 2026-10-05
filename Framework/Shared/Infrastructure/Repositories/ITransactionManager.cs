@@ -1,4 +1,4 @@
-﻿namespace Shared.Infrastructure.Repositories
+namespace Shared.Infrastructure.Repositories
 {
     public interface ITransactionScope : IDisposable
     {

@@ -1,4 +1,4 @@
-﻿using Shared.Domain;
+using Shared.Domain;
 using System.Net.Mail;
 using Shared.Extensions;
 

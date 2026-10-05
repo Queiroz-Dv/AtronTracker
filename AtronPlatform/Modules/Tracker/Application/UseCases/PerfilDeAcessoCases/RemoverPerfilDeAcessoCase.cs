@@ -2,7 +2,7 @@ using Application.Interfaces.Services;
 using Application.Resources;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.UseCases.PerfilDeAcessoCases
 {
@@ -16,7 +16,7 @@ namespace Application.UseCases.PerfilDeAcessoCases
         public async Task<Resultado> ExecutarAsync(string codigo)
         {
             var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
-            if (perfil is null)
+            if (perfil.IsNullable())
                 return Resultado.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado);
 
             var removido = await _perfilDeAcessoRepository.DeletarPerfilRepositoryAsync(perfil);

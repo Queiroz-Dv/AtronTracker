@@ -1,4 +1,4 @@
-using Application.Interfaces.Services;
+using Application.UseCases.PerfilDeAcessoCases;
 using Application.UseCases.WorkspaceCases;
 using AtronPlatform.WebApi.Security;
 using Microsoft.AspNetCore.Authorization;
@@ -24,13 +24,15 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     public class SessaoController : ControllerBase
     {
         private readonly ICacheService _cacheService;
-        private readonly IPerfilDeAcessoService _perfilDeAcessoService;
+        private readonly ObterPerfisUsuarioCase _obterPerfisUsuarioCase;
         private readonly ObterWorkspaceCase _obterWorkspaceCase;
 
-        public SessaoController(ICacheService cacheService, IPerfilDeAcessoService perfilDeAcessoService, ObterWorkspaceCase obterWorkspaceCase)
+        public SessaoController(ICacheService cacheService,
+                                ObterPerfisUsuarioCase obterPerfisUsuarioCase,
+                                ObterWorkspaceCase obterWorkspaceCase)
         {
             _cacheService = cacheService;
-            _perfilDeAcessoService = perfilDeAcessoService;
+            _obterPerfisUsuarioCase = obterPerfisUsuarioCase;
             _obterWorkspaceCase = obterWorkspaceCase;
         }
 
@@ -68,7 +70,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
                 });
             }
 
-            var perfisModulos = await _perfilDeAcessoService.ObterPerfisPorCodigoUsuarioAsync(usuarioCodigo);
+            var perfisModulos = await _obterPerfisUsuarioCase.ExecutarAsync(usuarioCodigo);
             var workspaceResultado = await _obterWorkspaceCase.ObterPorDadosDoUsuario(usuarioCodigo, usuarioEmail);
 
             var dto = new DadosComplementaresDoUsuarioDTO

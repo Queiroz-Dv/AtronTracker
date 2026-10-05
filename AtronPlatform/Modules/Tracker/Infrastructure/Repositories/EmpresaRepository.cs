@@ -9,7 +9,7 @@ namespace Infrastructure.Repositories
 {
     public sealed class EmpresaRepository(AtronDbContext context) : IEmpresaRepository
     {
-        public Task<Usuario?> ObterUsuarioAsync(string codigo)
+        public Task<Usuario?> UsuarioServiceAsync(string codigo)
             => context.Usuarios.SingleOrDefaultAsync(usuario => usuario.Codigo == codigo);
 
         public Task<bool> CodigoExisteAsync(string codigo)
@@ -39,3 +39,4 @@ namespace Infrastructure.Repositories
                 empresa.Id == id && empresa.Status == Domain.Enums.StatusEmpresa.Ativa);
     }
 }
+

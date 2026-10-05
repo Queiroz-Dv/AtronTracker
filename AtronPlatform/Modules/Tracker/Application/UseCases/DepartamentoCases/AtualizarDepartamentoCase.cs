@@ -1,14 +1,12 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.Mapping;
+using Application.Services.EntitiesServices;
 using Domain.Interfaces;
-using Shared.Application.Interfaces.Service;
 using Shared.Application.Interfaces.Mapping;
+using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Services.EntitiesServices;
 
 namespace Application.UseCases.DepartamentoCases
 {

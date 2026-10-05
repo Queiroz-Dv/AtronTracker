@@ -1,39 +1,34 @@
-﻿using Application.DTO;
-using Application.Interfaces.Services;
+using Application.DTO;
+using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Mapping;
 using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases
 {
     public class ObterSolicitacaoCase(
         IToDtoMapper<SolicitacaoObtencaoTarefa, SolicitacaoObtencaoTarefaDTO> mapper,
-        IUsuarioService usuarioService, 
-        IDepartamentoService departamentoService,
+        ObterUsuarioCase usuarioService,
+        IDepartamentoRepository departamentoRepository,
         ISolicitacaoObtencaoTarefaRepository solicitacaoRepository)
     {
-        private readonly IUsuarioService _usuarioService = usuarioService;
-        private readonly IDepartamentoService _departamentoService = departamentoService;
+        private readonly ObterUsuarioCase _usuarioService = usuarioService;
+        private readonly IDepartamentoRepository _departamentoRepository = departamentoRepository;
         private readonly ISolicitacaoObtencaoTarefaRepository _repository = solicitacaoRepository;
         private readonly IToDtoMapper<SolicitacaoObtencaoTarefa, SolicitacaoObtencaoTarefaDTO> _mapper = mapper;
 
         public async Task<Resultado<IReadOnlyCollection<SolicitacaoObtencaoTarefaDTO>>> ExecutarAsync()
         {
-            var usuarioResultado = await _usuarioService.ObterUsuarioAtual();
+            var usuarioResultado = await _usuarioService.ObterAsync();
             if (usuarioResultado.TeveFalha)
                 return Resultado<IReadOnlyCollection<SolicitacaoObtencaoTarefaDTO>>.Falhas(usuarioResultado.Messages);
 
             var usuario = usuarioResultado.Dados!;
 
-            var departamentosResultado = await _departamentoService.ObterDepartamentosPorGestor(usuario.Codigo);
-            if (departamentosResultado.TeveFalha)
-                return Resultado<IReadOnlyCollection<SolicitacaoObtencaoTarefaDTO>>.Falhas(departamentosResultado.Messages);
+            var departamentosResultado = await _departamentoRepository.ObterDepartamentosPorCodigoGestorAsync(usuario.Codigo);
 
-            var codigosDepartamentos = departamentosResultado.Dados?
+            var codigosDepartamentos = departamentosResultado?
                 .Select(departamento => departamento.Codigo)
                 .ToList() ?? [];
 

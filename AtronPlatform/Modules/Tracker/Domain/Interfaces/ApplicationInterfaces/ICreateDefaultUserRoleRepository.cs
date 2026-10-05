@@ -1,8 +1,8 @@
-Ôªønamespace Domain.Interfaces.ApplicationInterfaces
+namespace Domain.Interfaces.ApplicationInterfaces
 {
     public interface ICreateDefaultUserRoleRepository
     {
-        // Usu√°rios padr√£o
+        // Usu·rios padr„o
         void CreateDefaultUsers();
 
         // Perfis de acesso

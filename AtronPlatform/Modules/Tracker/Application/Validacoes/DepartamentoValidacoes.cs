@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Shared.Application.Resources;
 using Shared.Application.Services;
 using Shared.Extensions.RegraExtensions;

@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.EmailCompositor.Compositores;
 using Application.Extensions;
 using Application.Interfaces.Services;
@@ -8,8 +8,6 @@ using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {

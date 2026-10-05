@@ -4,6 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
+      <NoWarn>$(NoWarn);CS8632</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,3 +27,4 @@
     <Folder Include="Infrastructure\Repositories\Empresas\" />
   </ItemGroup>
 </Project>
+

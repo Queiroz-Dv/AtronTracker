@@ -1,4 +1,4 @@
-﻿using AtronStock.Domain.Entities;
+using AtronStock.Domain.Entities;
 
 namespace AtronStock.Domain.Interfaces
 {

@@ -1,3 +1,4 @@
+using Application.UseCases.UsuarioCases;
 using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Mapping;
@@ -55,9 +56,9 @@ public class DecidirTarefaCaseTests
             movimentacaoRegistrada.Descricao);
         cenario.Publisher.Verify(
             publisher => publisher.PublicarAsync(
-                It.Is<PublicarNotificacaoInternaRequest>(request =>
-                    request.DestinatarioCodigo == cenario.Solicitante.Codigo &&
-                    request.TipoEvento == "SolicitacaoObtencaoAprovada"),
+                It.Is<global::Application.Events.TarefaNotificacaoEvent>(request =>
+                    request.NotificacaoInterna.DestinatarioCodigo == cenario.Solicitante.Codigo &&
+                    request.NotificacaoInterna.TipoEvento == "SolicitacaoObtencaoAprovada"),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -93,9 +94,9 @@ public class DecidirTarefaCaseTests
             movimentacaoRegistrada.Descricao);
         cenario.Publisher.Verify(
             publisher => publisher.PublicarAsync(
-                It.Is<PublicarNotificacaoInternaRequest>(request =>
-                    request.DestinatarioCodigo == cenario.Solicitante.Codigo &&
-                    request.TipoEvento == "SolicitacaoObtencaoRecusada"),
+                It.Is<global::Application.Events.TarefaNotificacaoEvent>(request =>
+                    request.NotificacaoInterna.DestinatarioCodigo == cenario.Solicitante.Codigo &&
+                    request.NotificacaoInterna.TipoEvento == "SolicitacaoObtencaoRecusada"),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -137,7 +138,7 @@ public class DecidirTarefaCaseTests
             mensagem.Descricao == TarefaResource.Erro_RegistrarMovimentacao);
         cenario.Publisher.Verify(
             publisher => publisher.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
     }
@@ -148,16 +149,16 @@ public class DecidirTarefaCaseTests
         var cenario = CriarCenario();
         cenario.Publisher
             .Setup(publisher => publisher.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(ResultadoPublicacaoNotificacaoInterna.Falha("Falha simulada"));
+            .Returns(System.Threading.Tasks.ValueTask.CompletedTask);
 
         var resultado = await cenario.Case.ExecutarAsync(cenario.Solicitacao.Id, aprovar: false);
 
         Assert.True(resultado.TeveSucesso);
         cenario.Publisher.Verify(
             publisher => publisher.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -236,9 +237,9 @@ public class DecidirTarefaCaseTests
             .Setup(repository => repository.ObterPorIdAsync(solicitacao.Id))
             .ReturnsAsync(solicitacao);
 
-        var usuarioService = new Mock<IUsuarioService>();
+        var usuarioService = new Mock<ObterUsuarioCase>();
         usuarioService
-            .Setup(service => service.ObterUsuarioAtual())
+            .Setup(service => service.ObterAsync())
             .ReturnsAsync(Resultado<Usuario>.Sucesso(aprovador));
 
         var tarefaMapper = new Mock<IToDtoMapper<Tarefa, TarefaDTO>>();
@@ -260,31 +261,19 @@ public class DecidirTarefaCaseTests
             .Setup(repository => repository.RegistrarAsync(It.IsAny<TarefaMovimentacao>()))
             .ReturnsAsync(true);
 
-        var publisher = new Mock<INotificacoesInternasPublisher>();
+        var publisher = new Mock<Shared.Application.Messaging.IEventBus>();
         publisher
             .Setup(item => item.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(ResultadoPublicacaoNotificacaoInterna.Sucesso(
-                new NotificacaoInternaResponse(
-                    1000001,
-                    "Tracker",
-                    "SolicitacaoObtencaoAprovada",
-                    "",
-                    "",
-                    null,
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    null)));
-
+            .Returns(System.Threading.Tasks.ValueTask.CompletedTask);
         var caseDeDecisao = new DecidirTarefaCase(
             new RegistrarDecisaoTarefaMovimentacaoCase(
                 movimentacoes.Object,
                 new TarefaMovimentacaoMapping()),
             new SolicitacaoObtencaoTarefaMapping(tarefaMapper.Object),
             solicitacoes.Object,
-            new TarefaNotificacaoInternaCase(publisher.Object),
+            publisher.Object,
             usuarioService.Object);
 
         return new CenarioDecisao(
@@ -305,7 +294,7 @@ public class DecidirTarefaCaseTests
             Times.Never);
         cenario.Publisher.Verify(
             publisher => publisher.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
     }
@@ -314,9 +303,11 @@ public class DecidirTarefaCaseTests
         DecidirTarefaCase Case,
         Mock<ISolicitacaoObtencaoTarefaRepository> Solicitacoes,
         Mock<ITarefaMovimentacaoRepository> Movimentacoes,
-        Mock<INotificacoesInternasPublisher> Publisher,
+        Mock<Shared.Application.Messaging.IEventBus> Publisher,
         Usuario Solicitante,
         Usuario Aprovador,
         Tarefa Tarefa,
         SolicitacaoObtencaoTarefa Solicitacao);
 }
+
+

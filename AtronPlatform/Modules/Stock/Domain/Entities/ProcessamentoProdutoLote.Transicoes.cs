@@ -47,6 +47,12 @@ public sealed partial class ProcessamentoProdutoLote
         LiberarReserva();
     }
 
+    public void AtualizarProgresso(int quantidadeProcessada, Guid tokenReserva)
+    {
+        ExigirReserva(tokenReserva);
+        Resultado.AtualizarProgresso(quantidadeProcessada);
+    }
+
     private void ExigirReserva(Guid tokenReserva)
     {
         if (Status != EStatusProcessamentoProdutoLote.EmExecucao

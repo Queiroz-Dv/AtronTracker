@@ -2,7 +2,6 @@ using Application.DTO;
 using Application.Policies.Tarefas;
 using Domain.Entities;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {

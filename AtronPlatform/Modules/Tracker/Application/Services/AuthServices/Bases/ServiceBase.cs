@@ -1,4 +1,4 @@
-Ôªøusing Shared.Application.Interfaces.Service;
+using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using System;
 
@@ -13,19 +13,19 @@ namespace Application.Services.AuthServices.Bases
             _accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
         }
 
-        // üîê M√©todo central de resolu√ß√£o segura
+        // ?? MÈtodo central de resoluÁ„o segura
         protected T ObterService<T>() where T : class
         {
             var instance = _accessor.ObterService<T>();
             if (instance is null)
-                throw new InvalidOperationException($"Servi√ßo de tipo {typeof(T).Name} n√£o encontrado no container.");
+                throw new InvalidOperationException($"ServiÁo de tipo {typeof(T).Name} n„o encontrado no container.");
             return instance;
         }
 
-        // üß≠ Mensagens (centralizadas)
-        protected Notifiable Messages => ObterService<Notifiable>();
+        // ?? Mensagens (centralizadas)
+        protected Resultado Messages => ObterService<Resultado>();
 
-        // üìè Valida√ß√£o tipada por DTO
+        // ?? ValidaÁ„o tipada por DTO
         protected IValidateModelService<T> GetValidator<T>() => ObterService<IValidateModelService<T>>();
     }
 }

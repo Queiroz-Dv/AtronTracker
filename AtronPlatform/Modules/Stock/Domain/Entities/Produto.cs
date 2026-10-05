@@ -1,4 +1,4 @@
-﻿using AtronStock.Domain.Constants;
+using AtronStock.Domain.Constants;
 using AtronStock.Domain.Enums;
 using Shared.Attributes;
 using Shared.Domain.Entities.Identity;

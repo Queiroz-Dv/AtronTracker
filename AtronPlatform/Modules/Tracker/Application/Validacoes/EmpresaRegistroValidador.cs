@@ -1,31 +1,39 @@
-﻿using Application.DTO.Request;
-using Shared.Application.Interfaces.Service;
+using Application.DTO.Request;
 using Shared.Application.Resources;
-using Shared.Domain.ValueObjects;
-using Shared.Extensions;
-using System.Collections.Generic;
+using Shared.Application.Services;
+using Shared.Extensions.RegraExtensions;
 
 namespace Application.Validacoes
 {
-    public sealed class EmpresaRegistroValidador : IValidador<EmpresaRegistroRequest>
+    public sealed class EmpresaRegistroValidador : Validador<EmpresaRegistroRequest>
     {
-        public IEnumerable<NotificationMessage> Validar(EmpresaRegistroRequest? request)
+        public EmpresaRegistroValidador()
         {
-            var notificacoes = new NotificationBag();
-            if (request.IsNullable())
-            {
-                notificacoes.AdicionarErro(NotificacoesPadronizadas.ErroRegistroNulo);
-                return notificacoes.Messages;
-            }
+            RegraPara(x => x.Codigo)
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, nameof(EmpresaRegistroRequest.Codigo)));
+            RegraPara(x => x.Codigo).TamanhoEntre(3, 25);
 
-            notificacoes.ValidarCampo(request.Codigo, 3, 25, nameof(request.Codigo));
-            notificacoes.ValidarCampo(request.NomeFantasia, 3, 150, nameof(request.NomeFantasia));
-            notificacoes.ValidarCampo(request.Endereco, 3, 200, nameof(request.Endereco));
-            notificacoes.ValidarCampo(request.Numero, 1, 20, nameof(request.Numero));
-            notificacoes.ValidarCampo(request.Email, 3, 254, nameof(request.Email));
-            notificacoes.ValidarEmail(request.Email, nameof(request.Email));
+            RegraPara(x => x.NomeFantasia)
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, nameof(EmpresaRegistroRequest.NomeFantasia)));
+            RegraPara(x => x.NomeFantasia).TamanhoEntre(3, 150);
 
-            return notificacoes.Messages;
+            RegraPara(x => x.Endereco)
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, nameof(EmpresaRegistroRequest.Endereco)));
+            RegraPara(x => x.Endereco).TamanhoEntre(3, 200);
+
+            RegraPara(x => x.Numero)
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, nameof(EmpresaRegistroRequest.Numero)));
+            RegraPara(x => x.Numero).TamanhoEntre(1, 20);
+
+            RegraPara(x => x.Email)
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, nameof(EmpresaRegistroRequest.Email)));
+            RegraPara(x => x.Email).TamanhoEntre(3, 254);
+            RegraPara(x => x.Email).EmailValido();
         }
     }
 }

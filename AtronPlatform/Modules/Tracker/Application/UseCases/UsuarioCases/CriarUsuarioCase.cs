@@ -1,12 +1,12 @@
 using Application.DTO.Request;
 using Application.Mapping;
+using Application.Services.EntitiesServices;
+using Domain.Entities;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {

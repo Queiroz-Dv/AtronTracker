@@ -14,6 +14,11 @@ public sealed class ResultadoProcessamentoProdutoLote
         Erro = null;
     }
 
+    internal void AtualizarProgresso(int quantidadeProcessada)
+    {
+        QuantidadeProcessada = quantidadeProcessada;
+    }
+
     internal void Falhar(string erro)
     {
         Erro = erro.Length <= 2000 ? erro : erro[..2000];

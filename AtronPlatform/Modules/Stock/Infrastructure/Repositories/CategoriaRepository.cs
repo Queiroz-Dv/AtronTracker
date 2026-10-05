@@ -1,4 +1,4 @@
-﻿using AtronStock.Domain.Entities;
+using AtronStock.Domain.Entities;
 using AtronStock.Domain.Enums;
 using AtronStock.Domain.Interfaces;
 using AtronStock.Infrastructure.Context;

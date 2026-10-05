@@ -1,8 +1,5 @@
-using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
 using Shared.Application.Interfaces.Service;
-using Shared.Extensions;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.ApplicationRepositories
 {

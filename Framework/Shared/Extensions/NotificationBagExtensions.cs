@@ -1,4 +1,4 @@
-Ôªøusing Shared.Application.Resources;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System.Net.Mail;
 
@@ -7,10 +7,10 @@ namespace Shared.Extensions
     public static class NotificationBagExtensions
     {
         /// <summary>
-        /// Valida se um campo n√£o √© nulo/vazio e tem comprimento dentro do intervalo especificado.
-        /// Adiciona mensagens de erro ao NotificationBag.
+        /// Valida se um campo n„o È nulo/vazio e tem comprimento dentro do intervalo especificado.
+        /// Adiciona mensagens de erro ao Resultado.
         /// </summary>
-        public static void ValidarCampo(this NotificationBag bag, string? valor, int tamanhoMinimo, int tamanhoMaximo, string nomeCampo)
+        public static void ValidarCampo(this Resultado bag, string? valor, int tamanhoMinimo, int tamanhoMaximo, string nomeCampo)
         {
             if (valor.IsNullOrEmpty())
             {
@@ -26,19 +26,19 @@ namespace Shared.Extensions
         }
 
         /// <summary>
-        /// Sobrecarga para quando n√£o h√° valida√ß√£o de tamanho (apenas obrigatoriedade).
+        /// Sobrecarga para quando n„o h· validaÁ„o de tamanho (apenas obrigatoriedade).
         /// </summary>
-        public static void ValidarCampoObrigatorio(this NotificationBag bag, string? valor, string nomeCampo)
+        public static void ValidarCampoObrigatorio(this Resultado bag, string? valor, string nomeCampo)
         {
             if (valor.IsNullOrEmpty())
                 bag.AdicionarErro(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, nomeCampo));
         }
 
         /// <summary>
-        /// Valida se o valor √© um e-mail v√°lido (opcional).
+        /// Valida se o valor È um e-mail v·lido (opcional).
         /// </summary>
         public static void ValidarEmail(
-            this NotificationBag bag,
+            this Resultado bag,
             string? email,
             string nomeCampo)
         {
@@ -52,7 +52,7 @@ namespace Shared.Extensions
             }
         }
 
-        public static void ValidarEnumeracao<TEnum>(this NotificationBag bag, TEnum valor, string nomeCampo) where TEnum : struct, Enum
+        public static void ValidarEnumeracao<TEnum>(this Resultado bag, TEnum valor, string nomeCampo) where TEnum : struct, Enum
         {
             if (!Enum.IsDefined(valor))
             {

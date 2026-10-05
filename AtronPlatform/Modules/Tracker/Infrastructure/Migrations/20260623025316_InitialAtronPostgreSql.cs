@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -388,10 +388,10 @@ namespace AtronTracker.Infrastructure.Migrations.Migrations
                 {
                     { "DPT", 1, "Departamentos" },
                     { "CRG", 2, "Cargos" },
-                    { "USR", 3, "Usu√°rios" },
+                    { "USR", 3, "Usu·rios" },
                     { "TAR", 4, "Tarefas" },
-                    { "SAL", 5, "Sal√°rios" },
-                    { "PAC", 6, "Pol√≠ticas e Acessos" }
+                    { "SAL", 5, "Sal·rios" },
+                    { "PAC", 6, "PolÌticas e Acessos" }
                 });
 
             migrationBuilder.CreateIndex(

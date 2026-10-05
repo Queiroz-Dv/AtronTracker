@@ -1,43 +1,44 @@
-﻿using Application.DTO;
+using Application.DTO;
+using Application.Events;
 using Application.Extensions;
-using Application.Interfaces.Services;
 using Application.Policies.Tarefas;
 using Application.Resources;
 using Application.Services.EntitiesServices;
 using Application.UseCases.TarefaCases.Movimentacao;
+using Application.UseCases.UsuarioCases;
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Application.Interfaces.Mapping;
+using Shared.Application.Messaging;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases
 {
     public class SolicitarTarefaCase(
-        IUsuarioService usuarioService,
+        ObterUsuarioCase usuarioService,
         ITarefaRepository tarefaRepository,
         ITarefaObtencaoPolicy obtencaoPolicy,
         ISolicitacaoObtencaoTarefaRepository solicitacaoRepository,
         RegistrarSolicitacaoTarefaMovimentacaoCase registrarMovimentacaoCase,
         IToDtoMapper<SolicitacaoObtencaoTarefa, SolicitacaoObtencaoTarefaDTO> mapper,
-        TarefaNotificacaoInternaCase tarefaNotificacao,
+        IEventBus eventBus,
         AprovadorObtencaoTarefaService aprovadorResolver)
     {
-        private readonly IUsuarioService _usuarioService = usuarioService;
+        private readonly ObterUsuarioCase _usuarioService = usuarioService;
         private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
         private readonly ITarefaObtencaoPolicy _obtencaoPolicy = obtencaoPolicy;
         private readonly ISolicitacaoObtencaoTarefaRepository _solicitacaoRepository = solicitacaoRepository;
         private readonly RegistrarSolicitacaoTarefaMovimentacaoCase _registrarMovimentacaoCase = registrarMovimentacaoCase;
 
         private readonly IToDtoMapper<SolicitacaoObtencaoTarefa, SolicitacaoObtencaoTarefaDTO> _mapper = mapper;
-        private readonly TarefaNotificacaoInternaCase _notificacaoCase = tarefaNotificacao;
+        private readonly IEventBus _eventBus = eventBus;
         private readonly AprovadorObtencaoTarefaService _aprovadorResolver = aprovadorResolver;
 
         public async Task<Resultado<SolicitacaoObtencaoTarefaDTO>> ExecutarAsync(int tarefaId)
         {
-            var usuario = await _usuarioService.ObterUsuarioAtual();
+            var usuario = await _usuarioService.ObterAsync();
             if (usuario.TeveFalha)
                 return Resultado<SolicitacaoObtencaoTarefaDTO>.Falhas(usuario.Messages);
 
@@ -69,7 +70,8 @@ namespace Application.UseCases.TarefaCases
 
             if (!possuiResponsabilidadeGestao)
             {
-                await _notificacaoCase.ExecutarAsync(solicitacaoGravada.CriarNotificacaoDeRecebimento());
+                var notificacaoEvent = new TarefaNotificacaoEvent(solicitacaoGravada.CriarNotificacaoDeRecebimento());
+                await _eventBus.PublicarAsync(notificacaoEvent);
             }
 
             var dto = _mapper.MapToDto(solicitacaoGravada);

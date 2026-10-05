@@ -1,10 +1,10 @@
-Ôªøusing System;
+using System;
 
 namespace Domain.ApiEntities
 {
     [Serializable]
     public class ApiRoute
     {
-        public string Url { get; set; } // Essa URL √© fixa e ser√° obtida do Json ent√£o n√£o precisa gravar no banco        
+        public string Url { get; set; } // Essa URL È fixa e ser· obtida do Json ent„o n„o precisa gravar no banco        
     }
 }
