@@ -1,107 +1,67 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
-using Shared.Domain.ValueObjects;
-using Shared.Extensions;
+using Shared.Application.Services;
+using Shared.Extensions.RegraExtensions;
 using System;
-using System.Collections.Generic;
 
 namespace Application.Validacoes
 {
-    public class UsuarioValidador(IAccessorService accessorService) : IValidador<Usuario>
+    public class UsuarioValidador : Validador<Usuario>
     {
-        private readonly IAccessorService _accessorService = accessorService;
+        private readonly IAccessorService _accessorService;
 
-        public IEnumerable<NotificationMessage> Validar(Usuario entity)
+        public UsuarioValidador(IAccessorService accessorService)
         {
-            var context = new NotificationBag();
+            _accessorService = accessorService;
 
-            if (entity == null)
-            {
-                context.AdicionarErro(UsuarioResource.ErroUsuarioNulo);
-                return [.. context.Messages];
-            }
+            RegraPara(x => x.Codigo)
+                .NaoVazio()
+                .ComMensagem(UsuarioResource.ErroCodigoNulo);
+            RegraPara(x => x.Codigo)
+                .TamanhoMenorOuIgualA(10)
+                .ComMensagem(UsuarioResource.ErroCodigoLongo);
+            RegraPara(x => x.Codigo)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(UsuarioResource.ErroCodigoPequeno);
 
-            ValidarCodigo(entity, context);
-            ValidarNome(entity, context);
-            ValidarSobrenome(entity, context);
-            ValidarDataNascimento(entity, context);
-            ValidarEmail(entity, context);
+            RegraPara(x => x.Nome)
+                .NaoVazio()
+                .ComMensagem(UsuarioResource.ErroNomeUsuarioNulo);
+            RegraPara(x => x.Nome)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(UsuarioResource.ErroNomePequeno);
+            RegraPara(x => x.Nome)
+                .TamanhoMenorOuIgualA(25)
+                .ComMensagem(UsuarioResource.ErroNomeLongo);
 
-            return [.. context.Messages];
-        }
+            RegraPara(x => x.Sobrenome)
+                .NaoVazio()
+                .ComMensagem(UsuarioResource.ErroSobrenomeObrigatorio);
+            RegraPara(x => x.Sobrenome)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(UsuarioResource.ErroSobrenomePequeno);
+            RegraPara(x => x.Sobrenome)
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(UsuarioResource.ErroSobrenomeLongo);
 
-        private void ValidarCodigo(Usuario entity, NotificationBag context)
-        {
-            if (entity.Codigo.IsNullOrEmpty())
-            {
-                context.AdicionarErro(UsuarioResource.ErroCodigoNulo);
-            }
-            else if (entity.Codigo.Length > 10)
-            {
-                context.AdicionarErro(UsuarioResource.ErroCodigoLongo);
-            }
-            else if (entity.Codigo.Length < 3)
-            {
-                context.AdicionarErro(UsuarioResource.ErroCodigoPequeno);
-            }
-        }
+            RegraPara(x => x.DataNascimento)
+                .DeveSer(data => data != DateTime.Now)
+                .ComMensagem(UsuarioResource.ErroDataDeNascimento);
 
-        private void ValidarNome(Usuario entity, NotificationBag context)
-        {
-            if (entity.Nome.IsNullOrEmpty())
-            {
-                context.AdicionarErro(UsuarioResource.ErroNomeUsuarioNulo);
-            }
-            else if (entity.Nome.Length < 3)
-            {
-                context.AdicionarErro(UsuarioResource.ErroNomePequeno);
-            }
-            else if (entity.Nome.Length > 25)
-            {
-                context.AdicionarErro(UsuarioResource.ErroNomeLongo);
-            }
-        }
+            RegraPara(x => x.Email)
+                .NaoVazio()
+                .ComMensagem(UsuarioResource.ErroEmailNulo);
 
-        private void ValidarSobrenome(Usuario entity, NotificationBag context)
-        {
-            if (entity.Sobrenome.IsNullOrEmpty())
-            {
-                context.AdicionarErro(UsuarioResource.ErroSobrenomeObrigatorio);
-            }
-            else if (entity.Sobrenome.Length < 3)
-            {
-                context.AdicionarErro(UsuarioResource.ErroSobrenomePequeno);
-            }
-            else if (entity.Sobrenome.Length > 50)
-            {
-                context.AdicionarErro(UsuarioResource.ErroSobrenomeLongo);
-            }
-        }
-
-        private void ValidarDataNascimento(Usuario entity, NotificationBag context)
-        {
-            if (entity.DataNascimento == DateTime.Now)
-            {
-                context.AdicionarErro(UsuarioResource.ErroDataDeNascimento);
-            }
-        }
-
-        private void ValidarEmail(Usuario entity, NotificationBag context)
-        {
-            if (entity.Email.IsNullOrEmpty())
-            {
-                context.AdicionarErro(UsuarioResource.ErroEmailNulo);
-                return;
-            }
-
-            var usuarioRepository = _accessorService.ObterService<IUsuarioRepository>();
-            var emailExiste = usuarioRepository.VerificarEmailExistenteAsync(entity.Email).Result;
-            if (emailExiste)
-            {
-                context.AdicionarErro(EmailResource.ErroEmailUtilizado);
-            }
+            RegraPara(x => x.Email)
+                .DeveSer(email => 
+                {
+                    if (string.IsNullOrEmpty(email)) return true;
+                    var repo = _accessorService.ObterService<IUsuarioRepository>();
+                    return !repo.VerificarEmailExistenteAsync(email).Result;
+                })
+                .ComMensagem(EmailResource.ErroEmailUtilizado);
         }
     }
 }

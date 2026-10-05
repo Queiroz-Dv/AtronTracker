@@ -1,4 +1,5 @@
 using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Application.Records.Autenticacao;
 using System;
 using System.Security.Cryptography;

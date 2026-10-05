@@ -35,7 +35,7 @@ namespace AtronStock.Application.UseCases.CategoriaCases
             await _repository.CriarCategoriaAsync(categoria);
             await _auditoriaCategoria.RegistrarCriacaoAsync(categoria);
 
-            var context = new NotificationBag();
+            var context = new Resultado();
             context.MensagemRegistroSalvo(CategoriaResource.SucessoCadastro);
             return Resultado.Sucesso(request, [.. context.Messages]);
         }

@@ -1,8 +1,8 @@
-﻿namespace Shared.Application.DTOS.Auth
+namespace Shared.Application.DTOS.Auth
 {
     public static class ClaimCode
     {
-        // Padrão para o funcionamento do JWT
+        // Padr�o para o funcionamento do JWT
         public const string CODIGO_DEPARTAMENTO = "CodigoDepartamento";
         public const string CODIGO_CARGO = "CodigoCargo";
         public const string CODIGO_USUARIO = "CodigoUsuario";

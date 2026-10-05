@@ -1,4 +1,5 @@
-ï»¿using Application.Interfaces.Services;
+using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Application.Records.Email;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
@@ -34,7 +35,7 @@ namespace Application.UseCases.UsuarioCases
                 return Resultado<ConfirmacaoRecord>.Sucesso(confirmacao);
             }
 
-            return Resultado<ConfirmacaoRecord>.Falha("NÃ£o foi possÃ­vel criar a confirmaÃ§Ã£o de email.");
+            return Resultado<ConfirmacaoRecord>.Falha("Não foi possível criar a confirmação de email.");
         }
     }
 }

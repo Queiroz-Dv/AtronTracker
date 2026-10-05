@@ -3,7 +3,6 @@ using Domain.Interfaces.Identity;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {

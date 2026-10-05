@@ -1,3 +1,4 @@
+using Application.UseCases.UsuarioCases;
 using Application.Interfaces.Services;
 using Application.Mapping;
 using Application.Resources;
@@ -36,9 +37,9 @@ public class ObterHistoricoTarefaCaseTests
         tarefaRepository
             .Setup(item => item.PodeAcessarHistoricoAsync(42, 7, "USR001"))
             .ReturnsAsync(true);
-        var usuarioService = new Mock<IUsuarioService>();
+        var usuarioService = new Mock<ObterUsuarioCase>();
         usuarioService
-            .Setup(item => item.ObterUsuarioAtual())
+            .Setup(item => item.ObterAsync())
             .ReturnsAsync(Resultado<Usuario>.Sucesso(
                 new Usuario { Id = 7, Codigo = "USR001" }));
         var caseDeHistorico = new ObterHistoricoTarefaCase(
@@ -102,9 +103,9 @@ public class ObterHistoricoTarefaCaseTests
         const string mensagemDeFalha = "Não foi possível obter o usuário atual.";
         var tarefaRepository = new Mock<ITarefaRepository>();
         var movimentacaoRepository = new Mock<ITarefaMovimentacaoRepository>();
-        var usuarioService = new Mock<IUsuarioService>();
+        var usuarioService = new Mock<ObterUsuarioCase>();
         usuarioService
-            .Setup(item => item.ObterUsuarioAtual())
+            .Setup(item => item.ObterAsync())
             .ReturnsAsync(Resultado<Usuario>.Falha(mensagemDeFalha));
         var caseDeHistorico = new ObterHistoricoTarefaCase(
             usuarioService.Object,
@@ -142,9 +143,9 @@ public class ObterHistoricoTarefaCaseTests
         tarefaRepository
             .Setup(item => item.PodeAcessarHistoricoAsync(42, 7, "USR001"))
             .ReturnsAsync(true);
-        var usuarioService = new Mock<IUsuarioService>();
+        var usuarioService = new Mock<ObterUsuarioCase>();
         usuarioService
-            .Setup(item => item.ObterUsuarioAtual())
+            .Setup(item => item.ObterAsync())
             .ReturnsAsync(Resultado<Usuario>.Sucesso(
                 new Usuario { Id = 7, Codigo = "USR001" }));
 
@@ -158,3 +159,5 @@ public class ObterHistoricoTarefaCaseTests
             movimentacaoRepository);
     }
 }
+
+

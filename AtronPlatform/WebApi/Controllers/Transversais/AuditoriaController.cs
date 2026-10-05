@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.DTOS.Common;
-using Shared.Application.Interfaces.Service;
-using Shared.Application.Resources;
-using Shared.Domain.Entities;
+using AtronAuditoria.Application.Resources;
+using AtronAuditoria.Application.UseCases;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 
@@ -14,15 +13,15 @@ namespace AtronPlatform.WebApi.Controllers.Transversais
     [Route("[controller]")]
     public class AuditoriaController : ControllerBase
     {
-        private readonly IAuditoriaService _service;
+        private readonly ObterAuditoriaCase _obterAuditoriaCase;
 
-        public AuditoriaController(IAuditoriaService service)
+        public AuditoriaController(ObterAuditoriaCase obterAuditoriaCase)
         {
-            _service = service;
+            _obterAuditoriaCase = obterAuditoriaCase;
         }
 
         [HttpGet("{codigoRegistro}/{contexto}")]
-        public async Task<ActionResult<Resultado<Auditoria>>> Get(
+        public async Task<ActionResult<Resultado<AuditoriaResult>>> Get(
             string codigoRegistro,
             string contexto)
         {
@@ -32,13 +31,7 @@ namespace AtronPlatform.WebApi.Controllers.Transversais
                     AuditoriaResource.ErroCodigoOuContextoObrigatorio);
             }
 
-            IAuditoriaDTO auditoria = new AuditoriaDTO
-            {
-                CodigoRegistro = codigoRegistro,
-                Contexto = contexto
-            };
-
-            var resultado = await _service.ObterPorChaveServiceAsync(auditoria);
+            var resultado = await _obterAuditoriaCase.ExecutarAsync(contexto, codigoRegistro);
             return Ok(resultado.Dados);
         }
     }

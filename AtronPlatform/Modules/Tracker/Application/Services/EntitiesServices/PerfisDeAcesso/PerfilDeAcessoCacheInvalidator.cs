@@ -1,7 +1,5 @@
 using Application.Interfaces.Services;
 using Domain.Entities;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Application.Services.EntitiesServices.PerfisDeAcesso
 {

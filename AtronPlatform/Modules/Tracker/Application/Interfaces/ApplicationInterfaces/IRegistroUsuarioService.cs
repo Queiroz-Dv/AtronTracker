@@ -14,3 +14,4 @@ namespace Application.Interfaces.ApplicationInterfaces
         Task<Resultado> TrocarSenha(RedefinirSenhaRequest request);
     }
 }
+

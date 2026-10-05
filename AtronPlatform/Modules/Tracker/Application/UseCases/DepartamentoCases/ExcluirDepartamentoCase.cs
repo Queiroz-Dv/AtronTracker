@@ -4,8 +4,6 @@ using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.DepartamentoCases
 {
@@ -14,7 +12,7 @@ namespace Application.UseCases.DepartamentoCases
         IDepartamentoRepository _departamentoRepository,
         ICargoRepository _cargoRepository,
         IUsuarioCargoDepartamentoRepository _relacionamentoRepository)
-    {       
+    {
         public async Task<Resultado> ExecutarAsync(string codigo)
         {
             if (codigo.IsNullOrEmpty())
@@ -26,11 +24,11 @@ namespace Application.UseCases.DepartamentoCases
             if (departamento.IsNullable())
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
-            var estruturaPlanejada = await _estruturaPlanejadaPolicy
+            var estruturaPlanejadaResultado = await _estruturaPlanejadaPolicy
                 .ValidarRemocaoDepartamentoAsync(departamento);
 
-            if (estruturaPlanejada.TeveFalha)
-                return estruturaPlanejada;
+            if (estruturaPlanejadaResultado.TeveFalha)
+                return estruturaPlanejadaResultado;
 
             var relacionamentos = await _relacionamentoRepository
                 .ObterPorDepartamento(departamento.Id, departamento.Codigo);

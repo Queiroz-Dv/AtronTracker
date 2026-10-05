@@ -1,4 +1,4 @@
-Ôªøusing Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -20,9 +20,9 @@ BEGIN
     END IF;
 
     IF EXISTS (SELECT 1 FROM ""Modulos"" WHERE ""Id"" = 10 AND ""Codigo"" = 'RPERFUSR') THEN
-        UPDATE ""Modulos"" SET ""Descricao"" = 'Relacionamento de perfil e usu√°rios' WHERE ""Id"" = 10 AND ""Codigo"" = 'RPERFUSR';
+        UPDATE ""Modulos"" SET ""Descricao"" = 'Relacionamento de perfil e usu·rios' WHERE ""Id"" = 10 AND ""Codigo"" = 'RPERFUSR';
     ELSE
-        INSERT INTO ""Modulos"" (""Codigo"", ""Id"", ""Descricao"") VALUES ('RPERFUSR', 10, 'Relacionamento de perfil e usu√°rios');
+        INSERT INTO ""Modulos"" (""Codigo"", ""Id"", ""Descricao"") VALUES ('RPERFUSR', 10, 'Relacionamento de perfil e usu·rios');
     END IF;
 END $$;
 ");
@@ -45,7 +45,7 @@ END $$;
                 values: new object[,]
                 {
                     { 1, "Em atividade" },
-                    { 2, "Pendente de aprova√ß√£o" },
+                    { 2, "Pendente de aprovaÁ„o" },
                     { 3, "Entregue" },
                     { 4, "Finalizada" },
                     { 5, "Iniciada" }
@@ -84,11 +84,11 @@ BEGIN
     DELETE FROM ""Modulos"" WHERE ""Id"" = 10 AND ""Codigo"" = 'RPERFUSR';
 
     IF EXISTS (SELECT 1 FROM ""Modulos"" WHERE ""Id"" = 6 AND ""Codigo"" = 'PERF') THEN
-        UPDATE ""Modulos"" SET ""Codigo"" = 'PAC', ""Descricao"" = 'Pol√≠ticas e Acessos' WHERE ""Id"" = 6 AND ""Codigo"" = 'PERF';
+        UPDATE ""Modulos"" SET ""Codigo"" = 'PAC', ""Descricao"" = 'PolÌticas e Acessos' WHERE ""Id"" = 6 AND ""Codigo"" = 'PERF';
     ELSIF EXISTS (SELECT 1 FROM ""Modulos"" WHERE ""Id"" = 6 AND ""Codigo"" = 'PAC') THEN
-        UPDATE ""Modulos"" SET ""Descricao"" = 'Pol√≠ticas e Acessos' WHERE ""Id"" = 6 AND ""Codigo"" = 'PAC';
+        UPDATE ""Modulos"" SET ""Descricao"" = 'PolÌticas e Acessos' WHERE ""Id"" = 6 AND ""Codigo"" = 'PAC';
     ELSE
-        INSERT INTO ""Modulos"" (""Codigo"", ""Id"", ""Descricao"") VALUES ('PAC', 6, 'Pol√≠ticas e Acessos');
+        INSERT INTO ""Modulos"" (""Codigo"", ""Id"", ""Descricao"") VALUES ('PAC', 6, 'PolÌticas e Acessos');
     END IF;
 END $$;
 ");

@@ -1,4 +1,4 @@
-﻿using AtronStock.Application.DTO.Request;
+using AtronStock.Application.DTO.Request;
 using AtronStock.Domain.Entities;
 using Shared.Application.Interfaces.Mapping;
 

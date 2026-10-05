@@ -76,7 +76,7 @@ export class AuthInterceptor implements HttpInterceptor {
       ).pipe(
         catchError(error => {
           this.limparSessaoERedirecionar();
-          this.refreshSubject.next(null);
+          this.refreshSubject.next(""); // Empty string signals error to waiting requests
           return throwError(() => error);
         }),
         switchMap(response => {
@@ -91,7 +91,12 @@ export class AuthInterceptor implements HttpInterceptor {
     return this.refreshSubject.pipe(
       filter(token => token !== null),
       take(1),
-      switchMap(token => next.handle(this.prepararRequisicaoAutenticada(request, token!)))
+      switchMap(token => {
+        if (token === "") {
+          return throwError(() => new Error('Falha ao atualizar token de acesso.'));
+        }
+        return next.handle(this.prepararRequisicaoAutenticada(request, token!));
+      })
     );
   }
 

@@ -1,11 +1,10 @@
-﻿using Domain.Interfaces.UsuarioInterfaces;
+using Application.DTO;
+using Application.EmailCompositor.Compositores;
+using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Threading.Tasks;
-using Application.EmailCompositor.Compositores;
-using Application.DTO;
 
 namespace Application.UseCases.UsuarioCases
 {
@@ -14,7 +13,7 @@ namespace Application.UseCases.UsuarioCases
         IEmailService emailService,
         IAcessoEmailCompositor emailCompositor)
     {
-        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;        
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly IEmailService _emailService = emailService;
         private readonly IAcessoEmailCompositor _emailCompositor = emailCompositor;
 

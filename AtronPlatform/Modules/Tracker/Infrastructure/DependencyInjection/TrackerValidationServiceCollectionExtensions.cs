@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.DTO.Request;
 using Domain.ApiEntities;
 using Domain.Entities;
@@ -32,11 +32,11 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddScoped<IMessageBaseService, LoginMessageValidation>();
             services.AddScoped<IValidateModelService<ApiLogin>, LoginMessageValidation>();
-            services.AddScoped<Notifiable, LoginMessageValidation>();
+            services.AddScoped<Resultado, LoginMessageValidation>();
 
             services.AddScoped<IMessageBaseService, InfoTokenMessageValidation>();
             services.AddScoped<IValidateModelService<DadosDoTokenDTO>, InfoTokenMessageValidation>();
-            services.AddScoped<Notifiable, InfoTokenMessageValidation>();
+            services.AddScoped<Resultado, InfoTokenMessageValidation>();
         }
 
         private static void ConfigurarTarefaServices(IServiceCollection services)
@@ -44,7 +44,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IMessageBaseService, TarefaMessageValidation>();
             services.AddScoped<IValidateModelService<Tarefa>, TarefaMessageValidation>();
             services.AddScoped<IValidador<TarefaDTO>, TarefaValidador>();
-            services.AddScoped<Notifiable, TarefaMessageValidation>();
+            services.AddScoped<Resultado, TarefaMessageValidation>();
 
         }
 
@@ -78,7 +78,7 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddScoped<IMessageBaseService, ModuloMessageValidation>();
             services.AddScoped<IValidateModelService<Modulo>, ModuloMessageValidation>();
-            services.AddScoped<Notifiable, ModuloMessageValidation>();
+            services.AddScoped<Resultado, ModuloMessageValidation>();
         }
 
         private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
@@ -87,7 +87,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<PerfilDeAcessoMessageValidation>();
             services.AddScoped<IMessageBaseService>(provider => provider.GetRequiredService<PerfilDeAcessoMessageValidation>());
             services.AddScoped<IValidateModelService<PerfilDeAcesso>>(provider => provider.GetRequiredService<PerfilDeAcessoMessageValidation>());
-            services.AddScoped<Notifiable>(provider => provider.GetRequiredService<PerfilDeAcessoMessageValidation>());
+            services.AddScoped<Resultado>(provider => provider.GetRequiredService<PerfilDeAcessoMessageValidation>());
         }
     }
 }

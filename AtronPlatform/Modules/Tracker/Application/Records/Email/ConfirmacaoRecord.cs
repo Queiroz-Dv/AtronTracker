@@ -1,4 +1,4 @@
-﻿namespace Application.Records.Email
+namespace Application.Records.Email
 {
     public record ConfirmacaoRecord
     {

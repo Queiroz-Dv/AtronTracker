@@ -1,10 +1,10 @@
-ï»¿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Shared.Domain.Entities.Identity;
 
 namespace Infrastructure.EntitiesConfiguration.ApplicationConfiguration
 {
-    // ReconfiguraÃ§Ã£o da classe User do Identity    
+    // Reconfiguração da classe User do Identity    
     public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)

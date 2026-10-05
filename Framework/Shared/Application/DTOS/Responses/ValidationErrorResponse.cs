@@ -1,4 +1,4 @@
-﻿namespace Shared.Application.DTOS.Responses
+namespace Shared.Application.DTOS.Responses
 {
     public class ValidationErrorResponse
     {

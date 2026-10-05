@@ -4,8 +4,6 @@ using Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.CargoCases
 {
@@ -45,7 +43,7 @@ namespace Application.UseCases.CargoCases
             return Resultado
                 .Sucesso()
                 .AdicionarMensagem(string.Format(
-                    NotificacoesPadronizadas.ResourceManager.GetString("Mensagem_RegistroSalvo")!,
+                    NotificacoesPadronizadas.Mensagem_RegistroSalvo,
                     cargoDTO.Codigo));
         }
     }

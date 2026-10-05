@@ -1,7 +1,7 @@
-﻿using AtronNotificacoes.Contracts.DTO;
+using AtronNotificacoes.Contracts.DTO;
 using AtronNotificacoes.Contracts.DTO.Request;
 using AtronNotificacoes.Contracts.Interfaces;
-using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.UseCases.TarefaCases
 {
@@ -11,8 +11,8 @@ namespace Application.UseCases.TarefaCases
 
         public async Task ExecutarAsync(PublicarNotificacaoInternaDto? notificacao)
         {
-            if (notificacao is null ||
-                string.IsNullOrWhiteSpace(notificacao.DestinatarioCodigo))
+            if (notificacao.IsNullable() ||
+                notificacao.DestinatarioCodigo.IsNullOrEmpty())
                 return;
 
             var request = new PublicarNotificacaoInternaRequest

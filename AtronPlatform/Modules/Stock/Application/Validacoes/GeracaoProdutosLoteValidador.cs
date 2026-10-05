@@ -12,7 +12,7 @@ public sealed class GeracaoProdutosLoteValidador(
 
     public IEnumerable<NotificationMessage> Validar(GeracaoProdutosLoteCommand command)
     {
-        var notificacoes = new NotificationBag();
+        var notificacoes = new Resultado();
         var mensagensProduto = _produtoValidador.Validar(new ProdutoAtualizacaoRequest
         {
             Descricao = command.Descricao,

@@ -1,8 +1,10 @@
 using Application.DTO;
-using Application.EmailCompositor.UseCases;
+using Shared.Application.DTOS.Email;
 using Shared.Application.DTOS.Requests;
 using Shared.Application.Email.Rendering;
+using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 
 namespace Application.EmailCompositor.Compositores
 {
@@ -12,32 +14,78 @@ namespace Application.EmailCompositor.Compositores
 
         public Resultado<EmailRequest> ComporConfirmacaoCadastro(ParametrosEmailDTO parametros)
         {
-            return ComporrEmailConfirmacaoCadastroCase.Executar(parametros, _renderer);
+            var dto = new EmailTemplateDTO(
+                EmailResource.Arquivo_ConfirmacaoCadastroHtml,
+                EmailResource.Assunto_ConfirmeCadastro,
+                EmailResource.Titulo_ConfirmacaoCadastro);
+
+            var templateDefinition = dto.CriarTemplate<AcessoEmailCompositor>();
+            return _renderer.Renderizar(templateDefinition, parametros, new[] { parametros.Destinatario });
         }
 
         public Resultado<EmailRequest> ComporRecuperacaoSenha(ParametrosEmailDTO parametros)
         {
-            return ComporEmailRecuperacaoSenhaCase.Executar(parametros, _renderer);
+            var dto = new EmailTemplateDTO()
+            {
+                Arquivo = EmailResource.Arquivo_RecuperacaoSenhaHtml,
+                Assunto = EmailResource.Assunto_RecuperacaoSenha,
+                Titulo = EmailResource.Titulo_RecuperacaoSenha
+            };
+
+            var templateDefinition = dto.CriarTemplate<AcessoEmailCompositor>();
+            return _renderer.Renderizar(templateDefinition, parametros, new[] { parametros.Destinatario });
         }
 
         public Resultado<EmailRequest> ComporConfirmacaoConcluida(ParametrosEmailDTO parametros)
         {
-            return ComporEmailConfirmacaoConcluidaCase.Executar(parametros, _renderer);
+            var dto = new EmailTemplateDTO()
+            {
+                Arquivo = EmailResource.Arquivo_ConfirmaaoConcluidaHtml,
+                Assunto = EmailResource.Assunto_EmailConfirmado,
+                Titulo = EmailResource.Titulo_EmailConfirmado
+            };
+
+            var templateDefinition = dto.CriarTemplate<AcessoEmailCompositor>();
+            return _renderer.Renderizar(templateDefinition, parametros, new[] { parametros.Destinatario });
         }
 
         public Resultado<EmailRequest> ComporPrimeiroAcesso(ParametrosEmailDTO parametros)
         {
-            return ComporEmailPrimeiroAcessoCase.Executar(parametros, _renderer);
+            var dto = new EmailTemplateDTO()
+            {
+                Arquivo = EmailResource.Arquivo_PrimeiroAcessoHtml,
+                Assunto = EmailResource.Assunto_PrimeiroAcesso,
+                Titulo = EmailResource.Titulo_PrimeiroAcesso
+            };
+
+            var templateDefinition = dto.CriarTemplate<AcessoEmailCompositor>();
+            return _renderer.Renderizar(templateDefinition, parametros, new[] { parametros.Destinatario });
         }
 
-        public Resultado<EmailRequest> ComporAlteracaoEmail(ParametrosEmailDTO parametrosEmailDTO)
+        public Resultado<EmailRequest> ComporAlteracaoEmail(ParametrosEmailDTO parametros)
         {
-            return ComporAlteracaoEmailCase.Executar(parametrosEmailDTO, _renderer);
+            var dto = new EmailTemplateDTO()
+            {
+                Arquivo = EmailResource.Arquivo_AlteracaoEmailHtml,
+                Assunto = EmailResource.Assunto_AlteracaoEmail,
+                Titulo = EmailResource.Titulo_AlteracaoEmail
+            };
+
+            var templateDefinition = dto.CriarTemplate<AcessoEmailCompositor>();
+            return _renderer.Renderizar(templateDefinition, parametros, new[] { parametros.Destinatario });
         }
 
         public Resultado<EmailRequest> ComporReativacaoConta(ParametrosEmailDTO parametros)
         {
-            return ComporReativacaoContaCase.Executar(parametros, _renderer);
+            var dto = new EmailTemplateDTO()
+            {
+                Arquivo = EmailResource.Arquivo_ReativacaoContaHtml,
+                Assunto = EmailResource.Assunto_ReativacaoConta,
+                Titulo = EmailResource.Titulo_ReativacaoConta
+            };
+
+            var templateDefinition = dto.CriarTemplate<AcessoEmailCompositor>();
+            return _renderer.Renderizar(templateDefinition, parametros, new[] { parametros.Destinatario });
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Domain.Entities;
 using Domain.Extensions;
 using Shared.Application.Interfaces.Mapping;
@@ -14,10 +14,10 @@ namespace Application.Mapping
             return new DepartamentoDTO
             {
                 Id = entity.Id,
-                Codigo = entity.Codigo.ToUpper(),
-                Descricao = entity.Descricao.ToUpper(),
+                Codigo = entity.Codigo?.ToUpper(),
+                Descricao = entity.Descricao?.ToUpper(),
                 GestorDepartamentoCodigo = entity.GestorDepartamentoCodigo,
-                GestorDepartamentoNome = entity.GestorDepartamento.ObterNome()
+                GestorDepartamentoNome = entity.GestorDepartamento?.ObterNome()
             };
         }
 

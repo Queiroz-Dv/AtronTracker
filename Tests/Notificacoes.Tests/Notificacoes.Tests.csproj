@@ -4,6 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+      <NoWarn>$(NoWarn);CS8632</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,3 +22,4 @@
     <ProjectReference Include="..\..\Framework\AtronNotificacoes\AtronNotificacoes.Core.csproj" />
   </ItemGroup>
 </Project>
+

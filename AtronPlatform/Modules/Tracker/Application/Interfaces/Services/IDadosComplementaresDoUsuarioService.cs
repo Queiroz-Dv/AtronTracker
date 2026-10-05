@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Shared.Application.DTOS.Users;
 using System.Threading.Tasks;
 
@@ -9,3 +9,4 @@ namespace Application.Interfaces.Services
         Task<DadosComplementaresDoUsuarioDTO> ObterInformacoesComplementaresDoUsuario(UsuarioDTO usuarioDTO);
     }
 }
+

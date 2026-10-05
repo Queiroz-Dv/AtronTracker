@@ -4,6 +4,7 @@ using AtronStock.Application.Resources;
 using AtronStock.Domain.Interfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 
 namespace AtronStock.Application.UseCases.ProdutoCases;
 
@@ -16,15 +17,13 @@ public sealed class ObterProcessamentoProdutoCase(
     {
         var solicitante = userAccessor.ObterCodigoUsuarioLogado();
         if (string.IsNullOrWhiteSpace(solicitante))
-            return Resultado<ProcessamentoProdutoResponse>.Falha(
-                ProdutoResource.ErroProcessamentoProdutoNaoEncontrado);
+            return Resultado<ProcessamentoProdutoResponse>.Falha(ProdutoResource.ErroProcessamentoProdutoNaoEncontrado);
 
         var processamento = await repository.ObterPorIdDoSolicitanteAsync(
             id,
             solicitante.Trim().ToUpperInvariant());
-        return processamento is null
-            ? Resultado<ProcessamentoProdutoResponse>.Falha(
-                ProdutoResource.ErroProcessamentoProdutoNaoEncontrado)
+        return processamento.IsNullable()
+            ? Resultado<ProcessamentoProdutoResponse>.Falha(ProdutoResource.ErroProcessamentoProdutoNaoEncontrado)
             : Resultado<ProcessamentoProdutoResponse>.Sucesso(mapper.MapToDto(processamento));
     }
 }

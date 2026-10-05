@@ -1,4 +1,4 @@
-﻿namespace Application.Interfaces.Contexts
+namespace Application.Interfaces.Contexts
 {
     public interface ILoginContext
     {

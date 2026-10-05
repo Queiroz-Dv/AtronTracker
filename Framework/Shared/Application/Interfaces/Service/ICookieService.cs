@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Shared.Application.DTOS.Auth;
 
 namespace Shared.Application.Interfaces.Service

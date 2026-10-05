@@ -1,5 +1,4 @@
 using Application.DTO;
-using Application.Interfaces.Services;
 using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -7,25 +6,34 @@ using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {
-    public class TarefaPreparacaoService(
-        TarefaRelacionamentoService tarefaRelacionamentoService,
-        ITarefaEstadoRepository tarefaEstadoRepository,
-        IMapper<TarefaEstado, TarefaEstadoDTO> tarefaEstadoMap,
-        IToEntityMapper<Tarefa, TarefaDTO> map,
-        IValidador<TarefaDTO> validador) : ITarefaPreparacaoService
+    public class TarefaPreparacaoService
     {
-        private readonly TarefaRelacionamentoService _tarefaRelacionamentoService = tarefaRelacionamentoService;
-        private readonly ITarefaEstadoRepository _tarefaEstadoRepository = tarefaEstadoRepository;
-        private readonly IMapper<TarefaEstado, TarefaEstadoDTO> _tarefaEstadoMap = tarefaEstadoMap;
-        private readonly IToEntityMapper<Tarefa, TarefaDTO> _map = map;
-        private readonly IValidador<TarefaDTO> _validador = validador;
+        private readonly TarefaRelacionamentoService _tarefaRelacionamentoService;
+        private readonly ITarefaEstadoRepository _tarefaEstadoRepository;
+        private readonly IMapper<TarefaEstado, TarefaEstadoDTO> _tarefaEstadoMap;
+        private readonly IToEntityMapper<Tarefa, TarefaDTO> _map;
+        private readonly IValidador<TarefaDTO> _validador;
 
-        public async Task<Resultado<Tarefa>> PrepararParaPersistenciaAsync(TarefaDTO tarefaDTO)
+        protected TarefaPreparacaoService() { }
+
+        public TarefaPreparacaoService(
+            TarefaRelacionamentoService tarefaRelacionamentoService,
+            ITarefaEstadoRepository tarefaEstadoRepository,
+            IMapper<TarefaEstado, TarefaEstadoDTO> tarefaEstadoMap,
+            IToEntityMapper<Tarefa, TarefaDTO> map,
+            IValidador<TarefaDTO> validador)
+        {
+            _tarefaRelacionamentoService = tarefaRelacionamentoService;
+            _tarefaEstadoRepository = tarefaEstadoRepository;
+            _tarefaEstadoMap = tarefaEstadoMap;
+            _map = map;
+            _validador = validador;
+        }
+
+        public virtual async Task<Resultado<Tarefa>> PrepararParaPersistenciaAsync(TarefaDTO tarefaDTO)
         {
             var erros = _validador.Validar(tarefaDTO);
             if (erros.TemErros())

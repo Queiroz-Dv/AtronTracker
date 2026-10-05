@@ -1,22 +1,22 @@
-Ôªøusing Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Shared.Domain.Enums;
 
 namespace Shared.Application.DTOS.Responses
 {
     /// <summary>
-    /// DTO base para manipula√ß√£o dos resultados das respostas da API
+    /// DTO base para manipulaÁ„o dos resultados das respostas da API
     /// </summary>
     [Serializable]
     public class ResultResponseDTO
     {
         /// <summary>
-        /// Mensagem que ser√° apresentada ao usu√°rio
+        /// Mensagem que ser· apresentada ao usu·rio
         /// </summary>
         public string Message { get; set; }
 
         /// <summary>
-        /// N√≠vel da mensagem
+        /// NÌvel da mensagem
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public ResultResponseLevelEnum Level { get; set; }

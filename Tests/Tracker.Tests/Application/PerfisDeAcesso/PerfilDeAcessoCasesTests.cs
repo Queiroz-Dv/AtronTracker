@@ -1,6 +1,7 @@
 using Application.DTO;
 using Application.Interfaces.Mapping;
 using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Application.Resources;
 using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.UseCases.PerfilDeAcessoCases;
@@ -12,6 +13,7 @@ using Moq;
 using Shared.Application.Interfaces.Service;
 using Shared.Infrastructure.Repositories;
 using Xunit;
+using Shared.Application.Interfaces;
 
 namespace Tracker.Tests.PerfisDeAcesso;
 
@@ -112,7 +114,7 @@ public class PerfilDeAcessoCasesTests
             .Setup(repositorio => repositorio.CriarPerfilRepositoryAsync(It.IsAny<PerfilDeAcessoUsuario>()))
             .ReturnsAsync(true);
 
-        var resultado = await cenario.Relacionamento.RelacionarAsync(new PerfilDeAcessoUsuarioDTO
+        var resultado = await cenario.Relacionamento.ExecutarAsync(new PerfilDeAcessoUsuarioDTO
         {
             PerfilDeAcesso = CriarPerfilDto(),
             Usuarios = [new UsuarioDTO { Codigo = "USR-NOVO" }]
@@ -133,7 +135,7 @@ public class PerfilDeAcessoCasesTests
             .Setup(repositorio => repositorio.ObterPerfilPorCodigoRepositoryAsync("PRF"))
             .ReturnsAsync(perfil);
 
-        var resultado = await cenario.Relacionamento.RelacionarAsync(new PerfilDeAcessoUsuarioDTO
+        var resultado = await cenario.Relacionamento.ExecutarAsync(new PerfilDeAcessoUsuarioDTO
         {
             PerfilDeAcesso = CriarPerfilDto(),
             Usuarios = [new UsuarioDTO { Codigo = "USR-INEXISTENTE" }]
@@ -222,16 +224,15 @@ public class PerfilDeAcessoCasesTests
             modulos.Object,
             new PerfilDeAcessoValidador());
         var invalidacaoCache = new PerfilDeAcessoCacheInvalidator(cache.Object);
-        var escopoTransacao = new Mock<ITransactionScope>();
-        var transacoes = new Mock<ITransactionManager>();
-        transacoes.Setup(gerenciador => gerenciador.CreateScope()).Returns(escopoTransacao.Object);
-        var relacionamento = new PerfilDeAcessoUsuarioRelacionamentoService(
+        var unitOfWork = new Mock<IUnitOfWork>();
+        unitOfWork.Setup(gerenciador => gerenciador.CommitAsync()).ReturnsAsync(true);
+        var relacionamento = new RelacionarPerfilUsuarioCase(
             perfisUsuarios.Object,
             usuarios.Object,
             mapa.Object,
             perfis.Object,
             invalidacaoCache,
-            transacoes.Object);
+            unitOfWork.Object);
 
         return new Cenario(
             new CriarPerfilDeAcessoCase(preparacao, perfis.Object),
@@ -269,10 +270,17 @@ public class PerfilDeAcessoCasesTests
         CriarPerfilDeAcessoCase Criar,
         AtualizarPerfilDeAcessoCase Atualizar,
         RemoverPerfilDeAcessoCase Remover,
-        PerfilDeAcessoUsuarioRelacionamentoService Relacionamento,
+        global::Application.UseCases.PerfilDeAcessoCases.RelacionarPerfilUsuarioCase Relacionamento,
         Mock<IPerfilDeAcessoUsuarioRepository> PerfisUsuarios,
         Mock<IUsuarioRepository> Usuarios,
         Mock<IPerfilDeAcessoRepository> Perfis,
         Mock<IModuloRepository> Modulos,
         Mock<ICacheUsuarioService> Cache);
 }
+
+
+
+
+
+
+

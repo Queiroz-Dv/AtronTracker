@@ -72,7 +72,7 @@ public sealed class CriarProdutoCaseTests
         AuditoriaServiceProdutoFake auditoria)
         => new(
             repository,
-            new ProdutoValidador(),
+            new ProdutoRequestValidador(),
             new ProdutoMapping(),
             new SelecionarCategoriasProdutoCase(categorias),
             new AuditoriaProdutoCase(auditoria));

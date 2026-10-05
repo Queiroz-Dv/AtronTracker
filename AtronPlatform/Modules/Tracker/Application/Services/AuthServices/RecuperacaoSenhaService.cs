@@ -1,18 +1,28 @@
 using Application.DTO;
 using Application.DTO.Request;
+using Application.EmailCompositor.Compositores;
 using Application.Extensions;
 using Application.Interfaces.Services;
-using Application.Records.Email;
-using Application.Records.Facade;
+using Domain.Interfaces.ApplicationInterfaces;
+using Domain.Interfaces.Identity;
+using Domain.Interfaces.UsuarioInterfaces;
+using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
-using System;
-using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.Services.AuthServices
 {
-    public class RecuperacaoSenhaService(RecuperacaoSenhaFacadeRecord context) : IRecuperacaoSenhaService
+    public class RecuperacaoSenhaService(
+        IUsuarioRepository usuarioRepository,
+        IUsuarioIdentityRepository identityRepository,
+        ILoginRepository loginRepository,
+        ICacheService cacheService,
+        IEmailService emailService,
+        IAcessoEmailCompositor emailCompositor,
+        IEnderecoFrontendService enderecoFrontendService,
+        ITokenTemporarioService tokenTemporarioService) : IRecuperacaoSenhaService
     {
         private const int ValidadeEmHoras = 24;
 
@@ -20,56 +30,51 @@ namespace Application.Services.AuthServices
         {
             var respostaPublica = Resultado.Sucesso(AuthResource.Mensagem_EnvioDeEmail);
 
-            if (string.IsNullOrWhiteSpace(request.Identificador))
+            if (request.Identificador.IsNullOrEmpty())
                 return respostaPublica;
 
             var identificador = request.Identificador.NormalizeIdentifier();
 
             var usuario = identificador.IdentifierIsEmail()
-                ? await context.UsuarioRepository.ObterUsuarioGeralPorEmailAsync(identificador)
-                : await context.UsuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificador.NormalizeUserCodeIdentifier());
+                ? await usuarioRepository.ObterUsuarioGeralPorEmailAsync(identificador)
+                : await usuarioRepository.ObterUsuarioGeralPorCodigoAsync(identificador.NormalizeUserCodeIdentifier());
 
-            if (usuario == null)
+            if (usuario.IsNullable())
                 return respostaPublica;
 
             if (usuario.Inativo)
                 return respostaPublica;
 
-            var temporario = context.TokenTemporarioService.Criar();
+            var temporario = tokenTemporarioService.Criar();
 
             var dados = new DadosTemporarios
             {
                 UsuarioCodigo = usuario.Codigo,
                 Email = usuario.Email,
-                Token = await context.IdentityRepository.GerarTokenRecuperacaoSenhaAsync(usuario.Codigo),
+                Token = await identityRepository.GerarTokenRecuperacaoSenhaAsync(usuario.Codigo),
                 DataAlteracaoSenha = DateTime.UtcNow
             };
 
             var cache = new CacheInfo<DadosTemporarios>(new ChaveCache(ECacheKeysInfo.DadosTemporarios, temporario.Hash)) { EntityInfo = dados };
 
-            context.CacheService.GravarCache(cache, TimeSpan.FromHours(ValidadeEmHoras));
-            var uri = context.EnderecoFrontendService.ObterUriBase();
+            cacheService.GravarCache(cache, TimeSpan.FromHours(ValidadeEmHoras));
+            var uri = enderecoFrontendService.ObterUriBase();
             var link = $"{uri}/trocar-senha#token={temporario.Valor}";
-            try
+
+            var parametrosEmailDTO = new ParametrosEmailDTO()
             {
-                var parametrosEmailDTO = new ParametrosEmailDTO()
-                {
-                    Link = link,
-                    Email = usuario.Email,
-                    UsuarioNome = usuario.Nome,
-                    Validade = ValidadeEmHoras
-                };
+                Link = link,
+                Email = usuario.Email,
+                UsuarioNome = usuario.Nome,
+                Validade = ValidadeEmHoras
+            };
 
-                var email = context.EmailCompositor.ComporRecuperacaoSenha(parametrosEmailDTO);
+            var email = emailCompositor.ComporRecuperacaoSenha(parametrosEmailDTO);
 
-                if (email.TeveFalha)
-                    return respostaPublica;
+            if (email.TeveFalha)
+                return respostaPublica;
 
-                await context.EmailService.EnviarAsync(email.Dados);
-            }
-            catch
-            {
-            }
+            await emailService.EnviarAsync(email.Dados);
 
             return respostaPublica;
         }
@@ -79,9 +84,9 @@ namespace Application.Services.AuthServices
             if (string.IsNullOrWhiteSpace(request.IdentificadorTemporario))
                 return Resultado.Falha(AuthResource.Erro_IdentificadorTemporario);
 
-            var hash = context.TokenTemporarioService.ObterHash(request.IdentificadorTemporario);
+            var hash = tokenTemporarioService.ObterHash(request.IdentificadorTemporario);
             var chave = new ChaveCache(ECacheKeysInfo.DadosTemporarios, hash);
-            var dados = context.CacheService.ObterCache<DadosTemporarios>(chave);
+            var dados = cacheService.ObterCache<DadosTemporarios>(chave);
 
             if (dados == null)
                 return Resultado.Falha(AuthResource.Erro_CacheExpiradoNaTrocaDeSenha);
@@ -95,11 +100,11 @@ namespace Application.Services.AuthServices
             if (senha != repetir)
                 return Resultado.Falha(AuthResource.Erro_SenhasDivergentes);
 
-            if (!await context.IdentityRepository.RedefinirSenhaAsync(dados.UsuarioCodigo, dados.Token, senha))
+            if (!await identityRepository.RedefinirSenhaAsync(dados.UsuarioCodigo, dados.Token, senha))
                 return Resultado.Falha(AuthResource.Erro_AtualizarSenha);
 
-            await context.LoginRepository.AtualizarSenhaUsuario(dados.UsuarioCodigo, senha);
-            context.CacheService.RemoverCache(chave);
+            await loginRepository.AtualizarSenhaUsuario(dados.UsuarioCodigo, senha);
+            cacheService.RemoverCache(chave);
 
             return Resultado.Sucesso(AuthResource.Mensagem_SenhaAlterada);
         }

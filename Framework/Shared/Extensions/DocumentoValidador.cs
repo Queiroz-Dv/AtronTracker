@@ -1,38 +1,38 @@
-Ôªøusing System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace Shared.Extensions
 {
     /// <summary>
-    /// Fornece m√©todos est√°ticos para validar formatos de documentos.
-    /// √â uma fun√ß√£o pura, sem estado.
+    /// Fornece mÈtodos est·ticos para validar formatos de documentos.
+    /// … uma funÁ„o pura, sem estado.
     /// </summary>
     public static class DocumentoValidator
     {
-        // Express√µes regulares para CPF e CNPJ (exemplos simples, podem ser melhorados)
+        // Expressıes regulares para CPF e CNPJ (exemplos simples, podem ser melhorados)
         private static readonly Regex CpfRegex = new Regex(@"^\d{11}$");
         private static readonly Regex CnpjRegex = new Regex(@"^\d{14}$");
 
         /// <summary>
-        /// Valida um n√∫mero de CPF (apenas formato, n√£o o d√≠gito verificador).
+        /// Valida um n˙mero de CPF (apenas formato, n„o o dÌgito verificador).
         /// </summary>
         public static bool IsValidCpf(string cpf)
         {
             if (string.IsNullOrWhiteSpace(cpf))
                 return false;
 
-            // Remove caracteres comuns de formata√ß√£o
+            // Remove caracteres comuns de formataÁ„o
             var cpfLimpo = cpf.Trim().Replace(".", "").Replace("-", "");
 
-            // Valida o formato e alguns casos inv√°lidos conhecidos
+            // Valida o formato e alguns casos inv·lidos conhecidos
             if (!CpfRegex.IsMatch(cpfLimpo) || cpfLimpo == "00000000000")
                 return false;
 
-            // TODO: Adicionar a l√≥gica do d√≠gito verificador aqui
+            // TODO: Adicionar a lÛgica do dÌgito verificador aqui
             return true;
         }
 
         /// <summary>
-        /// Valida um n√∫mero de CNPJ (apenas formato, n√£o o d√≠gito verificador).
+        /// Valida um n˙mero de CNPJ (apenas formato, n„o o dÌgito verificador).
         /// </summary>
         public static bool IsValidCnpj(string cnpj)
         {
@@ -44,7 +44,7 @@ namespace Shared.Extensions
             if (!CnpjRegex.IsMatch(cnpjLimpo) || cnpjLimpo == "00000000000000")
                 return false;
 
-            // TODO: Adicionar a l√≥gica do d√≠gito verificador aqui
+            // TODO: Adicionar a lÛgica do dÌgito verificador aqui
             return true;
         }
     }

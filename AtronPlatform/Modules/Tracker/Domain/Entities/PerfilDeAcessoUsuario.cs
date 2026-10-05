@@ -1,4 +1,4 @@
-ï»¿namespace Domain.Entities
+namespace Domain.Entities
 {
     public class PerfilDeAcessoUsuario
     {
@@ -8,7 +8,7 @@
         public int UsuarioId { get; set; }
         public string UsuarioCodigo { get; set; }
 
-        // NavegaÃ§Ã£o
+        // Navegação
         public Usuario Usuario { get; set; }
         public PerfilDeAcesso PerfilDeAcesso { get; set; }
     }

@@ -1,5 +1,5 @@
-﻿using Application.Interfaces.Services;
-using Application.Interfaces.Services.Identity;
+using Application.Interfaces.Services;
+using Domain.Interfaces.Identity;
 using Shared.Application.Interfaces.Service;
 
 namespace Application.Interfaces.Contexts
@@ -8,7 +8,7 @@ namespace Application.Interfaces.Contexts
     {
         ICacheUsuarioService CacheUsuarioService { get; }
 
-        IUserIdentityService UserIdentityService { get; }
+        IUsuarioIdentityRepository UserIdentityRepository { get; }
 
         ITokenService TokenService { get; }
 

@@ -1,13 +1,11 @@
 using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
-using Shared.Application.DTOS.Common;
-using Shared.Application.Interfaces.Service;
+using Shared.Application.Messaging;
 using Shared.Application.Resources;
+using Shared.Domain.Events.Auditoria;
 using Shared.Domain.ValueObjects;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.UseCases.UsuarioCases
 {
@@ -16,8 +14,8 @@ namespace Application.UseCases.UsuarioCases
         IUsuarioCargoDepartamentoRepository usuarioCargoDepartamentoRepository,
         ITarefaRepository tarefaRepository,
         IUsuarioIdentityRepository usuarioIdentityRepository,
-        IAuditoriaService auditoriaService)
-    {        
+        IEventBus eventBus)
+    {
 
         public async Task<Resultado> ExecutarAsync(string codigo)
         {
@@ -25,7 +23,7 @@ namespace Application.UseCases.UsuarioCases
                 return Resultado.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
 
             var usuario = await usuarioRepository.ObterUsuarioPorCodigoAsync(codigo);
-            if (usuario is null)
+            if (usuario.IsNullable())
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             var tarefas = (await tarefaRepository
@@ -34,15 +32,14 @@ namespace Application.UseCases.UsuarioCases
             var associacao = await usuarioCargoDepartamentoRepository
                 .ObterPorChaveDoUsuario(usuario.Id, usuario.Codigo);
 
-            if (tarefas.Count > 0 && associacao is null)
+            if (tarefas.Count > 0 && associacao.IsNullable())
                 return Resultado.Falha(UsuarioResource.ErroRepassarTarefasUsuario);
 
-            var identity = await usuarioIdentityRepository.ObterUsuarioIdentityPorCodigo(usuario.Codigo);
+            var identity = await usuarioIdentityRepository.UsuarioServiceIdentityPorCodigo(usuario.Codigo);
             var deletado = !await usuarioIdentityRepository.DeletarContaUserRepositoryAsync(usuario.Codigo);
 
-            if (identity is not null && deletado)
+            if (identity.IsNotNull() && deletado)
                 return Resultado.Falha(UsuarioResource.ErroRemoverUsuario);
-
 
             foreach (var tarefa in tarefas)
             {
@@ -59,23 +56,17 @@ namespace Application.UseCases.UsuarioCases
                     return Resultado.Falha(UsuarioResource.ErroRepassarTarefasUsuario);
             }
 
-            if (associacao is not null)
+            if (associacao.IsNotNull())
                 await usuarioCargoDepartamentoRepository.RemoverAssociacaoUsuarioCargoDepartamento(associacao);
 
             if (!await usuarioRepository.RemoverUsuarioAsync(usuario))
                 return Resultado.Falha(UsuarioResource.ErroRemoverUsuario);
 
-            await auditoriaService.RemoverServiceAsync(new AuditoriaDTO
-            {
-                CodigoRegistro = usuario.Codigo,
-                Contexto = nameof(Domain.Entities.Usuario),
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = usuario.Codigo,
-                    Contexto = nameof(Domain.Entities.Usuario),
-                    Descricao = $"Usu√°rio {usuario.Codigo} removido em {DateTime.Now:dd/MM/yyyy HH:mm}."
-                }
-            });
+            await eventBus.PublicarAsync(new AuditoriaRemovidaEvent(
+                usuario.Codigo,
+                nameof(Domain.Entities.Usuario),
+                "Usu·rio $({usuario.Codigo}) removido em $({DateTime.Now:dd/MM/yyyy HH:mm})."
+            ));
 
             return Resultado.Sucesso().AdicionarMensagem(UsuarioResource.MensagemUsuarioRemovido);
         }

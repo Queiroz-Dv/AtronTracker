@@ -1,118 +1,75 @@
-﻿using AtronStock.Application.DTO.Request;
+using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Resources;
-using Shared.Application.Interfaces.Service;
+using Shared.Application.Services;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Net.Mail;
+using Shared.Extensions.RegraExtensions;
 
 namespace AtronStock.Application.Validacoes
 {
-    public class ClienteValidador : IValidador<ClienteRequest>
+    public class ClienteValidador : Validador<ClienteRequest>
     {
-        public IEnumerable<NotificationMessage> Validar(ClienteRequest entity)
+        public ClienteValidador()
         {
-            var context = new NotificationBag();
+            RegraPara(x => x.Nome)
+                .NaoVazio()
+                .ComMensagem(ClienteResource.ErroNomeObrigatorio);
+            RegraPara(x => x.Nome)
+                .TamanhoEntre(3, 50)
+                .ComMensagem(ClienteResource.ErroNomeTamanho);
 
-            if (entity.Nome.IsNullOrEmpty())
-            {
-                context.AdicionarErro(ClienteResource.ErroNomeObrigatorio);
-            }
-            else if (entity.Nome.Length < 3 || entity.Nome.Length > 50)
-            {
-                context.AdicionarErro(ClienteResource.ErroNomeTamanho);
-            }
+            RegraPara(x => x.Codigo)
+                .NaoVazio()
+                .ComMensagem(ClienteResource.ErroCodigoObrigatorio);
+            RegraPara(x => x.Codigo)
+                .TamanhoEntre(3, 25)
+                .ComMensagem(ClienteResource.ErroCodigoTamanho);
 
-            if (entity.Codigo.IsNullOrEmpty())
-            {
-                context.AdicionarErro(ClienteResource.ErroCodigoObrigatorio);
-            }
-            else if (entity.Codigo.Length < 3 || entity.Codigo.Length > 25)
-            {
-                context.AdicionarErro(ClienteResource.ErroCodigoTamanho);
-            }
+            RegraPara(x => x.Documento.Dado)
+                .DeveSer(doc => doc.IsNullOrEmpty() || doc.Length <= 11 || DocumentoValidator.IsValidCpf(doc))
+                .ComMensagem(ClienteResource.ErroCpfInvalido);
 
-            if (!entity.Documento.Dado.IsNullOrEmpty())
-            {
-                if (entity.Documento.Dado.Length > 11)
-                {
-                    if (!DocumentoValidator.IsValidCpf(entity.Documento.Dado))
-                    {
-                        context.AdicionarErro(ClienteResource.ErroCpfInvalido);
-                    }
-                }
+            RegraPara(x => x.Documento.Dado)
+                .DeveSer(doc => doc.IsNullOrEmpty() || doc.Length <= 14 || DocumentoValidator.IsValidCnpj(doc))
+                .ComMensagem(ClienteResource.ErroCnpjInvalido);
 
-                if (entity.Documento.Dado.Length > 14)
-                {
-                    if (!DocumentoValidator.IsValidCnpj(entity.Documento.Dado))
-                    {
-                        context.AdicionarErro(ClienteResource.ErroCnpjInvalido);
-                    }
-                }
-            }
-            
-            if (entity.StatusPessoa.GetDescription().IsNullOrEmpty())
-            {
-                context.AdicionarErro(ClienteResource.ErroStatusObrigatorio);
-            }
+            RegraPara(x => x.StatusPessoa)
+                .DeveSer(status => !status.GetDescription().IsNullOrEmpty())
+                .ComMensagem(ClienteResource.ErroStatusObrigatorio);
 
-            if (entity.Email.IsNullOrEmpty())
-            {
-                context.AdicionarErro(ClienteResource.ErroEmailObrigatorio);
-            }
-            else if (entity.Email.Length > 50)
-            {
-                context.AdicionarErro(ClienteResource.ErroEmailTamanho);
-            }
-            else
-            {
-                try
-                {
-                    var m = new MailAddress(entity.Email);
-                }
-                catch (FormatException)
-                {
-                    context.AdicionarErro(ClienteResource.ErroEmailInvalido);
-                }
-            }
+            RegraPara(x => x.Email)
+                .NaoVazio()
+                .ComMensagem(ClienteResource.ErroEmailObrigatorio);
+            RegraPara(x => x.Email)
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(ClienteResource.ErroEmailTamanho);
+            RegraPara(x => x.Email)
+                .EmailValido()
+                .ComMensagem(ClienteResource.ErroEmailInvalido);
 
-            if (!entity.Telefone.IsNullOrEmpty())
-            {
-                if (entity.Telefone.Length > 15 || entity.Telefone.Length < 8)
-                {
-                    context.AdicionarErro(ClienteResource.ErroTelefoneTamanho);
-                }
-            }
+            RegraPara(x => x.Telefone)
+                .DeveSer(tel => tel.IsNullOrEmpty() || (tel.Length >= 8 && tel.Length <= 15))
+                .ComMensagem(ClienteResource.ErroTelefoneTamanho);
 
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.Logradouro.IsNullOrEmpty() || end.Logradouro.Length <= 100)
+                .ComMensagem(ClienteResource.ErroLogradouroTamanho);
 
-            if (entity.EnderecoVO != null)
-            {
-                if (!entity.EnderecoVO.Logradouro.IsNullOrEmpty() && entity.EnderecoVO.Logradouro.Length > 100)
-                {
-                    context.AdicionarErro(ClienteResource.ErroLogradouroTamanho);
-                }
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.Numero.IsNullOrEmpty() || end.Numero.Length <= 10)
+                .ComMensagem(ClienteResource.ErroNumeroEnderecoTamanho);
 
-                if (!entity.EnderecoVO.Numero.IsNullOrEmpty() && entity.EnderecoVO.Numero.Length > 10)
-                {
-                    context.AdicionarErro(ClienteResource.ErroNumeroEnderecoTamanho);
-                }
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.Cidade.IsNullOrEmpty() || end.Cidade.Length <= 50)
+                .ComMensagem(ClienteResource.ErroCidadeTamanho);
 
-                if (!entity.EnderecoVO.Cidade.IsNullOrEmpty() && entity.EnderecoVO.Cidade.Length > 50)
-                {
-                    context.AdicionarErro(ClienteResource.ErroCidadeTamanho);
-                }
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.UF.IsNullOrEmpty() || end.UF.Length == 2)
+                .ComMensagem(ClienteResource.ErroUfTamanho);
 
-                if (!entity.EnderecoVO.UF.IsNullOrEmpty() && entity.EnderecoVO.UF.Length != 2)
-                {
-                    context.AdicionarErro(ClienteResource.ErroUfTamanho);
-                }
-
-                if (!entity.EnderecoVO.CEP.IsNullOrEmpty() && entity.EnderecoVO.CEP.Length != 9)
-                {
-                    context.AdicionarErro(ClienteResource.ErroCepTamanho);
-                }
-            }
-
-            return context.Messages.ToList();
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.CEP.IsNullOrEmpty() || end.CEP.Length == 9)
+                .ComMensagem(ClienteResource.ErroCepTamanho);
         }
     }
 }

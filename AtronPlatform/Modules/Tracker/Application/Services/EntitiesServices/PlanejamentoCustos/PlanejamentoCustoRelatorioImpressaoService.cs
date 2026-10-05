@@ -1,4 +1,5 @@
 using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 

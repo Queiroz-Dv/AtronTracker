@@ -1,4 +1,4 @@
-﻿namespace Shared.Domain.ValueObjects
+namespace Shared.Domain.ValueObjects
 {
     [Serializable]
     public class NotificationMessage

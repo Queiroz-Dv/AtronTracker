@@ -1,116 +1,79 @@
 using Application.DTO;
 using Application.Resources;
 using Domain.Enums;
-using Shared.Application.Interfaces.Service;
-using Shared.Domain.ValueObjects;
+using Shared.Application.Resources;
+using Shared.Application.Services;
 using Shared.Extensions;
+using Shared.Extensions.RegraExtensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Application.Validacoes
 {
-    public class TarefaValidador : IValidador<TarefaDTO>
+    public class TarefaValidador : Validador<TarefaDTO>
     {
-        public IEnumerable<NotificationMessage> Validar(TarefaDTO tarefa)
+        public TarefaValidador()
         {
-            var notificacoes = new NotificationBag();
+            RegraPara(x => x.DestinoInicial)
+                .DeveSer(d => Enum.IsDefined(typeof(DestinoInicialTarefa), d))
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, TarefaResource.Campo_DestinoInicial));
 
-            if (tarefa is null)
-            {
-                notificacoes.AdicionarErroRegistroNulo();
-                return notificacoes.Messages.ToList();
-            }
+            RegraPara(x => x.UsuarioCodigo)
+                .Quando(x => x.DestinoInicial == DestinoInicialTarefa.Usuario.GetDescription())
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, TarefaResource.Campo_Usuario));
 
-            ValidarDestinoInicial(tarefa, notificacoes);
-            ValidarConteudo(tarefa, notificacoes);
+            RegraPara(x => x.DepartamentoCodigo)
+                .Quando(x => x.DestinoInicial == DestinoInicialTarefa.DepartamentoCargo.GetDescription())
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, TarefaResource.Campo_Departamento));
 
-            if (tarefa.EstadoDaTarefa is null || tarefa.EstadoDaTarefa.Id <= 0)
-            {
-                notificacoes.AdicionarErroCampoObrigatorio(TarefaResource.Campo_EstadoDaTarefa);
-            }
+            RegraPara(x => x.UsuarioCodigo)
+                .Quando(x => !string.IsNullOrEmpty(x.UsuarioCodigo))
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(string.Format(TarefaResource.Erro_CodigoTamanhoMinimo, TarefaResource.Campo_Usuario.ToLower()));
+            RegraPara(x => x.UsuarioCodigo)
+                .Quando(x => !string.IsNullOrEmpty(x.UsuarioCodigo))
+                .TamanhoMenorOuIgualA(10)
+                .ComMensagem(string.Format(TarefaResource.Erro_CodigoTamanhoMaximo, TarefaResource.Campo_Usuario.ToLower()));
 
-            return notificacoes.Messages.ToList();
-        }
+            RegraPara(x => x.DepartamentoCodigo)
+                .Quando(x => !string.IsNullOrEmpty(x.DepartamentoCodigo))
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(string.Format(TarefaResource.Erro_CodigoTamanhoMinimo, TarefaResource.Campo_Departamento.ToLower()));
+            RegraPara(x => x.DepartamentoCodigo)
+                .Quando(x => !string.IsNullOrEmpty(x.DepartamentoCodigo))
+                .TamanhoMenorOuIgualA(10)
+                .ComMensagem(string.Format(TarefaResource.Erro_CodigoTamanhoMaximo, TarefaResource.Campo_Departamento.ToLower()));
 
-        private static void ValidarDestinoInicial(TarefaDTO tarefa, NotificationBag notificacoes)
-        {
-            if (!Enum.IsDefined(typeof(DestinoInicialTarefa), tarefa.DestinoInicial))
-            {
-                notificacoes.AdicionarErroCampoObrigatorio(TarefaResource.Campo_DestinoInicial);
-                return;
-            }
+            RegraPara(x => x.CargoCodigo)
+                .Quando(x => !string.IsNullOrEmpty(x.CargoCodigo))
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(string.Format(TarefaResource.Erro_CodigoTamanhoMinimo, TarefaResource.Campo_Cargo.ToLower()));
+            RegraPara(x => x.CargoCodigo)
+                .Quando(x => !string.IsNullOrEmpty(x.CargoCodigo))
+                .TamanhoMenorOuIgualA(10)
+                .ComMensagem(string.Format(TarefaResource.Erro_CodigoTamanhoMaximo, TarefaResource.Campo_Cargo.ToLower()));
 
+            RegraPara(x => x.Titulo)
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, TarefaResource.Campo_Titulo));
 
+            RegraPara(x => x.Titulo)
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(TarefaResource.Erro_TituloTamanhoMaximo);
 
-            if (tarefa.DestinoInicial == DestinoInicialTarefa.Usuario.GetDescription())
-            {
-                ValidarCodigoObrigatorio(tarefa.UsuarioCodigo, TarefaResource.Campo_Usuario, notificacoes);
-                return;
-            }
+            RegraPara(x => x.Conteudo)
+                .Quando(x => !string.IsNullOrEmpty(x.Conteudo))
+                .TamanhoMenorOuIgualA(2500)
+                .ComMensagem(TarefaResource.Erro_ConteudoTamanhoMaximo);
 
-            if (tarefa.DestinoInicial == DestinoInicialTarefa.DepartamentoCargo.GetDescription())
-            {
-                ValidarCodigoObrigatorio(tarefa.DepartamentoCodigo, TarefaResource.Campo_Departamento, notificacoes);
-                ValidarCodigoOpcional(tarefa.CargoCodigo, TarefaResource.Campo_Cargo.ToLower(), notificacoes);
-                return;
-            }
+            RegraPara(x => x)
+                .DeveSer(t => t.DataInicial <= t.DataFinal)
+                .ComMensagem(TarefaResource.Erro_PeriodoInvalido);
 
-            ValidarCodigoOpcional(tarefa.UsuarioCodigo, TarefaResource.Campo_Usuario.ToLower(), notificacoes);
-            ValidarCodigoOpcional(tarefa.DepartamentoCodigo, TarefaResource.Campo_Departamento.ToLower(), notificacoes);
-            ValidarCodigoOpcional(tarefa.CargoCodigo, TarefaResource.Campo_Cargo.ToLower(), notificacoes);
-        }
-
-        private static void ValidarConteudo(TarefaDTO tarefa, NotificationBag notificacoes)
-        {
-            if (tarefa.Titulo.IsNullOrEmpty())
-            {
-                notificacoes.AdicionarErroCampoObrigatorio(TarefaResource.Campo_Titulo);
-            }
-
-            if (tarefa.Titulo.Length > 50)
-            {
-                notificacoes.AdicionarErro(TarefaResource.Erro_TituloTamanhoMaximo);
-            }
-
-            if (!tarefa.Conteudo.IsNullOrEmpty() && tarefa.Conteudo.Length > 2500)
-            {
-                notificacoes.AdicionarErro(TarefaResource.Erro_ConteudoTamanhoMaximo);
-            }
-
-            if (tarefa.DataInicial > tarefa.DataFinal)
-            {
-                notificacoes.AdicionarErro(TarefaResource.Erro_PeriodoInvalido);
-            }
-        }
-
-        private static void ValidarCodigoObrigatorio(string codigo, string campo, NotificationBag notificacoes)
-        {
-            if (codigo.IsNullOrEmpty())
-            {
-                notificacoes.AdicionarErroCampoObrigatorio(campo);
-                return;
-            }
-
-            ValidarCodigoOpcional(codigo, campo.ToLower(), notificacoes);
-        }
-
-        private static void ValidarCodigoOpcional(string codigo, string campo, NotificationBag notificacoes)
-        {
-            if (codigo.IsNullOrEmpty())
-            {
-                return;
-            }
-
-            if (codigo.Length < 3)
-            {
-                notificacoes.AdicionarErro(string.Format(TarefaResource.Erro_CodigoTamanhoMinimo, campo));
-            }
-
-            if (codigo.Length > 10)
-            {
-                notificacoes.AdicionarErro(string.Format(TarefaResource.Erro_CodigoTamanhoMaximo, campo));
-            }
+            RegraPara(x => x.EstadoDaTarefa)
+                .DeveSer(e => e != null && e.Id > 0)
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, TarefaResource.Campo_EstadoDaTarefa));
         }
     }
 }

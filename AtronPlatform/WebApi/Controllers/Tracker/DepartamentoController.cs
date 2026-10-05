@@ -1,10 +1,11 @@
-﻿using Application.DTO;
-using Application.Interfaces.Services;
+using Application.DTO;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Resources;
 using Shared.Authorization;
 using Shared.Domain.ValueObjects;
+using Application.UseCases.DepartamentoCases;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -14,7 +15,11 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     [Authorize(Policy = ModuloPolicies.Departamento)]
     [ApiController]
     [Route("api/[controller]")]
-    public class DepartamentoController(IDepartamentoService departamentoService) : ControllerBase
+    public class DepartamentoController(
+        CriarDepartamentoCase criarDepartamento,
+        AtualizarDepartamentoCase atualizarDepartamento,
+        ExcluirDepartamentoCase excluirDepartamento,
+        ObterDepartamentoCase obterDepartamento) : ControllerBase
     {
         /// <summary>  
         /// Cria um novo departamento.  
@@ -24,7 +29,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] DepartamentoDTO departamento)
         {
-            var resultado = await departamentoService.CriarAsync(departamento);
+            var resultado = await criarDepartamento.ExecutarAsync(departamento);
 
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
@@ -38,7 +43,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet]
         public async Task<ActionResult<ICollection<DepartamentoDTO>>> Get()
         {
-            var resultado = await departamentoService.ObterTodosAsync();
+            var resultado = await obterDepartamento.ObterTodosAsync();
             return Ok(resultado.Dados);
         }
 
@@ -54,7 +59,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
             if (codigo != departamento.Codigo)
                 return BadRequest(Resultado<object>.Falha(NotificacoesPadronizadas.ErroCodigoRotaDivergente).Messages);
 
-            var resultado = await departamentoService.AtualizarAsync(codigo, departamento);
+            var resultado = await atualizarDepartamento.ExecutarAsync(codigo, departamento);
 
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
@@ -67,7 +72,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
         {
-            var resultado = await departamentoService.RemoverAsync(codigo);
+            var resultado = await excluirDepartamento.ExecutarAsync(codigo);
 
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
@@ -82,7 +87,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("{codigo}")]
         public async Task<ActionResult<DepartamentoDTO>> Get(string codigo)
         {
-            var resultado = await departamentoService.ObterPorCodigo(codigo);
+            var resultado = await obterDepartamento.ObterPorCodigoAsync(codigo);
 
             return resultado.TeveFalha ?
                 NotFound(resultado.Messages) :

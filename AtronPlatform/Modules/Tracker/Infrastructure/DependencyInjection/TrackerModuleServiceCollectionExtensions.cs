@@ -3,17 +3,13 @@ using Application.DTO.Request;
 using Application.EmailCompositor.Compositores;
 using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
-using Application.Interfaces.Services.Identity;
 using Application.Policies.PlanejamentoCustos;
 using Application.Policies.Tarefas;
-using Application.Records.Facade;
 using Application.Services.AuthServices;
 using Application.Services.EntitiesServices;
 using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Application.Services.EntitiesServices.PlanejamentoCustos;
 using Application.Services.EntitiesServices.Tarefas;
-using Application.Services.EntitiesServices.Tarefas.Obtencao;
-using Application.Services.Identity;
 using Application.UseCases.CargoCases;
 using Application.UseCases.DepartamentoCases;
 using Application.UseCases.EmailCases;
@@ -61,19 +57,7 @@ namespace Infrastructure.DependencyInjection
             options.UseConfiguredDatabase(database, migrationsAssembly)
             );
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-                    {
-                        options.Lockout.AllowedForNewUsers = true;
-                        options.Lockout.MaxFailedAccessAttempts = 5;
-                        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-                    })
-                    .AddEntityFrameworkStores<AtronDbContext>()
-                    .AddDefaultTokenProviders();
-
-            services.Configure<DataProtectionTokenProviderOptions>(options =>
-            {
-                options.TokenLifespan = TimeSpan.FromHours(24);
-            });
+            services.AddScoped<Shared.Application.Interfaces.IUnitOfWork, Infrastructure.Repositories.UnitOfWork>();
 
             services.AddTrackerSharedAdapters();
             services.AddTrackerMappings();
@@ -93,11 +77,6 @@ namespace Infrastructure.DependencyInjection
             ConfigurePerfilDeAcessoServices(services);
             ConfigurePerfilDeAcessoUsuarioServices(services);
 
-
-            services.AddDataProtection()
-                .SetApplicationName("Atron")
-                .PersistKeysToFileSystem(new DirectoryInfo(@"./keys"))
-                .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
             return services;
         }
 
@@ -105,7 +84,7 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddScoped<ICacheUsuarioService, CacheUsuarioService>();
             services.AddScoped<IDadosComplementaresDoUsuarioService, DadosComplementaresDoUsuarioService>();
-            services.AddScoped<IUserIdentityService, UserIdentityService>();
+            
             services.AddScoped<IUsuarioIdentityRepository, UserIdentityRepository>();
             services.AddScoped<IRefreshTokenUnicidadeService, RefreshTokenUnicidadeService>();
         }
@@ -126,8 +105,6 @@ namespace Infrastructure.DependencyInjection
             services.AddSingleton<ITokenTemporarioService, TokenTemporarioService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILoginRepository, LoginRepository>();
-            services.AddScoped<IRegistroUsuarioService, RegistroUsuarioService>();
-            services.AddScoped<ICadastroUsuarioService, CadastroUsuarioService>();
             services.AddScoped<IRecuperacaoSenhaService, RecuperacaoSenhaService>();
             services.AddScoped<IAcessoEmailCompositor, AcessoEmailCompositor>();
             services.AddScoped<IConfirmacaoEmailCodigoService, ConfirmacaoEmailCodigoService>();
@@ -135,29 +112,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IValidador<UsuarioRegistroRequest>, UsuarioRegistroValidacoes>();
             services.AddScoped<CriarRelacaoPerfilModuloUsuarioCase>();
 
-            services.AddScoped(provider => new CadastroUsuarioFacadeRecord(
-                null,
-                null,
-                provider.GetRequiredService<IUsuarioRepository>(),
-                provider.GetRequiredService<IUsuarioIdentityRepository>(),
-                provider.GetRequiredService<IEmailService>(),
-                provider.GetRequiredService<IAcessoEmailCompositor>(),
-                provider.GetRequiredService<IValidador<UsuarioRegistroRequest>>(),
-                provider.GetRequiredService<IEnderecoFrontendService>(),
-                provider.GetRequiredService<IConfirmacaoEmailRepository>(),
-                provider.GetRequiredService<IConfirmacaoEmailCodigoService>()
-            ));
 
-            services.AddScoped(provider => new RecuperacaoSenhaFacadeRecord(
-                provider.GetRequiredService<IUsuarioRepository>(),
-                provider.GetRequiredService<IUsuarioIdentityRepository>(),
-                provider.GetRequiredService<ILoginRepository>(),
-                provider.GetRequiredService<ICacheService>(),
-                provider.GetRequiredService<IEmailService>(),
-                provider.GetRequiredService<IAcessoEmailCompositor>(),
-                provider.GetRequiredService<IEnderecoFrontendService>(),
-                provider.GetRequiredService<ITokenTemporarioService>()
-            ));
         }
 
         private static void ConfigureDefaultUserRoleServices(IServiceCollection services)
@@ -175,13 +130,11 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<TarefaUsuarioRelacionamentoService>();
             services.AddScoped<TarefaDepartamentoCargoRelacionamentoService>();
             services.AddScoped<TarefaRelacionamentoService>();
-            services.AddScoped<ITarefaPreparacaoService, TarefaPreparacaoService>();
             services.AddScoped<ITarefaObtencaoPolicy, TarefaObtencaoPolicy>();
             services.AddScoped<AprovadorObtencaoTarefaService>();
-            services.AddScoped<ITarefaConfiguracoesService, TarefaConfiguracoesService>();
-            services.AddScoped<ITarefaObtencaoService, TarefaObtencaoService>();
             services.AddScoped<ITarefaEmailCompositor, TarefaEmailCompositor>();
             services.AddScoped<ITarefaNotificacaoService, TarefaNotificacaoService>();
+            services.AddScoped<Application.Services.EntitiesServices.Tarefas.TarefaPreparacaoService>();
 
             services.AddScoped<AssumirTarefaCase>();
             services.AddScoped<AtualizarTarefaCase>();
@@ -203,17 +156,16 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<SolicitarTarefaCase>();
             services.AddScoped<TarefaNotificacaoInternaCase>();
 
-            services.AddScoped<ITarefaService, TarefaService>();
         }
 
         private static void ConfigureUsuarioServices(IServiceCollection services)
         {
-            services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<AssociarUsuarioCargoDepartamentoCase>();
             services.AddScoped<AtualizarAssociacaoUsuarioCargoDepartamentoCase>();
             services.AddScoped<AtualizarCredenciaisUsuarioCase>();
             services.AddScoped<AuditoriaUsuarioCase>();
             services.AddScoped<CriarUsuarioCase>();
+            services.AddScoped<Application.UseCases.UsuarioCases.ObterTodosUsuariosCase>();
             services.AddScoped<AtualizarUsuarioCase>();
             services.AddScoped<EnviarEmailPrimeiroAcessoCase>();
             services.AddScoped<ProcessarEnvioEmailConfirmacaoCase>();
@@ -223,6 +175,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<SolicitarReativacaoCase>();
             services.AddScoped<ReativarUsuarioCase>();
             services.AddScoped<ObterUsuarioCase>();
+            services.AddScoped<ObterTodosUsuariosCase>();
             services.AddScoped<AlterarEmailCase>();
             services.AddScoped<ConfirmarAlteracaoEmailCase>();
             services.AddScoped<ReenviarConfirmacaoEmailCase>();
@@ -253,21 +206,19 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<CriarCargoCase>();
             services.AddScoped<ExcluirCargoCase>();
             services.AddScoped<ObterCargoCase>();
-            services.AddScoped<ICargoService, CargoService>();
         }
 
         private static void ConfigurePlanejamentoCustoServices(IServiceCollection services)
         {
             services.AddScoped<IPlanejamentoCustoRepository, PlanejamentoCustoRepository>();
             services.AddScoped<EstruturaPlanejadaPolicy>();
-            services.AddScoped<IPlanejamentoCustoPreparacaoService, PlanejamentoCustoPreparacaoService>();
             services.AddScoped<IPlanejamentoCustoRelatorioService, PlanejamentoCustoRelatorioService>();
             services.AddScoped<IPlanejamentoCustoRelatorioImpressaoService, PlanejamentoCustoRelatorioImpressaoService>();
             services.AddScoped<AtualizarPlanejamentoCustoCase>();
             services.AddScoped<CriarPlanejamentoCustoCase>();
             services.AddScoped<ExcluirPlanejamentoCustoCase>();
             services.AddScoped<ObterPlanejamentoCustoCase>();
-            services.AddScoped<IPlanejamentoCustoService, PlanejamentoCustoService>();
+            services.AddScoped<Application.Services.EntitiesServices.PlanejamentoCustos.PlanejamentoCustoPreparacaoService>();
         }
 
         private static void ConfigureDepartamentoServices(IServiceCollection services)
@@ -278,7 +229,6 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ExcluirDepartamentoCase>();
             services.AddScoped<ObterDepartamentoCase>();
             services.AddScoped<VincularGestorDepartamentoService>();
-            services.AddScoped<IDepartamentoService, DepartamentoService>();
         }
 
         private static void ConfigureEmpresaServices(IServiceCollection services)
@@ -289,7 +239,7 @@ namespace Infrastructure.DependencyInjection
         private static void ConfigureModuloServices(IServiceCollection services)
         {
             services.AddScoped<IModuloRepository, ModuloRepository>();
-            services.AddScoped<IModuloService, ModuloService>();
+            services.AddScoped<Application.UseCases.ModuloCases.ObterModuloCase>();
         }
 
         private static void ConfigurePerfilDeAcessoServices(IServiceCollection services)
@@ -300,10 +250,9 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ObterPerfilDeAcessoCase>();
             services.AddScoped<ObterPerfisUsuarioCase>();
             services.AddScoped<RemoverPerfilDeAcessoCase>();
-            services.AddScoped<IPerfilDeAcessoPreparacaoService, PerfilDeAcessoPreparacaoService>();
             services.AddScoped<IPerfilDeAcessoCacheInvalidator, PerfilDeAcessoCacheInvalidator>();
-            services.AddScoped<IPerfilDeAcessoUsuarioRelacionamentoService, PerfilDeAcessoUsuarioRelacionamentoService>();
-            services.AddScoped<IPerfilDeAcessoService, PerfilDeAcessoService>();
+            services.AddScoped<Application.Services.EntitiesServices.PerfisDeAcesso.PerfilDeAcessoPreparacaoService>();
+            services.AddScoped<RelacionarPerfilUsuarioCase>();
         }
     }
 }

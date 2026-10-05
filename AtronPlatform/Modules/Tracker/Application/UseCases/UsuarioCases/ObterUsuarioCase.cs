@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Mapping;
@@ -9,17 +9,25 @@ using Shared.Extensions;
 
 namespace Application.UseCases.UsuarioCases
 {
-    public class ObterUsuarioCase(
-        IToDtoMapper<Usuario, UsuarioDTO> usuarioMapper,
-        IUsuarioRepository usuarioRepository,
-        IUserAccessor userAccessor)
+    public class ObterUsuarioCase
     {
-        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
-        private readonly IUserAccessor _userAccessor = userAccessor;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IUserAccessor _userAccessor;
+        private readonly IToDtoMapper<Usuario, UsuarioDTO> _mapper;
 
-        private readonly IToDtoMapper<Usuario, UsuarioDTO> _mapper = usuarioMapper;
+        protected ObterUsuarioCase() { }
 
-        public async Task<Resultado<UsuarioDTO>> ExecutarAsync(string codigo)
+        public ObterUsuarioCase(
+            IToDtoMapper<Usuario, UsuarioDTO> usuarioMapper,
+            IUsuarioRepository usuarioRepository,
+            IUserAccessor userAccessor)
+        {
+            _mapper = usuarioMapper;
+            _usuarioRepository = usuarioRepository;
+            _userAccessor = userAccessor;
+        }
+
+        public virtual async Task<Resultado<UsuarioDTO>> ExecutarAsync(string codigo)
         {
             if (codigo.IsNullOrEmpty())
                 return Resultado<UsuarioDTO>.Falha(NotificacoesPadronizadas.ErroCampoInvalido);
@@ -32,7 +40,7 @@ namespace Application.UseCases.UsuarioCases
             return Resultado<UsuarioDTO>.Sucesso(dto);
         }
 
-        public async Task<Resultado<Usuario>> ObterAsync()
+        public virtual async Task<Resultado<Usuario>> ObterAsync()
         {
             var usuarioCodigo = _userAccessor.ObterCodigoUsuarioLogado();
             if (usuarioCodigo.IsNullOrEmpty())

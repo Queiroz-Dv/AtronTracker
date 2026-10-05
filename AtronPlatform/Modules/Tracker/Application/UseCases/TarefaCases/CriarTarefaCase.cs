@@ -1,36 +1,35 @@
-﻿using Application.DTO;
+using Application.DTO;
+using Application.Events;
 using Application.Extensions;
-using Application.Interfaces.Services;
 using Application.Resources;
+using Application.Services.EntitiesServices.Tarefas;
 using Application.UseCases.TarefaCases.Movimentacao;
+using Application.UseCases.UsuarioCases;
 using Domain.Enums;
 using Domain.Interfaces;
+using Shared.Application.Messaging;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases
 {
     public class CriarTarefaCase(
         ITarefaRepository tarefaRepository,
-        ITarefaPreparacaoService tarefaPreparacaoService,
-        ITarefaNotificacaoService tarefaNotificacaoService,
-        TarefaNotificacaoInternaCase notificacaoInternaCase,
-        IUsuarioService usuarioService,
+        TarefaPreparacaoService tarefaPreparacaoService,
+        IEventBus eventBus,
+        ObterUsuarioCase usuarioService,
         CriarTarefaMovimentacaoCase criarMovimentacao)
     {
         private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
-        private readonly ITarefaPreparacaoService _tarefaPreparacaoService = tarefaPreparacaoService;
-        private readonly ITarefaNotificacaoService _tarefaNotificacaoService = tarefaNotificacaoService;
-        private readonly TarefaNotificacaoInternaCase _notificacaoInternaCase = notificacaoInternaCase;
-        private readonly IUsuarioService _usuarioService = usuarioService;
+        private readonly TarefaPreparacaoService _tarefaPreparacaoService = tarefaPreparacaoService;
+        private readonly IEventBus _eventBus = eventBus;
+        private readonly ObterUsuarioCase _usuarioService = usuarioService;
 
         private readonly CriarTarefaMovimentacaoCase _criarMovimentacao = criarMovimentacao;
 
         public async Task<Resultado> ExecutarAsync(TarefaDTO tarefaDTO)
         {
-            var responsavelResultado = await _usuarioService.ObterUsuarioAtual();
+            var responsavelResultado = await _usuarioService.ObterAsync();
             if (responsavelResultado.TeveFalha)
                 return Resultado.Falha(responsavelResultado.Messages);
 
@@ -58,11 +57,12 @@ namespace Application.UseCases.TarefaCases
             tarefaDTO.Id = tarefa.Id;
             var resultado = Resultado.Sucesso().AdicionarMensagem(TarefaResource.Mensagem_TarefaCriada);
 
-            await _notificacaoInternaCase.ExecutarAsync(tarefaDTO.CriarNotificacaoDeAtribuicao());
-            var envioEmail = await _tarefaNotificacaoService.NotificarAtribuicaoAsync(tarefaDTO, tarefaDTO.Usuario);
+            var notificacaoEvent = new TarefaNotificacaoEvent(
+                tarefaDTO.CriarNotificacaoDeAtribuicao(),
+                tarefaDTO,
+                tarefaDTO.Usuario);
 
-            if (envioEmail.TeveFalha)
-                resultado.AdicionarAviso(TarefaResource.Aviso_EmailNotificacaoNaoEnviado);
+            await _eventBus.PublicarAsync(notificacaoEvent);
 
             return resultado;
         }

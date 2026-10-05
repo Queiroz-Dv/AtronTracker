@@ -1,11 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>Application</RootNamespace>
 		<Nullable>disable</Nullable>
-	</PropertyGroup>
+	    <NoWarn>$(NoWarn);CS8632</NoWarn>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -100,3 +101,4 @@
 	</ItemGroup>
 
 </Project>
+

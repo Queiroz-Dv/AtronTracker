@@ -1,4 +1,4 @@
-﻿using Shared.Application.Email.Models;
+using Shared.Application.Email.Models;
 
 namespace Application.DTO
 {

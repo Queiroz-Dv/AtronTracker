@@ -1,4 +1,4 @@
-Ôªøusing Domain.Entities;
+using Domain.Entities;
 using Application.DTO;
 using Shared.Application.Interfaces.Mapping;
 
@@ -6,7 +6,7 @@ namespace Application.Mapping
 {
     public sealed class ModuloMapping : Mapper<Modulo, ModuloDTO>
     {
-        //TODO: Ainda ser√° necess√°rio verificar se as propriedades devem seguir junto com os m√≥dulos
+        //TODO: Ainda ser· necess·rio verificar se as propriedades devem seguir junto com os mÛdulos
         public override ModuloDTO MapToDto(Modulo entity)
         {
             return new ModuloDTO { Codigo = entity.Codigo, Descricao = entity.Descricao };

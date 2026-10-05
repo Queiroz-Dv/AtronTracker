@@ -1,3 +1,4 @@
+using Application.UseCases.UsuarioCases;
 using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Mapping;
@@ -98,7 +99,7 @@ public class AssumirTarefaCaseTests
             Times.Never);
         cenario.Publisher.Verify(
             publisher => publisher.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
     }
@@ -118,7 +119,7 @@ public class AssumirTarefaCaseTests
             mensagem.Descricao == TarefaResource.Erro_RegistrarMovimentacao);
         cenario.Publisher.Verify(
             publisher => publisher.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
     }
@@ -156,9 +157,9 @@ public class AssumirTarefaCaseTests
             .Callback(() => assumida = true)
             .ReturnsAsync(true);
 
-        var usuarioService = new Mock<IUsuarioService>();
+        var usuarioService = new Mock<ObterUsuarioCase>();
         usuarioService
-            .Setup(service => service.ObterUsuarioAtual())
+            .Setup(service => service.ObterAsync())
             .ReturnsAsync(Resultado<Usuario>.Sucesso(usuario));
 
         var movimentacoes = new Mock<ITarefaMovimentacaoRepository>();
@@ -166,23 +167,12 @@ public class AssumirTarefaCaseTests
             .Setup(repository => repository.RegistrarAsync(It.IsAny<TarefaMovimentacao>()))
             .ReturnsAsync(true);
 
-        var publisher = new Mock<INotificacoesInternasPublisher>();
+        var publisher = new Mock<Shared.Application.Messaging.IEventBus>();
         publisher
             .Setup(service => service.PublicarAsync(
-                It.IsAny<PublicarNotificacaoInternaRequest>(),
+                It.IsAny<global::Application.Events.TarefaNotificacaoEvent>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(ResultadoPublicacaoNotificacaoInterna.Sucesso(
-                new NotificacaoInternaResponse(
-                    1000001,
-                    "Tracker",
-                    "TarefaObtida",
-                    "",
-                    "",
-                    null,
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    null)));
+            .Returns(System.Threading.Tasks.ValueTask.CompletedTask);
 
         var mapper = new Mock<IToDtoMapper<Tarefa, TarefaDTO>>();
         mapper
@@ -202,7 +192,7 @@ public class AssumirTarefaCaseTests
             tarefas.Object,
             usuarioService.Object,
             new TarefaObtencaoPolicy(),
-            new TarefaNotificacaoInternaCase(publisher.Object),
+            publisher.Object,
             mapper.Object,
             new RegistrarObtencaoTarefaMovimentacaoCase(
                 movimentacoes.Object,
@@ -233,8 +223,10 @@ public class AssumirTarefaCaseTests
         AssumirTarefaCase Case,
         Mock<ITarefaRepository> Tarefas,
         Mock<ITarefaMovimentacaoRepository> Movimentacoes,
-        Mock<INotificacoesInternasPublisher> Publisher,
+        Mock<Shared.Application.Messaging.IEventBus> Publisher,
         Usuario Usuario,
         Tarefa TarefaAnterior,
         Tarefa TarefaAtualizada);
 }
+
+

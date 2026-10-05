@@ -1,37 +1,38 @@
-﻿using Application.DTO;
-using Application.Interfaces.Services;
+using Application.DTO;
 using Application.Records.Tarefa;
 using Application.Resources;
+using Application.Services.EntitiesServices.Tarefas;
 using Application.UseCases.TarefaCases.Movimentacao;
+using Application.UseCases.UsuarioCases;
 using Domain.Interfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.UseCases.TarefaCases
 {
     public class AtualizarTarefaCase(
         ITarefaRepository tarefaRepository,
-        ITarefaPreparacaoService tarefaPreparacaoService,
-        IUsuarioService usuarioService,
+        TarefaPreparacaoService tarefaPreparacaoService,
+        ObterUsuarioCase usuarioService,
         AtualizarTarefaMovimentacaoCase atualizarMovimentacao)
     {
         private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
-        private readonly ITarefaPreparacaoService _tarefaPreparacaoService = tarefaPreparacaoService;
-        private readonly IUsuarioService _usuarioService = usuarioService;
+        private readonly TarefaPreparacaoService _tarefaPreparacaoService = tarefaPreparacaoService;
+        private readonly ObterUsuarioCase _usuarioService = usuarioService;
         private readonly AtualizarTarefaMovimentacaoCase _atualizarMovimentacao = atualizarMovimentacao;
 
         public async Task<Resultado> ExecutarAsync(int id, TarefaDTO tarefaDTO)
         {
             var tarefaAnterior = await _tarefaRepository.ObterTarefaPorId(id);
-            if (tarefaAnterior is null)
+            if (tarefaAnterior.IsNullable())
                 return Resultado.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
             var preparacaoResultado = await _tarefaPreparacaoService.PrepararParaPersistenciaAsync(tarefaDTO);
             if (preparacaoResultado.TeveFalha)
                 return Resultado.Falha(preparacaoResultado.Messages);
 
-            var responsavelResultado = await _usuarioService.ObterUsuarioAtual();
+            var responsavelResultado = await _usuarioService.ObterAsync();
             if (responsavelResultado.TeveFalha)
                 return Resultado.Falha(responsavelResultado.Messages);
 

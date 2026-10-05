@@ -2,6 +2,7 @@ using Application.DTO.Request;
 using Application.DTO.Response;
 using Application.Extensions;
 using Application.Interfaces.Services;
+using Application.UseCases.PlanejamentoCustoCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Authorization;
@@ -18,7 +19,11 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     [ApiController]
     [Route("api/[controller]")]
     public class PlanejamentoCustoController(
-        IPlanejamentoCustoService planejamentoCustoService,
+        CriarPlanejamentoCustoCase criarPlanejamentoCusto,
+        AtualizarPlanejamentoCustoCase atualizarPlanejamentoCusto,
+        ExcluirPlanejamentoCustoCase excluirPlanejamentoCusto,
+        ObterPlanejamentoCustoCase obterPlanejamentoCusto,
+        IPlanejamentoCustoRelatorioService planejamentoCustoRelatorioService,
         IPlanejamentoCustoRelatorioImpressaoService planejamentoCustoRelatorioImpressaoService) : ControllerBase
     {
         /// <summary>
@@ -29,7 +34,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpPost]
         public async Task<ActionResult<PlanejamentoCustoResponse>> Post([FromBody] PlanejamentoCustoRequest request)
         {
-            var resultado = await planejamentoCustoService.CriarAsync(request.MontarDTO());
+            var resultado = await criarPlanejamentoCusto.ExecutarAsync(request.MontarDTO());
 
             return resultado.TeveFalha
                 ? BadRequest(resultado.Messages)
@@ -45,8 +50,8 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         public async Task<ActionResult<ICollection<PlanejamentoCustoResponse>>> Get([FromQuery] int? ano)
         {
             var resultado = ano.HasValue
-                ? await planejamentoCustoService.ObterPorAnoAsync(ano.Value)
-                : await planejamentoCustoService.ObterTodosAsync();
+                ? await obterPlanejamentoCusto.ObterPorAnoAsync(ano.Value)
+                : await obterPlanejamentoCusto.ObterTodosAsync();
 
             var response = resultado.Dados.Select(plc => plc.MontarResponse()).ToList();
             return Ok(response);
@@ -60,7 +65,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("relatorio-geral")]
         public async Task<ActionResult<PlanejamentoCustoRelatorioGeralResponse>> ObterRelatorioGeral([FromQuery] int ano)
         {
-            var resultado = await planejamentoCustoService.ObterRelatorioGeralAsync(ano);
+            var resultado = await planejamentoCustoRelatorioService.ObterRelatorioGeralAsync(ano);
 
             return resultado.TeveFalha
                 ? BadRequest(resultado.Messages)
@@ -90,7 +95,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("relatorio/{codigo}")]
         public async Task<ActionResult<PlanejamentoCustoRelatorioGeralResponse>> ObterRelatorioPorCodigo(string codigo)
         {
-            var resultado = await planejamentoCustoService.ObterRelatorioPorCodigoAsync(codigo);
+            var resultado = await planejamentoCustoRelatorioService.ObterRelatorioPorCodigoAsync(codigo);
 
             return resultado.TeveFalha
                 ? BadRequest(resultado.Messages)
@@ -120,7 +125,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("{codigo}")]
         public async Task<ActionResult<PlanejamentoCustoResponse>> Get(string codigo)
         {
-            var resultado = await planejamentoCustoService.ObterPorCodigoAsync(codigo);
+            var resultado = await obterPlanejamentoCusto.ObterPorCodigoAsync(codigo);
 
             return resultado.TeveFalha
                 ? NotFound(resultado.Messages)
@@ -136,7 +141,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpPut("{codigo}")]
         public async Task<ActionResult> Put(string codigo, [FromBody] PlanejamentoCustoRequest request)
         {
-            var resultado = await planejamentoCustoService.AtualizarAsync(codigo, request.MontarDTO());
+            var resultado = await atualizarPlanejamentoCusto.ExecutarAsync(codigo, request.MontarDTO());
 
             return resultado.TeveFalha
                 ? BadRequest(resultado.Messages)
@@ -151,7 +156,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
         {
-            var resultado = await planejamentoCustoService.RemoverAsync(codigo);
+            var resultado = await excluirPlanejamentoCusto.ExecutarAsync(codigo);
 
             return resultado.TeveFalha
                 ? BadRequest(resultado.Messages)

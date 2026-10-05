@@ -1,6 +1,6 @@
-ï»¿namespace Shared.Application.DTOS.Email
+namespace Shared.Application.DTOS.Email
 {
-    // DTO de configuraÃ§Ã£o de SMTP
+    // DTO de configuração de SMTP
     public class EmailSettings
     {
         public string Provider { get; set; } = "Smtp";

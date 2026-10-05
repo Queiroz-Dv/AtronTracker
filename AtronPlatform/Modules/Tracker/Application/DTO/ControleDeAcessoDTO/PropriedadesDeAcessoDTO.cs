@@ -1,4 +1,4 @@
-﻿namespace Application.DTO.ControleDeAcessoDTO
+namespace Application.DTO.ControleDeAcessoDTO
 {
     public class PropriedadesDeAcessoDTO
     {

@@ -1,4 +1,4 @@
-﻿namespace AtronStock.Domain.Entities
+namespace AtronStock.Domain.Entities
 {
     public class ProdutoCategoria
     {

@@ -1,4 +1,4 @@
-ï»¿using Domain.Entities;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,7 +18,7 @@ namespace Infrastructure.EntitiesConfiguration
 
             builder.HasOne(dpt => dpt.Departamento) // Tem um departamento
                    .WithMany(crg => crg.Cargos) // com muitos cargos 
-                   .HasForeignKey(key => new { key.DepartamentoId, key.DepartamentoCodigo }) // FK da relaÃ§Ã£o
+                   .HasForeignKey(key => new { key.DepartamentoId, key.DepartamentoCodigo }) // FK da relação
                    .HasPrincipalKey(dpt => new { dpt.Id, dpt.Codigo });
 
             // Exemplo pra preencher a tabela 

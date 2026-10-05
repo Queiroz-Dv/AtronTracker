@@ -1,9 +1,8 @@
-Ôªøusing Application.DTO;
+using Application.DTO;
 using Application.Mapping;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.WorkspaceCases
 {
@@ -15,7 +14,7 @@ namespace Application.UseCases.WorkspaceCases
 
             if (entidade.IsNullable())
             {
-                return Resultado<WorkspaceDTO>.Falha("N√£o h√° v√≠nculos com workspace para o usu√°rio informado.");
+                return Resultado<WorkspaceDTO>.Falha("N„o h· vÌnculos com workspace para o usu·rio informado.");
             }
 
             var dto = mapping.MapToDto(entidade);

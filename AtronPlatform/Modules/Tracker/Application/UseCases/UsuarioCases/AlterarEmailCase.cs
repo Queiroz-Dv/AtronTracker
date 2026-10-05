@@ -1,5 +1,6 @@
-﻿using Domain.Interfaces.Identity;
+using Domain.Interfaces.Identity;
 using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
@@ -67,3 +68,5 @@ namespace Application.UseCases.UsuarioCases
         }
     }
 }
+
+

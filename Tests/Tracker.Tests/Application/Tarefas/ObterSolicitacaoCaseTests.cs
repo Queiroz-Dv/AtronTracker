@@ -1,4 +1,6 @@
+using Application.UseCases.UsuarioCases;
 using Application.DTO;
+using Domain.Entities;
 using Application.Interfaces.Services;
 using Application.UseCases.TarefaCases;
 using Domain.Entities;
@@ -21,16 +23,16 @@ public class ObterSolicitacaoCaseTests
             new() { Id = 11 },
             new() { Id = 12 }
         };
-        var usuarioService = new Mock<IUsuarioService>();
+        var usuarioService = new Mock<ObterUsuarioCase>();
         usuarioService
-            .Setup(service => service.ObterUsuarioAtual())
+            .Setup(service => service.ObterAsync())
             .ReturnsAsync(Resultado<Usuario>.Sucesso(usuario));
 
-        var departamentoService = new Mock<IDepartamentoService>();
+        var departamentoService = new Mock<IDepartamentoRepository>();
         departamentoService
-            .Setup(service => service.ObterDepartamentosPorGestor(usuario.Codigo))
-            .ReturnsAsync(Resultado<IEnumerable<DepartamentoDTO>>.Sucesso(
-                [new DepartamentoDTO { Codigo = "ADM" }, new DepartamentoDTO { Codigo = "FIN" }]));
+            .Setup(service => service.ObterDepartamentosPorCodigoGestorAsync(usuario.Codigo))
+            .ReturnsAsync(
+                [new Departamento { Codigo = "ADM" }, new Departamento { Codigo = "FIN" }]);
 
         var repository = new Mock<ISolicitacaoObtencaoTarefaRepository>();
         repository
@@ -61,15 +63,15 @@ public class ObterSolicitacaoCaseTests
     public async Task ExecutarAsync_DeveConsultarAprovadorMesmoSemDepartamentoGerido()
     {
         var usuario = new Usuario { Id = 7, Codigo = "GESTOR" };
-        var usuarioService = new Mock<IUsuarioService>();
+        var usuarioService = new Mock<ObterUsuarioCase>();
         usuarioService
-            .Setup(service => service.ObterUsuarioAtual())
+            .Setup(service => service.ObterAsync())
             .ReturnsAsync(Resultado<Usuario>.Sucesso(usuario));
 
-        var departamentoService = new Mock<IDepartamentoService>();
+        var departamentoService = new Mock<IDepartamentoRepository>();
         departamentoService
-            .Setup(service => service.ObterDepartamentosPorGestor(usuario.Codigo))
-            .ReturnsAsync(Resultado<IEnumerable<DepartamentoDTO>>.Sucesso([]));
+            .Setup(service => service.ObterDepartamentosPorCodigoGestorAsync(usuario.Codigo))
+            .ReturnsAsync([]);
 
         var repository = new Mock<ISolicitacaoObtencaoTarefaRepository>();
         repository
@@ -94,3 +96,7 @@ public class ObterSolicitacaoCaseTests
         repository.VerifyAll();
     }
 }
+
+
+
+

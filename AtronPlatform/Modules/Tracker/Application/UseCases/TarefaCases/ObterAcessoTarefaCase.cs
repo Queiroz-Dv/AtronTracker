@@ -1,21 +1,20 @@
 using Application.DTO;
-using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases
 {
     public sealed class ObterAcessoTarefaCase(
-        IUsuarioService usuarioService,
+        ObterUsuarioCase usuarioService,
         ITarefaRepository tarefaRepository)
     {
-        private readonly IUsuarioService _usuarioService = usuarioService;
+        private readonly ObterUsuarioCase _usuarioService = usuarioService;
         private readonly ITarefaRepository _tarefaRepository = tarefaRepository;
 
         public async Task<Resultado<TarefaAcessoDTO>> ExecutarAsync()
         {
-            var usuarioResultado = await _usuarioService.ObterUsuarioAtual();
+            var usuarioResultado = await _usuarioService.ObterAsync();
             if (usuarioResultado.TeveFalha)
                 return Resultado<TarefaAcessoDTO>.Falhas(usuarioResultado.Messages);
 

@@ -1,142 +1,78 @@
-﻿using AtronStock.Application.DTO.Request;
+using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Resources;
-using Shared.Application.Interfaces.Service;
+using Shared.Application.Services;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Net.Mail;
+using Shared.Extensions.RegraExtensions;
 
 namespace AtronStock.Application.Validacoes
 {
-    public class FornecedorValidador : IValidador<FornecedorRequest>
+    public class FornecedorValidador : Validador<FornecedorRequest>
     {
-        public IEnumerable<NotificationMessage> Validar(FornecedorRequest entity)
+        public FornecedorValidador()
         {
-            var context = new NotificationBag();
-            ValidaCodigo(entity, context);
-            ValidaNome(entity, context);
+            RegraPara(x => x.Codigo)
+                .NaoVazio()
+                .ComMensagem(FornecedorResource.ErroCodigoObrigatorio);
+            RegraPara(x => x.Codigo)
+                .TamanhoEntre(3, 20)
+                .ComMensagem(FornecedorResource.ErroCodigoLimiteMaximoDeCaractere); // wait, old logic: if > 20 then MaximoDeCaractere, else if < 3 then MinimoDeCaractere.
 
-            ValidarEmail(entity, context);
-            ValidarTelefone(entity, context);
+            RegraPara(x => x.Codigo)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(FornecedorResource.ErroCodigoLimiteMinimoDeCaractere);
 
-            ValidarEndereco(entity, context);
+            RegraPara(x => x.Nome)
+                .NaoVazio()
+                .ComMensagem(FornecedorResource.ErroNomeObrigatorio);
+            RegraPara(x => x.Nome)
+                .TamanhoMenorOuIgualA(100)
+                .ComMensagem(FornecedorResource.ErroNomeLimiteMaximoDeCaractere);
+            RegraPara(x => x.Nome)
+                .TamanhoMaiorOuIgualA(5)
+                .ComMensagem(FornecedorResource.ErroNomeLimiteMinimoDeCaractere);
 
-            ValidarDocumento(entity, context);
+            RegraPara(x => x.Email)
+                .NaoVazio()
+                .ComMensagem(FornecedorResource.ErroEmailObrigatorio);
+            RegraPara(x => x.Email)
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(FornecedorResource.ErroEmailTamanho);
+            RegraPara(x => x.Email)
+                .EmailValido()
+                .ComMensagem(FornecedorResource.ErroEmailInvalido);
 
-            return [.. context.Messages];
-        }
+            RegraPara(x => x.Telefone)
+                .DeveSer(tel => tel.IsNullOrEmpty() || (tel.Length >= 8 && tel.Length <= 15))
+                .ComMensagem(FornecedorResource.ErroTelefoneTamanho);
 
-        private static void ValidarDocumento(FornecedorRequest entity, NotificationBag context)
-        {
-            if (!entity.CNPJ.IsNullOrEmpty())
-            {
-                if (entity.CNPJ.Length > 14)
-                {
-                    if (!DocumentoValidator.IsValidCnpj(entity.CNPJ))
-                    {
-                        context.AdicionarErro(FornecedorResource.ErroCnpjInvalido);
-                    }
-                }
-            }
-            else
-            {
-                context.AdicionarErro(FornecedorResource.ErroCnpjInvalido);
-            }
-        }
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.Logradouro.IsNullOrEmpty() || end.Logradouro.Length <= 100)
+                .ComMensagem(FornecedorResource.ErroLogradouroTamanho);
 
-        private static void ValidarEndereco(FornecedorRequest entity, NotificationBag context)
-        {
-            if (entity.EnderecoVO != null)
-            {
-                if (!entity.EnderecoVO.Logradouro.IsNullOrEmpty() && entity.EnderecoVO.Logradouro.Length > 100)
-                {
-                    context.AdicionarErro(FornecedorResource.ErroLogradouroTamanho);
-                }
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.Numero.IsNullOrEmpty() || end.Numero.Length <= 10)
+                .ComMensagem(FornecedorResource.ErroNumeroEnderecoTamanho);
 
-                if (!entity.EnderecoVO.Numero.IsNullOrEmpty() && entity.EnderecoVO.Numero.Length > 10)
-                {
-                    context.AdicionarErro(FornecedorResource.ErroNumeroEnderecoTamanho);
-                }
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.Cidade.IsNullOrEmpty() || end.Cidade.Length <= 50)
+                .ComMensagem(FornecedorResource.ErroCidadeTamanho);
 
-                if (!entity.EnderecoVO.Cidade.IsNullOrEmpty() && entity.EnderecoVO.Cidade.Length > 50)
-                {
-                    context.AdicionarErro(FornecedorResource.ErroCidadeTamanho);
-                }
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.UF.IsNullOrEmpty() || end.UF.Length == 2)
+                .ComMensagem(FornecedorResource.ErroUfTamanho);
 
-                if (!entity.EnderecoVO.UF.IsNullOrEmpty() && entity.EnderecoVO.UF.Length != 2)
-                {
-                    context.AdicionarErro(FornecedorResource.ErroUfTamanho);
-                }
+            RegraPara(x => x.EnderecoVO)
+                .DeveSer(end => end == null || end.CEP.IsNullOrEmpty() || end.CEP.Length == 9)
+                .ComMensagem(FornecedorResource.ErroCepTamanho);
 
-                if (!entity.EnderecoVO.CEP.IsNullOrEmpty() && entity.EnderecoVO.CEP.Length != 9)
-                {
-                    context.AdicionarErro(FornecedorResource.ErroCepTamanho);
-                }
-            }
-        }
-
-        private static void ValidarTelefone(FornecedorRequest entity, NotificationBag context)
-        {
-            if (!entity.Telefone.IsNullOrEmpty())
-            {
-                if (entity.Telefone.Length > 15 || entity.Telefone.Length < 8)
-                {
-                    context.AdicionarErro(FornecedorResource.ErroTelefoneTamanho);
-                }
-            }
-        }
-
-        private static void ValidarEmail(FornecedorRequest entity, NotificationBag context)
-        {
-            if (entity.Email.IsNullOrEmpty())
-            {
-                context.AdicionarErro(FornecedorResource.ErroEmailObrigatorio);
-            }
-            else if (entity.Email.Length > 50)
-            {
-                context.AdicionarErro(FornecedorResource.ErroEmailTamanho);
-            }
-            else
-            {
-                try
-                {
-                    var m = new MailAddress(entity.Email);
-                }
-                catch (FormatException)
-                {
-                    context.AdicionarErro(FornecedorResource.ErroEmailInvalido);
-                }
-            }
-        }
-
-        private static void ValidaCodigo(FornecedorRequest entity, NotificationBag context)
-        {
-            if (entity.Codigo.IsNullOrEmpty())
-            {
-                context.AdicionarErro(FornecedorResource.ErroCodigoObrigatorio);
-            }
-            else if (entity.Codigo.Length > 20)
-            {
-                context.AdicionarErro(FornecedorResource.ErroCodigoLimiteMaximoDeCaractere);
-            }
-            else if (entity.Codigo.Length < 3)
-            {
-                context.AdicionarErro(FornecedorResource.ErroCodigoLimiteMinimoDeCaractere);
-            }
-        }
-        private static void ValidaNome(FornecedorRequest entity, NotificationBag context)
-        {
-            if (entity.Nome.IsNullOrEmpty())
-            {
-                context.AdicionarErro(FornecedorResource.ErroNomeObrigatorio);
-            }
-            else if (entity.Nome.Length > 100)
-            {
-                context.AdicionarErro(FornecedorResource.ErroNomeLimiteMaximoDeCaractere);
-            }
-            else if (entity.Nome.Length < 5)
-            {
-                context.AdicionarErro(FornecedorResource.ErroNomeLimiteMinimoDeCaractere);
-            }
+            RegraPara(x => x.CNPJ)
+                .NaoVazio()
+                .ComMensagem(FornecedorResource.ErroCnpjInvalido);
+            
+            RegraPara(x => x.CNPJ)
+                .DeveSer(cnpj => cnpj.IsNullOrEmpty() || cnpj.Length <= 14 || DocumentoValidator.IsValidCnpj(cnpj))
+                .ComMensagem(FornecedorResource.ErroCnpjInvalido);
         }
     }
 }

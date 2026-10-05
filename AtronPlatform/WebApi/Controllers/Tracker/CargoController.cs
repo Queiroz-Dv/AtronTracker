@@ -1,10 +1,11 @@
-﻿using Application.DTO;
-using Application.Interfaces.Services;
+using Application.DTO;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Resources;
 using Shared.Authorization;
 using Shared.Domain.ValueObjects;
+using Application.UseCases.CargoCases;
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -14,7 +15,11 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     [Authorize(Policy = ModuloPolicies.Cargo)]
     [ApiController]
     [Route("api/[controller]")]
-    public class CargoController(ICargoService cargoService) : ControllerBase
+    public class CargoController(
+        CriarCargoCase criarCargo,
+        AtualizarCargoCase atualizarCargo,
+        ExcluirCargoCase excluirCargo,
+        ObterCargoCase obterCargo) : ControllerBase
     {
         /// <summary>  
         /// Cria um novo cargo.  
@@ -24,7 +29,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CargoDTO cargo)
         {
-            var resultado = await cargoService.CriarAsync(cargo);
+            var resultado = await criarCargo.ExecutarAsync(cargo);
 
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
@@ -38,7 +43,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet]
         public async Task<ActionResult<ICollection<CargoDTO>>> Get()
         {
-            var resultado = await cargoService.ObterTodosAsync();
+            var resultado = await obterCargo.ObterTodosAsync();
             return Ok(resultado.Dados);
         }
 
@@ -54,7 +59,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
             if (codigo != cargo.Codigo)
                 return BadRequest(Resultado<object>.Falha(NotificacoesPadronizadas.ErroCodigoRotaDivergente).Messages);
 
-            var resultado = await cargoService.AtualizarAsync(codigo, cargo);
+            var resultado = await atualizarCargo.ExecutarAsync(codigo, cargo);
 
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
@@ -67,7 +72,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpDelete("{codigo}")]
         public async Task<ActionResult> Delete(string codigo)
         {
-            var resultado = await cargoService.RemoverAsync(codigo);
+            var resultado = await excluirCargo.ExecutarAsync(codigo);
 
             return resultado.TeveFalha ?
                 BadRequest(resultado.Messages) :
@@ -82,7 +87,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("{codigo}")]
         public async Task<ActionResult<CargoDTO>> Get(string codigo)
         {
-            var resultado = await cargoService.ObterPorCodigoAsync(codigo);
+            var resultado = await obterCargo.ObterPorCodigoAsync(codigo);
 
             return resultado.TeveFalha ?
                 NotFound(resultado.Messages) :

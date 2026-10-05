@@ -1,4 +1,4 @@
-﻿using Shared.Domain.Enums;
+using Shared.Domain.Enums;
 
 namespace Shared.Domain.ValueObjects
 {

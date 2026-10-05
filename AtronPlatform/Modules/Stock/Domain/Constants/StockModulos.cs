@@ -1,4 +1,4 @@
-﻿namespace AtronStock.Domain.Constants
+namespace AtronStock.Domain.Constants
 {
     internal class StockModulos
     {

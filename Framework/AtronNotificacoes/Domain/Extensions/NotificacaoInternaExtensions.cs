@@ -1,4 +1,4 @@
-﻿using AtronNotificacoes.Contracts.DTO.Response;
+using AtronNotificacoes.Contracts.DTO.Response;
 
 namespace AtronNotificacoes.Domain.Extensions
 {

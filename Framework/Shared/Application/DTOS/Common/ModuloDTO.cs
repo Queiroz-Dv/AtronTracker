@@ -1,11 +1,11 @@
-Ôªønamespace Shared.Application.DTOS.Common
+namespace Shared.Application.DTOS.Common
 {
     public class ModuloDTO
     {
         public string Codigo { get; set; } // "DPT", "CRG"...
-        public string Nome { get; set; }   // Nome do m√≥dulo, ex: "Departamentos"
+        public string Nome { get; set; }   // Nome do mÛdulo, ex: "Departamentos"
 
-        // Campos visuais (apenas se quiser deix√°-los din√¢micos via banco)
+        // Campos visuais (apenas se quiser deix·-los din‚micos via banco)
         public string Icone { get; set; }  // Ex: "business"
         public string Rota { get; set; }   // Ex: "/atron/departamentos"
         public int Colunas { get; set; } = 1;

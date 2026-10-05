@@ -1,17 +1,16 @@
 using Application.DTO;
-using Application.Interfaces.Services;
 using Application.Resources;
+using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.PerfilDeAcessoCases
 {
     public sealed class CriarPerfilDeAcessoCase(
-        IPerfilDeAcessoPreparacaoService preparacaoService,
+        PerfilDeAcessoPreparacaoService preparacaoService,
         IPerfilDeAcessoRepository perfilDeAcessoRepository)
     {
-        private readonly IPerfilDeAcessoPreparacaoService _preparacaoService = preparacaoService;
+        private readonly PerfilDeAcessoPreparacaoService _preparacaoService = preparacaoService;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository = perfilDeAcessoRepository;
 
         public async Task<Resultado<PerfilDeAcessoDTO>> ExecutarAsync(PerfilDeAcessoDTO perfilDeAcessoDTO)

@@ -1,4 +1,4 @@
-﻿namespace Application.DTO.Request
+namespace Application.DTO.Request
 {
     [System.Text.Json.Serialization.JsonUnmappedMemberHandling(
         System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow)]

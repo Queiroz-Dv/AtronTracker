@@ -82,3 +82,5 @@ public class ObterUsuarioTests
         Assert.Same(usuarioDto, resultado.Dados);
     }
 }
+
+

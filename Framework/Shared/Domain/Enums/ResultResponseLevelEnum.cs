@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Shared.Domain.Enums
 {
     /// <summary>
-    /// Enumerador de nível da mensagem
+    /// Enumerador de n�vel da mensagem
     /// </summary>
     [Serializable]
     public enum ResultResponseLevelEnum

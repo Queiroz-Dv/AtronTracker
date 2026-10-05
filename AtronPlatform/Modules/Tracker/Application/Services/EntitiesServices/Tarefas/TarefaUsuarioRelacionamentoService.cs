@@ -6,7 +6,6 @@ using Shared.Application.Interfaces.Mapping;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Threading.Tasks;
 
 namespace Application.Services.EntitiesServices.Tarefas
 {

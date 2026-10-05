@@ -1,47 +1,49 @@
 using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Resources;
 using AtronStock.Domain.Entities;
-using Shared.Application.DTOS.Common;
-using Shared.Application.Interfaces.Service;
+using Shared.Application.Messaging;
+using Shared.Domain.Events.Auditoria;
 using Shared.Extensions;
 using System.Transactions;
 
 namespace AtronStock.Application.UseCases.CategoriaCases
 {
-    public sealed class AuditoriaCategoriaCase(IAuditoriaService auditoriaService)
+    public sealed class AuditoriaCategoriaCase(IEventBus eventBus)
     {
         private const string CategoriaContexto = nameof(Categoria);
-
-        private readonly IAuditoriaService _auditoriaService = auditoriaService;
+        private readonly IEventBus _eventBus = eventBus;
 
         public Task RegistrarCriacaoAsync(Categoria categoria)
-            => _auditoriaService.RegistrarServiceAsync(CriarAuditoria(
+            => _eventBus.PublicarAsync(new AuditoriaRegistradaEvent(
                 categoria.Codigo,
+                CategoriaContexto,
                 string.Format(
                     CategoriaResource.HistoricoCriacao,
                     categoria.Codigo,
-                    DateTime.Now)));
+                    DateTime.Now))).AsTask();
 
         public Task RegistrarAtualizacaoAsync(
             Categoria categoria,
             CategoriaRequest request)
-            => _auditoriaService.AtualizarServiceAsync(CriarAuditoria(
+            => _eventBus.PublicarAsync(new AuditoriaAtualizadaEvent(
                 categoria.Codigo,
+                CategoriaContexto,
                 string.Format(
                     CategoriaResource.HistoricoAtualizacao,
                     categoria.Codigo,
                     DateTime.Now,
                     request.Descricao,
-                    request.Status.GetDescription())));
+                    request.Status.GetDescription()))).AsTask();
 
         public Task RegistrarStatusAlteradoAsync(Categoria categoria)
-            => _auditoriaService.AtualizarServiceAsync(CriarAuditoria(
+            => _eventBus.PublicarAsync(new AuditoriaAtualizadaEvent(
                 categoria.Codigo,
+                CategoriaContexto,
                 string.Format(
                     CategoriaResource.HistoricoStatusAlterado,
                     categoria.Codigo,
                     categoria.Status.GetDescription(),
-                    DateTime.Now)));
+                    DateTime.Now))).AsTask();
 
         public async Task RegistrarInativacaoRecusadaAsync(Categoria categoria)
         {
@@ -49,8 +51,9 @@ namespace AtronStock.Application.UseCases.CategoriaCases
                 TransactionScopeOption.Suppress,
                 TransactionScopeAsyncFlowOption.Enabled);
 
-            await _auditoriaService.AtualizarServiceAsync(CriarAuditoria(
+            await _eventBus.PublicarAsync(new AuditoriaAtualizadaEvent(
                 categoria.Codigo,
+                CategoriaContexto,
                 string.Format(
                     CategoriaResource.HistoricoInativacaoRecusada,
                     categoria.Codigo,
@@ -60,26 +63,12 @@ namespace AtronStock.Application.UseCases.CategoriaCases
         }
 
         public Task RegistrarRemocaoAsync(Categoria categoria)
-            => _auditoriaService.RemoverServiceAsync(CriarAuditoria(
+            => _eventBus.PublicarAsync(new AuditoriaRemovidaEvent(
                 categoria.Codigo,
+                CategoriaContexto,
                 string.Format(
                     CategoriaResource.HistoricoRemocao,
                     categoria.Codigo,
-                    DateTime.Now)));
-
-        private static AuditoriaDTO CriarAuditoria(
-            string codigo,
-            string descricao)
-            => new()
-            {
-                CodigoRegistro = codigo,
-                Contexto = CategoriaContexto,
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = codigo,
-                    Contexto = CategoriaContexto,
-                    Descricao = descricao
-                }
-            };
+                    DateTime.Now))).AsTask();
     }
 }

@@ -1,11 +1,11 @@
-Ôªøusing Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Shared.Application.Interfaces.Service;
 using Shared.Domain.Entities.Identity;
 
 namespace Shared.Application.Services.Contexts
 {
     /// <summary>
-    /// Facade concreto para gerenciar autentica√ß√£o e usu√°rios.
+    /// Facade concreto para gerenciar autenticaÁ„o e usu·rios.
     /// </summary>
     public class AuthManagerContext : IAuthManagerService
     {

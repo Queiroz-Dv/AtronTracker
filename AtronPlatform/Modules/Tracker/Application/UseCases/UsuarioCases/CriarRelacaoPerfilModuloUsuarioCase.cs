@@ -1,22 +1,19 @@
-﻿using Application.DTO;
+using Application.DTO;
 using Application.Interfaces.ApplicationInterfaces;
-using Application.Interfaces.Services;
 using Application.UseCases.PerfilDeAcessoCases;
 using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
     public sealed class CriarRelacaoPerfilModuloUsuarioCase(
         ILoginService loginService,
         CriarPerfilDeAcessoCase criarPerfilDeAcessoCase,
-        IPerfilDeAcessoUsuarioRelacionamentoService relacionamentoService,
-        IUsuarioService usuarioService)
+        RelacionarPerfilUsuarioCase relacionamentoService,
+        ObterUsuarioCase usuarioService)
     {
         public async Task<Resultado> ExecutarAsync(PerfilDeAcessoDTO perfil, string usuarioCodigo)
         {
-            var usuarioResultado = await usuarioService.ObterPorCodigoAsync(usuarioCodigo);
+            var usuarioResultado = await usuarioService.ExecutarAsync(usuarioCodigo);
 
             if (usuarioResultado.TeveFalha)
                 return Resultado.Falha(usuarioResultado.Messages);
@@ -33,7 +30,7 @@ namespace Application.UseCases.UsuarioCases
             if (perfilCriado.TeveFalha)
                 return Resultado.Falha(perfilCriado.Messages);
 
-            var relacionamentoPerfilResultado = await relacionamentoService.RelacionarAsync(relacionamentoPerfil);
+            var relacionamentoPerfilResultado = await relacionamentoService.ExecutarAsync(relacionamentoPerfil);
 
             if (relacionamentoPerfilResultado.TeveFalha)
                 return Resultado.Falha(relacionamentoPerfilResultado.Messages);

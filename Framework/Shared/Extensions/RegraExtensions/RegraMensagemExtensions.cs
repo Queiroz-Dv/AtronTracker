@@ -1,4 +1,4 @@
-﻿using Shared.Domain;
+using Shared.Domain;
 using Shared.Extensions;
 
 namespace Shared.Extensions.RegraExtensions
@@ -15,7 +15,7 @@ namespace Shared.Extensions.RegraExtensions
 
                 regra.MensagemErro ??=
                     $"A mensagem da regra do campo " +
-                    $"{regra.Propriedade.NomePropriedade} não foi informada.";
+                    $"{regra.Propriedade.NomePropriedade} n�o foi informada.";
 
                 return regra;
             }

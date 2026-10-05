@@ -1,11 +1,11 @@
-Ôªøusing Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Auth;
 using Shared.Domain.ValueObjects;
 using System.Threading.Tasks;
 
 namespace Application.Interfaces.ApplicationInterfaces
 {
     /// <summary>
-    /// Classe de autentica√ß√£o para os usu√°rios
+    /// Classe de autenticaÁ„o para os usu·rios
     /// </summary>
     public interface ILoginService
     {

@@ -33,7 +33,18 @@ public sealed class ProcessadorProdutosLote(
 
             using var transaction = transactionManager.CreateScope();
             var resultado = await executor.ExecutarAsync(
-                GeracaoProdutosLoteCommand.Criar(processamento));
+                GeracaoProdutosLoteCommand.Criar(processamento),
+                async (quantidadeProcessada) =>
+                {
+                    using var progressScope = scopeFactory.CreateScope();
+                    var progressRepo = progressScope.ServiceProvider.GetRequiredService<IProcessamentoProdutoLoteRepository>();
+                    var p = await progressRepo.ObterPorIdAsync(processamentoId);
+                    if (p != null)
+                    {
+                        p.AtualizarProgresso(quantidadeProcessada, tokenReserva);
+                        await progressRepo.AtualizarAsync(p);
+                    }
+                });
             if (resultado.TeveFalha)
             {
                 erro = string.Join(" ", resultado.Messages.Select(item => item.Descricao));

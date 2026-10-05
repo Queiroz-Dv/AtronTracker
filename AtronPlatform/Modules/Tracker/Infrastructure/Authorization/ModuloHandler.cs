@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Services;
+using Application.UseCases.UsuarioCases;
+using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
@@ -8,11 +9,11 @@ using Shared.Domain.ValueObjects;
 
 namespace Infrastructure.Authorization
 {
-    public class ModuloHandler(ICacheService cacheService, IUsuarioService usuarioService, IAccessorService serviceAccessor) 
+    public class ModuloHandler(ICacheService cacheService, ObterUsuarioCase usuarioService, IAccessorService serviceAccessor) 
         : AuthorizationHandler<ModuloRequirement>
     {
         private readonly ICacheService _cacheService = cacheService;
-        private readonly IUsuarioService _usuarioService = usuarioService;
+        private readonly ObterUsuarioCase _usuarioService = usuarioService;
         private readonly IAccessorService _serviceAccessor = serviceAccessor;
 
         protected override async Task HandleRequirementAsync(
@@ -50,7 +51,7 @@ namespace Infrastructure.Authorization
         private async Task<DadosComplementaresDoUsuarioDTO> RecarregarSessaoNoCacheAsync(string userId)
         {
             var dadosComplementaresService = _serviceAccessor.ObterService<IDadosComplementaresDoUsuarioService>();
-            var userDto = await _usuarioService.ObterPorCodigoAsync(userId);
+            var userDto = await _usuarioService.ExecutarAsync(userId);
             var dadosDto = await dadosComplementaresService.ObterInformacoesComplementaresDoUsuario(userDto.Dados);
             _cacheService.GravarCache(new CacheInfo<DadosComplementaresDoUsuarioDTO>(new ChaveCache(ECacheKeysInfo.Acesso, userId))
             {

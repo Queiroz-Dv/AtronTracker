@@ -1,7 +1,7 @@
-ï»¿namespace Shared.Application.DTOS.Common
+namespace Shared.Application.DTOS.Common
 {
     /// <summary>
-    /// Classe que define a estrutura de informaÃ§Ãµes para paginaÃ§Ã£o das entidades
+    /// Classe que define a estrutura de informações para paginação das entidades
     /// </summary>
     public class PageInfoDTO
     {        

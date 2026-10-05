@@ -1,16 +1,14 @@
 using Application.DTO;
 using Application.Interfaces.Services;
+using Application.UseCases.PerfilDeAcessoCases;
 using Application.UseCases.WorkspaceCases;
 using Shared.Application.DTOS.Users;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services.AuthServices
 {
     public class DadosComplementaresDoUsuarioService(
         ObterWorkspaceCase workspaceCase,
-        IPerfilDeAcessoService perfilDeAcessoService) : IDadosComplementaresDoUsuarioService
+        ObterPerfisUsuarioCase obterPerfisUsuarioCase) : IDadosComplementaresDoUsuarioService
     {
 
         public async Task<DadosComplementaresDoUsuarioDTO> ObterInformacoesComplementaresDoUsuario(UsuarioDTO usuarioDTO)
@@ -39,7 +37,7 @@ namespace Application.Services.AuthServices
                 DadosDoToken = new TempoDosTokensDoUsuarioDTO(DateTime.UtcNow.AddMinutes(15), DateTime.UtcNow.AddDays(7))
             };
 
-            var perfisAssociados = await perfilDeAcessoService.ObterPerfisPorCodigoUsuarioAsync(usuarioDTO.Codigo);
+            var perfisAssociados = await obterPerfisUsuarioCase.ExecutarAsync(usuarioDTO.Codigo);
 
             foreach (var perf in perfisAssociados)
             {

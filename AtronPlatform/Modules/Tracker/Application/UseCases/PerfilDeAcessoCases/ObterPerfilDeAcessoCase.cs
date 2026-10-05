@@ -3,9 +3,7 @@ using Application.Interfaces.Mapping;
 using Application.Resources;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Shared.Extensions;
 
 namespace Application.UseCases.PerfilDeAcessoCases
 {
@@ -25,18 +23,18 @@ namespace Application.UseCases.PerfilDeAcessoCases
         public async Task<Resultado<PerfilDeAcessoDTO>> ObterPorCodigoAsync(string codigo)
         {
             var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
-            return perfil is null
+            return perfil.IsNullable()
                 ? Resultado<PerfilDeAcessoDTO>.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado)
                 : Resultado<PerfilDeAcessoDTO>.Sucesso(_map.MapToDto(perfil));
         }
 
         public async Task<Resultado<PerfilDeAcessoUsuarioDTO>> ObterRelacionamentoAsync(string codigo)
         {
-            if (string.IsNullOrEmpty(codigo))
+            if (codigo.IsNullOrEmpty())
                 return Resultado<PerfilDeAcessoUsuarioDTO>.Sucesso(new PerfilDeAcessoUsuarioDTO());
 
             var perfil = await _perfilDeAcessoRepository.ObterPerfilPorCodigoRepositoryAsync(codigo);
-            return perfil is null
+            return perfil.IsNullable()
                 ? Resultado<PerfilDeAcessoUsuarioDTO>.Falha(PerfilDeAcessoResource.Erro_RegistroNaoEncontrado)
                 : Resultado<PerfilDeAcessoUsuarioDTO>.Sucesso(_map.MapToPerfilDeAcessoUsuarioDto(perfil));
         }

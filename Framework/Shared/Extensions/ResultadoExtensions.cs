@@ -1,4 +1,4 @@
-﻿using Shared.Domain.ValueObjects;
+using Shared.Domain.ValueObjects;
 
 namespace Shared.Extensions
 {

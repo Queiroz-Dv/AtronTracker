@@ -1,7 +1,7 @@
 using Domain.Entities;
 using Domain.Extensions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 using Microsoft.EntityFrameworkCore;
 using Shared.Application.DTOS.Auth;
 using Shared.Domain.Entities.Identity;
@@ -9,15 +9,7 @@ using System.Reflection;
 
 namespace Infrastructure.Context
 {
-    public class AtronDbContext : IdentityDbContext<
-        ApplicationUser,
-        ApplicationRole,
-        int,
-        ApplicationUserClaim,
-        ApplicationUserRole,
-        ApplicationUserLogin,
-        ApplicationRoleClaim,
-        ApplicationUserToken>
+    public class AtronDbContext : DbContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         public bool IsProcessingTenantRecords { get; set; }
@@ -36,7 +28,6 @@ namespace Infrastructure.Context
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Empresa> Empresas { get; set; }
         public DbSet<Workspace> Workspaces { get; set; }
-        public DbSet<MembroWorkspace> MembrosWorkspace { get; set; }
         public DbSet<ConfirmacaoEmail> ConfirmacoesEmail { get; set; }
         public DbSet<Tarefa> Tarefas { get; set; }
         public DbSet<TarefaMovimentacao> TarefaMovimentacoes { get; set; }
@@ -107,6 +98,7 @@ namespace Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AtronDbContext).Assembly);
+            
 
             if (Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL")
             {
@@ -153,3 +145,5 @@ namespace Infrastructure.Context
         }
     }
 }
+
+

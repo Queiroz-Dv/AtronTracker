@@ -1,8 +1,7 @@
-﻿using Application.DTO.Request;
+using Application.DTO.Request;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {

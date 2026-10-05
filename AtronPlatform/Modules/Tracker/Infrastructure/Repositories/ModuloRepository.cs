@@ -1,10 +1,7 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -26,9 +23,9 @@ namespace Infrastructure.Repositories
                 var result = await _context.SaveChangesAsync();
                 return result > 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -44,9 +41,8 @@ namespace Infrastructure.Repositories
                     return entidade;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var message = ex.ToString();
                 throw;
             }
 

@@ -1,4 +1,4 @@
-﻿using Shared.Application.DTOS.Auth;
+using Shared.Application.DTOS.Auth;
 using Shared.Application.DTOS.Users;
 using System.Security.Claims;
 

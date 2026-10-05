@@ -1,4 +1,4 @@
-Ôªøusing Shared.Application.Records;
+using Shared.Application.Records;
 using Shared.Domain.Enums;
 using Shared.Domain.ValueObjects;
 
@@ -36,7 +36,7 @@ namespace Shared.Domain
             }
             catch
             {
-                return CriarMensagem($"N√£o foi poss√≠vel obter o valor do campo {Propriedade.NomePropriedade}.");
+                return CriarMensagem($"N„o foi possÌvel obter o valor do campo {Propriedade.NomePropriedade}.");
             }
 
             foreach (var validacao in Validacoes.PorValor)
@@ -48,7 +48,7 @@ namespace Shared.Domain
                 }
                 catch
                 {
-                    return CriarMensagem($"N√£o foi poss√≠vel validar o campo {Propriedade.NomePropriedade}.");
+                    return CriarMensagem($"N„o foi possÌvel validar o campo {Propriedade.NomePropriedade}.");
                 }
             }
 
@@ -61,7 +61,7 @@ namespace Shared.Domain
                 }
                 catch
                 {
-                    return CriarMensagem($"N√£o foi poss√≠vel validar o campo {Propriedade.NomePropriedade}.");
+                    return CriarMensagem($"N„o foi possÌvel validar o campo {Propriedade.NomePropriedade}.");
                 }
             }
 
@@ -74,7 +74,7 @@ namespace Shared.Domain
                 Descricao =
                     mensagem
                     ?? MensagemErro
-                    ?? $"O campo {Propriedade.NomePropriedade} √© inv√°lido.",
+                    ?? $"O campo {Propriedade.NomePropriedade} È inv·lido.",
 
                 Nivel = ENotificationType.Error
             };       

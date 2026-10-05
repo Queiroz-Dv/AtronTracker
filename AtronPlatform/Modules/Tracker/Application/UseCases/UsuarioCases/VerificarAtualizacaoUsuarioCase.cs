@@ -4,8 +4,6 @@ using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {

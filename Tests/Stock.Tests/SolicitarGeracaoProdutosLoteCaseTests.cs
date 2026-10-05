@@ -68,7 +68,7 @@ public sealed class SolicitarGeracaoProdutosLoteCaseTests
         CategoriaRepositoryProdutoFake? categorias = null)
         => new(
             repository,
-            new GeracaoProdutosLoteValidador(new ProdutoValidador()),
+            new GeracaoProdutosLoteValidador(new ProdutoAtualizacaoRequestValidador()),
             new SelecionarCategoriasProdutoCase(
                 categorias ?? new CategoriaRepositoryProdutoFake()),
             new UserAccessorFake(usuarioCodigo));

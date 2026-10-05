@@ -1,4 +1,4 @@
-﻿using AtronStock.Domain.Enums;
+using AtronStock.Domain.Enums;
 
 namespace AtronStock.Application.DTO.Request
 {

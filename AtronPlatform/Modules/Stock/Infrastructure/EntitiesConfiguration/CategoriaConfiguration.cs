@@ -1,4 +1,4 @@
-﻿using AtronStock.Domain.Entities;
+using AtronStock.Domain.Entities;
 using AtronStock.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

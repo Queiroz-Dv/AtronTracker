@@ -1,19 +1,19 @@
-Ôªønamespace Shared.Application.DTOS.Auth
+namespace Shared.Application.DTOS.Auth
 {
     /// <summary>
-    /// Representa a requisi√ß√£o de login do usu√°rio.
+    /// Representa a requisiÁ„o de login do usu·rio.
     /// </summary>
     [System.Text.Json.Serialization.JsonUnmappedMemberHandling(
         System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow)]
     public class LoginRequestDTO
     {
         /// <summary>
-        /// C√≥digo do usu√°rio que ser√° autenticado.
+        /// CÛdigo do usu·rio que ser· autenticado.
         /// </summary>
         public string CodigoDoUsuario { get; set; } = string.Empty;
 
         /// <summary>
-        /// Senha do usu√°rio que ser√° autenticado.
+        /// Senha do usu·rio que ser· autenticado.
         /// </summary>
         public string Senha { get; set; } = string.Empty;
     }

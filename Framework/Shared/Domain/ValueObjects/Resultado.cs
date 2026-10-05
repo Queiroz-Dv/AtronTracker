@@ -1,4 +1,6 @@
+using Shared.Application.Resources;
 using Shared.Domain.Enums;
+using Shared.Extensions;
 using System.Text.Json.Serialization;
 
 namespace Shared.Domain.ValueObjects
@@ -86,22 +88,132 @@ namespace Shared.Domain.ValueObjects
         }
     }
 
-    public class Resultado : NotificationBag
+    public class Resultado
     {
+        private readonly List<NotificationMessage> _messages;
+
+        public IReadOnlyCollection<NotificationMessage> Messages => _messages.AsReadOnly();
+
         public object? Dados { get; protected set; }
 
-        public bool TeveSucesso => !Messages.Any(m => m.Nivel == ENotificationType.Error);
+        public bool TeveSucesso => !_messages.Any(m => m.Nivel == ENotificationType.Error);
 
         [JsonIgnore]
         public bool TeveFalha => !TeveSucesso;
 
+        public Resultado()
+        {
+            _messages = [];
+        }
+
         protected Resultado(bool teveSucesso)
         {
+            _messages = [];
             // O estado de sucesso/falha é inferido pelas notificações, 
             // mas o construtor pode ser usado para inicializar.
-            // Se falha for forçada na construção, talvez devêssemos adicionar um erro genérico se não houver mensagens?
-            // Por enquanto, seguimos a lógica de que "Sem erros = Sucesso".
         }
+
+        // --- Resultado Flattened Methods ---
+        public void AddNotification(string description, string level)
+        {
+            _messages.Add(new NotificationMessage { Descricao = description, Nivel = level });
+        }
+
+        public void Adicionar(NotificationMessage message)
+        {
+            _messages.Add(message);
+        }
+
+        public void AdicionarErro(string description)
+        {
+            AddNotification(description, ENotificationType.Error);
+        }
+
+        public void AdicionarErros(IEnumerable<NotificationMessage> erros)
+        {
+            foreach (var erro in erros)
+            {
+                AdicionarErro(erro.Descricao);
+            }
+        }
+
+        public void AdicionarAviso(string description)
+        {
+            AddNotification(description, ENotificationType.Aviso);
+        }
+
+        public void AdicionarAvisos(IEnumerable<NotificationMessage> avisos)
+        {
+            foreach (var aviso in avisos)
+            {
+                AdicionarAviso(aviso.Descricao);
+            }
+        }
+
+        public void AdicionarErroCampoObrigatorio(string campo)
+        {
+            var mensagemFormatada = string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, campo);
+            AdicionarErro(mensagemFormatada);
+        }
+
+        public void AdicionarErroRegistroNulo()
+        {
+            AdicionarErro(NotificacoesPadronizadas.ErroRegistroNulo);
+        }
+
+        public void AdicionarMensagemBase(string description)
+        {
+            AddNotification(description, ENotificationType.Mensagem);
+        }
+
+        public void MensagemRegistroSalvo(string registro)
+        {
+            AddNotification(string.Format(NotificacoesPadronizadas.Mensagem_EntidadeSalva, registro), ENotificationType.Sucesso);
+        }
+
+        public void MensagemRegistroAtualizado(string registro)
+        {
+            AddNotification(string.Format(NotificacoesPadronizadas.Mensagem_RegistroAtualizado, registro), ENotificationType.Sucesso);
+        }
+
+        public void MesagemFalhaNaGravacao(string registro)
+        {
+            AddNotification(string.Format(NotificacoesPadronizadas.Erro_FalhaNaGravacao, registro), ENotificationType.Sucesso);
+        }
+
+        public void MensagemRegistroNaoEncontrado(string key = "")
+        {
+            AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoNaoEncontrado, key));
+        }
+
+        public void MensagemRegistroExistente(string key = "")
+        {
+            AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoExistente, key));
+        }
+
+        public void MensagemRegistroRemovido(string registro = "")
+        {
+            if (registro.IsNullOrEmpty())
+            {
+                AdicionarMensagemBase(NotificacoesPadronizadas.Mensagem_RemocaoSucessoSemRegistro);
+            }
+            else
+            {
+                AdicionarMensagemBase(string.Format(NotificacoesPadronizadas.Mensagem_RegistroRemovido, registro));
+            }
+        }
+
+        public void MensagemRegistroInvalido(string key = "")
+        {
+            AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoInvalido, key));
+        }
+
+        public void MensagemRegistroNaoExiste(string key)
+        {
+            // Consertar depois 
+            AdicionarErro(string.Format(NotificacoesPadronizadas.Erro_RegistroComDescricaoExistente, key));
+        }
+        // ----------------------------------------
 
         public static Resultado Falha(string mensagemErro)
         {

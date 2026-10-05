@@ -40,9 +40,20 @@ As responsabilidades serão distribuídas assim:
 | Notificações e integrações | Colaboradores especializados e contratos explícitos. |
 | Ordem do caso de uso | Serviço orquestrador. |
 
+### Critérios de Design: Use Cases vs. Services
+
+Para evitar overengineering e granularidade excessiva, aplicam-se as seguintes regras de limite estrutural:
+
+1. **Critério para criação de Use Cases (Granularidade):**
+   Um Use Case só deve ser extraído como uma classe própria se corresponder a uma ação acionável do usuário (um endpoint/ação específica) OU se for explicitamente reutilizado por outros Use Cases. Blocos lógicos ou auxiliares não reutilizáveis devem ser mantidos como métodos privados ou colaboradores internos do caso de uso principal.
+
+2. **Critério para existência de Services (Orquestração vs. Pass-Through):**
+   Serviços de aplicação de domínio (ex: `TarefaService`) só devem existir se realizarem orquestração real: composição de múltiplos Use Cases, gerenciamento transacional de operações compostas, ou lógica de *cross-cutting* integrada. 
+   **É vetada a criação de "Services de passagem"** que operam em 1:1 repassando chamadas sem adicionar lógica. Para operações auto-contidas, os Controllers da Web API devem consumir as classes de Use Case diretamente.
+
 Validadores de aplicação complementam as invariantes do domínio. Eles não podem permitir que uma entidade inválida exista quando for criada ou alterada por outro caminho.
 
-Toda mudança em serviço deve avaliar, principalmente, responsabilidade única, segregação de interfaces e inversão de dependência. Uma extração só é aceita quando atribui a regra a um conceito claro e reduz acoplamento. Classes de passagem sem responsabilidade própria não atendem essa decisão.
+Toda mudança em serviço deve avaliar, principalmente, responsabilidade única, segregação de interfaces e inversão de dependência. Uma extração só é aceita quando atribui a regra a um conceito claro e reduz acoplamento. Classes de passagem sem responsabilidade própria não atendem essa decisão e devem ser removidas.
 
 ## Alternativas consideradas
 

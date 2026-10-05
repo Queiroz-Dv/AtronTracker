@@ -1,4 +1,4 @@
-ï»¿using Shared.Application.Records;
+using Shared.Application.Records;
 using Shared.Domain;
 using Shared.Extensions;
 
@@ -11,8 +11,8 @@ namespace Shared.Extensions.RegraExtensions
             if (condicao.IsNullable())
             {
                 regra.MensagemErro ??=
-                    $"A condiÃ§Ã£o da regra do campo " +
-                    $"{regra.Propriedade.NomePropriedade} nÃ£o foi informada.";
+                    $"A condição da regra do campo " +
+                    $"{regra.Propriedade.NomePropriedade} não foi informada.";
 
                 regra.Validacoes.PorValor.Add(_ => false);
 
@@ -29,8 +29,8 @@ namespace Shared.Extensions.RegraExtensions
             if (condicao.IsNullable())
             {
                 regra.MensagemErro ??=
-                    $"A condiÃ§Ã£o da regra do campo " +
-                    $"{regra.Propriedade.NomePropriedade} nÃ£o foi informada.";
+                    $"A condição da regra do campo " +
+                    $"{regra.Propriedade.NomePropriedade} não foi informada.";
 
                 regra.Validacoes.PorValor.Add(_ => false);
 

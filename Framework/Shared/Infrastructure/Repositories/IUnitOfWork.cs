@@ -1,21 +1,21 @@
-ï»¿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Shared.Infrastructure.Repositories
 {
     public interface IUnitOfWork<TContext> : IDisposable where TContext : DbContext
     {
         /// <summary>
-        /// Inicia uma transaÃ§Ã£o de banco de dados.
+        /// Inicia uma transação de banco de dados.
         /// </summary>
         Task BeginTransactionAsync();
 
         /// <summary>
-        /// Confirma todas as alteraÃ§Ãµes feitas no escopo da transaÃ§Ã£o.
+        /// Confirma todas as alterações feitas no escopo da transação.
         /// </summary>
         Task CommitAsync();
 
         /// <summary>
-        /// Desfaz todas as alteraÃ§Ãµes em caso de erro.
+        /// Desfaz todas as alterações em caso de erro.
         /// </summary>
         Task RollbackAsync();
     }

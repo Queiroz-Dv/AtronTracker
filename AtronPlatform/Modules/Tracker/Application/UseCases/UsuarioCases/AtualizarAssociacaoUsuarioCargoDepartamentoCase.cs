@@ -5,7 +5,6 @@ using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {
@@ -27,7 +26,7 @@ namespace Application.UseCases.UsuarioCases
                 .ObterDepartamentoPorCodigoRepository(request.DepartamentoCodigo);
             var cargo = await _cargoRepository.ObterCargoPorCodigoAsync(request.CargoCodigo);
 
-            if (departamento is null || cargo is null)
+            if (departamento.IsNullable() || cargo.IsNullable())
                 return Resultado.Sucesso();
 
             var relacionamentoExistente = await _usuarioCargoDepartamentoRepository
@@ -36,7 +35,7 @@ namespace Application.UseCases.UsuarioCases
             if (RelacionamentoJaAtualizado(relacionamentoExistente, cargo, departamento))
                 return Resultado.Sucesso();
 
-            if (relacionamentoExistente is not null)
+            if (relacionamentoExistente.IsNotNull())
             {
                 var removido = await _usuarioCargoDepartamentoRepository
                     .RemoverAssociacaoUsuarioCargoDepartamento(relacionamentoExistente);

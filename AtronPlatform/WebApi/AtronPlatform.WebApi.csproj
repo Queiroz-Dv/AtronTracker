@@ -6,7 +6,7 @@
     <Nullable>disable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin/AtronPlatform.WebApi.xml</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>CS8632;1591</NoWarn>
     <UserSecretsId>9989a2b9-a79c-4323-83da-60c21a95b15b</UserSecretsId>
   </PropertyGroup>
 
@@ -21,6 +21,8 @@
     <ProjectReference Include="..\Modules\Tracker\Infrastructure\AtronTracker.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Stock\Application\AtronStock.Application.csproj" />
     <ProjectReference Include="..\Modules\Stock\Infrastructure\AtronStock.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Framework\AtronAuditoria\AtronAuditoria.Core.csproj" />
   </ItemGroup>
 
 </Project>
+

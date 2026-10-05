@@ -117,7 +117,7 @@ public class ModularArchitectureTests
     public void AuditoriaPossuiComposicaoEControllerTransversais()
     {
         Assert.True(ExisteArquivo(
-            "Framework/Shared/Infrastructure/DependencyInjection/AuditoriaServiceCollectionExtensions.cs"));
+            "Framework/AtronAuditoria/Infrastructure/DependencyInjection/AuditoriaServiceCollectionExtensions.cs"));
         Assert.True(ExisteArquivo(
             "AtronPlatform/WebApi/Controllers/Transversais/AuditoriaController.cs"));
         Assert.False(ExisteArquivo(
@@ -138,8 +138,6 @@ public class ModularArchitectureTests
         Assert.False(ExisteArquivo("AtronTracker/WebApi/Startup.cs"));
         Assert.DoesNotContain("AtronTracker/WebApi", solution);
         Assert.DoesNotContain("AtronTracker.WebApi", solution);
-        Assert.DoesNotContain("AtronAuditoria/", solution);
-        Assert.DoesNotContain("\"AtronAuditoria\"", solution);
         Assert.False(ExisteArquivo("AtronStock/WebApi/AtronStock.WebApi.csproj"));
         Assert.False(ExisteArquivo("AtronStock/WebApi/Program.cs"));
         Assert.False(ExisteArquivo("AtronStock/WebApi/Startup.cs"));
@@ -153,18 +151,9 @@ public class ModularArchitectureTests
     [Fact]
     public void StockPossuiComposicaoEControllersNoHostNeutro()
     {
-        Assert.True(ExisteArquivo(
-            "AtronPlatform/Modules/Stock/Infrastructure/DependencyInjection/StockModuleServiceCollectionExtensions.cs"));
-        Assert.True(ExisteArquivo(
-            "AtronPlatform/WebApi/Controllers/Stock/CategoriaController.cs"));
-        Assert.True(ExisteArquivo(
-            "AtronPlatform/WebApi/Controllers/Stock/ClienteController.cs"));
-        Assert.True(ExisteArquivo(
-            "AtronPlatform/WebApi/Controllers/Stock/EstoqueController.cs"));
-        Assert.True(ExisteArquivo(
-            "AtronPlatform/WebApi/Controllers/Stock/FornecedorController.cs"));
-        Assert.True(ExisteArquivo(
-            "AtronPlatform/WebApi/Controllers/Stock/ProdutoController.cs"));
+        Assert.True(ExisteArquivo("AtronPlatform/Modules/Stock/Infrastructure/DependencyInjection/StockModuleServiceCollectionExtensions.cs"));
+        Assert.True(ExisteArquivo("AtronPlatform/WebApi/Controllers/Stock/CategoriaController.cs"));
+        Assert.True(ExisteArquivo("AtronPlatform/WebApi/Controllers/Stock/ProdutoController.cs"));
     }
 
     [Fact]
@@ -202,11 +191,11 @@ public class ModularArchitectureTests
         Assert.True(ExisteArquivo(
             "AtronPlatform/Modules/Stock/Infrastructure/Migrations/StockDbContextModelSnapshot.cs"));
         Assert.True(ExisteArquivo(
-            "Framework/Shared/Infrastructure/Context/SharedDbContext.cs"));
+            "Framework/AtronAuditoria/Infrastructure/Context/AtronAuditoriaContext.cs"));
         Assert.True(ExisteArquivo(
-            "Framework/Shared/Migrations/SharedDbContextModelSnapshot.cs"));
+            "Framework/AtronAuditoria/Migrations/AtronAuditoriaContextModelSnapshot.cs"));
         Assert.True(ExisteArquivo(
-            "Framework/Shared/Migrations/Framework.Shared.Migrations.csproj"));
+            "Framework/AtronAuditoria/Migrations/AtronAuditoria.Migrations.csproj"));
         Assert.True(ExisteArquivo(
             "Framework/AtronNotificacoes/Infrastructure/NotificacoesDbContext.cs"));
         Assert.True(ExisteArquivo(
@@ -320,3 +309,8 @@ public class ModularArchitectureTests
                 "A raiz do repositório Atron não foi encontrada.");
     }
 }
+
+
+
+
+

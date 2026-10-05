@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -25,7 +25,7 @@ import { ProcessamentoProdutoService } from '../../services/processamento-produt
   templateUrl: './processamento-produto-lista.component.html',
   styleUrl: './processamento-produto-lista.component.css'
 })
-export class ProcessamentoProdutoListaComponent implements AfterViewInit {
+export class ProcessamentoProdutoListaComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -45,8 +45,13 @@ export class ProcessamentoProdutoListaComponent implements AfterViewInit {
     this.dataSource.filterPredicate = processamentoCorrespondeAosFiltros;
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.carregar();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   carregar(): void {

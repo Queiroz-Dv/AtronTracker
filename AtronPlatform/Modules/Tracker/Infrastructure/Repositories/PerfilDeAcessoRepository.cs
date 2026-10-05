@@ -1,11 +1,7 @@
-ï»¿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -46,7 +42,7 @@ namespace Infrastructure.Repositories
                 var result = await _context.SaveChangesAsync();
                 return result > 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -62,9 +58,9 @@ namespace Infrastructure.Repositories
         public async Task<PerfilDeAcesso> ObterPerfilPorCodigoRepositoryAsync(string codigo)
         {
             return await _context.PerfisDeAcesso
-               .Include(pam => pam.PerfilDeAcessoModulos) // Relacionamento com mÃ³dulos
-               .ThenInclude(mdl => mdl.Modulo) // Dentro do relacionamento vai trazer os mÃ³dulos
-               .Include(pda => pda.PerfisDeAcessoUsuario) // Relacionamento com usuÃ¡rios
+               .Include(pam => pam.PerfilDeAcessoModulos) // Relacionamento com módulos
+               .ThenInclude(mdl => mdl.Modulo) // Dentro do relacionamento vai trazer os módulos
+               .Include(pda => pda.PerfisDeAcessoUsuario) // Relacionamento com usuários
                .ThenInclude(usr => usr.Usuario)
                .FirstOrDefaultAsync(pf => pf.Codigo == codigo);
         }

@@ -1,36 +1,30 @@
 using Application.Interfaces.ApplicationInterfaces;
 using Application.Interfaces.Services;
-using Application.Interfaces.Services.Identity;
-using Application.Records.Autenticacao;
+using Application.UseCases.UsuarioCases;
+using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
+using Domain.Interfaces.Identity;
 using Shared.Application.DTOS.Auth;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
+using Shared.Application.Security;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
 
 namespace Application.Services.AuthServices
 {
     public class LoginService(
-        ILoginRepository loginRepository,
-        IUsuarioService usuarioService,
-        IDadosComplementaresDoUsuarioService dadosComplementaresDoUsuarioService,
-        ITokenService tokenService,
-        ICacheUsuarioService cacheUsuarioService,
-        ICookieService cookieService,
-        IUserIdentityService userIdentityService) : ILoginService
+        ILoginRepository _loginRepository,
+        ObterUsuarioCase _usuarioService,
+        IDadosComplementaresDoUsuarioService _dadosComplementaresDoUsuarioService,
+        ITokenService _tokenService,
+        ICacheUsuarioService _cacheUsuarioService,
+        ICookieService _cookieService,
+        IUsuarioIdentityRepository _userIdentityRepository) : ILoginService
     {
-        private readonly ILoginRepository _loginRepository = loginRepository;
-        private readonly IUsuarioService _usuarioService = usuarioService;
-        private readonly IDadosComplementaresDoUsuarioService _dadosComplementaresDoUsuarioService = dadosComplementaresDoUsuarioService;
-        private readonly ITokenService _tokenService = tokenService;
-        private readonly ICacheUsuarioService _cacheUsuarioService = cacheUsuarioService;
-        private readonly ICookieService _cookieService = cookieService;
-        private readonly IUserIdentityService _userIdentityService = userIdentityService;
-
         public async Task<Resultado<DadosDoTokenDTO>> Autenticar(LoginRequestDTO loginRequest)
         {
-            var resultadoUsuario = await _usuarioService.ObterPorCodigoAsync(loginRequest.CodigoDoUsuario);
+            var resultadoUsuario = await _usuarioService.ExecutarAsync(loginRequest.CodigoDoUsuario);
 
             if (resultadoUsuario?.Dados == null)
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
@@ -60,9 +54,16 @@ namespace Application.Services.AuthServices
 
             var dadosDoToken = await _tokenService.ObterTokenComRefreshToken(dadosComplementares);
 
-            var usuarioAutenticado = await _userIdentityService.GravarRefreshTokenAsync(
+            if (dadosComplementares.DadosDoUsuario.CodigoDoUsuario.IsNullOrEmpty() ||
+                dadosDoToken.RefrehTokenDTO.Value.IsNullOrEmpty() ||
+                dadosDoToken.RefrehTokenDTO.Expires <= DateTime.UtcNow)
+            {
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
+            }
+
+            var usuarioAutenticado = await _userIdentityRepository.AtualizarRefreshTokenUsuarioRepositoryAsync(
                 dadosComplementares.DadosDoUsuario.CodigoDoUsuario,
-                dadosDoToken.RefrehTokenDTO.Value,
+                RefreshTokenHash.Obter(dadosDoToken.RefrehTokenDTO.Value),
                 dadosDoToken.RefrehTokenDTO.Expires);
 
             if (!usuarioAutenticado)
@@ -76,10 +77,12 @@ namespace Application.Services.AuthServices
 
         public async Task<Resultado<DadosDoTokenDTO>> RefreshAcesso(DadosDoRefreshTokenCookieDTO dadosDoRefreshToken)
         {
-            if (dadosDoRefreshToken is null || !dadosDoRefreshToken.IsValid())
+            if (dadosDoRefreshToken is null || !dadosDoRefreshToken.IsValid() || dadosDoRefreshToken.RefreshToken.IsNullOrEmpty())
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_DadosRefreshTokenInvalido);
 
-            var sessaoRefreshToken = await _userIdentityService.ObterSessaoRefreshTokenAsync(dadosDoRefreshToken.RefreshToken);
+            var sessaoRefreshToken = await _userIdentityRepository.ObterSessaoRefreshTokenRepositoryAsync(
+                RefreshTokenHash.Obter(dadosDoRefreshToken.RefreshToken));
+
             if (sessaoRefreshToken is null)
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_DadosRefreshTokenInvalido);
 
@@ -87,7 +90,7 @@ namespace Application.Services.AuthServices
                 return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_TokenExpiradoInvalido);
 
             var codigoUsuario = sessaoRefreshToken.UsuarioCodigo;
-            var usuario = await _usuarioService.ObterPorCodigoAsync(codigoUsuario);
+            var usuario = await _usuarioService.ExecutarAsync(codigoUsuario);
             if (usuario?.Dados == null)
                 return Resultado<DadosDoTokenDTO>.Falha(NotificacoesPadronizadas.ErroRegistroNaoEncontrado);
 
@@ -105,10 +108,18 @@ namespace Application.Services.AuthServices
 
             var dadosDeToken = await _tokenService.ObterTokenComRefreshToken(dadosComplementares);
 
-            var autenticado = await _userIdentityService.RotacionarRefreshTokenAsync(new RotacaoRefreshTokenRecord(
+            if (codigoUsuario.IsNullOrEmpty() ||
+                dadosDoRefreshToken.RefreshToken.IsNullOrEmpty() ||
+                dadosDeToken.RefrehTokenDTO.Value.IsNullOrEmpty() ||
+                dadosDeToken.RefrehTokenDTO.Expires <= DateTime.UtcNow)
+            {
+                return Resultado<DadosDoTokenDTO>.Falha(AuthResource.Erro_Autenticacao);
+            }
+
+            var autenticado = await _userIdentityRepository.RotacionarRefreshTokenRepositoryAsync(new RotacaoRefreshTokenHash(
                 codigoUsuario,
-                dadosDoRefreshToken.RefreshToken,
-                dadosDeToken.RefrehTokenDTO.Value,
+                RefreshTokenHash.Obter(dadosDoRefreshToken.RefreshToken),
+                RefreshTokenHash.Obter(dadosDeToken.RefrehTokenDTO.Value),
                 dadosDeToken.RefrehTokenDTO.Expires));
 
             if (!autenticado)
@@ -126,7 +137,10 @@ namespace Application.Services.AuthServices
         {
             _cookieService.RemoverCookieDeRefreshToken();
 
-            var refreshTokenRedefinido = await _userIdentityService.RevogarRefreshTokenAsync(usuarioCodigo);
+            if (usuarioCodigo.IsNullOrEmpty())
+                return Resultado.Falha(AuthResource.Erro_EncerrarSessao);
+
+            var refreshTokenRedefinido = await _userIdentityRepository.RedefinirRefreshTokenRepositoryAsync(usuarioCodigo);
 
             if (!refreshTokenRedefinido)
                 return Resultado.Falha(AuthResource.Erro_EncerrarSessao);

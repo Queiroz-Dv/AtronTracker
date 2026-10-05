@@ -1,6 +1,6 @@
-﻿namespace Domain.Constants
+namespace Domain.Constants
 {
-    internal class TrackerModulos
+    public class TrackerModulos
     {
         public const string Departamento = "DPT";
         public const string Cargo = "CRG";

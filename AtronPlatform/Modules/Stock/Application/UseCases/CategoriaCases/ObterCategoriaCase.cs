@@ -2,6 +2,7 @@ using AtronStock.Application.DTO.Request;
 using AtronStock.Application.Mapping;
 using AtronStock.Domain.Interfaces;
 using Shared.Domain.ValueObjects;
+using Shared.Extensions;
 
 namespace AtronStock.Application.UseCases.CategoriaCases
 {
@@ -31,9 +32,9 @@ namespace AtronStock.Application.UseCases.CategoriaCases
         public async Task<Resultado<CategoriaRequest>> ObterPorCodigoAsync(string codigo)
         {
             var categoria = await _repository.ObterCategoriaPorCodigoAsync(codigo);
-            if (categoria == null)
+            if (categoria.IsNullable())
             {
-                var bag = new NotificationBag();
+                var bag = new Resultado();
                 bag.MensagemRegistroNaoEncontrado(codigo);
                 return Resultado<CategoriaRequest>.Falhas(bag.Messages.ToList());
             }

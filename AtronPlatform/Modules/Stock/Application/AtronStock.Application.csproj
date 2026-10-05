@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-	  <NoWarn>1591</NoWarn>
+	  <NoWarn>CS8632;1591</NoWarn>
 	  <Nullable>disable</Nullable>
   </PropertyGroup>
 
@@ -69,3 +69,4 @@
   </ItemGroup>
 
 </Project>
+

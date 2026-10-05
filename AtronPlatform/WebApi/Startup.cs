@@ -1,3 +1,4 @@
+using AtronAuditoria.Infrastructure.DependencyInjection;
 using AtronNotificacoes.Infrastructure.DependencyInjection;
 using AtronStock.Infrastructure;
 using AtronPlatform.WebApi.OpenApi;
@@ -5,7 +6,9 @@ using AtronPlatform.WebApi.Security;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Shared.Infrastructure.DependencyInjection;
+using Shared.Extensions;
 using Infrastructure.DependencyInjection;
+using AtronPlatform.WebApi.Infrastructure.Identity;
 
 namespace AtronPlatform.WebApi;
 
@@ -17,9 +20,12 @@ public class Startup(IConfiguration configuration)
     {
         services.AddAtronCache(Configuration);
         services.AddSharedInfrastructure(Configuration);
+        services.AddInMemoryEventBus();
+        services.AddAuditoriaCapability(Configuration);
         services.AddAtronApiDocumentation();
         services.AddEmailServices(Configuration);
         services.AddNotificacoesInternasCapability(Configuration);
+        services.AddAtronIdentity(Configuration);
         services.AddTrackerModule(Configuration);
         services.AddStockModule(Configuration);
         services.AddInfrastructureSecurity(Configuration);
@@ -88,3 +94,5 @@ public class Startup(IConfiguration configuration)
         });
     }
 }
+
+

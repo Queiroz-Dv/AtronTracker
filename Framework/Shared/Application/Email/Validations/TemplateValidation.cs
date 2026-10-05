@@ -1,4 +1,4 @@
-﻿using Shared.Application.Email.Rendering;
+using Shared.Application.Email.Rendering;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using Shared.Extensions;
@@ -7,27 +7,27 @@ namespace Shared.Application.Email.Validations
 {
     public class TemplateValidation
     {
-        public static (NotificationBag Bag, List<string> EmailsDestino) Validar<TModel>(
+        public static (Resultado Bag, List<string> EmailsDestino) Validar<TModel>(
             EmailTemplateDefinition template,
             TModel model,
             IEnumerable<string> destinatarios)
         {
-            var notificationBag = new NotificationBag();
+            var bag = new Resultado();
 
             if (template.IsNullable())
-                notificationBag.AdicionarErro(EmailResource.Erro_TemplateDefinicaoObrigatoria);
+                bag.AdicionarErro(EmailResource.Erro_TemplateDefinicaoObrigatoria);
 
             if (model.IsNullable())
-                notificationBag.AdicionarErro(EmailResource.Erro_TemplateModeloObrigatorio);
+                bag.AdicionarErro(EmailResource.Erro_TemplateModeloObrigatorio);
 
             if (destinatarios.IsNullable())
-                notificationBag.AdicionarErro(EmailResource.Erro_TemplateDestinatarioObrigatorio);
+                bag.AdicionarErro(EmailResource.Erro_TemplateDestinatarioObrigatorio);
 
             if (template.Assunto.IsNullOrEmpty())
-                notificationBag.AdicionarErro(EmailResource.Erro_TemplateAssuntoObrigatorio);
+                bag.AdicionarErro(EmailResource.Erro_TemplateAssuntoObrigatorio);
 
             if (template.Titulo.IsNullOrEmpty())
-                notificationBag.AdicionarErro(EmailResource.Erro_TemplateTituloObrigatorio);
+                bag.AdicionarErro(EmailResource.Erro_TemplateTituloObrigatorio);
 
 
             var emailsDestino = destinatarios
@@ -37,10 +37,10 @@ namespace Shared.Application.Email.Validations
                 .ToList();
 
             if (emailsDestino.Count == 0)
-                notificationBag.AdicionarErro(EmailResource.Erro_TemplateDestinatarioObrigatorio);
+                bag.AdicionarErro(EmailResource.Erro_TemplateDestinatarioObrigatorio);
 
 
-            return (notificationBag, emailsDestino);
+            return (bag, emailsDestino);
         }
     }
 }

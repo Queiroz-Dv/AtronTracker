@@ -3,7 +3,6 @@ using Application.Resources;
 using Domain.Entities;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.TarefaCases.Movimentacao
 {

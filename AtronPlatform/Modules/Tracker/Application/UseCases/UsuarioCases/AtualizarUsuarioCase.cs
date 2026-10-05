@@ -4,7 +4,6 @@ using Application.Mapping;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.UsuarioCases
 {

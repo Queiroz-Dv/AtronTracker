@@ -1,99 +1,47 @@
 using Application.DTO.Request;
-using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
-using Shared.Domain.ValueObjects;
-using Shared.Extensions;
-using System.Collections.Generic;
-using System.Linq;
+using Shared.Application.Services;
+using Shared.Extensions.RegraExtensions;
 
 namespace Application.Validacoes
 {
-    /// <summary>
-    /// Valida os dados de entrada antes de processar a operação no serviço.
-    /// </summary>
-    public class UsuarioRequestValidador : IValidador<UsuarioRequest>
+    public class UsuarioRequestValidador : Validador<UsuarioRequest>
     {
-        public IEnumerable<NotificationMessage> Validar(UsuarioRequest request)
+        public UsuarioRequestValidador()
         {
-            var notificacoes = new NotificationBag();
+            RegraPara(x => x.Codigo)
+                .NaoVazio()
+                .ComMensagem(UsuarioResource.ErroCodigoNulo);
+            RegraPara(x => x.Codigo)
+                .TamanhoMenorOuIgualA(10)
+                .ComMensagem(UsuarioResource.ErroCodigoLongo);
+            RegraPara(x => x.Codigo)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(UsuarioResource.ErroCodigoPequeno);
 
-            if (request == null)
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroUsuarioNulo);
-                return notificacoes.Messages.ToList();
-            }
+            RegraPara(x => x.Nome)
+                .NaoVazio()
+                .ComMensagem(UsuarioResource.ErroNomeUsuarioNulo);
+            RegraPara(x => x.Nome)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(UsuarioResource.ErroNomePequeno);
+            RegraPara(x => x.Nome)
+                .TamanhoMenorOuIgualA(25)
+                .ComMensagem(UsuarioResource.ErroNomeLongo);
 
-            ValidarCodigo(request.Codigo, notificacoes);
-            ValidarNome(request.Nome, notificacoes);
-            ValidarSobrenome(request.Sobrenome, notificacoes);
-            ValidarEmail(request.Email, notificacoes);
+            RegraPara(x => x.Sobrenome)
+                .NaoVazio()
+                .ComMensagem(UsuarioResource.ErroSobrenomeObrigatorio);
+            RegraPara(x => x.Sobrenome)
+                .TamanhoMaiorOuIgualA(3)
+                .ComMensagem(UsuarioResource.ErroSobrenomePequeno);
+            RegraPara(x => x.Sobrenome)
+                .TamanhoMenorOuIgualA(50)
+                .ComMensagem(UsuarioResource.ErroSobrenomeLongo);
 
-            return notificacoes.Messages.ToList();
-        }
-
-        private static void ValidarCodigo(string codigo, NotificationBag notificacoes)
-        {
-            if (codigo.IsNullOrEmpty())
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroCodigoNulo);
-                return;
-            }
-
-            if (codigo.Length > 10)
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroCodigoLongo);
-            }
-
-            if (codigo.Length < 3)
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroCodigoPequeno);
-            }
-        }
-
-        private static void ValidarNome(string nome, NotificationBag notificacoes)
-        {
-            if (nome.IsNullOrEmpty())
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroNomeUsuarioNulo);
-                return;
-            }
-
-            if (nome.Length < 3)
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroNomePequeno);
-            }
-
-            if (nome.Length > 25)
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroNomeLongo);
-            }
-        }
-
-        private static void ValidarSobrenome(string sobrenome, NotificationBag notificacoes)
-        {
-            if (sobrenome.IsNullOrEmpty())
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroSobrenomeObrigatorio);
-                return;
-            }
-
-            if (sobrenome.Length < 3)
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroSobrenomePequeno);
-            }
-
-            if (sobrenome.Length > 50)
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroSobrenomeLongo);
-            }
-        }
-
-        private static void ValidarEmail(string email, NotificationBag notificacoes)
-        {
-            if (email.IsNullOrEmpty())
-            {
-                notificacoes.AdicionarErro(UsuarioResource.ErroEmailNulo);
-            }
+            RegraPara(x => x.Email)
+                .NaoVazio()
+                .ComMensagem(UsuarioResource.ErroEmailNulo);
         }
     }
 }

@@ -1,18 +1,18 @@
 using Application.DTO;
 using Application.Interfaces.Services;
 using Application.Resources;
+using Application.Services.EntitiesServices.PerfisDeAcesso;
 using Domain.Interfaces;
 using Shared.Domain.ValueObjects;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.PerfilDeAcessoCases
 {
     public sealed class AtualizarPerfilDeAcessoCase(
-        IPerfilDeAcessoPreparacaoService preparacaoService,
+        PerfilDeAcessoPreparacaoService preparacaoService,
         IPerfilDeAcessoRepository perfilDeAcessoRepository,
         IPerfilDeAcessoCacheInvalidator cacheInvalidator)
     {
-        private readonly IPerfilDeAcessoPreparacaoService _preparacaoService = preparacaoService;
+        private readonly PerfilDeAcessoPreparacaoService _preparacaoService = preparacaoService;
         private readonly IPerfilDeAcessoRepository _perfilDeAcessoRepository = perfilDeAcessoRepository;
         private readonly IPerfilDeAcessoCacheInvalidator _cacheInvalidator = cacheInvalidator;
 

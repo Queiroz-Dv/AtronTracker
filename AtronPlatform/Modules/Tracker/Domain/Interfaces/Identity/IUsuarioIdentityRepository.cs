@@ -19,7 +19,7 @@ namespace Domain.Interfaces.Identity
         Task<bool> RedefinirRefreshTokenRepositoryAsync(string codigoUsuario);
         Task<string> GerarTokenConfirmacaoEmailAsync(string codigoUsuario);
         Task<bool> ConfirmarEmailAsync(string codigoUsuario, string token);
-        Task<UsuarioIdentity> ObterUsuarioIdentityPorCodigo(string codigoUsuario);
+        Task<UsuarioIdentity> UsuarioServiceIdentityPorCodigo(string codigoUsuario);
         Task<string> GerarTokenAlteracaoEmailAsync(string codigoUsuario, string emailNovo);
         Task<bool> ConfirmarAlteracaoEmailAsync(string codigoUsuario, string emailNovo, string token);
         Task<string> GerarTokenRecuperacaoSenhaAsync(string codigoUsuario);
@@ -27,3 +27,4 @@ namespace Domain.Interfaces.Identity
         Task<bool> EmailConfirmadoAsync(string codigoUsuario);
     }
 }
+

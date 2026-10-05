@@ -1,4 +1,4 @@
-﻿using Domain.Interfaces.Identity;
+using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Domain.ValueObjects;
 using Shared.Application.Resources;
@@ -37,3 +37,5 @@ namespace Application.UseCases.UsuarioCases
         }
     }
 }
+
+

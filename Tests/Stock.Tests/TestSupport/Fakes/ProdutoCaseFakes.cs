@@ -1,9 +1,13 @@
 using AtronStock.Domain.Entities;
 using AtronStock.Domain.Interfaces;
-using Shared.Application.DTOS.Common;
-using Shared.Application.Interfaces.Service;
+using Shared.Application.Messaging;
+using Shared.Domain.Events;
 using Shared.Domain.Entities;
 using Shared.Domain.ValueObjects;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Stock.Tests.TestSupport.Fakes;
 
@@ -12,7 +16,7 @@ internal sealed class ProdutoRepositoryFake : IProdutoRepository
     public Produto? ProdutoPorCodigo { get; set; }
     public Produto? ProdutoAdicionado { get; private set; }
     public Produto? ProdutoAtualizado { get; private set; }
-    public ICollection<Produto> Todos { get; set; } = [];
+    public ICollection<Produto> Todos { get; set; } = new List<Produto>();
 
     public Task<Produto?> ObterPorIdAsync(int id)
         => Task.FromResult(Todos.FirstOrDefault(produto => produto.Id == id));
@@ -38,39 +42,28 @@ internal sealed class ProdutoRepositoryFake : IProdutoRepository
 
 internal sealed class CategoriaRepositoryProdutoFake : ICategoriaRepository
 {
-    public ICollection<Categoria> CategoriasSelecionadas { get; set; } = [];
+    public ICollection<Categoria> CategoriasSelecionadas { get; set; } = new List<Categoria>();
 
     public Task<ICollection<Categoria>> ObterPorCodigosAsync(IReadOnlyCollection<string> codigos)
         => Task.FromResult(CategoriasSelecionadas);
 
     public Task<bool> CriarCategoriaAsync(Categoria categoria) => Task.FromResult(true);
-    public Task<ICollection<Categoria>> ObterTodasCategoriasAsync() => Task.FromResult<ICollection<Categoria>>([]);
-    public Task<ICollection<Categoria>> ObterTodasCategoriasInativasAsync() => Task.FromResult<ICollection<Categoria>>([]);
+    public Task<ICollection<Categoria>> ObterTodasCategoriasAsync() => Task.FromResult<ICollection<Categoria>>(new List<Categoria>());
+    public Task<ICollection<Categoria>> ObterTodasCategoriasInativasAsync() => Task.FromResult<ICollection<Categoria>>(new List<Categoria>());
     public Task<Categoria> ObterCategoriaPorCodigoAsync(string codigo) => Task.FromResult<Categoria>(null!);
     public Task<bool> PossuiProdutosVinculadosAsync(int categoriaId) => Task.FromResult(false);
     public Task<bool> AtualizarCategoriaAsync(Categoria categoria) => Task.FromResult(true);
 }
 
-internal sealed class AuditoriaServiceProdutoFake : IAuditoriaService
+internal sealed class AuditoriaServiceProdutoFake : IEventBus
 {
-    public List<IAuditoriaDTO> Criacoes { get; } = [];
-    public List<IAuditoriaDTO> Atualizacoes { get; } = [];
+    public List<Shared.Domain.Events.Auditoria.AuditoriaRegistradaEvent> Criacoes { get; } = new();
+    public List<Shared.Domain.Events.Auditoria.AuditoriaAtualizadaEvent> Atualizacoes { get; } = new();
 
-    public Task<Resultado> RegistrarServiceAsync(IAuditoriaDTO auditoria)
+    public ValueTask PublicarAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : IEvent
     {
-        Criacoes.Add(auditoria);
-        return Task.FromResult(Resultado.Sucesso());
+        if (@event is Shared.Domain.Events.Auditoria.AuditoriaRegistradaEvent c) Criacoes.Add(c);
+        if (@event is Shared.Domain.Events.Auditoria.AuditoriaAtualizadaEvent a) Atualizacoes.Add(a);
+        return ValueTask.CompletedTask;
     }
-
-    public Task<Resultado> AtualizarServiceAsync(IAuditoriaDTO auditoria)
-    {
-        Atualizacoes.Add(auditoria);
-        return Task.FromResult(Resultado.Sucesso());
-    }
-
-    public Task<Resultado> RemoverServiceAsync(IAuditoriaDTO auditoria)
-        => Task.FromResult(Resultado.Sucesso());
-
-    public Task<Resultado<Auditoria>> ObterPorChaveServiceAsync(IAuditoriaDTO documento)
-        => Task.FromResult(Resultado<Auditoria>.Falha("Não implementado no fake."));
 }

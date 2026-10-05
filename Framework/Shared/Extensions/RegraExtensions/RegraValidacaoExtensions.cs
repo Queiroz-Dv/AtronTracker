@@ -1,4 +1,4 @@
-﻿using Shared.Domain;
+using Shared.Domain;
 using Shared.Extensions;
 
 namespace Shared.Extensions.RegraExtensions

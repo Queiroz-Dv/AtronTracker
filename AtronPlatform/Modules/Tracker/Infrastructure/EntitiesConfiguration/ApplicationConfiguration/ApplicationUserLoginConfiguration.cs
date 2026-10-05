@@ -1,4 +1,4 @@
-ï»¿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Shared.Domain.Entities.Identity;
 
@@ -16,7 +16,7 @@ namespace Infrastructure.EntitiesConfiguration.ApplicationConfiguration
             builder.Property(l => l.LoginProvider).HasMaxLength(128);
             builder.Property(l => l.ProviderKey).HasMaxLength(128);
 
-            // Mapeamento nÃ£o necessÃ¡rio
+            // Mapeamento não necessário
             builder.Ignore(l => l.ProviderDisplayName);
         }
     }

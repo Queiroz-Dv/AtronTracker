@@ -12,6 +12,5 @@ namespace Domain.Entities
         public string ResponsavelEmail { get; set; }
 
         public Usuario Responsavel { get; set; }
-        public ICollection<MembroWorkspace> Membros { get; set; } = new List<MembroWorkspace>();
     }
 }

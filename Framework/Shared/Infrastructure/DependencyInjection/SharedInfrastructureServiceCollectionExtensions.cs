@@ -16,13 +16,12 @@ namespace Shared.Infrastructure.DependencyInjection
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddAuditoriaCapability(configuration);
+            
 
             services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
             services.AddScoped<ITransactionManager, TransactionManager>();
             services.AddScoped<IAccessorService, ServiceAccessor>();
             services.AddScoped<ICookieService, CookieService>();
-            services.AddScoped<ICookieFactoryService, CookieFactory>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenFactoryService, TokenFactory>();
             services.AddScoped<IAuthManagerService, AuthManagerContext>();

@@ -1,4 +1,4 @@
-﻿namespace Shared.Domain.Enums
+namespace Shared.Domain.Enums
 {
     public class ENotificationType
     {

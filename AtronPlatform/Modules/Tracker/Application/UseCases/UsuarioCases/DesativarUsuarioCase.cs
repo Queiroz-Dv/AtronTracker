@@ -1,8 +1,10 @@
-﻿using Domain.Interfaces;
+using Domain.Interfaces;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.DTOS.Common;
 using Shared.Application.Interfaces.Service;
+using Shared.Application.Messaging;
+using Shared.Domain.Events.Auditoria;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
 using System;
@@ -14,11 +16,11 @@ namespace Application.UseCases.UsuarioCases
     public class DesativarUsuarioCase(
         IUsuarioRepository usuarioRepository,
         IUsuarioIdentityRepository usuarioIdentityRepository,
-        IAuditoriaService auditoriaService)
+        IEventBus eventBus)
     {
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly IUsuarioIdentityRepository _usuarioIdentityRepository = usuarioIdentityRepository;
-        private readonly IAuditoriaService _auditoriaService = auditoriaService;
+        private readonly IEventBus _eventBus = eventBus;
 
         public async Task<Resultado> ExecutarAsync(string codigo)
         {
@@ -35,17 +37,11 @@ namespace Application.UseCases.UsuarioCases
             await _usuarioRepository.AtualizarUsuarioAsync(usuario);
             await _usuarioIdentityRepository.DesativarContaAsync(usuario.Codigo);
 
-            await _auditoriaService.AtualizarServiceAsync(new AuditoriaDTO
-            {
-                CodigoRegistro = usuario.Codigo,
-                Contexto = nameof(Domain.Entities.Usuario),
-                Historico = new HistoricoDTO
-                {
-                    CodigoRegistro = usuario.Codigo,
-                    Contexto = nameof(Domain.Entities.Usuario),
-                    Descricao = $"Usuário {usuario.Codigo} desativado em {DateTime.Now:dd/MM/yyyy HH:mm}."
-                }
-            });
+            await _eventBus.PublicarAsync(new AuditoriaAtualizadaEvent(
+                usuario.Codigo,
+                nameof(Domain.Entities.Usuario),
+                "Usu�rio $({usuario.Codigo}) desativado em $({DateTime.Now:dd/MM/yyyy HH:mm})."
+            ));
 
             return Resultado.Sucesso().AdicionarMensagem(UsuarioResource.MensagemUsuarioDesativado);
         }
@@ -63,3 +59,6 @@ namespace Application.UseCases.UsuarioCases
         }
     }
 }
+
+
+

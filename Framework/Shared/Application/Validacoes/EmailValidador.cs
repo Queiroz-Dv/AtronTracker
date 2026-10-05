@@ -1,31 +1,25 @@
-﻿using Shared.Application.DTOS.Requests;
-using Shared.Application.Interfaces.Service;
-using Shared.Domain.ValueObjects;
+using Shared.Application.DTOS.Requests;
+using Shared.Application.Services;
+using Shared.Application.Resources;
+using Shared.Extensions.RegraExtensions;
 
 namespace Shared.Application.Validacoes
 {
-    public class EmailValidador : IValidador<EmailRequest>
+    public class EmailValidador : Validador<EmailRequest>
     {
-        public IEnumerable<NotificationMessage> Validar(EmailRequest entity)
+        public EmailValidador()
         {
-            var context = new NotificationBag();
+            RegraPara(x => x.EmailsDestino)
+                .DeveSer(emails => emails != null && emails.Count > 0)
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, nameof(EmailRequest.EmailsDestino)));
 
-            if (entity.EmailsDestino is null || entity.EmailsDestino.Count == 0)
-            {
-                context.AdicionarErroCampoObrigatorio(nameof(entity.EmailsDestino));
-            }
+            RegraPara(x => x.Assunto)
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, nameof(EmailRequest.Assunto)));
 
-            if (string.IsNullOrWhiteSpace(entity.Assunto))
-            {
-                context.AdicionarErroCampoObrigatorio(nameof(entity.Assunto));
-            }
-
-            if (string.IsNullOrWhiteSpace(entity.Mensagem))
-            {
-                context.AdicionarErroCampoObrigatorio(nameof(entity.Assunto));
-            }
-
-            return context.Messages.ToList();
+            RegraPara(x => x.Mensagem)
+                .NaoVazio()
+                .ComMensagem(string.Format(NotificacoesPadronizadas.ErroCampoObrigatorio, nameof(EmailRequest.Mensagem)));
         }
     }
 }

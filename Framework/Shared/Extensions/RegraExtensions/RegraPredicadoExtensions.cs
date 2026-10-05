@@ -1,4 +1,4 @@
-Ôªøusing Shared.Domain;
+using Shared.Domain;
 using Shared.Extensions;
 
 namespace Shared.Extensions.RegraExtensions
@@ -12,9 +12,9 @@ namespace Shared.Extensions.RegraExtensions
                 regra.Validacoes.PorValor.Add(_ => false);
 
                 regra.MensagemErro ??=
-                    $"A condi√ß√£o de valida√ß√£o do campo " +
+                    $"A condiÁ„o de validaÁ„o do campo " +
                     $"{regra.Propriedade.NomePropriedade} " +
-                    $"n√£o foi informada.";
+                    $"n„o foi informada.";
 
                 return regra;
             }
@@ -31,9 +31,9 @@ namespace Shared.Extensions.RegraExtensions
                 regra.Validacoes.PorValor.Add(_ => false);
 
                 regra.MensagemErro ??=
-                    $"A condi√ß√£o de valida√ß√£o do campo " +
+                    $"A condiÁ„o de validaÁ„o do campo " +
                     $"{regra.Propriedade.NomePropriedade} " +
-                    $"n√£o foi informada.";
+                    $"n„o foi informada.";
 
                 return regra;
             }

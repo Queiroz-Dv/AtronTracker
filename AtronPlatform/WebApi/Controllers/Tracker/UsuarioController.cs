@@ -1,11 +1,12 @@
-﻿using Application.DTO.Request;
-using Application.Interfaces.Services;
+using Application.DTO.Request;
+using Application.UseCases.UsuarioCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Resources;
 using Shared.Authorization;
 using Shared.Domain.ValueObjects;
 using Shared.Infrastructure.Filters;
+
 
 namespace AtronPlatform.WebApi.Controllers.Tracker
 {
@@ -17,7 +18,16 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
     [Authorize(Policy = ModuloPolicies.Usuario)]
     [ApiController]
     [Route("api/[controller]")]
-    public class UsuarioController(IUsuarioService usuarioService) : ControllerBase
+    public class UsuarioController(
+        CriarUsuarioCase criarUsuario,
+        AtualizarUsuarioCase atualizarUsuario,
+        RemoverUsuarioCase removerUsuario,
+        DesativarUsuarioCase desativarUsuario,
+        AlterarEmailCase alterarEmail,
+        ConfirmarAlteracaoEmailCase confirmarAlteracaoEmail,
+        ReenviarConfirmacaoEmailCase reenviarConfirmacaoEmail,
+        ObterUsuarioCase obterUsuario,
+        ObterTodosUsuariosCase obterTodosUsuarios) : ControllerBase
     {
         /// <summary>
         /// Cria um novo usuário no sistema.
@@ -28,7 +38,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Transactional]
         public async Task<ActionResult> Post([FromBody] UsuarioRequest request)
         {
-            var resultado = await usuarioService.CriarAsync(request);
+            var resultado = await criarUsuario.ExecutarAsync(request);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
@@ -45,7 +55,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
             if (codigo != request.Codigo)
                 return BadRequest(Resultado<object>.Falha(NotificacoesPadronizadas.ErroCodigoRotaDivergente).Messages);
 
-            var resultado = await usuarioService.AtualizarAsync(request);
+            var resultado = await atualizarUsuario.ExecutarAsync(request);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
@@ -58,7 +68,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Transactional]
         public async Task<ActionResult> Delete(string codigo)
         {
-            var resultado = await usuarioService.RemoverAsync(codigo);
+            var resultado = await removerUsuario.ExecutarAsync(codigo);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
@@ -71,7 +81,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [Transactional]
         public async Task<ActionResult> Desativar(string codigo)
         {
-            var resultado = await usuarioService.DesativarAsync(codigo);
+            var resultado = await desativarUsuario.ExecutarAsync(codigo);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Messages);
         }
 
@@ -82,7 +92,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var resultado = await usuarioService.ObterTodosAsync();
+            var resultado = await obterTodosUsuarios.ExecutarAsync();
             return Ok(resultado.Dados);
         }
 
@@ -94,7 +104,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpGet("{codigo}")]
         public async Task<ActionResult> Get(string codigo)
         {
-            var resultado = await usuarioService.ObterPorCodigoAsync(codigo);
+            var resultado = await obterUsuario.ExecutarAsync(codigo);
             return resultado.TeveFalha ? NotFound(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -108,7 +118,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpPut("alterar-email/{codigo}")]
         public async Task<IActionResult> AlterarEmail(string codigo, [FromBody] AlterarEmailRequest request)
         {
-            var resultado = await usuarioService.AlterarEmailAsync(codigo, request.EmailNovo);
+            var resultado = await alterarEmail.ExecutarAsync(codigo, request.EmailNovo);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -126,7 +136,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
             [FromQuery] string emailNovo,
             [FromQuery] string token)
         {
-            var resultado = await usuarioService.ConfirmarAlteracaoEmailAsync(usuarioCodigo, emailNovo, token);
+            var resultado = await confirmarAlteracaoEmail.ExecutarAsync(usuarioCodigo, emailNovo, token);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
 
@@ -139,7 +149,7 @@ namespace AtronPlatform.WebApi.Controllers.Tracker
         [HttpPost("reenviar-confirmacao-email/{codigo}")]
         public async Task<IActionResult> ReenviarConfirmacaoEmail(string codigo)
         {
-            var resultado = await usuarioService.ReenviarConfirmacaoEmailAsync(codigo);
+            var resultado = await reenviarConfirmacaoEmail.ExecutarAsync(codigo);
             return resultado.TeveFalha ? BadRequest(resultado.Messages) : Ok(resultado.Dados);
         }
     }

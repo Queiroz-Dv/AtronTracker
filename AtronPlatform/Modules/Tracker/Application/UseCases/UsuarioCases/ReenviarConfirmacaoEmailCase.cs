@@ -2,14 +2,12 @@ using Application.DTO;
 using Application.EmailCompositor.Compositores;
 using Application.Extensions;
 using Application.Interfaces.Services;
-using Application.Records.Email;
 using Domain.Interfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Shared.Application.Interfaces.Service;
 using Shared.Application.Resources;
 using Shared.Domain.ValueObjects;
-using System;
-using System.Threading.Tasks;
+using Shared.Extensions;
 using UsuarioEntity = Domain.Entities.Usuario;
 
 namespace Application.UseCases.UsuarioCases
@@ -39,7 +37,7 @@ namespace Application.UseCases.UsuarioCases
 
         public async Task<Resultado> ExecutarPorIdentificadorAsync(string identificador)
         {
-            if (string.IsNullOrWhiteSpace(identificador))
+            if (identificador.IsNullOrEmpty())
                 return RespostaPublica();
 
             var usuario = identificador.IdentifierIsEmail()
@@ -52,7 +50,7 @@ namespace Application.UseCases.UsuarioCases
 
         private async Task<Resultado> ReenviarAsync(UsuarioEntity usuario)
         {
-            if (usuario == null)
+            if (usuario.IsNullable())
                 return Resultado.Falha(UsuarioResource.Erro_UsuarioNaoEncontrado);
 
             if (usuario.Inativo)
@@ -65,7 +63,7 @@ namespace Application.UseCases.UsuarioCases
                 .ObterAtivaPorUsuarioAsync(usuario.Codigo);
             var agora = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
 
-            if (confirmacaoAtiva is not null &&
+            if (confirmacaoAtiva.IsNotNull() &&
                 agora - confirmacaoAtiva.CriadoEm < IntervaloMinimoReenvio)
             {
                 return RespostaPublica();

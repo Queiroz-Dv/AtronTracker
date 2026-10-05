@@ -1,4 +1,4 @@
-Ôªøusing Shared.Application.Interfaces.Service;
+using Shared.Application.Interfaces.Service;
 
 namespace Shared.Application.Services.Accessor
 {
@@ -27,7 +27,7 @@ namespace Shared.Application.Services.Accessor
                 return resolved;
             }
 
-            throw new InvalidOperationException($"Servi√ßo do tipo {tipo.Name} n√£o est√° registrado no container.");
+            throw new InvalidOperationException($"ServiÁo do tipo {tipo.Name} n„o est· registrado no container.");
         }
     }
 }
